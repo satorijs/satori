@@ -35,6 +35,8 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Install
+        run: yarn
       - name: Unit Test
         run: yarn test:json
       - name: Report Coverage
