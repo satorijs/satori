@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/core",
+  "name": "@satorijs/node",
   "description": "Core components of Satorijs",
   "version": "1.0.0",
   "main": "lib/index.js",
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/node-sdk.git",
-    "directory": "packages/core"
+    "directory": "packages/node"
   },
   "bugs": {
     "url": "https://github.com/satorijs/node-sdk/issues"
@@ -25,12 +25,9 @@
     "message",
     "utilities"
   ],
-  "scripts": {
-    "compile:cjs": "esbuild src/index.ts --outfile=lib/index.cjs --bundle --sourcemap --platform=node --external:cosmokit --external:cordis --target=es2019",
-    "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --platform=neutral --external:cosmokit --external:cordis --target=esnext",
-    "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
-  },
   "dependencies": {
-    "cordis": "^2.0.0"
+    "@satorijs/core": "^1.0.0",
+    "reggol": "^1.0.3",
+    "ws": "^8.6.0"
   }
 }
