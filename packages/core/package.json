@@ -1,0 +1,36 @@
+{
+  "name": "@satorijs/core",
+  "description": "Core components of Satorijs",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "index.js"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/node-sdk/issues"
+  },
+  "homepage": "https://satori.js.org/",
+  "keywords": [
+    "satori",
+    "element",
+    "message",
+    "utilities"
+  ],
+  "scripts": {
+    "compile:cjs": "esbuild src/index.ts --outfile=lib/index.cjs --bundle --sourcemap --platform=node --external:cosmokit --target=es2019",
+    "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --platform=neutral --external:cosmokit --target=esnext",
+    "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
+  },
+  "dependencies": {
+    "cordis": "^2.0.0"
+  }
+}
