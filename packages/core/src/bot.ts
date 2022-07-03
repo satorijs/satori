@@ -13,15 +13,16 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
   public hidden?: boolean
   public internal?: any
   public selfId?: string
+  public adapter?: Adapter<this>
 
-  abstract adapter: Adapter<this>
-  private _status: Bot.Status
+  private _status: Bot.Status = 'offline'
 
   error?: Error
 
-  constructor(public ctx: Context, public config: T, public instinct: string) {
-    this.platform = config.platform || instinct
-    this._status = 'offline'
+  constructor(public ctx: Context, public config: T) {
+    if (config.platform) {
+      this.platform = config.platform
+    }
 
     ctx.bots.push(this)
     ctx.emit('bot-added', this)

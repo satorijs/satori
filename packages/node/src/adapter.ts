@@ -1,5 +1,6 @@
 import { Bot, Adapter } from '@satorijs/core'
 import { Awaitable, Time } from 'cosmokit'
+import Schema from 'schemastery'
 import WebSocket from 'ws'
 import Logger from 'reggol'
 
@@ -15,6 +16,8 @@ declare module '@satorijs/core' {
         retryTimes?: number
         retryInterval?: number
       }
+
+      export const Config: Schema<Config>
     }
 
     export abstract class WsClient<T extends Bot<WsClient.Config>> extends Adapter.Client<T> {
@@ -30,6 +33,12 @@ const logger = new Logger('adapter')
 
 abstract class WsClient<T extends Bot<Adapter.WsClient.Config>> extends Adapter.Client<T> {
   static reusable = true
+
+  static Config: Schema<Adapter.WsClient.Config> = Schema.object({
+    retryTimes: Schema.natural().description('初次连接时的最大重试次数，仅用于 ws 协议。').default(6),
+    retryInterval: Schema.natural().role('ms').description('初次连接时的重试时间间隔，仅用于 ws 协议。').default(5 * Time.second),
+    retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔，仅用于 ws 协议。').default(Time.minute),
+  }).description('连接设置')
 
   protected abstract prepare(): Awaitable<WebSocket>
   protected abstract accept(): void
