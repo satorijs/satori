@@ -1,9 +1,8 @@
 import { Adapter } from '@satorijs/core'
+import { Logger, Schema } from '@satorijs/env-node'
 import { GatewayOpcode, GatewayPayload } from './types'
 import { adaptSession, adaptUser } from './utils'
 import { DiscordBot } from './bot'
-import Logger from 'reggol'
-import Schema from 'schemastery'
 
 const logger = new Logger('discord')
 

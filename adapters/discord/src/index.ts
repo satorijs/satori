@@ -8,10 +8,10 @@ export * from './sender'
 export * from './utils'
 export * from './ws'
 
+export default DiscordBot
+
 declare module '@satorijs/core' {
   interface Session {
     discord?: Discord.GatewayPayload & Discord.Internal
   }
 }
-
-export default DiscordBot

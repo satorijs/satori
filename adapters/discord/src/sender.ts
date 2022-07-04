@@ -4,9 +4,8 @@ import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import AggregateError from 'es-aggregate-error'
 import { DiscordBot } from './bot'
-import { Dict } from 'cosmokit'
+import { Dict, Schema } from '@satorijs/env-node'
 import segment from '@satorijs/message'
-import Schema from 'schemastery'
 
 export class Sender {
   private results: string[] = []

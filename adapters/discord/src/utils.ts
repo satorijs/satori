@@ -1,9 +1,9 @@
 import { Author, Channel, Guild, Message, Session, User } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import segment from '@satorijs/message'
-import * as discord from './types'
+import * as Discord from './types'
 
-export const adaptUser = (user: discord.User): User => ({
+export const adaptUser = (user: Discord.User): User => ({
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
@@ -11,22 +11,22 @@ export const adaptUser = (user: discord.User): User => ({
   isBot: user.bot || false,
 })
 
-export const adaptGroup = (data: discord.Guild): Guild => ({
+export const adaptGuild = (data: Discord.Guild): Guild => ({
   guildId: data.id,
   guildName: data.name,
 })
 
-export const adaptChannel = (data: discord.Channel): Channel => ({
+export const adaptChannel = (data: Discord.Channel): Channel => ({
   channelId: data.id,
   channelName: data.name,
 })
 
-export const adaptAuthor = (author: discord.User): Author => ({
+export const adaptAuthor = (author: Discord.User): Author => ({
   ...adaptUser(author),
   nickname: author.username,
 })
 
-export function adaptMessage(meta: discord.Message, session: Partial<Session> = {}) {
+export function adaptMessage(meta: Discord.Message, session: Partial<Session> = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
@@ -103,7 +103,7 @@ export function adaptMessage(meta: discord.Message, session: Partial<Session> = 
   return session as Message
 }
 
-export function adaptMessageSession(meta: discord.Message, session: Partial<Session> = {}) {
+export function adaptMessageSession(meta: Discord.Message, session: Partial<Session> = {}) {
   adaptMessage(meta, session)
   session.messageId = meta.id
   session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
@@ -115,7 +115,7 @@ export function adaptMessageSession(meta: discord.Message, session: Partial<Sess
   return session
 }
 
-export function prepareMessageSession(session: Partial<Session>, data: Partial<discord.Message>) {
+export function prepareMessageSession(session: Partial<Session>, data: Partial<Discord.Message>) {
   session.guildId = data.guild_id
   session.subtype = data.guild_id ? 'group' : 'private'
   session.channelId = data.channel_id
@@ -132,7 +132,7 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
   session.content = id ? `${name}:${id}` : name
 }
 
-export async function adaptSession(bot: DiscordBot, input: discord.GatewayPayload) {
+export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
   const session: Partial<Session> = {
     selfId: bot.selfId,
   }
