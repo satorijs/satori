@@ -19,19 +19,6 @@ declare module '@satorijs/core' {
   interface Context {
     router: Router
   }
-
-  namespace Context {
-    interface Config extends Config.Network {}
-
-    namespace Config {
-      interface Network {
-        host?: string
-        port?: number
-        maxPort?: number
-        selfUrl?: string
-      }
-    }
-  }
 }
 
 type WebSocketCallback = (socket: WebSocket, request: IncomingMessage) => void
@@ -63,8 +50,8 @@ export class WebSocketLayer {
 }
 
 export class Router extends KoaRouter {
-  httpServer?: Server
-  wsServer?: WebSocket.Server
+  _http?: Server
+  _ws?: WebSocket.Server
   wsStack: WebSocketLayer[] = []
 
   constructor(ctx: Context) {
@@ -76,12 +63,12 @@ export class Router extends KoaRouter {
     koa.use(this.routes())
     koa.use(this.allowedMethods())
 
-    this.httpServer = createServer(koa.callback())
-    this.wsServer = new WebSocket.Server({
-      server: this.httpServer,
+    this._http = createServer(koa.callback())
+    this._ws = new WebSocket.Server({
+      server: this._http,
     })
 
-    this.wsServer.on('connection', (socket, request) => {
+    this._ws.on('connection', (socket, request) => {
       for (const manager of this.wsStack) {
         if (manager.accept(socket, request)) return
       }

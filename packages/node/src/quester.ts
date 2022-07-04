@@ -4,6 +4,7 @@ import { Agent, ClientRequestArgs } from 'http'
 import WebSocket from 'ws'
 import ProxyAgent from 'proxy-agent'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import Schema from 'schemastery'
 
 declare module '@satorijs/core' {
   interface Context {
@@ -44,6 +45,13 @@ export namespace Quester {
     timeout?: number
     proxyAgent?: string
   }
+
+  export const Config: Schema<Config> = Schema.object({
+    endpoint: Schema.string().role('url').description('API 请求的终结点。'),
+    proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
+    headers: Schema.dict(String).description('要附加的额外请求头。'),
+    timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+  }).description('请求设置')
 
   const agents: Dict<Agent> = {}
 
