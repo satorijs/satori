@@ -49,11 +49,13 @@ export interface Context {
   bots: Bot[] & Dict<Bot> & { counter: number }
 }
 
-export class Context extends cordis.Context {
+export class Context extends cordis.Context<Context.Config> {
   [cordis.Events]: Events<this>
 }
 
-export namespace Context {}
+export namespace Context {
+  export interface Config extends cordis.Context.Config {}
+}
 
 Context.service('bots', class {
   constructor(root: Context) {
@@ -61,9 +63,20 @@ Context.service('bots', class {
     let counter = 0
     return new Proxy(list, {
       get(target, prop) {
-        if (prop in target || typeof prop === 'symbol') return target[prop]
+        if (prop in target || typeof prop === 'symbol') {
+          return target[prop]
+        }
         if (prop === 'counter') return counter++
         return list.find(bot => bot.sid === prop)
+      },
+      deleteProperty(target, prop) {
+        if (prop in target || typeof prop === 'symbol') {
+          return delete target[prop]
+        }
+        const bot = target.findIndex(bot => bot.sid === prop)
+        if (bot < 0) return false
+        target.splice(bot, 1)
+        return true
       },
     })
   }

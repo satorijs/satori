@@ -31,6 +31,6 @@
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "dependencies": {
-    "cordis": "^2.0.0"
+    "cordis": "^2.0.1"
   }
 }
