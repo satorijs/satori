@@ -1,11 +1,11 @@
 import { createReadStream } from 'fs'
 import { Dict, Logger } from '@satorijs/env-node'
 import segment from '@satorijs/message'
-import * as Telegram from './types'
 import AggregateError from 'es-aggregate-error'
 import fileType from 'file-type'
-import { TelegramBot } from '.'
 import FormData from 'form-data'
+import * as Telegram from './types'
+import { TelegramBot } from './bot'
 
 const logger = new Logger('telegram')
 

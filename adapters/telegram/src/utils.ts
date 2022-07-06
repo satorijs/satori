@@ -1,16 +1,9 @@
-import { GuildMember, User } from '@satorijs/core'
-import Schema from 'schemastery'
+import { GuildMember, Session, User } from '@satorijs/core'
+import { Logger } from '@satorijs/env-node'
+import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
-export interface AdapterConfig {
-  path?: string
-  selfUrl?: string
-}
-
-export const AdapterConfig: Schema<AdapterConfig> = Schema.object({
-  path: Schema.string().description('服务器监听的路径。').default('/telegram'),
-  selfUrl: Schema.string().role('url').description('Koishi 服务暴露在公网的地址。缺省时将使用全局配置。'),
-})
+const logger = new Logger('telegram')
 
 export const adaptUser = (data: Telegram.User): User => ({
   userId: data.id.toString(),
@@ -20,3 +13,39 @@ export const adaptUser = (data: Telegram.User): User => ({
 })
 
 export const adaptGuildMember = (data: Telegram.ChatMember): GuildMember => adaptUser(data.user)
+
+export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
+  logger.debug('receive %s', JSON.stringify(update))
+  const session: Partial<Session> = { selfId: bot.selfId }
+  session.telegram = Object.create(bot.internal)
+  Object.assign(session.telegram, update)
+
+  const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
+  if (message) {
+    session.type = update.message || update.channel_post ? 'message' : 'message-updated'
+    await bot.adaptMessage(message, session)
+  } else if (update.chat_join_request) {
+    session.timestamp = update.chat_join_request.date * 1000
+    session.type = 'guild-member-request'
+    session.messageId = `${update.chat_join_request.chat.id}@${update.chat_join_request.from.id}`
+    // Telegram join request does not have text
+    session.content = ''
+    session.channelId = update.chat_join_request.chat.id.toString()
+    session.guildId = session.channelId
+  } else if (update.my_chat_member) {
+    session.timestamp = update.my_chat_member.date * 1000
+    session.messageId = `${update.my_chat_member.chat.id}@${update.my_chat_member.from.id}`
+    session.content = ''
+    session.channelId = update.my_chat_member.chat.id.toString()
+    session.guildId = session.channelId
+    if (update.my_chat_member.old_chat_member.user.id.toString() === bot.selfId) {
+      if (update.my_chat_member.new_chat_member.status === 'left') {
+        session.type = 'group-deleted'
+      } else if (update.my_chat_member.old_chat_member.status === 'left') {
+        session.type = 'group-added'
+      }
+    }
+  }
+  logger.debug('receive %o', session)
+  this.dispatch(new Session(bot, session))
+}

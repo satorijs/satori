@@ -20,13 +20,10 @@ export namespace Adapter {
   export abstract class Server<T extends Bot = Bot> extends Adapter<T> {
     protected bots: T[] = []
 
-    constructor(ctx: Context) {
-      super()
-      ctx.on('fork', (ctx, bot: T) => {
-        this.bots.push(bot)
-        ctx.on('dispose', () => {
-          remove(this.bots, bot)
-        })
+    fork(ctx: Context, bot: T) {
+      this.bots.push(bot)
+      ctx.on('dispose', () => {
+        remove(this.bots, bot)
       })
     }
   }
