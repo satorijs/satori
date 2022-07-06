@@ -1,0 +1,39 @@
+{
+  "name": "@satorijs/adapter-feishu",
+  "description": "Feishu Adapter for Satorijs",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "directory": "adapters/feishu"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/node-sdk/issues"
+  },
+  "homepage": "https://koishi.js.org/api/adapter/feishu.html",
+  "keywords": [
+    "bot",
+    "feishu",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/core": "^1.0.0",
+    "@satorijs/env-node": "^1.0.0"
+  },
+  "dependencies": {
+    "form-data": "^4.0.0",
+    "reggol": "^1.0.3",
+    "schemastery": "^3.4.3"
+  }
+}
