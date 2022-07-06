@@ -3,6 +3,8 @@ import { Dict, Logger, Quester, Schema, Time } from '@satorijs/env-node'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
+import { HttpServer } from './server'
+import { HttpPolling } from './polling'
 import segment from '@satorijs/message'
 import fs from 'fs'
 
@@ -26,11 +28,6 @@ export interface TelegramResponse {
   result: any
 }
 
-export interface FileConfig {
-  endpoint?: string
-  local?: boolean
-}
-
 export class TelegramBot extends Bot<TelegramBot.Config> {
   http: Quester & { file?: Quester }
   internal?: Telegram.Internal
@@ -49,6 +46,11 @@ export class TelegramBot extends Bot<TelegramBot.Config> {
       endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
     })
     this.internal = new Telegram.Internal(this.http)
+    if (config.protocol === 'server') {
+      ctx.plugin(HttpServer, this)
+    } else if (config.protocol === 'polling') {
+      ctx.plugin(HttpPolling, this)
+    }
   }
 
   async initialize(callback: (bot: TelegramBot) => Promise<void>) {
@@ -274,22 +276,38 @@ export class TelegramBot extends Bot<TelegramBot.Config> {
 }
 
 export namespace TelegramBot {
-  export interface Config extends Bot.BaseConfig, Quester.Config {
-    token?: string
-    pollingTimeout?: number
-    files?: FileConfig
+  export interface BaseConfig extends Bot.BaseConfig, Quester.Config {
+    protocol: 'server' | 'polling'
+    token: string
+    files?: Config.Files
   }
 
-  export const Config: Schema<TelegramBot.Config> = Schema.intersect([
+  export type Config = BaseConfig & (HttpServer.Config | HttpPolling.Config)
+
+  export namespace Config {
+    export interface Files {
+      endpoint?: string
+      local?: boolean
+    }
+  }
+
+  export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),
-        local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。').default(false),
+        local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
       }),
     }),
-    // Quester.createSchema({
-    //   endpoint: 'https://api.telegram.org',
-    // }),
+    Schema.union([
+      HttpServer.Config,
+      HttpPolling.Config,
+    ]).description('推送设置'),
+    Schema.object({
+      endpoint: Schema.string().role('url').description('API 请求的终结点。').default('https://discord.com/api/v8'),
+      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
+      headers: Schema.dict(String).description('要附加的额外请求头。'),
+      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+    }).description('请求设置'),
   ] as const)
 }
