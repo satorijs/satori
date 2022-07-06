@@ -29,7 +29,6 @@
     "@satorijs/env-node": "^1.0.0"
   },
   "dependencies": {
-    "reggol": "^1.0.3",
-    "schemastery": "^3.4.3"
+    "qface": "^1.2.0"
   }
 }
