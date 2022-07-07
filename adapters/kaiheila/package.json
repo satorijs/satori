@@ -1,0 +1,31 @@
+{
+  "name": "@satorijs/adapter-kaiheila",
+  "description": "Kaiheila Adapter for Satorijs",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "directory": "adapters/kaiheila"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/node-sdk/issues"
+  },
+  "homepage": "https://koishi.js.org/api/adapter/kaiheila.html",
+  "keywords": [
+    "bot",
+    "kaiheila",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/core": "^1.0.0",
+    "@satorijs/env-node": "^1.0.0"
+  }
+}

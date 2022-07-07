@@ -21,8 +21,8 @@ declare module '@satorijs/core' {
     }
 
     export abstract class WsClient<T extends Bot<WsClient.Config>> extends Adapter.Client<T> {
-      protected abstract prepare(): Awaitable<WebSocket>
-      protected abstract accept(): void
+      protected abstract prepare(bot: T): Awaitable<WebSocket>
+      protected abstract accept(bot: T): void
       start(bot: T): Promise<void>
       stop(bot: T): Promise<void>
     }
