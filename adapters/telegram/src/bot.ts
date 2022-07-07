@@ -294,20 +294,22 @@ export namespace TelegramBot {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
-      files: Schema.object({
-        endpoint: Schema.string().description('文件请求的终结点。'),
-        local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
-      }),
     }),
     Schema.union([
       HttpServer.Config,
       HttpPolling.Config,
     ]).description('推送设置'),
     Schema.object({
-      endpoint: Schema.string().role('url').description('API 请求的终结点。').default('https://discord.com/api/v8'),
+      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://api.telegram.org'),
       proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
       headers: Schema.dict(String).description('要附加的额外请求头。'),
       timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
     }).description('请求设置'),
+    Schema.object({
+      files: Schema.object({
+        endpoint: Schema.string().description('文件请求的终结点。'),
+        local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
+      }),
+    }).description('文件设置'),
   ] as const)
 }
