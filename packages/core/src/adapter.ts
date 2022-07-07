@@ -4,8 +4,8 @@ import { Bot } from './bot'
 
 export abstract class Adapter<T extends Bot = Bot> {
   static reusable = true
-  abstract start(bot: T): Promise<void>
-  abstract stop(bot: T): Promise<void>
+  async start(bot: T) {}
+  async stop(bot: T) {}
 }
 
 export namespace Adapter {
