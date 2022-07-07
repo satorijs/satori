@@ -34,7 +34,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
           seq: this._d,
         },
       }))
-      this.bot.status = 'online'
+      this.bot.online()
     }
 
     this.bot.socket.on('message', async (data) => {
@@ -72,7 +72,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
           delete self.userId
           Object.assign(this.bot, self)
           logger.debug('session_id ' + this._sessionId)
-          return this.bot.status = 'online'
+          return this.bot.online()
         }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)

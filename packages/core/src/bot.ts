@@ -45,6 +45,16 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     }
   }
 
+  online() {
+    this.status = 'online'
+    this.error = null
+  }
+
+  offline(error?: Error) {
+    this.status = 'offline'
+    this.error = error
+  }
+
   async start() {
     if (['connect', 'reconnect', 'online'].includes(this.status)) return
     this.status = 'connect'
@@ -52,8 +62,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
       await this.ctx.parallel('bot-connect', this)
       await this.adapter.start(this)
     } catch (error) {
-      this.error = error
-      this.status = 'offline'
+      this.offline(error)
     }
   }
 
@@ -65,6 +74,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
       await this.adapter.stop(this)
     } catch (error) {
       this.ctx.emit('internal/warning', error)
+      this.offline()
     }
   }
 

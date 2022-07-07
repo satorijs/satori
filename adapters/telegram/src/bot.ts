@@ -28,12 +28,12 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot extends Bot<TelegramBot.Config> {
+export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   http: Quester & { file?: Quester }
   internal?: Telegram.Internal
   local?: boolean
 
-  constructor(ctx: Context, config: TelegramBot.Config) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
@@ -53,7 +53,7 @@ export class TelegramBot extends Bot<TelegramBot.Config> {
     }
   }
 
-  async initialize(callback: (bot: TelegramBot) => Promise<void>) {
+  async initialize(callback: (bot: this) => Promise<void>) {
     const { username, userId, avatar, nickname } = await this.getLoginInfo()
     this.username = username
     this.avatar = avatar
@@ -61,7 +61,7 @@ export class TelegramBot extends Bot<TelegramBot.Config> {
     this.nickname = nickname
     await callback(this)
     logger.debug('connected to %c', 'telegram:' + this.selfId)
-    this.resolve()
+    this.online()
   }
 
   async adaptMessage(message: Telegram.Message, session: Partial<Session>) {
@@ -276,7 +276,7 @@ export class TelegramBot extends Bot<TelegramBot.Config> {
 }
 
 export namespace TelegramBot {
-  export interface BaseConfig extends Bot.BaseConfig, Quester.Config {
+  export interface BaseConfig extends Bot.Config, Quester.Config {
     protocol: 'server' | 'polling'
     token: string
     files?: Config.Files

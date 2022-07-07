@@ -8,9 +8,9 @@ import * as Telegram from './types'
 const logger = new Logger('telegram')
 
 export class HttpServer extends Adapter.Server<TelegramBot> {
-  fork(ctx: Context, bot: TelegramBot) {
+  fork(ctx: Context, bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
     super.fork(ctx, bot)
-    const config = bot.config as HttpServer.Config
+    const config = bot.config
     config.path = sanitize(config.path || '/telegram')
     if (config.selfUrl) {
       config.selfUrl = trimSlash(config.selfUrl)
@@ -19,21 +19,20 @@ export class HttpServer extends Adapter.Server<TelegramBot> {
     }
   }
 
-  async start(bot: TelegramBot) {
-    const { path } = bot.config as HttpServer.Config
+  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
+    const { path } = bot.config
     bot.ctx.router.post(path, async (ctx) => {
       const payload: Telegram.Update = ctx.request.body
       const token = ctx.request.query.token as string
       const [selfId] = token.split(':')
-      const bot = this.bots.find(bot => bot.selfId === selfId) as TelegramBot
+      const bot = this.bots.find(bot => bot.selfId === selfId)
       if (!(bot?.config?.token === token)) return ctx.status = 403
       ctx.body = 'OK'
       await handleUpdate(payload, bot)
     })
 
     bot.initialize(async (bot) => {
-      const { token } = bot.config
-      const { path, selfUrl } = bot.config as HttpServer.Config
+      const { token, path, selfUrl } = bot.config
       const info = await bot.internal.setWebhook({
         url: selfUrl + path + '?token=' + token,
         drop_pending_updates: true,
