@@ -25,5 +25,8 @@
     "element",
     "message",
     "utilities"
-  ]
+  ],
+  "devDependencies": {
+    "chai-shape": "^1.0.0"
+  }
 }
