@@ -1,3 +1,5 @@
+import { camelize, Dict, Logger } from '@satorijs/env-node'
+
 export interface Response {
   status: string
   retcode: number
@@ -489,3 +491,146 @@ export interface Internal {
   getGuildMemberProfile(guild_id: id, user_id: id): Promise<GuildMemberProfile>
   sendGuildChannelMsg(guild_id: id, channel_id: id, message: string): Promise<number>
 }
+
+class SenderError extends Error {
+  constructor(args: Dict, url: string, retcode: number) {
+    super(`Error when trying to send to ${url}, args: ${JSON.stringify(args)}, retcode: ${retcode}`)
+    Object.defineProperties(this, {
+      name: { value: 'SenderError' },
+      code: { value: retcode },
+      args: { value: args },
+      url: { value: url },
+    })
+  }
+}
+
+const logger = new Logger('onebot')
+
+export class Internal {
+  _request?(action: string, params: Dict): Promise<Response>
+
+  private async _get<T = any>(action: string, params = {}): Promise<T> {
+    logger.debug('[request] %s %o', action, params)
+    const response = await this._request(action, params)
+    logger.debug('[response] %o', response)
+    const { data, retcode } = response
+    if (retcode === 0) return data
+    throw new SenderError(params, action, retcode)
+  }
+
+  async setGroupAnonymousBan(group_id: string, meta: string | object, duration?: number) {
+    const args = { group_id, duration } as any
+    args[typeof meta === 'string' ? 'flag' : 'anonymous'] = meta
+    await this._get('set_group_anonymous_ban', args)
+  }
+
+  async setGroupAnonymousBanAsync(group_id: string, meta: string | object, duration?: number) {
+    const args = { group_id, duration } as any
+    args[typeof meta === 'string' ? 'flag' : 'anonymous'] = meta
+    await this._get('set_group_anonymous_ban_async', args)
+  }
+
+  private static asyncPrefixes = ['set', 'send', 'delete', 'create', 'upload']
+
+  private static prepareMethod(name: string) {
+    const prop = camelize(name.replace(/^[_.]/, ''))
+    const isAsync = Internal.asyncPrefixes.some(prefix => prop.startsWith(prefix))
+    return [prop, isAsync] as const
+  }
+
+  static define(name: string, ...params: string[]) {
+    const [prop, isAsync] = Internal.prepareMethod(name)
+    Internal.prototype[prop] = async function (this: Internal, ...args: any[]) {
+      const data = await this._get(name, Object.fromEntries(params.map((name, index) => [name, args[index]])))
+      if (!isAsync) return data
+    }
+    isAsync && (Internal.prototype[prop + 'Async'] = async function (this: Internal, ...args: any[]) {
+      await this._get(name + '_async', Object.fromEntries(params.map((name, index) => [name, args[index]])))
+    })
+  }
+
+  static defineExtract(name: string, key: string, ...params: string[]) {
+    const [prop, isAsync] = Internal.prepareMethod(name)
+    Internal.prototype[prop] = async function (this: Internal, ...args: any[]) {
+      const data = await this._get(name, Object.fromEntries(params.map((name, index) => [name, args[index]])))
+      return data[key]
+    }
+    isAsync && (Internal.prototype[prop + 'Async'] = async function (this: Internal, ...args: any[]) {
+      await this._get(name + '_async', Object.fromEntries(params.map((name, index) => [name, args[index]])))
+    })
+  }
+}
+
+Internal.defineExtract('send_private_msg', 'message_id', 'user_id', 'message', 'auto_escape')
+Internal.defineExtract('send_group_msg', 'message_id', 'group_id', 'message', 'auto_escape')
+Internal.defineExtract('send_group_forward_msg', 'message_id', 'group_id', 'messages')
+Internal.define('delete_msg', 'message_id')
+Internal.define('set_essence_msg', 'message_id')
+Internal.define('delete_essence_msg', 'message_id')
+Internal.define('send_like', 'user_id', 'times')
+Internal.define('get_msg', 'message_id')
+Internal.define('get_essence_msg_list', 'group_id')
+Internal.define('ocr_image', 'image')
+Internal.defineExtract('get_forward_msg', 'messages', 'message_id')
+Internal.defineExtract('.get_word_slices', 'slices', 'content')
+Internal.define('get_group_msg_history', 'group_id', 'message_seq')
+Internal.define('set_friend_add_request', 'flag', 'approve', 'remark')
+Internal.define('set_group_add_request', 'flag', 'sub_type', 'approve', 'reason')
+Internal.defineExtract('_get_model_show', 'variants', 'model')
+Internal.define('_set_model_show', 'model', 'model_show')
+
+Internal.define('set_group_kick', 'group_id', 'user_id', 'reject_add_request')
+Internal.define('set_group_ban', 'group_id', 'user_id', 'duration')
+Internal.define('set_group_whole_ban', 'group_id', 'enable')
+Internal.define('set_group_admin', 'group_id', 'user_id', 'enable')
+Internal.define('set_group_anonymous', 'group_id', 'enable')
+Internal.define('set_group_card', 'group_id', 'user_id', 'card')
+Internal.define('set_group_leave', 'group_id', 'is_dismiss')
+Internal.define('set_group_special_title', 'group_id', 'user_id', 'special_title', 'duration')
+Internal.define('set_group_name', 'group_id', 'group_name')
+Internal.define('set_group_portrait', 'group_id', 'file', 'cache')
+Internal.define('_send_group_notice', 'group_id', 'content')
+Internal.define('get_group_at_all_remain', 'group_id')
+
+Internal.define('get_login_info')
+Internal.define('get_stranger_info', 'user_id', 'no_cache')
+Internal.define('_get_vip_info', 'user_id')
+Internal.define('get_friend_list')
+Internal.define('get_group_info', 'group_id', 'no_cache')
+Internal.define('get_group_list')
+Internal.define('get_group_member_info', 'group_id', 'user_id', 'no_cache')
+Internal.define('get_group_member_list', 'group_id')
+Internal.define('get_group_honor_info', 'group_id', 'type')
+Internal.define('get_group_system_msg')
+Internal.define('get_group_file_system_info', 'group_id')
+Internal.define('get_group_root_files', 'group_id')
+Internal.define('get_group_files_by_folder', 'group_id', 'folder_id')
+Internal.define('upload_group_file', 'group_id', 'file', 'name', 'folder')
+Internal.define('create_group_file_folder', 'group_id', 'folder_id', 'name')
+Internal.define('delete_group_folder', 'group_id', 'folder_id')
+Internal.define('delete_group_file', 'group_id', 'folder_id', 'file_id', 'busid')
+Internal.defineExtract('get_group_file_url', 'url', 'group_id', 'file_id', 'busid')
+Internal.defineExtract('download_file', 'file', 'url', 'headers', 'thread_count')
+Internal.defineExtract('get_online_clients', 'clients', 'no_cache')
+Internal.defineExtract('check_url_safely', 'level', 'url')
+Internal.define('delete_friend', 'user_id')
+
+Internal.defineExtract('get_cookies', 'cookies', 'domain')
+Internal.defineExtract('get_csrf_token', 'token')
+Internal.define('get_credentials', 'domain')
+Internal.define('get_record', 'file', 'out_format', 'full_path')
+Internal.define('get_image', 'file')
+Internal.defineExtract('can_send_image', 'yes')
+Internal.defineExtract('can_send_record', 'yes')
+Internal.define('get_status')
+Internal.define('get_version_info')
+Internal.define('set_restart', 'delay')
+Internal.define('reload_event_filter')
+
+Internal.define('get_guild_service_profile')
+Internal.define('get_guild_list')
+Internal.define('get_guild_meta_by_guest', 'guild_id')
+Internal.define('get_guild_channel_list', 'guild_id', 'no_cache')
+Internal.define('get_guild_member_list', 'guild_id', 'next_token')
+Internal.define('get_guild_member_profile', 'guild_id', 'user_id')
+Internal.defineExtract('send_guild_channel_msg', 'message_id', 'guild_id', 'channel_id', 'message')
