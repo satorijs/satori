@@ -4,9 +4,9 @@ import { Adapter } from './adapter'
 import { Session } from './session'
 import { Methods, UserBase } from './protocol'
 
-export interface Bot extends Bot.BaseConfig, Methods, UserBase {}
+export interface Bot extends Bot.Config, Methods, UserBase {}
 
-export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
+export abstract class Bot<T extends Bot.Config = Bot.Config> {
   static reusable = true
 
   public platform: string
@@ -45,15 +45,6 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
     }
   }
 
-  resolve() {
-    this.status = 'online'
-  }
-
-  reject(error: Error) {
-    this.error = error
-    this.status = 'offline'
-  }
-
   async start() {
     if (['connect', 'reconnect', 'online'].includes(this.status)) return
     this.status = 'connect'
@@ -61,7 +52,8 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
       await this.ctx.parallel('bot-connect', this)
       await this.adapter.start(this)
     } catch (error) {
-      this.reject(error)
+      this.error = error
+      this.status = 'offline'
     }
   }
 
@@ -74,7 +66,6 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
     } catch (error) {
       this.ctx.emit('internal/warning', error)
     }
-    this.status = 'offline'
   }
 
   get sid() {
@@ -116,15 +107,13 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
 }
 
 export namespace Bot {
-  export interface BaseConfig {
-    protocol?: string
+  export interface Config {
     platform?: string
   }
 
-  export interface Constructor<S extends Bot.BaseConfig = Bot.BaseConfig, T extends Bot<S> = Bot<S>> {
+  export interface Constructor<S extends Bot.Config = Bot.Config, T extends Bot<S> = Bot<S>> {
     new (ctx: Context, config: S): T
   }
 
   export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
-
 }

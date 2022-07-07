@@ -3,17 +3,15 @@ import { Context } from '.'
 import { Bot } from './bot'
 
 export abstract class Adapter<T extends Bot = Bot> {
+  static reusable = true
   abstract start(bot: T): Promise<void>
   abstract stop(bot: T): Promise<void>
 }
 
 export namespace Adapter {
   export abstract class Client<T extends Bot = Bot> extends Adapter<T> {
-    protected config: T['config']
-
     constructor(protected ctx: Context, protected bot: T) {
       super()
-      this.config = bot.config
     }
   }
 
