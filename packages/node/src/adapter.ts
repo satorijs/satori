@@ -1,4 +1,4 @@
-import { Bot, Adapter } from '@satorijs/core'
+import { Bot, Adapter, Context } from '@satorijs/core'
 import { Awaitable, Time } from 'cosmokit'
 import Schema from 'schemastery'
 import WebSocket from 'ws'
@@ -20,7 +20,7 @@ declare module '@satorijs/core' {
       export const Config: Schema<Config>
     }
 
-    export abstract class WsClient<T extends Bot<WsClient.Config>> extends Adapter.Client<T> {
+    export abstract class WsClient<T extends Bot<Context, WsClient.Config>> extends Adapter.Client<T> {
       protected abstract prepare(bot: T): Awaitable<WebSocket>
       protected abstract accept(bot: T): void
       start(bot: T): Promise<void>
@@ -31,7 +31,7 @@ declare module '@satorijs/core' {
 
 const logger = new Logger('adapter')
 
-abstract class WsClient<T extends Bot<Adapter.WsClient.Config>> extends Adapter.Client<T> {
+abstract class WsClient<T extends Bot<Context, Adapter.WsClient.Config>> extends Adapter.Client<T> {
   static reusable = true
 
   static Config: Schema<Adapter.WsClient.Config> = Schema.object({
