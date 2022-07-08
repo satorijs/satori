@@ -43,7 +43,16 @@ export class QQGuildBot extends Bot {
   }
 
   async sendGuildMessage(guildId: string, channelId: string, content: string) {
-    const session = await this.session({ content, subtype: 'group', guildId, channelId })
+    const session = this.session({
+      content,
+      type: 'send',
+      subtype: 'group',
+      author: this,
+      guildId,
+      channelId,
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     session.messageId = '' + await this.internal.sendGuildChannelMsg(guildId, channelId, session.content)
     this.ctx.emit(session, 'send', session)

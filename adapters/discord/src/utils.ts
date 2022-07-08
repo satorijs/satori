@@ -133,9 +133,7 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
 }
 
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
-  const session: Partial<Session> = {
-    selfId: bot.selfId,
-  }
+  const session = bot.session()
   if (input.t === 'MESSAGE_CREATE') {
     session.type = 'message'
     prepareMessageSession(session, input.d)
@@ -177,5 +175,5 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
   } else {
     return
   }
-  return new Session(bot, session)
+  return session
 }

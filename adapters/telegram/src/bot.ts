@@ -1,5 +1,5 @@
 import { Bot, Context, Guild, Session } from '@satorijs/core'
-import { Dict, Logger, Quester, Schema, Time } from '@satorijs/env-node'
+import { defineProperty, Dict, Logger, Quester, Schema, Time } from '@satorijs/env-node'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
@@ -28,7 +28,7 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
+export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<Context, T> {
   http: Quester & { file?: Quester }
   internal?: Telegram.Internal
   local?: boolean
@@ -64,7 +64,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     this.online()
   }
 
-  async adaptMessage(message: Telegram.Message, session: Partial<Session>) {
+  async adaptMessage(message: Telegram.Message, session: Session) {
     function parseText(text: string, entities: Telegram.MessageEntity[]): segment[] {
       let curr = 0
       const segs: segment[] = []
@@ -166,18 +166,26 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       chatId = channelId
     }
 
-    const session = await this.session({ subtype, content, channelId, guildId: channelId })
+    const session = this.session({
+      type: 'send',
+      subtype,
+      content,
+      channelId,
+      guildId: channelId,
+      author: this,
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const send = Sender.from(this, chatId)
     const results = await send(session.content)
 
     for (const message of results) {
-      const session = new Session(this, {
-        selfId: this.selfId,
-        type: 'message',
-      })
-      session.telegram = Object.create(this.internal)
+      const session = this.session()
+      session.type = 'message'
+      defineProperty(session, 'telegram', Object.create(this.internal))
+      Object.assign(session.telegram, message)
       await this.adaptMessage(message, session)
       this.ctx.emit(session, 'send', session)
       this.ctx.emit(session, 'message', session)

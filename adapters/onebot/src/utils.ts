@@ -107,17 +107,15 @@ export function dispatchSession(bot: Bot, data: OneBot.Payload) {
     if (!bot) return
   }
 
-  const payload = adaptSession(data)
-  if (!payload) return
-
-  const session = new Session(bot, payload)
+  const session = adaptSession(bot, data)
+  if (!session) return
   defineProperty(session, 'onebot', Object.create(bot.internal))
   Object.assign(session.onebot, data)
   bot.dispatch(session)
 }
 
-export function adaptSession(data: OneBot.Payload) {
-  const session: Partial<Session> = {}
+export function adaptSession(bot: Bot, data: OneBot.Payload) {
+  const session = bot.session()
   session.selfId = data.self_tiny_id ? data.self_tiny_id : '' + data.self_id
   session.type = data.post_type
 

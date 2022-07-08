@@ -9,10 +9,7 @@ export class WsClient extends Adapter<QQGuildBot> {
     bot.internal.on('ready', bot.online.bind(bot))
     bot.internal.on('message', msg => {
       const session = bot.adaptMessage(msg)
-      if (session) {
-        session.type = 'message'
-        bot.dispatch(session)
-      }
+      if (session) bot.dispatch(session)
     })
   }
 

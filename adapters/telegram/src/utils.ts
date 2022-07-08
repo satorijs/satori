@@ -1,5 +1,5 @@
 import { GuildMember, Session, User } from '@satorijs/core'
-import { Logger } from '@satorijs/env-node'
+import { defineProperty, Logger } from '@satorijs/env-node'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -16,8 +16,8 @@ export const adaptGuildMember = (data: Telegram.ChatMember): GuildMember => adap
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   logger.debug('receive %s', JSON.stringify(update))
-  const session: Partial<Session> = { selfId: bot.selfId }
-  session.telegram = Object.create(bot.internal)
+  const session = bot.session()
+  defineProperty(session, 'telegram', Object.create(bot.internal))
   Object.assign(session.telegram, update)
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
@@ -46,6 +46,6 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
       }
     }
   }
-  logger.debug('receive %o', session)
-  this.dispatch(new Session(bot, session))
+
+  bot.dispatch(session)
 }

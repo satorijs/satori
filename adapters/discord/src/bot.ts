@@ -6,7 +6,7 @@ import { GatewayIntent, Internal } from './types'
 import { WsClient } from './ws'
 import segment from '@satorijs/message'
 
-export class DiscordBot extends Bot<DiscordBot.Config> {
+export class DiscordBot extends Bot<Context, DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
@@ -49,7 +49,16 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async sendMessage(channelId: string, content: string, guildId?: string) {
-    const session = await this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
+    const session = this.session({
+      type: 'send',
+      author: this,
+      channelId,
+      content,
+      guildId,
+      subtype: guildId ? 'group' : 'private',
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const chain = segment.parse(session.content)

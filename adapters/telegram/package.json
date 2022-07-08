@@ -7,7 +7,11 @@
   "files": [
     "lib"
   ],
-  "author": "Shigma <shigma10826@gmail.com>",
+  "author": "undefined <i@undefined.moe>",
+  "maintainers": [
+    "Shigma <shigma10826@gmail.com>",
+    "undefined <i@undefined.moe>"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -5,7 +5,7 @@ import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
 import segment from '@satorijs/message'
 
-export class QQGuildBot extends Bot<QQGuildBot.Config> {
+export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
   internal: QQGuild.Bot
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
@@ -21,7 +21,16 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, content: string, guildId?: string) {
-    const session = await this.session({ channelId, content, guildId, subtype: 'group' })
+    const session = this.session({
+      channelId,
+      content,
+      guildId,
+      author: this,
+      type: 'send',
+      subtype: 'group',
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     const resp = await this.internal.send.channel(channelId, session.content)
     session.messageId = resp.id
@@ -35,16 +44,14 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   adaptMessage(msg: QQGuild.Message) {
-    const {
-      id: messageId, author, guildId, channelId, timestamp,
-    } = msg
-    const session: Partial<Session> = {
-      selfId: this.selfId,
+    const { id: messageId, author, guildId, channelId, timestamp } = msg
+    const session = this.session({
+      type: 'message',
       guildId,
       messageId,
       channelId,
       timestamp: +timestamp,
-    }
+    })
     session.author = adaptUser(msg.author)
     session.userId = author.id
     session.guildId = msg.guildId
@@ -53,7 +60,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => segment.at($1))
       .replace(/<#(.+)>/, (_, $1) => segment.sharp($1))
-    const { attachments = [] } = msg as any as { attachments?: any[] }
+    const { attachments = [] } = msg as { attachments?: any[] }
     if (attachments.length > 0) {
       session.content += attachments.map((attachment) => {
         if (attachment.contentType.startsWith('image')) {
@@ -64,7 +71,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
       .reduce((content, attachment) => content + segment.image(attachment.url), session.content)
-    return new Session(this, session)
+    return session
   }
 }
 

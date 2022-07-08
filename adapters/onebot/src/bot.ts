@@ -22,7 +22,7 @@ export function renderText(source: string) {
   }, '')
 }
 
-export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bot<T> {
+export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bot<Context, T> {
   public internal = new OneBot.Internal()
   public guildBot: QQGuildBot
 
@@ -127,7 +127,16 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
   }
 
   protected async sendGuildMessage(guildId: string, channelId: string, content: string) {
-    const session = await this.session({ content, subtype: 'group', guildId, channelId })
+    const session = this.session({
+      content,
+      type: 'send',
+      subtype: 'group',
+      author: this,
+      guildId,
+      channelId,
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     session.messageId = '' + await this.internal.sendGroupMsg(channelId, session.content)
     this.ctx.emit(session, 'send', session)
@@ -135,7 +144,16 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
   }
 
   async sendPrivateMessage(userId: string, content: string) {
-    const session = await this.session({ content, subtype: 'private', userId, channelId: 'private:' + userId })
+    const session = this.session({
+      content,
+      type: 'send',
+      subtype: 'private',
+      author: this,
+      userId,
+      channelId: 'private:' + userId,
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     session.messageId = '' + await this.internal.sendPrivateMsg(userId, session.content)
     this.ctx.emit(session, 'send', session)
