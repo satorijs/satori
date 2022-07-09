@@ -27,9 +27,9 @@ export enum Type {
 
 export interface MessageParams {
   type: Type
-  msgId: string
-  chatCode: string
-  targetId: string
+  msg_id: string
+  chat_code: string
+  target_id: string
   content: any
   quote: string
   nonce: string
@@ -41,13 +41,13 @@ export interface MessageBase {
 }
 
 export interface Data extends MessageBase {
-  channelType: 'GROUP' | 'PERSON' | 'WEBHOOK_CHALLENGE'
+  channel_type: 'GROUP' | 'PERSON' | 'WEBHOOK_CHALLENGE'
   challenge: string
-  verifyToken: string
-  targetId: string
-  authorId: string
-  msgId: string
-  msgTimestamp: number
+  verify_token: string
+  target_id: string
+  author_id: string
+  msg_id: string
+  msg_timestamp: number
   nonce: string
   extra: MessageExtra | Notice
 }
@@ -67,9 +67,9 @@ type NoticeType =
 
 export interface MessageMeta {
   mention: string[]
-  mentionAll: boolean
-  mentionRoles: string[]
-  mentionHere: boolean
+  mention_all: boolean
+  mention_roles: string[]
+  mention_here: boolean
   attachments: Attachment
   quote: Message
   author: Author
@@ -78,15 +78,15 @@ export interface MessageMeta {
 export interface MessageExtra extends MessageMeta {
   type: Type
   code: string
-  guildId: string
-  channelName: string
+  guild_id: string
+  channel_name: string
 }
 
 export interface Message extends MessageBase, MessageMeta {
   id: string
   embeds: any[]
   reactions: any[]
-  mentionInfo: object
+  mention_info: object
 }
 
 export interface Card {
@@ -170,8 +170,8 @@ export namespace Card {
 
   export interface Countdown {
     type: 'countdown'
-    endTime: string
-    startTime: string
+    end_time: string
+    start_time: string
     mode: 'day' | 'hour' | 'second'
   }
 }
@@ -179,21 +179,24 @@ export namespace Card {
 export interface User {
   id: string
   username: string
-  identifyNum: string
+  identify_num: string
   avatar: string
   online: boolean
   bot?: boolean
 }
 
-export enum UserStatus { normal = 0, banned = 10 }
+export enum UserStatus {
+  normal = 0,
+  banned = 10,
+}
 
 export interface Self extends User {
   status: UserStatus
-  mobileVerified: boolean
+  mobile_verified: boolean
   system: boolean
-  mobilePrefix: string
+  mobile_prefix: string
   mobile: string
-  invitedCount: number
+  invited_count: number
 }
 
 export interface Author extends User {
@@ -205,7 +208,7 @@ export interface Attachment {
   type: AttachmentType
   name: string
   url: string
-  fileType: string
+  file_type: string
   size: number
   duration: number
   width: number
@@ -220,40 +223,40 @@ export interface Notice {
 export interface Channel {
   id: string
   name: string
-  userId: string
-  guildId: string
+  user_id: string
+  guild_id: string
   isCategory: number
   parentId: string
   topic: string
   type: number
   level: number
-  slowMode: number
-  permissionOverwrites: Overwrite
-  permissionUsers: any
-  permissionSync: 0 | 1
+  slow_mode: number
+  permission_overwrites: Overwrite
+  permission_users: any
+  permission_sync: 0 | 1
 }
 
 export interface NoticeBody extends Channel, MessageMeta {
   value: string
-  msgId: string
-  targetId: string
-  channelId: string
+  msg_id: string
+  target_id: string
+  channel_id: string
   emoji: Emoji
   content: string
   icon: string
-  notifyType: number
+  notify_type: number
   region: string
-  enableOpen: number
+  enable_open: number
   openId: number
-  defaultChannelId: string
-  welcomeChannelId: string
-  updatedAt: number
-  joinedAt: number
-  exitedAt: number
-  deletedAt: number
+  default_channel_id: string
+  welcome_channel_id: string
+  updated_at: number
+  joined_at: number
+  exited_at: number
+  deleted_at: number
   nickname: string
-  chatCode: string
-  eventTime: number
+  chat_code: string
+  event_time: number
   guilds: string[]
 }
 
@@ -263,15 +266,15 @@ export interface Emoji {
 }
 
 export interface Overwrite {
-  roleId: number
+  role_id: number
   allow: number
   deny: number
 }
 
 export interface ListMeta {
   page: number
-  pageTotal: number
-  pageSize: number
+  page_total: number
+  page_size: number
   total: number
 }
 
@@ -285,30 +288,30 @@ export interface Guild {
   id: string
   name: string
   topic: string
-  masterId: string
-  isMaster: boolean
+  master_id: string
+  is_master: boolean
   icon: string
-  inviteEnabled: number
-  notifyType: number
+  invite_enabled: number
+  notify_type: number
   region: string
-  enableOpen: number
+  enable_open: number
   openId: string
-  defaultChannelId: string
-  welcomeChannelId: string
+  default_channel_id: string
+  welcome_channel_id: string
 }
 
 export interface GuildList extends List<Guild> {}
 
 export interface GuildMember extends User {
-  joinedAt: number
-  activeTime: number
+  joined_at: number
+  active_time: number
   roles: number[]
-  isMaster: boolean
+  is_master: boolean
   abbr: string
 }
 
 export interface GuildMemberList extends List<GuildMember> {
-  userCount: number
-  onlineCount: number
-  offlineCount: number
+  user_count: number
+  online_count: number
+  offline_count: number
 }
