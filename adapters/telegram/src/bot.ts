@@ -1,11 +1,9 @@
-import { Bot, Context, Guild, Session } from '@satorijs/core'
-import { defineProperty, Dict, Logger, Quester, Schema, Time } from '@satorijs/env-node'
+import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time } from '@satorijs/env-node'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
-import segment from '@satorijs/message'
 import fs from 'fs'
 
 const logger = new Logger('telegram')

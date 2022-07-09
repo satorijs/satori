@@ -13,34 +13,33 @@ export * from './session'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'
-type SessionEventCallback<C extends Context = Context, T = void> = (this: C[typeof Context.session], session: C[typeof Context.session]) => T
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, SessionEventCallback<C>> {
+export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback<C>> {
   // session events
-  'message': SessionEventCallback<C>
-  'message-deleted': SessionEventCallback<C>
-  'message-updated': SessionEventCallback<C>
-  'reaction-added': SessionEventCallback<C>
-  'reaction-deleted': SessionEventCallback<C>
-  'reaction-deleted/one': SessionEventCallback<C>
-  'reaction-deleted/all': SessionEventCallback<C>
-  'reaction-deleted/emoji': SessionEventCallback<C>
-  'send': SessionEventCallback<C>
-  'friend-request': SessionEventCallback<C>
-  'guild-request': SessionEventCallback<C>
-  'guild-member-request': SessionEventCallback<C>
-  'guild-member/role': SessionEventCallback<C>
-  'guild-member/ban': SessionEventCallback<C>
-  'guild-member/nickname': SessionEventCallback<C>
-  'notice/poke': SessionEventCallback<C>
-  'notice/lucky-king': SessionEventCallback<C>
-  'notice/honor': SessionEventCallback<C>
-  'notice/honor/talkative': SessionEventCallback<C>
-  'notice/honor/performer': SessionEventCallback<C>
-  'notice/honor/emotion': SessionEventCallback<C>
+  'message': Session.EventCallback<C>
+  'message-deleted': Session.EventCallback<C>
+  'message-updated': Session.EventCallback<C>
+  'reaction-added': Session.EventCallback<C>
+  'reaction-deleted': Session.EventCallback<C>
+  'reaction-deleted/one': Session.EventCallback<C>
+  'reaction-deleted/all': Session.EventCallback<C>
+  'reaction-deleted/emoji': Session.EventCallback<C>
+  'send': Session.EventCallback<C>
+  'friend-request': Session.EventCallback<C>
+  'guild-request': Session.EventCallback<C>
+  'guild-member-request': Session.EventCallback<C>
+  'guild-member/role': Session.EventCallback<C>
+  'guild-member/ban': Session.EventCallback<C>
+  'guild-member/nickname': Session.EventCallback<C>
+  'notice/poke': Session.EventCallback<C>
+  'notice/lucky-king': Session.EventCallback<C>
+  'notice/honor': Session.EventCallback<C>
+  'notice/honor/talkative': Session.EventCallback<C>
+  'notice/honor/performer': Session.EventCallback<C>
+  'notice/honor/emotion': Session.EventCallback<C>
 
   // lifecycle events
-  'before-send': SessionEventCallback<C, boolean>
+  'before-send': Session.EventCallback<C, boolean>
   'bot-added'(client: Bot<C>): void
   'bot-removed'(client: Bot<C>): void
   'bot-status-updated'(client: Bot<C>): void

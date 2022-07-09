@@ -1,5 +1,4 @@
-import { Adapter } from '@satorijs/core'
-import { Logger, Schema } from '@satorijs/env-node'
+import { Adapter, Logger, Schema } from '@satorijs/env-node'
 import { GatewayOpcode, GatewayPayload } from './types'
 import { adaptSession, adaptUser } from './utils'
 import { DiscordBot } from './bot'

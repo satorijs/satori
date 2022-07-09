@@ -1,6 +1,5 @@
 import { createReadStream } from 'fs'
-import { Dict, Logger } from '@satorijs/env-node'
-import segment from '@satorijs/message'
+import { Dict, Logger, segment } from '@satorijs/env-node'
 import AggregateError from 'es-aggregate-error'
 import fileType from 'file-type'
 import FormData from 'form-data'

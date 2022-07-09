@@ -1,5 +1,4 @@
-import { Adapter, Context } from '@satorijs/core'
-import { Logger, Quester, Schema, Time, WebSocketLayer } from '@satorijs/env-node'
+import { Adapter, Context, Logger, Quester, Schema, Time, WebSocketLayer } from '@satorijs/env-node'
 import { OneBotBot } from './bot'
 import { dispatchSession, Response } from './utils'
 

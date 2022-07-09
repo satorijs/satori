@@ -25,7 +25,6 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^1.0.0",
     "@satorijs/env-node": "^1.0.0"
   },
   "dependencies": {

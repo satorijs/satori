@@ -1,6 +1,5 @@
-import { Author, Channel, Guild, Message, Session, User } from '@satorijs/core'
+import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/env-node'
 import { DiscordBot } from './bot'
-import segment from '@satorijs/message'
 import * as Discord from './types'
 
 export const adaptUser = (user: Discord.User): User => ({

@@ -15,14 +15,10 @@ declare module '@satorijs/core' {
     onebot?: OneBot.Payload & OneBot.Internal
   }
 
-  namespace Session {
-    interface Events {
-      onebot: {
-        'message-reactions-updated': {}
-        'channel-updated': {}
-        'channel-created': {}
-        'channel-destroyed': {}
-      }
-    }
+  interface Events<C> {
+    'onebot/message-reactions-updated': Session.EventCallback<C>
+    'onebot/channel-updated': Session.EventCallback<C>
+    'onebot/channel-created': Session.EventCallback<C>
+    'onebot/channel-destroyed': Session.EventCallback<C>
   }
 }

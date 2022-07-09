@@ -26,6 +26,8 @@ export namespace Session {
     targetId?: string
     duration?: number
   }
+
+  export type EventCallback<C extends Context = Context, T = void> = (this: C[typeof Context.session], session: C[typeof Context.session]) => T
 }
 
 export class Session<C extends Context = Context> {

@@ -1,4 +1,4 @@
-import { Guild, User } from '@satorijs/core'
+import { Guild, User } from '@satorijs/env-node'
 import * as QQGuild from '@qq-guild-sdk/core'
 
 export const adaptGuild = (guild: QQGuild.Guild): Guild => ({

@@ -1,10 +1,8 @@
-import { Bot, Context, Message } from '@satorijs/core'
-import { Quester, Schema } from '@satorijs/env-node'
+import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/env-node'
 import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
 import { Sender } from './sender'
 import { GatewayIntent, Internal } from './types'
 import { WsClient } from './ws'
-import segment from '@satorijs/message'
 
 export class DiscordBot extends Bot<Context, DiscordBot.Config> {
   public http: Quester

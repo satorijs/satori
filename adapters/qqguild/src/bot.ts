@@ -1,9 +1,7 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context } from '@satorijs/core'
-import { Schema } from '@satorijs/env-node'
+import { Bot, Context, Schema, segment } from '@satorijs/env-node'
 import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
-import segment from '@satorijs/message'
 
 export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
   internal: QQGuild.Bot

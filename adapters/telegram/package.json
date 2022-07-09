@@ -28,8 +28,10 @@
     "chatbot",
     "satori"
   ],
+  "devDependencies": {
+    "@types/es-aggregate-error": "^1.0.2"
+  },
   "peerDependencies": {
-    "@satorijs/core": "^1.0.0",
     "@satorijs/env-node": "^1.0.0"
   },
   "dependencies": {

@@ -1,5 +1,4 @@
-import { Adapter } from '@satorijs/core'
-import { Logger, Schema, Time } from '@satorijs/env-node'
+import { Adapter, Logger, Schema, Time } from '@satorijs/env-node'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'

@@ -1,11 +1,10 @@
+import { Dict, Schema, segment } from '@satorijs/env-node'
 import { readFileSync } from 'fs'
 import { basename } from 'path'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import AggregateError from 'es-aggregate-error'
 import { DiscordBot } from './bot'
-import { Dict, Schema } from '@satorijs/env-node'
-import segment from '@satorijs/message'
 
 export class Sender {
   private results: string[] = []

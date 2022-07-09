@@ -1,9 +1,7 @@
-import { Bot, Context } from '@satorijs/core'
-import { noop, Schema } from '@satorijs/env-node'
+import { Bot, Context, noop, Schema, segment } from '@satorijs/env-node'
 import { HttpServer } from './http'
 import { WsClient, WsServer } from './ws'
 import { QQGuildBot } from './qqguild'
-import segment from '@satorijs/message'
 import * as OneBot from './utils'
 
 export function renderText(source: string) {
