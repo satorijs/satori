@@ -1,6 +1,7 @@
 import * as cordis from 'cordis'
 import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
+import { Selector } from './selector'
 import { Session } from './session'
 import segment from '@satorijs/message'
 
@@ -9,6 +10,7 @@ export { segment }
 export * from './bot'
 export * from './adapter'
 export * from './protocol'
+export * from './selector'
 export * from './session'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
@@ -60,6 +62,12 @@ export class Context<T extends Context.Config = Context.Config> extends cordis.C
 export namespace Context {
   export interface Config extends cordis.Context.Config {}
 }
+
+Session.prototype[Context.filter] = function (ctx: Context) {
+  return ctx.filter(this)
+}
+
+Context.service('__selector__', Selector)
 
 Context.service('bots', class {
   constructor(root: Context) {
