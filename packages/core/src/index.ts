@@ -10,7 +10,7 @@ export * from './session'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'
-type SessionEventCallback<C extends Context = Context, T = void> = (this: Session<C>, session: Session<C>) => T
+type SessionEventCallback<C extends Context = Context, T = void> = (this: C[typeof Context.session], session: C[typeof Context.session]) => T
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, SessionEventCallback<C>> {
   // session events
@@ -46,11 +46,13 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 }
 
 export interface Context {
+  [Context.events]: Events<this>
+  [Context.session]: Session<Context>
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
 export class Context<T extends Context.Config = Context.Config> extends cordis.Context<T> {
-  [cordis.Events]: Events<this>
+  static readonly session = Symbol('session')
 }
 
 export namespace Context {

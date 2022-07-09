@@ -84,11 +84,11 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
     return `${this.platform}:${this.selfId}`
   }
 
-  session(payload?: Partial<Session.Payload>) {
+  session(payload?: Partial<Session.Payload>): C[typeof Context.session] {
     return new Session(this, payload)
   }
 
-  dispatch(session: Session<C>) {
+  dispatch(session: C[typeof Context.session]) {
     if (!this.ctx.lifecycle.isActive) return
     const events: string[] = [session.type]
     if (session.subtype) {

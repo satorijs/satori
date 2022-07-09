@@ -29,14 +29,16 @@ export namespace Session {
 }
 
 export class Session<C extends Context = Context> {
-  id: string
-  bot: Bot<C>
+  public id: string
+  public bot: Bot<C>
+  public app: C
 
   constructor(bot: Bot<C>, payload?: Partial<Session.Payload>) {
     Object.assign(this, payload)
     this.selfId = bot.selfId
     this.platform = bot.platform
     defineProperty(this, 'bot', bot)
+    defineProperty(this, 'app', bot.ctx.root)
     defineProperty(this, 'id', bot.ctx.bots.counter)
   }
 
