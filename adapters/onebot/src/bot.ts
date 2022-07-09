@@ -30,6 +30,14 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
     super(ctx, config)
     this.selfId = config.selfId
     this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
+
+    if (config.protocol === 'http') {
+      ctx.plugin(HttpServer, this)
+    } else if (config.protocol === 'ws') {
+      ctx.plugin(WsClient, this)
+    } else if (config.protocol === 'ws-reverse') {
+      ctx.plugin(WsServer, this)
+    }
   }
 
   async stop() {

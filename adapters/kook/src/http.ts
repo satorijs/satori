@@ -6,9 +6,9 @@ import { adaptSession } from './utils'
 const logger = new Logger('kaiheila')
 
 export class HttpServer extends Adapter.Server<KookBot<KookBot.BaseConfig & HttpServer.Config>> {
-  constructor(ctx: Context, bot: KookBot<KookBot.BaseConfig & HttpServer.Config>) {
+  constructor(ctx: Context, bot: KookBot) {
     super()
-    let { path = '' } = bot.config
+    let { path = '' } = bot.config as HttpServer.Config
     path = sanitize(path || '/kaiheila')
     ctx.router.post(path, (ctx) => {
       const { body } = ctx.request
@@ -38,9 +38,10 @@ export class HttpServer extends Adapter.Server<KookBot<KookBot.BaseConfig & Http
 
 export namespace HttpServer {
   export interface Config {
+    protocol: 'http'
     path?: string
-    token?: string
-    verifyToken?: string
+    token: string
+    verifyToken: string
   }
 
   export const Config: Schema<Config> = Schema.object({

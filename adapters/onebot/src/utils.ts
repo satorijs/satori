@@ -1,4 +1,4 @@
-import { Author, Bot, Channel, Guild, GuildMember, Message, Session, User } from '@satorijs/core'
+import { Author, Bot, Channel, Guild, GuildMember, Message, User } from '@satorijs/core'
 import { defineProperty, hyphenate } from '@satorijs/env-node'
 import segment from '@satorijs/message'
 import * as qface from 'qface'

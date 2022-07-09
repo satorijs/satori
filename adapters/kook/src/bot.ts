@@ -26,6 +26,12 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
         'Content-Type': 'application/json',
       },
     }).extend(config)
+
+    if (config.protocol === 'http') {
+      ctx.plugin(HttpServer, this)
+    } else if (config.protocol === 'ws') {
+      ctx.plugin(WsClient, this)
+    }
   }
 
   async request<T = any>(method: Method, path: string, data?: any, headers: any = {}): Promise<T> {

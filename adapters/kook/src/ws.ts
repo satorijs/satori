@@ -68,6 +68,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
 
 export namespace WsClient {
   export interface Config extends Adapter.WsClient.Config {
+    protocol: 'ws'
     token: string
   }
 

@@ -42,10 +42,10 @@ export namespace WsClient {
 export class WsServer extends Adapter.Server<OneBotBot<OneBotBot.BaseConfig & WsServer.Config>> {
   public wsServer?: WebSocketLayer
 
-  constructor(ctx: Context, bot: OneBotBot<OneBotBot.BaseConfig & WsServer.Config>) {
+  constructor(ctx: Context, bot: OneBotBot) {
     super()
 
-    const { path = '/onebot' } = bot.config
+    const { path = '/onebot' } = bot.config as WsServer.Config
     this.wsServer = ctx.router.ws(path, (socket, { headers }) => {
       logger.debug('connected with', headers)
       if (headers['x-client-role'] !== 'Universal') {

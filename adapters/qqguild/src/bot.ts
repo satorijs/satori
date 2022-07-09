@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Session } from '@satorijs/core'
+import { Bot, Context } from '@satorijs/core'
 import { Schema } from '@satorijs/env-node'
 import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
@@ -11,6 +11,7 @@ export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
     this.internal = new QQGuild.Bot(config)
+    ctx.plugin(WsClient, this)
   }
 
   async getSelf() {
