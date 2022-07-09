@@ -2,7 +2,7 @@ import { Bot, Context, Session } from '@satorijs/core'
 import { Quester, Schema } from '@satorijs/env-node'
 import { Method } from 'axios'
 import * as Kook from './types'
-import { adaptAuthor, AdapterConfig, adaptGroup, adaptUser } from './utils'
+import { adaptAuthor, adaptGroup, adaptUser } from './utils'
 import FormData from 'form-data'
 import { createReadStream } from 'fs'
 import segment from '@satorijs/message'
@@ -13,16 +13,10 @@ const attachmentTypes = ['image', 'video', 'audio', 'file']
 type SendHandle = [string, Kook.MessageParams, Session]
 
 export class KookBot extends Bot<Context, KookBot.Config> {
-  _sn: number
-  _ping: NodeJS.Timeout
-  _heartbeat: NodeJS.Timeout
   http: Quester
-
-  static schema = AdapterConfig
 
   constructor(ctx: Context, config: KookBot.Config) {
     super(ctx, config)
-    this._sn = 0
     this.http = ctx.http.extend({
       endpoint: 'https://www.kaiheila.cn/api/v3',
       headers: {
