@@ -1,13 +1,12 @@
 {
   "name": "@satorijs/message",
   "description": "Segment Manipulation",
-  "version": "1.0.0",
-  "main": "index.js",
-  "module": "lib/browser.js",
+  "version": "1.0.1",
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib",
-    "index.js"
+    "lib"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -27,6 +26,7 @@
     "utilities"
   ],
   "devDependencies": {
-    "chai-shape": "^1.0.0"
+    "chai-shape": "^1.0.0",
+    "cosmokit": "^1.2.1"
   }
 }

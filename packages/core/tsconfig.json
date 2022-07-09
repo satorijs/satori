@@ -3,8 +3,6 @@
   "compilerOptions": {
     "rootDir": "src",
     "outFile": "lib/index.d.ts",
-    "composite": false,
-    "incremental": false,
   },
   "include": [
     "src"

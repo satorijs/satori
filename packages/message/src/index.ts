@@ -1,5 +1,4 @@
-type Dict<T = any> = { [key: string]: T }
-type Awaitable<T> = [T] extends [Promise<unknown>] ? T : T | Promise<T>
+import { Dict, Awaitable } from 'cosmokit'
 
 type Global = NodeJS.Global & Window & typeof globalThis
 
@@ -148,4 +147,4 @@ namespace segment {
   export const file = createAssetFactory('file')
 }
 
-export default segment
+export = segment

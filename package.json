@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yakumo tsc",
+    "build": "yakumo esbuild && yakumo tsc",
     "bump": "yakumo version",
     "dep": "yakumo upgrade",
     "pub": "yakumo publish",
@@ -26,15 +26,16 @@
     "@types/rimraf": "^3.0.2",
     "c8": "^7.11.3",
     "chai": "^4.3.6",
-    "esbuild": "^0.12.29",
-    "esbuild-register": "^3.3.2",
+    "esbuild": "^0.14.48",
+    "esbuild-register": "^3.3.3",
     "mocha": "^9.2.2",
     "rimraf": "^3.0.2",
     "typescript": "^4.7.2",
     "yakumo": "^0.2.8",
+    "yakumo-esbuild": "^0.2.3",
     "yakumo-mocha": "^0.2.5",
     "yakumo-publish": "^0.2.4",
-    "yakumo-tsc": "^0.2.3",
+    "yakumo-tsc": "^0.2.4",
     "yakumo-upgrade": "^0.2.3",
     "yakumo-version": "^0.2.5"
   },

@@ -2,6 +2,9 @@ import * as cordis from 'cordis'
 import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
+import segment from '@satorijs/message'
+
+export { segment }
 
 export * from './bot'
 export * from './adapter'
