@@ -1,21 +1,23 @@
 import { Bot, Context, Session } from '@satorijs/core'
 import { Quester, Schema } from '@satorijs/env-node'
-import { Method } from 'axios'
-import * as Kook from './types'
-import { adaptAuthor, adaptGroup, adaptUser } from './utils'
-import FormData from 'form-data'
 import { createReadStream } from 'fs'
+import { Method } from 'axios'
+import { adaptAuthor, adaptGroup, adaptUser } from './utils'
+import * as Kook from './types'
+import FormData from 'form-data'
 import segment from '@satorijs/message'
 import internal from 'stream'
+import { WsClient } from './ws'
+import { HttpServer } from './http'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
 type SendHandle = [string, Kook.MessageParams, Session]
 
-export class KookBot extends Bot<Context, KookBot.Config> {
+export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Context, T> {
   http: Quester
 
-  constructor(ctx: Context, config: KookBot.Config) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
       endpoint: 'https://www.kaiheila.cn/api/v3',
@@ -190,9 +192,9 @@ export class KookBot extends Bot<Context, KookBot.Config> {
       chain.shift()
     }
 
-    const { attachMode } = this.config
+    const { handleMixedContent } = this.config
     const hasAttachment = chain.some(node => attachmentTypes.includes(node.type))
-    const useCard = hasAttachment && (attachMode === 'card' || attachMode === 'mixed' && chain.length > 1)
+    const useCard = hasAttachment && (handleMixedContent === 'card' || handleMixedContent === 'mixed' && chain.length > 1)
 
     if (useCard) {
       await this._sendCard(handle, chain, useMarkdown)
@@ -271,13 +273,31 @@ export class KookBot extends Bot<Context, KookBot.Config> {
 }
 
 export namespace KookBot {
-  export interface Config extends Bot.Config, Quester.Config {
-    token?: string
-    verifyToken?: string
-    attachMode?: 'separate' | 'card' | 'mixed'
+  export interface BaseConfig extends Bot.Config, Quester.Config {
+    handleMixedContent?: 'separate' | 'card' | 'mixed'
   }
 
-  export const Config: Schema<Config> = Schema.object({})
+  export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
+
+  export const Config: Schema<Config> = Schema.intersect([
+    Schema.union([
+      WsClient.Config,
+      HttpServer.Config,
+    ]),
+    Schema.object({
+      handleMixedContent: Schema.union([
+        Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
+        Schema.const('card' as const).description('使用卡片发送内容'),
+        Schema.const('mixed' as const).description('使用混合模式发送内容'),
+      ]).description('发送图文等混合内容时采用的方式。').default('separate'),
+    }).description('发送设置'),
+    Schema.object({
+      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://www.kaiheila.cn/api/v3'),
+      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
+      headers: Schema.dict(String).description('要附加的额外请求头。'),
+      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+    }).description('请求设置'),
+  ])
 }
 
 // for backward compatibility

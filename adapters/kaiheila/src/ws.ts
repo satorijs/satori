@@ -68,11 +68,12 @@ export class WsClient extends Adapter.WsClient<KookBot> {
 
 export namespace WsClient {
   export interface Config extends Adapter.WsClient.Config {
-    token?: string
+    token: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
+      protocol: Schema.const('ws' as const).required(),
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     Adapter.WsClient.Config,

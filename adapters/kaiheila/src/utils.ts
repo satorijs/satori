@@ -1,18 +1,6 @@
-import { Adapter, Author, Bot, Guild, MessageBase, Session, User } from '@satorijs/core'
-import { camelize, Schema } from '@satorijs/env-node'
+import { Author, Bot, Guild, MessageBase, Session, User } from '@satorijs/core'
 import segment from '@satorijs/message'
 import * as Kook from './types'
-
-export interface AdapterConfig extends Adapter.WsClient.Config {
-  path?: string
-}
-
-export const AdapterConfig: Schema<AdapterConfig> = Schema.intersect([
-  Schema.object({
-    path: Schema.string().description('服务器监听的路径，仅用于 http 协议。').default('/kaiheila'),
-  }),
-  Adapter.WsClient.Config,
-])
 
 export const adaptGroup = (data: Kook.Guild): Guild => ({
   guildId: data.id,
@@ -91,23 +79,19 @@ function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
 }
 
 export function adaptSession(bot: Bot, input: any) {
-  const data: any = {}
-  for (const key in input) {
-    data[camelize(key)] = input[key]
-  }
   const session = bot.session()
-  if (data.type === Kook.Type.system) {
-    const { type, body } = data.extra as Kook.Notice
+  if (input.type === Kook.Type.system) {
+    const { type, body } = input.extra as Kook.Notice
     switch (type) {
       case 'updated_message':
       case 'updated_private_message':
         session.type = 'message-updated'
-        adaptMessageModify(data, body, session)
+        adaptMessageModify(input, body, session)
         break
       case 'deleted_message':
       case 'deleted_private_message':
         session.type = 'message-deleted'
-        adaptMessageModify(data, body, session)
+        adaptMessageModify(input, body, session)
         break
       case 'added_reaction':
       case 'private_added_reaction':
@@ -123,7 +107,7 @@ export function adaptSession(bot: Bot, input: any) {
     }
   } else {
     session.type = 'message'
-    adaptMessageCreate(data, data.extra as Kook.MessageExtra, session)
+    adaptMessageCreate(input, input.extra as Kook.MessageExtra, session)
     if (!session.content) return
   }
   return session
