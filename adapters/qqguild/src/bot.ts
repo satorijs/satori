@@ -95,3 +95,5 @@ export namespace QQGuildBot {
     WsClient.Config,
   ] as const)
 }
+
+QQGuildBot.prototype.platform = 'qqguild'

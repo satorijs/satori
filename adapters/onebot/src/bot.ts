@@ -193,6 +193,8 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
   }
 }
 
+OneBotBot.prototype.platform = 'onebot'
+
 export namespace OneBotBot {
   export interface QQGuildConfig extends Bot.Config {}
 

@@ -283,6 +283,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 }
 
+TelegramBot.prototype.platform = 'telegram'
+
 export namespace TelegramBot {
   export interface BaseConfig extends Bot.Config, Quester.Config {
     protocol: 'server' | 'polling'
