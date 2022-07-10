@@ -24,10 +24,6 @@
 
 ### Basic Usage
 
-```sh
-npm i @satorijs/satori @satorijs/adapter-discord
-```
-
 ```ts
 import { Context } from '@satorijs/satori'
 import discord from '@satorijs/adapter-discord'
@@ -45,7 +41,7 @@ ctx.on('message', (session) => {
   console.log(session.content)
 })
 
-// start the application
+// start application
 await ctx.start()
 ```
 
@@ -97,4 +93,16 @@ ctx.plugin(telegram, {
   protocol: 'polling',
   token: 'zzzzzz',
 })
+```
+
+### Removing Accounts
+
+Based on [cordis](https://github.com/shigma/cordis).
+
+```ts
+const fork = ctx.plugin(discord, {
+  token: 'xxxxxx',
+})
+
+fork.dispose()
 ```
