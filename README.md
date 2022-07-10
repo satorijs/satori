@@ -3,19 +3,26 @@
   <p>The Universal Messenger Protocol</p>
 </div>
 
-Supported platforms:
+## Roadmap
 
-- Discord
-- Telegram
-- OneBot v11
-- QQ Guild
-- KOOK (Kaiheila)
-- Feishu (WIP)
-- Wecom (WIP)
+- Infrastructure
+  - [x] @satorijs/core
+  - [ ] @satorijs/element
+  - [x] @satorijs/satori
+  - [ ] @satorijs/database
+  - [ ] @satorijs/server
+- Ecosystem
+  - [x] Discord
+  - [x] Telegram
+  - [x] OneBot (v11)
+  - [x] QQ Guild
+  - [x] KOOK (Kaiheila)
+  - [ ] Feishu
+  - [ ] Wecom
 
-# Examples
+## Examples
 
-## Basic Usage
+### Basic Usage
 
 ```sh
 npm i @satorijs/satori @satorijs/adapter-discord
@@ -42,7 +49,7 @@ ctx.on('message', (session) => {
 await ctx.start()
 ```
 
-## Event Filtering
+### Event Filters
 
 ```ts
 // only listen to messages from discord user 123456789
@@ -55,7 +62,7 @@ ctx.exclude(ctx.platform('telegram').private()).on('message', callback)
 ctx1.union(ctx2).intersect(ctx3).on('message', callback)
 ```
 
-## Specify Protocol
+### Specifying Protocol
 
 ```ts
 // your application will be listening http://localhost:8080
@@ -73,7 +80,7 @@ ctx.plugin(telegram, {
 })
 ```
 
-## Multiple Accounts
+### Multiple Accounts
 
 ```ts
 // specify multiple accounts with different platforms and protocols
