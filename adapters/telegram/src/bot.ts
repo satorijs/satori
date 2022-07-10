@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time } from '@satorijs/env-node'
+import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'

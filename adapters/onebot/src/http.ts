@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Quester, Schema } from '@satorijs/env-node'
+import { Adapter, Context, Logger, Quester, Schema } from '@satorijs/satori'
 import { OneBotBot } from './bot'
 import { dispatchSession } from './utils'
 import { createHmac } from 'crypto'

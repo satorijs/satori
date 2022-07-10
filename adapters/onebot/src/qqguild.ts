@@ -1,4 +1,4 @@
-import { Bot, Context, GuildMember } from '@satorijs/env-node'
+import { Bot, Context, GuildMember } from '@satorijs/satori'
 import { OneBotBot } from './bot'
 import * as OneBot from './utils'
 

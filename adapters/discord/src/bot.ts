@@ -1,4 +1,4 @@
-import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/env-node'
+import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
 import { Sender } from './sender'
 import { GatewayIntent, Internal } from './types'

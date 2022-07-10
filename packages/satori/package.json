@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/env-node",
+  "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
   "version": "1.0.0",
   "main": "lib/index.js",

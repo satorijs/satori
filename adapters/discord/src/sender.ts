@@ -1,4 +1,4 @@
-import { Dict, Schema, segment } from '@satorijs/env-node'
+import { Dict, Schema, segment } from '@satorijs/satori'
 import { readFileSync } from 'fs'
 import { basename } from 'path'
 import { fromBuffer } from 'file-type'

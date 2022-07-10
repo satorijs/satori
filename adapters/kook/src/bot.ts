@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, segment, Session } from '@satorijs/env-node'
+import { Bot, Context, Quester, Schema, segment, Session } from '@satorijs/satori'
 import { createReadStream } from 'fs'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptUser } from './utils'

@@ -1,4 +1,4 @@
-import { GuildMember, defineProperty, Logger, User } from '@satorijs/env-node'
+import { GuildMember, defineProperty, Logger, User } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 

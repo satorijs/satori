@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/env-node'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import { sanitize, trimSlash } from 'cosmokit'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'

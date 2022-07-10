@@ -1,4 +1,4 @@
-import { Adapter, Logger, Schema, Time } from '@satorijs/env-node'
+import { Adapter, Logger, Schema, Time } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 

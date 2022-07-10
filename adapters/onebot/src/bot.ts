@@ -1,4 +1,4 @@
-import { Bot, Context, noop, Schema, segment } from '@satorijs/env-node'
+import { Bot, Context, noop, Schema, segment } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { WsClient, WsServer } from './ws'
 import { QQGuildBot } from './qqguild'

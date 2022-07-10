@@ -1,5 +1,5 @@
 import { Dict, makeArray } from 'cosmokit'
-import { Quester } from '@satorijs/env-node'
+import { Quester } from '@satorijs/satori'
 import { AxiosRequestConfig } from 'axios'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'

@@ -1,4 +1,4 @@
-import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/env-node'
+import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 

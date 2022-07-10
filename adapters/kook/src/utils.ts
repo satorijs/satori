@@ -1,4 +1,4 @@
-import { Author, Bot, Guild, MessageBase, segment, Session, User } from '@satorijs/env-node'
+import { Author, Bot, Guild, MessageBase, segment, Session, User } from '@satorijs/satori'
 import * as Kook from './types'
 
 export const adaptGroup = (data: Kook.Guild): Guild => ({

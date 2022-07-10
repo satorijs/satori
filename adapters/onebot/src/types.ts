@@ -1,4 +1,4 @@
-import { camelize, Dict, Logger } from '@satorijs/env-node'
+import { camelize, Dict, Logger } from '@satorijs/satori'
 
 export interface Response {
   status: string

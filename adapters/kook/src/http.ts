@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/env-node'
+import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/satori'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 

@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Schema, segment } from '@satorijs/env-node'
+import { Bot, Context, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
 

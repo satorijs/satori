@@ -1,4 +1,4 @@
-import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Message, segment, User } from '@satorijs/env-node'
+import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Message, segment, User } from '@satorijs/satori'
 import * as qface from 'qface'
 import * as OneBot from './types'
 

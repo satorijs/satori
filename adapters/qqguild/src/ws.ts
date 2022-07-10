@@ -1,4 +1,4 @@
-import { Adapter, Schema } from '@satorijs/env-node'
+import { Adapter, Schema } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 export class WsClient extends Adapter<QQGuildBot> {
