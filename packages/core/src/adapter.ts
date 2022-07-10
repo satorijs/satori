@@ -3,6 +3,8 @@ import { Context } from '.'
 import { Bot } from './bot'
 
 export abstract class Adapter<T extends Bot = Bot> {
+  static schema = false
+
   async start(bot: T) {}
   async stop(bot: T) {}
 }
@@ -13,6 +15,7 @@ export namespace Adapter {
 
     constructor(protected ctx: Context, protected bot: T) {
       super()
+      bot.adapter = this
     }
   }
 
@@ -20,6 +23,7 @@ export namespace Adapter {
     public bots: T[] = []
 
     fork(ctx: Context, bot: T) {
+      bot.adapter = this
       this.bots.push(bot)
       ctx.on('dispose', () => {
         remove(this.bots, bot)

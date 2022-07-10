@@ -1,7 +1,7 @@
 import { Adapter, Schema } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
-export class WsClient extends Adapter<QQGuildBot> {
+export class WsClient extends Adapter.Client<QQGuildBot> {
   async start(bot: QQGuildBot) {
     Object.assign(bot, await bot.getSelf())
     await bot.internal.startClient(bot.config.intents)

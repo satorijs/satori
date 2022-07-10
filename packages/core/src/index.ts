@@ -5,7 +5,7 @@ import { Selector } from './selector'
 import { Session } from './session'
 import segment from '@satorijs/message'
 
-export { segment }
+export { segment, segment as h }
 
 export * from './bot'
 export * from './adapter'
@@ -41,7 +41,7 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
   'notice/honor/emotion': Session.EventCallback<C>
 
   // lifecycle events
-  'before-send': Session.EventCallback<C, boolean>
+  'before-send': Session.EventCallback<C, void | boolean>
   'bot-added'(client: Bot<C>): void
   'bot-removed'(client: Bot<C>): void
   'bot-status-updated'(client: Bot<C>): void
