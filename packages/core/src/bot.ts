@@ -4,16 +4,15 @@ import { Adapter } from './adapter'
 import { Session } from './session'
 import { Methods, User } from './protocol'
 
-export interface Bot extends Bot.Config, Methods, User {}
+export interface Bot extends Methods, User {}
 
 export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bot.Config> {
   static reusable = true
 
   public isBot = true
   public platform: string
-  public hidden?: boolean
+  public selfId: string
   public internal?: any
-  public selfId?: string
   public adapter?: Adapter<this>
   public error?: Error
 
@@ -23,6 +22,9 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
   constructor(public ctx: C, public config: T) {
     if (config.platform) {
       this.platform = config.platform
+    }
+    if (config.selfId) {
+      this.selfId = config.selfId
     }
 
     this.context = ctx
@@ -106,6 +108,7 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
 export namespace Bot {
   export interface Config {
     platform?: string
+    selfId?: string
   }
 
   export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'

@@ -52,11 +52,16 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 export interface Context {
   [Context.events]: Events<this>
   [Context.session]: Session<Context>
+  options: Context.Config
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
-export class Context<T extends Context.Config = Context.Config> extends cordis.Context<T> {
+export class Context extends cordis.Context {
   static readonly session = Symbol('session')
+
+  constructor(options?: Context.Config) {
+    super(options)
+  }
 }
 
 export namespace Context {
