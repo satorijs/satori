@@ -284,6 +284,9 @@ export namespace KookBot {
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
   export const Config: Schema<Config> = Schema.intersect([
+    Schema.object({
+      protocol: Schema.union(['http', 'ws']).description('选择要使用的协议。'),
+    }),
     Schema.union([
       WsClient.Config,
       HttpServer.Config,
@@ -301,7 +304,7 @@ export namespace KookBot {
       headers: Schema.dict(String).description('要附加的额外请求头。'),
       timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
     }).description('请求设置'),
-  ])
+  ] as const)
 }
 
 // for backward compatibility
