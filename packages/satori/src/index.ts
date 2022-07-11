@@ -7,6 +7,7 @@ import { Quester } from './quester'
 
 export { Schema, Logger }
 
+export * from '@satorijs/core'
 export * from 'cosmokit'
 export * from './adapter'
 export * from './quester'

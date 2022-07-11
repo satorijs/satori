@@ -1,4 +1,5 @@
 import { defineProperty } from 'cosmokit'
+import { Context } from '.'
 import { Bot } from './bot'
 import { Author, Message } from './protocol'
 
@@ -6,10 +7,11 @@ export interface Session extends Session.Payload {}
 
 export namespace Session {
   export interface Payload {
-    platform?: string
+    platform: string
     selfId: string
     type?: string
     subtype?: string
+    subsubtype?: string
     messageId?: string
     channelId?: string
     guildId?: string
@@ -24,27 +26,21 @@ export namespace Session {
     targetId?: string
     duration?: number
   }
+
+  export type EventCallback<C extends Context = Context, T = void> = (this: C[typeof Context.session], session: C[typeof Context.session]) => T
 }
 
-export class Session {
-  type?: string
-  subtype?: string
-  subsubtype?: string
+export class Session<C extends Context = Context> {
+  public id: string
+  public bot: Bot<C>
+  public app: C
 
-  id: string
-  bot: Bot
-  platform?: string
-  selfId: string
-  operatorId?: string
-  targetId?: string
-  duration?: number
-
-  constructor(bot: Bot, session: Partial<Session.Payload>) {
-    Object.assign(this, session)
+  constructor(bot: Bot<C>, payload?: Partial<Session.Payload>) {
+    Object.assign(this, payload)
+    this.selfId = bot.selfId
     this.platform = bot.platform
     defineProperty(this, 'bot', bot)
-    defineProperty(this, 'user', null)
-    defineProperty(this, 'channel', null)
+    defineProperty(this, 'app', bot.ctx.root)
     defineProperty(this, 'id', bot.ctx.bots.counter)
   }
 

@@ -1,5 +1,5 @@
 import FormData from 'form-data'
-import { Quester } from '@satorijs/env-node'
+import { Quester } from '@satorijs/satori'
 import Logger from 'reggol'
 
 export interface Internal {}

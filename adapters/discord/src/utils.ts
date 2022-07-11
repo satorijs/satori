@@ -1,6 +1,5 @@
-import { Author, Channel, Guild, Message, Session, User } from '@satorijs/core'
+import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/satori'
 import { DiscordBot } from './bot'
-import segment from '@satorijs/message'
 import * as Discord from './types'
 
 export const adaptUser = (user: Discord.User): User => ({
@@ -133,9 +132,7 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
 }
 
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
-  const session: Partial<Session> = {
-    selfId: bot.selfId,
-  }
+  const session = bot.session()
   if (input.t === 'MESSAGE_CREATE') {
     session.type = 'message'
     prepareMessageSession(session, input.d)
@@ -177,5 +174,5 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
   } else {
     return
   }
-  return new Session(bot, session)
+  return session
 }

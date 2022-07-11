@@ -1,61 +1,78 @@
 import * as cordis from 'cordis'
 import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
+import { Selector } from './selector'
 import { Session } from './session'
+import segment from '@satorijs/message'
+
+export { segment, segment as h }
 
 export * from './bot'
 export * from './adapter'
 export * from './protocol'
+export * from './selector'
 export * from './session'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'
-type SessionEventCallback = (this: Session, session: Session) => void
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, SessionEventCallback> {
+export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback<C>> {
   // session events
-  'message': SessionEventCallback
-  'message-deleted': SessionEventCallback
-  'message-updated': SessionEventCallback
-  'reaction-added': SessionEventCallback
-  'reaction-deleted': SessionEventCallback
-  'reaction-deleted/one': SessionEventCallback
-  'reaction-deleted/all': SessionEventCallback
-  'reaction-deleted/emoji': SessionEventCallback
-  'send': SessionEventCallback
-  'friend-request': SessionEventCallback
-  'guild-request': SessionEventCallback
-  'guild-member-request': SessionEventCallback
-  'guild-member/role': SessionEventCallback
-  'guild-member/ban': SessionEventCallback
-  'guild-member/nickname': SessionEventCallback
-  'notice/poke': SessionEventCallback
-  'notice/lucky-king': SessionEventCallback
-  'notice/honor': SessionEventCallback
-  'notice/honor/talkative': SessionEventCallback
-  'notice/honor/performer': SessionEventCallback
-  'notice/honor/emotion': SessionEventCallback
+  'message': Session.EventCallback<C>
+  'message-deleted': Session.EventCallback<C>
+  'message-updated': Session.EventCallback<C>
+  'reaction-added': Session.EventCallback<C>
+  'reaction-deleted': Session.EventCallback<C>
+  'reaction-deleted/one': Session.EventCallback<C>
+  'reaction-deleted/all': Session.EventCallback<C>
+  'reaction-deleted/emoji': Session.EventCallback<C>
+  'send': Session.EventCallback<C>
+  'friend-request': Session.EventCallback<C>
+  'guild-request': Session.EventCallback<C>
+  'guild-member-request': Session.EventCallback<C>
+  'guild-member/role': Session.EventCallback<C>
+  'guild-member/ban': Session.EventCallback<C>
+  'guild-member/nickname': Session.EventCallback<C>
+  'notice/poke': Session.EventCallback<C>
+  'notice/lucky-king': Session.EventCallback<C>
+  'notice/honor': Session.EventCallback<C>
+  'notice/honor/talkative': Session.EventCallback<C>
+  'notice/honor/performer': Session.EventCallback<C>
+  'notice/honor/emotion': Session.EventCallback<C>
 
   // lifecycle events
-  'before-send': (this: Session, session: Session) => boolean
-  'bot-added'(client: Bot): void
-  'bot-removed'(client: Bot): void
-  'bot-status-updated'(client: Bot): void
-  'bot-connect'(client: Bot): Awaitable<void>
-  'bot-disconnect'(client: Bot): Awaitable<void>
+  'before-send': Session.EventCallback<C, void | boolean>
+  'bot-added'(client: Bot<C>): void
+  'bot-removed'(client: Bot<C>): void
+  'bot-status-updated'(client: Bot<C>): void
+  'bot-connect'(client: Bot<C>): Awaitable<void>
+  'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
 export interface Context {
-  bots: Bot[] & Dict<Bot> & { counter: number }
+  [Context.events]: Events<this>
+  [Context.session]: Session<Context>
+  options: Context.Config
+  bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
-export class Context extends cordis.Context<Context.Config> {
-  [cordis.Events]: Events<this>
+export class Context extends cordis.Context {
+  static readonly session = Symbol('session')
+
+  constructor(options?: Context.Config) {
+    super(options)
+  }
 }
 
 export namespace Context {
   export interface Config extends cordis.Context.Config {}
 }
+
+Session.prototype[Context.filter] = function (ctx: Context) {
+  return ctx.filter(this)
+}
+
+Context.service('__selector__', Selector)
 
 Context.service('bots', class {
   constructor(root: Context) {

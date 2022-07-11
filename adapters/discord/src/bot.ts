@@ -1,23 +1,15 @@
-import { Bot, Context, Message } from '@satorijs/core'
-import { Quester, Schema } from '@satorijs/env-node'
+import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
 import { Sender } from './sender'
 import { GatewayIntent, Internal } from './types'
 import { WsClient } from './ws'
-import segment from '@satorijs/message'
 
-export class DiscordBot extends Bot<DiscordBot.Config> {
-  _d: number
-  _ping: NodeJS.Timeout
-  _sessionId: string
-
+export class DiscordBot extends Bot<Context, DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
-    this._d = 0
-    this._sessionId = ''
     this.http = ctx.http.extend({
       ...config,
       headers: {
@@ -55,7 +47,16 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async sendMessage(channelId: string, content: string, guildId?: string) {
-    const session = await this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
+    const session = this.session({
+      type: 'send',
+      author: this,
+      channelId,
+      content,
+      guildId,
+      subtype: guildId ? 'group' : 'private',
+    })
+
+    if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const chain = segment.parse(session.content)
@@ -164,35 +165,22 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 }
 
 export namespace DiscordBot {
-  interface PrivilegedIntents {
-    members?: boolean
-    presence?: boolean
-  }
-
-  export interface Config extends Bot.BaseConfig, Quester.Config, Sender.Config {
+  export interface Config extends Bot.Config, Quester.Config, Sender.Config, WsClient.Config {
     token: string
-    gateway?: string
-    intents?: PrivilegedIntents
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
+    WsClient.Config,
+    Sender.Config,
     Schema.object({
-      gateway: Schema.string().role('url').default('wss://gateway.discord.gg/?v=8&encoding=json').description('要连接的 WebSocket 网关。'),
-      intents: Schema.object({
-        members: Schema.boolean().description('启用 GUILD_MEMBERS 推送。').default(true),
-        presence: Schema.boolean().description('启用 GUILD_PRESENCES 推送。').default(false),
-      }),
-    }).description('推送设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('API 请求的终结点。').default('https://discord.com/api/v8'),
+      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://discord.com/api/v8'),
       proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
       headers: Schema.dict(String).description('要附加的额外请求头。'),
       timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
     }).description('请求设置'),
-    WsClient.Config,
   ])
 }
 

@@ -1,12 +1,12 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "1.0.0",
-  "main": "lib/index.js",
+  "version": "1.0.1",
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib",
-    "index.js"
+    "lib"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -31,6 +31,8 @@
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "dependencies": {
-    "cordis": "^2.0.1"
+    "@satorijs/message": "^1.0.1",
+    "cordis": "^2.0.4",
+    "cosmokit": "^1.2.1"
   }
 }

@@ -1,4 +1,4 @@
-import { segment } from 'koishi'
+import segment from '../src'
 import { expect, use } from 'chai'
 import shape from 'chai-shape'
 

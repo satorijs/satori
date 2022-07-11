@@ -3,30 +3,30 @@ import { Context } from '.'
 import { Bot } from './bot'
 
 export abstract class Adapter<T extends Bot = Bot> {
-  abstract start(bot: T): Promise<void>
-  abstract stop(bot: T): Promise<void>
+  static schema = false
+
+  async start(bot: T) {}
+  async stop(bot: T) {}
 }
 
 export namespace Adapter {
   export abstract class Client<T extends Bot = Bot> extends Adapter<T> {
-    protected config: T['config']
+    static reusable = true
 
     constructor(protected ctx: Context, protected bot: T) {
       super()
-      this.config = bot.config
+      bot.adapter = this
     }
   }
 
   export abstract class Server<T extends Bot = Bot> extends Adapter<T> {
-    protected bots: T[] = []
+    public bots: T[] = []
 
-    constructor(ctx: Context) {
-      super()
-      ctx.on('fork', (ctx, bot: T) => {
-        this.bots.push(bot)
-        ctx.on('dispose', () => {
-          remove(this.bots, bot)
-        })
+    fork(ctx: Context, bot: T) {
+      bot.adapter = this
+      this.bots.push(bot)
+      ctx.on('dispose', () => {
+        remove(this.bots, bot)
       })
     }
   }

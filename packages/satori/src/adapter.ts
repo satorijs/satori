@@ -1,4 +1,4 @@
-import { Bot, Adapter } from '@satorijs/core'
+import { Bot, Adapter, Context } from '@satorijs/core'
 import { Awaitable, Time } from 'cosmokit'
 import Schema from 'schemastery'
 import WebSocket from 'ws'
@@ -11,7 +11,7 @@ declare module '@satorijs/core' {
 
   namespace Adapter {
     export namespace WsClient {
-      export interface Config extends Bot.BaseConfig {
+      export interface Config extends Bot.Config {
         retryLazy?: number
         retryTimes?: number
         retryInterval?: number
@@ -20,18 +20,16 @@ declare module '@satorijs/core' {
       export const Config: Schema<Config>
     }
 
-    export abstract class WsClient<T extends Bot<WsClient.Config>> extends Adapter.Client<T> {
-      protected abstract prepare(): Awaitable<WebSocket>
-      protected abstract accept(): void
-      start(bot: T): Promise<void>
-      stop(bot: T): Promise<void>
+    export abstract class WsClient<T extends Bot<Context, WsClient.Config>> extends Adapter.Client<T> {
+      protected abstract prepare(bot: T): Awaitable<WebSocket>
+      protected abstract accept(bot: T): void
     }
   }
 }
 
 const logger = new Logger('adapter')
 
-abstract class WsClient<T extends Bot<Adapter.WsClient.Config>> extends Adapter.Client<T> {
+abstract class WsClient<T extends Bot<Context, Adapter.WsClient.Config>> extends Adapter.Client<T> {
   static reusable = true
 
   static Config: Schema<Adapter.WsClient.Config> = Schema.object({
@@ -40,25 +38,25 @@ abstract class WsClient<T extends Bot<Adapter.WsClient.Config>> extends Adapter.
     retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔，仅用于 ws 协议。').default(Time.minute),
   }).description('连接设置')
 
-  protected abstract prepare(): Awaitable<WebSocket>
-  protected abstract accept(): void
+  protected abstract prepare(bot: T): Awaitable<WebSocket>
+  protected abstract accept(bot: T): void
 
-  async start() {
+  async start(bot: T) {
     let _retryCount = 0
-    const { retryTimes, retryInterval, retryLazy } = this.config
+    const { retryTimes, retryInterval, retryLazy } = bot.config
 
     const reconnect = async (initial = false) => {
       logger.debug('websocket client opening')
-      const socket = await this.prepare()
+      const socket = await this.prepare(bot)
       const url = socket.url.replace(/\?.+/, '')
 
       socket.on('error', error => logger.debug(error))
 
       socket.on('close', (code, reason) => {
-        this.bot.socket = null
+        bot.socket = null
         logger.debug(`websocket closed with ${code}`)
-        if (this.bot.status === 'disconnect') {
-          return this.bot.status = 'offline'
+        if (bot.status === 'disconnect') {
+          return bot.status = 'offline'
         }
 
         // remove query args to protect privacy
@@ -66,37 +64,34 @@ abstract class WsClient<T extends Bot<Adapter.WsClient.Config>> extends Adapter.
         let timeout = retryInterval
         if (_retryCount >= retryTimes) {
           if (initial) {
-            return this.bot.reject(new Error(message))
+            bot.error = new Error(message)
+            return bot.status = 'offline'
           } else {
             timeout = retryLazy
           }
         }
 
         _retryCount++
-        this.bot.status = 'reconnect'
+        bot.status = 'reconnect'
         logger.warn(`${message}, will retry in ${Time.format(timeout)}...`)
         setTimeout(() => {
-          if (this.bot.status === 'reconnect') reconnect()
+          if (bot.status === 'reconnect') reconnect()
         }, timeout)
       })
 
       socket.on('open', () => {
         _retryCount = 0
-        this.bot.socket = socket
+        bot.socket = socket
         logger.info('connect to server: %c', url)
-        this.accept()
+        this.accept(bot)
       })
     }
 
     reconnect(true)
   }
 
-  async stop() {
-    if (this.bot.socket) {
-      this.bot.socket.close()
-    } else {
-      this.bot.status = 'offline'
-    }
+  async stop(bot: T) {
+    bot.socket?.close()
   }
 }
 

@@ -2,34 +2,38 @@ import { remove } from 'cosmokit'
 import { Context } from '.'
 import { Adapter } from './adapter'
 import { Session } from './session'
-import { Methods, UserBase } from './protocol'
+import { Methods, User } from './protocol'
 
-export interface Bot extends Bot.BaseConfig, Methods, UserBase {}
+export interface Bot extends Methods, User {}
 
-export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
+export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bot.Config> {
   static reusable = true
 
+  public isBot = true
   public platform: string
-  public hidden?: boolean
+  public selfId: string
   public internal?: any
-  public selfId?: string
   public adapter?: Adapter<this>
+  public error?: Error
 
-  private _status: Bot.Status = 'offline'
+  protected context: Context
+  protected _status: Bot.Status = 'offline'
 
-  error?: Error
-
-  constructor(public ctx: Context, public config: T) {
+  constructor(public ctx: C, public config: T) {
     if (config.platform) {
       this.platform = config.platform
     }
+    if (config.selfId) {
+      this.selfId = config.selfId
+    }
 
+    this.context = ctx
     ctx.bots.push(this)
-    ctx.emit('bot-added', this)
+    this.context.emit('bot-added', this)
     ctx.on('ready', () => this.start())
     ctx.on('dispose', () => {
       remove(ctx.bots, this)
-      ctx.emit('bot-removed', this)
+      this.context.emit('bot-removed', this)
       this.stop()
     })
   }
@@ -41,27 +45,28 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
   set status(value) {
     this._status = value
     if (this.ctx.bots.includes(this)) {
-      this.ctx.emit('bot-status-updated', this)
+      this.context.emit('bot-status-updated', this)
     }
   }
 
-  resolve() {
+  online() {
     this.status = 'online'
+    this.error = null
   }
 
-  reject(error: Error) {
-    this.error = error
+  offline(error?: Error) {
     this.status = 'offline'
+    this.error = error
   }
 
   async start() {
     if (['connect', 'reconnect', 'online'].includes(this.status)) return
     this.status = 'connect'
     try {
-      await this.ctx.parallel('bot-connect', this)
+      await this.context.parallel('bot-connect', this)
       await this.adapter.start(this)
     } catch (error) {
-      this.reject(error)
+      this.offline(error)
     }
   }
 
@@ -69,38 +74,23 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
     if (['disconnect', 'offline'].includes(this.status)) return
     this.status = 'disconnect'
     try {
-      await this.ctx.parallel('bot-disconnect', this)
+      await this.context.parallel('bot-disconnect', this)
       await this.adapter.stop(this)
     } catch (error) {
-      this.ctx.emit('internal/warning', error)
+      this.context.emit('internal/warning', error)
+      this.offline()
     }
-    this.status = 'offline'
   }
 
   get sid() {
     return `${this.platform}:${this.selfId}`
   }
 
-  async session(data: Partial<Session>) {
-    const session = new Session(this, {
-      ...data,
-      type: 'send',
-      selfId: this.selfId,
-      platform: this.platform,
-      timestamp: Date.now(),
-      author: {
-        userId: this.selfId,
-        username: this.username,
-        avatar: this.avatar,
-        discriminator: this.discriminator,
-        isBot: true,
-      },
-    })
-    if (await this.ctx.serial(session, 'before-send', session)) return
-    return session
+  session(payload?: Partial<Session.Payload>): C[typeof Context.session] {
+    return new Session(this, payload)
   }
 
-  dispatch(session: Session) {
+  dispatch(session: C[typeof Context.session]) {
     if (!this.ctx.lifecycle.isActive) return
     const events: string[] = [session.type]
     if (session.subtype) {
@@ -110,21 +100,16 @@ export abstract class Bot<T extends Bot.BaseConfig = Bot.BaseConfig> {
       }
     }
     for (const event of events) {
-      this.ctx.emit(session, event as any, session)
+      this.context.emit(session, event as any, session)
     }
   }
 }
 
 export namespace Bot {
-  export interface BaseConfig {
-    protocol?: string
+  export interface Config {
     platform?: string
-  }
-
-  export interface Constructor<S extends Bot.BaseConfig = Bot.BaseConfig, T extends Bot<S> = Bot<S>> {
-    new (ctx: Context, config: S): T
+    selfId?: string
   }
 
   export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
-
 }
