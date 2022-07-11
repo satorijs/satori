@@ -15,7 +15,7 @@ export * from './router'
 
 declare module '@satorijs/core' {
   namespace Context {
-    interface Config extends Config.Network, Quester.Config {}
+    interface Config extends Config.Network {}
 
     const Config: Config.Static
   
@@ -44,7 +44,9 @@ defineProperty(Context.Config, 'Network', Schema.object({
 }).description('网络设置'))
 
 Context.Config.list.unshift(Context.Config.Network)
-Context.Config.list.push(Quester.Config)
+Context.Config.list.push(Schema.object({
+  request: Quester.Config,
+}))
 
 const logger = new Logger('app')
 
