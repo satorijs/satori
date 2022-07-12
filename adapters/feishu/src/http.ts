@@ -1,8 +1,9 @@
+import Logger from 'reggol'
 import { Adapter, Context, Session } from '@satorijs/core'
-import { AdapterConfig, Cipher } from './utils'
-import { FeishuBot } from './bot'
 
+import { Cipher } from './utils'
 import { Event } from './types'
+import { FeishuBot } from './bot'
 
 const logger = new Logger('feishu')
 

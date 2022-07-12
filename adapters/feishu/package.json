@@ -28,8 +28,8 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^1.0.0",
-    "@satorijs/env-node": "^1.0.0"
+    "@satorijs/core": "^1.0.1",
+    "@satorijs/satori": "^1.0.1"
   },
   "dependencies": {
     "form-data": "^4.0.0",

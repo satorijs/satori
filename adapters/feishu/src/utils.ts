@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Schema } from '@satorijs/env-node'
+import { Schema } from '@satorijs/satori'
 
 export interface AdapterConfig {
   path?: string

@@ -1,5 +1,5 @@
 import { Bot, Context } from '@satorijs/core'
-import { Quester, Schema } from '@satorijs/env-node'
+import { Quester, Schema } from '@satorijs/satori'
 import segment from '@satorijs/message'
 import FormData from 'form-data'
 import { createReadStream } from 'fs'
