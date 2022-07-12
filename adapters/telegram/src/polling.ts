@@ -1,4 +1,4 @@
-import { Adapter, Logger, Schema, Time } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema, Time } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 
@@ -7,7 +7,7 @@ const logger = new Logger('telegram')
 export class HttpPolling extends Adapter.Client<TelegramBot> {
   private offset = 0
 
-  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Config>) {
+  async start(bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpPolling.Config>) {
     bot.initialize(async () => {
       const { url } = await bot.internal.getWebhookInfo()
       if (url) {

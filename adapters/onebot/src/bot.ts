@@ -20,11 +20,11 @@ export function renderText(source: string) {
   }, '')
 }
 
-export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bot<Context, T> {
+export class OneBotBot<C extends Context = Context, T extends OneBotBot.Config = OneBotBot.Config> extends Bot<C, T> {
   public internal = new OneBot.Internal()
   public guildBot: QQGuildBot
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.selfId = config.selfId
     this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
@@ -142,10 +142,10 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
       channelId,
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     session.messageId = '' + await this.internal.sendGroupMsg(channelId, session.content)
-    this.ctx.emit(session, 'send', session)
+    this.context.emit(session, 'send', session)
     return [session.messageId]
   }
 
@@ -159,10 +159,10 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Bo
       channelId: 'private:' + userId,
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     session.messageId = '' + await this.internal.sendPrivateMsg(userId, session.content)
-    this.ctx.emit(session, 'send', session)
+    this.context.emit(session, 'send', session)
     return [session.messageId]
   }
 

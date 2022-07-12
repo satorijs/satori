@@ -3,10 +3,10 @@ import { Bot, Context, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
 
-export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
+export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
   internal: QQGuild.Bot
 
-  constructor(ctx: Context, config: QQGuildBot.Config) {
+  constructor(ctx: C, config: QQGuildBot.Config) {
     super(ctx, config)
     this.internal = new QQGuild.Bot(config)
     ctx.plugin(WsClient, this)
@@ -29,12 +29,12 @@ export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
       subtype: 'group',
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     const resp = await this.internal.send.channel(channelId, session.content)
     session.messageId = resp.id
-    this.ctx.emit(session, 'send', session)
-    this.ctx.emit(session, 'message', this.adaptMessage(resp))
+    this.context.emit(session, 'send', session)
+    this.context.emit(session, 'message', this.adaptMessage(resp))
     return [resp.id]
   }
 

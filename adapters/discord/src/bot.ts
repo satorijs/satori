@@ -4,11 +4,11 @@ import { Sender } from './sender'
 import { GatewayIntent, Internal } from './types'
 import { WsClient } from './ws'
 
-export class DiscordBot extends Bot<Context, DiscordBot.Config> {
+export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
-  constructor(ctx: Context, config: DiscordBot.Config) {
+  constructor(ctx: C, config: DiscordBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend({
       ...config,
@@ -56,7 +56,7 @@ export class DiscordBot extends Bot<Context, DiscordBot.Config> {
       subtype: guildId ? 'group' : 'private',
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const chain = segment.parse(session.content)
@@ -70,7 +70,7 @@ export class DiscordBot extends Bot<Context, DiscordBot.Config> {
 
     for (const id of results) {
       session.messageId = id
-      this.ctx.emit(session, 'send', session)
+      this.context.emit(session, 'send', session)
     }
 
     return results

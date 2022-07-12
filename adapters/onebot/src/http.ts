@@ -8,8 +8,8 @@ const logger = new Logger('onebot')
 export class HttpServer extends Adapter.Server<OneBotBot> {
   public bots: OneBotBot[]
 
-  async fork(ctx: Context, bot: OneBotBot) {
-    const config = bot.config as OneBotBot.Config & HttpServer.Config
+  async fork(ctx: Context, bot: OneBotBot<Context, OneBotBot.Config & HttpServer.Config>) {
+    const config = bot.config
     const { endpoint, token } = config
     if (!endpoint) return
 
@@ -27,8 +27,8 @@ export class HttpServer extends Adapter.Server<OneBotBot> {
     return bot.initialize()
   }
 
-  async start(bot: OneBotBot) {
-    const { secret, path = '/onebot' } = bot.config as HttpServer.Config
+  async start(bot: OneBotBot<Context, OneBotBot.Config & HttpServer.Config>) {
+    const { secret, path = '/onebot' } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       if (secret) {
         // no signature

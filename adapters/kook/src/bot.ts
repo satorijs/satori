@@ -12,10 +12,10 @@ const attachmentTypes = ['image', 'video', 'audio', 'file']
 
 type SendHandle = [string, Kook.MessageParams, Session]
 
-export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Context, T> {
+export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   http: Quester
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
       endpoint: 'https://www.kaiheila.cn/api/v3',
@@ -51,7 +51,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
       path = '/message/create'
     }
     const session = this.session(data)
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     return [path, params, session] as SendHandle
   }
 
@@ -60,7 +60,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
     params.content = content
     const message = await this.request('POST', path, params)
     session.messageId = message.msg_id
-    this.ctx.emit(session, 'send', session)
+    this.context.emit(session, 'send', session)
   }
 
   private async _transformUrl({ type, data }: segment.Parsed) {

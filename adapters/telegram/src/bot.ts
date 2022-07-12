@@ -26,12 +26,12 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<Context, T> {
+export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
   http: Quester & { file?: Quester }
   internal?: Telegram.Internal
   local?: boolean
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
@@ -173,7 +173,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       author: this,
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const send = Sender.from(this, chatId)
@@ -185,8 +185,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       defineProperty(session, 'telegram', Object.create(this.internal))
       Object.assign(session.telegram, message)
       await this.adaptMessage(message, session)
-      this.ctx.emit(session, 'send', session)
-      this.ctx.emit(session, 'message', session)
+      this.context.emit(session, 'send', session)
+      this.context.emit(session, 'message', session)
     }
 
     return results.map(result => '' + result.message_id)
