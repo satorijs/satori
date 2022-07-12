@@ -12,11 +12,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "url": "git+https://github.com/satorijs/satori.git",
     "directory": "packages/core"
   },
   "bugs": {
-    "url": "https://github.com/satorijs/node-sdk/issues"
+    "url": "https://github.com/satorijs/satori/issues"
   },
   "homepage": "https://satori.js.org/",
   "keywords": [
