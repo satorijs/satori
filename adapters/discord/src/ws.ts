@@ -1,5 +1,5 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
-import { GatewayOpcode, GatewayPayload } from './types'
+import { GatewayIntent, GatewayOpcode, GatewayPayload } from './types'
 import { adaptSession, adaptUser } from './utils'
 import { DiscordBot } from './bot'
 
@@ -58,7 +58,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
             token: this.bot.config.token,
             properties: {},
             compress: false,
-            intents: this.bot.getIntents(),
+            intents: this.bot.config.intents,
           },
         }))
       }
@@ -85,23 +85,19 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 }
 
 export namespace WsClient {
-  interface PrivilegedIntents {
-    members?: boolean
-    presence?: boolean
-  }
-
   export interface Config extends Adapter.WsClient.Config {
     gateway?: string
-    intents?: PrivilegedIntents
+    intents?: number
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       gateway: Schema.string().role('url').default('wss://gateway.discord.gg/?v=8&encoding=json').description('要连接的 WebSocket 网关。'),
-      intents: Schema.object({
-        members: Schema.boolean().description('启用 GUILD_MEMBERS 推送。').default(true),
-        presence: Schema.boolean().description('启用 GUILD_PRESENCES 推送。').default(false),
-      }),
+      intents: Schema.bitset(GatewayIntent).description('需要订阅的机器人事件。').default(0
+        | GatewayIntent.GUILD_MESSAGES
+        | GatewayIntent.GUILD_MESSAGE_REACTIONS
+        | GatewayIntent.DIRECT_MESSAGES
+        | GatewayIntent.DIRECT_MESSAGE_REACTIONS),
     }).description('推送设置'),
     Adapter.WsClient.Config,
   ] as const)

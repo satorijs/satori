@@ -1,7 +1,7 @@
 import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
 import { Sender } from './sender'
-import { GatewayIntent, Internal } from './types'
+import { Internal } from './types'
 import { WsClient } from './ws'
 
 export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
@@ -19,21 +19,6 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
-  }
-
-  getIntents() {
-    let intents = 0
-      | GatewayIntent.GUILD_MESSAGES
-      | GatewayIntent.GUILD_MESSAGE_REACTIONS
-      | GatewayIntent.DIRECT_MESSAGES
-      | GatewayIntent.DIRECT_MESSAGE_REACTIONS
-    if (this.config.intents.members) {
-      intents |= GatewayIntent.GUILD_MEMBERS
-    }
-    if (this.config.intents.presence) {
-      intents |= GatewayIntent.GUILD_PRESENCES
-    }
-    return intents
   }
 
   async getSelf() {
