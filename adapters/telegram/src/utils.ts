@@ -1,4 +1,4 @@
-import { GuildMember, defineProperty, Logger, User, paramCase } from '@satorijs/satori'
+import { defineProperty, GuildMember, hyphenate, Logger, User } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -49,7 +49,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
     if (subtype) {
       session.type = 'telegram'
-      session.subtype = paramCase(subtype)
+      session.subtype = hyphenate(subtype)
     }
   }
 
