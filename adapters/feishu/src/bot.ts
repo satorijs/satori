@@ -1,14 +1,15 @@
+import FormData from 'form-data'
+import segment from '@satorijs/message'
 import { Bot, Context } from '@satorijs/core'
 import { Quester, Schema } from '@satorijs/satori'
-import segment from '@satorijs/message'
-import FormData from 'form-data'
 import { createReadStream } from 'fs'
-import { Internal, MessageContent } from './types'
+
 import { AdapterConfig } from './utils'
+import { Internal, MessageContent } from './types'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
 
-export class FeishuBot extends Bot<FeishuBot.Config> {
+export class FeishuBot extends Bot<Context, FeishuBot.Config> {
   static schema = AdapterConfig
   _token?: string
   http: Quester
@@ -157,8 +158,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
 }
 
 export namespace FeishuBot {
-  export interface Config extends Bot.BaseConfig, Quester.Config {
-    endpoint: string
+  export interface Config extends Bot.Config, Quester.Config {
     appId: string
     appSecret: string
     encryptKey?: string
@@ -166,7 +166,6 @@ export namespace FeishuBot {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      endpoint: Schema.string().required(),
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
