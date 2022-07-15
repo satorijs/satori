@@ -1,28 +1,29 @@
 import Logger from 'reggol'
 import { Adapter, Context, Session } from '@satorijs/core'
 
-import { AdapterConfig, Cipher } from './utils'
+import { Cipher } from './utils'
 import { Event } from './types'
 import { FeishuBot } from './bot'
+import { Schema } from '@satorijs/satori'
 
 const logger = new Logger('feishu')
 
 export class HttpServer extends Adapter.Server<FeishuBot> {
   private ctx: Context
-  private config: AdapterConfig
+  private config: FeishuBot.Config
   private ciphers: Record<string, Cipher> = {}
 
-  constructor(ctx: Context, config: AdapterConfig) {
-    super()
+  fork(ctx: Context, bot: FeishuBot) {
+    super.fork(ctx, bot)
     this.ctx = ctx
-    this.config = config
 
     this._refreshCipher()
+    return bot.initialize()
   }
 
-  async start() {
-    const { path = '/feishu' } = this.config
-    this.ctx.router.post(path, (ctx) => {
+  async start(bot: FeishuBot) {
+    const { path = '/feishu' } = bot.config
+    bot.ctx.router.post(path, (ctx) => {
       logger.debug('receive %o', ctx.request.body)
 
       this._refreshCipher()
@@ -57,7 +58,9 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     })
   }
 
-  async stop() {}
+  async stop() {
+    logger.debug('http server stopped')
+  }
 
   async dispatchSession(body: Event): Promise<void> {
     const { header } = body
@@ -106,6 +109,18 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       this.ciphers[bot.config.appId] = new Cipher(bot.config.encryptKey)
     }
   }
+}
+
+export namespace HttpServer {
+  export interface Config {
+    verifyToken?: boolean
+    verifySignature?: boolean
+  }
+
+  export const Config = Schema.object({
+    verifyToken: Schema.boolean().description('是否验证 Varification Token'),
+    verifySignature: Schema.boolean().description('是否验证 Signature'),
+  })
 }
 
 // function firstOrDefault(arg: string | string[]): string {

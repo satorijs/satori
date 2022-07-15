@@ -4,7 +4,7 @@ import { Bot, Context } from '@satorijs/core'
 import { Logger, Quester, Schema } from '@satorijs/satori'
 import { createReadStream } from 'fs'
 
-import { AdapterConfig } from './utils'
+import { HttpServer } from './http'
 import { Internal, MessageContent } from './types'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
@@ -12,10 +12,9 @@ type AssetType = 'image' | 'audio' | 'video' | 'file'
 const logger = new Logger('feishu')
 
 export class FeishuBot extends Bot<Context, FeishuBot.Config> {
-  static schema = AdapterConfig
   _token?: string
   http: Quester
-  internal: Internal
+  internal?: Internal
 
   constructor(ctx: Context, config: FeishuBot.Config) {
     super(ctx, config)
@@ -31,7 +30,12 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
     this.internal = new Internal(this.http)
 
-    this.refreshToken()
+    ctx.plugin(HttpServer, this)
+  }
+
+  async initialize(): Promise<void> {
+    await this.refreshToken()
+    this.online()
   }
 
   private async refreshToken(): Promise<void> {
@@ -41,6 +45,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     })
     logger.debug('refreshed token %s', token)
     this.token = token
+    this.online()
   }
 
   get token() {
@@ -160,7 +165,8 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 }
 
 export namespace FeishuBot {
-  export interface Config extends Bot.Config, Quester.Config {
+  export interface Config extends Bot.Config, HttpServer.Config, Quester.Config {
+    path?: string
     appId: string
     appSecret: string
     encryptKey?: string
@@ -168,11 +174,13 @@ export namespace FeishuBot {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
+      path: Schema.string().role('url').description('要连接的服务器地址。').default('/feishu'),
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
     }),
     Quester.Config,
+    HttpServer.Config,
   ])
 }
 
