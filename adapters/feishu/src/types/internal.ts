@@ -1,6 +1,6 @@
 import FormData from 'form-data'
-import { Dict, Logger, makeArray, Quester } from '@satorijs/env-node'
 import { AxiosRequestConfig } from 'axios'
+import { Dict, Logger, Quester, makeArray } from '@satorijs/satori'
 
 export interface Internal {}
 

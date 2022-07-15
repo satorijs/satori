@@ -1,7 +1,7 @@
 import Logger from 'reggol'
 import { Adapter, Context, Session } from '@satorijs/core'
 
-import { Cipher } from './utils'
+import { AdapterConfig, Cipher } from './utils'
 import { Event } from './types'
 import { FeishuBot } from './bot'
 
@@ -9,11 +9,13 @@ const logger = new Logger('feishu')
 
 export class HttpServer extends Adapter.Server<FeishuBot> {
   private ctx: Context
+  private config: AdapterConfig
   private ciphers: Record<string, Cipher> = {}
 
-  constructor(ctx: Context) {
-    super(ctx)
+  constructor(ctx: Context, config: AdapterConfig) {
+    super()
     this.ctx = ctx
+    this.config = config
 
     this._refreshCipher()
   }
@@ -62,7 +64,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     const { app_id } = header
     const bot = this.bots.find((bot) => bot.selfId === app_id)
     const session = await this._adaptSession(bot, body)
-    this.dispatch(session)
+    bot.dispatch(session)
   }
 
   private _tryDecryptBody(body: any): any {
@@ -86,7 +88,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     return body
   }
 
-  private async _adaptSession(bot: FeishuBot, body: Event): Promise<Session<never, never>> {
+  private async _adaptSession(bot: FeishuBot, body: Event): Promise<Session<Context>> {
     const payload: Partial<Session> = {
       selfId: bot.selfId,
     }

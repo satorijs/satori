@@ -1,13 +1,15 @@
 import FormData from 'form-data'
 import segment from '@satorijs/message'
 import { Bot, Context } from '@satorijs/core'
-import { Quester, Schema } from '@satorijs/satori'
+import { Logger, Quester, Schema } from '@satorijs/satori'
 import { createReadStream } from 'fs'
 
 import { AdapterConfig } from './utils'
 import { Internal, MessageContent } from './types'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
+
+const logger = new Logger('feishu')
 
 export class FeishuBot extends Bot<Context, FeishuBot.Config> {
   static schema = AdapterConfig
@@ -37,7 +39,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
       app_id: this.config.appId,
       app_secret: this.config.appSecret,
     })
-    this.logger.debug('refreshed token %s', token)
+    logger.debug('refreshed token %s', token)
     this.token = token
   }
 
@@ -87,7 +89,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
               text: '<at user_id="all">all</at>',
             })
           } else if (data.type === 'here' || data.role) {
-            this.logger.warn(`@here or @role{${data.role}} is not supported`)
+            logger.warn(`@here or @role{${data.role}} is not supported`)
           }
           break
         }
@@ -110,7 +112,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
         case 'sharp':
         case 'face':
-          this.logger.warn(`${type} is not supported`)
+          logger.warn(`${type} is not supported`)
           break
       }
     }
