@@ -9,13 +9,10 @@ import { Schema } from '@satorijs/satori'
 const logger = new Logger('feishu')
 
 export class HttpServer extends Adapter.Server<FeishuBot> {
-  private ctx: Context
-  private config: FeishuBot.Config
   private ciphers: Record<string, Cipher> = {}
 
   fork(ctx: Context, bot: FeishuBot) {
     super.fork(ctx, bot)
-    this.ctx = ctx
 
     this._refreshCipher()
     return bot.initialize()
