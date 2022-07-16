@@ -11,6 +11,7 @@ export namespace QQGuildBot {
 
 export class QQGuildBot extends Bot {
   parent: OneBotBot
+  hidden = true
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
