@@ -97,5 +97,3 @@ export class QQGuildBot extends Bot {
     return list
   }
 }
-
-QQGuildBot.prototype.platform = 'qqguild'

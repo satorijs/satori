@@ -211,11 +211,16 @@ export namespace OneBotBot {
     qqguild?: QQGuildConfig
   }
 
+  export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
+    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称'),
+  })
+
   export const BaseConfig: Schema<BaseConfig> = Schema.object({
     selfId: Schema.string().description('机器人的账号。').required(),
     password: Schema.string().role('secret').description('机器人的密码。'),
     token: Schema.string().role('secret').description('发送信息时用于验证的字段，应与 OneBot 配置文件中的 `access_token` 保持一致。'),
     protocol: Schema.union(['http', 'ws', 'ws-reverse']).description('选择要使用的协议。').required(),
+    qqguild: QQGuildConfig.hidden(),
   })
 
   export type Config = BaseConfig & (HttpServer.Config | WsServer.Config | WsClient.Config)
