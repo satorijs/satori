@@ -58,9 +58,9 @@ export class OneBotBot<C extends Context = Context, T extends OneBotBot.Config =
     // guild service is not supported in this account
     if (!profile?.tiny_id || profile.tiny_id === '0') return
     this.ctx.plugin(QQGuildBot, {
+      ...this.config,
       profile,
       parent: this,
-      platform: this.config.qqguild.platform,
     })
   }
 

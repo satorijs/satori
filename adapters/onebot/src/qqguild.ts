@@ -9,15 +9,16 @@ export namespace QQGuildBot {
   }
 }
 
-export class QQGuildBot extends Bot {
+export class QQGuildBot extends OneBotBot {
   parent: OneBotBot
   hidden = true
 
-  constructor(ctx: Context, config: QQGuildBot.Config) {
+  constructor(ctx: Context, config: OneBotBot.Config & QQGuildBot.Config) {
     super(ctx, config)
     this.parent = config.parent
     this.internal = config.parent.internal
     this.selfId = config.profile.tiny_id
+    this.platform = config.qqguild.platform
     this.avatar = config.profile.avatar_url
     this.username = config.profile.nickname
 
