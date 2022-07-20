@@ -20,6 +20,8 @@ export class QQGuildBot extends Bot {
     this.selfId = config.profile.tiny_id
     this.avatar = config.profile.avatar_url
     this.username = config.profile.nickname
+
+    this.parent.guildBot = this
   }
 
   get status() {
