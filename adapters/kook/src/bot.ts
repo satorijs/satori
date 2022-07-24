@@ -18,7 +18,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   constructor(ctx: C, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
-      endpoint: 'https://www.kaiheila.cn/api/v3',
+      endpoint: 'https://www.kookapp.cn/api/v3',
       headers: {
         'Authorization': `Bot ${config.token}`,
         'Content-Type': 'application/json',
