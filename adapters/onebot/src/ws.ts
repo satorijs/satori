@@ -26,7 +26,7 @@ export namespace WsClient {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       protocol: Schema.const('ws' as const).required(),
-      responseTimeout: Schema.natural().role('time').default(Time.second * 5).description('等待响应的时间 (单位为秒)。'),
+      responseTimeout: Schema.natural().role('time').default(Time.second * 5).description('等待响应的时间 (单位为毫秒)。'),
     }).description('连接设置'),
     Schema.object({
       endpoint: Schema.string().role('url').description('要连接的服务器地址。').required(),
@@ -78,7 +78,7 @@ export namespace WsServer {
   export const Config: Schema<Config> = Schema.object({
     protocol: Schema.const('ws-reverse' as const).required(),
     path: Schema.string().description('服务器监听的路径。').default('/onebot'),
-    responseTimeout: Schema.natural().role('time').default(Time.second * 5).description('等待响应的时间 (单位为秒)。'),
+    responseTimeout: Schema.natural().role('time').default(Time.second * 5).description('等待响应的时间 (单位为毫秒)。'),
   }).description('连接设置')
 }
 
