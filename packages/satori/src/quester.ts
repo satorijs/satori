@@ -1,5 +1,5 @@
 import { Context } from '@satorijs/core'
-import { Dict } from 'cosmokit'
+import { Dict, trimSlash } from 'cosmokit'
 import { Agent, ClientRequestArgs } from 'http'
 import WebSocket from 'ws'
 import ProxyAgent from 'proxy-agent'
@@ -60,7 +60,7 @@ export namespace Quester {
   }
 
   export function create(config: Quester.Config = {}) {
-    const { endpoint = '' } = config
+    const endpoint = config.endpoint = trimSlash(config.endpoint || '')
 
     const options: AxiosRequestConfig = {
       timeout: config.timeout,
@@ -89,7 +89,14 @@ export namespace Quester {
 
     http.config = config
     http.axios = request as any
-    http.extend = (newConfig) => create({ ...config, ...newConfig })
+    http.extend = (newConfig) => create({
+      ...config,
+      ...newConfig,
+      headers: {
+        ...config.headers,
+        ...newConfig.headers,
+      },
+    })
 
     http.get = (url, config) => http('GET', url, config)
     http.delete = (url, config) => http('DELETE', url, config)
