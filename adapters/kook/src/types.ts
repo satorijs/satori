@@ -38,6 +38,7 @@ export interface MessageParams {
 export interface MessageBase {
   type: Type
   content: string
+  extra: MessageExtra | Notice
 }
 
 export interface Data extends MessageBase {
@@ -49,7 +50,6 @@ export interface Data extends MessageBase {
   msg_id: string
   msg_timestamp: number
   nonce: string
-  extra: MessageExtra | Notice
 }
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'file'
@@ -75,11 +75,29 @@ export interface MessageMeta {
   author: Author
 }
 
+export interface KmarkdownUserMeta {
+  id: string
+  username: string
+  full_name: string
+  avatar: string
+}
+
+export interface KmarkdownRoleMeta {
+  role_id: number
+  name: string
+  color: number
+}
+
 export interface MessageExtra extends MessageMeta {
   type: Type
   code: string
   guild_id: string
   channel_name: string
+  kmarkdown?: {
+    raw_content: string
+    mention_part: KmarkdownUserMeta[]
+    mention_role_part: KmarkdownRoleMeta[]
+  }
 }
 
 export interface Message extends MessageBase, MessageMeta {
