@@ -25,7 +25,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
       return
     }
     let trials = 0
-    function send() {
+    const send = () => {
       if (!bot.socket) return
       if (trials >= 2) {
         return bot.socket.close(1013)

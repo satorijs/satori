@@ -18,7 +18,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   constructor(ctx: C, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
-      endpoint: 'https://www.kaiheila.cn/api/v3',
+      endpoint: 'https://www.kookapp.cn/api/v3',
       headers: {
         'Authorization': `Bot ${config.token}`,
         'Content-Type': 'application/json',
@@ -34,7 +34,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 
   async request<T = any>(method: Method, path: string, data?: any, headers: any = {}): Promise<T> {
     data = data instanceof FormData ? data : JSON.stringify(data)
-    return await this.http(method, path, { data, headers })
+    return (await this.http(method, path, { data, headers })).data
   }
 
   private async _prepareHandle(channelId: string, content: string, guildId: string) {
@@ -159,7 +159,11 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
         textBuffer += data.content
       } else if (type === 'at') {
         if (data.id) {
-          textBuffer += `@user#${data.id}`
+          if (data.name) {
+            textBuffer += `@${data.name}#${data.id}`
+          } else {
+            textBuffer += `@user#${data.id}`
+          }
         } else if (data.type === 'all') {
           textBuffer += '@全体成员'
         } else if (data.type === 'here') {
