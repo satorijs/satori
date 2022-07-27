@@ -63,7 +63,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   }
 
   async adaptMessage(message: Telegram.Message, session: Session) {
-    function parseText(text: string, entities: Telegram.MessageEntity[]): segment[] {
+    const parseText = (text: string, entities: Telegram.MessageEntity[]): segment[] => {
       let curr = 0
       const segs: segment[] = []
       for (const e of entities) {
