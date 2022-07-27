@@ -45,7 +45,7 @@
     "portfinder": "^1.0.28",
     "proxy-agent": "^5.0.0",
     "reggol": "^1.0.3",
-    "schemastery": "^3.4.3",
+    "schemastery": "^3.5.0",
     "ws": "^8.6.0"
   }
 }

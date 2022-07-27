@@ -87,7 +87,7 @@ export namespace QQGuildBot {
         token: Schema.string().description('机器人令牌。').role('secret').required(),
       }),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
-      endpoint: Schema.string().role('url').description('API 入口地址。').default('https://api.sgroup.qq.com/'),
+      endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
       intents: Schema.bitset(QQGuild.Bot.Intents).description('需要订阅的机器人事件。').default(QQGuild.Bot.Intents.PUBLIC_GUILD_MESSAGES),
     }),

@@ -308,12 +308,7 @@ export namespace TelegramBot {
       HttpServer.Config,
       HttpPolling.Config,
     ]).description('推送设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://api.telegram.org'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig('https://api.telegram.org'),
     Schema.object({
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),

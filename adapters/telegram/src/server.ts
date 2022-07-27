@@ -56,6 +56,6 @@ export namespace HttpServer {
   export const Config: Schema<Config> = Schema.object({
     protocol: Schema.const('server' as const).required(),
     path: Schema.string().description('服务器监听的路径。').default('/telegram'),
-    selfUrl: Schema.string().role('url').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+    selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
   })
 }

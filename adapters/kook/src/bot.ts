@@ -300,14 +300,9 @@ export namespace KookBot {
         Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
         Schema.const('card' as const).description('使用卡片发送内容'),
         Schema.const('mixed' as const).description('使用混合模式发送内容'),
-      ]).description('发送图文等混合内容时采用的方式。').default('separate'),
+      ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
     }).description('发送设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://www.kaiheila.cn/api/v3'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig('https://www.kaiheila.cn/api/v3'),
   ] as const)
 }
 

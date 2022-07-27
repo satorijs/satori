@@ -160,12 +160,7 @@ export namespace DiscordBot {
     }),
     WsClient.Config,
     Sender.Config,
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://discord.com/api/v8'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig('https://discord.com/api/v8'),
   ])
 }
 

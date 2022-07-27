@@ -28,12 +28,7 @@ export namespace WsClient {
       protocol: Schema.const('ws' as const).required(),
       responseTimeout: Schema.natural().role('time').default(Time.second * 5).description('等待响应的时间 (单位为毫秒)。'),
     }).description('连接设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').required(),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig(true),
     Adapter.WsClient.Config,
   ])
 }
