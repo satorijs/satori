@@ -2,13 +2,13 @@ import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/satori'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 
-const logger = new Logger('kaiheila')
+const logger = new Logger('kook')
 
 export class HttpServer extends Adapter.Server<KookBot<Context, KookBot.BaseConfig & HttpServer.Config>> {
   constructor(ctx: Context, bot: KookBot) {
     super()
-    let { path = '' } = bot.config as HttpServer.Config
-    path = sanitize(path || '/kaiheila')
+    let { path } = bot.config as HttpServer.Config
+    path = sanitize(path)
     ctx.router.post(path, (ctx) => {
       const { body } = ctx.request
       logger.debug('receive %o', body)
@@ -45,7 +45,7 @@ export namespace HttpServer {
 
   export const Config: Schema<Config> = Schema.object({
     protocol: Schema.const('http' as const).required(),
-    path: Schema.string().description('服务器监听的路径。').default('/kaiheila'),
+    path: Schema.string().description('服务器监听的路径。').default('/kook'),
     token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     verifyToken: Schema.string().description('机器人的验证令牌。').role('secret').required(),
   })

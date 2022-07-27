@@ -18,7 +18,6 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   constructor(ctx: C, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
-      endpoint: 'https://www.kookapp.cn/api/v3',
       headers: {
         'Authorization': `Bot ${config.token}`,
         'Content-Type': 'application/json',
@@ -302,9 +301,9 @@ export namespace KookBot {
         Schema.const('mixed' as const).description('使用混合模式发送内容'),
       ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
     }).description('发送设置'),
-    Quester.createConfig('https://www.kaiheila.cn/api/v3'),
+    Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }
 
 // for backward compatibility
-KookBot.prototype.platform = 'kaiheila'
+KookBot.prototype.platform = 'kook'

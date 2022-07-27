@@ -4,7 +4,7 @@ import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
 import WebSocket from 'ws'
 
-const logger = new Logger('kaiheila')
+const logger = new Logger('kook')
 
 const heartbeatIntervals = [6, 2, 4]
 
