@@ -9,7 +9,7 @@ import { TelegramBot } from './bot'
 
 const logger = new Logger('telegram')
 
-const prefixTypes = ['quote', 'card', 'anonymous', 'markdown']
+const prefixTypes = ['quote', 'card', 'anonymous', 'markdown', 'html']
 
 type AssetType =
   | 'photo'
@@ -107,6 +107,8 @@ export class Sender {
         if (segs[currIdx].data.ignore === 'false') return null
       } else if (segs[currIdx].type === 'markdown') {
         this.payload.parse_mode = 'MarkdownV2'
+      } else if (segs[currIdx].type === 'html') {
+        this.payload.parse_mode = 'html'
       }
       // else if (segs[currIdx].type === 'card') {}
       ++currIdx
@@ -164,6 +166,7 @@ export class Sender {
       this.results.push(await this.bot.internal.sendMessage({
         chat_id: this.chat_id,
         text: this.payload.caption,
+        parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
       }))
     }
