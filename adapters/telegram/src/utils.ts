@@ -7,7 +7,7 @@ const logger = new Logger('telegram')
 export const adaptUser = (data: Telegram.User): User => ({
   userId: data.id.toString(),
   username: data.username,
-  nickname: data.last_name ? data.first_name + ' ' + data.last_name : data.first_name,
+  nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
   isBot: data.is_bot,
 })
 
