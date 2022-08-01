@@ -1,6 +1,7 @@
 import { Adapter, Context, Logger, Schema, Time } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
+import axios from 'axios'
 
 const logger = new Logger('telegram')
 
@@ -29,13 +30,30 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           return bot.offline()
         }
 
-        const updates = await bot.internal.getUpdates({
-          offset: this.offset + 1,
-          timeout: bot.config.pollingTimeout,
-        })
-        for (const e of updates) {
-          this.offset = Math.max(this.offset, e.update_id)
-          handleUpdate(e, bot)
+        try {
+          const updates = await bot.internal.getUpdates({
+            offset: this.offset + 1,
+            timeout: bot.config.pollingTimeout,
+          })
+          if (bot.status === 'reconnect') bot.status = 'online'
+          for (const e of updates) {
+            this.offset = Math.max(this.offset, e.update_id)
+            handleUpdate(e, bot)
+          }
+        } catch (e) {
+          bot.status = 'reconnect'
+          // Telegram error
+          if (axios.isAxiosError(e) && e.response && e.response.data) {
+            const errorBody = e.response.data
+            logger.error('failed to get updates. (%c) reason: %s %c', errorBody.error_code, errorBody.description, 'telegram: ' + bot.selfId)
+            // Handle Bot Conflict
+            if (errorBody.error_code == 409) {
+              bot.status = 'disconnect'
+            }
+          } else {
+            // Other error
+            logger.error('failed to get updates. reason: %s %c', e.message, 'telegram: ' + bot.selfId)
+          }
         }
         setTimeout(polling, 0)
       }
