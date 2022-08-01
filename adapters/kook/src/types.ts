@@ -73,6 +73,11 @@ export interface MessageMeta {
   attachments: Attachment
   quote: Message
   author: Author
+  kmarkdown?: {
+    raw_content: string
+    mention_part: KmarkdownUserMeta[]
+    mention_role_part: KmarkdownRoleMeta[]
+  }
 }
 
 export interface KmarkdownUserMeta {
@@ -93,11 +98,6 @@ export interface MessageExtra extends MessageMeta {
   code: string
   guild_id: string
   channel_name: string
-  kmarkdown?: {
-    raw_content: string
-    mention_part: KmarkdownUserMeta[]
-    mention_role_part: KmarkdownRoleMeta[]
-  }
 }
 
 export interface Message extends MessageBase, MessageMeta {
