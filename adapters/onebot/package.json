@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.0.6"
+    "@satorijs/satori": "^1.0.9"
   },
   "dependencies": {
     "qface": "^1.2.0"

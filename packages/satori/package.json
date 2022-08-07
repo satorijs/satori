@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "engines": {
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "^1.0.6",
+    "@satorijs/core": "^1.0.9",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.3",
@@ -45,7 +45,7 @@
     "portfinder": "^1.0.28",
     "proxy-agent": "^5.0.0",
     "reggol": "^1.0.3",
-    "schemastery": "^3.5.0",
+    "schemastery": "^3.5.1",
     "ws": "^8.8.1"
   }
 }
