@@ -35,7 +35,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             offset: this.offset + 1,
             timeout: bot.config.pollingTimeout,
           })
-          if (bot.status === 'reconnect') bot.status = 'online'
+          bot.online()
           for (const e of updates) {
             this.offset = Math.max(this.offset, e.update_id)
             handleUpdate(e, bot)
