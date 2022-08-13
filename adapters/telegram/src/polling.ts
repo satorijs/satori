@@ -45,14 +45,14 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           // Telegram error
           if (axios.isAxiosError(e) && e.response && e.response.data) {
             const errorBody = e.response.data
-            logger.error('failed to get updates. (%c) reason: %s %c', errorBody.error_code, errorBody.description, 'telegram: ' + bot.selfId)
+            logger.warn('failed to get updates: (%c) %s', errorBody.error_code, errorBody.description)
             // Handle Bot Conflict
             if (errorBody.error_code == 409) {
               bot.status = 'disconnect'
             }
           } else {
             // Other error
-            logger.error('failed to get updates. reason: %s %c', e.message, 'telegram: ' + bot.selfId)
+            logger.warn('failed to get updates. reason: %s', e.message)
           }
         }
         setTimeout(polling, 0)
