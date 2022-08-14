@@ -39,6 +39,8 @@ export class Quester {
 }
 
 export namespace Quester {
+  export const isAxiosError = axios.isAxiosError
+
   export interface Config {
     headers?: Dict
     endpoint?: string
