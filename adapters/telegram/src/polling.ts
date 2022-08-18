@@ -1,7 +1,6 @@
-import { Adapter, Context, Logger, Schema, Time } from '@satorijs/satori'
+import { Adapter, Context, Logger, Quester, Schema, Time } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
-import axios from 'axios'
 
 const logger = new Logger('telegram')
 
@@ -41,20 +40,20 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           bot.online()
           _retryCount = 0
           _initial = false
-          
+
           for (const e of updates) {
             this.offset = Math.max(this.offset, e.update_id)
             handleUpdate(e, bot)
           }
           setTimeout(polling, 0)
         } catch (e) {
-          if (!axios.isAxiosError(e) || !e.response?.data) {
+          if (!Quester.isAxiosError(e) || !e.response?.data) {
             // Other error
             logger.warn('failed to get updates. reason: %s', e.message)
           } else {
             // Telegram error
-            const errorBody = e.response.data
-            logger.warn('failed to get updates: (%c) %s', errorBody.error_code, errorBody.description)
+            const { error_code, description } = e.response.data
+            logger.warn('failed to get updates: %c %s', error_code, description)
           }
 
           if (_initial && _retryCount > retryTimes) {
