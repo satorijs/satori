@@ -163,22 +163,19 @@ export interface VipInfo extends AccountInfo {
 }
 
 export interface GroupNotice {
-  cn: number
-  fid: string
-  fn: number
-  msg: {
+  notice_id: string
+  sender_id: number
+  publish_time: number
+  message: {
     text: string
-    text_face: string
-    title: string
+    images: GroupNoticeImage[]
   }
-  pubt: number
-  read_num: number
-  settings: {
-    is_show_edit_card: number
-    remind_ts: number
-  }
-  u: number
-  vn: number
+}
+
+export interface GroupNoticeImage {
+  height: string
+  width: string
+  id: string
 }
 
 export interface Statistics {
@@ -418,6 +415,8 @@ export interface Internal {
   getGroupMsgHistory(group_id: id, message_seq?: number): Promise<{ messages: Message[] }>
   deleteFriend(user_id: id): Promise<void>
   deleteFriendAsync(user_id: id): Promise<void>
+  deleteUnidirectionalFriend(user_id: id): Promise<void>
+  deleteUnidirectionalFriendAsync(user_id: id): Promise<void>
   setFriendAddRequest(flag: string, approve: boolean, remark?: string): Promise<void>
   setFriendAddRequestAsync(flag: string, approve: boolean, remark?: string): Promise<void>
   setGroupAddRequest(flag: string, subType: 'add' | 'invite', approve: boolean, reason?: string): Promise<void>
@@ -446,6 +445,8 @@ export interface Internal {
   getGroupAtAllRemain(group_id: id): Promise<AtAllRemain>
   sendGroupNotice(group_id: id, content: string): Promise<void>
   sendGroupNoticeAsync(group_id: id, content: string): Promise<void>
+  getGroupNotice(group_id: id): Promise<GroupNotice[]>
+  delGroupNotice(group_id: id, notice_id: id): Promise<void>
 
   getLoginInfo(): Promise<AccountInfo>
   getVipInfo(): Promise<VipInfo>
@@ -590,6 +591,8 @@ Internal.define('set_group_special_title', 'group_id', 'user_id', 'special_title
 Internal.define('set_group_name', 'group_id', 'group_name')
 Internal.define('set_group_portrait', 'group_id', 'file', 'cache')
 Internal.define('_send_group_notice', 'group_id', 'content')
+Internal.define('_get_group_notice', 'group_id')
+Internal.define('_del_group_notice', 'group_id', 'notice_id')
 Internal.define('get_group_at_all_remain', 'group_id')
 
 Internal.define('get_login_info')
@@ -614,6 +617,7 @@ Internal.defineExtract('download_file', 'file', 'url', 'headers', 'thread_count'
 Internal.defineExtract('get_online_clients', 'clients', 'no_cache')
 Internal.defineExtract('check_url_safely', 'level', 'url')
 Internal.define('delete_friend', 'user_id')
+Internal.define('delete_unidirectional_friend', 'user_id')
 
 Internal.defineExtract('get_cookies', 'cookies', 'domain')
 Internal.defineExtract('get_csrf_token', 'token')

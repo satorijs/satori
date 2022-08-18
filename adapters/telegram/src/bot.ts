@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time } from '@satorijs/satori'
+import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
@@ -226,12 +226,16 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     user_id = +user_id
     if (Number.isNaN(user_id)) return null
     const data = await this.internal.getChatMember({ chat_id, user_id })
-    return adaptGuildMember(data)
+    const user = adaptGuildMember(data)
+    await this.setAvatarUrl(user)
+    return user
   }
 
   async getGuildMemberList(chat_id: string) {
     const data = await this.internal.getChatAdministrators({ chat_id })
-    return data.map(adaptGuildMember)
+    const users = data.map(adaptGuildMember)
+    await Promise.all(users.map(this.setAvatarUrl.bind(this)))
+    return users
   }
 
   async kickGuildMember(chat_id: string, user_id: string | number, permanent?: boolean) {
@@ -257,7 +261,9 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   async getLoginInfo() {
     const data = await this.internal.getMe()
-    return adaptUser(data)
+    const user = adaptUser(data)
+    await this.setAvatarUrl(user)
+    return user
   }
 
   async $getFileData(file_id: string) {
@@ -278,6 +284,15 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     }
     const base64 = `base64://` + res.toString('base64')
     return { url: base64 }
+  }
+
+  private async setAvatarUrl(user: User) {
+    const { endpoint } = this.http.file.config
+    const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
+    if (!avatar) return
+    const { file_id } = avatar[avatar.length - 1]
+    const file = await this.internal.getFile({ file_id })
+    user.avatar = `${endpoint}/${file.file_path}`
   }
 }
 

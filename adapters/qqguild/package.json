@@ -26,7 +26,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.0.6"
+    "@satorijs/satori": "^1.0.10"
   },
   "dependencies": {
     "@qq-guild-sdk/core": "^2.0.1",

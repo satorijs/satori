@@ -33,15 +33,14 @@ function adaptMessage(base: Kook.MessageBase, meta: Kook.MessageMeta, session: M
   } else if (base.type === Kook.Type.image) {
     session.content = segment('image', { url: base.content, file: meta.attachments.name })
   } else if (base.type == Kook.Type.kmarkdown) {
-    const extra = base.extra as Kook.MessageExtra
     session.content = base.content
       .replace(/\(met\)all\(met\)/g, () => `[CQ:at,type=all]`)
       .replace(/\(met\)here\(met\)/g, () => `[CQ:at,type=here]`)
       .replace(/\(chn\)(\d+)\(chn\)/g, (_, $1) => segment.sharp($1))
-    for (const mention of extra.kmarkdown.mention_part) {
+    for (const mention of meta.kmarkdown.mention_part) {
       session.content = session.content.replace(`(met)${mention.id}(met)`, segment.at(mention.id, { name: mention.username }))
     }
-    for (const mention of extra.kmarkdown.mention_role_part) {
+    for (const mention of meta.kmarkdown.mention_role_part) {
       session.content = session.content.replace(`(rol)${mention.role_id}(rol)`, `[CQ:at,role=${mention.role_id},name=${mention.name}]`)
     }
     session.content = session.content
