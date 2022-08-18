@@ -288,9 +288,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   private async setAvatarUrl(user: User) {
     const { endpoint } = this.http.file.config
-    const profilePhotos = await this.internal.getUserProfilePhotos({ user_id: parseInt(user.userId) })
-    if (!profilePhotos.photos) return
-    const [avatar] = profilePhotos.photos
+    const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
+    if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]
     const file = await this.internal.getFile({ file_id })
     user.avatar = `${endpoint}/${file.file_path}`
