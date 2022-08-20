@@ -12,13 +12,12 @@ const attachmentTypes = ['image', 'video', 'audio', 'file']
 
 type SendHandle = [string, Kook.MessageParams, Session]
 
-export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Context, T> {
+export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   http: Quester
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
-      endpoint: 'https://www.kaiheila.cn/api/v3',
       headers: {
         'Authorization': `Bot ${config.token}`,
         'Content-Type': 'application/json',
@@ -34,7 +33,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
 
   async request<T = any>(method: Method, path: string, data?: any, headers: any = {}): Promise<T> {
     data = data instanceof FormData ? data : JSON.stringify(data)
-    return await this.http(method, path, { data, headers })
+    return (await this.http(method, path, { data, headers })).data
   }
 
   private async _prepareHandle(channelId: string, content: string, guildId: string) {
@@ -51,7 +50,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
       path = '/message/create'
     }
     const session = this.session(data)
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     return [path, params, session] as SendHandle
   }
 
@@ -60,7 +59,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
     params.content = content
     const message = await this.request('POST', path, params)
     session.messageId = message.msg_id
-    this.ctx.emit(session, 'send', session)
+    this.context.emit(session, 'send', session)
   }
 
   private async _transformUrl({ type, data }: segment.Parsed) {
@@ -159,7 +158,11 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<Cont
         textBuffer += data.content
       } else if (type === 'at') {
         if (data.id) {
-          textBuffer += `@user#${data.id}`
+          if (data.name) {
+            textBuffer += `@${data.name}#${data.id}`
+          } else {
+            textBuffer += `@user#${data.id}`
+          }
         } else if (data.type === 'all') {
           textBuffer += '@全体成员'
         } else if (data.type === 'here') {
@@ -284,6 +287,9 @@ export namespace KookBot {
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
   export const Config: Schema<Config> = Schema.intersect([
+    Schema.object({
+      protocol: Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
+    }),
     Schema.union([
       WsClient.Config,
       HttpServer.Config,
@@ -293,16 +299,11 @@ export namespace KookBot {
         Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
         Schema.const('card' as const).description('使用卡片发送内容'),
         Schema.const('mixed' as const).description('使用混合模式发送内容'),
-      ]).description('发送图文等混合内容时采用的方式。').default('separate'),
+      ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
     }).description('发送设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://www.kaiheila.cn/api/v3'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
-  ])
+    Quester.createConfig('https://www.kookapp.cn/api/v3'),
+  ] as const)
 }
 
 // for backward compatibility
-KookBot.prototype.platform = 'kaiheila'
+KookBot.prototype.platform = 'kook'

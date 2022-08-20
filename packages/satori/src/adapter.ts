@@ -33,9 +33,9 @@ abstract class WsClient<T extends Bot<Context, Adapter.WsClient.Config>> extends
   static reusable = true
 
   static Config: Schema<Adapter.WsClient.Config> = Schema.object({
-    retryTimes: Schema.natural().description('初次连接时的最大重试次数，仅用于 ws 协议。').default(6),
-    retryInterval: Schema.natural().role('ms').description('初次连接时的重试时间间隔，仅用于 ws 协议。').default(5 * Time.second),
-    retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔，仅用于 ws 协议。').default(Time.minute),
+    retryTimes: Schema.natural().description('初次连接时的最大重试次数。').default(6),
+    retryInterval: Schema.natural().role('ms').description('初次连接时的重试时间间隔。').default(5 * Time.second),
+    retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
   }).description('连接设置')
 
   protected abstract prepare(bot: T): Awaitable<WebSocket>

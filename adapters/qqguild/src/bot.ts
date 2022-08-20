@@ -3,10 +3,10 @@ import { Bot, Context, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { WsClient } from './ws'
 
-export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
+export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
   internal: QQGuild.Bot
 
-  constructor(ctx: Context, config: QQGuildBot.Config) {
+  constructor(ctx: C, config: QQGuildBot.Config) {
     super(ctx, config)
     this.internal = new QQGuild.Bot(config)
     ctx.plugin(WsClient, this)
@@ -29,12 +29,12 @@ export class QQGuildBot extends Bot<Context, QQGuildBot.Config> {
       subtype: 'group',
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
     const resp = await this.internal.send.channel(channelId, session.content)
     session.messageId = resp.id
-    this.ctx.emit(session, 'send', session)
-    this.ctx.emit(session, 'message', this.adaptMessage(resp))
+    this.context.emit(session, 'send', session)
+    this.context.emit(session, 'message', this.adaptMessage(resp))
     return [resp.id]
   }
 
@@ -87,7 +87,7 @@ export namespace QQGuildBot {
         token: Schema.string().description('机器人令牌。').role('secret').required(),
       }),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
-      endpoint: Schema.string().role('url').description('API 入口地址。').default('https://api.sgroup.qq.com/'),
+      endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
       intents: Schema.bitset(QQGuild.Bot.Intents).description('需要订阅的机器人事件。').default(QQGuild.Bot.Intents.PUBLIC_GUILD_MESSAGES),
     }),

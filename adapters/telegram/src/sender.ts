@@ -1,4 +1,5 @@
 import { createReadStream } from 'fs'
+import { fileURLToPath } from 'url'
 import { Dict, Logger, segment } from '@satorijs/satori'
 import AggregateError from 'es-aggregate-error'
 import fileType from 'file-type'
@@ -8,7 +9,7 @@ import { TelegramBot } from './bot'
 
 const logger = new Logger('telegram')
 
-const prefixTypes = ['quote', 'card', 'anonymous', 'markdown']
+const prefixTypes = ['quote', 'card', 'anonymous', 'markdown', 'html']
 
 type AssetType =
   | 'photo'
@@ -21,16 +22,23 @@ async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buf
   if (!payload[field]) return []
   let content: any
   let filename = 'file'
-  const [schema, data] = payload[field].split('://')
-  if (schema === 'file') {
-    content = createReadStream(data)
+
+  const url = new URL(payload[field])
+  const schema = url.protocol
+
+  // Because the base64 string is not url encoded, so it will contain slash
+  // and can't parse with URL.pathname
+  const data = payload[field].split('://')[1]
+
+  if (schema === 'file:') {
+    content = createReadStream(fileURLToPath(url))
     delete payload[field]
-  } else if (schema === 'base64') {
+  } else if (schema === 'base64:') {
     content = Buffer.from(data, 'base64')
     delete payload[field]
   }
   // add file extension for base64 document (general file)
-  if (field === 'document' && schema === 'base64') {
+  if (field === 'document' && schema === 'base64:') {
     const type = await fileType.fromBuffer(Buffer.from(data, 'base64'))
     if (!type) {
       logger.warn('Can not infer file mime')
@@ -99,6 +107,8 @@ export class Sender {
         if (segs[currIdx].data.ignore === 'false') return null
       } else if (segs[currIdx].type === 'markdown') {
         this.payload.parse_mode = 'MarkdownV2'
+      } else if (segs[currIdx].type === 'html') {
+        this.payload.parse_mode = 'html'
       }
       // else if (segs[currIdx].type === 'card') {}
       ++currIdx
@@ -128,7 +138,7 @@ export class Sender {
         case 'audio':
         case 'video':
         case 'file': {
-        // send previous asset if there is any
+          // send previous asset if there is any
           if (this.currAssetType) await this.sendAsset()
 
           // handel current asset
@@ -156,6 +166,7 @@ export class Sender {
       this.results.push(await this.bot.internal.sendMessage({
         chat_id: this.chat_id,
         text: this.payload.caption,
+        parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
       }))
     }

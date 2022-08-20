@@ -1,0 +1,8 @@
+require:
+  - yakumo-esbuild
+  - yakumo-mocha
+  - yakumo-publish
+  - yakumo-publish-sync
+  - yakumo-tsc
+  - yakumo-upgrade
+  - yakumo-version

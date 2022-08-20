@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-onebot",
   "description": "OneBot Adapter for Satorijs",
-  "version": "5.0.0",
+  "version": "5.0.9",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -11,11 +11,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "url": "git+https://github.com/satorijs/satori.git",
     "directory": "adapters/onebot"
   },
   "bugs": {
-    "url": "https://github.com/satorijs/node-sdk/issues"
+    "url": "https://github.com/satorijs/satori/issues"
   },
   "homepage": "https://koishi.js.org/api/adapter/onebot.html",
   "keywords": [
@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.0.1"
+    "@satorijs/satori": "^1.0.10"
   },
   "dependencies": {
     "qface": "^1.2.0"

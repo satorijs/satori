@@ -4,7 +4,6 @@ import * as OneBot from './utils'
 export { OneBot }
 
 export * from './bot'
-export * from './qqguild'
 export * from './http'
 export * from './ws'
 

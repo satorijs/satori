@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "1.0.1",
+  "version": "1.0.10",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "engines": {
@@ -14,11 +14,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "url": "git+https://github.com/satorijs/satori.git",
     "directory": "packages/node"
   },
   "bugs": {
-    "url": "https://github.com/satorijs/node-sdk/issues"
+    "url": "https://github.com/satorijs/satori/issues"
   },
   "homepage": "https://satori.js.org/",
   "keywords": [
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "^1.0.1",
+    "@satorijs/core": "^1.0.10",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.3",
@@ -45,7 +45,7 @@
     "portfinder": "^1.0.28",
     "proxy-agent": "^5.0.0",
     "reggol": "^1.0.3",
-    "schemastery": "^3.4.3",
-    "ws": "^8.6.0"
+    "schemastery": "^3.5.1",
+    "ws": "^8.8.1"
   }
 }

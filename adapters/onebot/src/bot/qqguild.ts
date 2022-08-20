@@ -1,6 +1,7 @@
 import { Bot, Context, GuildMember } from '@satorijs/satori'
-import { OneBotBot } from './bot'
-import * as OneBot from './utils'
+import { BaseBot } from './base'
+import { OneBotBot } from '.'
+import * as OneBot from '../utils'
 
 export namespace QQGuildBot {
   export interface Config extends Bot.Config {
@@ -9,8 +10,9 @@ export namespace QQGuildBot {
   }
 }
 
-export class QQGuildBot extends Bot {
+export class QQGuildBot extends BaseBot {
   parent: OneBotBot
+  hidden = true
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
@@ -19,6 +21,7 @@ export class QQGuildBot extends Bot {
     this.selfId = config.profile.tiny_id
     this.avatar = config.profile.avatar_url
     this.username = config.profile.nickname
+    this.parent.guildBot = this
   }
 
   get status() {
@@ -96,5 +99,3 @@ export class QQGuildBot extends Bot {
     return list
   }
 }
-
-QQGuildBot.prototype.platform = 'qqguild'

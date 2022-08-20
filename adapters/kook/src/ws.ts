@@ -4,7 +4,7 @@ import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
 import WebSocket from 'ws'
 
-const logger = new Logger('kaiheila')
+const logger = new Logger('kook')
 
 const heartbeatIntervals = [6, 2, 4]
 
@@ -25,7 +25,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
       return
     }
     let trials = 0
-    function send() {
+    const send = () => {
       if (!bot.socket) return
       if (trials >= 2) {
         return bot.socket.close(1013)

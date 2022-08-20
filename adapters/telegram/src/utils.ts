@@ -1,4 +1,4 @@
-import { GuildMember, defineProperty, Logger, User } from '@satorijs/satori'
+import { defineProperty, GuildMember, hyphenate, Logger, User } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -7,7 +7,7 @@ const logger = new Logger('telegram')
 export const adaptUser = (data: Telegram.User): User => ({
   userId: data.id.toString(),
   username: data.username,
-  nickname: data.first_name + (data.last_name || ''),
+  nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
   isBot: data.is_bot,
 })
 
@@ -43,6 +43,13 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
       } else if (update.my_chat_member.old_chat_member.status === 'left') {
         session.type = 'group-added'
       }
+    }
+  } else {
+    // Get update type from field name.
+    const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
+    if (subtype) {
+      session.type = 'telegram'
+      session.subtype = hyphenate(subtype)
     }
   }
 

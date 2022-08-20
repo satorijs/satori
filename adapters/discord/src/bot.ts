@@ -1,14 +1,14 @@
 import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
 import { Sender } from './sender'
-import { GatewayIntent, Internal } from './types'
+import { Internal } from './types'
 import { WsClient } from './ws'
 
-export class DiscordBot extends Bot<Context, DiscordBot.Config> {
+export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
-  constructor(ctx: Context, config: DiscordBot.Config) {
+  constructor(ctx: C, config: DiscordBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend({
       ...config,
@@ -19,21 +19,6 @@ export class DiscordBot extends Bot<Context, DiscordBot.Config> {
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
-  }
-
-  getIntents() {
-    let intents = 0
-      | GatewayIntent.GUILD_MESSAGES
-      | GatewayIntent.GUILD_MESSAGE_REACTIONS
-      | GatewayIntent.DIRECT_MESSAGES
-      | GatewayIntent.DIRECT_MESSAGE_REACTIONS
-    if (this.config.intents.members) {
-      intents |= GatewayIntent.GUILD_MEMBERS
-    }
-    if (this.config.intents.presence) {
-      intents |= GatewayIntent.GUILD_PRESENCES
-    }
-    return intents
   }
 
   async getSelf() {
@@ -56,7 +41,7 @@ export class DiscordBot extends Bot<Context, DiscordBot.Config> {
       subtype: guildId ? 'group' : 'private',
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const chain = segment.parse(session.content)
@@ -70,7 +55,7 @@ export class DiscordBot extends Bot<Context, DiscordBot.Config> {
 
     for (const id of results) {
       session.messageId = id
-      this.ctx.emit(session, 'send', session)
+      this.context.emit(session, 'send', session)
     }
 
     return results
@@ -175,12 +160,7 @@ export namespace DiscordBot {
     }),
     WsClient.Config,
     Sender.Config,
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://discord.com/api/v8'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig('https://discord.com/api/v8'),
   ])
 }
 

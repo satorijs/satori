@@ -1,5 +1,5 @@
 import { Context } from '@satorijs/core'
-import { Dict } from 'cosmokit'
+import { Dict, trimSlash } from 'cosmokit'
 import { Agent, ClientRequestArgs } from 'http'
 import WebSocket from 'ws'
 import ProxyAgent from 'proxy-agent'
@@ -39,6 +39,8 @@ export class Quester {
 }
 
 export namespace Quester {
+  export const isAxiosError = axios.isAxiosError
+
   export interface Config {
     headers?: Dict
     endpoint?: string
@@ -47,8 +49,15 @@ export namespace Quester {
   }
 
   export const Config: Schema<Config> = Schema.object({
-    endpoint: Schema.string().role('url').description('API 请求的终结点。'),
-    proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
+    proxyAgent: Schema.string().description('使用的代理服务器地址。'),
+    timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+  }).description('请求设置')
+
+  export const createConfig = (endpoint: string | boolean): Schema<Config> => Schema.object({
+    endpoint: Schema.string().role('link').description('要连接的服务器地址。')
+      .default(typeof endpoint === 'string' ? endpoint : null)
+      .required(typeof endpoint === 'boolean' ? endpoint : false),
+    proxyAgent: Schema.string().description('使用的代理服务器地址。'),
     headers: Schema.dict(String).description('要附加的额外请求头。'),
     timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
   }).description('请求设置')
@@ -60,7 +69,7 @@ export namespace Quester {
   }
 
   export function create(config: Quester.Config = {}) {
-    const { endpoint = '' } = config
+    const endpoint = config.endpoint = trimSlash(config.endpoint || '')
 
     const options: AxiosRequestConfig = {
       timeout: config.timeout,
@@ -89,7 +98,14 @@ export namespace Quester {
 
     http.config = config
     http.axios = request as any
-    http.extend = (newConfig) => create({ ...config, ...newConfig })
+    http.extend = (newConfig) => create({
+      ...config,
+      ...newConfig,
+      headers: {
+        ...config.headers,
+        ...newConfig.headers,
+      },
+    })
 
     http.get = (url, config) => http('GET', url, config)
     http.delete = (url, config) => http('DELETE', url, config)

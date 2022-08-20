@@ -7,7 +7,7 @@ import * as Telegram from './types'
 const logger = new Logger('telegram')
 
 export class HttpServer extends Adapter.Server<TelegramBot> {
-  fork(ctx: Context, bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
+  fork(ctx: Context, bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpServer.Config>) {
     super.fork(ctx, bot)
     const config = bot.config
     config.path = sanitize(config.path || '/telegram')
@@ -18,7 +18,7 @@ export class HttpServer extends Adapter.Server<TelegramBot> {
     }
   }
 
-  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
+  async start(bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpServer.Config>) {
     const { path } = bot.config
     bot.ctx.router.post(path, async (ctx) => {
       const payload: Telegram.Update = ctx.request.body
@@ -56,6 +56,6 @@ export namespace HttpServer {
   export const Config: Schema<Config> = Schema.object({
     protocol: Schema.const('server' as const).required(),
     path: Schema.string().description('服务器监听的路径。').default('/telegram'),
-    selfUrl: Schema.string().role('url').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+    selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
   })
 }

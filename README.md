@@ -22,7 +22,7 @@
 
 ## Examples
 
-### Basic Usage
+### Basic usage
 
 ```ts
 import { Context } from '@satorijs/satori'
@@ -45,7 +45,7 @@ ctx.on('message', (session) => {
 await ctx.start()
 ```
 
-### Event Filters
+### Event filters
 
 ```ts
 // only listen to messages from discord user 123456789
@@ -58,7 +58,7 @@ ctx.exclude(ctx.platform('telegram').private()).on('message', callback)
 ctx1.union(ctx2).intersect(ctx3).on('message', callback)
 ```
 
-### Specifying Protocol
+### Specifying protocol
 
 ```ts
 // your application will be listening http://localhost:8080
@@ -69,14 +69,14 @@ const ctx = new Context({
 })
 
 ctx.plugin(telegram, {
-  // telegram support two ways of connection: server and polling
+  // telegram supports two ways of connection: server and polling
   protocol: 'server',
   path: '/telegram',
   token: 'xxxxxx',
 })
 ```
 
-### Multiple Accounts
+### Multiple accounts
 
 ```ts
 // specify multiple accounts with different platforms and protocols
@@ -95,7 +95,7 @@ ctx.plugin(telegram, {
 })
 ```
 
-### Removing Accounts
+### Removing an account
 
 Based on [cordis](https://github.com/shigma/cordis).
 

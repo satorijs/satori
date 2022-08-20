@@ -8,8 +8,8 @@ const logger = new Logger('onebot')
 export class HttpServer extends Adapter.Server<OneBotBot> {
   public bots: OneBotBot[]
 
-  async fork(ctx: Context, bot: OneBotBot) {
-    const config = bot.config as OneBotBot.Config & HttpServer.Config
+  async fork(ctx: Context, bot: OneBotBot<Context, OneBotBot.Config & HttpServer.Config>) {
+    const config = bot.config
     const { endpoint, token } = config
     if (!endpoint) return
 
@@ -27,8 +27,8 @@ export class HttpServer extends Adapter.Server<OneBotBot> {
     return bot.initialize()
   }
 
-  async start(bot: OneBotBot) {
-    const { secret, path = '/onebot' } = bot.config as HttpServer.Config
+  async start(bot: OneBotBot<Context, OneBotBot.Config & HttpServer.Config>) {
+    const { secret, path = '/onebot' } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       if (secret) {
         // no signature
@@ -67,11 +67,6 @@ export namespace HttpServer {
       path: Schema.string().description('服务器监听的路径。').default('/onebot'),
       secret: Schema.string().description('接收事件推送时用于验证的字段，应该与 OneBot 的 secret 配置保持一致。').role('secret'),
     }).description('连接设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig(true),
   ])
 }

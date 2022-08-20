@@ -10,6 +10,7 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
   static reusable = true
 
   public isBot = true
+  public hidden = false
   public platform: string
   public selfId: string
   public internal?: any

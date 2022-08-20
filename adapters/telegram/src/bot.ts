@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time } from '@satorijs/satori'
+import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
@@ -26,12 +26,12 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<Context, T> {
+export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
   http: Quester & { file?: Quester }
   internal?: Telegram.Internal
   local?: boolean
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
@@ -63,7 +63,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async adaptMessage(message: Telegram.Message, session: Session) {
-    function parseText(text: string, entities: Telegram.MessageEntity[]): segment[] {
+    const parseText = (text: string, entities: Telegram.MessageEntity[]): segment[] => {
       let curr = 0
       const segs: segment[] = []
       for (const e of entities) {
@@ -173,7 +173,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       author: this,
     })
 
-    if (await this.ctx.serial(session, 'before-send', session)) return
+    if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
     const send = Sender.from(this, chatId)
@@ -185,8 +185,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       defineProperty(session, 'telegram', Object.create(this.internal))
       Object.assign(session.telegram, message)
       await this.adaptMessage(message, session)
-      this.ctx.emit(session, 'send', session)
-      this.ctx.emit(session, 'message', session)
+      this.context.emit(session, 'send', session)
+      this.context.emit(session, 'message', session)
     }
 
     return results.map(result => '' + result.message_id)
@@ -226,12 +226,16 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     user_id = +user_id
     if (Number.isNaN(user_id)) return null
     const data = await this.internal.getChatMember({ chat_id, user_id })
-    return adaptGuildMember(data)
+    const user = adaptGuildMember(data)
+    await this.setAvatarUrl(user)
+    return user
   }
 
   async getGuildMemberList(chat_id: string) {
     const data = await this.internal.getChatAdministrators({ chat_id })
-    return data.map(adaptGuildMember)
+    const users = data.map(adaptGuildMember)
+    await Promise.all(users.map(this.setAvatarUrl.bind(this)))
+    return users
   }
 
   async kickGuildMember(chat_id: string, user_id: string | number, permanent?: boolean) {
@@ -257,7 +261,9 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   async getLoginInfo() {
     const data = await this.internal.getMe()
-    return adaptUser(data)
+    const user = adaptUser(data)
+    await this.setAvatarUrl(user)
+    return user
   }
 
   async $getFileData(file_id: string) {
@@ -278,6 +284,15 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
     const base64 = `base64://` + res.toString('base64')
     return { url: base64 }
+  }
+
+  private async setAvatarUrl(user: User) {
+    const { endpoint } = this.http.file.config
+    const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
+    if (!avatar) return
+    const { file_id } = avatar[avatar.length - 1]
+    const file = await this.internal.getFile({ file_id })
+    user.avatar = `${endpoint}/${file.file_path}`
   }
 }
 
@@ -302,17 +317,13 @@ export namespace TelegramBot {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+      protocol: Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
       HttpServer.Config,
       HttpPolling.Config,
     ]).description('推送设置'),
-    Schema.object({
-      endpoint: Schema.string().role('url').description('要连接的服务器地址。').default('https://api.telegram.org'),
-      proxyAgent: Schema.string().role('url').description('使用的代理服务器地址。'),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-    }).description('请求设置'),
+    Quester.createConfig('https://api.telegram.org'),
     Schema.object({
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),
