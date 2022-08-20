@@ -32,7 +32,7 @@
     "@types/es-aggregate-error": "^1.0.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^1.0.10"
+    "@satorijs/satori": "^1.0.11"
   },
   "dependencies": {
     "es-aggregate-error": "^1.0.8",
