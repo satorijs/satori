@@ -142,7 +142,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
     const assetKey = type === 'image' ? 'image' : 'file'
     const [schema, file] = data.url.split('://')
-    const filename = schema === 'base64' ? 'unknown' : data.url.split('/').pop()
+    const filename = schema === 'base64' ? 'unknown' : new URL(data.url).pathname.split('/').pop()
     if (schema === 'file') {
       payload.append(assetKey, createReadStream(file))
     } else if (schema === 'base64') {
