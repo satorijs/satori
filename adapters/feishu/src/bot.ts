@@ -62,8 +62,8 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
   }
 
   async sendMessage(channelId: string, content: string, guildId?: string): Promise<string[]> {
-    const session = await this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
-    if (!session?.content) return []
+    const session = this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
+    if (!session.content) return []
 
     const openIdType = channelId.startsWith('ou') ? 'open_id' : channelId.startsWith('on') ? 'union_id' : channelId.startsWith('oc') ? 'chat_id' : 'user_id'
 
