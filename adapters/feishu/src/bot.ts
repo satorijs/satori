@@ -7,7 +7,7 @@ import { Logger, Quester, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { HttpServer } from './http'
-import { Internal, MessageContent } from './types'
+import { Internal, MessageContent, MessagePayload } from './types'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
 
@@ -69,17 +69,30 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
     const chain = segment.parse(content)
 
+    const parseQuote = (chain: segment.Chain): string | undefined => {
+      if (chain[0].type !== 'quote') return
+      return chain.shift().data.id
+    }
+
+    const quote = parseQuote(chain)
+    const send = async (payload: MessagePayload): Promise<string> => {
+      if (quote) {
+        delete payload.receive_id
+        return (await this.internal.replyMessage(quote, payload)).data.message_id
+      }
+      return (await this.internal.sendMessage(openIdType, payload)).data.message_id
+    }
+
     const messageIds: string[] = []
     let buffer: MessageContent.Text[] = []
     const sendBuffer = async () => {
       if (!buffer.length) return
       const data = await Promise.all(buffer.map(async (b) => {
-        const { data } = await this.internal.sendMessage(openIdType, {
+        return await send({
           msg_type: 'text',
           content: JSON.stringify(b),
           receive_id: channelId,
         })
-        return data.message_id
       }))
       buffer = []
       messageIds.push(...data)
@@ -113,14 +126,14 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
         case 'file': {
           await sendBuffer()
           const content = await this._prepareAssets(type, data)
-          const { data: resp } = await this.internal.sendMessage(openIdType, {
+          const id = await send({
             content: JSON.stringify(content),
             // video is marked as 'media' in feishu platform
             // see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json#54406d84
             msg_type: type === 'video' ? 'media' : type,
             receive_id: channelId,
           })
-          messageIds.push(resp.message_id)
+          messageIds.push(id)
           break
         }
 
