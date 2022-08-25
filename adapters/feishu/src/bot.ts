@@ -1,8 +1,10 @@
-import FormData from 'form-data'
+import { createReadStream } from 'fs'
+import internal from 'stream'
+
 import segment from '@satorijs/message'
 import { Bot, Context } from '@satorijs/core'
 import { Logger, Quester, Schema } from '@satorijs/satori'
-import { createReadStream } from 'fs'
+import FormData from 'form-data'
 
 import { HttpServer } from './http'
 import { Internal, MessageContent } from './types'
@@ -14,6 +16,7 @@ const logger = new Logger('feishu')
 export class FeishuBot extends Bot<Context, FeishuBot.Config> {
   _token?: string
   http: Quester
+  assetsQuester: Quester
   internal?: Internal
 
   constructor(ctx: Context, config: FeishuBot.Config) {
@@ -27,6 +30,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
         'Content-Type': 'application/json; charset=utf-8',
       },
     })
+    this.assetsQuester = Quester.create()
 
     this.internal = new Internal(this.http)
 
@@ -133,7 +137,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     return messageIds
   }
 
-  private async _prepareAssets(type: AssetType, data: any): Promise<MessageContent.Contents> {
+  private async _prepareAssets(type: AssetType, data: { url: string }): Promise<MessageContent.Contents> {
     const payload = new FormData()
 
     const assetKey = type === 'image' ? 'image' : 'file'
@@ -144,7 +148,8 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     } else if (schema === 'base64') {
       payload.append(assetKey, Buffer.from(file, 'base64'))
     } else {
-      payload.append(assetKey, await this.http.get(data.url, { responseType: 'stream' }))
+      const resp = await this.assetsQuester.get<internal.Readable>(data.url, { responseType: 'stream' })
+      payload.append(assetKey, resp)
     }
 
     if (type === 'image') {
