@@ -141,6 +141,10 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     return this.sendMessage(userId, content)
   }
 
+  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+    await this.internal.deleteMessage(messageId)
+  }
+
   private async _prepareAssets(type: AssetType, data: { url: string }): Promise<MessageContent.Contents> {
     const payload = new FormData()
 

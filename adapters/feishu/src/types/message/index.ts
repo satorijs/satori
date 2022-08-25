@@ -163,6 +163,8 @@ declare module '../internal' {
     sendMessage(receive_id_type: Feishu.ReceiveIdType, message: MessagePayload): Promise<BaseResponse & { data: Message }>
     /** @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/reply */
     replyMessage(message: MessagePayload): Promise<BaseResponse & { data: Message }>
+    /** @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/delete */
+    deleteMessage(message_id: string): Promise<BaseResponse>
   }
 }
 
@@ -173,4 +175,7 @@ Internal.define({
   '/im/v1/messages/{message_id}/reply': {
     POST: 'relayMessage',
   },
+  '/im/v1/messages/{message_id}': {
+    DELETE: 'deleteMessage',
+  }
 })
