@@ -31,6 +31,11 @@ export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'
       break
   }
   const result: Message = {
+    userId: data.sender.sender_id.open_id,
+    timestamp: Number(data.message.create_time),
+    author: {
+      userId: data.sender.sender_id.open_id,
+    },
     channelId: data.message.chat_id,
     content: content,
   }
