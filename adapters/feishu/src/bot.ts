@@ -75,6 +75,28 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     }
 
     const quote = parseQuote(chain)
+
+    const shouldRichText = ((chain: segment.Chain): boolean => {
+      const types = {
+        text: false,
+        image: false,
+        link: false,
+      }
+      for (const { type } of chain) {
+        if (['text', 'at'].includes(type)) {
+          types.text = true
+        } else if (type === 'image') {
+          types.image = true
+        } else if (type === 'link') {
+          types.link = true
+        } else {
+          return false
+        }
+      }
+      if (types.link) return true // as hyperlink can be only sent as rich text
+      return types.text && types.image
+    })(chain)
+
     const send = async (payload: MessagePayload): Promise<string> => {
       if (quote) {
         delete payload.receive_id
