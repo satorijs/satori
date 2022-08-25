@@ -137,6 +137,10 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     return messageIds
   }
 
+  async sendPrivateMessage(userId: string, content: string): Promise<string[]> {
+    return this.sendMessage(userId, content)
+  }
+
   private async _prepareAssets(type: AssetType, data: { url: string }): Promise<MessageContent.Contents> {
     const payload = new FormData()
 
