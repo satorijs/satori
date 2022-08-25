@@ -1,4 +1,4 @@
-import { Adapter, Context, Session } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import { Schema } from '@satorijs/satori'
 import Logger from 'reggol'
 
