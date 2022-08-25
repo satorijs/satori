@@ -41,10 +41,10 @@ declare module '../internal' {
 }
 
 Internal.define({
-  'im/v1/images': {
+  '/im/v1/images': {
     POST: 'uploadImage',
   },
-  'im/v1/files': {
+  '/im/v1/files': {
     POST: 'uploadFile',
   },
 })

@@ -22,7 +22,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     this.selfId = config.appId
 
     this.http = ctx.http.extend({
-      endpoint: config.endpoint,
+      endpoint: config.endpoint ?? 'https://open.feishu.cn/open-apis/',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },

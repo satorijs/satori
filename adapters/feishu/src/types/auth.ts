@@ -45,10 +45,10 @@ declare module './internal' {
 }
 
 Internal.define({
-  'auth/v3/app_access_token/internal': {
+  '/auth/v3/app_access_token/internal': {
     POST: 'getAppAccessToken',
   },
-  'auth/v3/tenant_access_token/internal': {
+  '/auth/v3/tenant_access_token/internal': {
     POST: 'getTenantAccessToken',
   },
 })

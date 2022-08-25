@@ -153,10 +153,10 @@ declare module '../internal' {
 }
 
 Internal.define({
-  'im/v1/messages?receive_id_type={receive_id_type}': {
+  '/im/v1/messages?receive_id_type={receive_id_type}': {
     POST: 'sendMessage',
   },
-  'im/v1/messages/{message_id}/reply': {
+  '/im/v1/messages/{message_id}/reply': {
     POST: 'relayMessage',
   },
 })
