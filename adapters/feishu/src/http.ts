@@ -1,10 +1,10 @@
-import Logger from 'reggol'
 import { Adapter, Context, Session } from '@satorijs/core'
-
-import { Cipher } from './utils'
-import { Event } from './types'
-import { FeishuBot } from './bot'
 import { Schema } from '@satorijs/satori'
+import Logger from 'reggol'
+
+import { FeishuBot } from './bot'
+import { Event } from './types'
+import { adaptSession, Cipher } from './utils'
 
 const logger = new Logger('feishu')
 
@@ -21,8 +21,6 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   async start(bot: FeishuBot) {
     const { path = '/feishu' } = bot.config
     bot.ctx.router.post(path, (ctx) => {
-      logger.debug('receive %o', ctx.request.body)
-
       this._refreshCipher()
 
       // // compare signature if encryptKey is set
@@ -51,7 +49,9 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       ctx.status = 200
 
       // dispatch message
-      this.dispatchSession(this._tryDecryptBody(ctx.request.body))
+      const decryped = this._tryDecryptBody(ctx.request.body)
+      logger.debug('received decryped event: %o', decryped)
+      this.dispatchSession(decryped)
     })
   }
 
@@ -63,7 +63,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     const { header } = body
     const { app_id } = header
     const bot = this.bots.find((bot) => bot.selfId === app_id)
-    const session = await this._adaptSession(bot, body)
+    const session = await adaptSession(bot, body)
     bot.dispatch(session)
   }
 
@@ -86,14 +86,6 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     }
 
     return body
-  }
-
-  private async _adaptSession(bot: FeishuBot, body: Event): Promise<Session<Context>> {
-    const payload: Partial<Session> = {
-      selfId: bot.selfId,
-    }
-    const session = new Session(bot, payload)
-    return session
   }
 
   private _refreshCipher(): void {
