@@ -143,6 +143,8 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
       payload.append(assetKey, createReadStream(file))
     } else if (schema === 'base64') {
       payload.append(assetKey, Buffer.from(file, 'base64'))
+    } else {
+      payload.append(assetKey, await this.http.get(data.url, { responseType: 'stream' }))
     }
 
     if (type === 'image') {
