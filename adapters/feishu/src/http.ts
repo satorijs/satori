@@ -1,6 +1,5 @@
 import { Adapter, Context } from '@satorijs/core'
-import { Schema } from '@satorijs/satori'
-import Logger from 'reggol'
+import { Schema, Logger } from '@satorijs/satori'
 import internal from 'stream'
 
 import { FeishuBot } from './bot'
