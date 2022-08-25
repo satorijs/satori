@@ -61,19 +61,24 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     const session = await this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
     if (!session?.content) return []
 
+    const openIdType = channelId.startsWith('ou') ? 'open_id' : channelId.startsWith('on') ? 'union_id' : channelId.startsWith('oc') ? 'chat_id' : 'user_id'
+
     const chain = segment.parse(content)
 
     const messageIds: string[] = []
     let buffer: MessageContent.Text[] = []
     const sendBuffer = async () => {
       if (!buffer.length) return
-      const { data } = await this.internal.sendMessage('open_id', {
-        msg_type: 'text',
-        content: JSON.stringify(buffer),
-        receive_id: channelId,
-      })
+      const data = await Promise.all(buffer.map(async (b) => {
+        const { data } = await this.internal.sendMessage(openIdType, {
+          msg_type: 'text',
+          content: JSON.stringify(b),
+          receive_id: channelId,
+        })
+        return data.message_id
+      }))
       buffer = []
-      messageIds.push(data.message_id)
+      messageIds.push(...data)
     }
 
     for (const message of chain) {
@@ -104,7 +109,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
         case 'file': {
           await sendBuffer()
           const content = await this._prepareAssets(type, data)
-          const { data: resp } = await this.internal.sendMessage('open_id', {
+          const { data: resp } = await this.internal.sendMessage(openIdType, {
             content: JSON.stringify(content),
             // video is marked as 'media' in feishu platform
             // see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json#54406d84
