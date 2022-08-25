@@ -7,25 +7,26 @@ import { Event, MessageContentType } from './types'
 
 export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'>['event']): Message {
   const json = JSON.parse(data.message.content) as MessageContentType<typeof data.message.message_type>
+  const assetEndpoint = bot.config.selfUrl + bot.config.path + '/assets'
   let content = ''
   switch (data.message.message_type) {
     case 'text':
       content = json.text
       break
     case 'image':
-      const imageUrl = bot.config.endpoint + '/im/v1/images/' + json.image_key
+      const imageUrl = `${assetEndpoint}/image/${data.message.message_id}/${json.image_key}?self_id=${bot.selfId}`
       content = segment.image(imageUrl)
       break
     case 'audio':
-      const audioUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      const audioUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
       content = segment.audio(audioUrl)
       break
     case 'media':
-      const mediaUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      const mediaUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
       content = segment.video(mediaUrl, json.image_key)
       break
     case 'file':
-      const fileUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      const fileUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
       content = segment.file(fileUrl)
       break
   }

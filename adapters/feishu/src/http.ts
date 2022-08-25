@@ -1,6 +1,7 @@
 import { Adapter, Context } from '@satorijs/core'
 import { Schema } from '@satorijs/satori'
 import Logger from 'reggol'
+import internal from 'stream'
 
 import { FeishuBot } from './bot'
 import { Event } from './types'
@@ -53,6 +54,25 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       logger.debug('received decryped event: %o', decryped)
       this.dispatchSession(decryped)
     })
+
+    bot.ctx.router.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
+      const type = ctx.params.type === 'image' ? 'image' : 'file'
+      const key = ctx.params.key
+      const messageId = ctx.params.message_id
+      const selfId = ctx.request.query.self_id
+      const bot = this.bots.find((bot) => bot.selfId === selfId)
+      if (!bot) return ctx.status = 404
+
+      const resp = await bot.http.axios<internal.Readable>(`/im/v1/messages/${messageId}/resources/${key}`, {
+        method: 'GET',
+        params: { type },
+        responseType: 'stream',
+      })
+
+      ctx.status = 200
+      ctx.response.headers['Content-Type'] = resp.headers['content-type']
+      ctx.response.body = resp.data
+    })
   }
 
   async stop() {
@@ -102,11 +122,13 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 
 export namespace HttpServer {
   export interface Config {
+    selfUrl?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
 
   export const Config = Schema.object({
+    selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     verifyToken: Schema.boolean().description('是否验证 Varification Token'),
     verifySignature: Schema.boolean().description('是否验证 Signature'),
   })
