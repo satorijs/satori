@@ -36,6 +36,7 @@ export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'
     author: {
       userId: data.sender.sender_id.open_id,
     },
+    messageId: data.message.message_id,
     channelId: data.message.chat_id,
     content: content,
   }
