@@ -1,14 +1,37 @@
 import crypto from 'crypto'
 
-import { Context, Message, Session } from '@satorijs/satori'
+import { Context, Message, segment, Session } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
-import { Event } from './types'
+import { Event, MessageContentType } from './types'
 
-export function adaptMessage(data: Event<'im.message.receive_v1'>['event']): Message {
+export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'>['event']): Message {
+  const json = JSON.parse(data.message.content) as MessageContentType<typeof data.message.message_type>
+  let content = ''
+  switch (data.message.message_type) {
+    case 'text':
+      content = json.text
+      break
+    case 'image':
+      const imageUrl = bot.config.endpoint + '/im/v1/images/' + json.image_key
+      content = segment.image(imageUrl)
+      break
+    case 'audio':
+      const audioUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      content = segment.audio(audioUrl)
+      break
+    case 'media':
+      const mediaUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      content = segment.video(mediaUrl, json.image_key)
+      break
+    case 'file':
+      const fileUrl = bot.config.endpoint + '/im/v1/files/' + json.file_key
+      content = segment.file(fileUrl)
+      break
+  }
   const result: Message = {
     channelId: data.message.chat_id,
-    content: data.message.content,
+    content: content,
   }
 
   return result
@@ -20,8 +43,8 @@ export async function adaptSession(bot: FeishuBot, body: Event): Promise<Session
 
   if (body.header.event_type === 'im.message.receive_v1') {
     session.type = 'message'
-    subtype: body.event.message.chat_type,
-    Object.assign(session, adaptMessage(body.event))
+    session.subtype = body.event.message.chat_type,
+    Object.assign(session, adaptMessage(bot, body.event))
   }
   return session
 }

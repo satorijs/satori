@@ -1,9 +1,23 @@
 import { Feishu, Internal } from '..'
+import { MessageContent } from './content'
 
 export * from './content'
 export * from './asset'
 
 export type MessageType = 'text' | 'post' | 'image' | 'file' | 'audio' | 'media' | 'sticker' | 'interactive' | 'share_chat' | 'share_user'
+
+export interface MessageContentMap {
+  'text': MessageContent.Text
+  'post': MessageContent.RichText
+  'image': MessageContent.Image
+  'file': MessageContent.File
+  'audio': MessageContent.Audio
+  'media': MessageContent.Media
+  'sticker': MessageContent.Sticker
+  'share_chat': MessageContent.ShareChat
+  'share_user': MessageContent.ShareUser
+}
+export type MessageContentType<T extends MessageType> = T extends keyof MessageContentMap ? MessageContentMap[T] : any
 
 export interface Sender extends Feishu.UserIdentifiers {
   sender_type: string
@@ -34,7 +48,7 @@ declare module '../event' {
         create_time: string
         chat_id: string
         chat_type: string
-        message_type: string
+        message_type: MessageType
         content: string
         mentions: {
           key: string
