@@ -3,9 +3,9 @@ import crypto from 'crypto'
 import { Context, Message, segment, Session } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
-import { Event, MessageContentType } from './types'
+import { AllEvents, Events, MessageContentType } from './types'
 
-export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'>['event']): Message {
+export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Message {
   const json = JSON.parse(data.message.content) as MessageContentType<typeof data.message.message_type>
   const assetEndpoint = (bot.config.selfUrl ?? bot.ctx.options.selfUrl) + bot.config.path + '/assets'
   let content = ''
@@ -44,14 +44,16 @@ export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'
   return result
 }
 
-export function adaptSession(bot: FeishuBot, body: Event): Session<Context> {
+export function adaptSession(bot: FeishuBot, body: AllEvents): Session<Context> {
   const session = bot.session()
   session.selfId = bot.selfId
 
-  if (body.header.event_type === 'im.message.receive_v1') {
-    session.type = 'message'
-    session.subtype = body.event.message.chat_type,
-    Object.assign(session, adaptMessage(bot, body.event))
+  switch (body.type) {
+    case 'im.message.receive_v1':
+      session.type = 'message'
+      session.subtype = body.event.message.chat_type,
+      Object.assign(session, adaptMessage(bot, body.event))
+      break
   }
   return session
 }

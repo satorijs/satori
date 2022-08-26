@@ -3,7 +3,7 @@ import { Schema, Logger } from '@satorijs/satori'
 import internal from 'stream'
 
 import { FeishuBot } from './bot'
-import { Event } from './types'
+import { AllEvents, Events } from './types'
 import { adaptSession, Cipher } from './utils'
 
 const logger = new Logger('feishu')
@@ -78,9 +78,10 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     logger.debug('http server stopped')
   }
 
-  dispatchSession(body: Event): void {
+  dispatchSession(body: AllEvents): void {
     const { header } = body
-    const { app_id } = header
+    const { app_id, event_type } = header
+    body.type = event_type
     const bot = this.bots.find((bot) => bot.selfId === app_id)
     const session = adaptSession(bot, body)
     bot.dispatch(session)
