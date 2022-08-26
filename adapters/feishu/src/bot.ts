@@ -147,7 +147,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
         case 'video':
         case 'file': {
           await sendBuffer()
-          const content = await this._prepareAssets(type, data)
+          const content = await this._prepareAssets(type, { url: data.url })
           const id = await send({
             content: JSON.stringify(content),
             // video is marked as 'media' in feishu platform
