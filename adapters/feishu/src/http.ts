@@ -78,7 +78,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     logger.debug('http server stopped')
   }
 
-  dispatchSession(body: Event): Promise<void> {
+  dispatchSession(body: Event): void {
     const { header } = body
     const { app_id } = header
     const bot = this.bots.find((bot) => bot.selfId === app_id)

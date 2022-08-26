@@ -44,7 +44,7 @@ export function adaptMessage(bot: FeishuBot, data: Event<'im.message.receive_v1'
   return result
 }
 
-export async function adaptSession(bot: FeishuBot, body: Event): Promise<Session<Context>> {
+export function adaptSession(bot: FeishuBot, body: Event): Session<Context> {
   const session = bot.session()
   session.selfId = bot.selfId
 
