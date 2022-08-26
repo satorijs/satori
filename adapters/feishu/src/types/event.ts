@@ -15,7 +15,7 @@ export type EventName = keyof Events
 export type EventSkeleton<T extends EventName, Event, Header = EventHeader<T>> = {
   schema: '2.0'
   type: T
-  header: EventHeader<T>
+  header: Header
   event: Event
 }
 

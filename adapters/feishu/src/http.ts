@@ -81,7 +81,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   dispatchSession(body: AllEvents): void {
     const { header } = body
     const { app_id, event_type } = header
-    body.type = event_type
+    body.type = event_type // add type to body to ease typescript type narrowing
     const bot = this.bots.find((bot) => bot.selfId === app_id)
     const session = adaptSession(bot, body)
     bot.dispatch(session)
