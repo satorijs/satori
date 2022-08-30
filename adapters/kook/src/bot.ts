@@ -65,9 +65,15 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   private async _transformUrl({ type, data }: segment.Parsed) {
     if (data.url.startsWith('file://') || data.url.startsWith('base64://')) {
       const payload = new FormData()
-      payload.append('file', data.url.startsWith('file://')
-        ? createReadStream(data.url.slice(8))
-        : Buffer.from(data.url.slice(9), 'base64'))
+      payload.append(
+        'file',
+        data.url.startsWith('file://')
+          ? createReadStream(data.url.slice(8))
+          : Buffer.from(data.url.slice(9), 'base64'),
+        {
+          filename: 'file',
+        },
+      )
       const { url } = await this.request('POST', '/asset/create', payload, payload.getHeaders())
       data.url = url
     } else if (!data.url.includes('kaiheila')) {
@@ -76,7 +82,9 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
         responseType: 'stream',
       })
       const payload = new FormData()
-      payload.append('file', res)
+      payload.append('file', res, {
+        filename: 'file',
+      })
       const { url } = await this.request('POST', '/asset/create', payload, payload.getHeaders())
       data.url = url
       console.log(url)
