@@ -2,6 +2,7 @@ import { defineProperty } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
 import { Author, Message } from './protocol'
+import segment from '@satorijs/element'
 
 export interface Session extends Session.Payload {}
 
@@ -17,6 +18,7 @@ export namespace Session {
     guildId?: string
     userId?: string
     content?: string
+    elements?: segment[]
     timestamp?: number
     author?: Author
     quote?: Message

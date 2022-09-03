@@ -3,7 +3,7 @@ import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Selector } from './selector'
 import { Session } from './session'
-import segment from '@satorijs/message'
+import segment from '@satorijs/element'
 
 export { segment, segment as h }
 

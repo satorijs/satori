@@ -1,8 +1,7 @@
 import { Awaitable, camelize, capitalize, Dict, hyphenate, isNullable } from 'cosmokit'
+import { isType } from './utils'
 
-export const kElement = Symbol('element')
-
-type Fragment = string | Element | (string | Element)[]
+const kElement = Symbol('element')
 
 function isElement(source: any): source is Element {
   return source && typeof source === 'object' && source[kElement]
@@ -10,10 +9,10 @@ function isElement(source: any): source is Element {
 
 function toElement(content: string | Element) {
   if (typeof content !== 'string') return content
-  return h('text', { content })
+  return Element('text', { content })
 }
 
-function toElementArray(input: Fragment) {
+function toElementArray(input: Element.Content) {
   if (typeof input === 'string' || isElement(input)) {
     return [toElement(input)]
   } else if (Array.isArray(input)) {
@@ -21,10 +20,12 @@ function toElementArray(input: Fragment) {
   }
 }
 
-export interface Element {
+interface Element {
   [kElement]: true
   type: string
   attrs: Dict<string>
+  /** @deprecated use `attrs` instead */
+  data: Dict<string>
   children: Element[]
   toString(): string
 }
@@ -32,6 +33,10 @@ export interface Element {
 interface ElementConstructor extends Element {}
 
 class ElementConstructor {
+  get data() {
+    return this.attrs
+  }
+
   toString() {
     if (!this.type) return this.children.join('')
     if (this.type === 'text') return Element.escape(this.attrs.content)
@@ -46,9 +51,9 @@ class ElementConstructor {
   }
 }
 
-export function Element(type: string, children?: Fragment): Element
-export function Element(type: string, attrs: Dict<any>, children?: Fragment): Element
-export function Element(type: string, ...args: any[]) {
+function Element(type: string, children?: Element.Content): Element
+function Element(type: string, attrs: Dict<any>, children?: Element.Content): Element
+function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict<string> = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
@@ -67,9 +72,10 @@ export function Element(type: string, ...args: any[]) {
   return Object.assign(el, { type, attrs, children })
 }
 
-export namespace Element {
-  export type Transformer = boolean | Fragment | ((element: Element, index: number, array: Element[]) => boolean | Fragment)
-  export type AsyncTransformer = boolean | Fragment | ((element: Element, index: number, array: Element[]) => Awaitable<boolean | Fragment>)
+namespace Element {
+  export type Content = string | Element | (string | Element)[]
+  export type Transformer = boolean | Content | ((element: Element, index: number, array: Element[]) => boolean | Content)
+  export type AsyncTransformer = boolean | Content | ((element: Element, index: number, array: Element[]) => Awaitable<boolean | Content>)
 
   export function escape(source: string, inline = false) {
     const result = source
@@ -117,14 +123,14 @@ export namespace Element {
       source = source.slice(tagCap.index + tagCap[0].length)
     }
     if (source) tokens.push(source)
-    const stack = [h(null)]
+    const stack = [Element(null)]
     for (const token of tokens) {
       if (typeof token === 'string') {
         stack[0].children.push(toElement(token))
       } else if (token.close) {
         stack.shift()
       } else {
-        const element = h(token.tag, token.attrs)
+        const element = Element(token.tag, token.attrs)
         stack[0].children.push(element)
         if (!token.empty) stack.unshift(element)
       }
@@ -142,7 +148,7 @@ export namespace Element {
       }
       if (result === true) {
         const { type, attrs, children } = element
-        children.push(h(type, attrs, transform(children, rules)))
+        children.push(Element(type, attrs, transform(children, rules)))
       } else if (result !== false) {
         children.push(...toElementArray(result))
       }
@@ -159,7 +165,7 @@ export namespace Element {
       }
       if (result === true) {
         const { type, attrs, children } = element
-        return [h(type, attrs, await transformAsync(children, rules))]
+        return [Element(type, attrs, await transformAsync(children, rules))]
       } else if (result !== false) {
         return toElementArray(result)
       } else {
@@ -167,8 +173,42 @@ export namespace Element {
       }
     }))).flat(1)
   }
+
+  export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element
+
+  function createFactory<R extends any[] = any[]>(type: string, ...keys: string[]): Factory<R> {
+    return (...args: any[]) => {
+      const element = Element(type)
+      keys.forEach((key, index) => {
+        if (!isNullable(args[index])) {
+          element.attrs[key] = args[index]
+        }
+      })
+      if (args[keys.length]) {
+        Object.assign(element.attrs, args[keys.length])
+      }
+      return element
+    }
+  }
+
+  function createAssetFactory(type: string): Factory<[data: string | Buffer | ArrayBuffer]> {
+    return (value, attrs = {}) => {
+      if (isType('Buffer', value)) {
+        value = 'base64://' + value.toString('base64')
+      } else if (isType('ArrayBuffer', value)) {
+        value = 'base64://' + Buffer.from(value).toString('base64')
+      }
+      return Element(type, { ...attrs, url: value })
+    }
+  }
+
+  export const at = createFactory<[id: any]>('at', 'id')
+  export const sharp = createFactory<[id: any]>('sharp', 'id')
+  export const quote = createFactory<[id: any]>('quote', 'id')
+  export const image = createAssetFactory('image')
+  export const video = createAssetFactory('video')
+  export const audio = createAssetFactory('audio')
+  export const file = createAssetFactory('file')
 }
 
-import h = Element
-
-export { h }
+export = Element
