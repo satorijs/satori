@@ -1,4 +1,4 @@
-import { Dict, Awaitable, valueMap, isNullable } from 'cosmokit'
+import { Awaitable, camelize, capitalize, Dict, hyphenate, isNullable } from 'cosmokit'
 
 export const kElement = Symbol('element')
 
@@ -37,9 +37,11 @@ class ElementConstructor {
     if (this.type === 'text') return Element.escape(this.attrs.content)
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
+      key = hyphenate(key)
       if (value === '') return ` ${key}`
       return ` ${key}="${Element.escape(value, true)}"`
     }).join('')
+    if (!this.children.length) return `<${this.type}${attrs}/>`
     return `<${this.type}${attrs}>${this.children.join('')}</${this.type}>`
   }
 }
@@ -55,7 +57,7 @@ export function Element(type: string, ...args: any[]) {
       if (value === true) {
         attrs[key] = ''
       } else if (value === false) {
-        attrs['no-' + key] = ''
+        attrs['no' + capitalize(key)] = ''
       } else {
         attrs[key] = '' + value
       }
@@ -109,7 +111,7 @@ export namespace Element {
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
         const [_, key, value = ''] = attrCap
-        token.attrs[key] = unescape(value)
+        token.attrs[camelize(key)] = unescape(value)
       }
       tokens.push(token)
       source = source.slice(tagCap.index + tagCap[0].length)
