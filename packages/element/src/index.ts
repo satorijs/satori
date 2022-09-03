@@ -8,14 +8,6 @@ function isElement(source: any): source is Element {
   return source && typeof source === 'object' && source[kElement]
 }
 
-function isFragment(value: any): value is Fragment {
-  return value && typeof value === 'object' && !Array.isArray(value) && !isElement(value)
-}
-
-function toString(value: any) {
-  return isNullable(value) ? '' : '' + value
-}
-
 function toElement(content: string | Element) {
   if (typeof content !== 'string') return content
   return h('text', { content })
@@ -34,6 +26,7 @@ export interface Element {
   type: string
   attrs: Dict<string>
   children: Element[]
+  toString(): string
 }
 
 interface ElementConstructor extends Element {}
@@ -42,7 +35,11 @@ class ElementConstructor {
   toString() {
     if (!this.type) return this.children.join('')
     if (this.type === 'text') return Element.escape(this.attrs.content)
-    const attrs = Object.entries(this.attrs).map(([key, value]) => ` ${key}="${Element.escape(value, true)}"`).join('')
+    const attrs = Object.entries(this.attrs).map(([key, value]) => {
+      if (isNullable(value)) return ''
+      if (value === '') return ` ${key}`
+      return ` ${key}="${Element.escape(value, true)}"`
+    }).join('')
     return `<${this.type}${attrs}>${this.children.join('')}</${this.type}>`
   }
 }
@@ -52,8 +49,17 @@ export function Element(type: string, attrs: Dict<any>, children?: Fragment): El
 export function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict<string> = {}, children: Element[] = []
-  if (args[0] && !isFragment(args[0])) {
-    attrs = valueMap(args.shift(), toString)
+  if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
+    for (const [key, value] of Object.entries(args.shift())) {
+      if (isNullable(value)) continue
+      if (value === true) {
+        attrs[key] = ''
+      } else if (value === false) {
+        attrs['no-' + key] = ''
+      } else {
+        attrs[key] = '' + value
+      }
+    }
   }
   if (args[0]) children = toElementArray(args[0])
   return Object.assign(el, { type, attrs, children })
@@ -63,8 +69,8 @@ export namespace Element {
   export type Transformer = boolean | Fragment | ((element: Element, index: number, array: Element[]) => boolean | Fragment)
   export type AsyncTransformer = boolean | Fragment | ((element: Element, index: number, array: Element[]) => Awaitable<boolean | Fragment>)
 
-  export function escape(source: any, inline = false) {
-    const result = toString(source)
+  export function escape(source: string, inline = false) {
+    const result = source
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -74,7 +80,7 @@ export namespace Element {
   }
 
   export function unescape(source: string) {
-    return toString(source)
+    return source
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
