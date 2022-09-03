@@ -87,12 +87,13 @@ export namespace Element {
       .replace(/&amp;/g, '&')
   }
 
-  const tagRegExp = /<(\/?)\s*(\S+)([^>]*)>/
-  const attrRegExp = /([^\s=]+)="([^"]*)"/g
+  const tagRegExp = /<(\/?)\s*(\S+)([^>]*?)\s*(\/?)>/
+  const attrRegExp = /([^\s=]+)(?:="([^"]*)")?/g
 
   interface Token {
     tag: string
     close: string
+    empty: string
     attrs: Dict<string>
   }
 
@@ -103,11 +104,11 @@ export namespace Element {
       if (tagCap.index) {
         tokens.push(unescape(source.slice(0, tagCap.index)))
       }
-      const [_, tag, close, attrs] = tagCap
-      const token: Token = { tag, close, attrs: {} }
-      let cap: RegExpExecArray
-      while ((cap = attrRegExp.exec(attrs))) {
-        const [_, key, value] = cap
+      const [_, close, tag, attrs, empty] = tagCap
+      const token: Token = { tag, close, empty, attrs: {} }
+      let attrCap: RegExpExecArray
+      while ((attrCap = attrRegExp.exec(attrs))) {
+        const [_, key, value = ''] = attrCap
         token.attrs[key] = unescape(value)
       }
       tokens.push(token)
@@ -123,7 +124,7 @@ export namespace Element {
       } else {
         const element = h(token.tag, token.attrs)
         stack[0].children.push(element)
-        stack.unshift(element)
+        if (!token.empty) stack.unshift(element)
       }
     }
     return stack[stack.length - 1].children

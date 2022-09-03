@@ -15,8 +15,10 @@ describe('Element API', () => {
     expect(Element.unescape('&amp;quot;')).to.equal('&quot;')
   })
 
-  it('Element()', () => {
-    expect(Element('img', { src: 'https://test.com/?foo=1&bar=2' }).toString()).to.equal('<img src="https://test.com/?foo=1&amp;bar=2"></img>')
-    expect(Element('tag', { foo: '', bar: null, qux: false }).toString()).to.equal('<tag foo no-qux></tag>')
+  it('Element.parse()', () => {
+    expect(Element.parse('<img src="https://test.com/?foo=1&amp;bar=2" />'))
+      .to.deep.equal([Element('img', { src: 'https://test.com/?foo=1&bar=2' })])
+    expect(Element.parse('<tag foo no-qux>text</tag>'))
+      .to.deep.equal([Element('tag', { foo: '', bar: null, qux: false }, 'text')])
   })
 })
