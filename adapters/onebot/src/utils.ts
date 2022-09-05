@@ -1,8 +1,11 @@
-import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Message, segment, User } from '@satorijs/satori'
+import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Logger, Message, segment, User } from '@satorijs/satori'
 import * as qface from 'qface'
+import { CQCode } from './cqcode'
 import * as OneBot from './types'
 
 export * from './types'
+
+const logger = new Logger('onebot')
 
 export const adaptUser = (user: OneBot.AccountInfo): User => ({
   userId: user.tiny_id || user.user_id.toString(),
@@ -39,30 +42,37 @@ export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.Anonymou
   roles: [user.role],
 })
 
-export function adaptMessage(message: OneBot.Message): Message {
-  const author = adaptAuthor(message.sender, message.anonymous)
-  const result: Message = {
-    author,
-    userId: author.userId,
-    messageId: message.message_id.toString(),
-    timestamp: message.time * 1000,
-    content: segment.transform(message.message, {
-      at({ qq }) {
-        if (qq !== 'all') return segment.at(qq)
-        return segment('at', { type: 'all' })
-      },
-      face: ({ id }) => segment('face', { id, url: qface.getUrl(id) }),
-      reply: (data) => segment('quote', data),
-    }),
-  }
+export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Message = {}) {
+  // basic properties
+  result.author = adaptAuthor(message.sender, message.anonymous)
+  result.userId = result.author.userId
+  result.messageId = message.message_id.toString()
+  result.timestamp = message.time * 1000
   if (message.guild_id) {
     result.guildId = message.guild_id
     result.channelId = message.channel_id
   } else if (message.group_id) {
     result.guildId = result.channelId = message.group_id.toString()
   } else {
-    result.channelId = 'private:' + author.userId
+    result.channelId = 'private:' + result.author.userId
   }
+
+  // message content
+  result.elements = segment.transform(CQCode.parse(message.message), {
+    at({ attrs }) {
+      if (attrs.qq !== 'all') return segment.at(attrs.qq)
+      return segment('at', { type: 'all' })
+    },
+    face: ({ attrs }) => segment('face', { id: attrs.id, url: qface.getUrl(attrs.id) }),
+  })
+  if (result.elements[0]?.type === 'reply') {
+    const reply = result.elements.shift()
+    result.quote = await bot.getMessage(result.channelId, reply.attrs.id).catch((error) => {
+      logger.warn(error)
+      return undefined
+    })
+  }
+  result.content = result.elements.join('')
   return result
 }
 
@@ -98,27 +108,27 @@ export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Chann
   }
 }
 
-export function dispatchSession(bot: Bot, data: OneBot.Payload) {
+export async function dispatchSession(bot: Bot, data: OneBot.Payload) {
   if (data.self_tiny_id) {
     // don't dispatch any guild message without guild initialization
     bot = bot['guildBot']
     if (!bot) return
   }
 
-  const session = adaptSession(bot, data)
+  const session = await adaptSession(bot, data)
   if (!session) return
   defineProperty(session, 'onebot', Object.create(bot.internal))
   Object.assign(session.onebot, data)
   bot.dispatch(session)
 }
 
-export function adaptSession(bot: Bot, data: OneBot.Payload) {
+export async function adaptSession(bot: Bot, data: OneBot.Payload) {
   const session = bot.session()
   session.selfId = data.self_tiny_id ? data.self_tiny_id : '' + data.self_id
   session.type = data.post_type
 
   if (data.post_type === 'message' || data.post_type === 'message_sent') {
-    Object.assign(session, adaptMessage(data))
+    await adaptMessage(bot, data, session)
     if (data.post_type === 'message_sent' && !session.guildId) {
       session.channelId = 'private:' + data.target_id
     }

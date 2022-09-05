@@ -61,7 +61,7 @@ export interface Message extends MessageId {
   group_id?: number
   guild_id?: string
   channel_id?: string
-  message: string | any[]
+  message: string
   anonymous?: AnonymousInfo
 }
 

@@ -1,35 +1,20 @@
 import { Bot, Context, segment } from '@satorijs/satori'
 import * as OneBot from '../utils'
-
-export function renderText(source: string) {
-  return segment.parse(source).reduce((prev, { type, data }) => {
-    if (type === 'at') {
-      if (data.type === 'all') return prev + '[CQ:at,qq=all]'
-      return prev + `[CQ:at,qq=${data.id}]`
-    } else if (['video', 'audio', 'image'].includes(type)) {
-      if (type === 'audio') type = 'record'
-      data.file = data.url
-      delete data.url
-    } else if (type === 'quote') {
-      type = 'reply'
-    }
-    return prev + segment(type, data)
-  }, '')
-}
+import { CQCode } from '../cqcode'
 
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, content: string, guildId?: string) {
-    content = renderText(content)
+  sendMessage(channelId: string, fragment: segment.Content, guildId?: string) {
+    const [content, elements] = CQCode.render(fragment)
     return channelId.startsWith('private:')
-      ? this.sendPrivateMessage(channelId.slice(8), content)
-      : this.sendGuildMessage(guildId, channelId, content)
+      ? this.sendPrivateMessage(channelId.slice(8), content, elements)
+      : this.sendGuildMessage(guildId, channelId, content, elements)
   }
 
   async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getMsg(messageId)
-    return OneBot.adaptMessage(data)
+    return await OneBot.adaptMessage(this, data)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -51,9 +36,10 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     return data.map(OneBot.adaptUser)
   }
 
-  async sendGuildMessage(guildId: string, channelId: string, content: string) {
+  async sendGuildMessage(guildId: string, channelId: string, content: string, elements: segment[]) {
     const session = this.session({
       content,
+      elements,
       type: 'send',
       subtype: 'group',
       author: this,
@@ -68,9 +54,13 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     return [session.messageId]
   }
 
-  async sendPrivateMessage(userId: string, content: string) {
+  async sendPrivateMessage(userId: string, content: segment.Content, elements?: segment[]) {
+    if (!elements) {
+      [content, elements] = CQCode.render(content)
+    }
     const session = this.session({
-      content,
+      content: content as string,
+      elements,
       type: 'send',
       subtype: 'private',
       author: this,
@@ -114,6 +104,6 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     }
 
     // 从旧到新
-    return list.map(OneBot.adaptMessage)
+    return await Promise.all(list.map(item => OneBot.adaptMessage(this, item)))
   }
 }

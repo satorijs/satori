@@ -83,5 +83,5 @@ export interface MessageBase {
 }
 
 export interface Message extends MessageBase {
-  subtype?: 'private' | 'group'
+  subtype?: string
 }

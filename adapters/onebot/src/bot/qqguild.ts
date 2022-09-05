@@ -1,4 +1,4 @@
-import { Bot, Context, GuildMember } from '@satorijs/satori'
+import { Bot, Context, GuildMember, segment } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { OneBotBot } from '.'
 import * as OneBot from '../utils'
@@ -44,9 +44,10 @@ export class QQGuildBot extends BaseBot {
     await this.ctx.parallel('bot-disconnect', this)
   }
 
-  async sendGuildMessage(guildId: string, channelId: string, content: string) {
+  async sendGuildMessage(guildId: string, channelId: string, content: string, elements?: segment[]) {
     const session = this.session({
       content,
+      elements,
       type: 'send',
       subtype: 'group',
       author: this,
