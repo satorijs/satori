@@ -97,6 +97,63 @@ namespace Element {
       .replace(/&amp;/g, '&')
   }
 
+  type Combinator = ' ' | '>' | '+' | '~'
+
+  export interface Selector {
+    type: string
+    combinator: Combinator
+  }
+
+  const combRegExp = / *([ >+~]) */g
+
+  export function parseSelector(input: string): Selector[][] {
+    return input.split(',').map((query) => {
+      const selectors: Selector[] = []
+      query = query.trim()
+      let combCap: RegExpExecArray, combinator: Combinator = ' '
+      while ((combCap = combRegExp.exec(query))) {
+        selectors.push({ type: query.slice(0, combCap.index), combinator })
+        combinator = combCap[1] as Combinator
+        query = query.slice(combCap.index + combCap[0].length)
+      }
+      selectors.push({ type: query, combinator })
+      return selectors
+    })
+  }
+
+  export function select(source: string | Element[], query: string) {
+    if (typeof source === 'string') source = parse(source)
+    return [..._select(source, parseSelector(query))]
+  }
+
+  function *_select(elements: Element[], query: Selector[][]): Generator<Element, null> {
+    if (!query.length) return
+    let adjacent: Selector[][] = []
+    for (const [index, { type, children }] of elements.entries()) {
+      const inner: Selector[][] = []
+      const local = [...query, ...adjacent]
+      adjacent = []
+      for (const group of local) {
+        const selector = group[0]
+        if (type === selector.type) {
+          if (group.length === 1) {
+            yield elements[index]
+          } else if ([' ', '>'].includes(group[1].combinator)) {
+            inner.push(group.slice(1))
+          } else if (group[1].combinator === '+') {
+            adjacent.push(group.slice(1))
+          } else {
+            query.push(group.slice(1))
+          }
+        }
+        if (selector.combinator === ' ') {
+          inner.push(group)
+        }
+      }
+      yield *_select(children, inner)
+    }
+  }
+
   const tagRegExp = /<(\/?)\s*([^\s>]+)([^>]*?)\s*(\/?)>/
   const attrRegExp = /([^\s=]+)(?:="([^"]*)")?/g
 

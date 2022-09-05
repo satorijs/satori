@@ -1,4 +1,4 @@
-import { Element } from '../src'
+import Element from '../src'
 import { expect, use } from 'chai'
 import shape from 'chai-shape'
 
@@ -27,5 +27,28 @@ describe('Element API', () => {
       .to.equal('<img src="https://test.com/?foo=1&amp;bar=2"/>')
     expect(Element('tag', { foo: '', bar: null, qux: false }, 'text').toString())
       .to.equal('<tag foo no-qux>text</tag>')
+  })
+
+  describe('Selectors', () => {
+    const selectIds = (source: string, query: string) => Element.select(source, query).map(el => el.attrs.id)
+
+    it('type selector', () => {
+      expect(selectIds('<a id="1"><a id="2"></a></a>', 'a')).to.deep.equal(['1', '2'])
+      expect(selectIds('<a id="1"><b id="2"></b></a>', 'b')).to.deep.equal(['2'])
+      expect(selectIds('<a id="1"><b id="2"></b></a>', 'c')).to.deep.equal([])
+    })
+
+    it('descendant', () => {
+      expect(selectIds('<a id="1"><b id="2"><c id="3"></c></b></a>', 'b>c')).to.deep.equal(['3'])
+      expect(selectIds('<a id="1"><b id="2"><c id="3"></c></b></a>', 'a c')).to.deep.equal(['3'])
+      expect(selectIds('<a id="1"><b id="2"><c id="3"></c></b></a>', 'a>c')).to.deep.equal([])
+      expect(selectIds('<a id="1"><b id="2"></b><c id="3"></c></a>', 'b c')).to.deep.equal([])
+      expect(selectIds('<a id="1"><b id="2"></b><c id="3"></c></a>', 'a>c')).to.deep.equal(['3'])
+    })
+
+    it('sibling', () => {
+      expect(selectIds('<a id="2"></a><b id="3"></b><b id="4"></b>', 'a+b')).to.deep.equal(['3'])
+      expect(selectIds('<a id="2"></a><b id="3"></b><b id="4"></b>', 'a~b')).to.deep.equal(['3', '4'])
+    })
   })
 })
