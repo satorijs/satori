@@ -1,4 +1,4 @@
-import { Awaitable, camelize, capitalize, Dict, hyphenate, isNullable } from 'cosmokit'
+import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, isNullable } from 'cosmokit'
 import { isType } from './utils'
 
 const kElement = Symbol('element')
@@ -51,6 +51,8 @@ class ElementConstructor {
   }
 }
 
+defineProperty(ElementConstructor, 'name', 'Element')
+
 function Element(type: string, children?: Element.Content): Element
 function Element(type: string, attrs: Dict<any>, children?: Element.Content): Element
 function Element(type: string, ...args: any[]) {
@@ -95,7 +97,7 @@ namespace Element {
       .replace(/&amp;/g, '&')
   }
 
-  const tagRegExp = /<(\/?)\s*(\S+)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<(\/?)\s*([^\s>]+)([^>]*?)\s*(\/?)>/
   const attrRegExp = /([^\s=]+)(?:="([^"]*)")?/g
 
   interface Token {
