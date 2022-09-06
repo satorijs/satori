@@ -34,7 +34,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   async sendMessage(channelId: string, content: string | segment, guildId?: string) {
     const fragment = segment.normalize(content)
     const elements = fragment.children
-    content = fragment.toString(true)
+    content = fragment.toString()
     const session = this.session({
       type: 'send',
       author: this,
@@ -75,7 +75,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 
   async editMessage(channelId: string, messageId: string, content: string | segment) {
     const fragment = segment.normalize(content)
-    content = fragment.toString(true)
+    content = fragment.toString()
     const chain = fragment.children
     const image = chain.find(v => v.type === 'image')
     if (image) {

@@ -36,10 +36,13 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     return (await this.http(method, path, { data, headers })).data
   }
 
-  private async _prepareHandle(channelId: string, content: string, guildId: string) {
+  private async _prepareHandle(channelId: string, content: string | segment, guildId: string) {
     let path: string
     const params = {} as Kook.MessageParams
-    const data = { type: 'send', author: this, channelId, content, guildId } as Partial<Session>
+    const fragment = segment.normalize(content)
+    const elements = fragment.children
+    content = fragment.toString()
+    const data = { type: 'send', author: this, channelId, content, elements, guildId } as Partial<Session>
     if (channelId.length > 30) {
       params.chat_code = channelId
       data.subtype = 'private'
@@ -62,7 +65,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     this.context.emit(session, 'send', session)
   }
 
-  private async _transformUrl({ type, data }: segment.Parsed) {
+  private async _transformUrl({ type, data }: segment) {
     if (data.url.startsWith('file://') || data.url.startsWith('base64://')) {
       const payload = new FormData()
       const content = data.url.startsWith('file://')
@@ -88,7 +91,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  private async _sendCard(handle: SendHandle, chain: segment.Chain, useMarkdown: boolean) {
+  private async _sendCard(handle: SendHandle, chain: segment[], useMarkdown: boolean) {
     const type = useMarkdown ? 'kmarkdown' : 'plain-text'
     let text: Kook.Card.Text = { type, content: '' }
     let card: Kook.Card = { type: 'card', modules: [] }
@@ -106,48 +109,49 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
       card = { type: 'card', modules: [] }
     }
 
-    for (const { type, data } of chain) {
+    for (const element of chain) {
+      const { type, attrs } = element
       if (type === 'text') {
-        text.content += data.content
+        text.content += attrs.content
       } else if (type === 'at') {
-        if (data.id) {
-          text.content += `@user#${data.id}`
-        } else if (data.type === 'all') {
+        if (attrs.id) {
+          text.content += `@user#${attrs.id}`
+        } else if (attrs.type === 'all') {
           text.content += '@全体成员'
-        } else if (data.type === 'here') {
+        } else if (attrs.type === 'here') {
           text.content += '@在线成员'
-        } else if (data.role) {
-          text.content += `@role:${data.role};`
+        } else if (attrs.role) {
+          text.content += `@role:${attrs.role};`
         }
       } else if (type === 'sharp') {
-        text.content += `#channel:${data.id};`
+        text.content += `#channel:${attrs.id};`
       } else if (attachmentTypes.includes(type)) {
         flushText()
-        await this._transformUrl({ type, data })
+        await this._transformUrl(element)
         if (type === 'image') {
           card.modules.push({
             type: 'image-group',
             elements: [{
               type: 'image',
-              src: data.url,
+              src: attrs.url,
             }],
           })
         } else {
           card.modules.push({
             type: type as never,
-            src: data.url,
+            src: attrs.url,
           })
         }
       } else if (type === 'card') {
         flushCard()
-        output.push(JSON.parse(data.content))
+        output.push(JSON.parse(attrs.content))
       }
     }
     flushCard()
     await this._sendHandle(handle, Kook.Type.card, JSON.stringify(output))
   }
 
-  private async _sendSeparate(handle: SendHandle, chain: segment.Chain, useMarkdown: boolean) {
+  private async _sendSeparate(handle: SendHandle, chain: segment[], useMarkdown: boolean) {
     let textBuffer = ''
     const type = useMarkdown ? Kook.Type.kmarkdown : Kook.Type.text
     const flush = async () => {
@@ -158,38 +162,39 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
       textBuffer = ''
     }
 
-    for (const { type, data } of chain) {
+    for (const element of chain) {
+      const { type, attrs } = element
       if (type === 'text') {
-        textBuffer += data.content
+        textBuffer += attrs.content
       } else if (type === 'at') {
-        if (data.id) {
-          if (data.name) {
-            textBuffer += `@${data.name}#${data.id}`
+        if (attrs.id) {
+          if (attrs.name) {
+            textBuffer += `@${attrs.name}#${attrs.id}`
           } else {
-            textBuffer += `@user#${data.id}`
+            textBuffer += `@user#${attrs.id}`
           }
-        } else if (data.type === 'all') {
+        } else if (attrs.type === 'all') {
           textBuffer += '@全体成员'
-        } else if (data.type === 'here') {
+        } else if (attrs.type === 'here') {
           textBuffer += '@在线成员'
-        } else if (data.role) {
-          textBuffer += `@role:${data.role};`
+        } else if (attrs.role) {
+          textBuffer += `@role:${attrs.role};`
         }
       } else if (type === 'sharp') {
-        textBuffer += `#channel:${data.id};`
+        textBuffer += `#channel:${attrs.id};`
       } else if (attachmentTypes.includes(type)) {
         await flush()
-        await this._transformUrl({ type, data })
-        await this._sendHandle(handle, Kook.Type[type], data.url)
+        await this._transformUrl(element)
+        await this._sendHandle(handle, Kook.Type[type], attrs.url)
       } else if (type === 'card') {
         await flush()
-        await this._sendHandle(handle, Kook.Type.card, JSON.stringify([JSON.parse(data.content)]))
+        await this._sendHandle(handle, Kook.Type.card, JSON.stringify([JSON.parse(attrs.content)]))
       }
     }
     await flush()
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string) {
+  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
     const handle = await this._prepareHandle(channelId, content, guildId)
     const [, params, session] = handle
     if (!session?.content) return []
@@ -217,7 +222,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     return [session.messageId]
   }
 
-  async sendPrivateMessage(target_id: string, content: string) {
+  async sendPrivateMessage(target_id: string, content: string | segment) {
     const { code } = await this.request('POST', '/user-chat/create', { target_id })
     return this.sendMessage(code, content)
   }
@@ -230,7 +235,8 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  async editMessage(channelId: string, msg_id: string, content: string) {
+  async editMessage(channelId: string, msg_id: string, content: string | segment) {
+    content = segment.normalize(content).toString()
     if (channelId.length > 30) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {

@@ -152,7 +152,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   async sendMessage(channelId: string, content: string | segment) {
     const fragment = segment.normalize(content)
     const elements = fragment.children
-    content = fragment.toString(true)
+    content = fragment.toString()
     if (!content) return []
     let subtype: string
     let chatId: string

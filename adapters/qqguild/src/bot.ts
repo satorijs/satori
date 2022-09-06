@@ -22,7 +22,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
   async sendMessage(channelId: string, content: string | segment, guildId?: string) {
     const fragment = segment.normalize(content)
     const elements = fragment.children
-    content = fragment.toString(true)
+    content = fragment.toString()
     const session = this.session({
       channelId,
       content,
