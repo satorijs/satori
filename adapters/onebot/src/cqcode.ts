@@ -28,9 +28,8 @@ export namespace CQCode {
       .replace(/&amp;/g, '&')
   }
 
-  export function render(source: segment.Content) {
-    if (typeof source === 'string') source = segment.parse(source)
-    const { children } = segment(null, source)
+  export function render(source: string | segment) {
+    const { children } = segment.normalize(source)
     return [children.map(({ type, attrs }) => {
       if (type === 'at') {
         if (attrs.type === 'all') return '[CQ:at,qq=all]'

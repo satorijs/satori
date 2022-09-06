@@ -5,7 +5,7 @@ import { CQCode } from '../cqcode'
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, fragment: segment.Content, guildId?: string) {
+  sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
     const [content, elements] = CQCode.render(fragment)
     return channelId.startsWith('private:')
       ? this.sendPrivateMessage(channelId.slice(8), content, elements)
@@ -54,7 +54,7 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     return [session.messageId]
   }
 
-  async sendPrivateMessage(userId: string, content: segment.Content, elements?: segment[]) {
+  async sendPrivateMessage(userId: string, content: string | segment, elements?: segment[]) {
     if (!elements) {
       [content, elements] = CQCode.render(content)
     }

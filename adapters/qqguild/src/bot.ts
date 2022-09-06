@@ -19,10 +19,14 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     return user
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string) {
+  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
+    const fragment = segment.normalize(content)
+    const elements = fragment.children
+    content = fragment.toString(true)
     const session = this.session({
       channelId,
       content,
+      elements,
       guildId,
       author: this,
       type: 'send',
@@ -57,8 +61,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     session.channelId = msg.channelId
     session.subtype = 'group'
     session.content = (msg.content ?? '')
-      .replace(/<@!(.+)>/, (_, $1) => segment.at($1))
-      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1))
+      .replace(/<@!(.+)>/, (_, $1) => segment.at($1).toString())
+      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
     if (attachments.length > 0) {
       session.content += attachments.map((attachment) => {
@@ -70,6 +74,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
       .reduce((content, attachment) => content + segment.image(attachment.url), session.content)
+    session.elements = segment.parse(session.content)
     return session
   }
 }
