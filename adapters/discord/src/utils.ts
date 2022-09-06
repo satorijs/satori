@@ -25,7 +25,10 @@ export const adaptAuthor = (author: Discord.User): Author => ({
   nickname: author.username,
 })
 
-export function adaptMessage(meta: Discord.Message, session: Partial<Session> = {}) {
+export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
+  prepareMessage(session, meta)
+  session.messageId = meta.id
+  session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
@@ -40,19 +43,19 @@ export function adaptMessage(meta: Discord.Message, session: Partial<Session> = 
     session.content = meta.content
       .replace(/<@[!&]?(.+?)>/g, (_, id) => {
         if (meta.mention_roles.includes(id)) {
-          return segment('at', { role: id })
+          return segment('at', { role: id }).toString()
         } else {
           const user = meta.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
-          return segment.at(id, { name: user?.username })
+          return segment.at(id, { name: user?.username }).toString()
         }
       })
-      .replace(/<:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name }))
-      .replace(/<a:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name, animated: true }))
-      .replace(/@everyone/g, () => segment('at', { type: 'all' }))
-      .replace(/@here/g, () => segment('at', { type: 'here' }))
+      .replace(/<:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name }).toString())
+      .replace(/<a:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name, animated: true }).toString())
+      .replace(/@everyone/g, () => segment('at', { type: 'all' }).toString())
+      .replace(/@here/g, () => segment('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
         const channel = meta.mention_channels?.find(c => c.id === id)
-        return segment.sharp(id, { name: channel?.name })
+        return segment.sharp(id, { name: channel?.name }).toString()
       })
   }
 
@@ -99,22 +102,16 @@ export function adaptMessage(meta: Discord.Message, session: Partial<Session> = 
       session.content += segment('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
     }
   }
-  return session as Message
-}
-
-export function adaptMessageSession(meta: Discord.Message, session: Partial<Session> = {}) {
-  adaptMessage(meta, session)
-  session.messageId = meta.id
-  session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
+  session.elements = segment.parse(session.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
   if (meta.message_reference) {
     const { message_id, channel_id } = meta.message_reference
-    session.content = segment('quote', { id: message_id, channelId: channel_id }) + session.content
+    session.quote = await bot.getMessage(channel_id, message_id)
   }
-  return session
+  return session as Message
 }
 
-export function prepareMessageSession(session: Partial<Session>, data: Partial<Discord.Message>) {
+export function prepareMessage(session: Partial<Session>, data: Partial<Discord.Message>) {
   session.guildId = data.guild_id
   session.subtype = data.guild_id ? 'group' : 'private'
   session.channelId = data.channel_id
@@ -135,22 +132,20 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
   const session = bot.session()
   if (input.t === 'MESSAGE_CREATE') {
     session.type = 'message'
-    prepareMessageSession(session, input.d)
-    adaptMessageSession(input.d, session)
+    await adaptMessage(bot, input.d, session)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
-    prepareMessageSession(session, input.d)
     const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway#message-update
-    adaptMessageSession(msg, session)
+    await adaptMessage(bot, msg, session)
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_DELETE') {
     session.type = 'message-deleted'
     session.messageId = input.d.id
-    prepareMessageSession(session, input.d)
+    prepareMessage(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     session.type = 'reaction-added'
     prepareReactionSession(session, input.d)

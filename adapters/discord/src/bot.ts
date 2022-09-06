@@ -1,5 +1,5 @@
 import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
-import { adaptChannel, adaptGuild, adaptMessage, adaptMessageSession, adaptUser, prepareMessageSession } from './utils'
+import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { Sender } from './sender'
 import { Internal } from './types'
 import { WsClient } from './ws'
@@ -26,16 +26,20 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return adaptUser(data)
   }
 
-  private parseQuote(chain: segment.Chain) {
+  private parseQuote(chain: segment[]) {
     if (chain[0].type !== 'quote') return
-    return chain.shift().data.id
+    return chain.shift().attrs.id
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string) {
+  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
+    const fragment = segment.normalize(content)
+    const elements = fragment.children
+    content = fragment.toString(true)
     const session = this.session({
       type: 'send',
       author: this,
       channelId,
+      elements,
       content,
       guildId,
       subtype: guildId ? 'group' : 'private',
@@ -61,7 +65,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return results
   }
 
-  async sendPrivateMessage(channelId: string, content: string) {
+  async sendPrivateMessage(channelId: string, content: string | segment) {
     return this.sendMessage(channelId, content)
   }
 
@@ -69,8 +73,10 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     await this.internal.deleteMessage(channelId, messageId)
   }
 
-  async editMessage(channelId: string, messageId: string, content: string) {
-    const chain = segment.parse(content)
+  async editMessage(channelId: string, messageId: string, content: string | segment) {
+    const fragment = segment.normalize(content)
+    content = fragment.toString(true)
+    const chain = fragment.children
     const image = chain.find(v => v.type === 'image')
     if (image) {
       throw new Error("You can't include embed object(s) while editing message.")
@@ -81,14 +87,15 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   }
 
   async getMessage(channelId: string, messageId: string): Promise<Message> {
-    const original = await this.internal.getChannelMessage(channelId, messageId)
-    const result = adaptMessage(original)
-    const reference = original.message_reference
-    if (reference) {
-      const quoteMsg = await this.internal.getChannelMessage(reference.channel_id, reference.message_id)
-      result.quote = adaptMessage(quoteMsg)
-    }
-    return result
+    const data = await this.internal.getChannelMessage(channelId, messageId)
+    return await adaptMessage(this, data)
+  }
+
+  async getMessageList(channelId: string, before?: string) {
+    // doesn't include `before` message
+    // 从旧到新
+    const data = (await this.internal.getChannelMessages(channelId, { before, limit: 50 })).reverse()
+    return await Promise.all(data.map(data => adaptMessage(this, data)))
   }
 
   async getUser(userId: string) {
@@ -131,21 +138,6 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   async getChannelList(guildId: string) {
     const data = await this.internal.getGuildChannels(guildId)
     return data.map(v => adaptChannel(v))
-  }
-
-  async getMessageList(channelId: string, before?: string) {
-    // doesnt include `before` message
-    // 从旧到新
-    const data = (await this.internal.getChannelMessages(channelId, {
-      before: before,
-      limit: 50,
-    })).reverse()
-    return data.map(v => {
-      const session = {}
-      prepareMessageSession(session, v)
-      adaptMessageSession(v, session)
-      return session
-    }) as unknown as Message[]
   }
 }
 
