@@ -15,9 +15,13 @@ function toElement(content: string | Element) {
 function toElementArray(input: Element.Content) {
   if (Array.isArray(input)) {
     return input.map(toElement)
-  } else if (typeof input === 'string' || isElement(input)) {
+  } else if (typeof input === 'string') {
     return [toElement(input)]
-  } 
+  } else if (!input.type) {
+    return input.children
+  } else {
+    return [input]
+  }
 }
 
 interface Element {
@@ -77,11 +81,11 @@ function Element(type: string, ...args: any[]) {
 
 namespace Element {
   export type Content = string | Element | (string | Element)[]
-  export type Transformer = boolean | Content | ((element: Element, index: number, array: Element[]) => boolean | Content)
-  export type AsyncTransformer = boolean | Content | ((element: Element, index: number, array: Element[]) => Awaitable<boolean | Content>)
+  export type Transformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => boolean | Content)
+  export type AsyncTransformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => Awaitable<boolean | Content>)
 
   export function normalize(source: string | Element) {
-    if (typeof source !== 'string') return source
+    if (typeof source !== 'string') return Element(null, source)
     return Element.parse(source, true)
   }
 
@@ -177,7 +181,7 @@ namespace Element {
   }
 
   const tagRegExp = /<(\/?)\s*([^\s>]+)([^>]*?)\s*(\/?)>/
-  const attrRegExp = /([^\s=]+)(?:="([^"]*)")?/g
+  const attrRegExp = /([^\s=]+)(?:="([^"]*)"|=([^"\s]+))?/g
 
   interface Token {
     tag: string
@@ -199,13 +203,13 @@ namespace Element {
       const token: Token = { tag, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, value = ''] = attrCap
-        token.attrs[camelize(key)] = unescape(value)
+        const [_, key, v1 = '', v2 = v1] = attrCap
+        token.attrs[camelize(key)] = unescape(v2)
       }
       tokens.push(token)
       source = source.slice(tagCap.index + tagCap[0].length)
     }
-    if (source) tokens.push(source)
+    if (source) tokens.push(unescape(source))
     const stack = [Element(null)]
     for (const token of tokens) {
       if (typeof token === 'string') {
@@ -222,30 +226,34 @@ namespace Element {
     return fragment ? root : root.children
   }
 
+  export function transform(source: string, rules: Dict<Transformer>): string
+  export function transform(source: Element[], rules: Dict<Transformer>): Element[]
   export function transform(source: string | Element[], rules: Dict<Transformer>) {
     const elements = typeof source === 'string' ? parse(source) : source
-    const children: Element[] = []
+    const output: Element[] = []
     elements.forEach((element, index, elements) => {
       let result = rules[element.type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = result(element, index, elements)
+        result = result(element.attrs, index, elements)
       }
       if (result === true) {
         const { type, attrs, children } = element
-        children.push(Element(type, attrs, transform(children, rules)))
+        output.push(Element(type, attrs, transform(children, rules)))
       } else if (result !== false) {
-        children.push(...toElementArray(result))
+        output.push(...toElementArray(result))
       }
     })
-    return children
+    return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync(source: string | Element[], rules: Dict<AsyncTransformer>): Promise<Element[]> {
+  export async function transformAsync(source: string, rules: Dict<AsyncTransformer>): Promise<string>
+  export async function transformAsync(source: Element[], rules: Dict<AsyncTransformer>): Promise<Element[]>
+  export async function transformAsync(source: string | Element[], rules: Dict<AsyncTransformer>) {
     const elements = typeof source === 'string' ? parse(source) : source
-    return (await Promise.all(elements.map(async (element, index, elements) => {
+    const children = (await Promise.all(elements.map(async (element, index, elements) => {
       let result = rules[element.type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = await result(element, index, elements)
+        result = await result(element.attrs, index, elements)
       }
       if (result === true) {
         const { type, attrs, children } = element
@@ -256,6 +264,7 @@ namespace Element {
         return []
       }
     }))).flat(1)
+    return typeof source === 'string' ? children.join('') : children
   }
 
   export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element

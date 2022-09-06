@@ -59,11 +59,11 @@ export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Me
 
   // message content
   result.elements = segment.transform(CQCode.parse(message.message), {
-    at({ attrs }) {
-      if (attrs.qq !== 'all') return segment.at(attrs.qq)
+    at({ qq }) {
+      if (qq !== 'all') return segment.at(qq)
       return segment('at', { type: 'all' })
     },
-    face: ({ attrs }) => segment('face', { id: attrs.id, url: qface.getUrl(attrs.id) }),
+    face: ({ id }) => segment('face', { id, url: qface.getUrl(id) }),
   })
   if (result.elements[0]?.type === 'reply') {
     const reply = result.elements.shift()
