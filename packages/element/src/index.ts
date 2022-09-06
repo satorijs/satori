@@ -13,11 +13,11 @@ function toElement(content: string | Element) {
 }
 
 function toElementArray(input: Element.Content) {
-  if (typeof input === 'string' || isElement(input)) {
-    return [toElement(input)]
-  } else if (Array.isArray(input)) {
+  if (Array.isArray(input)) {
     return input.map(toElement)
-  }
+  } else if (typeof input === 'string' || isElement(input)) {
+    return [toElement(input)]
+  } 
 }
 
 interface Element {
@@ -27,7 +27,7 @@ interface Element {
   /** @deprecated use `attrs` instead */
   data: Dict<string>
   children: Element[]
-  toString(): string
+  toString(strip?: boolean): string
 }
 
 interface ElementConstructor extends Element {}
@@ -37,8 +37,9 @@ class ElementConstructor {
     return this.attrs
   }
 
-  toString() {
-    if (!this.type) return this.children.join('')
+  toString(strip = false) {
+    const inner = this.children.map(child => child.toString(strip)).join('')
+    if (!this.type || strip) return inner
     if (this.type === 'text') return Element.escape(this.attrs.content)
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
@@ -47,7 +48,7 @@ class ElementConstructor {
       return ` ${key}="${Element.escape(value, true)}"`
     }).join('')
     if (!this.children.length) return `<${this.type}${attrs}/>`
-    return `<${this.type}${attrs}>${this.children.join('')}</${this.type}>`
+    return `<${this.type}${attrs}>${inner}</${this.type}>`
   }
 }
 
@@ -79,6 +80,11 @@ namespace Element {
   export type Transformer = boolean | Content | ((element: Element, index: number, array: Element[]) => boolean | Content)
   export type AsyncTransformer = boolean | Content | ((element: Element, index: number, array: Element[]) => Awaitable<boolean | Content>)
 
+  export function normalize(source: string | Element) {
+    if (typeof source !== 'string') return source
+    return Element.parse(source, true)
+  }
+
   export function escape(source: string, inline = false) {
     const result = source
       .replace(/&/g, '&amp;')
@@ -95,6 +101,21 @@ namespace Element {
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
       .replace(/&amp;/g, '&')
+  }
+
+  export interface FindOptions {
+    type?: string
+    caret?: boolean
+  }
+
+  /** @deprecated use `Element.select()` instead */
+  export function from(source: string, options: FindOptions = {}): Element {
+    const elements = parse(source)
+    if (options.caret) {
+      if (options.type && elements[0]?.type !== options.type) return
+      return elements[0]
+    }
+    return select(elements, options.type || '*')[0]
   }
 
   type Combinator = ' ' | '>' | '+' | '~'
@@ -121,23 +142,22 @@ namespace Element {
     })
   }
 
-  export function select(source: string | Element[], query: string) {
+  export function select(source: string | Element[], query: string | Selector[][]): Element[] {
     if (typeof source === 'string') source = parse(source)
-    return [..._select(source, parseSelector(query))]
-  }
-
-  function *_select(elements: Element[], query: Selector[][]): Generator<Element, null> {
+    if (typeof query === 'string') query = parseSelector(query)
     if (!query.length) return
     let adjacent: Selector[][] = []
-    for (const [index, { type, children }] of elements.entries()) {
+    const results: Element[] = []
+    for (const [index, element] of source.entries()) {
       const inner: Selector[][] = []
       const local = [...query, ...adjacent]
       adjacent = []
+      let matched = false
       for (const group of local) {
-        const selector = group[0]
-        if (type === selector.type) {
+        const { type, combinator } = group[0]
+        if (type === element.type || type === '*') {
           if (group.length === 1) {
-            yield elements[index]
+            matched = true
           } else if ([' ', '>'].includes(group[1].combinator)) {
             inner.push(group.slice(1))
           } else if (group[1].combinator === '+') {
@@ -146,12 +166,14 @@ namespace Element {
             query.push(group.slice(1))
           }
         }
-        if (selector.combinator === ' ') {
+        if (combinator === ' ') {
           inner.push(group)
         }
       }
-      yield *_select(children, inner)
+      if (matched) results.push(source[index])
+      results.push(...select(element.children, inner))
     }
+    return results
   }
 
   const tagRegExp = /<(\/?)\s*([^\s>]+)([^>]*?)\s*(\/?)>/
@@ -164,7 +186,9 @@ namespace Element {
     attrs: Dict<string>
   }
 
-  export function parse(source: string) {
+  export function parse(source: string): Element[]
+  export function parse(source: string, fragment: true): Element
+  export function parse(source: string, fragment = false) {
     const tokens: (string | Token)[] = []
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
@@ -185,7 +209,7 @@ namespace Element {
     const stack = [Element(null)]
     for (const token of tokens) {
       if (typeof token === 'string') {
-        stack[0].children.push(toElement(token))
+        stack[0].children.push(Element('text', { content: token }))
       } else if (token.close) {
         stack.shift()
       } else {
@@ -194,7 +218,8 @@ namespace Element {
         if (!token.empty) stack.unshift(element)
       }
     }
-    return stack[stack.length - 1].children
+    const root = stack[stack.length - 1]
+    return fragment ? root : root.children
   }
 
   export function transform(source: string | Element[], rules: Dict<Transformer>) {
