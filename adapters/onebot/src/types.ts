@@ -12,9 +12,15 @@ export interface MessageId {
 }
 
 export interface AccountInfo {
-  user_id: string
+  user_id: number
   tiny_id?: string
   nickname: string
+}
+
+export interface QidianAccountInfo {
+  master_id: number
+  ext_name: string
+  create_time: number
 }
 
 export interface StrangerInfo extends AccountInfo {
@@ -78,6 +84,10 @@ export interface FriendInfo extends AccountInfo {
   remark: string
 }
 
+export interface UnidirectionalFriendInfo extends AccountInfo {
+  source: string
+}
+
 export interface GroupBase {
   group_id: number
   group_name: string
@@ -111,15 +121,20 @@ export interface RecordInfo {
 }
 
 export interface VersionInfo {
-  coolq_directory: string
-  coolq_edition: 'air' | 'pro'
-  plugin_version: string
-  plugin_build_number: number
-  plugin_build_configuration: 'debug' | 'release'
+  app_name?: string
+  app_version?: string
+  app_full_name?: string
+  protocol_version?: string
+  coolq_edition?: 'air' | 'pro'
+  coolq_directory?: string
+  plugin_version?: string
+  plugin_build_number?: number
+  plugin_build_configuration?: 'debug' | 'release'
   version?: string
   go_cqhttp?: boolean
   runtime_version?: string
   runtime_os?: string
+  protocol?: string
 }
 
 export interface ImageInfo {
@@ -405,8 +420,11 @@ export interface Internal {
   setEssenceMsgAsync(message_id: id): Promise<void>
   deleteEssenceMsg(message_id: id): Promise<void>
   deleteEssenceMsgAsync(message_id: id): Promise<void>
+  markMsgAsRead(message_id: id): Promise<void>
   sendLike(user_id: id, times?: number): Promise<void>
   sendLikeAsync(user_id: id, times?: number): Promise<void>
+  sendGroupSign(group_id: id): Promise<void>
+  sendGroupSignAsync(group_id: id): Promise<void>
   getMsg(message_id: id): Promise<Message>
   getForwardMsg(message_id: id): Promise<ForwardMessage[]>
   getEssenceMsgList(group_id: id): Promise<EssenceMessage[]>
@@ -449,9 +467,13 @@ export interface Internal {
   delGroupNotice(group_id: id, notice_id: id): Promise<void>
 
   getLoginInfo(): Promise<AccountInfo>
+  qidianGetLoginInfo(): Promise<QidianAccountInfo>
+  setQqProfile(nickname: string, company: string, email: string, college: string, personal_note: string): Promise<void>
+  setQqProfileAsync(nickname: string, company: string, email: string, college: string, personal_note: string): Promise<void>
   getVipInfo(): Promise<VipInfo>
   getStrangerInfo(user_id: id, no_cache?: boolean): Promise<StrangerInfo>
   getFriendList(): Promise<FriendInfo[]>
+  getUnidirectionalFriendList(): Promise<UnidirectionalFriendInfo[]>
   getGroupInfo(group_id: id, no_cache?: boolean): Promise<GroupInfo>
   getGroupList(): Promise<GroupInfo[]>
   getGroupMemberInfo(group_id: id, user_id: id, no_cache?: boolean): Promise<GroupMemberInfo>
@@ -562,12 +584,15 @@ export class Internal {
   }
 }
 
+// messages
 Internal.defineExtract('send_private_msg', 'message_id', 'user_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_msg', 'message_id', 'group_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_forward_msg', 'message_id', 'group_id', 'messages')
 Internal.define('delete_msg', 'message_id')
+Internal.define('mark_msg_as_read', 'message_id')
 Internal.define('set_essence_msg', 'message_id')
 Internal.define('delete_essence_msg', 'message_id')
+Internal.define('send_group_sign', 'group_id')
 Internal.define('send_like', 'user_id', 'times')
 Internal.define('get_msg', 'message_id')
 Internal.define('get_essence_msg_list', 'group_id')
@@ -580,6 +605,7 @@ Internal.define('set_group_add_request', 'flag', 'sub_type', 'approve', 'reason'
 Internal.defineExtract('_get_model_show', 'variants', 'model')
 Internal.define('_set_model_show', 'model', 'model_show')
 
+// group operations
 Internal.define('set_group_kick', 'group_id', 'user_id', 'reject_add_request')
 Internal.define('set_group_ban', 'group_id', 'user_id', 'duration')
 Internal.define('set_group_whole_ban', 'group_id', 'enable')
@@ -595,10 +621,17 @@ Internal.define('_get_group_notice', 'group_id')
 Internal.define('_del_group_notice', 'group_id', 'notice_id')
 Internal.define('get_group_at_all_remain', 'group_id')
 
+// accounts
 Internal.define('get_login_info')
+Internal.define('qidian_get_login_info')
+Internal.define('set_qq_profile', 'nickname', 'company', 'email', 'college', 'personal_note')
 Internal.define('get_stranger_info', 'user_id', 'no_cache')
 Internal.define('_get_vip_info', 'user_id')
 Internal.define('get_friend_list')
+Internal.define('get_unidirectional_friend_list')
+Internal.define('delete_friend', 'user_id')
+Internal.define('delete_unidirectional_friend', 'user_id')
+
 Internal.define('get_group_info', 'group_id', 'no_cache')
 Internal.define('get_group_list')
 Internal.define('get_group_member_info', 'group_id', 'user_id', 'no_cache')
@@ -616,8 +649,6 @@ Internal.defineExtract('get_group_file_url', 'url', 'group_id', 'file_id', 'busi
 Internal.defineExtract('download_file', 'file', 'url', 'headers', 'thread_count')
 Internal.defineExtract('get_online_clients', 'clients', 'no_cache')
 Internal.defineExtract('check_url_safely', 'level', 'url')
-Internal.define('delete_friend', 'user_id')
-Internal.define('delete_unidirectional_friend', 'user_id')
 
 Internal.defineExtract('get_cookies', 'cookies', 'domain')
 Internal.defineExtract('get_csrf_token', 'token')
