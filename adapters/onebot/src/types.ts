@@ -414,6 +414,8 @@ export interface Internal {
   sendGroupMsgAsync(group_id: id, message: string, auto_escape?: boolean): Promise<void>
   sendGroupForwardMsg(group_id: id, messages: readonly CQNode[]): Promise<number>
   sendGroupForwardMsgAsync(group_id: id, messages: readonly CQNode[]): Promise<void>
+  sendPrivateForwardMsg(user_id: id, messages: readonly CQNode[]): Promise<number>
+  sendPrivateForwardMsgAsync(user_id: id, messages: readonly CQNode[]): Promise<void>
   deleteMsg(message_id: id): Promise<void>
   deleteMsgAsync(message_id: id): Promise<void>
   setEssenceMsg(message_id: id): Promise<void>
@@ -480,15 +482,19 @@ export interface Internal {
   getGroupMemberList(group_id: id, no_cache?: boolean): Promise<GroupMemberInfo[]>
   getGroupHonorInfo(group_id: id, type: HonorType): Promise<HonorInfo>
   getGroupSystemMsg(): Promise<GroupSystemMessageInfo>
+
+  // files
   getGroupFileSystemInfo(group_id: id): Promise<GroupFileSystemInfo>
   getGroupRootFiles(group_id: id): Promise<GroupFileList>
   getGroupFilesByFolder(group_id: id, folder_id: string): Promise<GroupFileList>
   getGroupFileUrl(group_id: id, file_id: string, busid: number): Promise<string>
   downloadFile(url: string, headers?: string | readonly string[], thread_count?: number): Promise<string>
+  uploadPrivateFile(user_id: id, file: string, name: string): Promise<void>
   uploadGroupFile(group_id: id, file: string, name: string, folder?: string): Promise<void>
   createGroupFileFolder(group_id: id, folder_id: string, name: string): Promise<void>
   deleteGroupFolder(group_id: id, folder_id: string): Promise<void>
   deleteGroupFile(group_id: id, folder_id: string, file_id: string, busid: number): Promise<void>
+
   getOnlineClients(no_cache?: boolean): Promise<Device[]>
   checkUrlSafely(url: string): Promise<SafetyLevel>
   getModelShow(model: string): Promise<ModelVariant[]>
@@ -588,6 +594,7 @@ export class Internal {
 Internal.defineExtract('send_private_msg', 'message_id', 'user_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_msg', 'message_id', 'group_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_forward_msg', 'message_id', 'group_id', 'messages')
+Internal.defineExtract('send_private_forward_msg', 'message_id', 'user_id', 'messages')
 Internal.define('delete_msg', 'message_id')
 Internal.define('mark_msg_as_read', 'message_id')
 Internal.define('set_essence_msg', 'message_id')
@@ -641,6 +648,7 @@ Internal.define('get_group_system_msg')
 Internal.define('get_group_file_system_info', 'group_id')
 Internal.define('get_group_root_files', 'group_id')
 Internal.define('get_group_files_by_folder', 'group_id', 'folder_id')
+Internal.define('upload_private_file', 'user_id', 'file', 'name')
 Internal.define('upload_group_file', 'group_id', 'file', 'name', 'folder')
 Internal.define('create_group_file_folder', 'group_id', 'folder_id', 'name')
 Internal.define('delete_group_folder', 'group_id', 'folder_id')
