@@ -32,7 +32,8 @@
   },
   "dependencies": {
     "@satorijs/element": "^1.0.0",
-    "cordis": "^2.1.1",
-    "cosmokit": "^1.2.1"
+    "cordis": "^2.1.2",
+    "cordis-axios": "^1.0.1",
+    "cosmokit": "^1.2.2"
   }
 }

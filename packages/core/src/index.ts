@@ -3,9 +3,10 @@ import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Selector } from './selector'
 import { Session } from './session'
+import Quester from 'cordis-axios'
 import segment from '@satorijs/element'
 
-export { segment, segment as h }
+export { segment, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'

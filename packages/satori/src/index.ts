@@ -1,16 +1,14 @@
-import { Context } from '@satorijs/core'
+import { Context, Quester } from '@satorijs/core'
 import { defineProperty, trimSlash } from 'cosmokit'
 import { getPortPromise } from 'portfinder'
 import Schema from 'schemastery'
 import Logger from 'reggol'
-import { Quester } from './quester'
 
 export { Schema, Logger }
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
 export * from './adapter'
-export * from './quester'
 export * from './router'
 
 declare module '@satorijs/core' {

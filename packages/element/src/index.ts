@@ -267,6 +267,11 @@ namespace Element {
     return typeof source === 'string' ? children.join('') : children
   }
 
+  /** @deprecated use `elements.join('')` instead */
+  export function join(elements: Element[]) {
+    return elements.join('')
+  }
+
   export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element
 
   function createFactory<R extends any[] = any[]>(type: string, ...keys: string[]): Factory<R> {
