@@ -24,9 +24,10 @@ class Quester extends BaseQuester {
 }
 
 namespace Quester {
-  export interface Config extends BaseQuester.Config {
-    proxyAgent?: string
-  }
+  export type Config = BaseQuester.Config
+  export type Method = BaseQuester.Method
+  export type AxiosResponse = BaseQuester.AxiosResponse
+  export type AxiosRequestConfig = BaseQuester.AxiosRequestConfig
 
   export const Config: Schema<Config> = Schema.object({
     ...BaseQuester.Config.dict,
@@ -35,7 +36,7 @@ namespace Quester {
 
   type CreateAgent = (opts: string) => Agent
 
-  const agents: Dict<Agent> = {}
+  const agents: Dict<Agent> = Object.create(null)
   const proxies: Dict<CreateAgent> = Object.create(null)
 
   export function register(protocols: string[], callback: CreateAgent) {

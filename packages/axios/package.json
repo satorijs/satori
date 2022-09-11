@@ -1,7 +1,7 @@
 {
   "name": "cordis-axios",
   "description": "Axios service for cordis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "exports": {

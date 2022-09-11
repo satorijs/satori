@@ -30,10 +30,16 @@
     "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --platform=neutral --external:cosmokit --external:cordis --target=esnext",
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
+  "devDependencies": {
+    "@types/ws": "^8.5.3"
+  },
   "dependencies": {
     "@satorijs/element": "^1.0.0",
     "cordis": "^2.1.2",
-    "cordis-axios": "^1.0.1",
-    "cosmokit": "^1.2.2"
+    "cordis-axios": "^1.0.2",
+    "cosmokit": "^1.2.2",
+    "ws": "^8.8.1",
+    "reggol": "^1.1.0",
+    "schemastery": "^3.5.4"
   }
 }

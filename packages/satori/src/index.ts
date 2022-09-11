@@ -1,14 +1,9 @@
-import { Context, Quester } from '@satorijs/core'
+import { Context, Logger, Quester, Schema } from '@satorijs/core'
 import { defineProperty, trimSlash } from 'cosmokit'
 import { getPortPromise } from 'portfinder'
-import Schema from 'schemastery'
-import Logger from 'reggol'
-
-export { Schema, Logger }
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
-export * from './adapter'
 export * from './router'
 
 declare module '@satorijs/core' {
@@ -16,7 +11,7 @@ declare module '@satorijs/core' {
     interface Config extends Config.Network {}
 
     const Config: Config.Static
-  
+
     namespace Config {
       interface Network {
         host?: string

@@ -3,8 +3,11 @@ import { Context } from '.'
 import { Adapter } from './adapter'
 import { Session } from './session'
 import { Methods, User } from './protocol'
+import WebSocket from 'ws'
 
-export interface Bot extends Methods, User {}
+export interface Bot extends Methods, User {
+  socket?: WebSocket
+}
 
 export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bot.Config> {
   static reusable = true

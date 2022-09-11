@@ -52,7 +52,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             logger.warn('failed to get updates. reason: %s', e.message)
           } else {
             // Telegram error
-            const { error_code, description } = e.response.data
+            const { error_code, description } = e.response.data as any
             logger.warn('failed to get updates: %c %s', error_code, description)
           }
 

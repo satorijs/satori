@@ -1,8 +1,10 @@
 import { Context } from 'cordis'
 import { Dict, trimSlash } from 'cosmokit'
+import { ClientRequestArgs } from 'http'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as types from 'axios'
 import Schema from 'schemastery'
+import WebSocket from 'ws'
 
 declare module 'cordis' {
   interface Context {
@@ -63,7 +65,7 @@ class Quester {
     return response.headers
   }
 
-  ws(url: string) {
+  ws(url: string, options?: ClientRequestArgs) {
     return new WebSocket(url)
   }
 }
