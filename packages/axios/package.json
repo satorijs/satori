@@ -1,0 +1,58 @@
+{
+  "name": "cordis-axios",
+  "description": "Axios service for cordis",
+  "version": "1.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "node": "./lib/index.js",
+      "browser": "./lib/shared.mjs"
+    },
+    "./shared": {
+      "node": "./lib/shared.js",
+      "browser": "./lib/shared.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "packages/axios"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://github.com/satorijs/satori/tree/master/packages/axios",
+  "keywords": [
+    "cordis",
+    "axios",
+    "http",
+    "request",
+    "service"
+  ],
+  "peerDependencies": {
+    "cordis": "^2.1.2"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.3"
+  },
+  "dependencies": {
+    "agent-base": "^6.0.2",
+    "axios": "^0.27.2",
+    "cosmokit": "^1.2.2",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.1",
+    "schemastery": "^3.5.4",
+    "socks-proxy-agent": "^5.0.1",
+    "ws": "^8.8.1"
+  }
+}
