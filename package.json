@@ -29,7 +29,7 @@
     "esbuild-register": "^3.3.3",
     "mocha": "^9.2.2",
     "shx": "^0.3.4",
-    "typescript": "^4.7.4",
+    "typescript": "4.8.2",
     "yakumo": "^0.3.6",
     "yakumo-esbuild": "^0.3.16",
     "yakumo-mocha": "^0.3.0",
