@@ -31,6 +31,7 @@ interface Element {
   /** @deprecated use `attrs` instead */
   data: Dict<string>
   children: Element[]
+  source?: string
   toString(strip?: boolean): string
 }
 
@@ -57,6 +58,7 @@ class ElementConstructor {
 }
 
 defineProperty(ElementConstructor, 'name', 'Element')
+defineProperty(ElementConstructor.prototype, kElement, true)
 
 function Element(type: string, children?: Element.Content): Element
 function Element(type: string, attrs: Dict<any>, children?: Element.Content): Element
@@ -188,6 +190,7 @@ namespace Element {
     close: string
     empty: string
     attrs: Dict<string>
+    source: string
   }
 
   export function parse(source: string): Element[]
@@ -200,7 +203,7 @@ namespace Element {
         tokens.push(unescape(source.slice(0, tagCap.index)))
       }
       const [_, close, tag, attrs, empty] = tagCap
-      const token: Token = { tag, close, empty, attrs: {} }
+      const token: Token = { source: _, tag, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
         const [_, key, v1 = '', v2 = v1] = attrCap
@@ -211,19 +214,39 @@ namespace Element {
     }
     if (source) tokens.push(unescape(source))
     const stack = [Element(null)]
+    function rollback(index: number) {
+      for (; index > 0; index--) {
+        const { children } = stack.shift()
+        const { source } = stack[0].children.pop()
+        stack[0].children.push(Element('text', { content: source }))
+        stack[0].children.push(...children)
+      }
+    }
     for (const token of tokens) {
       if (typeof token === 'string') {
         stack[0].children.push(Element('text', { content: token }))
       } else if (token.close) {
-        stack.shift()
+        let index = 0
+        while (index < stack.length && stack[index].type !== token.tag) index++
+        if (index === stack.length) {
+          // no matching open tag
+          stack[0].children.push(Element('text', { content: token.source }))
+        } else {
+          rollback(index)
+          const element = stack.shift()
+          delete element.source
+        }
       } else {
         const element = Element(token.tag, token.attrs)
         stack[0].children.push(element)
-        if (!token.empty) stack.unshift(element)
+        if (!token.empty) {
+          element.source = token.source
+          stack.unshift(element)
+        }
       }
     }
-    const root = stack[stack.length - 1]
-    return fragment ? root : root.children
+    rollback(stack.length - 1)
+    return fragment ? stack[0] : stack[0].children
   }
 
   export function transform(source: string, rules: Dict<Transformer>): string
