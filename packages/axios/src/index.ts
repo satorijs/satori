@@ -12,7 +12,7 @@ import BaseQuester from './shared'
 class Quester extends BaseQuester {
   ws(url: string, options: ClientRequestArgs = {}) {
     return new WebSocket(url, {
-      agent: this.config.proxyAgent && Quester.getAgent(this.config.proxyAgent),
+      agent: Quester.getAgent(this.config.proxyAgent),
       handshakeTimeout: this.config.timeout,
       ...options,
       headers: {
@@ -50,6 +50,7 @@ namespace Quester {
   register(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], createSocksProxyAgent)
 
   export function getAgent(url: string) {
+    if (!url) return
     if (agents[url]) return agents[url]
     const { protocol } = new URL(url)
     const callback = proxies[protocol.slice(0, -1)]
@@ -58,10 +59,8 @@ namespace Quester {
 
   export function prepare(config: Quester.Config) {
     const options = BaseQuester.prepare(config)
-    if (config.proxyAgent) {
-      options.httpAgent = getAgent(config.proxyAgent)
-      options.httpsAgent = getAgent(config.proxyAgent)
-    }
+    options.httpAgent = getAgent(config.proxyAgent)
+    options.httpsAgent = getAgent(config.proxyAgent)
     return options
   }
 }

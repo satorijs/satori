@@ -30,7 +30,7 @@ class Quester {
   }
 
   extend(newConfig: Quester.Config): Quester {
-    return Object.getPrototypeOf(this).constructor.create({
+    return (this.constructor as typeof Quester).create({
       ...this.config,
       ...newConfig,
       headers: {
@@ -123,6 +123,10 @@ namespace Quester {
     }) as Quester
 
     Object.setPrototypeOf(http, this.prototype)
+    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head', 'ws']) {
+      http[key] = this.prototype[key].bind(http)
+    }
+
     http.config = config
     http.axios = request
     return http

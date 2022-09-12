@@ -94,7 +94,7 @@ export namespace Adapter {
           }, timeout)
         }
 
-        socket.onopen, () => {
+        socket.onopen = () => {
           _retryCount = 0
           bot.socket = socket
           logger.info('connect to server: %c', url)

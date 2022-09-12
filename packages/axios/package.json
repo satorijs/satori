@@ -1,7 +1,7 @@
 {
   "name": "cordis-axios",
   "description": "Axios service for cordis",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "exports": {
@@ -48,7 +48,7 @@
   "dependencies": {
     "agent-base": "^6.0.2",
     "axios": "^0.27.2",
-    "cosmokit": "^1.2.2",
+    "cosmokit": "^1.2.3",
     "http-proxy-agent": "^5.0.0",
     "https-proxy-agent": "^5.0.1",
     "schemastery": "^3.5.4",
