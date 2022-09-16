@@ -43,9 +43,9 @@ class ElementConstructor {
   }
 
   toString(strip = false) {
+    if (this.type === 'text') return Element.escape(this.attrs.content)
     const inner = this.children.map(child => child.toString(strip)).join('')
     if (!this.type || strip) return inner
-    if (this.type === 'text') return Element.escape(this.attrs.content)
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
       key = hyphenate(key)

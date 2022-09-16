@@ -32,6 +32,7 @@ describe('Element API', () => {
       .to.equal('<img src="https://test.com/?foo=1&amp;bar=2"/>')
     expect(Element('tag', { foo: '', bar: null, qux: false }, 'text').toString())
       .to.equal('<tag foo no-qux>text</tag>')
+    expect(Element.normalize('<tag foo no-qux>bar</tag>').toString(true)).to.equal('bar')
   })
 
   describe('Selectors', () => {
