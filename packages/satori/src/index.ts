@@ -4,6 +4,7 @@ import { getPortPromise } from 'portfinder'
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
+export * from './axios'
 export * from './router'
 
 declare module '@satorijs/core' {

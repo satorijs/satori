@@ -1,67 +1,135 @@
 import { Context } from 'cordis'
-import { Dict } from 'cosmokit'
+import { Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
-import { Agent } from 'agent-base'
-import createHttpProxyAgent from 'http-proxy-agent'
-import createHttpsProxyAgent from 'https-proxy-agent'
-import createSocksProxyAgent from 'socks-proxy-agent'
-import WebSocket from 'ws'
+import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import * as types from 'axios'
 import Schema from 'schemastery'
-import BaseQuester from './shared'
 
-class Quester extends BaseQuester {
-  ws(url: string, options: ClientRequestArgs = {}) {
-    return new WebSocket(url, {
-      agent: Quester.getAgent(this.config.proxyAgent),
-      handshakeTimeout: this.config.timeout,
-      ...options,
+declare module 'cordis' {
+  interface Context {
+    http: Quester
+  }
+
+  namespace Context {
+    interface Config {
+      request?: Quester.Config
+    }
+  }
+}
+
+interface Quester {
+  <T = any>(method: Method, url: string, config?: AxiosRequestConfig): Promise<T>
+  axios<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>
+  config: Quester.Config
+}
+
+class Quester {
+  constructor(ctx: Context, config: Context.Config) {
+    return Quester.create(config.request)
+  }
+
+  extend(newConfig: Quester.Config): Quester {
+    return Quester.create({
+      ...this.config,
+      ...newConfig,
       headers: {
         ...this.config.headers,
-        ...options.headers,
+        ...newConfig.headers,
       },
-    }) as any
+    })
+  }
+
+  get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this('GET', url, config)
+  }
+
+  delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return this('DELETE', url, config)
+  }
+
+  post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+    return this('POST', url, { ...config, data })
+  }
+
+  put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+    return this('PUT', url, { ...config, data })
+  }
+
+  patch<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+    return this('PATCH', url, { ...config, data })
+  }
+
+  async head(url: string, config?: AxiosRequestConfig): Promise<Dict<string>> {
+    const response = await this.axios(url, { ...config, method: 'HEAD' })
+    return response.headers
+  }
+
+  ws(url: string, options?: ClientRequestArgs) {
+    return new WebSocket(url) as any as import('ws').WebSocket
+  }
+
+  prepare(): AxiosRequestConfig {
+    return pick(this.config, ['timeout', 'headers'])
   }
 }
 
 namespace Quester {
-  export type Config = BaseQuester.Config
-  export type Method = BaseQuester.Method
-  export type AxiosResponse = BaseQuester.AxiosResponse
-  export type AxiosRequestConfig = BaseQuester.AxiosRequestConfig
+  export type Method = types.Method
+  export type AxiosResponse = types.AxiosResponse
+  export type AxiosRequestConfig = types.AxiosRequestConfig
+
+  export const isAxiosError = axios.isAxiosError
+
+  export interface Config {
+    headers?: Dict
+    endpoint?: string
+    timeout?: number
+    proxyAgent?: string
+  }
 
   export const Config: Schema<Config> = Schema.object({
-    ...BaseQuester.Config.dict,
-    proxyAgent: Schema.string().description('使用的代理服务器地址。'),
+    timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
   }).description('请求设置')
 
-  type CreateAgent = (opts: string) => Agent
+  export function createConfig(this: typeof Quester, endpoint: string | boolean): Schema<Config> {
+    return Schema.object({
+      endpoint: Schema.string().role('link').description('要连接的服务器地址。')
+        .default(typeof endpoint === 'string' ? endpoint : null)
+        .required(typeof endpoint === 'boolean' ? endpoint : false),
+      headers: Schema.dict(String).description('要附加的额外请求头。'),
+      ...this.Config.dict,
+    }).description('请求设置')
+  }
 
-  const agents: Dict<Agent> = Object.create(null)
-  const proxies: Dict<CreateAgent> = Object.create(null)
+  export function create(this: typeof Quester, config: Quester.Config = {}) {
+    const endpoint = config.endpoint = trimSlash(config.endpoint || '')
 
-  export function register(protocols: string[], callback: CreateAgent) {
-    for (const protocol of protocols) {
-      proxies[protocol] = callback
+    const request = async (url: string, config: AxiosRequestConfig = {}) => {
+      const options = http.prepare()
+      return axios({
+        ...options,
+        ...config,
+        url: endpoint + url,
+        headers: {
+          ...options.headers,
+          ...config.headers,
+        },
+      })
     }
-  }
 
-  register(['http'], createHttpProxyAgent)
-  register(['https'], createHttpsProxyAgent)
-  register(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], createSocksProxyAgent)
+    const http = (async (method, url, config) => {
+      const response = await request(url, { ...config, method })
+      return response.data
+    }) as Quester
 
-  export function getAgent(url: string) {
-    if (!url) return
-    if (agents[url]) return agents[url]
-    const { protocol } = new URL(url)
-    const callback = proxies[protocol.slice(0, -1)]
-    return agents[url] ||= callback(url)
-  }
+    Object.setPrototypeOf(http, this.prototype)
+    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head', 'ws']) {
+      http[key] = this.prototype[key].bind(http)
+    }
 
-  export function prepare(config: Quester.Config) {
-    const options = BaseQuester.prepare(config)
-    options.httpAgent = getAgent(config.proxyAgent)
-    options.httpsAgent = getAgent(config.proxyAgent)
-    return options
+    http.config = config
+    http.axios = request
+    return http
   }
 }
 
