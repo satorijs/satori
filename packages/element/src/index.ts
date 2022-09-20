@@ -1,5 +1,4 @@
-import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, isNullable } from 'cosmokit'
-import { isType } from './utils'
+import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, is, isNullable } from 'cosmokit'
 
 const kElement = Symbol('element')
 
@@ -314,9 +313,9 @@ namespace Element {
 
   function createAssetFactory(type: string): Factory<[data: string | Buffer | ArrayBuffer]> {
     return (value, attrs = {}) => {
-      if (isType('Buffer', value)) {
+      if (is('Buffer', value)) {
         value = 'base64://' + value.toString('base64')
-      } else if (isType('ArrayBuffer', value)) {
+      } else if (is('ArrayBuffer', value)) {
         value = 'base64://' + Buffer.from(value).toString('base64')
       }
       return Element(type, { ...attrs, url: value })
