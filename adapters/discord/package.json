@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "3.1.1",
+  "version": "3.2.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [

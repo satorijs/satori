@@ -203,7 +203,7 @@ export interface IdentifyParams {
   /** authentication token */
   token: string
   /** connection properties */
-  properties: object
+  properties: ConnectionProperties
   /** whether this connection supports compression of packets */
   compress?: boolean
   /** value between 50 and 250, total number of members where the gateway will stop sending offline members in the guild member list */
@@ -214,6 +214,16 @@ export interface IdentifyParams {
   presence?: PresenceUpdateParams
   /** the Gateway Intents you wish to receive */
   intents: integer
+}
+
+/** https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties */
+export interface ConnectionProperties {
+  /** Your operating system */
+  os: string
+  /** Your library name */
+  browser: string
+  /** Your library name */
+  device: string
 }
 
 /** https://discord.com/developers/docs/topics/gateway#resume-resume-structure */
