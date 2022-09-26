@@ -152,7 +152,7 @@ export namespace DiscordBot {
     }),
     WsClient.Config,
     Sender.Config,
-    Quester.createConfig('https://discord.com/api/v8'),
+    Quester.createConfig('https://discord.com/api/v10'),
   ])
 }
 

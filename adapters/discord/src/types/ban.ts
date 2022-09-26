@@ -27,14 +27,22 @@ export namespace Ban {
     }
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/guild#create-guild-ban-json-params */
-    export interface Create {
-      /** number of days to delete messages for (0-7) */
-      delete_message_days?: integer
-      /** reason for the ban (deprecated) */
-      reason?: string
-    }
+  /** @see https://discord.com/developers/docs/resources/guild#get-guild-bans-query-string-params */
+  export interface GetParams {
+    /** number of users to return (up to maximum 1000) */
+    limit?: number
+    /** consider only users before given user id */
+    before?: snowflake
+    /** consider only users after given user id */
+    after?: snowflake
+  }
+
+  /** @see https://discord.com/developers/docs/resources/guild#create-guild-ban-json-params */
+  export interface CreateParams {
+    /** number of days to delete messages for (0-7) */
+    delete_message_days?: integer
+    /** reason for the ban (deprecated) */
+    reason?: string
   }
 }
 
@@ -53,7 +61,7 @@ declare module './internal' {
      * Returns a list of ban objects for the users banned from this guild. Requires the BAN_MEMBERS permission.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-bans
      */
-    getGuildBans(guild_id: snowflake): Promise<Ban[]>
+    getGuildBans(guild_id: snowflake, params: Ban.GetParams): Promise<Ban[]>
     /**
      * Returns a ban object for the given user or a 404 not found if the ban cannot be found. Requires the BAN_MEMBERS permission.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-ban
@@ -63,7 +71,7 @@ declare module './internal' {
      * Create a guild ban, and optionally delete previous messages sent by the banned user. Requires the BAN_MEMBERS permission. Returns a 204 empty response on success. Fires a Guild Ban Add Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#create-guild-ban
      */
-    createGuildBan(guild_id: snowflake, user_id: snowflake, params: Ban.Params.Create): Promise<void>
+    createGuildBan(guild_id: snowflake, user_id: snowflake, params?: Ban.CreateParams): Promise<void>
     /**
      * Remove the ban for a user. Requires the BAN_MEMBERS permissions. Returns a 204 empty response on success. Fires a Guild Ban Remove Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#remove-guild-ban
