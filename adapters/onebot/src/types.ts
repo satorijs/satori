@@ -521,11 +521,20 @@ export interface Internal {
   sendGuildChannelMsg(guild_id: id, channel_id: id, message: string): Promise<number>
 }
 
+export class TimeoutError extends Error {
+  constructor(args: Dict, url: string) {
+    super(`Timeout with request ${url}, args: ${JSON.stringify(args)}`)
+    Object.defineProperties(this, {
+      args: { value: args },
+      url: { value: url },
+    })
+  }
+}
+
 class SenderError extends Error {
   constructor(args: Dict, url: string, retcode: number) {
-    super(`Error when trying to send to ${url}, args: ${JSON.stringify(args)}, retcode: ${retcode}`)
+    super(`Error with request ${url}, args: ${JSON.stringify(args)}, retcode: ${retcode}`)
     Object.defineProperties(this, {
-      name: { value: 'SenderError' },
       code: { value: retcode },
       args: { value: args },
       url: { value: url },
