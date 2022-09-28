@@ -69,5 +69,7 @@ Context.prototype.start = async function (this: Context, ...args) {
     })
   }
 
+  this.decline(['selfUrl', 'host', 'port', 'maxPort'])
+
   return start.call(this, ...args)
 }

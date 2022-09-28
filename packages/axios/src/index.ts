@@ -102,7 +102,7 @@ namespace Quester {
   }
 
   export function create(this: typeof Quester, config: Quester.Config = {}) {
-    const endpoint = config.endpoint = trimSlash(config.endpoint || '')
+    const endpoint = trimSlash(config.endpoint || '')
 
     const request = async (url: string, config: AxiosRequestConfig = {}) => {
       const options = http.prepare()

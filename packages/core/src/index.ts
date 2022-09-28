@@ -55,7 +55,7 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 export interface Context {
   [Context.events]: Events<this>
   [Context.session]: Session<Context>
-  options: Context.Config
+  get options(): Context.Config
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
