@@ -1,19 +1,15 @@
 import { Bot, Context, Quester, Schema, segment, Session } from '@satorijs/satori'
-import { createReadStream } from 'fs'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptUser } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
-import internal from 'stream'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-
-const attachmentTypes = ['image', 'video', 'audio', 'file']
-
-type SendHandle = [string, Kook.MessageParams, Session]
+import { Sender } from './sender'
 
 export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   http: Quester
+  internal: Kook.Internal
 
   constructor(ctx: C, config: T) {
     super(ctx, config)
@@ -23,6 +19,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
         'Content-Type': 'application/json',
       },
     }).extend(config)
+    this.internal = new Kook.Internal(this.http)
 
     if (config.protocol === 'http') {
       ctx.plugin(HttpServer, this)
@@ -36,190 +33,32 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     return (await this.http(method, path, { data, headers })).data
   }
 
-  private async _prepareHandle(channelId: string, content: string | segment, guildId: string) {
-    let path: string
-    const params = {} as Kook.MessageParams
+  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
     const fragment = segment.normalize(content)
     const elements = fragment.children
     content = fragment.toString()
-    const data = { type: 'send', author: this, channelId, content, elements, guildId } as Partial<Session>
-    if (channelId.length > 30) {
-      params.chat_code = channelId
-      data.subtype = 'private'
-      path = '/user-chat/create-msg'
-    } else {
-      params.target_id = channelId
-      data.subtype = 'group'
-      path = '/message/create'
-    }
-    const session = this.session(data)
+    const session = this.session({
+      type: 'send',
+      author: this,
+      channelId,
+      elements,
+      content,
+      guildId,
+      subtype: guildId ? 'group' : 'private',
+    })
+
     if (await this.context.serial(session, 'before-send', session)) return
-    return [path, params, session] as SendHandle
-  }
+    if (!session.content) return []
 
-  private async _sendHandle([path, params, session]: SendHandle, type: Kook.Type, content: string) {
-    params.type = type
-    params.content = content
-    const message = await this.request('POST', path, params)
-    session.messageId = message.msg_id
-    this.context.emit(session, 'send', session)
-  }
+    const sender = new Sender(this, channelId)
+    const results = await sender.send(session.content)
 
-  private async _transformUrl({ type, data }: segment) {
-    if (data.url.startsWith('file://') || data.url.startsWith('base64://')) {
-      const payload = new FormData()
-      const content = data.url.startsWith('file://')
-        ? createReadStream(data.url.slice(8))
-        : Buffer.from(data.url.slice(9), 'base64')
-      payload.append('file', content, {
-        filename: 'file',
-      })
-      const { url } = await this.request('POST', '/asset/create', payload, payload.getHeaders())
-      data.url = url
-    } else if (!data.url.includes('kaiheila')) {
-      const res = await this.ctx.http.get<internal.Readable>(data.url, {
-        headers: { accept: type },
-        responseType: 'stream',
-      })
-      const payload = new FormData()
-      payload.append('file', res, {
-        filename: 'file',
-      })
-      const { url } = await this.request('POST', '/asset/create', payload, payload.getHeaders())
-      data.url = url
-      console.log(url)
-    }
-  }
-
-  private async _sendCard(handle: SendHandle, chain: segment[], useMarkdown: boolean) {
-    const type = useMarkdown ? 'kmarkdown' : 'plain-text'
-    let text: Kook.Card.Text = { type, content: '' }
-    let card: Kook.Card = { type: 'card', modules: [] }
-    const output: Kook.Card[] = []
-    const flushText = () => {
-      text.content = text.content.trim()
-      if (!text.content) return
-      card.modules.push({ type: 'section', text })
-      text = { type, content: '' }
-    }
-    const flushCard = () => {
-      flushText()
-      if (!card.modules.length) return
-      output.push(card)
-      card = { type: 'card', modules: [] }
+    for (const id of results) {
+      session.messageId = id
+      this.context.emit(session, 'send', session)
     }
 
-    for (const element of chain) {
-      const { type, attrs } = element
-      if (type === 'text') {
-        text.content += attrs.content
-      } else if (type === 'at') {
-        if (attrs.id) {
-          text.content += `@user#${attrs.id}`
-        } else if (attrs.type === 'all') {
-          text.content += '@全体成员'
-        } else if (attrs.type === 'here') {
-          text.content += '@在线成员'
-        } else if (attrs.role) {
-          text.content += `@role:${attrs.role};`
-        }
-      } else if (type === 'sharp') {
-        text.content += `#channel:${attrs.id};`
-      } else if (attachmentTypes.includes(type)) {
-        flushText()
-        await this._transformUrl(element)
-        if (type === 'image') {
-          card.modules.push({
-            type: 'image-group',
-            elements: [{
-              type: 'image',
-              src: attrs.url,
-            }],
-          })
-        } else {
-          card.modules.push({
-            type: type as never,
-            src: attrs.url,
-          })
-        }
-      } else if (type === 'card') {
-        flushCard()
-        output.push(JSON.parse(attrs.content))
-      }
-    }
-    flushCard()
-    await this._sendHandle(handle, Kook.Type.card, JSON.stringify(output))
-  }
-
-  private async _sendSeparate(handle: SendHandle, chain: segment[], useMarkdown: boolean) {
-    let textBuffer = ''
-    const type = useMarkdown ? Kook.Type.kmarkdown : Kook.Type.text
-    const flush = async () => {
-      textBuffer = textBuffer.trim()
-      if (!textBuffer) return
-      await this._sendHandle(handle, type, textBuffer)
-      handle[1].quote = null
-      textBuffer = ''
-    }
-
-    for (const element of chain) {
-      const { type, attrs } = element
-      if (type === 'text') {
-        textBuffer += attrs.content
-      } else if (type === 'at') {
-        if (attrs.id) {
-          if (attrs.name) {
-            textBuffer += `@${attrs.name}#${attrs.id}`
-          } else {
-            textBuffer += `@user#${attrs.id}`
-          }
-        } else if (attrs.type === 'all') {
-          textBuffer += '@全体成员'
-        } else if (attrs.type === 'here') {
-          textBuffer += '@在线成员'
-        } else if (attrs.role) {
-          textBuffer += `@role:${attrs.role};`
-        }
-      } else if (type === 'sharp') {
-        textBuffer += `#channel:${attrs.id};`
-      } else if (attachmentTypes.includes(type)) {
-        await flush()
-        await this._transformUrl(element)
-        await this._sendHandle(handle, Kook.Type[type], attrs.url)
-      } else if (type === 'card') {
-        await flush()
-        await this._sendHandle(handle, Kook.Type.card, JSON.stringify([JSON.parse(attrs.content)]))
-      }
-    }
-    await flush()
-  }
-
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    const handle = await this._prepareHandle(channelId, content, guildId)
-    const [, params, session] = handle
-    if (!session?.content) return []
-
-    let useMarkdown = false
-    const chain = segment.parse(session.content)
-    if (chain[0].type === 'quote') {
-      params.quote = chain.shift().data.id
-    }
-    if (chain[0].type === 'markdown') {
-      useMarkdown = true
-      chain.shift()
-    }
-
-    const { handleMixedContent } = this.config
-    const hasAttachment = chain.some(node => attachmentTypes.includes(node.type))
-    const useCard = hasAttachment && (handleMixedContent === 'card' || handleMixedContent === 'mixed' && chain.length > 1)
-
-    if (useCard) {
-      await this._sendCard(handle, chain, useMarkdown)
-    } else {
-      await this._sendSeparate(handle, chain, useMarkdown)
-    }
-
-    return [session.messageId]
+    return results
   }
 
   async sendPrivateMessage(target_id: string, content: string | segment) {
@@ -291,9 +130,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config {
-    handleMixedContent?: 'separate' | 'card' | 'mixed'
-  }
+  export interface BaseConfig extends Bot.Config, Quester.Config, Sender.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -305,13 +142,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    Schema.object({
-      handleMixedContent: Schema.union([
-        Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
-        Schema.const('card' as const).description('使用卡片发送内容'),
-        Schema.const('mixed' as const).description('使用混合模式发送内容'),
-      ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
-    }).description('发送设置'),
+    Sender.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

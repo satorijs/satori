@@ -1,3 +1,6 @@
+import { Dict, makeArray } from 'cosmokit'
+import { Quester } from '@satorijs/satori'
+
 export enum Signal {
   event,
   hello,
@@ -333,3 +336,40 @@ export interface GuildMemberList extends List<GuildMember> {
   online_count: number
   offline_count: number
 }
+
+interface Pagination {
+  page?: number
+  page_size?: number
+  sort?: string[]
+}
+
+export interface Internal {
+  getGuildList(param?: Pagination): Promise<List<Guild>>
+  getGuildView(param: { guild_id: string }): Promise<Guild>
+}
+
+export class Internal {
+  constructor(private http: Quester) {}
+
+  static define(name: string, method: Quester.Method, path: string) {
+    Internal.prototype[name] = function (this: Internal, ...args: any[]) {
+      const config: Quester.AxiosRequestConfig = {}
+      if (method === 'GET' || method === 'DELETE') {
+        config.params = args[0]
+      } else {
+        config.data = args[0]
+      }
+      return this.http(method, path, config)
+    }
+  }
+}
+
+Internal.define('getGuildList', 'GET', '/guild/list')
+Internal.define('getGuildView', 'GET', '/guild/view')
+Internal.define('getGuildUserList', 'GET', '/guild/user-list')
+Internal.define('setGuildUserNickname', 'POST', '/guild/nickname')
+Internal.define('leaveGuild', 'POST', '/guild/leave')
+Internal.define('kickoutGuildUser', 'POST', '/guild/kickout')
+Internal.define('getGuildMuteList', 'GET', '/guild-mute/list')
+Internal.define('setGuildMute', 'POST', '/guild-mute/create')
+Internal.define('unsetGuildMute', 'POST', '/guild-mute/delete')
