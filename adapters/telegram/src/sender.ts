@@ -11,12 +11,7 @@ const logger = new Logger('telegram')
 
 const prefixTypes = ['quote', 'card', 'anonymous', 'markdown', 'html']
 
-type AssetType =
-  | 'photo'
-  | 'audio'
-  | 'document'
-  | 'video'
-  | 'animation'
+type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
 async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buffer?, string?]> {
   if (!payload[field]) return []
@@ -68,101 +63,34 @@ const assetApi = {
 } as const
 
 export class Sender {
-  errors: Error[] = []
-  results: Telegram.Message[] = []
-
-  currAssetType: AssetType = null
-  payload: Dict
+  private errors: Error[] = []
+  private results: Telegram.Message[] = []
+  private assetType: AssetType = null
+  private payload: Dict
 
   constructor(private bot: TelegramBot, private chat_id: string) {
     this.payload = { chat_id, caption: '' }
   }
 
-  static from(bot: TelegramBot, chat_id: string) {
-    const sender = new Sender(bot, chat_id)
-    return sender.sendMessage.bind(sender)
-  }
-
-  sendAsset = async () => {
-    const [field, content, filename] = await maybeFile(this.payload, this.currAssetType)
+  async sendAsset() {
+    const [field, content, filename] = await maybeFile(this.payload, this.assetType)
     const payload = new FormData()
     for (const key in this.payload) {
       payload.append(key, this.payload[key].toString())
     }
     if (field && content) payload.append(field, content, filename)
-    this.results.push(await this.bot.internal[assetApi[this.currAssetType]](payload as any))
-    this.currAssetType = null
-    delete this.payload[this.currAssetType]
+    this.results.push(await this.bot.internal[assetApi[this.assetType]](payload as any))
+    delete this.payload[this.assetType]
     delete this.payload.reply_to_message
+    this.assetType = null
     this.payload.caption = ''
   }
 
-  async sendMessage(content: string) {
-    const segs = segment.parse(content)
-    let currIdx = 0
-    while (currIdx < segs.length && prefixTypes.includes(segs[currIdx].type)) {
-      if (segs[currIdx].type === 'quote') {
-        this.payload.reply_to_message_id = segs[currIdx].data.id
-      } else if (segs[currIdx].type === 'anonymous') {
-        if (segs[currIdx].data.ignore === 'false') return null
-      } else if (segs[currIdx].type === 'markdown') {
-        this.payload.parse_mode = 'MarkdownV2'
-      } else if (segs[currIdx].type === 'html') {
-        this.payload.parse_mode = 'html'
-      }
-      // else if (segs[currIdx].type === 'card') {}
-      ++currIdx
-    }
-
-    for (const seg of segs.slice(currIdx)) {
-      switch (seg.type) {
-        case 'text':
-          this.payload.caption += seg.data.content
-          break
-        case 'at': {
-          const atTarget = seg.data.name || seg.data.id || seg.data.role || seg.data.type
-          if (!atTarget) break
-          this.payload.caption += `@${atTarget} `
-          break
-        }
-        case 'sharp': {
-          const sharpTarget = seg.data.name || seg.data.id
-          if (!sharpTarget) break
-          this.payload.caption += `#${sharpTarget} `
-          break
-        }
-        case 'face':
-          logger.warn("Telegram don't support face")
-          break
-        case 'image':
-        case 'audio':
-        case 'video':
-        case 'file': {
-          // send previous asset if there is any
-          if (this.currAssetType) await this.sendAsset()
-
-          // handel current asset
-          const assetUrl = seg.data.url
-
-          if (!assetUrl) {
-            logger.warn('asset segment with no url')
-            break
-          }
-          if (seg.type === 'image') this.currAssetType = await isGif(assetUrl) ? 'animation' : 'photo'
-          else if (seg.type === 'file') this.currAssetType = 'document'
-          else this.currAssetType = seg.type
-          this.payload[this.currAssetType] = assetUrl
-          break
-        }
-        default:
-          logger.warn(`Unexpected asset type: ${seg.type}`)
-          return
-      }
-    }
-
-    // if something left in payload
-    if (this.currAssetType) await this.sendAsset()
-    if (this.payload.caption) {
+  async sendBuffer() {
+    if (this.assetType) {
+      // send previous asset if there is any
+      await this.sendAsset()
+    } else if (this.payload.caption) {
       this.results.push(await this.bot.internal.sendMessage({
         chat_id: this.chat_id,
         text: this.payload.caption,
@@ -170,7 +98,50 @@ export class Sender {
         reply_to_message_id: this.payload.reply_to_message_id,
       }))
     }
+  }
 
+  async sendMessage(elements: segment[]) {
+    for (const { type, attrs, children } of elements) {
+      if (type === 'text') {
+        this.payload.caption += attrs.content
+      } else if (type === 'at') {
+        const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
+        if (atTarget) this.payload.caption += `@${atTarget} `
+      } else if (type === 'sharp') {
+        const sharpTarget = attrs.name || attrs.id
+        if (sharpTarget) this.payload.caption += `#${sharpTarget} `
+      } else if (['image', 'audio', 'video', 'file'].includes(type)) {
+        await this.sendBuffer()
+        if (type === 'image') {
+          this.assetType = await isGif(attrs.url) ? 'animation' : 'photo'
+        } else if (type === 'file') {
+          this.assetType = 'document'
+        } else {
+          this.assetType = type as any
+        }
+        this.payload[this.assetType] = attrs.url
+      } else if (type === 'quote') {
+        await this.sendBuffer()
+        this.payload.reply_to_message_id = attrs.id
+      } else if (type === 'message') {
+        await this.sendBuffer()
+        if ('quote' in attrs) {
+          this.payload.reply_to_message_id = attrs.id
+        } else {
+          await this.sendMessage(children)
+        }
+      } else if (type === 'markdown') {
+        this.payload.parse_mode = 'MarkdownV2'
+      } else if (type === 'html') {
+        this.payload.parse_mode = 'html'
+      }
+    }
+    await this.sendBuffer()
+  }
+
+  async send(content: string) {
+    const elements = segment.parse(content)
+    await this.sendMessage(elements)
     if (!this.errors.length) return this.results
     throw new AggregateError(this.errors)
   }

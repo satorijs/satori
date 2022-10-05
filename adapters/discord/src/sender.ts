@@ -94,8 +94,7 @@ export class Sender {
   }
 
   async sendMessage(elements: segment[]) {
-    for (const code of elements) {
-      const { type, attrs, children } = code
+    for (const { type, attrs, children } of elements) {
       if (type === 'text') {
         this.buffer += attrs.content.trim()
       } else if (type === 'at') {
@@ -144,13 +143,11 @@ export class Sender {
         }
       }
     }
-
     await this.sendBuffer()
   }
 
   async send(content: string) {
     const elements = segment.parse(content)
-
     await this.sendMessage(elements)
     if (!this.errors.length) return this.results
     throw new AggregateError(this.errors)

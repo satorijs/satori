@@ -177,8 +177,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
-    const send = Sender.from(this, chatId)
-    const results = await send(session.content)
+    const sender = new Sender(this, chatId)
+    const results = await sender.send(session.content)
 
     for (const message of results) {
       const session = this.session()
