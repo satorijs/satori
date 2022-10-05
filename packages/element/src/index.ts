@@ -181,7 +181,7 @@ namespace Element {
     return results
   }
 
-  const tagRegExp = /<(\/?)\s*([^\s>]+)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<(\/?)\s*([^\s>/]+)([^>]*?)\s*(\/?)>/
   const attrRegExp = /([^\s=]+)(?:="([^"]*)"|=([^"\s]+))?/g
 
   interface Token {

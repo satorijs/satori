@@ -25,6 +25,7 @@ describe('Element API', () => {
   it('mismatched tags', () => {
     expect(Element.parse('1<foo>2<bar attr>3', true).toString()).to.equal('1&lt;foo&gt;2&lt;bar attr&gt;3')
     expect(Element.parse('1<foo>2<bar>3</foo>4', true).toString()).to.equal('1<foo>2&lt;bar&gt;3</foo>4')
+    expect(Element.parse('1<foo/>4', true).toString()).to.equal('1<foo/>4')
   })
 
   it('Element.toString()', () => {
