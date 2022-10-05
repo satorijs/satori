@@ -26,11 +26,6 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return adaptUser(data)
   }
 
-  private parseQuote(chain: segment[]) {
-    if (chain[0].type !== 'quote') return
-    return chain.shift().attrs.id
-  }
-
   async sendMessage(channelId: string, content: string | segment, guildId?: string) {
     const fragment = segment.normalize(content)
     const elements = fragment.children
@@ -48,14 +43,8 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
 
-    const chain = segment.parse(session.content)
-    const quote = this.parseQuote(chain)
-    const message_reference = quote ? {
-      message_id: quote,
-    } : undefined
-
-    const send = Sender.from(this, `/channels/${channelId}/messages`)
-    const results = await send(session.content, { message_reference })
+    const sender = new Sender(this, `/channels/${channelId}/messages`)
+    const results = await sender.send(session.content)
 
     for (const id of results) {
       session.messageId = id

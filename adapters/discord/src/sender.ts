@@ -9,13 +9,10 @@ import { DiscordBot } from './bot'
 export class Sender {
   private results: string[] = []
   private errors: Error[] = []
+  private buffer: string = ''
+  private addition: Dict = {}
 
-  private constructor(private bot: DiscordBot, private url: string) {}
-
-  static from(bot: DiscordBot, url: string) {
-    const sender = new Sender(bot, url)
-    return sender.sendMessage.bind(sender)
-  }
+  constructor(private bot: DiscordBot, private url: string) {}
 
   async post(data?: any, headers?: any) {
     try {
@@ -88,56 +85,74 @@ export class Sender {
     }, sendDownload)
   }
 
-  async sendMessage(content: string, addition: Dict = {}) {
-    const chain = segment.parse(content)
-    let textBuffer = ''
-    delete addition.content
+  async sendBuffer() {
+    const content = this.buffer.trim()
+    if (!content) return
+    await this.post({ ...this.addition, content })
+    this.buffer = ''
+    this.addition = {}
+  }
 
-    const sendBuffer = async () => {
-      const content = textBuffer.trim()
-      if (!content) return
-      await this.post({ ...addition, content })
-      textBuffer = ''
-    }
-
-    for (const code of chain) {
-      const { type, data } = code
+  async sendMessage(elements: segment[]) {
+    for (const code of elements) {
+      const { type, attrs, children } = code
       if (type === 'text') {
-        textBuffer += data.content.trim()
-      } else if (type === 'at' && data.id) {
-        textBuffer += `<@${data.id}>`
-      } else if (type === 'at' && data.type === 'all') {
-        textBuffer += `@everyone`
-      } else if (type === 'at' && data.type === 'here') {
-        textBuffer += `@here`
-      } else if (type === 'sharp' && data.id) {
-        textBuffer += `<#${data.id}>`
-      } else if (type === 'face' && data.name && data.id) {
-        textBuffer += `<:${data.name}:${data.id}>`
-      } else if ((type === 'image' || type === 'video') && data.url) {
-        await this.sendAsset(type, data, {
-          ...addition,
-          content: textBuffer.trim(),
+        this.buffer += attrs.content.trim()
+      } else if (type === 'at') {
+        if (attrs.id) {
+          this.buffer += `<@${attrs.id}>`
+        } else if (attrs.type === 'all') {
+          this.buffer += `@everyone`
+        } else if (attrs.type === 'here') {
+          this.buffer += `@here`
+        }
+      } else if (type === 'sharp' && attrs.id) {
+        this.buffer += `<#${attrs.id}>`
+      } else if (type === 'face' && attrs.name && attrs.id) {
+        this.buffer += `<:${attrs.name}:${attrs.id}>`
+      } else if ((type === 'image' || type === 'video') && attrs.url) {
+        await this.sendAsset(type, attrs, {
+          ...this.addition,
+          content: this.buffer.trim(),
         })
-        textBuffer = ''
+        this.buffer = ''
       } else if (type === 'share') {
-        await sendBuffer()
+        await this.sendBuffer()
         await this.post({
-          ...addition,
-          embeds: [{ ...data }],
+          ...this.addition,
+          embeds: [{ ...attrs }],
         })
       } else if (type === 'record') {
-        await this.sendAsset('file', data, {
-          ...addition,
-          content: textBuffer.trim(),
+        await this.sendAsset('file', attrs, {
+          ...this.addition,
+          content: this.buffer.trim(),
         })
-        textBuffer = ''
+        this.buffer = ''
+      } else if (type === 'quote') {
+        await this.sendBuffer()
+        this.addition.message_reference = {
+          message_id: attrs.id,
+        }
+      } else if (type === 'message') {
+        await this.sendBuffer()
+        if ('quote' in attrs) {
+          this.addition.message_reference = {
+            message_id: attrs.id,
+          }
+        } else {
+          await this.sendMessage(children)
+        }
       }
     }
 
-    await sendBuffer()
-    if (!this.errors.length) return this.results
+    await this.sendBuffer()
+  }
 
+  async send(content: string) {
+    const elements = segment.parse(content)
+
+    await this.sendMessage(elements)
+    if (!this.errors.length) return this.results
     throw new AggregateError(this.errors)
   }
 }
