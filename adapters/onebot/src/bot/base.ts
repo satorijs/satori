@@ -48,11 +48,13 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     })
 
     if (await this.context.serial(session, 'before-send', session)) return
+    const ids: string[] = []
     for (const result of CQCode.render(session.content)) {
       session.messageId = '' + await this.internal.sendGroupMsg(channelId, result)
+      ids.push(session.messageId)
     }
     this.context.emit(session, 'send', session)
-    return [session.messageId]
+    return ids
   }
 
   async sendPrivateMessage(userId: string, fragment: string | segment) {
@@ -68,12 +70,14 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     })
 
     if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
+    if (!session.content) return []
+    const ids: string[] = []
     for (const result of CQCode.render(session.content)) {
       session.messageId = '' + await this.internal.sendPrivateMsg(userId, result)
+      ids.push(session.messageId)
     }
     this.context.emit(session, 'send', session)
-    return [session.messageId]
+    return ids
   }
 
   async handleFriendRequest(messageId: string, approve: boolean, comment?: string) {

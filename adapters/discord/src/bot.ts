@@ -41,7 +41,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
 
     if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
+    if (!session.content) return []
 
     const sender = new Sender(this, `/channels/${channelId}/messages`)
     const results = await sender.send(session.content)

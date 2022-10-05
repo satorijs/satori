@@ -19,14 +19,11 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     return user
   }
 
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    const fragment = segment.normalize(content)
-    const elements = fragment.children
-    content = fragment.toString()
+  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+    const element = segment.normalize(fragment)
     const session = this.session({
-      channelId,
-      content,
-      elements,
+      content: element.toString(),
+      elements: element.children,
       guildId,
       author: this,
       type: 'send',
@@ -34,16 +31,46 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     })
 
     if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-    const resp = await this.internal.send.channel(channelId, session.content)
-    session.messageId = resp.id
+    if (!session.content) return []
+    const ids: string[] = []
+    for (const content of this.render(session.content)) {
+      const resp = await this.internal.send.channel(channelId, content)
+      ids.push(session.messageId = resp.id)
+      this.context.emit(session, 'message', this.adaptMessage(resp))
+    }
     this.context.emit(session, 'send', session)
-    this.context.emit(session, 'message', this.adaptMessage(resp))
-    return [resp.id]
+    return ids
   }
 
   async getGuildList() {
     return this.internal.guilds.then(guilds => guilds.map(adaptGuild))
+  }
+
+  render(source: string | segment) {
+    const result: string[] = []
+    let current = ''
+    const flush = () => {
+      if (current) result.push(current)
+      current = ''
+    }
+    const render = (elements: segment[]) => {
+      for (const element of elements) {
+        let { type, attrs, children } = element
+        if (type === 'text') {
+          current += attrs.content
+        } else if (type === 'message') {
+          flush()
+          if ('quote' in attrs) {
+            // not supported
+          } else {
+            render(children)
+          }
+        }
+      }
+      flush()
+    }
+    render(segment.normalize(source).children)
+    return result
   }
 
   adaptMessage(msg: QQGuild.Message) {
