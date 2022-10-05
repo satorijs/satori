@@ -96,7 +96,7 @@ export class Sender {
   async sendMessage(elements: segment[]) {
     for (const { type, attrs, children } of elements) {
       if (type === 'text') {
-        this.buffer += attrs.content.trim()
+        this.buffer += attrs.content
       } else if (type === 'at') {
         if (attrs.id) {
           this.buffer += `<@${attrs.id}>`

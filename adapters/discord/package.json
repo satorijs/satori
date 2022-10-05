@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -32,7 +32,7 @@
     "@types/es-aggregate-error": "^1.0.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^1.1.9"
+    "@satorijs/satori": "^1.1.11"
   },
   "dependencies": {
     "es-aggregate-error": "^1.0.8",

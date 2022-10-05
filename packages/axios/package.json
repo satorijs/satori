@@ -36,7 +36,7 @@
     "service"
   ],
   "peerDependencies": {
-    "cordis": "^2.3.5"
+    "cordis": "^2.4.1"
   },
   "devDependencies": {
     "@types/ws": "^8.5.3"
