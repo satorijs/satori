@@ -9,6 +9,12 @@ export function CQCode(type: string, attrs: Dict<string>) {
   return output + ']'
 }
 
+export interface CQCode {
+  type: string
+  data: Dict<string>
+  capture?: RegExpExecArray
+}
+
 export namespace CQCode {
   export function escape(source: any, inline = false) {
     const result = String(source)
@@ -29,26 +35,53 @@ export namespace CQCode {
   }
 
   export function render(source: string | segment) {
-    const { children } = segment.normalize(source)
-    return [children.map(({ type, attrs }) => {
-      if (type === 'at') {
-        if (attrs.type === 'all') return '[CQ:at,qq=all]'
-        return `[CQ:at,qq=${attrs.id}]`
-      } else if (['video', 'audio', 'image'].includes(type)) {
-        if (type === 'audio') type = 'record'
-        attrs = { ...attrs }
-        attrs.file = attrs.url
-        delete attrs.url
-      } else if (type === 'quote') {
-        type = 'reply'
+    const elements = segment.normalize(source).children
+    const result: CQCode[][] = []
+    let current: CQCode[] = []
+    const flush = () => {
+      if (current.length) result.push(current)
+      current = []
+    }
+    const render = (elements: segment[]) => {
+      for (const element of elements) {
+        let { type, attrs, children } = element
+        if (type === 'text') {
+          current.push({ type: 'text', data: { text: attrs.content } })
+        } else if (type === 'at') {
+          if (attrs.type === 'all') {
+            current.push({ type: 'at', data: { qq: 'all' } })
+          } else {
+            current.push({ type: 'at', data: { qq: attrs.id } })
+          }
+        } else if (['video', 'audio', 'image'].includes(type)) {
+          if (type === 'audio') type = 'record'
+          attrs = { ...attrs }
+          attrs.file = attrs.url
+          delete attrs.url
+          current.push({ type, data: attrs })
+        } else if (type === 'quote') {
+          flush()
+          current.push({ type: 'reply', data: attrs })
+        } else if (type === 'message') {
+          flush()
+          if ('quote' in attrs) {
+            attrs = { ...attrs }
+            delete attrs.quote
+            current.push({ type: 'reply', data: attrs })
+          } else {
+            render(children)
+          }
+        }
       }
-      return CQCode(type, attrs)
-    }).join(''), children] as [string, segment[]]
+      flush()
+    }
+    render(elements)
+    return result
   }
 
   const pattern = /\[CQ:(\w+)((,\w+=[^,\]]*)*)\]/
 
-  export function from(source: string) {
+  export function from(source: string): CQCode {
     const capture = pattern.exec(source)
     if (!capture) return null
     const [, type, attrs] = capture

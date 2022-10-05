@@ -1,6 +1,6 @@
 import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Logger, Message, segment, User } from '@satorijs/satori'
 import * as qface from 'qface'
-import { CQCode } from './cqcode'
+import { CQCode } from './bot'
 import * as OneBot from './types'
 
 export * from './types'

@@ -5,6 +5,7 @@ import { QQGuildBot } from './qqguild'
 import { BaseBot } from './base'
 import * as OneBot from '../utils'
 
+export * from './cqcode'
 export * from './base'
 export * from './qqguild'
 

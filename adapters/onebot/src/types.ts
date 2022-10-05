@@ -1,4 +1,5 @@
 import { camelize, Dict, Logger } from '@satorijs/satori'
+import { CQCode } from './bot'
 
 export interface Response {
   status: string
@@ -408,10 +409,10 @@ export interface Payload extends Message {
 type id = string | number
 
 export interface Internal {
-  sendPrivateMsg(user_id: id, message: string, auto_escape?: boolean): Promise<number>
-  sendPrivateMsgAsync(user_id: id, message: string, auto_escape?: boolean): Promise<void>
-  sendGroupMsg(group_id: id, message: string, auto_escape?: boolean): Promise<number>
-  sendGroupMsgAsync(group_id: id, message: string, auto_escape?: boolean): Promise<void>
+  sendPrivateMsg(user_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<number>
+  sendPrivateMsgAsync(user_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<void>
+  sendGroupMsg(group_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<number>
+  sendGroupMsgAsync(group_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<void>
   sendGroupForwardMsg(group_id: id, messages: readonly CQNode[]): Promise<number>
   sendGroupForwardMsgAsync(group_id: id, messages: readonly CQNode[]): Promise<void>
   sendPrivateForwardMsg(user_id: id, messages: readonly CQNode[]): Promise<number>
@@ -518,7 +519,7 @@ export interface Internal {
   getGuildChannelList(guild_id: id, no_cache: boolean): Promise<ChannelInfo[]>
   getGuildMemberList(guild_id: id, next_token?: string): Promise<GuildMemberListData>
   getGuildMemberProfile(guild_id: id, user_id: id): Promise<GuildMemberProfile>
-  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string): Promise<number>
+  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string | CQCode[]): Promise<number>
 }
 
 export class TimeoutError extends Error {

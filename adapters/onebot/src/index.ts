@@ -6,7 +6,6 @@ export { OneBot }
 export * from './bot'
 export * from './http'
 export * from './ws'
-export * from './cqcode'
 
 export default OneBotBot
 

@@ -1,15 +1,14 @@
 import { Bot, Context, segment } from '@satorijs/satori'
 import * as OneBot from '../utils'
-import { CQCode } from '../cqcode'
+import { CQCode } from './cqcode'
 
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
   public internal: OneBot.Internal
 
   sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    const [content, elements] = CQCode.render(fragment)
     return channelId.startsWith('private:')
-      ? this.sendPrivateMessage(channelId.slice(8), content, elements)
-      : this.sendGuildMessage(guildId, channelId, content, elements)
+      ? this.sendPrivateMessage(channelId.slice(8), fragment)
+      : this.sendGuildMessage(guildId, channelId, fragment)
   }
 
   async getMessage(channelId: string, messageId: string) {
@@ -36,10 +35,11 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     return data.map(OneBot.adaptUser)
   }
 
-  async sendGuildMessage(guildId: string, channelId: string, content: string, elements: segment[]) {
+  async sendGuildMessage(guildId: string, channelId: string, fragment: string | segment) {
+    const element = segment.normalize(fragment)
     const session = this.session({
-      content,
-      elements,
+      content: element.toString(),
+      elements: element.children,
       type: 'send',
       subtype: 'group',
       author: this,
@@ -48,19 +48,18 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     })
 
     if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-    session.messageId = '' + await this.internal.sendGroupMsg(channelId, session.content)
+    for (const result of CQCode.render(session.content)) {
+      session.messageId = '' + await this.internal.sendGroupMsg(channelId, result)
+    }
     this.context.emit(session, 'send', session)
     return [session.messageId]
   }
 
-  async sendPrivateMessage(userId: string, content: string | segment, elements?: segment[]) {
-    if (!elements) {
-      [content, elements] = CQCode.render(content)
-    }
+  async sendPrivateMessage(userId: string, fragment: string | segment) {
+    const element = segment.normalize(fragment)
     const session = this.session({
-      content: content as string,
-      elements,
+      content: element.toString(),
+      elements: element.children,
       type: 'send',
       subtype: 'private',
       author: this,
@@ -70,7 +69,9 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
 
     if (await this.context.serial(session, 'before-send', session)) return
     if (!session?.content) return []
-    session.messageId = '' + await this.internal.sendPrivateMsg(userId, session.content)
+    for (const result of CQCode.render(session.content)) {
+      session.messageId = '' + await this.internal.sendPrivateMsg(userId, result)
+    }
     this.context.emit(session, 'send', session)
     return [session.messageId]
   }
