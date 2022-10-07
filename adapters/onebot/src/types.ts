@@ -159,17 +159,6 @@ export interface EssenceMessage extends MessageId {
   operator_time: number
 }
 
-interface CQNode {
-  type: 'node'
-  data: {
-    id: number
-  } | {
-    name: string
-    uin: number
-    content: string
-  }
-}
-
 export interface VipInfo extends AccountInfo {
   level: number
   level_speed: number
@@ -409,14 +398,14 @@ export interface Payload extends Message {
 type id = string | number
 
 export interface Internal {
-  sendPrivateMsg(user_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<number>
-  sendPrivateMsgAsync(user_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<void>
-  sendGroupMsg(group_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<number>
-  sendGroupMsgAsync(group_id: id, message: string | CQCode[], auto_escape?: boolean): Promise<void>
-  sendGroupForwardMsg(group_id: id, messages: readonly CQNode[]): Promise<number>
-  sendGroupForwardMsgAsync(group_id: id, messages: readonly CQNode[]): Promise<void>
-  sendPrivateForwardMsg(user_id: id, messages: readonly CQNode[]): Promise<number>
-  sendPrivateForwardMsgAsync(user_id: id, messages: readonly CQNode[]): Promise<void>
+  sendPrivateMsg(user_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<number>
+  sendPrivateMsgAsync(user_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<void>
+  sendGroupMsg(group_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<number>
+  sendGroupMsgAsync(group_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<void>
+  sendGroupForwardMsg(group_id: id, messages: readonly CQCode[]): Promise<number>
+  sendGroupForwardMsgAsync(group_id: id, messages: readonly CQCode[]): Promise<void>
+  sendPrivateForwardMsg(user_id: id, messages: readonly CQCode[]): Promise<number>
+  sendPrivateForwardMsgAsync(user_id: id, messages: readonly CQCode[]): Promise<void>
   deleteMsg(message_id: id): Promise<void>
   deleteMsgAsync(message_id: id): Promise<void>
   setEssenceMsg(message_id: id): Promise<void>
@@ -519,7 +508,7 @@ export interface Internal {
   getGuildChannelList(guild_id: id, no_cache: boolean): Promise<ChannelInfo[]>
   getGuildMemberList(guild_id: id, next_token?: string): Promise<GuildMemberListData>
   getGuildMemberProfile(guild_id: id, user_id: id): Promise<GuildMemberProfile>
-  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string | CQCode[]): Promise<number>
+  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string | readonly CQCode[]): Promise<number>
 }
 
 export class TimeoutError extends Error {

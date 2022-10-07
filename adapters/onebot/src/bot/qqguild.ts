@@ -59,8 +59,8 @@ export class QQGuildBot extends BaseBot {
     if (await this.ctx.serial(session, 'before-send', session)) return
     if (!session.content) return []
     const ids: string[] = []
-    for (const result of CQCode.render(session.content)) {
-      session.messageId = '' + await this.internal.sendGuildChannelMsg(guildId, channelId, result)
+    for (const { children } of CQCode.render(session.content, this)) {
+      session.messageId = '' + await this.internal.sendGuildChannelMsg(guildId, channelId, children)
       ids.push(session.messageId)
     }
     this.ctx.emit(session, 'send', session)

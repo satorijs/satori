@@ -1,4 +1,5 @@
 import { Dict, segment } from '@satorijs/satori'
+import { BaseBot } from './base'
 
 export function CQCode(type: string, attrs: Dict<string>) {
   if (type === 'text') return attrs.content
@@ -34,42 +35,63 @@ export namespace CQCode {
       .replace(/&amp;/g, '&')
   }
 
-  export function render(source: string | segment) {
-    const elements = segment.normalize(source).children
-    const result: CQCode[][] = []
-    let current: CQCode[] = []
+  export interface Message extends CQCode {
+    type: 'message' | 'forward'
+    children: CQCode[]
+  }
+
+  export function _render(elements: segment[], bot: BaseBot) {
+    const result: Message[] = []
+    let data = {}
+    let buffer: Message = { type: 'message', data, children: [] }
     const flush = () => {
-      if (current.length) result.push(current)
-      current = []
+      if (buffer.children.length) result.push(buffer)
+      buffer = { type: 'message', data, children: [] }
     }
     const render = (elements: segment[]) => {
       for (const element of elements) {
         let { type, attrs, children } = element
         if (type === 'text') {
-          current.push({ type: 'text', data: { text: attrs.content } })
+          buffer.children.push({ type: 'text', data: { text: attrs.content } })
         } else if (type === 'at') {
           if (attrs.type === 'all') {
-            current.push({ type: 'at', data: { qq: 'all' } })
+            buffer.children.push({ type: 'at', data: { qq: 'all' } })
           } else {
-            current.push({ type: 'at', data: { qq: attrs.id } })
+            buffer.children.push({ type: 'at', data: { qq: attrs.id } })
           }
         } else if (['video', 'audio', 'image'].includes(type)) {
           if (type === 'audio') type = 'record'
           attrs = { ...attrs }
           attrs.file = attrs.url
           delete attrs.url
-          current.push({ type, data: attrs })
+          buffer.children.push({ type, data: attrs })
         } else if (type === 'quote') {
           flush()
-          current.push({ type: 'reply', data: attrs })
+          buffer.children.push({ type: 'reply', data: attrs })
         } else if (type === 'message') {
           flush()
           if ('quote' in attrs) {
             attrs = { ...attrs }
             delete attrs.quote
-            current.push({ type: 'reply', data: attrs })
+            buffer.children.push({ type: 'reply', data: attrs })
+          } else if ('forward' in attrs && !bot.parent) {
+            result.push({
+              type: 'forward',
+              data: attrs,
+              children: _render(children, bot).map(({ data, children }) => ({
+                type: 'node',
+                data: data.id ? { id: data.id } : {
+                  name: data.nickname || bot.nickname || bot.username,
+                  uin: data.userId || bot.userId,
+                  content: children as any,
+                },
+              })),
+            })
           } else {
+            data = attrs
+            Object.assign(buffer.data, attrs)
             render(children)
+            data = {}
           }
         }
       }
@@ -77,6 +99,11 @@ export namespace CQCode {
     }
     render(elements)
     return result
+  }
+
+  export function render(source: string | segment, bot: BaseBot) {
+    const elements = segment.normalize(source).children
+    return _render(elements, bot)
   }
 
   const pattern = /\[CQ:(\w+)((,\w+=[^,\]]*)*)\]/

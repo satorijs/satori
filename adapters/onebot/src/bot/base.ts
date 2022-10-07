@@ -3,6 +3,7 @@ import * as OneBot from '../utils'
 import { CQCode } from './cqcode'
 
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
+  public parent?: BaseBot
   public internal: OneBot.Internal
 
   sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
@@ -49,8 +50,10 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
 
     if (await this.context.serial(session, 'before-send', session)) return
     const ids: string[] = []
-    for (const result of CQCode.render(session.content)) {
-      session.messageId = '' + await this.internal.sendGroupMsg(channelId, result)
+    for (const { type, children } of CQCode.render(session.content, this)) {
+      session.messageId = type === 'forward'
+        ? '' + await this.internal.sendGroupForwardMsg(channelId, children)
+        : '' + await this.internal.sendGroupMsg(channelId, children)
       ids.push(session.messageId)
     }
     this.context.emit(session, 'send', session)
@@ -72,8 +75,10 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     if (await this.context.serial(session, 'before-send', session)) return
     if (!session.content) return []
     const ids: string[] = []
-    for (const result of CQCode.render(session.content)) {
-      session.messageId = '' + await this.internal.sendPrivateMsg(userId, result)
+    for (const { type, children } of CQCode.render(session.content, this)) {
+      session.messageId = type === 'forward'
+        ? '' + await this.internal.sendPrivateForwardMsg(userId, children)
+        : '' + await this.internal.sendPrivateMsg(userId, children)
       ids.push(session.messageId)
     }
     this.context.emit(session, 'send', session)
