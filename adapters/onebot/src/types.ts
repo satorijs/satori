@@ -1,4 +1,4 @@
-import { camelize, Dict, Logger } from '@satorijs/satori'
+import { camelize, Dict, Logger, segment } from '@satorijs/satori'
 import { CQCode } from './bot'
 
 export interface Response {
@@ -68,7 +68,7 @@ export interface Message extends MessageId {
   group_id?: number
   guild_id?: string
   channel_id?: string
-  message: string
+  message: string | CQCode[]
   anonymous?: AnonymousInfo
 }
 

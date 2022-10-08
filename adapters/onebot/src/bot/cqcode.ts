@@ -120,7 +120,10 @@ export namespace CQCode {
     return { type, data, capture }
   }
 
-  export function parse(source: string) {
+  export function parse(source: string | CQCode[]) {
+    if (typeof source !== 'string') {
+      return source.map(({ type, data }) => segment(type, data))
+    }
     const elements: segment[] = []
     let result: ReturnType<typeof from>
     while ((result = from(source))) {
