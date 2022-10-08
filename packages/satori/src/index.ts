@@ -1,6 +1,6 @@
 import { Context, Logger, Quester, Schema } from '@satorijs/core'
 import { defineProperty, trimSlash } from 'cosmokit'
-import { getPortPromise } from 'portfinder'
+import { listen } from './listen'
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
@@ -46,21 +46,13 @@ const logger = new Logger('app')
 
 const start = Context.prototype.start
 Context.prototype.start = async function (this: Context, ...args) {
-  if (this.options.selfUrl) {
-    this.options.selfUrl = trimSlash(this.options.selfUrl)
+  if (this.root.config.selfUrl) {
+    this.root.config.selfUrl = trimSlash(this.root.config.selfUrl)
   }
 
-  if (this.options.port) {
-    this.options.port = await getPortPromise({
-      port: this.options.port,
-      stopPort: this.options.maxPort || this.options.port,
-    })
-
-    const { host, port } = this.options
-    await new Promise<void>((resolve) => {
-      this.router._http.listen(port, host, resolve)
-    })
-
+  if (this.root.config.port) {
+    const { host, port } = this.root.config
+    await listen(this.router._http, this.root.config)
     logger.info('server listening at %c', `http://${host}:${port}`)
     this.on('dispose', () => {
       logger.info('http server closing')
