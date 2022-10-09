@@ -91,13 +91,16 @@ export namespace CQCode {
             data = attrs
             Object.assign(buffer.data, attrs)
             render(children)
+            flush()
             data = {}
           }
+        } else {
+          render(children)
         }
       }
-      flush()
     }
     render(elements)
+    flush()
     return result
   }
 

@@ -53,9 +53,9 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
       if (current) result.push(current)
       current = ''
     }
-    const render = (elements: segment[]) => {
+    const renderText = (elements: segment[]) => {
       for (const element of elements) {
-        let { type, attrs, children } = element
+        const { type, attrs, children } = element
         if (type === 'text') {
           current += attrs.content
         } else if (type === 'message') {
@@ -63,13 +63,18 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
           if ('quote' in attrs) {
             // not supported
           } else {
-            render(children)
+            renderMessage(children)
           }
+        } else {
+          renderText(children)
         }
       }
+    }
+    const renderMessage = (elements: segment[]) => {
+      renderText(elements)
       flush()
     }
-    render(segment.normalize(source).children)
+    renderMessage(segment.normalize(source).children)
     return result
   }
 

@@ -9,8 +9,6 @@ import { TelegramBot } from './bot'
 
 const logger = new Logger('telegram')
 
-const prefixTypes = ['quote', 'card', 'anonymous', 'markdown', 'html']
-
 type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
 async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buffer?, string?]> {
@@ -102,7 +100,7 @@ export class Sender {
     }
   }
 
-  async sendMessage(elements: segment[]) {
+  async render(elements: segment[]) {
     for (const { type, attrs, children } of elements) {
       if (type === 'text') {
         this.payload.caption += attrs.content
@@ -133,11 +131,19 @@ export class Sender {
           await this.sendMessage(children)
         }
       } else if (type === 'markdown') {
+        await this.sendBuffer()
         this.payload.parse_mode = 'MarkdownV2'
       } else if (type === 'html') {
+        await this.sendBuffer()
         this.payload.parse_mode = 'html'
+      } else {
+        await this.render(children)
       }
     }
+  }
+
+  async sendMessage(elements: segment[]) {
+    await this.render(elements)
     await this.sendBuffer()
   }
 

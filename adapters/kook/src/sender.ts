@@ -129,8 +129,8 @@ export class Sender {
     this.additional = {}
   }
 
-  async sendMessage(chain: segment[]) {
-    for (const element of chain) {
+  async render(elements: segment[]) {
+    for (const element of elements) {
       const { type, attrs, children } = element
       if (type === 'text') {
         this.buffer += attrs.content
@@ -162,8 +162,14 @@ export class Sender {
         } else {
           await this.sendMessage(children)
         }
+      } else {
+        await this.render(children)
       }
     }
+  }
+
+  async sendMessage(elements: segment[]) {
+    await this.render(elements)
     await this.sendBuffer()
   }
 
