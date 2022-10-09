@@ -97,6 +97,8 @@ export class Sender {
         parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
       }))
+      delete this.payload.reply_to_message
+      this.payload.caption = ''
     }
   }
 
