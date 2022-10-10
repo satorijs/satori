@@ -1,11 +1,16 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
 import { Dict, Logger, segment } from '@satorijs/satori'
-import AggregateError from 'es-aggregate-error'
 import fileType from 'file-type'
 import FormData from 'form-data'
 import * as Telegram from './types'
 import { TelegramBot } from './bot'
+
+class AggregateError extends Error {
+  constructor(public errors: Error[], message = '') {
+    super(message)
+  }
+}
 
 const logger = new Logger('telegram')
 

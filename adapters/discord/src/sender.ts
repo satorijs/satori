@@ -3,8 +3,13 @@ import { readFileSync } from 'fs'
 import { basename } from 'path'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
-import AggregateError from 'es-aggregate-error'
 import { DiscordBot } from './bot'
+
+class AggregateError extends Error {
+  constructor(public errors: Error[], message = '') {
+    super(message)
+  }
+}
 
 export class Sender {
   private results: string[] = []

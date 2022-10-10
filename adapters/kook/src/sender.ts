@@ -1,10 +1,15 @@
-import { Dict, Schema, segment } from '@satorijs/satori'
+import { Schema, segment } from '@satorijs/satori'
 import { createReadStream } from 'fs'
 import FormData from 'form-data'
-import AggregateError from 'es-aggregate-error'
 import { KookBot } from './bot'
 import * as Kook from './types'
 import internal from 'stream'
+
+class AggregateError extends Error {
+  constructor(public errors: Error[], message = '') {
+    super(message)
+  }
+}
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
