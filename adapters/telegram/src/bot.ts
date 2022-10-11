@@ -93,14 +93,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     session.timestamp = message.date * 1000
     const segments: segment[] = []
     if (message.reply_to_message) {
-      const replayText = message.reply_to_message.text || message.reply_to_message.caption
-      const parsedReply = parseText(replayText, message.reply_to_message.entities || [])
-      session.quote = {
-        messageId: message.reply_to_message.message_id.toString(),
-        author: adaptUser(message.reply_to_message.from),
-        content: replayText ? parsedReply.join('') : undefined,
-      }
-      segments.push(segment('quote', { id: message.reply_to_message.message_id, channelId: message.reply_to_message.chat.id }))
+      session.quote = {}
+      await this.adaptMessage(message.reply_to_message, session.quote as Session)
     }
     if (message.location) {
       segments.push(segment('location', { lat: message.location.latitude, lon: message.location.longitude }))
