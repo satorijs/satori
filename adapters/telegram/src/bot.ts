@@ -96,6 +96,16 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       session.quote = {}
       await this.adaptMessage(message.reply_to_message, session.quote as Session)
     }
+
+    // make sure text comes first so that commands can be triggered
+    const msgText = message.text || message.caption
+    segments.push(...parseText(msgText, message.entities || []))
+
+    if (message.caption) {
+      // add a space to separate caption from media
+      segments.push(segment('text', { content: ' ' }))
+    }
+
     if (message.location) {
       segments.push(segment('location', { lat: message.location.latitude, lon: message.location.longitude }))
     }
@@ -126,9 +136,6 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     } else if (message.document) {
       segments.push(segment('file', await this.$getFileData(message.document.file_id)))
     }
-
-    const msgText: string = message.text || message.caption
-    segments.push(...parseText(msgText, message.entities || []))
 
     session.content = segments.join('')
     session.userId = message.from.id.toString()
