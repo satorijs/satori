@@ -1,5 +1,4 @@
 import { Schema, segment } from '@satorijs/satori'
-import { createReadStream } from 'fs'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import * as Kook from './types'
@@ -137,6 +136,9 @@ export class Sender {
       const { type, attrs, children } = element
       if (type === 'text') {
         this.buffer += attrs.content
+      } else if (type === 'p') {
+        await this.render(children)
+        this.buffer += '\n'
       } else if (type === 'at') {
         if (attrs.id) {
           this.buffer += `(met)${attrs.id}(met)`

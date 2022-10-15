@@ -40,19 +40,44 @@ export namespace CQCode {
     children: CQCode[]
   }
 
-  export function _render(elements: segment[], bot: BaseBot) {
+  type RenderMode = 'default' | 'figure'
+
+  export function _render(elements: segment[], bot: BaseBot, mode: RenderMode = 'default') {
     const result: Message[] = []
     let data = {}
     let buffer: Message = { type: 'message', data, children: [] }
     const flush = () => {
+      // trim start
+      while (true) {
+        const first = buffer.children[0]
+        if (first?.type !== 'text') break
+        first.data.text = first.data.text.trimStart()
+        if (first.data.text) break
+        buffer.children.shift()
+      }
+
+      // trim end
+      while (true) {
+        const last = buffer.children[buffer.children.length - 1]
+        if (last?.type !== 'text') break
+        last.data.text = last.data.text.trimEnd()
+        if (last.data.text) break
+        buffer.children.pop()
+      }
+
+      // flush
       if (buffer.children.length) result.push(buffer)
       buffer = { type: 'message', data, children: [] }
     }
+
     const render = (elements: segment[]) => {
       for (const element of elements) {
         let { type, attrs, children } = element
         if (type === 'text') {
           buffer.children.push({ type: 'text', data: { text: attrs.content } })
+        } else if (type === 'p') {
+          render(children)
+          buffer.children.push({ type: 'text', data: { text: '\n' } })
         } else if (type === 'at') {
           if (attrs.type === 'all') {
             buffer.children.push({ type: 'at', data: { qq: 'all' } })
@@ -67,6 +92,20 @@ export namespace CQCode {
           const cap = /^data:([\w/-]+);base64,/.exec(attrs.file)
           if (cap) attrs.file = 'base64://' + attrs.file.slice(cap[0].length)
           buffer.children.push({ type, data: attrs })
+        } else if (type === 'figure') {
+          flush()
+          result.push({
+            type: 'forward',
+            data: attrs,
+            children: _render(children, bot).map(({ data, children }) => ({
+              type: 'node',
+              data: data.id ? { id: data.id } : {
+                name: data.nickname || bot.nickname || bot.username,
+                uin: data.userId || bot.userId,
+                content: children as any,
+              },
+            })),
+          })
         } else if (type === 'quote') {
           flush()
           buffer.children.push({ type: 'reply', data: attrs })

@@ -1,6 +1,4 @@
 import { Dict, Schema, segment } from '@satorijs/satori'
-import { readFileSync } from 'fs'
-import { basename } from 'path'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
@@ -11,11 +9,15 @@ class AggregateError extends Error {
   }
 }
 
+type RenderMode = 'default' | 'figure'
+
 export class Sender {
   private results: string[] = []
   private errors: Error[] = []
   private buffer: string = ''
   private addition: Dict = {}
+  private figure: segment = null
+  private mode: RenderMode = 'default'
 
   constructor(private bot: DiscordBot, private url: string) {}
 
@@ -31,7 +33,7 @@ export class Sender {
   async sendEmbed(fileBuffer: ArrayBuffer, payload_json: Dict, filename: string) {
     const fd = new FormData()
     filename ||= 'file.' + (await fromBuffer(fileBuffer)).ext
-    fd.append('file', fileBuffer, filename)
+    fd.append('file', Buffer.from(fileBuffer), filename)
     fd.append('payload_json', JSON.stringify(payload_json))
     return this.post(fd, fd.getHeaders())
   }
@@ -96,9 +98,13 @@ export class Sender {
   }
 
   async render(elements: segment[]) {
-    for (const { type, attrs, children } of elements) {
+    for (const element of elements) {
+      const { type, attrs, children } = element
       if (type === 'text') {
         this.buffer += attrs.content
+      } else if (type === 'p') {
+        await this.render(children)
+        this.buffer += '\n'
       } else if (type === 'at') {
         if (attrs.id) {
           this.buffer += `<@${attrs.id}>`
@@ -112,11 +118,15 @@ export class Sender {
       } else if (type === 'face' && attrs.name && attrs.id) {
         this.buffer += `<:${attrs.name}:${attrs.id}>`
       } else if ((type === 'image' || type === 'video') && attrs.url) {
-        await this.sendAsset(type, attrs, {
-          ...this.addition,
-          content: this.buffer.trim(),
-        })
-        this.buffer = ''
+        if (this.mode === 'figure') {
+          this.figure = element
+        } else {
+          await this.sendAsset(type, attrs, {
+            ...this.addition,
+            content: this.buffer.trim(),
+          })
+          this.buffer = ''
+        }
       } else if (type === 'share') {
         await this.sendBuffer()
         await this.post({
@@ -129,19 +139,34 @@ export class Sender {
           content: this.buffer.trim(),
         })
         this.buffer = ''
+      } else if (type === 'figure') {
+        await this.sendBuffer()
+        this.mode = 'figure'
+        await this.render(children)
+        await this.sendAsset(this.figure.type, this.figure.attrs, {
+          ...this.addition,
+          content: this.buffer.trim(),
+        })
+        this.buffer = ''
+        this.mode = 'default'
       } else if (type === 'quote') {
         await this.sendBuffer()
         this.addition.message_reference = {
           message_id: attrs.id,
         }
       } else if (type === 'message') {
-        await this.sendBuffer()
-        if ('quote' in attrs) {
-          this.addition.message_reference = {
-            message_id: attrs.id,
-          }
+        if (this.mode === 'figure') {
+          await this.render(children)
+          this.buffer += '\n'
         } else {
-          await this.sendMessage(children)
+          await this.sendBuffer()
+          if ('quote' in attrs) {
+            this.addition.message_reference = {
+              message_id: attrs.id,
+            }
+          } else {
+            await this.sendMessage(children)
+          }
         }
       } else {
         await this.render(children)

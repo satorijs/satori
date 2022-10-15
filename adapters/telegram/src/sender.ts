@@ -12,6 +12,8 @@ class AggregateError extends Error {
   }
 }
 
+type RenderMode = 'default' | 'figure'
+
 const logger = new Logger('telegram')
 
 type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
@@ -79,6 +81,7 @@ export class Sender {
   private results: Telegram.Message[] = []
   private assetType: AssetType = null
   private payload: Dict
+  private mode: RenderMode = 'default'
 
   constructor(private bot: TelegramBot, private chat_id: string) {
     this.payload = { chat_id, caption: '' }
@@ -118,6 +121,9 @@ export class Sender {
     for (const { type, attrs, children } of elements) {
       if (type === 'text') {
         this.payload.caption += attrs.content
+      } else if (type === 'p') {
+        await this.render(children)
+        this.payload.caption += '\n'
       } else if (type === 'at') {
         const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
         if (atTarget) this.payload.caption += `@${atTarget} `
@@ -125,7 +131,9 @@ export class Sender {
         const sharpTarget = attrs.name || attrs.id
         if (sharpTarget) this.payload.caption += `#${sharpTarget} `
       } else if (['image', 'audio', 'video', 'file'].includes(type)) {
-        await this.sendBuffer()
+        if (this.mode === 'default') {
+          await this.sendBuffer()
+        }
         if (type === 'image') {
           this.assetType = await isGif(attrs.url) ? 'animation' : 'photo'
         } else if (type === 'file') {
@@ -134,15 +142,26 @@ export class Sender {
           this.assetType = type as any
         }
         this.payload[this.assetType] = attrs.url
+      } else if (type === 'figure') {
+        await this.sendBuffer()
+        this.mode = 'figure'
+        await this.render(children)
+        await this.sendBuffer()
+        this.mode = 'default'
       } else if (type === 'quote') {
         await this.sendBuffer()
         this.payload.reply_to_message_id = attrs.id
       } else if (type === 'message') {
-        await this.sendBuffer()
-        if ('quote' in attrs) {
-          this.payload.reply_to_message_id = attrs.id
+        if (this.mode === 'figure') {
+          await this.render(children)
+          this.payload.caption += '\n'
         } else {
-          await this.sendMessage(children)
+          await this.sendBuffer()
+          if ('quote' in attrs) {
+            this.payload.reply_to_message_id = attrs.id
+          } else {
+            await this.sendMessage(children)
+          }
         }
       } else if (type === 'markdown') {
         await this.sendBuffer()
