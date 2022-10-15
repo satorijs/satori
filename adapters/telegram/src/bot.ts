@@ -4,6 +4,7 @@ import { adaptGuildMember, adaptUser } from './utils'
 import { Sender } from './sender'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
+import { fromBuffer } from 'file-type'
 import fs from 'fs'
 
 const logger = new Logger('telegram')
@@ -27,7 +28,8 @@ export interface TelegramResponse {
 }
 
 export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
-  http: Quester & { file?: Quester }
+  http: Quester
+  file: Quester
   internal?: Telegram.Internal
   local?: boolean
 
@@ -39,7 +41,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       ...config,
       endpoint: `${config.endpoint}/bot${config.token}`,
     })
-    this.http.file = this.ctx.http.extend({
+    this.file = this.ctx.http.extend({
       ...config,
       endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
     })
@@ -282,14 +284,15 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (this.local) {
       res = await fs.promises.readFile(filePath)
     } else {
-      res = await this.http.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
+      res = await this.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
     }
-    const base64 = `base64://` + res.toString('base64')
+    const { mime } = await fromBuffer(res)
+    const base64 = `data:${mime};base64,` + res.toString('base64')
     return { url: base64 }
   }
 
   private async setAvatarUrl(user: User) {
-    const { endpoint } = this.http.file.config
+    const { endpoint } = this.file.config
     const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
     if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]

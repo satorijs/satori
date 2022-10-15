@@ -64,6 +64,8 @@ export namespace CQCode {
           attrs = { ...attrs }
           attrs.file = attrs.url
           delete attrs.url
+          const cap = /^data:([\w/-]+);base64,/.exec(attrs.file)
+          if (cap) attrs.file = 'base64://' + attrs.file.slice(cap[0].length)
           buffer.children.push({ type, data: attrs })
         } else if (type === 'quote') {
           flush()

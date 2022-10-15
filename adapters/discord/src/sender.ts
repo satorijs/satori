@@ -48,12 +48,9 @@ export class Sender {
       addition.content = ''
     }
 
-    if (data.url.startsWith('file://')) {
-      const filename = basename(data.url.slice(7))
-      return await this.sendEmbed(readFileSync(data.url.slice(7)), addition, data.file || filename)
-    } else if (data.url.startsWith('base64://')) {
-      const a = Buffer.from(data.url.slice(9), 'base64')
-      return await this.sendEmbed(a, addition, data.file)
+    if (['file:', 'data:', 'base64:'].some((prefix) => data.url.startsWith(prefix))) {
+      const result = await this.bot.ctx.http.file(data.url)
+      return await this.sendEmbed(result.data, addition, data.file || result.filename)
     }
 
     const sendDirect = async () => {

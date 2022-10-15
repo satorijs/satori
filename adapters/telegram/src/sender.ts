@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
 import { Dict, Logger, segment } from '@satorijs/satori'
-import fileType from 'file-type'
+import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import * as Telegram from './types'
 import { TelegramBot } from './bot'
@@ -21,23 +21,26 @@ async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buf
   let content: any
   let filename = 'file'
 
-  const url = new URL(payload[field])
-  const schema = url.protocol
+  const { protocol } = new URL(payload[field])
 
   // Because the base64 string is not url encoded, so it will contain slash
   // and can't parse with URL.pathname
-  const data = payload[field].split('://')[1]
+  let data = payload[field].split('://')[1]
 
-  if (schema === 'file:') {
-    content = createReadStream(fileURLToPath(url))
+  if (protocol === 'file:') {
+    content = createReadStream(fileURLToPath(payload[field]))
     delete payload[field]
-  } else if (schema === 'base64:') {
+  } else if (protocol === 'base64:') {
+    content = Buffer.from(data, 'base64')
+    delete payload[field]
+  } else if (protocol === 'data:') {
+    data = payload[field].split('base64,')[1]
     content = Buffer.from(data, 'base64')
     delete payload[field]
   }
   // add file extension for base64 document (general file)
-  if (field === 'document' && schema === 'base64:') {
-    const type = await fileType.fromBuffer(Buffer.from(data, 'base64'))
+  if (field === 'document' && (protocol === 'base64:' || protocol === 'data:')) {
+    const type = await fromBuffer(content)
     if (!type) {
       logger.warn('Can not infer file mime')
     } else filename = `file.${type.ext}`
@@ -47,9 +50,15 @@ async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buf
 
 async function isGif(url: string) {
   if (url.toLowerCase().endsWith('.gif')) return true
-  const [schema, data] = url.split('://')
-  if (schema === 'base64') {
-    const type = await fileType.fromBuffer(Buffer.from(data, 'base64'))
+  const { protocol } = new URL(url)
+  let data: string
+  if (protocol === 'base64:') {
+    data = url.split('://')[1]
+  } else if (protocol === 'data:') {
+    data = url.split('base64,')[1]
+  }
+  if (data) {
+    const type = await fromBuffer(Buffer.from(data, 'base64'))
     if (!type) {
       logger.warn('Can not infer file mime')
     } else if (type.ext === 'gif') return true
