@@ -20,12 +20,16 @@ declare module 'cordis' {
 }
 
 export function base64ToArrayBuffer(base64: string) {
-  const binary = atob(base64)
-  const result = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i++) {
-    result[i] = binary.charCodeAt(i)
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(base64, 'base64').buffer
+  } else {
+    const binary = atob(base64.replace(/\s/g, ''))
+    const buffer = new Uint8Array(binary.length)
+    for (let i = 0; i < binary.length; i++) {
+      buffer[i] = binary.charCodeAt(i)
+    }
+    return buffer
   }
-  return result
 }
 
 export interface Quester {
