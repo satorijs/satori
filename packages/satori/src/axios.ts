@@ -3,10 +3,25 @@ import { defineProperty, Dict } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import { Agent } from 'agent-base'
 import { WebSocket } from 'ws'
+import { fromBuffer } from 'file-type'
+import { basename } from 'path'
+import { promises as fs } from 'fs'
+import { fileURLToPath } from 'url'
 import createHttpProxyAgent from 'http-proxy-agent'
 import createHttpsProxyAgent from 'https-proxy-agent'
 import createSocksProxyAgent from 'socks-proxy-agent'
 import Schema from 'schemastery'
+
+const oldFile = Quester.prototype.file
+Quester.prototype.file = async function file(this: Quester, url: string) {
+  // for backward compatibility
+  if (url.startsWith('file://')) {
+    const data = await fs.readFile(fileURLToPath(url))
+    const result = await fromBuffer(data)
+    return { mime: result?.mime, filename: basename(url), data }
+  }
+  return oldFile.call(this, url)
+}
 
 Quester.prototype.ws = function ws(this: Quester, url: string, options: ClientRequestArgs = {}) {
   return new WebSocket(url, {

@@ -1,6 +1,8 @@
 import { Context } from 'cordis'
 import { Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
+import { fromBuffer } from 'file-type'
+import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as types from 'axios'
 import Schema from 'schemastery'
@@ -17,13 +19,22 @@ declare module 'cordis' {
   }
 }
 
-interface Quester {
+export function base64ToArrayBuffer(base64: string) {
+  const binary = atob(base64)
+  const result = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    result[i] = binary.charCodeAt(i)
+  }
+  return result
+}
+
+export interface Quester {
   <T = any>(method: Method, url: string, config?: AxiosRequestConfig): Promise<T>
   axios<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>
   config: Quester.Config
 }
 
-class Quester {
+export class Quester {
   constructor(ctx: Context, config: Context.Config) {
     return Quester.create(config.request)
   }
@@ -71,12 +82,39 @@ class Quester {
   prepare(): AxiosRequestConfig {
     return pick(this.config, ['timeout', 'headers'])
   }
+
+  async file(url: string): Promise<Quester.File> {
+    // for backward compatibility
+    if (url.startsWith('base64://')) {
+      const data = base64ToArrayBuffer(url.slice(9))
+      const result = await fromBuffer(data)
+      const name = 'file' + (result ? '.' + result.ext : '')
+      return { mime: result?.mime, filename: name, data }
+    }
+    const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
+    if (capture) {
+      const [, mime, base64] = capture
+      const ext = mimedb[mime]?.extensions?.[0]
+      const name = 'file' + (ext ? '.' + ext : '')
+      return { mime, filename: name, data: base64ToArrayBuffer(base64) }
+    }
+    const [_, name] = new URL(url).pathname.match(/.+\/([^/]*)/)
+    const { headers, data } = await this.axios('GET', { url, responseType: 'arraybuffer' })
+    const mime = headers['content-type']
+    return { mime, filename: name, data }
+  }
 }
 
-namespace Quester {
+export namespace Quester {
   export type Method = types.Method
   export type AxiosResponse = types.AxiosResponse
   export type AxiosRequestConfig = types.AxiosRequestConfig
+
+  export interface File {
+    mime?: string
+    filename: string
+    data: ArrayBuffer
+  }
 
   export const isAxiosError = axios.isAxiosError
 
