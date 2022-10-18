@@ -40,17 +40,17 @@ export class Sender {
     }
   }
 
-  private async transformUrl({ type, data }: segment) {
-    if (['file:', 'base64:', 'data:'].some(protocol => data.url.startsWith(protocol))) {
+  private async transformUrl({ type, attrs }: segment) {
+    if (['file:', 'base64:', 'data:'].some(protocol => attrs.url.startsWith(protocol))) {
       const payload = new FormData()
-      const result = await this.bot.ctx.http.file(data.url)
-      payload.append('file', result.data, {
-        filename: data.file || result.filename,
+      const result = await this.bot.ctx.http.file(attrs.url)
+      payload.append('file', Buffer.from(result.data), {
+        filename: attrs.file || result.filename,
       })
       const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
       return url
-    } else if (!data.url.includes('kaiheila')) {
-      const res = await this.bot.ctx.http.get<internal.Readable>(data.url, {
+    } else if (!attrs.url.includes('kaiheila')) {
+      const res = await this.bot.ctx.http.get<internal.Readable>(attrs.url, {
         headers: { accept: type + '/*' },
         responseType: 'stream',
       })

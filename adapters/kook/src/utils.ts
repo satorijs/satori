@@ -54,7 +54,7 @@ function adaptMessage(base: Kook.MessageBase, meta: Kook.MessageMeta, session: M
       .replace(/#channel:(\d+);/, (_, id) => segment.sharp(id).toString())
     session.elements = segment.parse(session.content)
   } else if (base.type === Kook.Type.image) {
-    const element = segment('image', { url: base.content, file: meta.attachments.name })
+    const element = segment('image', { url: base.content, file: meta.attachments?.name })
     session.elements = [element]
     session.content = element.toString()
   } else if (base.type == Kook.Type.kmarkdown) {

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "Kook (Kaiheila) Adapter for Satorijs",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
