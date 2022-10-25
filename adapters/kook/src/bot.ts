@@ -1,11 +1,11 @@
-import { Bot, Context, Quester, Schema, segment, Session } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, segment } from '@satorijs/satori'
 import { Method } from 'axios'
-import { adaptAuthor, adaptGroup, adaptUser } from './utils'
+import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { Sender } from './sender'
+import { KookModulator } from './modulator'
 
 export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   http: Quester
@@ -34,31 +34,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   }
 
   async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    const fragment = segment.normalize(content)
-    const elements = fragment.children
-    content = fragment.toString()
-    const session = this.session({
-      type: 'send',
-      author: this,
-      channelId,
-      elements,
-      content,
-      guildId,
-      subtype: guildId ? 'group' : 'private',
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session.content) return []
-
-    const sender = new Sender(this, channelId)
-    const results = await sender.send(session.content)
-
-    for (const id of results) {
-      session.messageId = id
-      this.context.emit(session, 'send', session)
-    }
-
-    return results
+    return new KookModulator(this, channelId, guildId).send(content)
   }
 
   async sendPrivateMessage(target_id: string, content: string | segment) {
@@ -80,6 +56,14 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
       await this.request('POST', '/message/update', { msg_id, content })
+    }
+  }
+
+  async getMessage(channelId: string, msg_id: string) {
+    if (channelId.length > 30) {
+      return adaptMessage(await this.request('POST', '/user-chat/view', { msg_id }))
+    } else {
+      return adaptMessage(await this.request('POST', '/message/view', { msg_id }))
     }
   }
 
@@ -130,7 +114,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, Sender.Config {}
+  export interface BaseConfig extends Bot.Config, Quester.Config, KookModulator.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -142,7 +126,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    Sender.Config,
+    KookModulator.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

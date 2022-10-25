@@ -40,7 +40,7 @@ const rules: Rule[] = [{
   transform: (_, id) => segment.sharp(id),
 }]
 
-function adaptMessage(base: Kook.MessageBase, meta: Kook.MessageMeta, session: MessageBase = {}) {
+function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: MessageBase = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
@@ -80,14 +80,20 @@ function adaptMessage(base: Kook.MessageBase, meta: Kook.MessageMeta, session: M
   return session
 }
 
+export function adaptMessage(message: Kook.Message, session: Partial<Session> = {}) {
+  adaptMessageMeta(message, message, session)
+  session.messageId = message.id
+  return session
+}
+
 function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: Partial<Session> = {}) {
-  adaptMessage(data, meta, session)
+  adaptMessageMeta(data, meta, session)
   session.messageId = data.msg_id
   session.timestamp = data.msg_timestamp
   const subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
   session.subtype = subtype
   if (meta.quote) {
-    session.quote = adaptMessage(meta.quote, meta.quote)
+    session.quote = adaptMessageMeta(meta.quote, meta.quote)
     session.quote.messageId = meta.quote.id
     session.quote.channelId = session.channelId
     session.quote.subtype = subtype

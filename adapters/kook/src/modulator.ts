@@ -1,26 +1,20 @@
-import { Schema, segment } from '@satorijs/satori'
+import { Modulator, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
+import { adaptMessage } from './utils'
 import * as Kook from './types'
 import internal from 'stream'
 
-class AggregateError extends Error {
-  constructor(public errors: Error[], message = '') {
-    super(message)
-  }
-}
-
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class Sender {
+export class KookModulator extends Modulator<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
-  private results: Kook.Message[] = []
-  private errors: Error[] = []
   private buffer: string = ''
 
-  constructor(private bot: KookBot, channelId: string) {
+  constructor(bot: KookBot, channelId: string, guildId?: string) {
+    super(bot, channelId, guildId)
     if (channelId.length > 30) {
       this.params.chat_code = channelId
       this.path = '/user-chat/create-msg'
@@ -33,8 +27,11 @@ export class Sender {
   async post(type: Kook.Type, content: string) {
     try {
       const params = { ...this.params, ...this.additional, type, content }
-      const message = await this.bot.request('POST', this.path, params)
-      this.results.push(message)
+      const result = await this.bot.request('POST', this.path, params)
+      const session = this.bot.session()
+      adaptMessage(result, session)
+      this.results.push(session)
+      session.app.emit(session, 'send', session)
     } catch (e) {
       this.errors.push(e)
     }
@@ -123,7 +120,7 @@ export class Sender {
     await this.post(Kook.Type.card, JSON.stringify(output))
   }
 
-  async sendBuffer() {
+  async flush() {
     const content = this.buffer.trim()
     if (!content) return
     await this.post(Kook.Type.kmarkdown, content)
@@ -131,69 +128,55 @@ export class Sender {
     this.additional = {}
   }
 
-  async render(elements: segment[]) {
-    for (const element of elements) {
-      const { type, attrs, children } = element
-      if (type === 'text') {
-        this.buffer += attrs.content
-      } else if (type === 'p') {
-        await this.render(children)
-        this.buffer += '\n'
-      } else if (type === 'at') {
-        if (attrs.id) {
-          this.buffer += `(met)${attrs.id}(met)`
-        } else if (attrs.type === 'all') {
-          this.buffer += `(met)all(met)`
-        } else if (attrs.type === 'here') {
-          this.buffer += `(met)here(met)`
-        } else if (attrs.role) {
-          this.buffer += `(rol)${attrs.role}(rol)`
-        }
-      } else if (type === 'code') {
-        this.buffer += `\`${element.toString(true)}\``
-      } else if (type === 'sharp') {
-        this.buffer += `(chn)${attrs.id}(chn)`
-      } else if (['image', 'video', 'audio', 'file'].includes(type)) {
-        await this.sendBuffer()
-        const url = await this.transformUrl(element)
-        await this.post(Kook.Type[type], url)
-      } else if (type === 'quote') {
-        await this.sendBuffer()
-        this.additional.quote = attrs.id
-      } else if (type === 'message') {
-        await this.sendBuffer()
-        if ('quote' in attrs) {
-          this.additional.quote = attrs.id
-        } else {
-          await this.sendMessage(children)
-        }
-      } else {
-        await this.render(children)
+  async visit(element: segment) {
+    const { type, attrs, children } = element
+    if (type === 'text') {
+      this.buffer += attrs.content
+    } else if (type === 'p') {
+      await this.render(children)
+      this.buffer += '\n'
+    } else if (type === 'at') {
+      if (attrs.id) {
+        this.buffer += `(met)${attrs.id}(met)`
+      } else if (attrs.type === 'all') {
+        this.buffer += `(met)all(met)`
+      } else if (attrs.type === 'here') {
+        this.buffer += `(met)here(met)`
+      } else if (attrs.role) {
+        this.buffer += `(rol)${attrs.role}(rol)`
       }
+    } else if (type === 'code') {
+      this.buffer += `\`${element.toString(true)}\``
+    } else if (type === 'sharp') {
+      this.buffer += `(chn)${attrs.id}(chn)`
+    } else if (['image', 'video', 'audio', 'file'].includes(type)) {
+      await this.flush()
+      const url = await this.transformUrl(element)
+      await this.post(Kook.Type[type], url)
+    } else if (type === 'quote') {
+      await this.flush()
+      this.additional.quote = attrs.id
+    } else if (type === 'message') {
+      await this.flush()
+      if ('quote' in attrs) {
+        this.additional.quote = attrs.id
+      } else {
+        await this.render(children, true)
+      }
+    } else {
+      await this.render(children)
     }
-  }
-
-  async sendMessage(elements: segment[]) {
-    await this.render(elements)
-    await this.sendBuffer()
-  }
-
-  async send(content: string) {
-    const elements = segment.parse(content)
-    await this.sendMessage(elements)
-    if (!this.errors.length) return this.results
-    throw new AggregateError(this.errors)
   }
 }
 
-export namespace Sender {
+export namespace KookModulator {
   export type HandleMixedContent = 'card' | 'separate' | 'mixed'
 
   export interface Config {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<Sender.Config> = Schema.object({
+  export const Config: Schema<KookModulator.Config> = Schema.object({
     handleMixedContent: Schema.union([
       Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
       Schema.const('card' as const).description('使用卡片发送内容'),

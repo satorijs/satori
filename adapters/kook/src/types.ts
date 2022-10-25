@@ -1,4 +1,3 @@
-import { Dict, makeArray } from 'cosmokit'
 import { Quester } from '@satorijs/satori'
 
 export enum Signal {
