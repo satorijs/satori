@@ -1,6 +1,7 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
+import { QQGuildModulator } from './modulator'
 import { WsClient } from './ws'
 
 export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
@@ -20,62 +21,11 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
   }
 
   async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    const element = segment.normalize(fragment)
-    const session = this.session({
-      content: element.toString(),
-      elements: element.children,
-      guildId,
-      author: this,
-      type: 'send',
-      subtype: 'group',
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session.content) return []
-    const ids: string[] = []
-    for (const content of this.render(session.content)) {
-      const resp = await this.internal.send.channel(channelId, content)
-      ids.push(session.messageId = resp.id)
-      this.context.emit(session, 'message', this.adaptMessage(resp))
-    }
-    this.context.emit(session, 'send', session)
-    return ids
+    return new QQGuildModulator(this, channelId, guildId).send(fragment)
   }
 
   async getGuildList() {
     return this.internal.guilds.then(guilds => guilds.map(adaptGuild))
-  }
-
-  render(source: string | segment) {
-    const result: string[] = []
-    let current = ''
-    const flush = () => {
-      if (current) result.push(current)
-      current = ''
-    }
-    const renderText = (elements: segment[]) => {
-      for (const element of elements) {
-        const { type, attrs, children } = element
-        if (type === 'text') {
-          current += attrs.content
-        } else if (type === 'message') {
-          flush()
-          if ('quote' in attrs) {
-            // not supported
-          } else {
-            renderMessage(children)
-          }
-        } else {
-          renderText(children)
-        }
-      }
-    }
-    const renderMessage = (elements: segment[]) => {
-      renderText(elements)
-      flush()
-    }
-    renderMessage(segment.normalize(source).children)
-    return result
   }
 
   adaptMessage(msg: QQGuild.Message) {

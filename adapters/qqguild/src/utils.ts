@@ -1,4 +1,4 @@
-import { Guild, Message, segment, User } from '@satorijs/satori'
+import { Guild, User } from '@satorijs/satori'
 import * as QQGuild from '@qq-guild-sdk/core'
 
 export const adaptGuild = (guild: QQGuild.Guild): Guild => ({

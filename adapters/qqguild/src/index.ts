@@ -4,6 +4,7 @@ import { QQGuildBot } from './bot'
 export { QQGuild }
 
 export * from './bot'
+export * from './modulator'
 export * from './utils'
 export * from './ws'
 
