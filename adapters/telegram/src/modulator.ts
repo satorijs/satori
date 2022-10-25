@@ -1,16 +1,10 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
-import { Dict, Logger, segment } from '@satorijs/satori'
+import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
-import * as Telegram from './types'
 import { TelegramBot } from './bot'
-
-class AggregateError extends Error {
-  constructor(public errors: Error[], message = '') {
-    super(message)
-  }
-}
+import * as Telegram from './utils'
 
 type RenderMode = 'default' | 'figure'
 
@@ -76,15 +70,24 @@ const assetApi = {
   animation: 'sendAnimation',
 } as const
 
-export class Sender {
-  private errors: Error[] = []
-  private results: Telegram.Message[] = []
+export class TelegramModulator extends Modulator<TelegramBot> {
   private assetType: AssetType = null
   private payload: Dict
   private mode: RenderMode = 'default'
 
-  constructor(private bot: TelegramBot, private chat_id: string) {
+  constructor(bot: TelegramBot, channelId: string, guildId?: string) {
+    super(bot, channelId, guildId)
+    const chat_id = channelId.startsWith('private:')
+      ? channelId.slice(8)
+      : channelId
     this.payload = { chat_id, caption: '' }
+  }
+
+  async addResult(result: Telegram.Message) {
+    const session = this.bot.session()
+    await this.bot.adaptMessage(result, session)
+    this.results.push(session)
+    session.app.emit(session, 'send', session)
   }
 
   async sendAsset() {
@@ -94,96 +97,85 @@ export class Sender {
       payload.append(key, this.payload[key].toString())
     }
     if (field && content) payload.append(field, content, filename)
-    this.results.push(await this.bot.internal[assetApi[this.assetType]](payload as any))
+    const result = await this.bot.internal[assetApi[this.assetType]](payload as any)
+    await this.addResult(result)
     delete this.payload[this.assetType]
     delete this.payload.reply_to_message
     this.assetType = null
     this.payload.caption = ''
   }
 
-  async sendBuffer() {
+  async flush() {
     if (this.assetType) {
       // send previous asset if there is any
       await this.sendAsset()
     } else if (this.payload.caption) {
-      this.results.push(await this.bot.internal.sendMessage({
-        chat_id: this.chat_id,
+      const result = await this.bot.internal.sendMessage({
+        chat_id: this.payload.chat_id,
         text: this.payload.caption,
         parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
-      }))
+      })
+      await this.addResult(result)
       delete this.payload.reply_to_message
       this.payload.caption = ''
     }
   }
 
-  async render(elements: segment[]) {
-    for (const { type, attrs, children } of elements) {
-      if (type === 'text') {
-        this.payload.caption += attrs.content
-      } else if (type === 'p') {
+  async visit(element: segment) {
+    const { type, attrs, children } = element
+    if (type === 'text') {
+      this.payload.caption += attrs.content
+    } else if (type === 'p') {
+      await this.render(children)
+      this.payload.caption += '\n'
+    } else if (type === 'at') {
+      const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
+      if (atTarget) this.payload.caption += `@${atTarget} `
+    } else if (type === 'sharp') {
+      const sharpTarget = attrs.name || attrs.id
+      if (sharpTarget) this.payload.caption += `#${sharpTarget} `
+    } else if (['image', 'audio', 'video', 'file'].includes(type)) {
+      if (this.mode === 'default') {
+        await this.flush()
+      }
+      if (type === 'image') {
+        this.assetType = await isGif(attrs.url) ? 'animation' : 'photo'
+      } else if (type === 'file') {
+        this.assetType = 'document'
+      } else {
+        this.assetType = type as any
+      }
+      this.payload[this.assetType] = attrs.url
+    } else if (type === 'figure') {
+      await this.flush()
+      this.mode = 'figure'
+      await this.render(children)
+      await this.flush()
+      this.mode = 'default'
+    } else if (type === 'quote') {
+      await this.flush()
+      this.payload.reply_to_message_id = attrs.id
+    } else if (type === 'message') {
+      if (this.mode === 'figure') {
         await this.render(children)
         this.payload.caption += '\n'
-      } else if (type === 'at') {
-        const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
-        if (atTarget) this.payload.caption += `@${atTarget} `
-      } else if (type === 'sharp') {
-        const sharpTarget = attrs.name || attrs.id
-        if (sharpTarget) this.payload.caption += `#${sharpTarget} `
-      } else if (['image', 'audio', 'video', 'file'].includes(type)) {
-        if (this.mode === 'default') {
-          await this.sendBuffer()
-        }
-        if (type === 'image') {
-          this.assetType = await isGif(attrs.url) ? 'animation' : 'photo'
-        } else if (type === 'file') {
-          this.assetType = 'document'
-        } else {
-          this.assetType = type as any
-        }
-        this.payload[this.assetType] = attrs.url
-      } else if (type === 'figure') {
-        await this.sendBuffer()
-        this.mode = 'figure'
-        await this.render(children)
-        await this.sendBuffer()
-        this.mode = 'default'
-      } else if (type === 'quote') {
-        await this.sendBuffer()
-        this.payload.reply_to_message_id = attrs.id
-      } else if (type === 'message') {
-        if (this.mode === 'figure') {
-          await this.render(children)
-          this.payload.caption += '\n'
-        } else {
-          await this.sendBuffer()
-          if ('quote' in attrs) {
-            this.payload.reply_to_message_id = attrs.id
-          } else {
-            await this.sendMessage(children)
-          }
-        }
-      } else if (type === 'markdown') {
-        await this.sendBuffer()
-        this.payload.parse_mode = 'MarkdownV2'
-      } else if (type === 'html') {
-        await this.sendBuffer()
-        this.payload.parse_mode = 'html'
       } else {
-        await this.render(children)
+        await this.flush()
+        if ('quote' in attrs) {
+          this.payload.reply_to_message_id = attrs.id
+        } else {
+          await this.render(children, true)
+        }
       }
+    } else if (type === 'markdown') {
+      await this.flush()
+      this.payload.parse_mode = 'MarkdownV2'
+    } else if (type === 'html') {
+      await this.flush()
+      this.payload.parse_mode = 'html'
+    } else {
+      await this.render(children)
     }
-  }
-
-  async sendMessage(elements: segment[]) {
-    await this.render(elements)
-    await this.sendBuffer()
-  }
-
-  async send(content: string) {
-    const elements = segment.parse(content)
-    await this.sendMessage(elements)
-    if (!this.errors.length) return this.results
-    throw new AggregateError(this.errors)
   }
 }

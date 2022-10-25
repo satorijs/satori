@@ -1,7 +1,7 @@
-import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
+import { Bot, Context, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
-import { Sender } from './sender'
+import { TelegramModulator } from './modulator'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import { fromBuffer } from 'file-type'
@@ -152,48 +152,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     }
   }
 
-  async sendMessage(channelId: string, content: string | segment) {
-    const fragment = segment.normalize(content)
-    const elements = fragment.children
-    content = fragment.toString()
-    if (!content) return []
-    let subtype: string
-    let chatId: string
-    if (channelId.startsWith('private:')) {
-      subtype = 'private'
-      chatId = channelId.slice(8)
-    } else {
-      subtype = 'group'
-      chatId = channelId
-    }
-
-    const session = this.session({
-      type: 'send',
-      subtype,
-      content,
-      elements,
-      channelId,
-      guildId: channelId,
-      author: this,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-
-    const sender = new Sender(this, chatId)
-    const results = await sender.send(session.content)
-
-    for (const message of results) {
-      const session = this.session()
-      session.type = 'message'
-      defineProperty(session, 'telegram', Object.create(this.internal))
-      Object.assign(session.telegram, message)
-      await this.adaptMessage(message, session)
-      this.context.emit(session, 'send', session)
-      this.context.emit(session, 'message', session)
-    }
-
-    return results.map(result => '' + result.message_id)
+  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+    return new TelegramModulator(this, channelId, guildId).send(fragment)
   }
 
   async sendPrivateMessage(userId: string, content: string | segment) {

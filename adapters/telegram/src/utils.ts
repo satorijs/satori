@@ -2,6 +2,8 @@ import { defineProperty, GuildMember, hyphenate, Logger, User } from '@satorijs/
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
+export * from './types'
+
 const logger = new Logger('telegram')
 
 export const adaptUser = (data: Telegram.User): User => ({
