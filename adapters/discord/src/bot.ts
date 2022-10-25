@@ -1,6 +1,6 @@
 import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
-import { Sender } from './sender'
+import { DiscordModulator } from './modulator'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
@@ -27,35 +27,11 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   }
 
   async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    const fragment = segment.normalize(content)
-    const elements = fragment.children
-    content = fragment.toString()
-    const session = this.session({
-      type: 'send',
-      author: this,
-      channelId,
-      elements,
-      content,
-      guildId,
-      subtype: guildId ? 'group' : 'private',
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session.content) return []
-
-    const sender = new Sender(this, `/channels/${channelId}/messages`)
-    const results = await sender.send(session.content)
-
-    for (const id of results) {
-      session.messageId = id
-      this.context.emit(session, 'send', session)
-    }
-
-    return results
+    return new DiscordModulator(this, channelId, guildId).send(content)
   }
 
   async sendPrivateMessage(channelId: string, content: string | segment) {
-    return this.sendMessage(channelId, content)
+    return new DiscordModulator(this, channelId).send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -131,7 +107,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, Sender.Config, WsClient.Config {
+  export interface Config extends Bot.Config, Quester.Config, DiscordModulator.Config, WsClient.Config {
     token: string
   }
 
@@ -140,7 +116,7 @@ export namespace DiscordBot {
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     WsClient.Config,
-    Sender.Config,
+    DiscordModulator.Config,
     Quester.createConfig('https://discord.com/api/v10'),
   ])
 }
