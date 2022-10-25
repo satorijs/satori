@@ -62,6 +62,14 @@ export class Session<C extends Context = Context> {
     return `${this.platform}:${this.selfId}`
   }
 
+  get content() {
+    return this.elements.join('')
+  }
+
+  set content(value: string) {
+    this.elements = segment.parse(value)
+  }
+
   toJSON(): Session.Payload {
     return Object.fromEntries(Object.entries(this).filter(([key]) => {
       return !key.startsWith('_') && !key.startsWith('$')

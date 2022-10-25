@@ -12,6 +12,7 @@ export { Schema, Logger, segment, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
+export * from './modulator'
 export * from './protocol'
 export * from './selector'
 export * from './session'
