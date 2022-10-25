@@ -1,4 +1,4 @@
-import { camelize, Dict, Logger, segment } from '@satorijs/satori'
+import { camelize, Dict, Logger } from '@satorijs/satori'
 import { CQCode } from './bot'
 
 export interface Response {

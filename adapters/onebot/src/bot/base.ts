@@ -1,15 +1,17 @@
 import { Bot, Context, segment } from '@satorijs/satori'
 import * as OneBot from '../utils'
-import { CQCode } from './cqcode'
+import { OneBotModulator } from './modulator'
 
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 
   sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    return channelId.startsWith('private:')
-      ? this.sendPrivateMessage(channelId.slice(8), fragment)
-      : this.sendGuildMessage(guildId, channelId, fragment)
+    return new OneBotModulator(this, channelId, guildId).send(fragment)
+  }
+
+  sendPrivateMessage(userId: string, fragment: string | segment) {
+    return this.sendMessage('private:' + userId, fragment)
   }
 
   async getMessage(channelId: string, messageId: string) {
@@ -34,55 +36,6 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
   async getFriendList() {
     const data = await this.internal.getFriendList()
     return data.map(OneBot.adaptUser)
-  }
-
-  async sendGuildMessage(guildId: string, channelId: string, fragment: string | segment) {
-    const element = segment.normalize(fragment)
-    const session = this.session({
-      content: element.toString(),
-      elements: element.children,
-      type: 'send',
-      subtype: 'group',
-      author: this,
-      guildId,
-      channelId,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    const ids: string[] = []
-    for (const { type, children } of CQCode.render(session.content, this)) {
-      session.messageId = type === 'forward'
-        ? '' + await this.internal.sendGroupForwardMsg(channelId, children)
-        : '' + await this.internal.sendGroupMsg(channelId, children)
-      ids.push(session.messageId)
-    }
-    this.context.emit(session, 'send', session)
-    return ids
-  }
-
-  async sendPrivateMessage(userId: string, fragment: string | segment) {
-    const element = segment.normalize(fragment)
-    const session = this.session({
-      content: element.toString(),
-      elements: element.children,
-      type: 'send',
-      subtype: 'private',
-      author: this,
-      userId,
-      channelId: 'private:' + userId,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session.content) return []
-    const ids: string[] = []
-    for (const { type, children } of CQCode.render(session.content, this)) {
-      session.messageId = type === 'forward'
-        ? '' + await this.internal.sendPrivateForwardMsg(userId, children)
-        : '' + await this.internal.sendPrivateMsg(userId, children)
-      ids.push(session.messageId)
-    }
-    this.context.emit(session, 'send', session)
-    return ids
   }
 
   async handleFriendRequest(messageId: string, approve: boolean, comment?: string) {

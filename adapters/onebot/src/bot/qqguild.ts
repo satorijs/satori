@@ -1,6 +1,6 @@
-import { Bot, Context, GuildMember, segment } from '@satorijs/satori'
+import { Bot, Context, GuildMember } from '@satorijs/satori'
 import { BaseBot } from './base'
-import { CQCode, OneBotBot } from '.'
+import { OneBotBot } from '.'
 import * as OneBot from '../utils'
 
 export namespace QQGuildBot {
@@ -42,29 +42,6 @@ export class QQGuildBot extends BaseBot {
     // prevent circular reference and use this as already disposed
     this.parent = undefined
     await this.ctx.parallel('bot-disconnect', this)
-  }
-
-  async sendGuildMessage(guildId: string, channelId: string, fragment: string | segment) {
-    const element = segment.normalize(fragment)
-    const session = this.session({
-      content: element.toString(),
-      elements: element.children,
-      type: 'send',
-      subtype: 'group',
-      author: this,
-      guildId,
-      channelId,
-    })
-
-    if (await this.ctx.serial(session, 'before-send', session)) return
-    if (!session.content) return []
-    const ids: string[] = []
-    for (const { children } of CQCode.render(session.content, this)) {
-      session.messageId = '' + await this.internal.sendGuildChannelMsg(guildId, channelId, children)
-      ids.push(session.messageId)
-    }
-    this.ctx.emit(session, 'send', session)
-    return ids
   }
 
   async getChannel(channelId: string, guildId?: string) {
