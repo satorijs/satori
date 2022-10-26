@@ -2,17 +2,17 @@ import { defineProperty } from 'cosmokit'
 import { Context } from '.'
 import { Session } from './session'
 
-export type Filter<C extends Context = Context> = (session: C[typeof Context.session]) => boolean
+export type Filter = (session: Session) => boolean
 
 /* eslint-disable max-len */
 declare module '.' {
   interface Context {
-    filter: Filter<this>
+    filter: Filter
     any(): this
     never(): this
-    union(arg: Filter<this> | this): this
-    intersect(arg: Filter<this> | this): this
-    exclude(arg: Filter<this> | this): this
+    union(arg: Filter | this): this
+    intersect(arg: Filter | this): this
+    exclude(arg: Filter | this): this
     user(...values: string[]): this
     self(...values: string[]): this
     guild(...values: string[]): this

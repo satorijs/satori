@@ -22,30 +22,30 @@ type Actions = 'added' | 'deleted' | 'updated'
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback<C>> {
   // session events
-  'message': Session.EventCallback<C>
-  'message-deleted': Session.EventCallback<C>
-  'message-updated': Session.EventCallback<C>
-  'reaction-added': Session.EventCallback<C>
-  'reaction-deleted': Session.EventCallback<C>
-  'reaction-deleted/one': Session.EventCallback<C>
-  'reaction-deleted/all': Session.EventCallback<C>
-  'reaction-deleted/emoji': Session.EventCallback<C>
-  'send': Session.EventCallback<C>
-  'friend-request': Session.EventCallback<C>
-  'guild-request': Session.EventCallback<C>
-  'guild-member-request': Session.EventCallback<C>
-  'guild-member/role': Session.EventCallback<C>
-  'guild-member/ban': Session.EventCallback<C>
-  'guild-member/nickname': Session.EventCallback<C>
-  'notice/poke': Session.EventCallback<C>
-  'notice/lucky-king': Session.EventCallback<C>
-  'notice/honor': Session.EventCallback<C>
-  'notice/honor/talkative': Session.EventCallback<C>
-  'notice/honor/performer': Session.EventCallback<C>
-  'notice/honor/emotion': Session.EventCallback<C>
+  'message': Session.EventCallback
+  'message-deleted': Session.EventCallback
+  'message-updated': Session.EventCallback
+  'reaction-added': Session.EventCallback
+  'reaction-deleted': Session.EventCallback
+  'reaction-deleted/one': Session.EventCallback
+  'reaction-deleted/all': Session.EventCallback
+  'reaction-deleted/emoji': Session.EventCallback
+  'send': Session.EventCallback
+  'friend-request': Session.EventCallback
+  'guild-request': Session.EventCallback
+  'guild-member-request': Session.EventCallback
+  'guild-member/role': Session.EventCallback
+  'guild-member/ban': Session.EventCallback
+  'guild-member/nickname': Session.EventCallback
+  'notice/poke': Session.EventCallback
+  'notice/lucky-king': Session.EventCallback
+  'notice/honor': Session.EventCallback
+  'notice/honor/talkative': Session.EventCallback
+  'notice/honor/performer': Session.EventCallback
+  'notice/honor/emotion': Session.EventCallback
 
   // lifecycle events
-  'before-send': Session.EventCallback<C, Awaitable<void | boolean>>
+  'before-send': Session.EventCallback<Awaitable<void | boolean>>
   'bot-added'(client: Bot<C>): void
   'bot-removed'(client: Bot<C>): void
   'bot-status-updated'(client: Bot<C>): void
@@ -56,11 +56,10 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
-  [Context.session]: Session<Context>
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
-export type RenderFunction = segment.RenderFunction<Awaitable<segment | segment[]>, Session>
+export type RenderFunction = segment.RenderFunction<Awaitable<segment.Content>, Session>
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')

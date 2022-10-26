@@ -29,7 +29,7 @@ export namespace Session {
     duration?: number
   }
 
-  export type EventCallback<C extends Context = Context, T = void> = (this: C[typeof Context.session], session: C[typeof Context.session]) => T
+  export type EventCallback<T = void> = (this: Session, session: Session) => T
 }
 
 export class Session<C extends Context = Context> {
