@@ -3,7 +3,7 @@ import { Schema, Logger } from '@satorijs/satori'
 import internal from 'stream'
 
 import { FeishuBot } from './bot'
-import { AllEvents, Events } from './types'
+import { AllEvents } from './types'
 import { adaptSession, Cipher } from './utils'
 
 const logger = new Logger('feishu')
