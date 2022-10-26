@@ -95,19 +95,19 @@ export class DiscordModulator extends Modulator<DiscordBot> {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content.replace(/[\\*_`~|()]/g, '\\$&')
-    } else if (type === 'b') {
+    } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
       this.buffer += '**'
-    } else if (type === 'em') {
+    } else if (type === 'i' || type === 'em') {
       this.buffer += '*'
       await this.render(children)
       this.buffer += '*'
-    } else if (type === 'u') {
+    } else if (type === 'u' || type === 'ins') {
       this.buffer += '__'
       await this.render(children)
       this.buffer += '__'
-    } else if (type === 'del') {
+    } else if (type === 's' || type === 'del') {
       this.buffer += '~~'
       await this.render(children)
       this.buffer += '~~'

@@ -132,26 +132,26 @@ export class KookModulator extends Modulator<KookBot> {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content.replace(/[\\*_`~()]/g, '\\$&')
-    } else if (type === 'b') {
+    } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
       this.buffer += '**'
-    } else if (type === 'em') {
+    } else if (type === 'i' || type === 'em') {
       this.buffer += '*'
       await this.render(children)
       this.buffer += '*'
-    } else if (type === 'u') {
+    } else if (type === 'u' || type === 'ins') {
       this.buffer += '(ins)'
       await this.render(children)
       this.buffer += '(ins)'
+    } else if (type === 's' || type === 'del') {
+      this.buffer += '~~'
+      await this.render(children)
+      this.buffer += '~~'
     } else if (type === 'spl') {
       this.buffer += '(spl)'
       await this.render(children)
       this.buffer += '(spl)'
-    } else if (type === 'del') {
-      this.buffer += '~~'
-      await this.render(children)
-      this.buffer += '~~'
     } else if (type === 'code') {
       this.buffer += '`'
       await this.render(children)

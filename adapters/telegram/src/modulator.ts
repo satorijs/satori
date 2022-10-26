@@ -70,6 +70,8 @@ const assetApi = {
   animation: 'sendAnimation',
 } as const
 
+const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a', 'code']
+
 export class TelegramModulator extends Modulator<TelegramBot> {
   private assetType: AssetType = null
   private payload: Dict
@@ -80,7 +82,7 @@ export class TelegramModulator extends Modulator<TelegramBot> {
     const chat_id = channelId.startsWith('private:')
       ? channelId.slice(8)
       : channelId
-    this.payload = { chat_id, caption: '' }
+    this.payload = { chat_id, parse_mode: 'html', caption: '' }
   }
 
   async addResult(result: Telegram.Message) {
@@ -125,10 +127,16 @@ export class TelegramModulator extends Modulator<TelegramBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.payload.caption += attrs.content
+      this.payload.caption += segment.escape(attrs.content)
     } else if (type === 'p') {
       await this.render(children)
       this.payload.caption += '\n'
+    } else if (supportedElements.includes(type)) {
+      this.payload.caption += children.toString()
+    } else if (type === 'spl') {
+      this.payload.caption += '<tg-spoiler>'
+      await this.render(children)
+      this.payload.caption += '</tg-spoiler>'
     } else if (type === 'at') {
       const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
       if (atTarget) this.payload.caption += `@${atTarget} `
@@ -164,12 +172,6 @@ export class TelegramModulator extends Modulator<TelegramBot> {
         await this.flush()
         await this.render(children, true)
       }
-    } else if (type === 'markdown') {
-      await this.flush()
-      this.payload.parse_mode = 'MarkdownV2'
-    } else if (type === 'html') {
-      await this.flush()
-      this.payload.parse_mode = 'html'
     } else {
       await this.render(children)
     }
