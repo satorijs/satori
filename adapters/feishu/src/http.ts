@@ -127,7 +127,7 @@ export namespace HttpServer {
     verifySignature?: boolean
   }
 
-  export const Config = Schema.object({
+  export const Config: Schema<HttpServer.Config> = Schema.object({
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     verifyToken: Schema.boolean().description('是否验证 Varification Token'),
     verifySignature: Schema.boolean().description('是否验证 Signature'),

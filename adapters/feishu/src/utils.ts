@@ -7,8 +7,8 @@ import { AllEvents, Events, MessageContentType } from './types'
 
 export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Message {
   const json = JSON.parse(data.message.content) as MessageContentType<typeof data.message.message_type>
-  const assetEndpoint = (bot.config.selfUrl ?? bot.ctx.options.selfUrl) + bot.config.path + '/assets'
-  let content = ''
+  const assetEndpoint = (bot.config.selfUrl ?? bot.ctx.config.selfUrl) + bot.config.path + '/assets'
+  let content: segment
   switch (data.message.message_type) {
     case 'text':
       content = json.text
@@ -38,7 +38,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
     },
     messageId: data.message.message_id,
     channelId: data.message.chat_id,
-    content: content,
+    content: content.toString(),
   }
 
   return result

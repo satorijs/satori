@@ -1,9 +1,8 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import segment from '@satorijs/message'
 import { Bot, Context } from '@satorijs/core'
-import { Logger, Quester, Schema } from '@satorijs/satori'
+import { Logger, Quester, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { HttpServer } from './http'
@@ -69,14 +68,14 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
     const chain = segment.parse(content)
 
-    const parseQuote = (chain: segment.Chain): string | undefined => {
+    const parseQuote = (chain: segment[]): string | undefined => {
       if (chain[0].type !== 'quote') return
-      return chain.shift().data.id
+      return chain.shift().attrs.id
     }
 
     const quote = parseQuote(chain)
 
-    const shouldRichText = ((chain: segment.Chain): boolean => {
+    const shouldRichText = ((chain: segment[]): boolean => {
       const types = {
         text: false,
         image: false,
