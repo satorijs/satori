@@ -82,8 +82,9 @@ function Element(type: string, ...args: any[]) {
 
 namespace Element {
   export type Content = string | Element | (string | Element)[]
-  export type Transformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => boolean | Content)
-  export type AsyncTransformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => Awaitable<boolean | Content>)
+  export type RenderFunction<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
+  export type Transformer<S> = boolean | Content | RenderFunction<boolean | Content, S>
+  export type AsyncTransformer<S> = boolean | Content | RenderFunction<Awaitable<boolean | Content>, S>
 
   export function normalize(source: string | Element) {
     if (typeof source !== 'string') return Element(null, source)
@@ -248,18 +249,18 @@ namespace Element {
     return fragment ? stack[0] : stack[0].children
   }
 
-  export function transform(source: string, rules: Dict<Transformer>): string
-  export function transform(source: Element[], rules: Dict<Transformer>): Element[]
-  export function transform(source: string | Element[], rules: Dict<Transformer>) {
+  export function transform<S>(source: string, rules: Dict<Transformer<S>>, session?: S): string
+  export function transform<S>(source: Element[], rules: Dict<Transformer<S>>, session?: S): Element[]
+  export function transform<S>(source: string | Element[], rules: Dict<Transformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const output: Element[] = []
-    elements.forEach((element, index, elements) => {
-      let result = rules[element.type] ?? rules.default ?? true
+    elements.forEach((element) => {
+      const { type, attrs, children } = element
+      let result = rules[type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = result(element.attrs, index, elements)
+        result = result(attrs, children, session)
       }
       if (result === true) {
-        const { type, attrs, children } = element
         output.push(Element(type, attrs, transform(children, rules)))
       } else if (result !== false) {
         output.push(...toElementArray(result))
@@ -268,17 +269,17 @@ namespace Element {
     return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync(source: string, rules: Dict<AsyncTransformer>): Promise<string>
-  export async function transformAsync(source: Element[], rules: Dict<AsyncTransformer>): Promise<Element[]>
-  export async function transformAsync(source: string | Element[], rules: Dict<AsyncTransformer>) {
+  export async function transformAsync<S>(source: string, rules: Dict<AsyncTransformer<S>>, session?: S): Promise<string>
+  export async function transformAsync<S>(source: Element[], rules: Dict<AsyncTransformer<S>>, session?: S): Promise<Element[]>
+  export async function transformAsync<S>(source: string | Element[], rules: Dict<AsyncTransformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
-    const children = (await Promise.all(elements.map(async (element, index, elements) => {
-      let result = rules[element.type] ?? rules.default ?? true
+    const children = (await Promise.all(elements.map(async (element) => {
+      const { type, attrs, children } = element
+      let result = rules[type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = await result(element.attrs, index, elements)
+        result = await result(attrs, children, session)
       }
       if (result === true) {
-        const { type, attrs, children } = element
         return [Element(type, attrs, await transformAsync(children, rules))]
       } else if (result !== false) {
         return toElementArray(result)

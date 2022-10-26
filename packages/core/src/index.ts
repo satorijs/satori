@@ -45,7 +45,7 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
   'notice/honor/emotion': Session.EventCallback<C>
 
   // lifecycle events
-  'before-send': Session.EventCallback<C, void | boolean>
+  'before-send': Session.EventCallback<C, Awaitable<void | boolean>>
   'bot-added'(client: Bot<C>): void
   'bot-removed'(client: Bot<C>): void
   'bot-status-updated'(client: Bot<C>): void
@@ -60,11 +60,27 @@ export interface Context {
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 
+export type RenderFunction = segment.RenderFunction<Awaitable<segment | segment[]>, Session>
+
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
+  _components: Dict<RenderFunction> = Object.create(null)
 
   constructor(options?: Context.Config) {
     super(options)
+
+    this.on('before-send', async (session) => {
+      session.elements = await segment.transformAsync(session.elements, this._components, session)
+    })
+  }
+
+  component(name: string, render: RenderFunction) {
+    this._components[name] = render
+    this.collect('component', () => {
+      const shouldDelete = this._components[name] === render
+      if (shouldDelete) delete this._components[name]
+      return shouldDelete
+    })
   }
 }
 
