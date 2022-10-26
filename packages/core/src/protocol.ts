@@ -1,10 +1,12 @@
+import segment from '@satorijs/element'
+
 export interface Methods {
   // message
-  sendMessage(channelId: string, content: string, guildId?: string): Promise<string[]>
-  sendPrivateMessage(userId: string, content: string): Promise<string[]>
+  sendMessage(channelId: string, content: string | segment, guildId?: string): Promise<string[]>
+  sendPrivateMessage(userId: string, content: string | segment): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
   getMessageList(channelId: string, before?: string): Promise<Message[]>
-  editMessage(channelId: string, messageId: string, content: string): Promise<void>
+  editMessage(channelId: string, messageId: string, content: string | segment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>
 
   // user
@@ -74,11 +76,12 @@ export interface MessageBase {
   guildId?: string
   userId?: string
   content?: string
+  elements?: segment[]
   timestamp?: number
   author?: Author
   quote?: Message
 }
 
 export interface Message extends MessageBase {
-  subtype?: 'private' | 'group'
+  subtype?: string
 }

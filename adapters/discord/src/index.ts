@@ -4,7 +4,7 @@ import * as Discord from './types'
 export { Discord }
 
 export * from './bot'
-export * from './sender'
+export * from './modulator'
 export * from './utils'
 export * from './ws'
 

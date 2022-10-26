@@ -1,16 +1,13 @@
 import { Dict, makeArray } from 'cosmokit'
 import { Quester } from '@satorijs/satori'
-import { AxiosRequestConfig } from 'axios'
-
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 export class Internal {
   constructor(private http: Quester) {}
 
-  static define(routes: Dict<Partial<Record<Method, string | string[]>>>) {
+  static define(routes: Dict<Partial<Record<Quester.Method, string | string[]>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as Method
+        const method = key as Quester.Method
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
@@ -18,7 +15,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: AxiosRequestConfig = {}
+            const config: Quester.AxiosRequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

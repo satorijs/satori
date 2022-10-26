@@ -18,48 +18,82 @@ export const adaptAuthor = (author: Kook.Author): Author => ({
   nickname: author.nickname,
 })
 
-function adaptMessage(base: Kook.MessageBase, meta: Kook.MessageMeta, session: MessageBase = {}) {
+interface Rule {
+  pattern: RegExp
+  transform: (...args: string[]) => segment
+}
+
+const rules: Rule[] = [{
+  pattern: /@(.+?)#(\d+)/,
+  transform: (_, name, id) => segment('at', { id, name }),
+}, {
+  pattern: /@全体成员/,
+  transform: () => segment('at', { type: 'all' }),
+}, {
+  pattern: /@在线成员/,
+  transform: () => segment('at', { type: 'here' }),
+}, {
+  pattern: /@role:(\d+);/,
+  transform: (_, role) => segment('at', { role }),
+}, {
+  pattern: /#channel:(\d+);/,
+  transform: (_, id) => segment.sharp(id),
+}]
+
+function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: MessageBase = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
   }
   if (base.type === Kook.Type.text) {
     session.content = base.content
-      .replace(/@(.+?)#(\d+)/, (_, $1, $2) => segment.at($2, { name: $1 }))
-      .replace(/@全体成员/, () => `[CQ:at,type=all]`)
-      .replace(/@在线成员/, () => `[CQ:at,type=here]`)
-      .replace(/@role:(\d+);/, (_, $1) => `[CQ:at,role=${$1}]`)
-      .replace(/#channel:(\d+);/, (_, $1) => segment.sharp($1))
+      .replace(/@(.+?)#(\d+)/, (_, name, id) => segment('at', { id, name }).toString())
+      .replace(/@全体成员/, () => segment('at', { type: 'all' }).toString())
+      .replace(/@在线成员/, () => segment('at', { type: 'here' }).toString())
+      .replace(/@role:(\d+);/, (_, role) => segment('at', { role }).toString())
+      .replace(/#channel:(\d+);/, (_, id) => segment.sharp(id).toString())
+    session.elements = segment.parse(session.content)
   } else if (base.type === Kook.Type.image) {
-    session.content = segment('image', { url: base.content, file: meta.attachments.name })
+    const element = segment('image', { url: base.content, file: meta.attachments?.name })
+    session.elements = [element]
+    session.content = element.toString()
   } else if (base.type == Kook.Type.kmarkdown) {
     session.content = base.content
-      .replace(/\(met\)all\(met\)/g, () => `[CQ:at,type=all]`)
-      .replace(/\(met\)here\(met\)/g, () => `[CQ:at,type=here]`)
-      .replace(/\(chn\)(\d+)\(chn\)/g, (_, $1) => segment.sharp($1))
+      .replace(/\(met\)all\(met\)/g, () => segment('at', { type: 'all' }).toString())
+      .replace(/\(met\)here\(met\)/g, () => segment('at', { type: 'here' }).toString())
+      .replace(/\(chn\)(\d+)\(chn\)/g, (_, id) => segment.sharp(id).toString())
     for (const mention of meta.kmarkdown.mention_part) {
-      session.content = session.content.replace(`(met)${mention.id}(met)`, segment.at(mention.id, { name: mention.username }))
+      session.content = session.content
+        .replace(`(met)${mention.id}(met)`, segment.at(mention.id, { name: mention.username }).toString())
     }
     for (const mention of meta.kmarkdown.mention_role_part) {
-      session.content = session.content.replace(`(rol)${mention.role_id}(rol)`, `[CQ:at,role=${mention.role_id},name=${mention.name}]`)
+      const element = segment('at', { role: mention.role_id, name: mention.name })
+      session.content = session.content.replace(`(rol)${mention.role_id}(rol)`, element.toString())
     }
     session.content = session.content
       .replace(/\\\*/g, () => '*')
       .replace(/\\\\/g, () => '\\')
       .replace(/\\\(/g, () => '(')
       .replace(/\\\)/g, () => ')')
+    session.elements = segment.parse(session.content)
   }
   return session
 }
 
+export function adaptMessage(message: Kook.Message, session: Partial<Session> = {}) {
+  adaptMessageMeta(message, message, session)
+  session.messageId = message.id
+  return session
+}
+
 function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: Partial<Session> = {}) {
-  adaptMessage(data, meta, session)
+  adaptMessageMeta(data, meta, session)
   session.messageId = data.msg_id
   session.timestamp = data.msg_timestamp
   const subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
   session.subtype = subtype
   if (meta.quote) {
-    session.quote = adaptMessage(meta.quote, meta.quote)
+    session.quote = adaptMessageMeta(meta.quote, meta.quote)
     session.quote.messageId = meta.quote.id
     session.quote.channelId = session.channelId
     session.quote.subtype = subtype

@@ -92,12 +92,13 @@ export namespace WsClient {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      gateway: Schema.string().default('wss://gateway.discord.gg/?v=8&encoding=json').description('要连接的 WebSocket 网关。'),
+      gateway: Schema.string().default('wss://gateway.discord.gg/?v=10&encoding=json').description('要连接的 WebSocket 网关。'),
       intents: Schema.bitset(GatewayIntent).description('需要订阅的机器人事件。').default(0
         | GatewayIntent.GUILD_MESSAGES
         | GatewayIntent.GUILD_MESSAGE_REACTIONS
         | GatewayIntent.DIRECT_MESSAGES
-        | GatewayIntent.DIRECT_MESSAGE_REACTIONS),
+        | GatewayIntent.DIRECT_MESSAGE_REACTIONS
+        | GatewayIntent.MESSAGE_CONTENT),
     }).description('推送设置'),
     Adapter.WsClient.Config,
   ] as const)

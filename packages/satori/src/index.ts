@@ -1,16 +1,10 @@
-import { Context } from '@satorijs/core'
+import { Context, Logger, Quester, Schema } from '@satorijs/core'
 import { defineProperty, trimSlash } from 'cosmokit'
-import { getPortPromise } from 'portfinder'
-import Schema from 'schemastery'
-import Logger from 'reggol'
-import { Quester } from './quester'
-
-export { Schema, Logger }
+import { listen } from './listen'
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
-export * from './adapter'
-export * from './quester'
+export * from './axios'
 export * from './router'
 
 declare module '@satorijs/core' {
@@ -18,7 +12,7 @@ declare module '@satorijs/core' {
     interface Config extends Config.Network {}
 
     const Config: Config.Static
-  
+
     namespace Config {
       interface Network {
         host?: string
@@ -52,21 +46,13 @@ const logger = new Logger('app')
 
 const start = Context.prototype.start
 Context.prototype.start = async function (this: Context, ...args) {
-  if (this.options.selfUrl) {
-    this.options.selfUrl = trimSlash(this.options.selfUrl)
+  if (this.root.config.selfUrl) {
+    this.root.config.selfUrl = trimSlash(this.root.config.selfUrl)
   }
 
-  if (this.options.port) {
-    this.options.port = await getPortPromise({
-      port: this.options.port,
-      stopPort: this.options.maxPort || this.options.port,
-    })
-
-    const { host, port } = this.options
-    await new Promise<void>((resolve) => {
-      this.router._http.listen(port, host, resolve)
-    })
-
+  if (this.root.config.port) {
+    const { host, port } = this.root.config
+    await listen(this.router._http, this.root.config)
     logger.info('server listening at %c', `http://${host}:${port}`)
     this.on('dispose', () => {
       logger.info('http server closing')
@@ -74,6 +60,8 @@ Context.prototype.start = async function (this: Context, ...args) {
       this.router._http?.close()
     })
   }
+
+  this.decline(['selfUrl', 'host', 'port', 'maxPort'])
 
   return start.call(this, ...args)
 }

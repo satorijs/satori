@@ -1,9 +1,10 @@
-import { Bot, Context, defineProperty, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
+import { Bot, Context, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
-import { Sender } from './sender'
+import { TelegramModulator } from './modulator'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
+import { fromBuffer } from 'file-type'
 import fs from 'fs'
 
 const logger = new Logger('telegram')
@@ -27,7 +28,8 @@ export interface TelegramResponse {
 }
 
 export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
-  http: Quester & { file?: Quester }
+  http: Quester
+  file: Quester
   internal?: Telegram.Internal
   local?: boolean
 
@@ -39,7 +41,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       ...config,
       endpoint: `${config.endpoint}/bot${config.token}`,
     })
-    this.http.file = this.ctx.http.extend({
+    this.file = this.ctx.http.extend({
       ...config,
       endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
     })
@@ -71,20 +73,20 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
         if (e.type === 'mention') {
           if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
           const atName = eText.slice(1)
-          if (eText === '@' + this.username) segs.push({ type: 'at', data: { id: this.selfId, name: atName } })
+          if (eText === '@' + this.username) segs.push(segment('at', { id: this.selfId, name: atName }))
           // TODO handle @others
         } else if (e.type === 'text_mention') {
-          segs.push({ type: 'at', data: { id: e.user.id } })
+          segs.push(segment('at', { id: e.user.id }))
         } else {
           continue
         }
         if (e.offset > curr) {
-          segs.splice(-1, 0, { type: 'text', data: { content: text.slice(curr, e.offset) } })
+          segs.splice(-1, 0, segment('text', { content: text.slice(curr, e.offset) }))
           curr = e.offset + e.length
         }
       }
       if (curr < text?.length || 0) {
-        segs.push({ type: 'text', data: { content: text.slice(curr) } })
+        segs.push(segment('text', { content: text.slice(curr) }))
       }
       return segs
     }
@@ -93,24 +95,25 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     session.timestamp = message.date * 1000
     const segments: segment[] = []
     if (message.reply_to_message) {
-      const replayText = message.reply_to_message.text || message.reply_to_message.caption
-      const parsedReply = parseText(replayText, message.reply_to_message.entities || [])
-      session.quote = {
-        messageId: message.reply_to_message.message_id.toString(),
-        author: adaptUser(message.reply_to_message.from),
-        content: replayText ? segment.join(parsedReply) : undefined,
-      }
-      segments.push({ type: 'quote', data: { id: message.reply_to_message.message_id, channelId: message.reply_to_message.chat.id } })
+      session.quote = {}
+      await this.adaptMessage(message.reply_to_message, session.quote as Session)
     }
+
+    // make sure text comes first so that commands can be triggered
+    const msgText = message.text || message.caption
+    segments.push(...parseText(msgText, message.entities || []))
+
+    if (message.caption) {
+      // add a space to separate caption from media
+      segments.push(segment('text', { content: ' ' }))
+    }
+
     if (message.location) {
-      segments.push({
-        type: 'location',
-        data: { lat: message.location.latitude, lon: message.location.longitude },
-      })
+      segments.push(segment('location', { lat: message.location.latitude, lon: message.location.longitude }))
     }
     if (message.photo) {
       const photo = message.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
-      segments.push({ type: 'image', data: await this.$getFileData(photo.file_id) })
+      segments.push(segment('image', await this.$getFileData(photo.file_id)))
     }
     if (message.sticker) {
       // TODO: Convert tgs to gif
@@ -121,25 +124,22 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
         if (file.file_path.endsWith('.tgs')) {
           throw new Error('tgs is not supported now')
         }
-        segments.push({ type: 'image', data: await this.$getFileContent(file.file_path) })
+        segments.push(segment('image', await this.$getFileContent(file.file_path)))
       } catch (e) {
         logger.warn('get file error', e)
-        segments.push({ type: 'text', data: { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` } })
+        segments.push(segment('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
     } else if (message.animation) {
-      segments.push({ type: 'image', data: await this.$getFileData(message.animation.file_id) })
+      segments.push(segment('image', await this.$getFileData(message.animation.file_id)))
     } else if (message.voice) {
-      segments.push({ type: 'audio', data: await this.$getFileData(message.voice.file_id) })
+      segments.push(segment('audio', await this.$getFileData(message.voice.file_id)))
     } else if (message.video) {
-      segments.push({ type: 'video', data: await this.$getFileData(message.video.file_id) })
+      segments.push(segment('video', await this.$getFileData(message.video.file_id)))
     } else if (message.document) {
-      segments.push({ type: 'file', data: await this.$getFileData(message.document.file_id) })
+      segments.push(segment('file', await this.$getFileData(message.document.file_id)))
     }
 
-    const msgText: string = message.text || message.caption
-    segments.push(...parseText(msgText, message.entities || []))
-
-    session.content = segment.join(segments)
+    session.content = segments.join('')
     session.userId = message.from.id.toString()
     session.author = adaptUser(message.from)
     session.channelId = message.chat.id.toString()
@@ -152,47 +152,11 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     }
   }
 
-  async sendMessage(channelId: string, content: string) {
-    if (!content) return []
-    let subtype: string
-    let chatId: string
-    if (channelId.startsWith('private:')) {
-      subtype = 'private'
-      chatId = channelId.slice(8)
-    } else {
-      subtype = 'group'
-      chatId = channelId
-    }
-
-    const session = this.session({
-      type: 'send',
-      subtype,
-      content,
-      channelId,
-      guildId: channelId,
-      author: this,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-
-    const send = Sender.from(this, chatId)
-    const results = await send(session.content)
-
-    for (const message of results) {
-      const session = this.session()
-      session.type = 'message'
-      defineProperty(session, 'telegram', Object.create(this.internal))
-      Object.assign(session.telegram, message)
-      await this.adaptMessage(message, session)
-      this.context.emit(session, 'send', session)
-      this.context.emit(session, 'message', session)
-    }
-
-    return results.map(result => '' + result.message_id)
+  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+    return new TelegramModulator(this, channelId, guildId).send(fragment)
   }
 
-  async sendPrivateMessage(userId: string, content: string) {
+  async sendPrivateMessage(userId: string, content: string | segment) {
     return this.sendMessage('private:' + userId, content)
   }
 
@@ -280,14 +244,15 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (this.local) {
       res = await fs.promises.readFile(filePath)
     } else {
-      res = await this.http.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
+      res = await this.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
     }
-    const base64 = `base64://` + res.toString('base64')
+    const { mime } = await fromBuffer(res)
+    const base64 = `data:${mime};base64,` + res.toString('base64')
     return { url: base64 }
   }
 
   private async setAvatarUrl(user: User) {
-    const { endpoint } = this.http.file.config
+    const { endpoint } = this.file.config
     const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
     if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]

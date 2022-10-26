@@ -71,6 +71,10 @@ export namespace Channel {
     GUILD_PRIVATE_THREAD = 12,
     /** a voice channel for hosting events with an audience */
     GUILD_STAGE_VOICE = 13,
+    /** the channel in a hub containing the listed servers */
+    GUILD_DIRECTORY = 14,
+    /** Channel that can only contain threads */
+    GUILD_FORUM = 15,
   }
 
   export namespace Params {

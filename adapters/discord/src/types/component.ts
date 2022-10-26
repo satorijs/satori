@@ -3,7 +3,7 @@ import { Emoji, integer } from '.'
 /** https://discord.com/developers/docs/interactions/message-components#component-object-component-structure */
 export interface Component {
   /** component type */
-  type: integer
+  type: ComponentType
   /** a developer-defined identifier for the component, max 100 characters */
   custom_id?: string
   /** whether the component is disabled, default false */
@@ -36,12 +36,14 @@ export enum ComponentType {
   BUTTON = 2,
   /** A select menu for picking from choices */
   SELECT_MENU = 3,
+  /** A text input object */
+  TEXT_INPUT = 4,
 }
 
 /** https://discord.com/developers/docs/interactions/message-components#button-object-button-structure */
 export interface Button {
   /** 2 for a button */
-  type: integer
+  type: ComponentType.BUTTON
   /** one of button styles */
   style: integer
   /** text that appears on the button, max 80 characters */
@@ -59,7 +61,7 @@ export interface Button {
 /** https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure */
 export interface SelectMenu {
   /** 3 for a select menu */
-  type: integer
+  type: ComponentType.SELECT_MENU
   /** a developer-defined identifier for the button, max 100 characters */
   custom_id: string
   /** the choices in the select, max 25 */
@@ -86,4 +88,34 @@ export interface SelectOption {
   emoji?: Partial<Emoji>
   /** will render this option as selected by default */
   default?: boolean
+}
+
+/** @see https://discord.com/developers/docs/interactions/message-components#text-inputs-text-input-structure */
+export interface TextInput {
+  /** 4 for a text input */
+  type: ComponentType.TEXT_INPUT
+  /** a developer-defined identifier for the input, max 100 characters */
+  custom_id: string
+  /** the Text Input Style */
+  style: TextInputStyles
+  /** the label for this component, max 45 characters */
+  label: string
+  /** the minimum input length for a text input, min 0, max 4000 */
+  min_length?: integer
+  /** the maximum input length for a text input, min 1, max 4000 */
+  max_length?: integer
+  /** whether this component is required to be filled, default true */
+  required?: boolean
+  /** a pre-filled value for this component, max 4000 characters */
+  value?: string
+  /** custom placeholder text if the input is empty, max 100 characters */
+  placeholder?: string
+}
+
+/** @see https://discord.com/developers/docs/interactions/message-components#text-inputs-text-input-styles */
+export const enum TextInputStyles {
+  /** A single-line input */
+  SHORT = 1,
+  /** A multi-line input */
+  PARAGRAPH = 2,
 }

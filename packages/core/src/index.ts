@@ -3,12 +3,16 @@ import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Selector } from './selector'
 import { Session } from './session'
-import segment from '@satorijs/message'
+import Schema from 'schemastery'
+import Logger from 'reggol'
+import Quester from 'cordis-axios'
+import segment from '@satorijs/element'
 
-export { segment, segment as h }
+export { Schema, Logger, segment, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
+export * from './modulator'
 export * from './protocol'
 export * from './selector'
 export * from './session'
@@ -50,9 +54,9 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 }
 
 export interface Context {
+  [Context.config]: Context.Config
   [Context.events]: Events<this>
   [Context.session]: Session<Context>
-  options: Context.Config
   bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
 }
 

@@ -1,4 +1,5 @@
 import { camelize, Dict, Logger } from '@satorijs/satori'
+import { CQCode } from './bot'
 
 export interface Response {
   status: string
@@ -12,9 +13,15 @@ export interface MessageId {
 }
 
 export interface AccountInfo {
-  user_id: string
+  user_id: number
   tiny_id?: string
   nickname: string
+}
+
+export interface QidianAccountInfo {
+  master_id: number
+  ext_name: string
+  create_time: number
 }
 
 export interface StrangerInfo extends AccountInfo {
@@ -61,7 +68,7 @@ export interface Message extends MessageId {
   group_id?: number
   guild_id?: string
   channel_id?: string
-  message: string | any[]
+  message: string | CQCode[]
   anonymous?: AnonymousInfo
 }
 
@@ -76,6 +83,10 @@ export type DataDirectory = 'image' | 'record' | 'show' | 'bface'
 
 export interface FriendInfo extends AccountInfo {
   remark: string
+}
+
+export interface UnidirectionalFriendInfo extends AccountInfo {
+  source: string
 }
 
 export interface GroupBase {
@@ -111,15 +122,20 @@ export interface RecordInfo {
 }
 
 export interface VersionInfo {
-  coolq_directory: string
-  coolq_edition: 'air' | 'pro'
-  plugin_version: string
-  plugin_build_number: number
-  plugin_build_configuration: 'debug' | 'release'
+  app_name?: string
+  app_version?: string
+  app_full_name?: string
+  protocol_version?: string
+  coolq_edition?: 'air' | 'pro'
+  coolq_directory?: string
+  plugin_version?: string
+  plugin_build_number?: number
+  plugin_build_configuration?: 'debug' | 'release'
   version?: string
   go_cqhttp?: boolean
   runtime_version?: string
   runtime_os?: string
+  protocol?: string
 }
 
 export interface ImageInfo {
@@ -141,17 +157,6 @@ export interface EssenceMessage extends MessageId {
   operator_id: number
   operator_nick: string
   operator_time: number
-}
-
-interface CQNode {
-  type: 'node'
-  data: {
-    id: number
-  } | {
-    name: string
-    uin: number
-    content: string
-  }
 }
 
 export interface VipInfo extends AccountInfo {
@@ -393,20 +398,25 @@ export interface Payload extends Message {
 type id = string | number
 
 export interface Internal {
-  sendPrivateMsg(user_id: id, message: string, auto_escape?: boolean): Promise<number>
-  sendPrivateMsgAsync(user_id: id, message: string, auto_escape?: boolean): Promise<void>
-  sendGroupMsg(group_id: id, message: string, auto_escape?: boolean): Promise<number>
-  sendGroupMsgAsync(group_id: id, message: string, auto_escape?: boolean): Promise<void>
-  sendGroupForwardMsg(group_id: id, messages: readonly CQNode[]): Promise<number>
-  sendGroupForwardMsgAsync(group_id: id, messages: readonly CQNode[]): Promise<void>
+  sendPrivateMsg(user_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<number>
+  sendPrivateMsgAsync(user_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<void>
+  sendGroupMsg(group_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<number>
+  sendGroupMsgAsync(group_id: id, message: string | readonly CQCode[], auto_escape?: boolean): Promise<void>
+  sendGroupForwardMsg(group_id: id, messages: readonly CQCode[]): Promise<number>
+  sendGroupForwardMsgAsync(group_id: id, messages: readonly CQCode[]): Promise<void>
+  sendPrivateForwardMsg(user_id: id, messages: readonly CQCode[]): Promise<number>
+  sendPrivateForwardMsgAsync(user_id: id, messages: readonly CQCode[]): Promise<void>
   deleteMsg(message_id: id): Promise<void>
   deleteMsgAsync(message_id: id): Promise<void>
   setEssenceMsg(message_id: id): Promise<void>
   setEssenceMsgAsync(message_id: id): Promise<void>
   deleteEssenceMsg(message_id: id): Promise<void>
   deleteEssenceMsgAsync(message_id: id): Promise<void>
+  markMsgAsRead(message_id: id): Promise<void>
   sendLike(user_id: id, times?: number): Promise<void>
   sendLikeAsync(user_id: id, times?: number): Promise<void>
+  sendGroupSign(group_id: id): Promise<void>
+  sendGroupSignAsync(group_id: id): Promise<void>
   getMsg(message_id: id): Promise<Message>
   getForwardMsg(message_id: id): Promise<ForwardMessage[]>
   getEssenceMsgList(group_id: id): Promise<EssenceMessage[]>
@@ -449,24 +459,32 @@ export interface Internal {
   delGroupNotice(group_id: id, notice_id: id): Promise<void>
 
   getLoginInfo(): Promise<AccountInfo>
+  qidianGetLoginInfo(): Promise<QidianAccountInfo>
+  setQqProfile(nickname: string, company: string, email: string, college: string, personal_note: string): Promise<void>
+  setQqProfileAsync(nickname: string, company: string, email: string, college: string, personal_note: string): Promise<void>
   getVipInfo(): Promise<VipInfo>
   getStrangerInfo(user_id: id, no_cache?: boolean): Promise<StrangerInfo>
   getFriendList(): Promise<FriendInfo[]>
+  getUnidirectionalFriendList(): Promise<UnidirectionalFriendInfo[]>
   getGroupInfo(group_id: id, no_cache?: boolean): Promise<GroupInfo>
   getGroupList(): Promise<GroupInfo[]>
   getGroupMemberInfo(group_id: id, user_id: id, no_cache?: boolean): Promise<GroupMemberInfo>
   getGroupMemberList(group_id: id, no_cache?: boolean): Promise<GroupMemberInfo[]>
   getGroupHonorInfo(group_id: id, type: HonorType): Promise<HonorInfo>
   getGroupSystemMsg(): Promise<GroupSystemMessageInfo>
+
+  // files
   getGroupFileSystemInfo(group_id: id): Promise<GroupFileSystemInfo>
   getGroupRootFiles(group_id: id): Promise<GroupFileList>
   getGroupFilesByFolder(group_id: id, folder_id: string): Promise<GroupFileList>
   getGroupFileUrl(group_id: id, file_id: string, busid: number): Promise<string>
   downloadFile(url: string, headers?: string | readonly string[], thread_count?: number): Promise<string>
+  uploadPrivateFile(user_id: id, file: string, name: string): Promise<void>
   uploadGroupFile(group_id: id, file: string, name: string, folder?: string): Promise<void>
   createGroupFileFolder(group_id: id, folder_id: string, name: string): Promise<void>
   deleteGroupFolder(group_id: id, folder_id: string): Promise<void>
   deleteGroupFile(group_id: id, folder_id: string, file_id: string, busid: number): Promise<void>
+
   getOnlineClients(no_cache?: boolean): Promise<Device[]>
   checkUrlSafely(url: string): Promise<SafetyLevel>
   getModelShow(model: string): Promise<ModelVariant[]>
@@ -490,14 +508,23 @@ export interface Internal {
   getGuildChannelList(guild_id: id, no_cache: boolean): Promise<ChannelInfo[]>
   getGuildMemberList(guild_id: id, next_token?: string): Promise<GuildMemberListData>
   getGuildMemberProfile(guild_id: id, user_id: id): Promise<GuildMemberProfile>
-  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string): Promise<number>
+  sendGuildChannelMsg(guild_id: id, channel_id: id, message: string | readonly CQCode[]): Promise<number>
+}
+
+export class TimeoutError extends Error {
+  constructor(args: Dict, url: string) {
+    super(`Timeout with request ${url}, args: ${JSON.stringify(args)}`)
+    Object.defineProperties(this, {
+      args: { value: args },
+      url: { value: url },
+    })
+  }
 }
 
 class SenderError extends Error {
   constructor(args: Dict, url: string, retcode: number) {
-    super(`Error when trying to send to ${url}, args: ${JSON.stringify(args)}, retcode: ${retcode}`)
+    super(`Error with request ${url}, args: ${JSON.stringify(args)}, retcode: ${retcode}`)
     Object.defineProperties(this, {
-      name: { value: 'SenderError' },
       code: { value: retcode },
       args: { value: args },
       url: { value: url },
@@ -562,12 +589,16 @@ export class Internal {
   }
 }
 
+// messages
 Internal.defineExtract('send_private_msg', 'message_id', 'user_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_msg', 'message_id', 'group_id', 'message', 'auto_escape')
 Internal.defineExtract('send_group_forward_msg', 'message_id', 'group_id', 'messages')
+Internal.defineExtract('send_private_forward_msg', 'message_id', 'user_id', 'messages')
 Internal.define('delete_msg', 'message_id')
+Internal.define('mark_msg_as_read', 'message_id')
 Internal.define('set_essence_msg', 'message_id')
 Internal.define('delete_essence_msg', 'message_id')
+Internal.define('send_group_sign', 'group_id')
 Internal.define('send_like', 'user_id', 'times')
 Internal.define('get_msg', 'message_id')
 Internal.define('get_essence_msg_list', 'group_id')
@@ -580,6 +611,7 @@ Internal.define('set_group_add_request', 'flag', 'sub_type', 'approve', 'reason'
 Internal.defineExtract('_get_model_show', 'variants', 'model')
 Internal.define('_set_model_show', 'model', 'model_show')
 
+// group operations
 Internal.define('set_group_kick', 'group_id', 'user_id', 'reject_add_request')
 Internal.define('set_group_ban', 'group_id', 'user_id', 'duration')
 Internal.define('set_group_whole_ban', 'group_id', 'enable')
@@ -595,10 +627,17 @@ Internal.define('_get_group_notice', 'group_id')
 Internal.define('_del_group_notice', 'group_id', 'notice_id')
 Internal.define('get_group_at_all_remain', 'group_id')
 
+// accounts
 Internal.define('get_login_info')
+Internal.define('qidian_get_login_info')
+Internal.define('set_qq_profile', 'nickname', 'company', 'email', 'college', 'personal_note')
 Internal.define('get_stranger_info', 'user_id', 'no_cache')
 Internal.define('_get_vip_info', 'user_id')
 Internal.define('get_friend_list')
+Internal.define('get_unidirectional_friend_list')
+Internal.define('delete_friend', 'user_id')
+Internal.define('delete_unidirectional_friend', 'user_id')
+
 Internal.define('get_group_info', 'group_id', 'no_cache')
 Internal.define('get_group_list')
 Internal.define('get_group_member_info', 'group_id', 'user_id', 'no_cache')
@@ -608,6 +647,7 @@ Internal.define('get_group_system_msg')
 Internal.define('get_group_file_system_info', 'group_id')
 Internal.define('get_group_root_files', 'group_id')
 Internal.define('get_group_files_by_folder', 'group_id', 'folder_id')
+Internal.define('upload_private_file', 'user_id', 'file', 'name')
 Internal.define('upload_group_file', 'group_id', 'file', 'name', 'folder')
 Internal.define('create_group_file_folder', 'group_id', 'folder_id', 'name')
 Internal.define('delete_group_folder', 'group_id', 'folder_id')
@@ -616,8 +656,6 @@ Internal.defineExtract('get_group_file_url', 'url', 'group_id', 'file_id', 'busi
 Internal.defineExtract('download_file', 'file', 'url', 'headers', 'thread_count')
 Internal.defineExtract('get_online_clients', 'clients', 'no_cache')
 Internal.defineExtract('check_url_safely', 'level', 'url')
-Internal.define('delete_friend', 'user_id')
-Internal.define('delete_unidirectional_friend', 'user_id')
 
 Internal.defineExtract('get_cookies', 'cookies', 'domain')
 Internal.defineExtract('get_csrf_token', 'token')

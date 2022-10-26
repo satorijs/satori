@@ -1,6 +1,7 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
+import { QQGuildModulator } from './modulator'
 import { WsClient } from './ws'
 
 export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
@@ -19,23 +20,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     return user
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string) {
-    const session = this.session({
-      channelId,
-      content,
-      guildId,
-      author: this,
-      type: 'send',
-      subtype: 'group',
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-    const resp = await this.internal.send.channel(channelId, session.content)
-    session.messageId = resp.id
-    this.context.emit(session, 'send', session)
-    this.context.emit(session, 'message', this.adaptMessage(resp))
-    return [resp.id]
+  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+    return new QQGuildModulator(this, channelId, guildId).send(fragment)
   }
 
   async getGuildList() {
@@ -57,8 +43,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     session.channelId = msg.channelId
     session.subtype = 'group'
     session.content = (msg.content ?? '')
-      .replace(/<@!(.+)>/, (_, $1) => segment.at($1))
-      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1))
+      .replace(/<@!(.+)>/, (_, $1) => segment.at($1).toString())
+      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
     if (attachments.length > 0) {
       session.content += attachments.map((attachment) => {
@@ -70,6 +56,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
       .reduce((content, attachment) => content + segment.image(attachment.url), session.content)
+    session.elements = segment.parse(session.content)
     return session
   }
 }

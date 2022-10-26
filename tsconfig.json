@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "cordis-*": ["packages/*/src"],
       "@satorijs/*": ["packages/*/src"],
       "@satorijs/adapter-*": ["adapters/*/src"],
     },

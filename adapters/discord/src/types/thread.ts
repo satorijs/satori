@@ -41,6 +41,14 @@ export interface ThreadMetadata {
   invitable?: boolean
 }
 
+/** @see https://discord.com/developers/docs/resources/guild#list-active-guild-threads */
+export interface ListActiveGuildThreadsResult {
+  /** the active threads */
+  threads: Channel[]
+  /** a thread member object for each returned thread the current user has joined */
+  members: ThreadMember[]
+}
+
 export interface Thread extends Channel {}
 
 export namespace Thread {
@@ -148,9 +156,9 @@ declare module './internal' {
   interface Internal {
     /**
      * Returns all active threads in the guild, including public and private threads. Threads are ordered by their id, in descending order.
-     * @see https://discord.com/developers/docs/resources/guild#list-active-threads
+     * @see https://discord.com/developers/docs/resources/guild#list-active-guild-threads
      */
-    // listActiveThreads(guild_id: snowflake): Promise<void>
+    listActiveGuildThreads(guild_id: snowflake): Promise<ListActiveGuildThreadsResult>
     /**
      * Creates a new thread from an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-with-message
@@ -215,9 +223,9 @@ declare module './internal' {
 }
 
 Internal.define({
-  // '/guilds/{guild.id}/threads/active': {
-  //   GET: 'listActiveThreads',
-  // },
+  '/guilds/{guild.id}/threads/active': {
+    GET: 'listActiveGuildThreads',
+  },
   '/channels/{channel.id}/messages/{message.id}/threads': {
     POST: 'startThreadwithMessage',
   },

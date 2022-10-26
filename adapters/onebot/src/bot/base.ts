@@ -1,35 +1,22 @@
 import { Bot, Context, segment } from '@satorijs/satori'
 import * as OneBot from '../utils'
-
-export function renderText(source: string) {
-  return segment.parse(source).reduce((prev, { type, data }) => {
-    if (type === 'at') {
-      if (data.type === 'all') return prev + '[CQ:at,qq=all]'
-      return prev + `[CQ:at,qq=${data.id}]`
-    } else if (['video', 'audio', 'image'].includes(type)) {
-      if (type === 'audio') type = 'record'
-      data.file = data.url
-      delete data.url
-    } else if (type === 'quote') {
-      type = 'reply'
-    }
-    return prev + segment(type, data)
-  }, '')
-}
+import { OneBotModulator } from './modulator'
 
 export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
+  public parent?: BaseBot
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, content: string, guildId?: string) {
-    content = renderText(content)
-    return channelId.startsWith('private:')
-      ? this.sendPrivateMessage(channelId.slice(8), content)
-      : this.sendGuildMessage(guildId, channelId, content)
+  sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+    return new OneBotModulator(this, channelId, guildId).send(fragment)
+  }
+
+  sendPrivateMessage(userId: string, fragment: string | segment) {
+    return this.sendMessage('private:' + userId, fragment)
   }
 
   async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getMsg(messageId)
-    return OneBot.adaptMessage(data)
+    return await OneBot.adaptMessage(this, data)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -49,40 +36,6 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
   async getFriendList() {
     const data = await this.internal.getFriendList()
     return data.map(OneBot.adaptUser)
-  }
-
-  async sendGuildMessage(guildId: string, channelId: string, content: string) {
-    const session = this.session({
-      content,
-      type: 'send',
-      subtype: 'group',
-      author: this,
-      guildId,
-      channelId,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-    session.messageId = '' + await this.internal.sendGroupMsg(channelId, session.content)
-    this.context.emit(session, 'send', session)
-    return [session.messageId]
-  }
-
-  async sendPrivateMessage(userId: string, content: string) {
-    const session = this.session({
-      content,
-      type: 'send',
-      subtype: 'private',
-      author: this,
-      userId,
-      channelId: 'private:' + userId,
-    })
-
-    if (await this.context.serial(session, 'before-send', session)) return
-    if (!session?.content) return []
-    session.messageId = '' + await this.internal.sendPrivateMsg(userId, session.content)
-    this.context.emit(session, 'send', session)
-    return [session.messageId]
   }
 
   async handleFriendRequest(messageId: string, approve: boolean, comment?: string) {
@@ -114,6 +67,6 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     }
 
     // 从旧到新
-    return list.map(OneBot.adaptMessage)
+    return await Promise.all(list.map(item => OneBot.adaptMessage(this, item)))
   }
 }

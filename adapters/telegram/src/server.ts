@@ -7,19 +7,15 @@ import * as Telegram from './types'
 const logger = new Logger('telegram')
 
 export class HttpServer extends Adapter.Server<TelegramBot> {
-  fork(ctx: Context, bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpServer.Config>) {
-    super.fork(ctx, bot)
-    const config = bot.config
-    config.path = sanitize(config.path || '/telegram')
-    if (config.selfUrl) {
-      config.selfUrl = trimSlash(config.selfUrl)
-    } else {
-      config.selfUrl = ctx.options.selfUrl
-    }
-  }
-
   async start(bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpServer.Config>) {
-    const { path } = bot.config
+    let { token, path, selfUrl } = bot.config
+    path = sanitize(path || '/telegram')
+    if (selfUrl) {
+      selfUrl = trimSlash(selfUrl)
+    } else {
+      selfUrl = bot.ctx.root.config.selfUrl
+    }
+
     bot.ctx.router.post(path, async (ctx) => {
       const payload: Telegram.Update = ctx.request.body
       const token = ctx.request.query.token as string
@@ -31,7 +27,6 @@ export class HttpServer extends Adapter.Server<TelegramBot> {
     })
 
     bot.initialize(async (bot) => {
-      const { token, path, selfUrl } = bot.config
       const info = await bot.internal.setWebhook({
         url: selfUrl + path + '?token=' + token,
         drop_pending_updates: true,

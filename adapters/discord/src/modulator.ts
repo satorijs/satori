@@ -1,26 +1,24 @@
-import { Dict, Schema, segment } from '@satorijs/satori'
-import { readFileSync } from 'fs'
-import { basename } from 'path'
+import { Dict, Modulator, Schema, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
-import AggregateError from 'es-aggregate-error'
 import { DiscordBot } from './bot'
+import { adaptMessage } from './utils'
 
-export class Sender {
-  private results: string[] = []
-  private errors: Error[] = []
+type RenderMode = 'default' | 'figure'
 
-  private constructor(private bot: DiscordBot, private url: string) {}
-
-  static from(bot: DiscordBot, url: string) {
-    const sender = new Sender(bot, url)
-    return sender.sendMessage.bind(sender)
-  }
+export class DiscordModulator extends Modulator<DiscordBot> {
+  private buffer: string = ''
+  private addition: Dict = {}
+  private figure: segment = null
+  private mode: RenderMode = 'default'
 
   async post(data?: any, headers?: any) {
     try {
-      const result = await this.bot.http.post(this.url, data, { headers })
-      this.results.push(result.id)
+      const result = await this.bot.http.post(`/channels/${this.channelId}/messages`, data, { headers })
+      const session = this.bot.session()
+      await adaptMessage(this.bot, result, session)
+      session.app.emit(session, 'send', session)
+      this.results.push(session)
     } catch (e) {
       this.errors.push(e)
     }
@@ -29,7 +27,7 @@ export class Sender {
   async sendEmbed(fileBuffer: ArrayBuffer, payload_json: Dict, filename: string) {
     const fd = new FormData()
     filename ||= 'file.' + (await fromBuffer(fileBuffer)).ext
-    fd.append('file', fileBuffer, filename)
+    fd.append('file', Buffer.from(fileBuffer), filename)
     fd.append('payload_json', JSON.stringify(payload_json))
     return this.post(fd, fd.getHeaders())
   }
@@ -39,19 +37,16 @@ export class Sender {
   }
 
   async sendAsset(type: string, data: Dict<string>, addition: Dict) {
-    const { handleMixedContent, handleExternalAsset } = this.bot.config as Sender.Config
+    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordModulator.Config
 
     if (handleMixedContent === 'separate' && addition.content) {
       await this.post(addition)
       addition.content = ''
     }
 
-    if (data.url.startsWith('file://')) {
-      const filename = basename(data.url.slice(7))
-      return await this.sendEmbed(readFileSync(data.url.slice(7)), addition, data.file || filename)
-    } else if (data.url.startsWith('base64://')) {
-      const a = Buffer.from(data.url.slice(9), 'base64')
-      return await this.sendEmbed(a, addition, data.file)
+    if (['file:', 'data:', 'base64:'].some((prefix) => data.url.startsWith(prefix))) {
+      const result = await this.bot.ctx.http.file(data.url)
+      return await this.sendEmbed(result.data, addition, data.file || result.filename)
     }
 
     const sendDirect = async () => {
@@ -69,7 +64,7 @@ export class Sender {
       return this.sendEmbed(buffer, addition, data.file)
     }
 
-    const mode = data.mode as Sender.HandleExternalAsset || handleExternalAsset
+    const mode = data.mode as DiscordModulator.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
@@ -88,61 +83,91 @@ export class Sender {
     }, sendDownload)
   }
 
-  async sendMessage(content: string, addition: Dict = {}) {
-    const chain = segment.parse(content)
-    let textBuffer = ''
-    delete addition.content
+  async flush() {
+    const content = this.buffer.trim()
+    if (!content) return
+    await this.post({ ...this.addition, content })
+    this.buffer = ''
+    this.addition = {}
+  }
 
-    const sendBuffer = async () => {
-      const content = textBuffer.trim()
-      if (!content) return
-      await this.post({ ...addition, content })
-      textBuffer = ''
-    }
-
-    for (const code of chain) {
-      const { type, data } = code
-      if (type === 'text') {
-        textBuffer += data.content.trim()
-      } else if (type === 'at' && data.id) {
-        textBuffer += `<@${data.id}>`
-      } else if (type === 'at' && data.type === 'all') {
-        textBuffer += `@everyone`
-      } else if (type === 'at' && data.type === 'here') {
-        textBuffer += `@here`
-      } else if (type === 'sharp' && data.id) {
-        textBuffer += `<#${data.id}>`
-      } else if (type === 'face' && data.name && data.id) {
-        textBuffer += `<:${data.name}:${data.id}>`
-      } else if ((type === 'image' || type === 'video') && data.url) {
-        await this.sendAsset(type, data, {
-          ...addition,
-          content: textBuffer.trim(),
-        })
-        textBuffer = ''
-      } else if (type === 'share') {
-        await sendBuffer()
-        await this.post({
-          ...addition,
-          embeds: [{ ...data }],
-        })
-      } else if (type === 'record') {
-        await this.sendAsset('file', data, {
-          ...addition,
-          content: textBuffer.trim(),
-        })
-        textBuffer = ''
+  async visit(element: segment) {
+    const { type, attrs, children } = element
+    if (type === 'text') {
+      this.buffer += attrs.content
+    } else if (type === 'p') {
+      await this.render(children)
+      this.buffer += '\n'
+    } else if (type === 'at') {
+      if (attrs.id) {
+        this.buffer += `<@${attrs.id}>`
+      } else if (attrs.type === 'all') {
+        this.buffer += `@everyone`
+      } else if (attrs.type === 'here') {
+        this.buffer += `@here`
       }
+    } else if (type === 'sharp' && attrs.id) {
+      this.buffer += `<#${attrs.id}>`
+    } else if (type === 'face' && attrs.name && attrs.id) {
+      this.buffer += `<:${attrs.name}:${attrs.id}>`
+    } else if ((type === 'image' || type === 'video') && attrs.url) {
+      if (this.mode === 'figure') {
+        this.figure = element
+      } else {
+        await this.sendAsset(type, attrs, {
+          ...this.addition,
+          content: this.buffer.trim(),
+        })
+        this.buffer = ''
+      }
+    } else if (type === 'share') {
+      await this.flush()
+      await this.post({
+        ...this.addition,
+        embeds: [{ ...attrs }],
+      })
+    } else if (type === 'record') {
+      await this.sendAsset('file', attrs, {
+        ...this.addition,
+        content: this.buffer.trim(),
+      })
+      this.buffer = ''
+    } else if (type === 'figure') {
+      await this.flush()
+      this.mode = 'figure'
+      await this.render(children)
+      await this.sendAsset(this.figure.type, this.figure.attrs, {
+        ...this.addition,
+        content: this.buffer.trim(),
+      })
+      this.buffer = ''
+      this.mode = 'default'
+    } else if (type === 'quote') {
+      await this.flush()
+      this.addition.message_reference = {
+        message_id: attrs.id,
+      }
+    } else if (type === 'message') {
+      if (this.mode === 'figure') {
+        await this.render(children)
+        this.buffer += '\n'
+      } else {
+        await this.flush()
+        if ('quote' in attrs) {
+          this.addition.message_reference = {
+            message_id: attrs.id,
+          }
+        } else {
+          await this.render(children, true)
+        }
+      }
+    } else {
+      await this.render(children)
     }
-
-    await sendBuffer()
-    if (!this.errors.length) return this.results
-
-    throw new AggregateError(this.errors)
   }
 }
 
-export namespace Sender {
+export namespace DiscordModulator {
   export type HandleExternalAsset = 'auto' | 'download' | 'direct'
   export type HandleMixedContent = 'auto' | 'separate' | 'attach'
 
@@ -163,7 +188,7 @@ export namespace Sender {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<Sender.Config> = Schema.object({
+  export const Config: Schema<DiscordModulator.Config> = Schema.object({
     handleExternalAsset: Schema.union([
       Schema.const('download' as const).description('先下载后发送'),
       Schema.const('direct' as const).description('直接发送链接'),

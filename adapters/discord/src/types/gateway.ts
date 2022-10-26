@@ -147,6 +147,43 @@ export enum GatewayIntent {
    * - TYPING_START
    */
   DIRECT_MESSAGE_TYPING = 1 << 14,
+  /**
+   * `MESSAGE_CONTENT` is a unique privileged intent that isn't directly associated with any Gateway events.
+   * Instead, access to `MESSAGE_CONTENT` permits your app to receive message content data across the APIs.
+   * 
+   * Any fields affected by the message content intent are noted in the relevant documentation.
+   * For example, the content, embeds, attachments, and components fields in message objects all contain message content and therefore require the intent.
+   * 
+   * Like other privileged intents, `MESSAGE_CONTENT` must be approved for your app.
+   * After your app is verified, you can apply for the intent from your app's settings within the Developer Portal.
+   * You can read more about the message content intent review policy in the [Help Center](https://support-dev.discord.com/hc/en-us/articles/5324827539479).
+   * 
+   * Apps without the intent will receive empty values in fields that contain user-inputted content with a few exceptions:
+   * - Content in messages that an app sends
+   * - Content in DMs with the app
+   * - Content in which the app is mentioned
+   * 
+   * @see https://discord.com/developers/docs/topics/gateway#message-content-intent
+   */
+  MESSAGE_CONTENT = 1 << 15,
+  /**
+   * - GUILD_SCHEDULED_EVENT_CREATE
+   * - GUILD_SCHEDULED_EVENT_UPDATE
+   * - GUILD_SCHEDULED_EVENT_DELETE
+   * - GUILD_SCHEDULED_EVENT_USER_ADD
+   * - GUILD_SCHEDULED_EVENT_USER_REMOVE
+   */
+  GUILD_SCHEDULED_EVENTS = 1 << 16,
+  /**
+   * - AUTO_MODERATION_RULE_CREATE
+   * - AUTO_MODERATION_RULE_UPDATE
+   * - AUTO_MODERATION_RULE_DELETE
+   */
+  AUTO_MODERATION_CONFIGURATION = 1 << 17,
+  /**
+   * - AUTO_MODERATION_ACTION_EXECUTION
+   */
+  AUTO_MODERATION_EXECUTION = 1 << 18,
 }
 
 export interface GatewayParams {
@@ -166,7 +203,7 @@ export interface IdentifyParams {
   /** authentication token */
   token: string
   /** connection properties */
-  properties: object
+  properties: ConnectionProperties
   /** whether this connection supports compression of packets */
   compress?: boolean
   /** value between 50 and 250, total number of members where the gateway will stop sending offline members in the guild member list */
@@ -177,6 +214,16 @@ export interface IdentifyParams {
   presence?: PresenceUpdateParams
   /** the Gateway Intents you wish to receive */
   intents: integer
+}
+
+/** https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties */
+export interface ConnectionProperties {
+  /** Your operating system */
+  os: string
+  /** Your library name */
+  browser: string
+  /** Your library name */
+  device: string
 }
 
 /** https://discord.com/developers/docs/topics/gateway#resume-resume-structure */

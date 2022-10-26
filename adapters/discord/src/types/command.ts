@@ -1,4 +1,4 @@
-import { Channel, Internal, snowflake } from '.'
+import { Channel, Internal, Locale, snowflake } from '.'
 
 /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure */
 export interface ApplicationCommand {
@@ -10,12 +10,20 @@ export interface ApplicationCommand {
   application_id: snowflake
   /** guild id of the command, if not global */
   guild_id?: snowflake
-  /** 1-32 character name */
+  /** Name of command, 1-32 characters */
   name: string
-  /** 1-100 character description for CHAT_INPUT commands, empty string for USER and MESSAGE commands */
+  /** Localization dictionary for name field. Values follow the same restrictions as name */
+  name_localizations?: Record<Locale, string>
+  /** Description for `CHAT_INPUT` commands, 1-100 characters. Empty string for `USER` and `MESSAGE` commands */
   description: string
+  /** Localization dictionary for description field. Values follow the same restrictions as description */
+  description_localizations?: Record<Locale, string>
   /** the parameters for the command, max 25 */
   options?: ApplicationCommand.Option[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string
+  /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+  dm_permission?: boolean
   /** whether the command is enabled by default when the app is added to a guild */
   default_permission?: boolean
   /** autoincrementing version identifier updated during substantial record changes */
@@ -91,7 +99,12 @@ export namespace ApplicationCommand {
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-structure */
   export interface Permissions {
-    /** the id of the role or user */
+    /**
+     * ID of the role, user, or channel.
+     * It can also be a [permission constant](https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-constants):
+     * - `guild_id`: All members in a guild
+     * - `guild_id - 1`: All channels in a guild
+     */
     id: snowflake
     /** role or user */
     type: PermissionType
@@ -103,6 +116,7 @@ export namespace ApplicationCommand {
   export enum PermissionType {
     ROLE = 1,
     USER = 2,
+    CHANNEL = 3,
   }
 
   export namespace Params {
@@ -137,6 +151,16 @@ export namespace ApplicationCommand {
       /** the permissions for the command in the guild */
       permissions: Permissions[]
     }
+  }
+}
+
+declare module './gateway' {
+  interface GatewayEvents {
+    /**
+     * sent when an application command's permissions are updated
+     * @see https://discord.com/developers/docs/topics/gateway-events#application-command-permissions-update
+     */
+    APPLICATION_COMMAND_PERMISSIONS_UPDATE: ApplicationCommand.GuildPermissions
   }
 }
 
@@ -193,11 +217,6 @@ declare module './internal' {
      */
     getGuildApplicationCommandPermissions(application_id: snowflake, guild_id: snowflake): Promise<ApplicationCommand.GuildPermissions[]>
     /**
-     * This endpoint will overwrite all existing permissions for all commands in a guild, including slash commands, user commands, and message commands.
-     * @see https://discord.com/developers/docs/interactions/application-commands#batch-edit-application-command-permissions
-     */
-    batchEditApplicationCommandPermissions(application_id: snowflake, guild_id: snowflake, permissions: Partial<ApplicationCommand.GuildPermissions>[]): Promise<void>
-    /**
      * Fetch a guild command for your application. Returns an application command object.
      * @see https://discord.com/developers/docs/interactions/application-commands#get-guild-application-command
      */
@@ -248,7 +267,6 @@ Internal.define({
   },
   '/applications/{application.id}/guilds/{guild.id}/commands/permissions': {
     GET: 'getGuildApplicationCommandPermissions',
-    PUT: 'batchEditApplicationCommandPermissions',
   },
   '/applications/{application.id}/guilds/{guild.id}/commands/{command.id}/permissions': {
     GET: 'getApplicationCommandPermissions',
