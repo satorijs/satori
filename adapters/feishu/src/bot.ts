@@ -120,24 +120,24 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     }
 
     for (const message of chain) {
-      const { type, data } = message
+      const { type, attrs } = message
       switch (type) {
         case 'text':
           buffer.push({
-            text: data.content,
+            text: attrs.content,
           })
           break
         case 'at': {
-          if (data.id) {
+          if (attrs.id) {
             buffer.push({
-              text: `<at user_id="${data.id}">${data.name}</at>`,
+              text: `<at user_id="${attrs.id}">${attrs.name}</at>`,
             })
-          } else if (data.type === 'all') {
+          } else if (attrs.type === 'all') {
             buffer.push({
               text: '<at user_id="all">all</at>',
             })
-          } else if (data.type === 'here' || data.role) {
-            logger.warn(`@here or @role{${data.role}} is not supported`)
+          } else if (attrs.type === 'here' || attrs.role) {
+            logger.warn(`@here or @role{${attrs.role}} is not supported`)
           }
           break
         }
@@ -146,7 +146,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
         case 'video':
         case 'file': {
           await sendBuffer()
-          const content = await this._prepareAssets(type, { url: data.url })
+          const content = await this._prepareAssets(type, { url: attrs.url })
           const id = await send({
             content: JSON.stringify(content),
             // video is marked as 'media' in feishu platform
