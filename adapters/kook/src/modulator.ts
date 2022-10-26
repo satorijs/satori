@@ -131,7 +131,35 @@ export class KookModulator extends Modulator<KookBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content
+      this.buffer += attrs.content.replace(/[\\*_`]/g, '\\$&')
+    } else if (type === 'b') {
+      this.buffer += '**'
+      await this.render(children)
+      this.buffer += '**'
+    } else if (type === 'em') {
+      this.buffer += '*'
+      await this.render(children)
+      this.buffer += '*'
+    } else if (type === 'u') {
+      this.buffer += '(ins)'
+      await this.render(children)
+      this.buffer += '(ins)'
+    } else if (type === 'spl') {
+      this.buffer += '(spl)'
+      await this.render(children)
+      this.buffer += '(spl)'
+    } else if (type === 'del') {
+      this.buffer += '~~'
+      await this.render(children)
+      this.buffer += '~~'
+    } else if (type === 'code') {
+      this.buffer += '`'
+      await this.render(children)
+      this.buffer += '`'
+    } else if (type === 'a') {
+      this.buffer += `[`
+      await this.render(children)
+      this.buffer += `](${attrs.href})`
     } else if (type === 'p') {
       await this.render(children)
       this.buffer += '\n'
