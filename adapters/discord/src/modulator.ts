@@ -94,7 +94,30 @@ export class DiscordModulator extends Modulator<DiscordBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content
+      this.buffer += attrs.content.replace(/[\\*_`]/g, '\\$&')
+    } else if (type === 'b') {
+      this.buffer += '**'
+      await this.render(children)
+      this.buffer += '**'
+    } else if (type === 'em') {
+      this.buffer += '*'
+      await this.render(children)
+      this.buffer += '*'
+    } else if (type === 'u') {
+      this.buffer += '__'
+      await this.render(children)
+      this.buffer += '__'
+    } else if (type === 'del') {
+      this.buffer += '~~'
+      await this.render(children)
+      this.buffer += '~~'
+    } else if (type === 'code') {
+      this.buffer += '`'
+      await this.render(children)
+      this.buffer += '`'
+    } else if (type === 'a') {
+      await this.render(children)
+      this.buffer += ` (${attrs.href}) `
     } else if (type === 'p') {
       await this.render(children)
       this.buffer += '\n'
