@@ -70,7 +70,7 @@ const assetApi = {
   animation: 'sendAnimation',
 } as const
 
-const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a', 'code']
+const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
 export class TelegramModulator extends Modulator<TelegramBot> {
   private assetType: AssetType = null
@@ -132,17 +132,18 @@ export class TelegramModulator extends Modulator<TelegramBot> {
       await this.render(children)
       this.payload.caption += '\n'
     } else if (supportedElements.includes(type)) {
-      this.payload.caption += children.toString()
+      this.payload.caption += element.toString()
     } else if (type === 'spl') {
       this.payload.caption += '<tg-spoiler>'
       await this.render(children)
       this.payload.caption += '</tg-spoiler>'
+    } else if (type === 'code') {
+      const { lang } = attrs
+      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${segment.escape(attrs.content)}</code>`
     } else if (type === 'at') {
-      const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
-      if (atTarget) this.payload.caption += `@${atTarget} `
-    } else if (type === 'sharp') {
-      const sharpTarget = attrs.name || attrs.id
-      if (sharpTarget) this.payload.caption += `#${sharpTarget} `
+      if (attrs.id) {
+        this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`
+      }
     } else if (['image', 'audio', 'video', 'file'].includes(type)) {
       if (this.mode === 'default') {
         await this.flush()
