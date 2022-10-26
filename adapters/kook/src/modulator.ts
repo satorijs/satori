@@ -131,7 +131,7 @@ export class KookModulator extends Modulator<KookBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content.replace(/[\\*_`]/g, '\\$&')
+      this.buffer += attrs.content.replace(/[\\*_`~()]/g, '\\$&')
     } else if (type === 'b') {
       this.buffer += '**'
       await this.render(children)
@@ -186,11 +186,7 @@ export class KookModulator extends Modulator<KookBot> {
       this.additional.quote = attrs.id
     } else if (type === 'message') {
       await this.flush()
-      if ('quote' in attrs) {
-        this.additional.quote = attrs.id
-      } else {
-        await this.render(children, true)
-      }
+      await this.render(children, true)
     } else {
       await this.render(children)
     }

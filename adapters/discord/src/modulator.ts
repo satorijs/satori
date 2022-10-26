@@ -94,7 +94,7 @@ export class DiscordModulator extends Modulator<DiscordBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content.replace(/[\\*_`]/g, '\\$&')
+      this.buffer += attrs.content.replace(/[\\*_`~|()]/g, '\\$&')
     } else if (type === 'b') {
       this.buffer += '**'
       await this.render(children)
@@ -111,6 +111,10 @@ export class DiscordModulator extends Modulator<DiscordBot> {
       this.buffer += '~~'
       await this.render(children)
       this.buffer += '~~'
+    } else if (type === 'spl') {
+      this.buffer += '||'
+      await this.render(children)
+      this.buffer += '||'
     } else if (type === 'code') {
       this.buffer += '`'
       await this.render(children)
@@ -176,13 +180,7 @@ export class DiscordModulator extends Modulator<DiscordBot> {
         this.buffer += '\n'
       } else {
         await this.flush()
-        if ('quote' in attrs) {
-          this.addition.message_reference = {
-            message_id: attrs.id,
-          }
-        } else {
-          await this.render(children, true)
-        }
+        await this.render(children, true)
       }
     } else {
       await this.render(children)

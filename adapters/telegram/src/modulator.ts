@@ -162,11 +162,7 @@ export class TelegramModulator extends Modulator<TelegramBot> {
         this.payload.caption += '\n'
       } else {
         await this.flush()
-        if ('quote' in attrs) {
-          this.payload.reply_to_message_id = attrs.id
-        } else {
-          await this.render(children, true)
-        }
+        await this.render(children, true)
       }
     } else if (type === 'markdown') {
       await this.flush()

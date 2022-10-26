@@ -20,11 +20,7 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
       this.content += attrs.content
     } else if (type === 'message') {
       await this.flush()
-      if ('quote' in attrs) {
-        // not supported
-      } else {
-        await this.render(children, true)
-      }
+      await this.render(children, true)
     } else {
       await this.render(children)
     }

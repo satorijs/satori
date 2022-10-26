@@ -71,19 +71,28 @@ export class OneBotModulator extends Modulator<BaseBot> {
     this.children = []
   }
 
+  private text(text: string) {
+    this.children.push({ type: 'text', data: { text } })
+  }
+
   async visit(element: segment) {
     let { type, attrs, children } = element
     if (type === 'text') {
-      this.children.push({ type: 'text', data: { text: attrs.content } })
+      this.text(attrs.content)
     } else if (type === 'p') {
       await this.render(children)
-      this.children.push({ type: 'text', data: { text: '\n' } })
+      this.text('\n')
     } else if (type === 'at') {
       if (attrs.type === 'all') {
         this.children.push({ type: 'at', data: { qq: 'all' } })
       } else {
         this.children.push({ type: 'at', data: { qq: attrs.id } })
       }
+    } else if (type === 'sharp') {
+      if (attrs.id) this.text(attrs.id)
+    } else if (type === 'a') {
+      await this.render(children)
+      if (attrs.href) this.text(` (${attrs.href}) `)
     } else if (['video', 'audio', 'image'].includes(type)) {
       if (type === 'audio') type = 'record'
       attrs = { ...attrs }
@@ -102,11 +111,8 @@ export class OneBotModulator extends Modulator<BaseBot> {
       this.children.push({ type: 'reply', data: attrs })
     } else if (type === 'message') {
       await this.flush()
-      if ('quote' in attrs) {
-        attrs = { ...attrs }
-        delete attrs.quote
-        this.children.push({ type: 'reply', data: attrs })
-      } else if ('forward' in attrs && !this.bot.parent) {
+      // qqguild does not support forward messages
+      if ('forward' in attrs && !this.bot.parent) {
         this.buffer = { type: 'forward', data: {}, children: [] }
         await this.render(children)
         await this.forward()
