@@ -69,9 +69,17 @@ export class Context extends cordis.Context {
   constructor(options?: Context.Config) {
     super(options)
 
+    this.on('internal/warning', (format, ...args) => {
+      this.logger('app').warn(format, ...args)
+    })
+
     this.on('before-send', async (session) => {
       session.elements = await segment.transformAsync(session.elements, this._components, session)
     })
+  }
+
+  logger(name: string) {
+    return new Logger(name)
   }
 
   component(name: string, render: Render) {
@@ -100,7 +108,7 @@ Session.prototype[Context.filter] = function (ctx: Context) {
   return ctx.filter(this)
 }
 
-Context.service('__selector__', Selector)
+Context.service('selector', Selector)
 
 Context.service('bots', class {
   constructor(root: Context) {

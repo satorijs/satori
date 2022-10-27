@@ -7,6 +7,7 @@ export type Filter = (session: Session) => boolean
 /* eslint-disable max-len */
 declare module '.' {
   interface Context {
+    selector: Selector
     filter: Filter
     any(): this
     never(): this
