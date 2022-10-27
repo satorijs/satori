@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
@@ -33,11 +33,11 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     return (await this.http(method, path, { data, headers })).data
   }
 
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
+  async sendMessage(channelId: string, content: Fragment, guildId?: string) {
     return new KookModulator(this, channelId, guildId).send(content)
   }
 
-  async sendPrivateMessage(target_id: string, content: string | segment) {
+  async sendPrivateMessage(target_id: string, content: Fragment) {
     const { code } = await this.request('POST', '/user-chat/create', { target_id })
     return this.sendMessage(code, content)
   }
@@ -50,7 +50,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async editMessage(channelId: string, msg_id: string, content: string | segment) {
+  async editMessage(channelId: string, msg_id: string, content: Fragment) {
     content = segment.normalize(content).join('')
     if (channelId.length > 30) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })

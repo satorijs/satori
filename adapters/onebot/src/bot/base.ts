@@ -1,4 +1,4 @@
-import { Bot, segment } from '@satorijs/satori'
+import { Bot, Fragment } from '@satorijs/satori'
 import * as OneBot from '../utils'
 import { OneBotModulator } from './modulator'
 
@@ -6,11 +6,11 @@ export class BaseBot<T extends Bot.Config = Bot.Config> extends Bot<T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
+  sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
     return new OneBotModulator(this, channelId, guildId).send(fragment)
   }
 
-  sendPrivateMessage(userId: string, fragment: string | segment) {
+  sendPrivateMessage(userId: string, fragment: Fragment) {
     return this.sendMessage('private:' + userId, fragment)
   }
 

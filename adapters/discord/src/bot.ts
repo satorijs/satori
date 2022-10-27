@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordModulator } from './modulator'
 import { Internal } from './types'
@@ -26,11 +26,11 @@ export class DiscordBot<C extends Context = Context> extends Bot<DiscordBot.Conf
     return adaptUser(data)
   }
 
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
+  async sendMessage(channelId: string, content: Fragment, guildId?: string) {
     return new DiscordModulator(this, channelId, guildId).send(content)
   }
 
-  async sendPrivateMessage(channelId: string, content: string | segment) {
+  async sendPrivateMessage(channelId: string, content: Fragment) {
     return new DiscordModulator(this, channelId).send(content)
   }
 
@@ -38,7 +38,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<DiscordBot.Conf
     await this.internal.deleteMessage(channelId, messageId)
   }
 
-  async editMessage(channelId: string, messageId: string, content: string | segment) {
+  async editMessage(channelId: string, messageId: string, content: Fragment) {
     const elements = segment.normalize(content)
     content = elements.toString()
     const image = elements.find(v => v.type === 'image')
