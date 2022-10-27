@@ -87,7 +87,9 @@ export class Context extends cordis.Context {
 export namespace Context {
   export interface Config extends cordis.Context.Config {}
 
-  export const Config: Config.Static = Schema.intersect([])
+  export const Config: Config.Static = Schema.intersect([
+    Schema.object({}),
+  ])
 
   namespace Config {
     export interface Static extends Schema<Config> {}
