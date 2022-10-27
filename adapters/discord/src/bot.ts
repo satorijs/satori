@@ -1,10 +1,10 @@
-import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordModulator } from './modulator'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
-export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
+export class DiscordBot<C extends Context = Context> extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
@@ -51,7 +51,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
   }
 
-  async getMessage(channelId: string, messageId: string): Promise<Message> {
+  async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getChannelMessage(channelId, messageId)
     return await adaptMessage(this, data)
   }

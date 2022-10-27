@@ -4,10 +4,10 @@ import { adaptGuild, adaptUser } from './utils'
 import { QQGuildModulator } from './modulator'
 import { WsClient } from './ws'
 
-export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
+export class QQGuildBot extends Bot<QQGuildBot.Config> {
   internal: QQGuild.Bot
 
-  constructor(ctx: C, config: QQGuildBot.Config) {
+  constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
     this.internal = new QQGuild.Bot(config)
     ctx.plugin(WsClient, this)

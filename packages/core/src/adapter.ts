@@ -44,7 +44,7 @@ export namespace Adapter {
     }
   }
 
-  export abstract class WsClient<T extends Bot<Context, WsClient.Config>> extends Adapter.Client<T> {
+  export abstract class WsClient<T extends Bot<WsClient.Config>> extends Adapter.Client<T> {
     static reusable = true
 
     static Config: Schema<Adapter.WsClient.Config> = Schema.object({

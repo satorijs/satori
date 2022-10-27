@@ -11,7 +11,7 @@ function toElement(content: string | Element) {
   return Element('text', { content })
 }
 
-function toElementArray(input: Element.Content) {
+function toElementArray(input: Element.Fragment) {
   if (Array.isArray(input)) {
     return input.map(toElement)
   } else if (typeof input === 'string') {
@@ -59,8 +59,8 @@ class ElementConstructor {
 defineProperty(ElementConstructor, 'name', 'Element')
 defineProperty(ElementConstructor.prototype, kElement, true)
 
-function Element(type: string, children?: Element.Content): Element
-function Element(type: string, attrs: Dict<any>, children?: Element.Content): Element
+function Element(type: string, children?: Element.Fragment): Element
+function Element(type: string, attrs: Dict<any>, children?: Element.Fragment): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict<string> = {}, children: Element[] = []
@@ -81,12 +81,12 @@ function Element(type: string, ...args: any[]) {
 }
 
 namespace Element {
-  export type Content = string | Element | (string | Element)[]
-  export type RenderFunction<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
-  export type Transformer<S> = boolean | Content | RenderFunction<boolean | Content, S>
-  export type AsyncTransformer<S> = boolean | Content | RenderFunction<Awaitable<boolean | Content>, S>
+  export type Fragment = string | Element | (string | Element)[]
+  export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
+  export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
+  export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
-  export function normalize(source: string | Element) {
+  export function normalize(source: Fragment) {
     if (typeof source !== 'string') return Element(null, source)
     return Element.parse(source, true)
   }

@@ -7,11 +7,11 @@ import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { KookModulator } from './modulator'
 
-export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
+export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   http: Quester
   internal: Kook.Internal
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
       headers: {

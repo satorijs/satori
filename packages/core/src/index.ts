@@ -13,14 +13,14 @@ export { Schema, Logger, segment, segment as h, Quester }
 export * from './bot'
 export * from './adapter'
 export * from './modulator'
-export * from './protocol'
+export * from './universal'
 export * from './selector'
 export * from './session'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback<C>> {
+export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback> {
   // session events
   'message': Session.EventCallback
   'message-deleted': Session.EventCallback
@@ -46,24 +46,25 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 
   // lifecycle events
   'before-send': Session.EventCallback<Awaitable<void | boolean>>
-  'bot-added'(client: Bot<C>): void
-  'bot-removed'(client: Bot<C>): void
-  'bot-status-updated'(client: Bot<C>): void
-  'bot-connect'(client: Bot<C>): Awaitable<void>
-  'bot-disconnect'(client: Bot<C>): Awaitable<void>
+  'bot-added'(client: Bot): void
+  'bot-removed'(client: Bot): void
+  'bot-status-updated'(client: Bot): void
+  'bot-connect'(client: Bot): Awaitable<void>
+  'bot-disconnect'(client: Bot): Awaitable<void>
 }
 
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
-  bots: Bot<this>[] & Dict<Bot<this>> & { counter: number }
+  bots: Bot[] & Dict<Bot> & { counter: number }
 }
 
-export type RenderFunction = segment.RenderFunction<Awaitable<segment.Content>, Session>
+export type Fragment = segment.Fragment
+export type Render = segment.Render<Awaitable<Fragment>, Session>
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
-  _components: Dict<RenderFunction> = Object.create(null)
+  _components: Dict<Render> = Object.create(null)
 
   constructor(options?: Context.Config) {
     super(options)
@@ -73,7 +74,7 @@ export class Context extends cordis.Context {
     })
   }
 
-  component(name: string, render: RenderFunction) {
+  component(name: string, render: Render) {
     this._components[name] = render
     this.collect('component', () => {
       const shouldDelete = this._components[name] === render
@@ -85,6 +86,12 @@ export class Context extends cordis.Context {
 
 export namespace Context {
   export interface Config extends cordis.Context.Config {}
+
+  export const Config: Config.Static = Schema.intersect([])
+
+  namespace Config {
+    export interface Static extends Schema<Config> {}
+  }
 }
 
 Session.prototype[Context.filter] = function (ctx: Context) {

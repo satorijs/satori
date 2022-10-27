@@ -1,5 +1,7 @@
 import { defineProperty } from 'cosmokit'
-import { Bot, Message, segment, Session } from '.'
+import segment from '@satorijs/element'
+import { Bot } from './bot'
+import { Session } from './session'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -9,7 +11,7 @@ class AggregateError extends Error {
 
 export abstract class Modulator<B extends Bot = Bot> {
   protected errors: Error[] = []
-  protected results: Message[] = []
+  protected results: Session[] = []
   protected session: Session
 
   constructor(public bot: B, public channelId: string, public guildId?: string) {

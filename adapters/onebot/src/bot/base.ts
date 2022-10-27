@@ -1,8 +1,8 @@
-import { Bot, Context, segment } from '@satorijs/satori'
+import { Bot, segment } from '@satorijs/satori'
 import * as OneBot from '../utils'
 import { OneBotModulator } from './modulator'
 
-export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
+export class BaseBot<T extends Bot.Config = Bot.Config> extends Bot<T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 

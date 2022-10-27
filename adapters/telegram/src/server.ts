@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { sanitize, trimSlash } from 'cosmokit'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
@@ -7,7 +7,7 @@ import * as Telegram from './types'
 const logger = new Logger('telegram')
 
 export class HttpServer extends Adapter.Server<TelegramBot> {
-  async start(bot: TelegramBot<Context, TelegramBot.BaseConfig & HttpServer.Config>) {
+  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {

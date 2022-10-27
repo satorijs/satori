@@ -15,9 +15,9 @@ declare module '@satorijs/core' {
   }
 
   interface Events<C> {
-    'onebot/message-reactions-updated': Session.EventCallback<C>
-    'onebot/channel-updated': Session.EventCallback<C>
-    'onebot/channel-created': Session.EventCallback<C>
-    'onebot/channel-destroyed': Session.EventCallback<C>
+    'onebot/message-reactions-updated': Session.EventCallback
+    'onebot/channel-updated': Session.EventCallback
+    'onebot/channel-created': Session.EventCallback
+    'onebot/channel-destroyed': Session.EventCallback
   }
 }

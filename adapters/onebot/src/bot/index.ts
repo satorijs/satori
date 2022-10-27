@@ -9,10 +9,10 @@ export * from './cqcode'
 export * from './base'
 export * from './qqguild'
 
-export class OneBotBot<C extends Context = Context, T extends OneBotBot.Config = OneBotBot.Config> extends BaseBot<C, T> {
+export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends BaseBot<T> {
   public guildBot: QQGuildBot
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.selfId = config.selfId
     this.internal = new OneBot.Internal()

@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "^1.2.5",
+    "@satorijs/core": "1.2.5",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.3",

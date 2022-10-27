@@ -1,8 +1,8 @@
-import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/satori'
+import { segment, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
-export const adaptUser = (user: Discord.User): User => ({
+export const adaptUser = (user: Discord.User): Universal.User => ({
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
@@ -10,17 +10,17 @@ export const adaptUser = (user: Discord.User): User => ({
   isBot: user.bot || false,
 })
 
-export const adaptGuild = (data: Discord.Guild): Guild => ({
+export const adaptGuild = (data: Discord.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
 })
 
-export const adaptChannel = (data: Discord.Channel): Channel => ({
+export const adaptChannel = (data: Discord.Channel): Universal.Channel => ({
   channelId: data.id,
   channelName: data.name,
 })
 
-export const adaptAuthor = (author: Discord.User): Author => ({
+export const adaptAuthor = (author: Discord.User): Universal.Author => ({
   ...adaptUser(author),
   nickname: author.username,
 })
@@ -108,7 +108,7 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
     const { message_id, channel_id } = meta.message_reference
     session.quote = await bot.getMessage(channel_id, message_id)
   }
-  return session as Message
+  return session as Universal.Message
 }
 
 export function prepareMessage(session: Partial<Session>, data: Partial<Discord.Message>) {

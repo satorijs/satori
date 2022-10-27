@@ -1,4 +1,4 @@
-import { Author, Bot, Channel, defineProperty, Guild, GuildMember, hyphenate, Logger, Message, segment, User } from '@satorijs/satori'
+import { Bot, defineProperty, hyphenate, Logger, segment, Universal } from '@satorijs/satori'
 import * as qface from 'qface'
 import { CQCode } from './bot'
 import * as OneBot from './types'
@@ -7,19 +7,19 @@ export * from './types'
 
 const logger = new Logger('onebot')
 
-export const adaptUser = (user: OneBot.AccountInfo): User => ({
+export const adaptUser = (user: OneBot.AccountInfo): Universal.User => ({
   userId: user.tiny_id || user.user_id.toString(),
   avatar: user.user_id ? `http://q.qlogo.cn/headimg_dl?dst_uin=${user.user_id}&spec=640` : undefined,
   username: user.nickname,
 })
 
-export const adaptGuildMember = (user: OneBot.SenderInfo): GuildMember => ({
+export const adaptGuildMember = (user: OneBot.SenderInfo): Universal.GuildMember => ({
   ...adaptUser(user),
   nickname: user.card,
   roles: [user.role],
 })
 
-export const adaptQQGuildMemberInfo = (user: OneBot.GuildMemberInfo): GuildMember => ({
+export const adaptQQGuildMemberInfo = (user: OneBot.GuildMemberInfo): Universal.GuildMember => ({
   userId: user.tiny_id,
   username: user.nickname,
   nickname: user.nickname,
@@ -27,7 +27,7 @@ export const adaptQQGuildMemberInfo = (user: OneBot.GuildMemberInfo): GuildMembe
   isBot: user.role_name === '机器人',
 })
 
-export const adaptQQGuildMemberProfile = (user: OneBot.GuildMemberProfile): GuildMember => ({
+export const adaptQQGuildMemberProfile = (user: OneBot.GuildMemberProfile): Universal.GuildMember => ({
   userId: user.tiny_id,
   username: user.nickname,
   nickname: user.nickname,
@@ -35,14 +35,14 @@ export const adaptQQGuildMemberProfile = (user: OneBot.GuildMemberProfile): Guil
   isBot: user.roles?.some(r => r.role_name === '机器人'),
 })
 
-export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.AnonymousInfo): Author => ({
+export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.AnonymousInfo): Universal.Author => ({
   ...adaptUser(user),
   nickname: anonymous?.name || user.card,
   anonymous: anonymous?.flag,
   roles: [user.role],
 })
 
-export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Message = {}) {
+export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Universal.Message = {}) {
   // basic properties
   result.author = adaptAuthor(message.sender, message.anonymous)
   result.userId = result.author.userId
@@ -76,7 +76,7 @@ export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Me
   return result
 }
 
-export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Guild => {
+export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Universal.Guild => {
   if ((info as OneBot.GuildBaseInfo).guild_id) {
     const guild = info as OneBot.GuildBaseInfo
     return {
@@ -92,7 +92,7 @@ export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Guild
   }
 }
 
-export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Channel => {
+export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Universal.Channel => {
   if ((info as OneBot.ChannelInfo).channel_id) {
     const channel = info as OneBot.ChannelInfo
     return {
