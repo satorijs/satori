@@ -51,7 +51,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async editMessage(channelId: string, msg_id: string, content: string | segment) {
-    content = segment.normalize(content).toString()
+    content = segment.normalize(content).join('')
     if (channelId.length > 30) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {

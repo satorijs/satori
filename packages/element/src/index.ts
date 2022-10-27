@@ -87,8 +87,8 @@ namespace Element {
   export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
   export function normalize(source: Fragment) {
-    if (typeof source !== 'string') return Element(null, source)
-    return Element.parse(source, true)
+    if (typeof source !== 'string') return toElementArray(source)
+    return Element.parse(source)
   }
 
   export function escape(source: string, inline = false) {
@@ -193,9 +193,7 @@ namespace Element {
     source: string
   }
 
-  export function parse(source: string): Element[]
-  export function parse(source: string, fragment: true): Element
-  export function parse(source: string, fragment = false) {
+  export function parse(source: string) {
     const tokens: (string | Token)[] = []
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
@@ -246,7 +244,7 @@ namespace Element {
       }
     }
     rollback(stack.length - 1)
-    return fragment ? stack[0] : stack[0].children
+    return stack[0].children
   }
 
   export function transform<S>(source: string, rules: Dict<Transformer<S>>, session?: S): string

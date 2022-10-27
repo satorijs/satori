@@ -38,7 +38,7 @@ export abstract class Modulator<B extends Bot = Bot> {
   }
 
   async send(content: string | segment) {
-    this.session.elements = segment.normalize(content).children
+    this.session.elements = segment.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session)) return
     await this.render(this.session.elements, true)
     if (!this.errors.length) {
