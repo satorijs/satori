@@ -41,7 +41,7 @@ export abstract class Modulator<B extends Bot = Bot> {
     this.session.elements = segment.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session)) return
     await this.render(this.session.elements, true)
-    if (!this.errors.length) {
+    if (this.errors.length) {
       throw new AggregateError(this.errors)
     } else {
       return this.results.map(result => result.messageId)
