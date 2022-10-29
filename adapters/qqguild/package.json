@@ -29,7 +29,7 @@
     "@satorijs/satori": "^1.3.1"
   },
   "dependencies": {
-    "@qq-guild-sdk/core": "^2.0.1",
+    "@qq-guild-sdk/core": "^2.1.3",
     "qface": "^1.2.0"
   }
 }
