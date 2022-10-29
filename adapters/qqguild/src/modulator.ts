@@ -59,6 +59,7 @@ function isAxiosError(e: unknown): e is {
 }
 
 export class QQGuildModulator extends Modulator<QQGuildBot> {
+  private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private addition = {
     reference: null as string | null,
@@ -160,9 +161,19 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
     } else if ((type === 'image' || type === 'video' || type === 'audio' || type === 'file') && attrs.url) {
       this.resolveFile(attrs)
       await this.flush()
-    } else if (type === 'message') {
+    } else if (type === 'figure') {
       await this.flush()
+      this.mode = 'figure'
       await this.render(children, true)
+      this.mode = 'default'
+    } else if (type === 'message') {
+      if (this.mode === 'figure') {
+        await this.render(children)
+        this.content += '\n'
+      } else {
+        await this.flush()
+        await this.render(children, true)
+      }
     } else {
       await this.render(children)
     }
