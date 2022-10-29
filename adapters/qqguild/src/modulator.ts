@@ -83,7 +83,6 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
     let result: QQGuild.Message.Response
 
     try {
-      console.log('req', req, checkEmpty(req))
       if (checkEmpty(req)) {
         return
       }
