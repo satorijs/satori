@@ -1,15 +1,32 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Logger, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildModulator } from './modulator'
 import { WsClient } from './ws'
+
+const logger = new Logger('satori')
+
+function isAxiosError(e: unknown): e is {
+  response: {
+    status: number
+    statusText: string
+  }
+  data: {
+    code: number
+    message: string
+    data: any
+  }
+} {
+  // @ts-ignore
+  return e.data?.code !== undefined
+}
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
   internal: QQGuild.Bot
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
-    this.internal = new QQGuild.Bot(config)
+    this.internal = new QQGuild.Bot(config as QQGuild.Bot.Options)
     ctx.plugin(WsClient, this)
   }
 
@@ -21,7 +38,16 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
-    return new QQGuildModulator(this, channelId, guildId).send(fragment)
+    try {
+      return await new QQGuildModulator(this, channelId, guildId).send(fragment)
+    } catch (e) {
+      if (isAxiosError(e)) {
+        logger.warn(`QQGuild: ${e.response.status} ${e.response.statusText} [${e.data.code}](${e.data.message})`)
+        logger.warn(e.data.data)
+      } else {
+        logger.warn(e)
+      }
+    }
   }
 
   async getGuildList() {
@@ -62,8 +88,12 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 }
 
 export namespace QQGuildBot {
-  export interface Config extends Bot.Config, QQGuild.Bot.Options, WsClient.Config {
-    intents: number
+  type BotOptions = QQGuild.Bot.Options
+  type CustomBotOptions = Omit<BotOptions, 'sandbox'> & Partial<Pick<BotOptions, 'sandbox'>>
+  export interface Config extends Bot.Config, CustomBotOptions, WsClient.Config {
+    intents?: number
+    autoWithMsgId?: boolean
+    autoSplit?: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -73,6 +103,14 @@ export namespace QQGuildBot {
         key: Schema.string().description('机器人 key。').role('secret').required(),
         token: Schema.string().description('机器人令牌。').role('secret').required(),
       }),
+      autoWithMsgId: Schema.boolean().description(
+        '是否自动携带消息 ID，频道未携带消息 ID 的信息会视为主动消息，有频次限制。' +
+        '[详情参考](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E5%8A%9F%E8%83%BD%E6%8F%8F%E8%BF%B0)。'
+      ).default(true),
+      autoSplit: Schema.boolean().description(
+        '是否自动分割消息，由于 qq 官方只支持发送一个文件，以及不保证文件顺序，开启此功能可以尽量保证 segment 的文件顺序。\n' +
+        '如果你不需要该功能，可以关闭此选项，所有的文件会在文本内容发送完后按照 segement 中的相对顺序发送。'
+      ).default(true),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
