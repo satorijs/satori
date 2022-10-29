@@ -66,8 +66,6 @@ export namespace QQGuildBot {
   type CustomBotOptions = Omit<BotOptions, 'sandbox'> & Partial<Pick<BotOptions, 'sandbox'>>
   export interface Config extends Bot.Config, CustomBotOptions, WsClient.Config {
     intents?: number
-    autoWithMsgId?: boolean
-    autoSplit?: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -77,14 +75,6 @@ export namespace QQGuildBot {
         key: Schema.string().description('机器人 key。').role('secret').required(),
         token: Schema.string().description('机器人令牌。').role('secret').required(),
       }),
-      autoWithMsgId: Schema.boolean().description(
-        '是否自动携带消息 ID，频道未携带消息 ID 的信息会视为主动消息，有频次限制。' +
-        '[详情参考](https://bot.q.qq.com/wiki/develop/api/openapi/message/post_messages.html#%E5%8A%9F%E8%83%BD%E6%8F%8F%E8%BF%B0)。'
-      ).default(true),
-      autoSplit: Schema.boolean().description(
-        '是否自动分割消息，由于 qq 官方只支持发送一个文件，以及不保证文件顺序，开启此功能可以尽量保证 segment 的文件顺序。\n' +
-        '如果你不需要该功能，可以关闭此选项，所有的文件会在文本内容发送完后按照 segement 中的相对顺序发送。'
-      ).default(true),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),

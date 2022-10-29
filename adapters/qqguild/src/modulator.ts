@@ -72,11 +72,10 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
 
   async flush() {
     const { reference, file } = this.addition
-    const config = this.bot.config
     const req: QQGuild.Message.Request = {
       content: this.content,
     }
-    if (config.autoWithMsgId && this.session.messageId) {
+    if (this.session.messageId) {
       req.msgId = this.session.messageId
     }
     if (reference) {
