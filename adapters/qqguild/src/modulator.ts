@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { defineProperty, Dict, Logger, Modulator, segment, SendOptions } from '@satorijs/satori'
+import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -28,7 +28,7 @@ function urlToBuffer(url: string) {
   if (url.startsWith('data:')) {
     return dataUrlToBuffer(url)
   } else if (url.startsWith('base64:')) {
-    return base64ToBuffer(url.slice(7))
+    return base64ToBuffer(url.slice(9))
   } else {
     throw new Error(`Unsupported url: ${url}`)
   }
