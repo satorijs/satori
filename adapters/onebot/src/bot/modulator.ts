@@ -1,29 +1,26 @@
-import { Modulator, segment } from '@satorijs/satori'
+import { Dict, Modulator, segment } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
 
-export interface Message extends CQCode {
-  type: 'message' | 'forward'
-  children: CQCode[]
+class State {
+  author: Dict = {}
+  children: CQCode[] = []
+
+  constructor(public type: 'message' | 'forward' | 'reply') {}
 }
 
 export class OneBotModulator extends Modulator<BaseBot> {
-  stack: ('message' | 'forward')[] = []
-  data: any = {}
+  stack: State[] = [new State('message')]
   children: CQCode[] = []
-  buffer: Message
 
-  private async forward() {
-    if (!this.buffer.children.length) return
+  async forward() {
+    if (!this.stack[0].children.length) return
     const session = this.bot.session(this.session)
     session.messageId = this.guildId
-      ? '' + await this.bot.internal.sendGroupForwardMsg(this.guildId, this.buffer.children)
-      : '' + await this.bot.internal.sendPrivateForwardMsg(this.channelId.slice(8), this.buffer.children)
+      ? '' + await this.bot.internal.sendGroupForwardMsg(this.guildId, this.stack[0].children)
+      : '' + await this.bot.internal.sendPrivateForwardMsg(this.channelId.slice(8), this.stack[0].children)
     session.app.emit(session, 'send', session)
     this.results.push(session)
-    this.stack.shift()
-    this.buffer = null
-    return
   }
 
   async flush() {
@@ -47,12 +44,12 @@ export class OneBotModulator extends Modulator<BaseBot> {
 
     // flush
     if (!this.children.length) return
-    if (this.buffer) {
-      this.buffer.children.push({
+    if (this.stack[0].type === 'forward') {
+      this.stack[1].children.push({
         type: 'node',
-        data: this.data.id ? { id: this.data.id } : {
-          name: this.data.nickname || this.bot.nickname || this.bot.username,
-          uin: this.data.userId || this.bot.userId,
+        data: {
+          name: this.stack[0].author.name || this.bot.nickname || this.bot.username,
+          uin: this.stack[0].author.id || this.bot.userId,
           content: this.children as any,
         },
       })
@@ -101,10 +98,17 @@ export class OneBotModulator extends Modulator<BaseBot> {
       const cap = /^data:([\w/-]+);base64,/.exec(attrs.file)
       if (cap) attrs.file = 'base64://' + attrs.file.slice(cap[0].length)
       this.children.push({ type, data: attrs })
+    } else if (type === 'onebot:music') {
+      this.children.push({ type: 'music', data: attrs })
+    } else if (type === 'onebot:tts') {
+      this.children.push({ type: 'tts', data: attrs })
+    } else if (type === 'author') {
+      Object.assign(this.stack[0].author, attrs)
     } else if (type === 'figure') {
       await this.flush()
-      this.buffer = { type: 'forward', data: {}, children: [] }
-      await this.render(children)
+      this.stack.unshift(new State('forward'))
+      await this.render(children, true)
+      this.stack.shift()
       await this.forward()
     } else if (type === 'quote') {
       await this.flush()
@@ -112,16 +116,16 @@ export class OneBotModulator extends Modulator<BaseBot> {
     } else if (type === 'message') {
       await this.flush()
       // qqguild does not support forward messages
-      if ('forward' in attrs && !this.bot.parent) {
-        this.buffer = { type: 'forward', data: {}, children: [] }
-        await this.render(children)
+      if (attrs.forward && !this.bot.parent) {
+        this.stack.unshift(new State('forward'))
+        await this.render(children, true)
+        this.stack.shift()
         await this.forward()
       } else {
-        this.data = attrs
-        Object.assign(this.data, attrs)
+        if (attrs.userId) this.stack[0].author.id = attrs.userId
+        if (attrs.nickname) this.stack[0].author.name = attrs.nickname
         await this.render(children)
         await this.flush()
-        this.data = {}
       }
     } else {
       await this.render(children)
