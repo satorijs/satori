@@ -1,10 +1,11 @@
 import segment from '@satorijs/element'
+import { SendOptions } from './session'
 
 export namespace Universal {
   export interface Methods {
     // message
-    sendMessage(channelId: string, content: segment.Fragment, guildId?: string): Promise<string[]>
-    sendPrivateMessage(userId: string, content: segment.Fragment): Promise<string[]>
+    sendMessage(channelId: string, content: segment.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+    sendPrivateMessage(userId: string, content: segment.Fragment, options?: SendOptions): Promise<string[]>
     getMessage(channelId: string, messageId: string): Promise<Message>
     getMessageList(channelId: string, before?: string): Promise<Message[]>
     editMessage(channelId: string, messageId: string, content: segment.Fragment): Promise<void>

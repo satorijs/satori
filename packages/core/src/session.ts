@@ -4,6 +4,10 @@ import { Bot } from './bot'
 import { Universal } from './universal'
 import segment from '@satorijs/element'
 
+export interface SendOptions {
+  session?: Session
+}
+
 export interface Session extends Session.Payload {}
 
 export namespace Session {
