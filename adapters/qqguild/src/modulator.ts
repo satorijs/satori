@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
+import { defineProperty, Dict, Logger, Modulator, segment, SendOptions } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -51,6 +51,11 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
   }
   private addition = {
     files: [] as File[]
+  }
+
+  constructor(bot: QQGuildBot, channelId: string, guildId?: string, options?: SendOptions) {
+    super(bot, channelId, guildId, options)
+    defineProperty(this.session, 'messageId', options.session.messageId)
   }
 
   async flush() {
