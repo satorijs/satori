@@ -1,9 +1,5 @@
 import segment from '@satorijs/element'
-import { Session } from './session'
-
-export interface SendOptions {
-  session?: Session
-}
+import { SendOptions } from './session'
 
 export namespace Universal {
   export interface Methods {
