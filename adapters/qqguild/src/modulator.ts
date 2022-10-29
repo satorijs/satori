@@ -93,7 +93,6 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
       if (checkEmpty(req)) {
         return
       }
-      console.log(req)
       if (this.session.subtype === 'group') {
         result = await sender.channel(this.session.channelId, req)
       } else if (this.session.subtype === 'private') {
