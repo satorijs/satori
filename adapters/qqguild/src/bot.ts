@@ -10,15 +10,15 @@ function isAxiosError(e: unknown): e is {
   response: {
     status: number
     statusText: string
-  }
-  data: {
-    code: number
-    message: string
-    data: any
+    data: {
+      code: number
+      message: string
+      data: any
+    }
   }
 } {
   // @ts-ignore
-  return e.data?.code !== undefined
+  return e.response?.data?.code !== undefined
 }
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
@@ -42,8 +42,9 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
       return await new QQGuildModulator(this, channelId, guildId).send(fragment)
     } catch (e) {
       if (isAxiosError(e)) {
-        logger.warn(`QQGuild: ${e.response.status} ${e.response.statusText} [${e.data.code}](${e.data.message})`)
-        logger.warn(e.data.data)
+        const res = e.response
+        logger.warn(`QQGuild: ${res.status} ${res.statusText} [${res.data.code}](${res.data.message})`)
+        logger.warn(res.data.data)
       } else {
         logger.warn(e)
       }
