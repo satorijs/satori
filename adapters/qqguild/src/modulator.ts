@@ -117,6 +117,16 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
      */
     if (type === 'text') {
       this.content += attrs.content
+    } else if (type === 'at') {
+      switch (attrs.type) {
+        case 'all':
+          this.content += `@everyone`
+          break
+        default:
+          this.content += `<@${attrs.id}>`
+      }
+    } else if (type === 'sharp') {
+      this.content += `<#${attrs.id}>`
     } else if ((type === 'image' || type === 'video' || type === 'audio' || type === 'file') && attrs.url) {
       this.resolveFile(attrs)
     } else if (type === 'message') {
