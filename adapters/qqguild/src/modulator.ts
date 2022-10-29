@@ -72,10 +72,6 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
       content: this.content,
     }
     req.msgId = this.options?.session?.messageId
-    if (reference) {
-      req.messageReference = reference
-      this.addition.reference = null
-    }
     if (file) {
       if (file.type === 'url') {
         req.image = file.data
@@ -85,6 +81,9 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
         throw new Error(`Unsupported file type: ${file.type}`)
       }
       this.addition.file = null
+    } else if (reference) {
+      req.messageReference = reference
+      this.addition.reference = null
     }
 
     let sender = this.session.bot.internal.send as QQGuild.Sender
