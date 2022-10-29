@@ -1,25 +1,8 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, SendOptions, Logger, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, SendOptions, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildModulator } from './modulator'
 import { WsClient } from './ws'
-
-const logger = new Logger('satori')
-
-function isAxiosError(e: unknown): e is {
-  response: {
-    status: number
-    statusText: string
-    data: {
-      code: number
-      message: string
-      data: any
-    }
-  }
-} {
-  // @ts-ignore
-  return e.response?.data?.code !== undefined
-}
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
   internal: QQGuild.Bot
@@ -38,17 +21,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    try {
-      return await new QQGuildModulator(this, channelId, guildId, opts).send(fragment)
-    } catch (e) {
-      if (isAxiosError(e)) {
-        const res = e.response
-        logger.warn(`QQGuild: ${res.status} ${res.statusText} [${res.data.code}](${res.data.message})`)
-        logger.warn(res.data.data)
-      } else {
-        logger.warn(e)
-      }
-    }
+    return await new QQGuildModulator(this, channelId, guildId, opts).send(fragment)
   }
 
   async getGuildList() {

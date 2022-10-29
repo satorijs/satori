@@ -43,6 +43,21 @@ function checkEmpty(req: QQGuild.Message.Request) {
     // && req.embed === undefined
 }
 
+function isAxiosError(e: unknown): e is {
+  response: {
+    status: number
+    statusText: string
+    data: {
+      code: number
+      message: string
+      data: any
+    }
+  }
+} {
+  // @ts-ignore
+  return e.response?.data?.code !== undefined
+}
+
 export class QQGuildModulator extends Modulator<QQGuildBot> {
   private content: string = ''
   private addition = {
@@ -94,6 +109,14 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
       const session = this.bot.adaptMessage(result)
       this.results.push(session)
       session.app.emit(session, 'message', session)
+    } catch (e) {
+      if (isAxiosError(e)) {
+        const res = e.response
+        logger.warn(`QQGuild: ${res.status} ${res.statusText} [${res.data.code}](${res.data.message})`)
+        logger.warn(res.data.data)
+      } else {
+        logger.warn(e)
+      }
     } finally {
       this.content = ''
     }
