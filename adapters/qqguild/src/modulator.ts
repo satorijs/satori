@@ -65,19 +65,12 @@ export class QQGuildModulator extends Modulator<QQGuildBot> {
     file: null as File | null,
   }
 
-  constructor(bot: QQGuildBot, channelId: string, guildId?: string, options?: SendOptions) {
-    super(bot, channelId, guildId, options)
-    defineProperty(this.session, 'messageId', options?.session?.messageId)
-  }
-
   async flush() {
     const { reference, file } = this.addition
     const req: QQGuild.Message.Request = {
       content: this.content,
     }
-    if (this.session.messageId) {
-      req.msgId = this.session.messageId
-    }
+    req.msgId = this.options?.session?.messageId
     if (reference) {
       req.messageReference = reference
       this.addition.reference = null
