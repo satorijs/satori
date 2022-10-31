@@ -1,6 +1,6 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
-import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
+import { Dict, Logger, Messenger, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
@@ -72,7 +72,7 @@ const assetApi = {
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramModulator extends Modulator<TelegramBot> {
+export class TelegramModulator extends Messenger<TelegramBot> {
   private assetType: AssetType = null
   private payload: Dict
   private mode: RenderMode = 'default'

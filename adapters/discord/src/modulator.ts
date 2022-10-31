@@ -1,4 +1,4 @@
-import { Dict, Modulator, Schema, segment } from '@satorijs/satori'
+import { Dict, Messenger, Schema, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
@@ -6,7 +6,7 @@ import { adaptMessage } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
-export class DiscordModulator extends Modulator<DiscordBot> {
+export class DiscordModulator extends Messenger<DiscordBot> {
   private buffer: string = ''
   private addition: Dict = {}
   private figure: segment = null

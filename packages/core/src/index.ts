@@ -12,10 +12,10 @@ export { Schema, Logger, segment, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
-export * from './modulator'
-export * from './universal'
+export * from './messenger'
 export * from './selector'
 export * from './session'
+export * from './universal'
 
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'

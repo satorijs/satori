@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
+import { Dict, Logger, Messenger, segment } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -58,7 +58,7 @@ function isAxiosError(e: unknown): e is {
   return e.response?.data?.code !== undefined
 }
 
-export class QQGuildModulator extends Modulator<QQGuildBot> {
+export class QQGuildModulator extends Messenger<QQGuildBot> {
   private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private addition = {

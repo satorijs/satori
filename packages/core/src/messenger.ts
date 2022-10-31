@@ -9,7 +9,7 @@ class AggregateError extends Error {
   }
 }
 
-export abstract class Modulator<B extends Bot = Bot> {
+export abstract class Messenger<B extends Bot = Bot> {
   public errors: Error[] = []
   public results: Session[] = []
   public session: Session
@@ -48,3 +48,5 @@ export abstract class Modulator<B extends Bot = Bot> {
     }
   }
 }
+
+export { Messenger as Modulator }

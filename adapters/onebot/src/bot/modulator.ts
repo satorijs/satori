@@ -1,4 +1,4 @@
-import { Dict, Modulator, segment } from '@satorijs/satori'
+import { Dict, Messenger, segment } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
 
@@ -9,7 +9,7 @@ class State {
   constructor(public type: 'message' | 'forward' | 'reply') {}
 }
 
-export class OneBotModulator extends Modulator<BaseBot> {
+export class OneBotModulator extends Messenger<BaseBot> {
   stack: State[] = [new State('message')]
   children: CQCode[] = []
 

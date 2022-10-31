@@ -1,4 +1,4 @@
-import { Modulator, Schema, segment } from '@satorijs/satori'
+import { Messenger, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -7,7 +7,7 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class KookModulator extends Modulator<KookBot> {
+export class KookModulator extends Messenger<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
