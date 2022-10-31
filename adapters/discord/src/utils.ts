@@ -61,7 +61,8 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
   if (meta.attachments?.length) {
-    session.content += ' ' + meta.attachments.map(v => {
+    if (session.content) session.content += ' '
+    session.content += meta.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
         return segment('image', {
           url: v.url,

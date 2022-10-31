@@ -4,11 +4,11 @@ import { DiscordModulator } from './modulator'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
-export class DiscordBot<C extends Context = Context> extends Bot<DiscordBot.Config> {
+export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
-  constructor(ctx: C, config: DiscordBot.Config) {
+  constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend({
       ...config,
