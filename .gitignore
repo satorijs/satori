@@ -5,6 +5,7 @@ temp
 .temp
 .cache
 .data
+.env
 
 /docs
 /external

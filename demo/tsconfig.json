@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../",
+    "paths": {
+      "cordis-*": ["packages/*/dist"],
+      "@satorijs/*": ["packages/*/dist"],
+      "@satorijs/adapter-*": ["adapters/*/dist"]
+    }
+  },
+  "include": ["index.spec.ts"]
+}

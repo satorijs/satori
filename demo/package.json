@@ -1,0 +1,12 @@
+{
+  "name": "@satorijs/demo",
+  "version": "1.0.0",
+  "description": "Demo package",
+  "main": "index.spec.ts",
+  "scripts": {
+    "start": "ts-node index.spec.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3"
+  }
+}
