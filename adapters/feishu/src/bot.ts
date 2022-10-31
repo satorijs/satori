@@ -236,6 +236,44 @@ export namespace FeishuBot {
     Quester.Config,
     HttpServer.Config,
   ])
+
+  export namespace Message {
+    export interface Text {
+      text: string
+    }
+    export interface Image {
+      image_key: string
+    }
+    export interface Audio {
+      file_key: string
+    }
+    export interface Media {
+      file_key: string
+      image_key?: string
+    }
+    export interface File {
+      file_key: string
+    }
+    export interface Content {
+      receive_id?: string
+      msg_type: 'text' | 'image' | 'audio' | 'media' | 'file'
+    }
+    export type Contents<T extends Content['msg_type']> = Content & (
+      T extends 'text' ? Text :
+      T extends 'image' ? Image :
+      T extends 'audio' ? Audio :
+      T extends 'media' ? Media :
+      T extends 'file' ? File :
+      Content
+    )
+    export type FileContents = Content & (Image | Audio | Media | File)
+    export function isWhatContents<T extends Content['msg_type']>(
+      type: T, data: Contents<Content['msg_type']>
+    // @ts-ignore
+    ): data is Contents<T> {
+      return data.msg_type === type
+    }
+  }
 }
 
 FeishuBot.prototype.platform = 'feishu'
