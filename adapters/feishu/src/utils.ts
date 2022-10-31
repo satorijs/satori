@@ -3,10 +3,10 @@ import crypto from 'crypto'
 import { Context, Message, segment, Session } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
-import { AllEvents, Events, MessageContentType } from './types'
+import { AllEvents, Events, MessageContentType, MessageType } from './types'
 
 export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Message {
-  const json = JSON.parse(data.message.content) as MessageContentType<typeof data.message.message_type>
+  const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = (bot.config.selfUrl ?? bot.ctx.config.selfUrl) + bot.config.path + '/assets'
   let content: segment
   switch (data.message.message_type) {
