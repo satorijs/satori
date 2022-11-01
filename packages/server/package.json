@@ -1,0 +1,33 @@
+{
+  "name": "@satorijs/server",
+  "description": "Server of Satorijs",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "files": [
+    "lib"
+  ],
+  "author": "Yijie <yijie4188@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "packages/node"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://satori.js.org/",
+  "keywords": [
+    "satori",
+    "element",
+    "message",
+    "utilities"
+  ],
+  "dependencies": {
+    "@satorijs/satori": "1.3.5"
+  }
+}
