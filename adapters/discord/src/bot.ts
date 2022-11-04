@@ -1,6 +1,6 @@
 import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
-import { DiscordModulator } from './modulator'
+import { DiscordMessenger } from './message'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
@@ -27,11 +27,11 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async sendMessage(channelId: string, content: Fragment, guildId?: string) {
-    return new DiscordModulator(this, channelId, guildId).send(content)
+    return new DiscordMessenger(this, channelId, guildId).send(content)
   }
 
   async sendPrivateMessage(channelId: string, content: Fragment) {
-    return new DiscordModulator(this, channelId).send(content)
+    return new DiscordMessenger(this, channelId).send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -106,7 +106,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, DiscordModulator.Config, WsClient.Config {
+  export interface Config extends Bot.Config, Quester.Config, DiscordMessenger.Config, WsClient.Config {
     token: string
   }
 
@@ -115,7 +115,7 @@ export namespace DiscordBot {
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     WsClient.Config,
-    DiscordModulator.Config,
+    DiscordMessenger.Config,
     Quester.createConfig('https://discord.com/api/v10'),
   ])
 }

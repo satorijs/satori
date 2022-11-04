@@ -1,7 +1,7 @@
 import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
-import { TelegramModulator } from './modulator'
+import { TelegramMessenger } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import { fromBuffer } from 'file-type'
@@ -153,7 +153,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
-    return new TelegramModulator(this, channelId, guildId).send(fragment)
+    return new TelegramMessenger(this, channelId, guildId).send(fragment)
   }
 
   async sendPrivateMessage(userId: string, content: Fragment) {

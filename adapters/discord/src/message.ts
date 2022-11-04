@@ -6,7 +6,7 @@ import { adaptMessage } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
-export class DiscordModulator extends Messenger<DiscordBot> {
+export class DiscordMessenger extends Messenger<DiscordBot> {
   private buffer: string = ''
   private addition: Dict = {}
   private figure: segment = null
@@ -37,7 +37,7 @@ export class DiscordModulator extends Messenger<DiscordBot> {
   }
 
   async sendAsset(type: string, data: Dict<string>, addition: Dict) {
-    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordModulator.Config
+    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessenger.Config
 
     if (handleMixedContent === 'separate' && addition.content) {
       await this.post(addition)
@@ -64,7 +64,7 @@ export class DiscordModulator extends Messenger<DiscordBot> {
       return this.sendEmbed(buffer, addition, data.file)
     }
 
-    const mode = data.mode as DiscordModulator.HandleExternalAsset || handleExternalAsset
+    const mode = data.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
@@ -188,7 +188,7 @@ export class DiscordModulator extends Messenger<DiscordBot> {
   }
 }
 
-export namespace DiscordModulator {
+export namespace DiscordMessenger {
   export type HandleExternalAsset = 'auto' | 'download' | 'direct'
   export type HandleMixedContent = 'auto' | 'separate' | 'attach'
 
@@ -209,7 +209,7 @@ export namespace DiscordModulator {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<DiscordModulator.Config> = Schema.object({
+  export const Config: Schema<DiscordMessenger.Config> = Schema.object({
     handleExternalAsset: Schema.union([
       Schema.const('download' as const).description('先下载后发送'),
       Schema.const('direct' as const).description('直接发送链接'),

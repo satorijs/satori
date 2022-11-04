@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, Logger, Messenger, segment } from '@satorijs/satori'
+import { Dict, Logger, Messenger, segment, Quester } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -43,22 +43,7 @@ function checkEmpty(req: QQGuild.Message.Request) {
     // && req.embed === undefined
 }
 
-function isAxiosError(e: unknown): e is {
-  response: {
-    status: number
-    statusText: string
-    data: {
-      code: number
-      message: string
-      data: any
-    }
-  }
-} {
-  // @ts-ignore
-  return e.response?.data?.code !== undefined
-}
-
-export class QQGuildModulator extends Messenger<QQGuildBot> {
+export class QQGuildMessenger extends Messenger<QQGuildBot> {
   private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private addition = {
@@ -102,7 +87,7 @@ export class QQGuildModulator extends Messenger<QQGuildBot> {
       this.results.push(session)
       session.app.emit(session, 'message', session)
     } catch (e) {
-      if (isAxiosError(e)) {
+      if (Quester.isAxiosError(e)) {
         const res = e.response
         logger.warn(`QQGuild: ${res.status} ${res.statusText} [${res.data.code}](${res.data.message})`)
         logger.warn(res.data.data)

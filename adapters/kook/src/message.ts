@@ -7,7 +7,7 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class KookModulator extends Messenger<KookBot> {
+export class KookMessenger extends Messenger<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
@@ -193,14 +193,14 @@ export class KookModulator extends Messenger<KookBot> {
   }
 }
 
-export namespace KookModulator {
+export namespace KookMessenger {
   export type HandleMixedContent = 'card' | 'separate' | 'mixed'
 
   export interface Config {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<KookModulator.Config> = Schema.object({
+  export const Config: Schema<KookMessenger.Config> = Schema.object({
     handleMixedContent: Schema.union([
       Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
       Schema.const('card' as const).description('使用卡片发送内容'),

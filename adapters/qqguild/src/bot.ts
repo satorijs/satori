@@ -1,7 +1,7 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Fragment, SendOptions, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
-import { QQGuildModulator } from './modulator'
+import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
@@ -21,7 +21,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    return await new QQGuildModulator(this, channelId, guildId, opts).send(fragment)
+    return await new QQGuildMessenger(this, channelId, guildId, opts).send(fragment)
   }
 
   async getGuildList() {

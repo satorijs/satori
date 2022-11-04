@@ -5,7 +5,7 @@ import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { KookModulator } from './modulator'
+import { KookMessenger } from './message'
 
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   http: Quester
@@ -34,7 +34,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async sendMessage(channelId: string, content: Fragment, guildId?: string) {
-    return new KookModulator(this, channelId, guildId).send(content)
+    return new KookMessenger(this, channelId, guildId).send(content)
   }
 
   async sendPrivateMessage(target_id: string, content: Fragment) {
@@ -114,7 +114,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, KookModulator.Config {}
+  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessenger.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -126,7 +126,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    KookModulator.Config,
+    KookMessenger.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

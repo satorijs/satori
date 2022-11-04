@@ -72,7 +72,7 @@ const assetApi = {
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramModulator extends Messenger<TelegramBot> {
+export class TelegramMessenger extends Messenger<TelegramBot> {
   private assetType: AssetType = null
   private payload: Dict
   private mode: RenderMode = 'default'

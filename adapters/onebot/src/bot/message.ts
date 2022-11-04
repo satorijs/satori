@@ -9,7 +9,7 @@ class State {
   constructor(public type: 'message' | 'forward' | 'reply') {}
 }
 
-export class OneBotModulator extends Messenger<BaseBot> {
+export class OneBotMessenger extends Messenger<BaseBot> {
   stack: State[] = [new State('message')]
   children: CQCode[] = []
 
