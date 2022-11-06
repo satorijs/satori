@@ -103,7 +103,7 @@ export class Quester {
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
     const [_, name] = new URL(url).pathname.match(/.+\/([^/]*)/)
-    const { headers, data } = await this.axios('GET', { url, responseType: 'arraybuffer' })
+    const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
     const mime = headers['content-type']
     return { mime, filename: name, data }
   }
