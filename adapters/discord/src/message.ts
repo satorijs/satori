@@ -135,8 +135,12 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       }
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += `<#${attrs.id}>`
-    } else if (type === 'face' && attrs.name && attrs.id) {
-      this.buffer += `<:${attrs.name}:${attrs.id}>`
+    } else if (type === 'face') {
+      if (attrs.platform && attrs.platform !== this.bot.platform) {
+        return this.render(children)
+      } else {
+        this.buffer += `<${attrs.animated ? 'a' : ''}:${attrs.name}:${attrs.id}>`
+      }
     } else if ((type === 'image' || type === 'video') && attrs.url) {
       if (this.mode === 'figure') {
         this.figure = element

@@ -26,6 +26,8 @@ export const adaptAuthor = (author: Discord.User): Universal.Author => ({
 })
 
 export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
+  const { platform } = bot
+
   prepareMessage(session, meta)
   session.messageId = meta.id
   session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
@@ -49,8 +51,12 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
           return segment.at(id, { name: user?.username }).toString()
         }
       })
-      .replace(/<:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name }).toString())
-      .replace(/<a:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name, animated: true }).toString())
+      .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
+        const animated = _[1] === 'a'
+        return segment('face', { id, name, animated, platform }, [
+          segment.image(`https://cdn.discordapp.com/emojis/${id}.gif?quality=lossless`)
+        ]).toString()
+      })
       .replace(/@everyone/g, () => segment('at', { type: 'all' }).toString())
       .replace(/@here/g, () => segment('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
