@@ -88,6 +88,12 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       }
     } else if (type === 'sharp') {
       if (attrs.id) this.text(attrs.id)
+    } else if (type === 'face') {
+      if (attrs.platform && attrs.platform !== this.bot.platform) {
+        await this.render(children)
+      } else {
+        this.children.push({ type: 'face', data: { id: attrs.id } })
+      }
     } else if (type === 'a') {
       await this.render(children)
       if (attrs.href) this.text(` (${attrs.href}) `)

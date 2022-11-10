@@ -63,7 +63,11 @@ export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Un
       if (qq !== 'all') return segment.at(qq)
       return segment('at', { type: 'all' })
     },
-    face: ({ id }) => segment('face', { id, url: qface.getUrl(id) }),
+    face({ id }) {
+      return segment('face', { id, platform: bot.platform }, [
+        segment.image(qface.getUrl(id)),
+      ])
+    },
   })
   if (result.elements[0]?.type === 'reply') {
     const reply = result.elements.shift()
