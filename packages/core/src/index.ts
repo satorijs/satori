@@ -8,7 +8,7 @@ import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import segment from '@satorijs/element'
 
-export { Schema, Logger, segment, segment as h, Quester }
+export { Schema, Logger, segment, segment as Element, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
@@ -127,7 +127,7 @@ Context.service('bots', class {
           return delete target[prop]
         }
         const bot = target.findIndex(bot => bot.sid === prop)
-        if (bot < 0) return false
+        if (bot < 0) return true
         target.splice(bot, 1)
         return true
       },
