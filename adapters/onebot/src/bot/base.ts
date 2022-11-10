@@ -7,6 +7,9 @@ export class BaseBot<T extends Bot.Config = Bot.Config> extends Bot<T> {
   public internal: OneBot.Internal
 
   sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
+    if (!this.parent && !channelId.startsWith('private:')) {
+      guildId = channelId
+    }
     return new OneBotMessenger(this, channelId, guildId).send(fragment)
   }
 
