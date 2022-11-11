@@ -84,7 +84,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       if (attrs.type === 'all') {
         this.children.push({ type: 'at', data: { qq: 'all' } })
       } else {
-        this.children.push({ type: 'at', data: { qq: attrs.id } })
+        this.children.push({ type: 'at', data: { qq: attrs.id, name: attrs.name } })
       }
     } else if (type === 'sharp') {
       if (attrs.id) this.text(attrs.id)
@@ -106,9 +106,17 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       if (cap) attrs.file = 'base64://' + attrs.file.slice(cap[0].length)
       this.children.push({ type, data: attrs })
     } else if (type === 'onebot:music') {
+      await this.flush()
       this.children.push({ type: 'music', data: attrs })
     } else if (type === 'onebot:tts') {
+      await this.flush()
       this.children.push({ type: 'tts', data: attrs })
+    } else if (type === 'onebot:poke') {
+      await this.flush()
+      this.children.push({ type: 'poke', data: attrs })
+    } else if (type === 'onebot:gift') {
+      await this.flush()
+      this.children.push({ type: 'gift', data: attrs })
     } else if (type === 'author') {
       Object.assign(this.stack[0].author, attrs)
     } else if (type === 'figure') {
