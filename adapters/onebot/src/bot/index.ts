@@ -51,6 +51,7 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
       ...this.config.qqguild,
       profile,
       parent: this,
+      advanced: this.config.advanced,
     })
   }
 
@@ -97,16 +98,16 @@ OneBotBot.prototype.platform = 'onebot'
 export namespace OneBotBot {
   export interface QQGuildConfig extends Bot.Config {}
 
-  export interface BaseConfig extends Bot.Config {
+  export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
+    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称'),
+  })
+
+  export interface BaseConfig extends BaseBot.Config {
     selfId: string
     password?: string
     token?: string
     qqguild?: QQGuildConfig
   }
-
-  export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
-    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称'),
-  })
 
   export const BaseConfig: Schema<BaseConfig> = Schema.object({
     selfId: Schema.string().description('机器人的账号。').required(),
@@ -124,5 +125,8 @@ export namespace OneBotBot {
       WsClient.Config,
       WsServer.Config,
     ]),
+    Schema.object({
+      advanced: BaseBot.AdvancedConfig,
+    }),
   ])
 }

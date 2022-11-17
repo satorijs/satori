@@ -1,6 +1,6 @@
-import { Bot, defineProperty, hyphenate, Logger, segment, Universal } from '@satorijs/satori'
+import { defineProperty, hyphenate, Logger, segment, Universal } from '@satorijs/satori'
 import * as qface from 'qface'
-import { CQCode } from './bot'
+import { CQCode, BaseBot } from './bot'
 import * as OneBot from './types'
 
 export * from './types'
@@ -42,7 +42,7 @@ export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.Anonymou
   roles: [user.role],
 })
 
-export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Universal.Message = {}) {
+export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result: Universal.Message = {}) {
   // basic properties
   result.author = adaptAuthor(message.sender, message.anonymous)
   result.userId = result.author.userId
@@ -58,7 +58,22 @@ export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Un
   }
 
   // message content
-  result.elements = segment.transform(CQCode.parse(message.message), {
+  const chain = CQCode.parse(message.message)
+  if (bot.config.advanced.splitMixedContent) {
+    chain.forEach((item, index) => {
+      if (item.type !== 'image') return
+      const left = chain[index - 1]
+      if (left && left.type === 'text' && left.attrs.content.trimEnd() === left.attrs.content) {
+        left.attrs.content += ' '
+      }
+      const right = chain[index + 1]
+      if (right && right.type === 'text' && right.attrs.content.trimStart() === right.attrs.content) {
+        right.attrs.content = ' ' + right.attrs.content
+      }
+    })
+  }
+
+  result.elements = segment.transform(chain, {
     at({ qq }) {
       if (qq !== 'all') return segment.at(qq)
       return segment('at', { type: 'all' })
@@ -76,6 +91,7 @@ export async function adaptMessage(bot: Bot, message: OneBot.Message, result: Un
       return undefined
     })
   }
+
   result.content = result.elements.join('')
   return result
 }
@@ -112,7 +128,7 @@ export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Unive
   }
 }
 
-export async function dispatchSession(bot: Bot, data: OneBot.Payload) {
+export async function dispatchSession(bot: BaseBot, data: OneBot.Payload) {
   if (data.self_tiny_id) {
     // don't dispatch any guild message without guild initialization
     bot = bot['guildBot']
@@ -126,7 +142,7 @@ export async function dispatchSession(bot: Bot, data: OneBot.Payload) {
   bot.dispatch(session)
 }
 
-export async function adaptSession(bot: Bot, data: OneBot.Payload) {
+export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
   const session = bot.session()
   session.selfId = data.self_tiny_id ? data.self_tiny_id : '' + data.self_id
   session.type = data.post_type

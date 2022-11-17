@@ -1,8 +1,8 @@
-import { Bot, Fragment } from '@satorijs/satori'
+import { Bot, Fragment, Schema } from '@satorijs/satori'
 import * as OneBot from '../utils'
 import { OneBotMessenger } from './message'
 
-export class BaseBot<T extends Bot.Config = Bot.Config> extends Bot<T> {
+export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 
@@ -72,4 +72,18 @@ export class BaseBot<T extends Bot.Config = Bot.Config> extends Bot<T> {
     // 从旧到新
     return await Promise.all(list.map(item => OneBot.adaptMessage(this, item)))
   }
+}
+
+export namespace BaseBot {
+  export interface Config extends Bot.Config {
+    advanced?: AdvancedConfig
+  }
+
+  export interface AdvancedConfig {
+    splitMixedContent?: boolean
+  }
+
+  export const AdvancedConfig: Schema<AdvancedConfig> = Schema.object({
+    splitMixedContent: Schema.boolean().description('是否自动在混合内容间插入空格。').default(true),
+  }).description('高级设置')
 }
