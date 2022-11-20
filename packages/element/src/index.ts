@@ -44,7 +44,7 @@ class ElementConstructor {
   toString(strip = false) {
     if (this.type === 'text') return Element.escape(this.attrs.content)
     const inner = this.children.map(child => child.toString(strip)).join('')
-    if (!this.type || strip) return inner
+    if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
       key = hyphenate(key)
@@ -81,6 +81,8 @@ function Element(type: string, ...args: any[]) {
 }
 
 namespace Element {
+  export const Fragment = 'template'
+
   export type Fragment = string | Element | (string | Element)[]
   export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
   export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
@@ -182,7 +184,7 @@ namespace Element {
     return results
   }
 
-  const tagRegExp = /<(\/?)\s*([^\s>/]+)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<(\/?)\s*([^\s>/]*)([^>]*?)\s*(\/?)>/
   const attrRegExp = /([^\s=]+)(?:="([^"]*)"|=([^"\s]+))?/g
 
   interface Token {
@@ -202,6 +204,7 @@ namespace Element {
       }
       const [_, close, tag, attrs, empty] = tagCap
       const token: Token = { source: _, tag, close, empty, attrs: {} }
+      if (!token.tag) token.tag = 'template'
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
         const [_, key, v1 = '', v2 = v1] = attrCap
@@ -211,7 +214,7 @@ namespace Element {
       source = source.slice(tagCap.index + tagCap[0].length)
     }
     if (source) tokens.push(unescape(source))
-    const stack = [Element(null)]
+    const stack = [Element(Fragment)]
     function rollback(index: number) {
       for (; index > 0; index--) {
         const { children } = stack.shift()
