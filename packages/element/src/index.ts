@@ -7,19 +7,20 @@ function isElement(source: any): source is Element {
 }
 
 function toElement(content: string | Element) {
-  if (typeof content !== 'string') return content
-  return Element('text', { content })
+  if (typeof content === 'string') {
+    return Element('text', { content })
+  } else if (isElement(content)) {
+    return content
+  } else if (!isNullable(content)) {
+    throw new TypeError(`Invalid content: ${content}`)
+  }
 }
 
-function toElementArray(input: Element.Fragment) {
-  if (Array.isArray(input)) {
-    return input.map(toElement)
-  } else if (typeof input === 'string') {
-    return [toElement(input)]
-  } else if (!input.type) {
-    return input.children
+function toElementArray(content: Element.Fragment) {
+  if (Array.isArray(content)) {
+    return content.map(toElement).filter(x => x)
   } else {
-    return [input]
+    return [toElement(content)].filter(x => x)
   }
 }
 
@@ -46,7 +47,6 @@ class ElementConstructor {
     const inner = this.children.map(child => child.toString(strip)).join('')
     if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
-      if (isNullable(value)) return ''
       key = hyphenate(key)
       if (value === '') return ` ${key}`
       return ` ${key}="${Element.escape(value, true)}"`
@@ -59,24 +59,29 @@ class ElementConstructor {
 defineProperty(ElementConstructor, 'name', 'Element')
 defineProperty(ElementConstructor.prototype, kElement, true)
 
-function Element(type: string, children?: Element.Fragment): Element
-function Element(type: string, attrs: Dict<any>, children?: Element.Fragment): Element
+function Element(type: string, ...children: Element.Fragment[]): Element
+function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict<string> = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
     for (const [key, value] of Object.entries(args.shift())) {
       if (isNullable(value)) continue
-      if (value === true) {
+      // https://github.com/reactjs/rfcs/pull/107
+      if (key === 'children') {
+        children = toElementArray(value as Element.Fragment)
+      } else if (value === true) {
         attrs[key] = ''
       } else if (value === false) {
         attrs['no' + capitalize(key)] = ''
-      } else {
+      } else if (!isNullable(value)) {
         attrs[key] = '' + value
       }
     }
   }
-  if (args[0]) children = toElementArray(args[0])
+  for (const child of args) {
+    children.push(...toElementArray(child))
+  }
   return Object.assign(el, { type, attrs, children })
 }
 

@@ -42,6 +42,14 @@ describe('Element API', () => {
         .to.equal('<tag foo no-bar>text</tag>')
       expect(Element('template', Element.parse('<tag foo no-qux>bar</tag>')).toString(true)).to.equal('bar')
     })
+
+    it('validate children', () => {
+      expect(() => Element('tag', {}, {} as any)).to.throw()
+      expect(Element('tag', ['123', null, Element('span', '456')]).toString())
+        .to.equal('<tag>123<span>456</span></tag>')
+      expect(Element('tag', { children: '789' }).toString())
+        .to.equal('<tag>789</tag>')
+    })
   })
 
   describe('Selectors', () => {
