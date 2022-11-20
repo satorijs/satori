@@ -8,7 +8,7 @@ function isElement(source: any): source is Element {
 
 function toElement(content: string | Element) {
   if (typeof content === 'string') {
-    return Element('text', { content })
+    if (content) return Element('text', { content })
   } else if (isElement(content)) {
     return content
   } else if (!isNullable(content)) {
@@ -113,7 +113,9 @@ namespace Element {
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
+      .replace(/&#(\d+);/g, (_, code) => code === '38' ? _ : String.fromCharCode(+code))
+      .replace(/&#x([0-9a-f]+);/gi, (_, code) => code === '26' ? _ : String.fromCharCode(parseInt(code, 16)))
+      .replace(/&(amp|#38|#x26);/g, '&')
   }
 
   export interface FindOptions {
@@ -208,8 +210,7 @@ namespace Element {
         tokens.push(unescape(source.slice(0, tagCap.index)))
       }
       const [_, close, tag, attrs, empty] = tagCap
-      const token: Token = { source: _, tag, close, empty, attrs: {} }
-      if (!token.tag) token.tag = 'template'
+      const token: Token = { source: _, tag: tag || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
         const [_, key, v1 = '', v2 = v1] = attrCap
@@ -230,7 +231,10 @@ namespace Element {
     }
     for (const token of tokens) {
       if (typeof token === 'string') {
-        stack[0].children.push(Element('text', { content: token }))
+        const content = token
+          .replace(/^\s*\n\s*/, '')
+          .replace(/\s*\n\s*$/, '')
+        stack[0].children.push(Element('text', { content }))
       } else if (token.close) {
         let index = 0
         while (index < stack.length && stack[index].type !== token.tag) index++

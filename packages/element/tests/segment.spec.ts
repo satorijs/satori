@@ -27,10 +27,14 @@ describe('Element API', () => {
       expect(Element.parse('1<foo>2<bar attr>3').join('')).to.equal('1&lt;foo&gt;2&lt;bar attr&gt;3')
       expect(Element.parse('1<foo>2<bar>3</foo>4').join('')).to.equal('1<foo>2&lt;bar&gt;3</foo>4')
       expect(Element.parse('1<foo/>4').join('')).to.equal('1<foo/>4')
+      expect(Element.parse('1</foo>4').join('')).to.equal('1&lt;/foo&gt;4')
     })
 
-    it('fragments', () => {
-      expect(Element.parse('1<>2</>3').join('')).to.equal('1<template>2</template>3')
+    it('whitespace', () => {
+      expect(Element.parse(`<>
+        <foo> 1 </foo>
+        2
+      </>`).join('')).to.equal('<template><foo> 1 </foo>2</template>')
     })
   })
 
