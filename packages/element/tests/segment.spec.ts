@@ -19,6 +19,8 @@ describe('Element API', () => {
     it('basic support', () => {
       expect(Element.parse('<img src="https://test.com/?foo=1&amp;bar=2"/>'))
         .to.deep.equal([Element('img', { src: 'https://test.com/?foo=1&bar=2' })])
+      expect(Element.parse(`<tag foo="'" bar='"'>text</tag>`))
+        .to.deep.equal([Element('tag', { foo: "'", bar: '"' }, 'text')])
       expect(Element.parse('<tag foo no-bar>text</tag>'))
         .to.deep.equal([Element('tag', { foo: true, bar: false }, 'text')])
     })
@@ -28,6 +30,13 @@ describe('Element API', () => {
       expect(Element.parse('1<foo>2<bar>3</foo>4').join('')).to.equal('1<foo>2&lt;bar&gt;3</foo>4')
       expect(Element.parse('1<foo/>4').join('')).to.equal('1<foo/>4')
       expect(Element.parse('1</foo>4').join('')).to.equal('1&lt;/foo&gt;4')
+    })
+
+    it('interpolate', () => {
+      expect(Element.parse('<tag bar={bar}>1{foo}1</tag>', { foo: 2, bar: 3 }))
+        .to.deep.equal([Element('tag', { bar: '3' }, '121')])
+      expect(Element.parse('<tag>&gt;{"&gt;"}</tag>', {}))
+        .to.deep.equal([Element('tag', '>&gt;')])
     })
 
     it('whitespace', () => {

@@ -85,7 +85,22 @@ function Element(type: string, ...args: any[]) {
   return Object.assign(el, { type, attrs, children })
 }
 
+// eslint-disable-next-line no-new-func
+const interpolate = new Function('expr', 'context', `
+  try {
+    with (context) {
+      const result = eval(expr)
+      return result === undefined || result === null ? '' : result
+    }
+  } catch {
+    return ''
+  }
+`) as ((expr: string, context: object) => string)
+
 namespace Element {
+  export const jsx = Element
+  export const jsxs = Element
+  export const jsxDEV = Element
   export const Fragment = 'template'
 
   export type Fragment = string | Element | (string | Element)[]
@@ -192,34 +207,56 @@ namespace Element {
   }
 
   const tagRegExp = /<(\/?)\s*([^\s>/]*)([^>]*?)\s*(\/?)>/
-  const attrRegExp = /([^\s=]+)(?:="([^"]*)"|=([^"\s]+))?/g
+  const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
+  const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
+  const interpRegExp = /\{([^}]+)\}/g
 
   interface Token {
-    tag: string
+    type: string
     close: string
     empty: string
     attrs: Dict<string>
     source: string
   }
 
-  export function parse(source: string) {
+  export function parse(source: string, context?: any) {
     const tokens: (string | Token)[] = []
+    const attrRegExp = context ? attrRegExp2 : attrRegExp1
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
-      if (tagCap.index) {
-        tokens.push(unescape(source.slice(0, tagCap.index)))
-      }
-      const [_, close, tag, attrs, empty] = tagCap
-      const token: Token = { source: _, tag: tag || Fragment, close, empty, attrs: {} }
+      pushText(source.slice(0, tagCap.index))
+      const [_, close, type, attrs, empty] = tagCap
+      const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, v1 = '', v2 = v1] = attrCap
-        token.attrs[camelize(key)] = unescape(v2)
+        const [_, key, v1 = '', v2 = v1, v3] = attrCap
+        token.attrs[camelize(key)] = v3
+          ? interpolate(v3, context)
+          : unescape(v2)
       }
       tokens.push(token)
-      source = source.slice(tagCap.index + tagCap[0].length)
+      source = source.slice(tagCap.index + _.length)
     }
-    if (source) tokens.push(unescape(source))
+
+    pushText(source)
+    function pushText(source: string) {
+      source = source
+        .replace(/^\s*\n\s*/, '')
+        .replace(/\s*\n\s*$/, '')
+      let result = ''
+      if (context) {
+        let interpCap: RegExpExecArray
+        while ((interpCap = interpRegExp.exec(source))) {
+          const [_, expr] = interpCap
+          result += unescape(source.slice(0, interpCap.index))
+          result += interpolate(expr, context)
+          source = source.slice(interpCap.index + _.length)
+        }
+      }
+      result += unescape(source)
+      if (result) tokens.push(result)
+    }
+
     const stack = [Element(Fragment)]
     function rollback(index: number) {
       for (; index > 0; index--) {
@@ -229,15 +266,13 @@ namespace Element {
         stack[0].children.push(...children)
       }
     }
+
     for (const token of tokens) {
       if (typeof token === 'string') {
-        const content = token
-          .replace(/^\s*\n\s*/, '')
-          .replace(/\s*\n\s*$/, '')
-        stack[0].children.push(Element('text', { content }))
+        stack[0].children.push(Element('text', { content: token }))
       } else if (token.close) {
         let index = 0
-        while (index < stack.length && stack[index].type !== token.tag) index++
+        while (index < stack.length && stack[index].type !== token.type) index++
         if (index === stack.length) {
           // no matching open tag
           stack[0].children.push(Element('text', { content: token.source }))
@@ -247,7 +282,7 @@ namespace Element {
           delete element.source
         }
       } else {
-        const element = Element(token.tag, token.attrs)
+        const element = Element(token.type, token.attrs)
         stack[0].children.push(element)
         if (!token.empty) {
           element.source = token.source
