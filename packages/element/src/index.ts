@@ -86,15 +86,12 @@ function Element(type: string, ...args: any[]) {
 }
 
 // eslint-disable-next-line no-new-func
-const interpolate = new Function('expr', 'context', `
+const evaluate = new Function('expr', 'context', `
   try {
     with (context) {
-      const result = eval(expr)
-      return result === undefined || result === null ? '' : result
+      return eval(expr)
     }
-  } catch {
-    return ''
-  }
+  } catch {}
 `) as ((expr: string, context: object) => string)
 
 namespace Element {
@@ -206,10 +203,19 @@ namespace Element {
     return results
   }
 
+  export function interpolate(expr: string, context: any) {
+    expr = expr.trim()
+    if (/^\d+$/.test(expr)) {
+      return context[expr] || ''
+    } else {
+      return evaluate(expr, context) || ''
+    }
+  }
+
   const tagRegExp = /<(\/?)\s*([^\s>/]*)([^>]*?)\s*(\/?)>/
   const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
   const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
-  const interpRegExp = /\{([^}]+)\}/g
+  const interpRegExp = /\{([^}]+)\}/
 
   interface Token {
     type: string
@@ -333,11 +339,6 @@ namespace Element {
       }
     }))).flat(1)
     return typeof source === 'string' ? children.join('') : children
-  }
-
-  /** @deprecated use `elements.join('')` instead */
-  export function join(elements: Element[]) {
-    return elements.join('')
   }
 
   export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element

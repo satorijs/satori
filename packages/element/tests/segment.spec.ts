@@ -37,6 +37,8 @@ describe('Element API', () => {
         .to.deep.equal([Element('tag', { bar: '3' }, '121')])
       expect(Element.parse('<tag>&gt;{"&gt;"}</tag>', {}))
         .to.deep.equal([Element('tag', '>&gt;')])
+      expect(Element.parse('<tag>{0}{1+1}</tag>', [233, 666]))
+        .to.deep.equal([Element('tag', '2332')])
     })
 
     it('whitespace', () => {
