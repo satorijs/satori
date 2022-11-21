@@ -306,7 +306,7 @@ namespace Element {
         result = result(attrs, children, session)
       }
       if (result === true) {
-        output.push(Element(type, attrs, transform(children, rules)))
+        output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
         output.push(...toElementArray(result))
       }
@@ -325,7 +325,7 @@ namespace Element {
         result = await result(attrs, children, session)
       }
       if (result === true) {
-        return [Element(type, attrs, await transformAsync(children, rules))]
+        return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
         return toElementArray(result)
       } else {

@@ -8,6 +8,7 @@ import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import segment from '@satorijs/element'
 
+export { Fragment, Render, escape, unescape } from '@satorijs/element'
 export { Schema, Logger, segment, segment as Element, segment as h, Quester }
 
 export * from './bot'
@@ -59,12 +60,8 @@ export interface Context {
   bots: Bot[] & Dict<Bot> & { counter: number }
 }
 
-export type Fragment = segment.Fragment
-export type Render = segment.Render<Awaitable<Fragment>, Session>
-
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
-  _components: Dict<Render> = Object.create(null)
 
   constructor(options?: Context.Config) {
     super(options)
@@ -72,23 +69,10 @@ export class Context extends cordis.Context {
     this.on('internal/warning', (format, ...args) => {
       this.logger('app').warn(format, ...args)
     })
-
-    this.on('before-send', async (session) => {
-      session.elements = await segment.transformAsync(session.elements, this._components, session)
-    })
   }
 
   logger(name: string) {
     return new Logger(name)
-  }
-
-  component(name: string, render: Render) {
-    this._components[name] = render
-    this.collect('component', () => {
-      const shouldDelete = this._components[name] === render
-      if (shouldDelete) delete this._components[name]
-      return shouldDelete
-    })
   }
 }
 
