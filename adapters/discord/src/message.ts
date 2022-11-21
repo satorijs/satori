@@ -184,7 +184,8 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         this.buffer += '\n'
       } else {
         await this.flush()
-        await this.render(children, true)
+        await this.render(children)
+        await this.flush()
       }
     } else {
       await this.render(children)

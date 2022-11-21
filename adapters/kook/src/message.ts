@@ -186,7 +186,8 @@ export class KookMessenger extends Messenger<KookBot> {
       this.additional.quote = attrs.id
     } else if (type === 'message') {
       await this.flush()
-      await this.render(children, true)
+      await this.render(children)
+      await this.flush()
     } else {
       await this.render(children)
     }

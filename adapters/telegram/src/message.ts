@@ -171,7 +171,8 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
         this.payload.caption += '\n'
       } else {
         await this.flush()
-        await this.render(children, true)
+        await this.render(children)
+        await this.flush()
       }
     } else {
       await this.render(children)

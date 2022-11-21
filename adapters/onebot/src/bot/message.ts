@@ -122,7 +122,8 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     } else if (type === 'figure') {
       await this.flush()
       this.stack.unshift(new State('forward'))
-      await this.render(children, true)
+      await this.render(children)
+      await this.flush()
       this.stack.shift()
       await this.forward()
     } else if (type === 'quote') {
@@ -133,7 +134,8 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       // qqguild does not support forward messages
       if (attrs.forward && !this.bot.parent) {
         this.stack.unshift(new State('forward'))
-        await this.render(children, true)
+        await this.render(children)
+        await this.flush()
         this.stack.shift()
         await this.forward()
       } else {

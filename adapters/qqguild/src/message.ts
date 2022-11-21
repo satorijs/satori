@@ -148,7 +148,8 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
     } else if (type === 'figure') {
       await this.flush()
       this.mode = 'figure'
-      await this.render(children, true)
+      await this.render(children)
+      await this.flush()
       this.mode = 'default'
     } else if (type === 'message') {
       if (this.mode === 'figure') {
@@ -156,7 +157,8 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
         this.content += '\n'
       } else {
         await this.flush()
-        await this.render(children, true)
+        await this.render(children)
+        await this.flush()
       }
     } else {
       await this.render(children)
