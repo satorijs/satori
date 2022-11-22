@@ -205,17 +205,21 @@ namespace Element {
 
   export function interpolate(expr: string, context: any) {
     expr = expr.trim()
-    if (/^\d+$/.test(expr)) {
-      return context[expr] || ''
-    } else {
+    if (!/^[\w.]+$/.test(expr)) {
       return evaluate(expr, context) || ''
     }
+    let value = context
+    for (const part of expr.split('.')) {
+      value = value[part]
+      if (value == null) return ''
+    }
+    return value || ''
   }
 
-  const tagRegExp = /<(\/?)\s*([^\s>/]*)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<(\/?)\s*([^!\s>/]*)([^>]*?)\s*(\/?)>/
   const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
   const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
-  const interpRegExp = /\{([^}]+)\}/
+  const interpRegExp = /\{([^}]*)\}/
 
   interface Token {
     type: string
@@ -232,6 +236,8 @@ namespace Element {
     while ((tagCap = tagRegExp.exec(source))) {
       pushText(source.slice(0, tagCap.index))
       const [_, close, type, attrs, empty] = tagCap
+      source = source.slice(tagCap.index + _.length)
+      if (_.startsWith('<!')) continue
       const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
@@ -241,7 +247,6 @@ namespace Element {
           : unescape(v2)
       }
       tokens.push(token)
-      source = source.slice(tagCap.index + _.length)
     }
 
     pushText(source)

@@ -44,6 +44,7 @@ describe('Element API', () => {
     it('whitespace', () => {
       expect(Element.parse(`<>
         <foo> 1 </foo>
+        <!-- comment -->
         2
       </>`).join('')).to.equal('<template><foo> 1 </foo>2</template>')
     })
