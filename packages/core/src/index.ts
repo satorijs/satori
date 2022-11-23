@@ -18,35 +18,43 @@ export * from './selector'
 export * from './session'
 export * from './universal'
 
-type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
-type Actions = 'added' | 'deleted' | 'updated'
+declare global {
+  namespace Satori {
+    type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
+    type Actions = 'added' | 'deleted' | 'updated'
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<`${Genres}-${Actions}`, Session.EventCallback> {
-  // session events
-  'message': Session.EventCallback
-  'message-deleted': Session.EventCallback
-  'message-updated': Session.EventCallback
-  'reaction-added': Session.EventCallback
-  'reaction-deleted': Session.EventCallback
-  'reaction-deleted/one': Session.EventCallback
-  'reaction-deleted/all': Session.EventCallback
-  'reaction-deleted/emoji': Session.EventCallback
-  'send': Session.EventCallback
-  'friend-request': Session.EventCallback
-  'guild-request': Session.EventCallback
-  'guild-member-request': Session.EventCallback
-  'guild-member/role': Session.EventCallback
-  'guild-member/ban': Session.EventCallback
-  'guild-member/nickname': Session.EventCallback
-  'notice/poke': Session.EventCallback
-  'notice/lucky-king': Session.EventCallback
-  'notice/honor': Session.EventCallback
-  'notice/honor/talkative': Session.EventCallback
-  'notice/honor/performer': Session.EventCallback
-  'notice/honor/emotion': Session.EventCallback
+    interface Session {}
 
-  // lifecycle events
-  'before-send': Session.EventCallback<Awaitable<void | boolean>>
+    interface Events extends Record<`${Genres}-${Actions}`, {}> {
+      'message': {}
+      'message-deleted': {}
+      'message-updated': {}
+      'reaction-added': {}
+      'reaction-deleted': {}
+      'reaction-deleted/one': {}
+      'reaction-deleted/all': {}
+      'reaction-deleted/emoji': {}
+      'send': {}
+      'friend-request': {}
+      'guild-request': {}
+      'guild-member-request': {}
+      'guild-member/role': {}
+      'guild-member/ban': {}
+      'guild-member/nickname': {}
+      'notice/poke': {}
+      'notice/lucky-king': {}
+      'notice/honor': {}
+      'notice/honor/talkative': {}
+      'notice/honor/performer': {}
+      'notice/honor/emotion': {}
+    }
+  }
+}
+
+type EventCallback<T = void> = (this: Session, session: Session) => T
+
+export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<keyof Satori.Events, EventCallback> {
+  'before-send': EventCallback<Awaitable<void | boolean>>
   'bot-added'(client: Bot): void
   'bot-removed'(client: Bot): void
   'bot-status-updated'(client: Bot): void

@@ -8,7 +8,7 @@ export interface SendOptions {
   session?: Session
 }
 
-export interface Session extends Session.Payload {}
+export interface Session extends Session.Payload, Satori.Session {}
 
 export namespace Session {
   export interface Payload {
@@ -32,8 +32,6 @@ export namespace Session {
     targetId?: string
     duration?: number
   }
-
-  export type EventCallback<T = void> = (this: Session, session: Session) => T
 }
 
 export class Session {
