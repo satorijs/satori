@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-onebot",
   "description": "OneBot Adapter for Satorijs",
-  "version": "5.4.0",
+  "version": "5.4.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.4.0"
+    "@satorijs/satori": "^1.4.2"
   },
   "dependencies": {
     "qface": "^1.2.0"

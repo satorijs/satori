@@ -29,7 +29,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.4.0"
+    "@satorijs/satori": "^1.4.2"
   },
   "dependencies": {
     "file-type": "^16.5.4",
