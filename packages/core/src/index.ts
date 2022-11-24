@@ -8,7 +8,7 @@ import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import segment from '@satorijs/element'
 
-export { Fragment, Render } from '@satorijs/element'
+export { Fragment, Render, escape, unescape } from '@satorijs/element'
 export { Schema, Logger, segment, segment as Element, segment as h, Quester }
 
 export * from './bot'

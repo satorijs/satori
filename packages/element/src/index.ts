@@ -206,17 +206,17 @@ namespace Element {
   export function interpolate(expr: string, context: any) {
     expr = expr.trim()
     if (!/^[\w.]+$/.test(expr)) {
-      return evaluate(expr, context) || ''
+      return evaluate(expr, context) ?? ''
     }
     let value = context
     for (const part of expr.split('.')) {
       value = value[part]
-      if (value == null) return ''
+      if (isNullable(value)) return ''
     }
-    return value || ''
+    return value ?? ''
   }
 
-  const tagRegExp = /<(\/?)\s*([^!\s>/]*)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<!--[\s\S]*?-->|<(\/?)\s*([^!\s>/]*)([^>]*?)\s*(\/?)>/
   const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
   const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
   const interpRegExp = /\{([^}]*)\}/
