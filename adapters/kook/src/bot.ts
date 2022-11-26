@@ -28,9 +28,13 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async request<T = any>(method: Method, path: string, data?: any, headers: any = {}): Promise<T> {
-    data = data instanceof FormData ? data : JSON.stringify(data)
-    return (await this.http(method, path, { data, headers })).data
+  async request<T = any>(method: Method, path: string, data = {}, headers: any = {}): Promise<T> {
+    if (method === 'GET') {
+      return (await this.http.get(path, { params: data, headers })).data
+    } else {
+      data = data instanceof FormData ? data : JSON.stringify(data)
+      return (await this.http(method, path, { data, headers })).data
+    }
   }
 
   async sendMessage(channelId: string, content: Fragment, guildId?: string) {
