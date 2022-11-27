@@ -119,13 +119,16 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       this.children.push({ type: 'gift', data: attrs })
     } else if (type === 'author') {
       Object.assign(this.stack[0].author, attrs)
-    } else if (type === 'figure') {
+    } else if (type === 'figure' && !this.bot.parent) {
       await this.flush()
       this.stack.unshift(new State('forward'))
       await this.render(children)
       await this.flush()
       this.stack.shift()
       await this.forward()
+    } else if (type === 'figure') {
+      await this.render(children)
+      await this.flush()
     } else if (type === 'quote') {
       await this.flush()
       this.children.push({ type: 'reply', data: attrs })
