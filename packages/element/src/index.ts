@@ -1,6 +1,6 @@
 import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, is, isNullable } from 'cosmokit'
 
-const kElement = Symbol('element')
+const kElement = Symbol.for('satori.element')
 
 function isElement(source: any): source is Element {
   return source && typeof source === 'object' && source[kElement]
@@ -47,9 +47,10 @@ class ElementConstructor {
     const inner = this.children.map(child => child.toString(strip)).join('')
     if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
+      if (isNullable(value)) return ''
       key = hyphenate(key)
       if (value === '') return ` ${key}`
-      return ` ${key}="${Element.escape(value, true)}"`
+      return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
     if (!this.children.length) return `<${this.type}${attrs}/>`
     return `<${this.type}${attrs}>${inner}</${this.type}>`
