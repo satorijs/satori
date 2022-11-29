@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import { Context, Message, segment, Session } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
-import { AllEvents, Events, MessageContentType, MessageType } from './types'
+import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
 
 export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Message {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
@@ -56,6 +56,19 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session<Context> 
       break
   }
   return session
+}
+
+/**
+ * Get ID type from id string
+ *
+ * @see https://open.feishu.cn/document/home/user-identity-introduction/introduction
+ */
+export function extractIdType(id: string): Feishu.ReceiveIdType {
+  if (id.startsWith('ou')) return 'open_id'
+  if (id.startsWith('on')) return 'union_id'
+  if (id.startsWith('oc')) return 'chat_id'
+  if (id.includes('@')) return 'email'
+  return 'user_id'
 }
 
 export class Cipher {

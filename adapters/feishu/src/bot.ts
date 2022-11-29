@@ -2,11 +2,13 @@ import { createReadStream } from 'fs'
 import internal from 'stream'
 
 import { Bot, Context } from '@satorijs/core'
+import Element from '@satorijs/element'
 import { Logger, Quester, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { HttpServer } from './http'
 import { Internal, MessageContent, MessagePayload } from './types'
+import { extractIdType } from './utils'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
 
@@ -64,7 +66,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
     const session = this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
     if (!session.content) return []
 
-    const openIdType = channelId.startsWith('ou') ? 'open_id' : channelId.startsWith('on') ? 'union_id' : channelId.startsWith('oc') ? 'chat_id' : 'user_id'
+    const openIdType = extractIdType(channelId)
 
     const chain = segment.parse(content)
 
@@ -75,7 +77,7 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
 
     const quote = parseQuote(chain)
 
-    const shouldRichText = ((chain: segment[]): boolean => {
+    const shouldRichText = ((chain: Element[]): boolean => {
       const types = {
         text: false,
         image: false,
@@ -88,8 +90,6 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
           types.image = true
         } else if (type === 'link') {
           types.link = true
-        } else {
-          return false
         }
       }
       if (types.link) return true // as hyperlink can be only sent as rich text
