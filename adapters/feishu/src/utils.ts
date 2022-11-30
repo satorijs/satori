@@ -5,7 +5,29 @@ import { segment, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
 
-export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session.Payload {
+export type Sender =
+  | {
+      sender_id: Feishu.UserIds;
+      sender_type?: string;
+      tenant_key: string;
+    }
+  | (Feishu.UserIdentifiers & { sender_type?: string; tenant_key: string });
+
+export function adaptSender(sender: Sender, session: Session): Session {
+  let userId: string | undefined
+  if ('sender_id' in sender) {
+    userId = sender.sender_id.open_id
+  } else {
+    userId = sender.id
+  }
+  session.author ??= { userId }
+  session.author.userId = userId
+  session.userId = userId
+
+  return session
+}
+
+export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.config.selfUrl ?? `http://localhost:${bot.ctx.config.port}/`) + bot.config.path + '/assets'
   const content: (string | segment)[] = []
@@ -45,20 +67,15 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
       content.push(segment.file(fileUrl))
       break
   }
-  const result: Session.Payload = {
-    userId: data.sender.sender_id.open_id,
-    timestamp: Number(data.message.create_time),
-    author: {
-      userId: data.sender.sender_id.open_id,
-    },
-    messageId: data.message.message_id,
-    channelId: data.message.chat_id,
-    content: content.map((c) => c.toString()).join(' '),
-    platform: 'feishu',
-    selfId: bot.selfId,
-  }
 
-  return result
+  session.timestamp = Number(data.message.create_time)
+  session.messageId = data.message.message_id
+  session.channelId = data.message.chat_id
+  session.content = content.map((c) => c.toString()).join(' ')
+  session.platform = 'feishu'
+  session.selfId = bot.selfId
+
+  return session
 }
 
 export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
@@ -69,6 +86,7 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
     case 'im.message.receive_v1':
       session.type = 'message'
       session.subtype = body.event.message.chat_type,
+      adaptSender(body.event.sender, session)
       adaptMessage(bot, body.event, session)
       break
   }
