@@ -2,6 +2,7 @@ export * from './internal'
 
 export * from './auth'
 export * from './event'
+export * from './guild'
 export * from './message'
 
 export namespace Feishu {
