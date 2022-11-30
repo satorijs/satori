@@ -16,7 +16,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
   private content = ''
   private addition: Addition = {}
 
-  async post(data?: any, headers?: any) {
+  async post(data?: any) {
     try {
       let resp: BaseResponse & { data: Message }
       if (this.quote) {
