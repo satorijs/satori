@@ -27,7 +27,9 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
         resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
       }
       const session = this.bot.session()
-      // await adaptMessage(this.bot, result, session)
+      session.messageId = resp.data.message_id
+      session.timestamp = Number(resp.data.create_time) * 1000
+      session.userId = resp.data.sender.id
       session.app.emit(session, 'send', session)
       this.results.push(session)
     } catch (e) {

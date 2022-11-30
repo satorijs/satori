@@ -17,7 +17,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
         break
       }
 
-      // Feishu's `at` Element would be `@{user_id}` in text
+      // Feishu's `at` Element would be `@user_id` in text
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)
