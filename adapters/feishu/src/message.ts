@@ -1,6 +1,7 @@
-import { Modulator, segment } from '@satorijs/core'
+import { Messenger, segment } from '@satorijs/core'
 import { FeishuBot } from './bot'
-import { MessageType } from './types'
+import { BaseResponse, Message, MessageType } from './types'
+import { extractIdType } from './utils'
 
 interface Addition {
   file?: {
@@ -9,14 +10,21 @@ interface Addition {
   }
 }
 
-export class FeishuModulator extends Modulator<FeishuBot> {
+export class FeishuMessenger extends Messenger<FeishuBot> {
   private mode: 'default' | 'figure' = 'default'
+  private quote: string | undefined
   private content = ''
   private addition: Addition = {}
 
   async post(data?: any, headers?: any) {
     try {
-      const result = await this.bot.http.post(`/channels/${this.channelId}/messages`, data, { headers })
+      let resp: BaseResponse & { data: Message }
+      if (this.quote) {
+        resp = await this.bot.internal?.replyMessage(this.quote, data)
+      }
+      else {
+        resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
+      }
       const session = this.bot.session()
       // await adaptMessage(this.bot, result, session)
       session.app.emit(session, 'send', session)
@@ -49,6 +57,7 @@ export class FeishuModulator extends Modulator<FeishuBot> {
       }
     }
     await this.post({
+      msg_type: message.msg_type,
       content: JSON.stringify(message)
     })
   }
@@ -81,7 +90,7 @@ export class FeishuModulator extends Modulator<FeishuBot> {
       // platform does not support sharp
     } else if (type === 'quote') {
       await this.flush()
-      // platform does not support quote
+      this.quote = attrs.id
     } else if ((type === 'image' || type === 'video' || type === 'audio' || type === 'file') && attrs.url) {
       await this.flush()
       this.addition.file = await this.sendFile(type, attrs.url)

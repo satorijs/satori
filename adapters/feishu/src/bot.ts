@@ -2,10 +2,10 @@ import { createReadStream } from 'fs'
 import internal from 'stream'
 
 import { Bot, Context } from '@satorijs/core'
-import Element from '@satorijs/element'
 import { Logger, Quester, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
+import { FeishuMessenger } from './message'
 import { HttpServer } from './http'
 import { Internal, MessageContent, MessagePayload, MessageType } from './types'
 import { extractIdType } from './utils'
@@ -68,6 +68,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
   }
 
   async sendMessage(channelId: string, content: string, guildId?: string): Promise<string[]> {
+    return new FeishuMessenger(this, channelId, guildId).send(content)
     const session = this.session({ channelId, content, guildId, subtype: guildId ? 'group' : 'private' })
     if (!session.content) return []
 
@@ -82,7 +83,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
 
     const quote = parseQuote(chain)
 
-    const shouldRichText = ((chain: Element[]): boolean => {
+    const shouldRichText = ((chain: segment[]): boolean => {
       const types = {
         text: false,
         image: false,
