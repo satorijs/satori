@@ -14,7 +14,7 @@ type AssetType = 'image' | 'audio' | 'video' | 'file'
 
 const logger = new Logger('feishu')
 
-export class FeishuBot extends Bot<Context, FeishuBot.Config> {
+export class FeishuBot extends Bot<FeishuBot.Config> {
   _token?: string
   http: Quester
   assetsQuester: Quester

@@ -1,11 +1,11 @@
 import crypto from 'crypto'
 
-import { Context, Message, segment, Session, trimSlash } from '@satorijs/satori'
+import { segment, Session, trimSlash } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
 
-export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Message {
+export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): segment {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.config.selfUrl ?? `http://localhost:${bot.ctx.config.port}/`) + bot.config.path + '/assets'
   let content: segment
@@ -30,7 +30,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
       content = segment.file(fileUrl)
       break
   }
-  const result: Message = {
+  const result = {
     userId: data.sender.sender_id.open_id,
     timestamp: Number(data.message.create_time),
     author: {
@@ -41,10 +41,10 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
     content: content.toString(),
   }
 
-  return result
+  return segment('message', result)
 }
 
-export function adaptSession(bot: FeishuBot, body: AllEvents): Session<Context> {
+export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
   const session = bot.session()
   session.selfId = bot.selfId
 
