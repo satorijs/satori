@@ -1,4 +1,4 @@
-import { Modulator, Schema, segment } from '@satorijs/satori'
+import { Messenger, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -7,7 +7,7 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class KookModulator extends Modulator<KookBot> {
+export class KookMessenger extends Messenger<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
@@ -131,7 +131,35 @@ export class KookModulator extends Modulator<KookBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content
+      this.buffer += attrs.content.replace(/[\\*_`~()]/g, '\\$&')
+    } else if (type === 'b' || type === 'strong') {
+      this.buffer += '**'
+      await this.render(children)
+      this.buffer += '**'
+    } else if (type === 'i' || type === 'em') {
+      this.buffer += '*'
+      await this.render(children)
+      this.buffer += '*'
+    } else if (type === 'u' || type === 'ins') {
+      this.buffer += '(ins)'
+      await this.render(children)
+      this.buffer += '(ins)'
+    } else if (type === 's' || type === 'del') {
+      this.buffer += '~~'
+      await this.render(children)
+      this.buffer += '~~'
+    } else if (type === 'spl') {
+      this.buffer += '(spl)'
+      await this.render(children)
+      this.buffer += '(spl)'
+    } else if (type === 'code') {
+      this.buffer += '`'
+      await this.render(children)
+      this.buffer += '`'
+    } else if (type === 'a') {
+      this.buffer += `[`
+      await this.render(children)
+      this.buffer += `](${attrs.href})`
     } else if (type === 'p') {
       await this.render(children)
       this.buffer += '\n'
@@ -158,25 +186,22 @@ export class KookModulator extends Modulator<KookBot> {
       this.additional.quote = attrs.id
     } else if (type === 'message') {
       await this.flush()
-      if ('quote' in attrs) {
-        this.additional.quote = attrs.id
-      } else {
-        await this.render(children, true)
-      }
+      await this.render(children)
+      await this.flush()
     } else {
       await this.render(children)
     }
   }
 }
 
-export namespace KookModulator {
+export namespace KookMessenger {
   export type HandleMixedContent = 'card' | 'separate' | 'mixed'
 
   export interface Config {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<KookModulator.Config> = Schema.object({
+  export const Config: Schema<KookMessenger.Config> = Schema.object({
     handleMixedContent: Schema.union([
       Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
       Schema.const('card' as const).description('使用卡片发送内容'),

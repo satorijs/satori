@@ -1,17 +1,17 @@
-import { Bot, Context, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { KookModulator } from './modulator'
+import { KookMessenger } from './message'
 
-export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
+export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   http: Quester
   internal: Kook.Internal
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.http = ctx.http.extend({
       headers: {
@@ -28,16 +28,20 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  async request<T = any>(method: Method, path: string, data?: any, headers: any = {}): Promise<T> {
-    data = data instanceof FormData ? data : JSON.stringify(data)
-    return (await this.http(method, path, { data, headers })).data
+  async request<T = any>(method: Method, path: string, data = {}, headers: any = {}): Promise<T> {
+    if (method === 'GET') {
+      return (await this.http.get(path, { params: data, headers })).data
+    } else {
+      data = data instanceof FormData ? data : JSON.stringify(data)
+      return (await this.http(method, path, { data, headers })).data
+    }
   }
 
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    return new KookModulator(this, channelId, guildId).send(content)
+  async sendMessage(channelId: string, content: Fragment, guildId?: string) {
+    return new KookMessenger(this, channelId, guildId).send(content)
   }
 
-  async sendPrivateMessage(target_id: string, content: string | segment) {
+  async sendPrivateMessage(target_id: string, content: Fragment) {
     const { code } = await this.request('POST', '/user-chat/create', { target_id })
     return this.sendMessage(code, content)
   }
@@ -50,8 +54,8 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  async editMessage(channelId: string, msg_id: string, content: string | segment) {
-    content = segment.normalize(content).toString()
+  async editMessage(channelId: string, msg_id: string, content: Fragment) {
+    content = segment.normalize(content).join('')
     if (channelId.length > 30) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
@@ -114,7 +118,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, KookModulator.Config {}
+  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessenger.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -126,7 +130,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    KookModulator.Config,
+    KookMessenger.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

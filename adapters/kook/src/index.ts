@@ -4,6 +4,7 @@ import * as Kook from './types'
 export { Kook }
 
 export * from './bot'
+export * from './message'
 export * from './http'
 export * from './ws'
 export * from './utils'

@@ -5,7 +5,7 @@ export { Telegram }
 
 export * from './bot'
 export * from './polling'
-export * from './modulator'
+export * from './message'
 export * from './server'
 export * from './utils'
 

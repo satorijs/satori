@@ -1,19 +1,19 @@
-import { Author, Bot, Guild, MessageBase, segment, Session, User } from '@satorijs/satori'
+import { Bot, segment, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
-export const adaptGroup = (data: Kook.Guild): Guild => ({
+export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
 })
 
-export const adaptUser = (user: Kook.User): User => ({
+export const adaptUser = (user: Kook.User): Universal.User => ({
   userId: user.id,
   avatar: user.avatar,
   username: user.username,
   discriminator: user.identify_num,
 })
 
-export const adaptAuthor = (author: Kook.Author): Author => ({
+export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   ...adaptUser(author),
   nickname: author.nickname,
 })
@@ -40,7 +40,7 @@ const rules: Rule[] = [{
   transform: (_, id) => segment.sharp(id),
 }]
 
-function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: MessageBase = {}) {
+function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.MessageBase = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id

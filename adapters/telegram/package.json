@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-telegram",
   "description": "Telegram Adapter for Satorijs",
-  "version": "3.4.9",
+  "version": "3.5.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.js.org/api/adapter/telegram.html",
+  "homepage": "https://koishi.chat/plugins/adapter/telegram.html",
   "keywords": [
     "bot",
     "telegram",
@@ -29,7 +29,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.2.5"
+    "@satorijs/satori": "^1.4.2"
   },
   "dependencies": {
     "file-type": "^16.5.4",

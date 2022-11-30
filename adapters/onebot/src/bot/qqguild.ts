@@ -1,4 +1,4 @@
-import { Bot, Context, GuildMember } from '@satorijs/satori'
+import { Bot, Context, Universal } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { OneBotBot } from '.'
 import * as OneBot from '../utils'
@@ -71,7 +71,7 @@ export class QQGuildBot extends BaseBot {
 
   async getGuildMemberList(guildId: string) {
     let nextToken: string | undefined
-    let list: GuildMember[] = []
+    let list: Universal.GuildMember[] = []
     while (true) {
       const data = await this.internal.getGuildMemberList(guildId, nextToken)
       if (!data.members?.length) break

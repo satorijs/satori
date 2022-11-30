@@ -1,25 +1,26 @@
 import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, is, isNullable } from 'cosmokit'
 
-const kElement = Symbol('element')
+const kElement = Symbol.for('satori.element')
 
 function isElement(source: any): source is Element {
   return source && typeof source === 'object' && source[kElement]
 }
 
 function toElement(content: string | Element) {
-  if (typeof content !== 'string') return content
-  return Element('text', { content })
+  if (typeof content === 'string') {
+    if (content) return Element('text', { content })
+  } else if (isElement(content)) {
+    return content
+  } else if (!isNullable(content)) {
+    throw new TypeError(`Invalid content: ${content}`)
+  }
 }
 
-function toElementArray(input: Element.Content) {
-  if (Array.isArray(input)) {
-    return input.map(toElement)
-  } else if (typeof input === 'string') {
-    return [toElement(input)]
-  } else if (!input.type) {
-    return input.children
+function toElementArray(content: Element.Fragment) {
+  if (Array.isArray(content)) {
+    return content.map(toElement).filter(x => x)
   } else {
-    return [input]
+    return [toElement(content)].filter(x => x)
   }
 }
 
@@ -44,12 +45,12 @@ class ElementConstructor {
   toString(strip = false) {
     if (this.type === 'text') return Element.escape(this.attrs.content)
     const inner = this.children.map(child => child.toString(strip)).join('')
-    if (!this.type || strip) return inner
+    if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
       key = hyphenate(key)
       if (value === '') return ` ${key}`
-      return ` ${key}="${Element.escape(value, true)}"`
+      return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
     if (!this.children.length) return `<${this.type}${attrs}/>`
     return `<${this.type}${attrs}>${inner}</${this.type}>`
@@ -59,35 +60,55 @@ class ElementConstructor {
 defineProperty(ElementConstructor, 'name', 'Element')
 defineProperty(ElementConstructor.prototype, kElement, true)
 
-function Element(type: string, children?: Element.Content): Element
-function Element(type: string, attrs: Dict<any>, children?: Element.Content): Element
+function Element(type: string, ...children: Element.Fragment[]): Element
+function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict<string> = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
     for (const [key, value] of Object.entries(args.shift())) {
       if (isNullable(value)) continue
-      if (value === true) {
+      // https://github.com/reactjs/rfcs/pull/107
+      if (key === 'children') {
+        children = toElementArray(value as Element.Fragment)
+      } else if (value === true) {
         attrs[key] = ''
       } else if (value === false) {
         attrs['no' + capitalize(key)] = ''
-      } else {
+      } else if (!isNullable(value)) {
         attrs[key] = '' + value
       }
     }
   }
-  if (args[0]) children = toElementArray(args[0])
+  for (const child of args) {
+    children.push(...toElementArray(child))
+  }
   return Object.assign(el, { type, attrs, children })
 }
 
-namespace Element {
-  export type Content = string | Element | (string | Element)[]
-  export type Transformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => boolean | Content)
-  export type AsyncTransformer = boolean | Content | ((attrs: Dict<string>, index: number, array: Element[]) => Awaitable<boolean | Content>)
+// eslint-disable-next-line no-new-func
+const evaluate = new Function('expr', 'context', `
+  try {
+    with (context) {
+      return eval(expr)
+    }
+  } catch {}
+`) as ((expr: string, context: object) => string)
 
-  export function normalize(source: string | Element) {
-    if (typeof source !== 'string') return Element(null, source)
-    return Element.parse(source, true)
+namespace Element {
+  export const jsx = Element
+  export const jsxs = Element
+  export const jsxDEV = Element
+  export const Fragment = 'template'
+
+  export type Fragment = string | Element | (string | Element)[]
+  export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
+  export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
+  export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
+
+  export function normalize(source: Fragment) {
+    if (typeof source !== 'string') return toElementArray(source)
+    return Element.parse(source)
   }
 
   export function escape(source: string, inline = false) {
@@ -105,7 +126,9 @@ namespace Element {
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
-      .replace(/&amp;/g, '&')
+      .replace(/&#(\d+);/g, (_, code) => code === '38' ? _ : String.fromCharCode(+code))
+      .replace(/&#x([0-9a-f]+);/gi, (_, code) => code === '26' ? _ : String.fromCharCode(parseInt(code, 16)))
+      .replace(/&(amp|#38|#x26);/g, '&')
   }
 
   export interface FindOptions {
@@ -181,38 +204,72 @@ namespace Element {
     return results
   }
 
-  const tagRegExp = /<(\/?)\s*([^\s>/]+)([^>]*?)\s*(\/?)>/
-  const attrRegExp = /([^\s=]+)(?:="([^"]*)"|=([^"\s]+))?/g
+  export function interpolate(expr: string, context: any) {
+    expr = expr.trim()
+    if (!/^[\w.]+$/.test(expr)) {
+      return evaluate(expr, context) ?? ''
+    }
+    let value = context
+    for (const part of expr.split('.')) {
+      value = value[part]
+      if (isNullable(value)) return ''
+    }
+    return value ?? ''
+  }
+
+  const tagRegExp = /<!--[\s\S]*?-->|<(\/?)\s*([^!\s>/]*)([^>]*?)\s*(\/?)>/
+  const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
+  const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
+  const interpRegExp = /\{([^}]*)\}/
 
   interface Token {
-    tag: string
+    type: string
     close: string
     empty: string
     attrs: Dict<string>
     source: string
   }
 
-  export function parse(source: string): Element[]
-  export function parse(source: string, fragment: true): Element
-  export function parse(source: string, fragment = false) {
+  export function parse(source: string, context?: any) {
     const tokens: (string | Token)[] = []
+    const attrRegExp = context ? attrRegExp2 : attrRegExp1
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
-      if (tagCap.index) {
-        tokens.push(unescape(source.slice(0, tagCap.index)))
-      }
-      const [_, close, tag, attrs, empty] = tagCap
-      const token: Token = { source: _, tag, close, empty, attrs: {} }
+      pushText(source.slice(0, tagCap.index))
+      const [_, close, type, attrs, empty] = tagCap
+      source = source.slice(tagCap.index + _.length)
+      if (_.startsWith('<!')) continue
+      const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, v1 = '', v2 = v1] = attrCap
-        token.attrs[camelize(key)] = unescape(v2)
+        const [_, key, v1 = '', v2 = v1, v3] = attrCap
+        token.attrs[camelize(key)] = v3
+          ? interpolate(v3, context)
+          : unescape(v2)
       }
       tokens.push(token)
-      source = source.slice(tagCap.index + tagCap[0].length)
     }
-    if (source) tokens.push(unescape(source))
-    const stack = [Element(null)]
+
+    pushText(source)
+    function pushText(source: string) {
+      source = source
+        .replace(/^\s*\n\s*/, '')
+        .replace(/\s*\n\s*$/, '')
+      let result = ''
+      if (context) {
+        let interpCap: RegExpExecArray
+        while ((interpCap = interpRegExp.exec(source))) {
+          const [_, expr] = interpCap
+          result += unescape(source.slice(0, interpCap.index))
+          result += interpolate(expr, context)
+          source = source.slice(interpCap.index + _.length)
+        }
+      }
+      result += unescape(source)
+      if (result) tokens.push(result)
+    }
+
+    const stack = [Element(Fragment)]
     function rollback(index: number) {
       for (; index > 0; index--) {
         const { children } = stack.shift()
@@ -221,12 +278,13 @@ namespace Element {
         stack[0].children.push(...children)
       }
     }
+
     for (const token of tokens) {
       if (typeof token === 'string') {
         stack[0].children.push(Element('text', { content: token }))
       } else if (token.close) {
         let index = 0
-        while (index < stack.length && stack[index].type !== token.tag) index++
+        while (index < stack.length && stack[index].type !== token.type) index++
         if (index === stack.length) {
           // no matching open tag
           stack[0].children.push(Element('text', { content: token.source }))
@@ -236,7 +294,7 @@ namespace Element {
           delete element.source
         }
       } else {
-        const element = Element(token.tag, token.attrs)
+        const element = Element(token.type, token.attrs)
         stack[0].children.push(element)
         if (!token.empty) {
           element.source = token.source
@@ -245,22 +303,22 @@ namespace Element {
       }
     }
     rollback(stack.length - 1)
-    return fragment ? stack[0] : stack[0].children
+    return stack[0].children
   }
 
-  export function transform(source: string, rules: Dict<Transformer>): string
-  export function transform(source: Element[], rules: Dict<Transformer>): Element[]
-  export function transform(source: string | Element[], rules: Dict<Transformer>) {
+  export function transform<S>(source: string, rules: Dict<Transformer<S>>, session?: S): string
+  export function transform<S>(source: Element[], rules: Dict<Transformer<S>>, session?: S): Element[]
+  export function transform<S>(source: string | Element[], rules: Dict<Transformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const output: Element[] = []
-    elements.forEach((element, index, elements) => {
-      let result = rules[element.type] ?? rules.default ?? true
+    elements.forEach((element) => {
+      const { type, attrs, children } = element
+      let result = rules[type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = result(element.attrs, index, elements)
+        result = result(attrs, children, session)
       }
       if (result === true) {
-        const { type, attrs, children } = element
-        output.push(Element(type, attrs, transform(children, rules)))
+        output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
         output.push(...toElementArray(result))
       }
@@ -268,18 +326,18 @@ namespace Element {
     return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync(source: string, rules: Dict<AsyncTransformer>): Promise<string>
-  export async function transformAsync(source: Element[], rules: Dict<AsyncTransformer>): Promise<Element[]>
-  export async function transformAsync(source: string | Element[], rules: Dict<AsyncTransformer>) {
+  export async function transformAsync<S>(source: string, rules: Dict<AsyncTransformer<S>>, session?: S): Promise<string>
+  export async function transformAsync<S>(source: Element[], rules: Dict<AsyncTransformer<S>>, session?: S): Promise<Element[]>
+  export async function transformAsync<S>(source: string | Element[], rules: Dict<AsyncTransformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
-    const children = (await Promise.all(elements.map(async (element, index, elements) => {
-      let result = rules[element.type] ?? rules.default ?? true
+    const children = (await Promise.all(elements.map(async (element) => {
+      const { type, attrs, children } = element
+      let result = rules[type] ?? rules.default ?? true
       if (typeof result === 'function') {
-        result = await result(element.attrs, index, elements)
+        result = await result(attrs, children, session)
       }
       if (result === true) {
-        const { type, attrs, children } = element
-        return [Element(type, attrs, await transformAsync(children, rules))]
+        return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
         return toElementArray(result)
       } else {
@@ -287,11 +345,6 @@ namespace Element {
       }
     }))).flat(1)
     return typeof source === 'string' ? children.join('') : children
-  }
-
-  /** @deprecated use `elements.join('')` instead */
-  export function join(elements: Element[]) {
-    return elements.join('')
   }
 
   export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element

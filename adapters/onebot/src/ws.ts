@@ -12,7 +12,7 @@ interface SharedConfig<T = 'ws' | 'ws-reverse'> {
 export class WsClient extends Adapter.WsClient<OneBotBot> {
   protected accept = accept
 
-  prepare(bot: OneBotBot<Context, OneBotBot.BaseConfig & WsClient.Config>) {
+  prepare(bot: OneBotBot<OneBotBot.BaseConfig & WsClient.Config>) {
     const { token, endpoint } = bot.config
     const http = this.ctx.http.extend(bot.config)
     if (token) http.config.headers.Authorization = `Bearer ${token}`
@@ -33,7 +33,7 @@ export namespace WsClient {
   ])
 }
 
-export class WsServer extends Adapter.Server<OneBotBot<Context, OneBotBot.BaseConfig & WsServer.Config>> {
+export class WsServer extends Adapter.Server<OneBotBot<OneBotBot.BaseConfig & WsServer.Config>> {
   public wsServer?: WebSocketLayer
 
   constructor(ctx: Context, bot: OneBotBot) {
@@ -80,7 +80,7 @@ export namespace WsServer {
 let counter = 0
 const listeners: Record<number, (response: Response) => void> = {}
 
-export function accept(bot: OneBotBot<Context, OneBotBot.BaseConfig & SharedConfig>) {
+export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
   bot.socket.on('message', (data) => {
     let parsed: any
     try {

@@ -1,8 +1,8 @@
-import { Author, Channel, Guild, Message, segment, Session, User } from '@satorijs/satori'
+import { segment, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
-export const adaptUser = (user: Discord.User): User => ({
+export const adaptUser = (user: Discord.User): Universal.User => ({
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
@@ -10,22 +10,24 @@ export const adaptUser = (user: Discord.User): User => ({
   isBot: user.bot || false,
 })
 
-export const adaptGuild = (data: Discord.Guild): Guild => ({
+export const adaptGuild = (data: Discord.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
 })
 
-export const adaptChannel = (data: Discord.Channel): Channel => ({
+export const adaptChannel = (data: Discord.Channel): Universal.Channel => ({
   channelId: data.id,
   channelName: data.name,
 })
 
-export const adaptAuthor = (author: Discord.User): Author => ({
+export const adaptAuthor = (author: Discord.User): Universal.Author => ({
   ...adaptUser(author),
   nickname: author.username,
 })
 
 export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
+  const { platform } = bot
+
   prepareMessage(session, meta)
   session.messageId = meta.id
   session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
@@ -49,8 +51,12 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
           return segment.at(id, { name: user?.username }).toString()
         }
       })
-      .replace(/<:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name }).toString())
-      .replace(/<a:(.*):(.+?)>/g, (_, name, id) => segment('face', { id: id, name, animated: true }).toString())
+      .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
+        const animated = _[1] === 'a'
+        return segment('face', { id, name, animated, platform }, [
+          segment.image(`https://cdn.discordapp.com/emojis/${id}.gif?quality=lossless`)
+        ]).toString()
+      })
       .replace(/@everyone/g, () => segment('at', { type: 'all' }).toString())
       .replace(/@here/g, () => segment('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
@@ -61,7 +67,8 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
   if (meta.attachments?.length) {
-    session.content += ' ' + meta.attachments.map(v => {
+    if (session.content) session.content += ' '
+    session.content += meta.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
         return segment('image', {
           url: v.url,
@@ -108,7 +115,7 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
     const { message_id, channel_id } = meta.message_reference
     session.quote = await bot.getMessage(channel_id, message_id)
   }
-  return session as Message
+  return session as Universal.Message
 }
 
 export function prepareMessage(session: Partial<Session>, data: Partial<Discord.Message>) {

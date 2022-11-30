@@ -1,15 +1,15 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, SendOptions, Schema, segment } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
-import { QQGuildModulator } from './modulator'
+import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
 
-export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.Config> {
+export class QQGuildBot extends Bot<QQGuildBot.Config> {
   internal: QQGuild.Bot
 
-  constructor(ctx: C, config: QQGuildBot.Config) {
+  constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
-    this.internal = new QQGuild.Bot(config)
+    this.internal = new QQGuild.Bot(config as QQGuild.Bot.Options)
     ctx.plugin(WsClient, this)
   }
 
@@ -20,8 +20,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
     return user
   }
 
-  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    return new QQGuildModulator(this, channelId, guildId).send(fragment)
+  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
+    return await new QQGuildMessenger(this, channelId, guildId, opts).send(fragment)
   }
 
   async getGuildList() {
@@ -62,8 +62,10 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C, QQGuildBot.C
 }
 
 export namespace QQGuildBot {
-  export interface Config extends Bot.Config, QQGuild.Bot.Options, WsClient.Config {
-    intents: number
+  type BotOptions = QQGuild.Bot.Options
+  type CustomBotOptions = Omit<BotOptions, 'sandbox'> & Partial<Pick<BotOptions, 'sandbox'>>
+  export interface Config extends Bot.Config, CustomBotOptions, WsClient.Config {
+    intents?: number
   }
 
   export const Config: Schema<Config> = Schema.intersect([

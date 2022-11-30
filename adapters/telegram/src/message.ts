@@ -1,6 +1,6 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
-import { Dict, Logger, Modulator, segment } from '@satorijs/satori'
+import { Dict, Logger, Messenger, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
@@ -70,7 +70,9 @@ const assetApi = {
   animation: 'sendAnimation',
 } as const
 
-export class TelegramModulator extends Modulator<TelegramBot> {
+const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
+
+export class TelegramMessenger extends Messenger<TelegramBot> {
   private assetType: AssetType = null
   private payload: Dict
   private mode: RenderMode = 'default'
@@ -80,7 +82,7 @@ export class TelegramModulator extends Modulator<TelegramBot> {
     const chat_id = channelId.startsWith('private:')
       ? channelId.slice(8)
       : channelId
-    this.payload = { chat_id, caption: '' }
+    this.payload = { chat_id, parse_mode: 'html', caption: '' }
   }
 
   async addResult(result: Telegram.Message) {
@@ -125,16 +127,23 @@ export class TelegramModulator extends Modulator<TelegramBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.payload.caption += attrs.content
+      this.payload.caption += segment.escape(attrs.content)
     } else if (type === 'p') {
       await this.render(children)
       this.payload.caption += '\n'
+    } else if (supportedElements.includes(type)) {
+      this.payload.caption += element.toString()
+    } else if (type === 'spl') {
+      this.payload.caption += '<tg-spoiler>'
+      await this.render(children)
+      this.payload.caption += '</tg-spoiler>'
+    } else if (type === 'code') {
+      const { lang } = attrs
+      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${segment.escape(attrs.content)}</code>`
     } else if (type === 'at') {
-      const atTarget = attrs.name || attrs.id || attrs.role || attrs.type
-      if (atTarget) this.payload.caption += `@${atTarget} `
-    } else if (type === 'sharp') {
-      const sharpTarget = attrs.name || attrs.id
-      if (sharpTarget) this.payload.caption += `#${sharpTarget} `
+      if (attrs.id) {
+        this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`
+      }
     } else if (['image', 'audio', 'video', 'file'].includes(type)) {
       if (this.mode === 'default') {
         await this.flush()
@@ -162,18 +171,9 @@ export class TelegramModulator extends Modulator<TelegramBot> {
         this.payload.caption += '\n'
       } else {
         await this.flush()
-        if ('quote' in attrs) {
-          this.payload.reply_to_message_id = attrs.id
-        } else {
-          await this.render(children, true)
-        }
+        await this.render(children)
+        await this.flush()
       }
-    } else if (type === 'markdown') {
-      await this.flush()
-      this.payload.parse_mode = 'MarkdownV2'
-    } else if (type === 'html') {
-      await this.flush()
-      this.payload.parse_mode = 'html'
     } else {
       await this.render(children)
     }

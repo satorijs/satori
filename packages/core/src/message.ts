@@ -1,5 +1,7 @@
 import { defineProperty } from 'cosmokit'
-import { Bot, Message, segment, Session } from '.'
+import segment from '@satorijs/element'
+import { Bot } from './bot'
+import { SendOptions, Session } from './session'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -7,12 +9,12 @@ class AggregateError extends Error {
   }
 }
 
-export abstract class Modulator<B extends Bot = Bot> {
-  protected errors: Error[] = []
-  protected results: Message[] = []
-  protected session: Session
+export abstract class Messenger<B extends Bot = Bot> {
+  public errors: Error[] = []
+  public results: Session[] = []
+  public session: Session
 
-  constructor(public bot: B, public channelId: string, public guildId?: string) {
+  constructor(public bot: B, public channelId: string, public guildId?: string, public options?: SendOptions) {
     this.session = bot.session({
       type: 'send',
       author: bot,
@@ -35,14 +37,17 @@ export abstract class Modulator<B extends Bot = Bot> {
     }
   }
 
-  async send(content: string | segment) {
-    this.session.elements = segment.normalize(content).children
+  async send(content: segment.Fragment) {
+    this.session.elements = segment.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session)) return
-    await this.render(this.session.elements, true)
-    if (!this.errors.length) {
+    await this.render(this.session.elements)
+    await this.flush()
+    if (this.errors.length) {
       throw new AggregateError(this.errors)
     } else {
       return this.results.map(result => result.messageId)
     }
   }
 }
+
+export { Messenger as Modulator }

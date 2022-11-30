@@ -2,17 +2,18 @@ import { defineProperty } from 'cosmokit'
 import { Context } from '.'
 import { Session } from './session'
 
-export type Filter<C extends Context = Context> = (session: C[typeof Context.session]) => boolean
+export type Filter = (session: Session) => boolean
 
 /* eslint-disable max-len */
 declare module '.' {
   interface Context {
-    filter: Filter<this>
+    selector: Selector
+    filter: Filter
     any(): this
     never(): this
-    union(arg: Filter<this> | this): this
-    intersect(arg: Filter<this> | this): this
-    exclude(arg: Filter<this> | this): this
+    union(arg: Filter | this): this
+    intersect(arg: Filter | this): this
+    exclude(arg: Filter | this): this
     user(...values: string[]): this
     self(...values: string[]): this
     guild(...values: string[]): this
@@ -29,13 +30,13 @@ function property<K extends keyof Session>(ctx: Context, key: K, ...values: Sess
   })
 }
 
-export class Selector<C extends Context = Context> {
+export class Selector {
   static readonly methods = [
     'any', 'never', 'union', 'intersect', 'exclude',
     'user', 'self', 'guild', 'channel', 'platform', 'private',
   ]
 
-  constructor(private app: C) {
+  constructor(private app: Context) {
     defineProperty(this, Context.current, app)
 
     app.filter = () => true
@@ -59,19 +60,19 @@ export class Selector<C extends Context = Context> {
     return this.caller.extend({ filter: () => false })
   }
 
-  union(arg: Filter | C) {
+  union(arg: Filter | Context) {
     const caller = this.caller
     const filter = typeof arg === 'function' ? arg : arg.filter
     return this.caller.extend({ filter: s => caller.filter(s) || filter(s) })
   }
 
-  intersect(arg: Filter | C) {
+  intersect(arg: Filter | Context) {
     const caller = this.caller
     const filter = typeof arg === 'function' ? arg : arg.filter
     return this.caller.extend({ filter: s => caller.filter(s) && filter(s) })
   }
 
-  exclude(arg: Filter | C) {
+  exclude(arg: Filter | Context) {
     const caller = this.caller
     const filter = typeof arg === 'function' ? arg : arg.filter
     return this.caller.extend({ filter: s => caller.filter(s) && !filter(s) })

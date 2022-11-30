@@ -1,4 +1,4 @@
-import { Dict, Modulator, Schema, segment } from '@satorijs/satori'
+import { Dict, Messenger, Schema, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
@@ -6,7 +6,7 @@ import { adaptMessage } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
-export class DiscordModulator extends Modulator<DiscordBot> {
+export class DiscordMessenger extends Messenger<DiscordBot> {
   private buffer: string = ''
   private addition: Dict = {}
   private figure: segment = null
@@ -37,7 +37,7 @@ export class DiscordModulator extends Modulator<DiscordBot> {
   }
 
   async sendAsset(type: string, data: Dict<string>, addition: Dict) {
-    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordModulator.Config
+    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessenger.Config
 
     if (handleMixedContent === 'separate' && addition.content) {
       await this.post(addition)
@@ -64,7 +64,7 @@ export class DiscordModulator extends Modulator<DiscordBot> {
       return this.sendEmbed(buffer, addition, data.file)
     }
 
-    const mode = data.mode as DiscordModulator.HandleExternalAsset || handleExternalAsset
+    const mode = data.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
@@ -94,7 +94,34 @@ export class DiscordModulator extends Modulator<DiscordBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content
+      this.buffer += attrs.content.replace(/[\\*_`~|()]/g, '\\$&')
+    } else if (type === 'b' || type === 'strong') {
+      this.buffer += '**'
+      await this.render(children)
+      this.buffer += '**'
+    } else if (type === 'i' || type === 'em') {
+      this.buffer += '*'
+      await this.render(children)
+      this.buffer += '*'
+    } else if (type === 'u' || type === 'ins') {
+      this.buffer += '__'
+      await this.render(children)
+      this.buffer += '__'
+    } else if (type === 's' || type === 'del') {
+      this.buffer += '~~'
+      await this.render(children)
+      this.buffer += '~~'
+    } else if (type === 'spl') {
+      this.buffer += '||'
+      await this.render(children)
+      this.buffer += '||'
+    } else if (type === 'code') {
+      this.buffer += '`'
+      await this.render(children)
+      this.buffer += '`'
+    } else if (type === 'a') {
+      await this.render(children)
+      this.buffer += ` (${attrs.href}) `
     } else if (type === 'p') {
       await this.render(children)
       this.buffer += '\n'
@@ -108,8 +135,12 @@ export class DiscordModulator extends Modulator<DiscordBot> {
       }
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += `<#${attrs.id}>`
-    } else if (type === 'face' && attrs.name && attrs.id) {
-      this.buffer += `<:${attrs.name}:${attrs.id}>`
+    } else if (type === 'face') {
+      if (attrs.platform && attrs.platform !== this.bot.platform) {
+        return this.render(children)
+      } else {
+        this.buffer += `<${attrs.animated ? 'a' : ''}:${attrs.name}:${attrs.id}>`
+      }
     } else if ((type === 'image' || type === 'video') && attrs.url) {
       if (this.mode === 'figure') {
         this.figure = element
@@ -153,13 +184,8 @@ export class DiscordModulator extends Modulator<DiscordBot> {
         this.buffer += '\n'
       } else {
         await this.flush()
-        if ('quote' in attrs) {
-          this.addition.message_reference = {
-            message_id: attrs.id,
-          }
-        } else {
-          await this.render(children, true)
-        }
+        await this.render(children)
+        await this.flush()
       }
     } else {
       await this.render(children)
@@ -167,7 +193,7 @@ export class DiscordModulator extends Modulator<DiscordBot> {
   }
 }
 
-export namespace DiscordModulator {
+export namespace DiscordMessenger {
   export type HandleExternalAsset = 'auto' | 'download' | 'direct'
   export type HandleMixedContent = 'auto' | 'separate' | 'attach'
 
@@ -188,7 +214,7 @@ export namespace DiscordModulator {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<DiscordModulator.Config> = Schema.object({
+  export const Config: Schema<DiscordMessenger.Config> = Schema.object({
     handleExternalAsset: Schema.union([
       Schema.const('download' as const).description('先下载后发送'),
       Schema.const('direct' as const).description('直接发送链接'),

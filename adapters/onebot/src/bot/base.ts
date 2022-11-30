@@ -1,16 +1,19 @@
-import { Bot, Context, segment } from '@satorijs/satori'
+import { Bot, Fragment, Schema } from '@satorijs/satori'
 import * as OneBot from '../utils'
-import { OneBotModulator } from './modulator'
+import { OneBotMessenger } from './message'
 
-export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Config> extends Bot<C, T> {
+export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    return new OneBotModulator(this, channelId, guildId).send(fragment)
+  sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
+    if (!this.parent && !channelId.startsWith('private:')) {
+      guildId = channelId
+    }
+    return new OneBotMessenger(this, channelId, guildId).send(fragment)
   }
 
-  sendPrivateMessage(userId: string, fragment: string | segment) {
+  sendPrivateMessage(userId: string, fragment: Fragment) {
     return this.sendMessage('private:' + userId, fragment)
   }
 
@@ -69,4 +72,18 @@ export class BaseBot<C extends Context = Context, T extends Bot.Config = Bot.Con
     // 从旧到新
     return await Promise.all(list.map(item => OneBot.adaptMessage(this, item)))
   }
+}
+
+export namespace BaseBot {
+  export interface Config extends Bot.Config {
+    advanced?: AdvancedConfig
+  }
+
+  export interface AdvancedConfig {
+    splitMixedContent?: boolean
+  }
+
+  export const AdvancedConfig: Schema<AdvancedConfig> = Schema.object({
+    splitMixedContent: Schema.boolean().description('是否自动在混合内容间插入空格。').default(true),
+  }).description('高级设置')
 }

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "Kook (Kaiheila) Adapter for Satorijs",
-  "version": "3.3.5",
+  "version": "3.4.3",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.js.org/api/adapter/kook.html",
+  "homepage": "https://koishi.chat/plugins/adapter/kook.html",
   "keywords": [
     "bot",
     "kook",
@@ -26,7 +26,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.2.5"
+    "@satorijs/satori": "^1.4.2"
   },
   "dependencies": {
     "form-data": "^4.0.0"

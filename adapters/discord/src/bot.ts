@@ -1,14 +1,14 @@
-import { Bot, Context, Message, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
-import { DiscordModulator } from './modulator'
+import { DiscordMessenger } from './message'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
-export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
+export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
 
-  constructor(ctx: C, config: DiscordBot.Config) {
+  constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend({
       ...config,
@@ -26,23 +26,22 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return adaptUser(data)
   }
 
-  async sendMessage(channelId: string, content: string | segment, guildId?: string) {
-    return new DiscordModulator(this, channelId, guildId).send(content)
+  async sendMessage(channelId: string, content: Fragment, guildId?: string) {
+    return new DiscordMessenger(this, channelId, guildId).send(content)
   }
 
-  async sendPrivateMessage(channelId: string, content: string | segment) {
-    return new DiscordModulator(this, channelId).send(content)
+  async sendPrivateMessage(channelId: string, content: Fragment) {
+    return new DiscordMessenger(this, channelId).send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
     await this.internal.deleteMessage(channelId, messageId)
   }
 
-  async editMessage(channelId: string, messageId: string, content: string | segment) {
-    const fragment = segment.normalize(content)
-    content = fragment.toString()
-    const chain = fragment.children
-    const image = chain.find(v => v.type === 'image')
+  async editMessage(channelId: string, messageId: string, content: Fragment) {
+    const elements = segment.normalize(content)
+    content = elements.toString()
+    const image = elements.find(v => v.type === 'image')
     if (image) {
       throw new Error("You can't include embed object(s) while editing message.")
     }
@@ -51,7 +50,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
   }
 
-  async getMessage(channelId: string, messageId: string): Promise<Message> {
+  async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getChannelMessage(channelId, messageId)
     return await adaptMessage(this, data)
   }
@@ -107,7 +106,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, DiscordModulator.Config, WsClient.Config {
+  export interface Config extends Bot.Config, Quester.Config, DiscordMessenger.Config, WsClient.Config {
     token: string
   }
 
@@ -116,7 +115,7 @@ export namespace DiscordBot {
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     WsClient.Config,
-    DiscordModulator.Config,
+    DiscordMessenger.Config,
     Quester.createConfig('https://discord.com/api/v10'),
   ])
 }

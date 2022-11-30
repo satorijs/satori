@@ -2,14 +2,14 @@ import { remove } from 'cosmokit'
 import { Context } from '.'
 import { Adapter } from './adapter'
 import { Session } from './session'
-import { Methods, User } from './protocol'
+import { Universal } from './universal'
 import WebSocket from 'ws'
 
-export interface Bot extends Methods, User {
+export interface Bot extends Universal.Methods, Universal.User {
   socket?: WebSocket
 }
 
-export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bot.Config> {
+export abstract class Bot<T extends Bot.Config = Bot.Config> {
   static reusable = true
 
   public isBot = true
@@ -23,7 +23,7 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
   protected context: Context
   protected _status: Bot.Status = 'offline'
 
-  constructor(public ctx: C, public config: T) {
+  constructor(public ctx: Context, public config: T) {
     if (config.platform) {
       this.platform = config.platform
     }
@@ -90,11 +90,11 @@ export abstract class Bot<C extends Context = Context, T extends Bot.Config = Bo
     return `${this.platform}:${this.selfId}`
   }
 
-  session(payload?: Partial<Session.Payload>): C[typeof Context.session] {
+  session(payload?: Partial<Session.Payload>) {
     return new Session(this, payload)
   }
 
-  dispatch(session: C[typeof Context.session]) {
+  dispatch(session: Session) {
     if (!this.ctx.lifecycle.isActive) return
     const events: string[] = [session.type]
     if (session.subtype) {

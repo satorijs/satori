@@ -1,4 +1,4 @@
-import { defineProperty, GuildMember, hyphenate, Logger, User } from '@satorijs/satori'
+import { defineProperty, hyphenate, Logger, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -6,14 +6,14 @@ export * from './types'
 
 const logger = new Logger('telegram')
 
-export const adaptUser = (data: Telegram.User): User => ({
+export const adaptUser = (data: Telegram.User): Universal.User => ({
   userId: data.id.toString(),
   username: data.username,
   nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
   isBot: data.is_bot,
 })
 
-export const adaptGuildMember = (data: Telegram.ChatMember): GuildMember => adaptUser(data.user)
+export const adaptGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => adaptUser(data.user)
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   logger.debug('receive %s', JSON.stringify(update))

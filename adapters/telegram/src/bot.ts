@@ -1,7 +1,7 @@
-import { Bot, Context, Dict, Guild, Logger, Quester, Schema, segment, Session, Time, User } from '@satorijs/satori'
+import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
-import { TelegramModulator } from './modulator'
+import { TelegramMessenger } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import { fromBuffer } from 'file-type'
@@ -27,13 +27,13 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
+export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   http: Quester
   file: Quester
   internal?: Telegram.Internal
   local?: boolean
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config)
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
@@ -152,11 +152,11 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     }
   }
 
-  async sendMessage(channelId: string, fragment: string | segment, guildId?: string) {
-    return new TelegramModulator(this, channelId, guildId).send(fragment)
+  async sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
+    return new TelegramMessenger(this, channelId, guildId).send(fragment)
   }
 
-  async sendPrivateMessage(userId: string, content: string | segment) {
+  async sendPrivateMessage(userId: string, content: Fragment) {
     return this.sendMessage('private:' + userId, content)
   }
 
@@ -169,7 +169,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     await this.internal.deleteMessage({ chat_id, message_id })
   }
 
-  static adaptGroup(data: Telegram.Chat): Guild {
+  static adaptGroup(data: Telegram.Chat): Universal.Guild {
     data['guildId'] = data.id + ''
     data['guildName'] = data.title
     delete data.id
@@ -177,7 +177,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     return data as any
   }
 
-  async getGuild(chat_id: string): Promise<Guild> {
+  async getGuild(chat_id: string): Promise<Universal.Guild> {
     const data = await this.internal.getChat({ chat_id })
     return TelegramBot.adaptGroup(data)
   }
@@ -251,7 +251,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     return { url: base64 }
   }
 
-  private async setAvatarUrl(user: User) {
+  private async setAvatarUrl(user: Universal.User) {
     const { endpoint } = this.file.config
     const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
     if (!avatar) return

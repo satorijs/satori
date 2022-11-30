@@ -11,8 +11,6 @@ declare module '@satorijs/core' {
   namespace Context {
     interface Config extends Config.Network {}
 
-    const Config: Config.Static
-
     namespace Config {
       interface Network {
         host?: string
@@ -27,8 +25,6 @@ declare module '@satorijs/core' {
     }
   }
 }
-
-defineProperty(Context, 'Config', Schema.intersect([]))
 
 defineProperty(Context.Config, 'Network', Schema.object({
   host: Schema.string().default('localhost').description('要监听的 IP 地址。如果将此设置为 `0.0.0.0` 将监听所有地址，包括局域网和公网地址。'),
