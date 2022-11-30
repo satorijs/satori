@@ -5,32 +5,47 @@ import { segment, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
 
-export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): segment {
+export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Session.Payload {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.config.selfUrl ?? `http://localhost:${bot.ctx.config.port}/`) + bot.config.path + '/assets'
-  let content: segment
+  const content: (string | segment)[] = []
   switch (data.message.message_type) {
-    case 'text':
-      content = json.text
+    case 'text': {
+      let text = json.text as string
+      if (!data.message.mentions?.length) {
+        content.push(text)
+        break
+      }
+
+      // Feishu's `at` Element would be `@{user_id}` in text
+      text.split(' ').forEach((word) => {
+        if (word.startsWith('@')) {
+          const mention = data.message.mentions.find((mention) => mention.key === word)
+          content.push(segment.at(mention.id.open_id, { name: mention.name }))
+        } else {
+          content.push(word)
+        }
+      })
       break
+    }
     case 'image':
       const imageUrl = `${assetEndpoint}/image/${data.message.message_id}/${json.image_key}?self_id=${bot.selfId}`
-      content = segment.image(imageUrl)
+      content.push(segment.image(imageUrl))
       break
     case 'audio':
       const audioUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
-      content = segment.audio(audioUrl)
+      content.push(segment.audio(audioUrl))
       break
     case 'media':
       const mediaUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
-      content = segment.video(mediaUrl, json.image_key)
+      content.push(segment.video(mediaUrl, json.image_key))
       break
     case 'file':
       const fileUrl = `${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`
-      content = segment.file(fileUrl)
+      content.push(segment.file(fileUrl))
       break
   }
-  const result = {
+  const result: Session.Payload = {
     userId: data.sender.sender_id.open_id,
     timestamp: Number(data.message.create_time),
     author: {
@@ -38,10 +53,12 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
     },
     messageId: data.message.message_id,
     channelId: data.message.chat_id,
-    content: content.toString(),
+    content: content.map((c) => c.toString()).join(' '),
+    platform: 'feishu',
+    selfId: bot.selfId,
   }
 
-  return segment('message', result)
+  return result
 }
 
 export function adaptSession(bot: FeishuBot, body: AllEvents): Session {

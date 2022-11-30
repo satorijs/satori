@@ -23,6 +23,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
         resp = await this.bot.internal?.replyMessage(this.quote, data)
       }
       else {
+        data.receive_id = this.channelId
         resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
       }
       const session = this.bot.session()

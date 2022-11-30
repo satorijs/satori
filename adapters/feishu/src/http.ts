@@ -44,14 +44,13 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
         return
       }
 
-      // Feishu requires 200 OK response to make sure event is received
-      ctx.body = 'OK'
-      ctx.status = 200
-
       // dispatch message
       const decryped = this._tryDecryptBody(ctx.request.body)
       logger.debug('received decryped event: %o', decryped)
       this.dispatchSession(decryped)
+
+      // Feishu requires 200 OK response to make sure event is received
+      return ctx.status = 200
     })
 
     bot.ctx.router.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
