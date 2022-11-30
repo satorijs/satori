@@ -132,10 +132,3 @@ export namespace HttpServer {
     verifySignature: Schema.boolean().description('是否验证 Signature'),
   })
 }
-
-// function firstOrDefault(arg: string | string[]): string {
-//   if (Array.isArray(arg)) {
-//     return arg[0]
-//   }
-//   return arg
-// }
