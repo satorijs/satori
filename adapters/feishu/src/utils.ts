@@ -5,7 +5,7 @@ import { segment, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
 
-export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event']): Session.Payload {
+export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session.Payload {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.config.selfUrl ?? `http://localhost:${bot.ctx.config.port}/`) + bot.config.path + '/assets'
   const content: (string | segment)[] = []
@@ -69,7 +69,7 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
     case 'im.message.receive_v1':
       session.type = 'message'
       session.subtype = body.event.message.chat_type,
-      Object.assign(session, adaptMessage(bot, body.event))
+      adaptMessage(bot, body.event, session)
       break
   }
   return session
