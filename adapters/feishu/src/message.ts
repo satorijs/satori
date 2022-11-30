@@ -63,6 +63,10 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       msg_type: message.msg_type,
       content: JSON.stringify(message)
     })
+
+    // reset cached content
+    this.content = ''
+    this.addition = {}
   }
 
   async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string) {
