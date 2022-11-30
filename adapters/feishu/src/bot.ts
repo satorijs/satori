@@ -23,6 +23,11 @@ export class FeishuBot extends Bot<Context, FeishuBot.Config> {
   constructor(ctx: Context, config: FeishuBot.Config) {
     super(ctx, config)
 
+    // feishu bot needs config.selfUrl to be set as it should be serve on a public url
+    if (!config.selfUrl && !ctx.config.selfUrl) {
+      logger.warn('selfUrl is not set, some features may not work')
+    }
+
     this.selfId = config.appId
 
     this.http = ctx.http.extend({
