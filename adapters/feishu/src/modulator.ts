@@ -1,15 +1,18 @@
 import { Modulator, segment } from '@satorijs/core'
 import { FeishuBot } from './bot'
+import { MessageType } from './types'
+
+interface Addition {
+  file?: {
+    id: string
+    type: MessageType
+  }
+}
 
 export class FeishuModulator extends Modulator<FeishuBot> {
   private mode: 'default' | 'figure' = 'default'
   private content = ''
-  private addition = {
-    file: null as {
-      id: string
-      type: FeishuBot.Message.FileContents['msg_type']
-    } | null,
-  }
+  private addition: Addition = {}
 
   async post(data?: any, headers?: any) {
     try {
@@ -24,27 +27,24 @@ export class FeishuModulator extends Modulator<FeishuBot> {
   }
 
   async flush() {
-    if (
-      this.content === ''
-      && this.addition.file === null
-    )
-      return
-    let message = {} as FeishuBot.Message.Contents<FeishuBot.Message.Content['msg_type']>
+    if (this.content === '' && !this.addition.file) return
+
+    let message = {} as FeishuBot.Message.Contents<MessageType>
     if (this.addition.file) {
       message.msg_type = this.addition.file.type
-      if (FeishuBot.Message.isWhatContents('image', message)) {
+      if (FeishuBot.Message.extractContentsType('image', message)) {
         message.image_key = this.addition.file.id
       } else if (
-        FeishuBot.Message.isWhatContents('audio', message)
-        || FeishuBot.Message.isWhatContents('file', message)
+        FeishuBot.Message.extractContentsType('audio', message)
+        || FeishuBot.Message.extractContentsType('file', message)
       ) {
         message.file_key = this.addition.file.id
-      } else if (FeishuBot.Message.isWhatContents('media', message)) {
+      } else if (FeishuBot.Message.extractContentsType('media', message)) {
         message.file_key = this.addition.file.id
       }
     } else {
       message.msg_type = 'text'
-      if (FeishuBot.Message.isWhatContents('text', message)) {
+      if (FeishuBot.Message.extractContentsType('text', message)) {
         message.text = this.content
       }
     }
@@ -54,7 +54,7 @@ export class FeishuModulator extends Modulator<FeishuBot> {
   }
 
   async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string) {
-    let newType = type as FeishuBot.Message.FileContents['msg_type']
+    let newType = type as MessageType
     if (type === 'audio') {
       newType = 'media'
     }

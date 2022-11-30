@@ -7,7 +7,7 @@ import { Logger, Quester, Schema, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { HttpServer } from './http'
-import { Internal, MessageContent, MessagePayload } from './types'
+import { Internal, MessageContent, MessagePayload, MessageType } from './types'
 import { extractIdType } from './utils'
 
 type AssetType = 'image' | 'audio' | 'video' | 'file'
@@ -261,9 +261,9 @@ export namespace FeishuBot {
     }
     export interface Content {
       receive_id?: string
-      msg_type: 'text' | 'image' | 'audio' | 'media' | 'file'
+      msg_type: MessageType
     }
-    export type Contents<T extends Content['msg_type']> = Content & (
+    export type Contents<T extends MessageType> = Content & (
       T extends 'text' ? Text :
       T extends 'image' ? Image :
       T extends 'audio' ? Audio :
@@ -272,8 +272,8 @@ export namespace FeishuBot {
       Content
     )
     export type FileContents = Content & (Image | Audio | Media | File)
-    export function isWhatContents<T extends Content['msg_type']>(
-      type: T, data: Contents<Content['msg_type']>
+    export function extractContentsType<T extends MessageType>(
+      type: T, data: Contents<MessageType>
     // @ts-ignore
     ): data is Contents<T> {
       return data.msg_type === type
