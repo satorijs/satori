@@ -132,7 +132,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
         case 'text':
           this.richText.content.push([{ tag: 'text', text: attrs.content }])
           break
-        case 'link':
+        case 'a':
           this.richText.content.push([{ tag: 'a', text: attrs.text, href: attrs.href }])
           break
         case 'at':
@@ -160,6 +160,9 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
         default:
           this.content += `<at user_id="${attrs.id}">${attrs.name}</at>`
       }
+    } else if (type === 'a') {
+      await this.render(children)
+      if (attrs.href) this.content += ` (${attrs.href})`
     } else if (type === 'sharp') {
       // platform does not support sharp
     } else if (type === 'quote') {
