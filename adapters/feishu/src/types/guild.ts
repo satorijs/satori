@@ -1,6 +1,6 @@
 import { Dict } from '@satorijs/satori'
 import { Feishu } from '.'
-import { BaseResponse, Internal } from './internal'
+import { Internal } from './internal'
 import { Paginated, Pagination } from './utils'
 
 declare module '.' {
@@ -31,10 +31,18 @@ declare module '.' {
   }
 }
 
+export interface GuildMember {
+  member_id_type: Feishu.UserIdType
+  member_id: string
+  name: string
+  tenant_key: string
+}
+
 declare module './internal' {
   export interface Internal {
     getCurrentUserGuilds(params: Pagination<{ user_id_type: Feishu.UserIdType }>): Promise<{ data: Paginated<Feishu.Guild> }>
-    GetGuildInfo(chat_id: string, params: { user_id_type: string }): Promise<BaseResponse & { data: Feishu.Guild }>
+    getGuildInfo(chat_id: string, params: { user_id_type: string }): Promise<BaseResponse & { data: Feishu.Guild }>
+    getGuildMembers(chat_id: string, params: Pagination<{ member_id_type: Feishu.UserIdType }>): Promise<{ data: Paginated<GuildMember> }>
   }
 }
 
@@ -43,6 +51,9 @@ Internal.define({
     GET: 'getCurrentUserGuilds',
   },
   '/im/v1/chats/{chat_id}': {
-    GET: 'GetGuildInfo',
+    GET: 'getGuildInfo',
+  },
+  '/im/v1/chats/{chat_id}/members': {
+    GET: 'getGuildMembers',
   },
 })
