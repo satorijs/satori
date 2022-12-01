@@ -1,20 +1,20 @@
 import { Messenger, segment } from '@satorijs/core'
+import FormData from 'form-data'
+import { createReadStream } from 'fs'
+import internal from 'stream'
+import { Feishu } from '.'
+
 import { FeishuBot } from './bot'
 import { BaseResponse, Message, MessageType } from './types'
 import { extractIdType } from './utils'
 
-interface Addition {
-  file?: {
-    id: string
-    type: MessageType
-  }
-}
+type Addition = FeishuBot.Message.Contents<'audio' | 'file' | 'image' | 'media'>
 
 export class FeishuMessenger extends Messenger<FeishuBot> {
   private mode: 'default' | 'figure' = 'default'
   private quote: string | undefined
   private content = ''
-  private addition: Addition = {}
+  private addition: Addition
 
   async post(data?: any) {
     try {
@@ -38,26 +38,17 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
   }
 
   async flush() {
-    if (this.content === '' && !this.addition.file) return
+    if (this.content === '' && !this.addition) return
 
     let message = {} as FeishuBot.Message.Contents<MessageType>
-    if (this.addition.file) {
-      message.msg_type = this.addition.file.type
-      if (FeishuBot.Message.extractContentsType('image', message)) {
-        message.image_key = this.addition.file.id
-      } else if (
-        FeishuBot.Message.extractContentsType('audio', message)
-        || FeishuBot.Message.extractContentsType('file', message)
-      ) {
-        message.file_key = this.addition.file.id
-      } else if (FeishuBot.Message.extractContentsType('media', message)) {
-        message.file_key = this.addition.file.id
+    if (this.addition) {
+      message = {
+        ...message,
+        ...this.addition,
       }
     } else {
       message.msg_type = 'text'
-      if (FeishuBot.Message.extractContentsType('text', message)) {
-        message.text = this.content
-      }
+      ;(message as FeishuBot.Message.Text).text = this.content
     }
     await this.post({
       msg_type: message.msg_type,
@@ -66,18 +57,59 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
 
     // reset cached content
     this.content = ''
-    this.addition = {}
+    this.addition = undefined
   }
 
-  async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string) {
+  async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string): Promise<Addition> {
     let newType = type as MessageType
     if (type === 'audio') {
       newType = 'media'
     }
     // TODO send file, and get file id
-    return {
-      id: 'fileId',
-      type: newType,
+    // return {
+    //   id: 'fileId',
+    //   type: newType,
+    // }
+
+    const payload = new FormData()
+
+    const assetKey = type === 'image' ? 'image' : 'file'
+    const [schema, file] = url.split('://')
+    const filename = schema === 'base64' ? 'unknown' : new URL(url).pathname.split('/').pop()
+    if (schema === 'file') {
+      payload.append(assetKey, createReadStream(file))
+    } else if (schema === 'base64') {
+      payload.append(assetKey, Buffer.from(file, 'base64'))
+    } else {
+      const resp = await this.bot.assetsQuester.get<internal.Readable>(url, { responseType: 'stream' })
+      payload.append(assetKey, resp)
+    }
+
+    if (type === 'image') {
+      payload.append('image_type', 'message')
+      const { data } = await this.bot.internal.uploadImage(payload)
+      return { msg_type: 'image', image_key: data.image_key }
+    } else {
+      let msgType: MessageType = 'file'
+      if (type === 'audio') {
+        // FIXME: only support opus
+        payload.append('file_type', 'opus')
+        msgType = 'audio'
+      } else if (type === 'video') {
+        // FIXME: only support mp4
+        payload.append('file_type', 'mp4')
+        msgType = 'media'
+      } else {
+        const ext = filename.split('.').pop()
+        if (['xls', 'ppt', 'pdf'].includes(ext)) {
+          payload.append('file_type', ext)
+        } else {
+          payload.append('file_type', 'stream')
+        }
+      }
+      payload.append('file_name', filename)
+      const { data } = await this.bot.internal.uploadFile(payload)
+      return { msg_type: msgType, file_key: data.file_key }
     }
   }
 
@@ -100,7 +132,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       this.quote = attrs.id
     } else if ((type === 'image' || type === 'video' || type === 'audio' || type === 'file') && attrs.url) {
       await this.flush()
-      this.addition.file = await this.sendFile(type, attrs.url)
+      this.addition = await this.sendFile(type, attrs.url)
     } else if (type === 'figure') {
       await this.flush()
       this.mode = 'figure'

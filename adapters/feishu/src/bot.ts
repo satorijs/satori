@@ -78,44 +78,6 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
   async deleteMessage(channelId: string, messageId: string): Promise<void> {
     await this.internal.deleteMessage(messageId)
   }
-
-  private async _prepareAssets(type: AssetType, data: { url: string }): Promise<MessageContent.Contents> {
-    const payload = new FormData()
-
-    const assetKey = type === 'image' ? 'image' : 'file'
-    const [schema, file] = data.url.split('://')
-    const filename = schema === 'base64' ? 'unknown' : new URL(data.url).pathname.split('/').pop()
-    if (schema === 'file') {
-      payload.append(assetKey, createReadStream(file))
-    } else if (schema === 'base64') {
-      payload.append(assetKey, Buffer.from(file, 'base64'))
-    } else {
-      const resp = await this.assetsQuester.get<internal.Readable>(data.url, { responseType: 'stream' })
-      payload.append(assetKey, resp)
-    }
-
-    if (type === 'image') {
-      payload.append('image_type', 'message')
-      const { data } = await this.internal.uploadImage(payload)
-      return { image_key: data.image_key }
-    } else {
-      if (type === 'audio') {
-        payload.append('file_type', 'opus')
-      } else if (type === 'video') {
-        payload.append('file_type', 'mp4')
-      } else {
-        const ext = filename.split('.').pop()
-        if (['xls', 'ppt', 'pdf'].includes(ext)) {
-          payload.append('file_type', ext)
-        } else {
-          payload.append('file_type', 'stream')
-        }
-      }
-      payload.append('file_name', filename)
-      const { data } = await this.internal.uploadFile(payload)
-      return { file_key: data.file_key }
-    }
-  }
 }
 
 export namespace FeishuBot {
