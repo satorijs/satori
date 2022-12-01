@@ -25,11 +25,11 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 
       // compare signature if encryptKey is set
       // But not every message contains signature
-      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-security-verification
+      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
       const signature = ctx.get('X-Lark-Signature')
-      const enabled = this.bots.filter((bot) => bot.config.verifySignature)
-      if (signature && enabled.length) {
-        const result = enabled.some((bot) => {
+      const enabledSignatureVerify = this.bots.filter((bot) => bot.config.verifySignature)
+      if (signature && enabledSignatureVerify.length) {
+        const result = enabledSignatureVerify.some((bot) => {
           const timestamp = ctx.get('X-Lark-Request-Timestamp')
           const nonce = ctx.get('X-Lark-Request-Nonce')
           const body = ctx.request.rawBody
@@ -49,10 +49,20 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
         return
       }
 
+      // compare verification token
+      const enabledVeirfyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
+      if (enabledVeirfyTokenVerify.length) {
+        const result = enabledVeirfyTokenVerify.some((bot) => {
+          const token = ctx.request.body?.token
+          if (token === bot.config.verificationToken) return true
+          else return false
+        })
+        if (!result) return (ctx.status = 403)
+      }
+
       // dispatch message
-      const decryped = this._tryDecryptBody(ctx.request.body)
-      logger.debug('received decryped event: %o', decryped)
-      this.dispatchSession(decryped)
+      logger.debug('received decryped event: %o', body)
+      this.dispatchSession(body)
 
       // Feishu requires 200 OK response to make sure event is received
       return ctx.status = 200

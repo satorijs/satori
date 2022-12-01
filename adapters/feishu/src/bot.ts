@@ -86,6 +86,7 @@ export namespace FeishuBot {
     appId: string
     appSecret: string
     encryptKey?: string
+    verificationToken?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -94,6 +95,7 @@ export namespace FeishuBot {
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
+      verificationToken: Schema.string().description('事件推送的 Varification Token'),
     }),
     Quester.Config,
     HttpServer.Config,
