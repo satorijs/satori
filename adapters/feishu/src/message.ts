@@ -54,7 +54,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       message = { zh_cn: this.richText } as MessageContent.RichText
     }
     if (this.content) {
-      ;(message as MessageContent.Text).text = this.content
+      message = { text: this.content }
     }
     await this.post({
       msg_type: this.richText ? 'post' : this.addition ? this.addition.type : 'text',
