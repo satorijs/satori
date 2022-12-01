@@ -23,17 +23,22 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     bot.ctx.router.post(path, (ctx) => {
       this._refreshCipher()
 
-      // // compare signature if encryptKey is set
-      // // But not every message contains signature
-      // // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-security-verification
-      // const signature = firstOrDefault(ctx.headers['X-Lark-Signature'])
-      // if (encryptKey && signature) {
-      //   const timestamp = firstOrDefault(ctx.headers['X-Lark-Request-Timestamp'])
-      //   const nonce = firstOrDefault(ctx.headers['X-Lark-Request-Nonce'])
-      //   const body = ctx.request.rawBody
-      //   const actualSignature = this.cipher.calculateSignature(timestamp, nonce, body)
-      //   if (signature !== actualSignature) return (ctx.status = 403)
-      // }
+      // compare signature if encryptKey is set
+      // But not every message contains signature
+      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-security-verification
+      const signature = ctx.get('X-Lark-Signature')
+      const enabled = this.bots.filter((bot) => bot.config.verifySignature)
+      if (signature && enabled.length) {
+        const result = enabled.some((bot) => {
+          const timestamp = ctx.get('X-Lark-Request-Timestamp')
+          const nonce = ctx.get('X-Lark-Request-Nonce')
+          const body = ctx.request.rawBody
+          const actualSignature = this.ciphers[bot.config.appId]?.calculateSignature(timestamp, nonce, body)
+          if (actualSignature === signature) return true
+          else return false
+        })
+        if (!result) return (ctx.status = 403)
+      }
 
       // try to decrypt message first if encryptKey is set
       const body = this._tryDecryptBody(ctx.request.body)
