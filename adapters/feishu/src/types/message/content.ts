@@ -12,6 +12,12 @@ export namespace MessageContent {
     | Sticker
     | RichText
 
+  export type MediaContents =
+    | Image
+    | Audio
+    | Media
+    | File
+
   export interface Text {
     text: string
   }
@@ -66,6 +72,7 @@ export namespace MessageContent {
     }
     export interface LinkContent extends BaseContent {
       tag: 'a'
+      text: string
       href: string
     }
     export interface AtContent extends BaseContent {
@@ -79,11 +86,17 @@ export namespace MessageContent {
       height?: number
       width?: number
     }
+    export interface MediaContent extends BaseContent {
+      tag: 'media'
+      file_key: string
+      image_key?: string
+    }
 
     export type Content =
       | RichText.TextContent
       | RichText.LinkContent
       | RichText.AtContent
       | RichText.ImageContent
+      | RichText.MediaContent
   }
 }

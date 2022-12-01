@@ -2,19 +2,22 @@ import { Messenger, segment } from '@satorijs/core'
 import FormData from 'form-data'
 import { createReadStream } from 'fs'
 import internal from 'stream'
-import { Feishu } from '.'
 
 import { FeishuBot } from './bot'
-import { BaseResponse, Message, MessageType } from './types'
+import { BaseResponse, Message, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
 
-type Addition = FeishuBot.Message.Contents<'audio' | 'file' | 'image' | 'media'>
+export interface Addition {
+  file: MessageContent.MediaContents
+  type: MessageType
+}
 
 export class FeishuMessenger extends Messenger<FeishuBot> {
   private mode: 'default' | 'figure' = 'default'
   private quote: string | undefined
   private content = ''
   private addition: Addition
+  private richText: MessageContent.RichText[string]
 
   async post(data?: any) {
     try {
@@ -38,39 +41,33 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
   }
 
   async flush() {
-    if (this.content === '' && !this.addition) return
+    if (this.content === '' && !this.addition && !this.richText) return
 
-    let message = {} as FeishuBot.Message.Contents<MessageType>
+    let message: MessageContent.Contents
     if (this.addition) {
       message = {
         ...message,
-        ...this.addition,
+        ...this.addition.file,
       }
-    } else {
-      message.msg_type = 'text'
-      ;(message as FeishuBot.Message.Text).text = this.content
+    }
+    if (this.richText) {
+      message = { zh_cn: this.richText } as MessageContent.RichText
+    }
+    if (this.content) {
+      ;(message as MessageContent.Text).text = this.content
     }
     await this.post({
-      msg_type: message.msg_type,
+      msg_type: this.richText ? 'post' : this.addition ? this.addition.type : 'text',
       content: JSON.stringify(message)
     })
 
     // reset cached content
     this.content = ''
     this.addition = undefined
+    this.richText = undefined
   }
 
   async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string): Promise<Addition> {
-    let newType = type as MessageType
-    if (type === 'audio') {
-      newType = 'media'
-    }
-    // TODO send file, and get file id
-    // return {
-    //   id: 'fileId',
-    //   type: newType,
-    // }
-
     const payload = new FormData()
 
     const assetKey = type === 'image' ? 'image' : 'file'
@@ -88,7 +85,12 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     if (type === 'image') {
       payload.append('image_type', 'message')
       const { data } = await this.bot.internal.uploadImage(payload)
-      return { msg_type: 'image', image_key: data.image_key }
+      return {
+        type: 'image',
+        file: {
+          image_key: data.image_key,
+        },
+      }
     } else {
       let msgType: MessageType = 'file'
       if (type === 'audio') {
@@ -109,12 +111,45 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       }
       payload.append('file_name', filename)
       const { data } = await this.bot.internal.uploadFile(payload)
-      return { msg_type: msgType, file_key: data.file_key }
+      return {
+        type: msgType,
+        file: {
+          file_key: data.file_key,
+        },
+      }
     }
   }
 
   async visit(element: segment) {
     const { type, attrs, children } = element
+
+    // render rich text post
+    if (this.mode === 'figure') {
+      if (!this.richText) {
+        this.richText = { title: '', content: [] }
+      }
+      switch (type) {
+        case 'text':
+          this.richText.content.push([{ tag: 'text', text: attrs.content }])
+          break
+        case 'link':
+          this.richText.content.push([{ tag: 'a', text: attrs.text, href: attrs.href }])
+          break
+        case 'at':
+          this.richText.content.push([{ tag: 'at', user_id: attrs.id }])
+          break
+        case 'image':
+          const data = await this.sendFile('image', attrs.url)
+          this.richText.content.push([{ tag: 'img', image_key: (data.file as MessageContent.Image).image_key }])
+          break
+        case 'video':
+          const video = await this.sendFile('video', attrs.url)
+          this.richText.content.push([{ tag: 'media', file_key: (video.file as MessageContent.Media).file_key }])
+          break
+      }
+      return
+    }
+
     if (type === 'text') {
       this.content += attrs.content
     } else if (type === 'at') {
@@ -139,13 +174,8 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       await this.render(children, true)
       this.mode = 'default'
     } else if (type === 'message') {
-      if (this.mode === 'figure') {
-        await this.render(children)
-        this.content += '\n'
-      } else {
-        await this.flush()
-        await this.render(children, true)
-      }
+      await this.flush()
+      await this.render(children, true)
     } else {
       await this.render(children)
     }
