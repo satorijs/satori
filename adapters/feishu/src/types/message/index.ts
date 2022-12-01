@@ -1,4 +1,5 @@
 import { Feishu, Internal } from '..'
+import { Paginated, Pagination } from '../utils'
 import { MessageContent } from './content'
 
 export * from './content'
@@ -157,6 +158,13 @@ export interface Message {
   upper_message_id: string
 }
 
+export interface ReadUser {
+  user_id_type: Feishu.UserIdType
+  user_id: string
+  timestamp: string
+  tenant_key: string
+}
+
 declare module '../internal' {
   export interface Internal {
     /** @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create */
@@ -167,6 +175,8 @@ declare module '../internal' {
     getMessage(message_id: string): Promise<BaseResponse & { data: Message }>
     /** @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/delete */
     deleteMessage(message_id: string): Promise<BaseResponse>
+    /** @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users */
+    getMessageReadUsers(message_id: string, params: Pagination<{ user_id_type: Feishu.UserIdType }>): Promise<BaseResponse & { data: Paginated<ReadUser> }>
   }
 }
 
@@ -180,5 +190,8 @@ Internal.define({
   '/im/v1/messages/{message_id}': {
     GET: 'getMessage',
     DELETE: 'deleteMessage',
+  },
+  '/im/v1/messages/{message_id}/read_users': {
+    GET: 'getMessageReadUsers',
   }
 })
