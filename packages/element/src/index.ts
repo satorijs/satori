@@ -106,9 +106,9 @@ namespace Element {
   export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
   export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
-  export function normalize(source: Fragment) {
+  export function normalize(source: Fragment, context?: any) {
     if (typeof source !== 'string') return toElementArray(source)
-    return Element.parse(source)
+    return Element.parse(source, context)
   }
 
   export function escape(source: string, inline = false) {
