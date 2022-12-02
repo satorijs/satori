@@ -150,37 +150,50 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       return
     }
 
-    if (type === 'text') {
-      this.content += attrs.content
-    } else if (type === 'at') {
-      switch (attrs.type) {
-        case 'all':
-          this.content += `<at user_id="all">${ attrs.name ?? '所有人' }</at>`
-          break
-        default:
+    switch (type) {
+      case 'text':
+        this.content += attrs.content
+        break
+      case 'at': {
+        if (attrs.type === 'all') {
+          this.content += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
+        } else {
           this.content += `<at user_id="${attrs.id}">${attrs.name}</at>`
+        }
+        break
       }
-    } else if (type === 'a') {
-      await this.render(children)
-      if (attrs.href) this.content += ` (${attrs.href})`
-    } else if (type === 'sharp') {
-      // platform does not support sharp
-    } else if (type === 'quote') {
-      await this.flush()
-      this.quote = attrs.id
-    } else if ((type === 'image' || type === 'video' || type === 'audio' || type === 'file') && attrs.url) {
-      await this.flush()
-      this.addition = await this.sendFile(type, attrs.url)
-    } else if (type === 'figure') {
-      await this.flush()
-      this.mode = 'figure'
-      await this.render(children, true)
-      this.mode = 'default'
-    } else if (type === 'message') {
-      await this.flush()
-      await this.render(children, true)
-    } else {
-      await this.render(children)
+      case 'a':
+        await this.render(children)
+        if (attrs.href) this.content += ` (${attrs.href})`
+        break
+      case 'sharp':
+        // platform does not support sharp
+        break
+      case 'quote':
+        await this.flush()
+        this.quote = attrs.id
+        break
+      case 'image':
+      case 'video':
+      case 'audio':
+      case 'file':
+        if (attrs.url) {
+          await this.flush()
+          this.addition = await this.sendFile(type, attrs.url)
+        }
+        break
+      case 'figure':
+        await this.flush()
+        this.mode = 'figure'
+        await this.render(children, true)
+        this.mode = 'default'
+        break
+      case 'message':
+        await this.flush()
+        await this.render(children, true)
+        break
+      default:
+        await this.render(children)
     }
   }
 }
