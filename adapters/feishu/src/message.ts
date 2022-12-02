@@ -63,6 +63,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     })
 
     // reset cached content
+    this.quote = undefined
     this.content = ''
     this.addition = undefined
     this.richText = undefined
