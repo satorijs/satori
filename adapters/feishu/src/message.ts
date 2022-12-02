@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { Messenger, segment } from '@satorijs/core'
+import { Messenger, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { FeishuBot } from './bot'

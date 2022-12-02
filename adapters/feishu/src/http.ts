@@ -1,7 +1,6 @@
 import internal from 'stream'
 
-import { Adapter, Context } from '@satorijs/core'
-import { Schema, Logger } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
 import { AllEvents } from './types'
@@ -144,7 +143,7 @@ export namespace HttpServer {
 
   export const Config: Schema<HttpServer.Config> = Schema.object({
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
-    verifyToken: Schema.boolean().description('是否验证 Varification Token'),
-    verifySignature: Schema.boolean().description('是否验证 Signature'),
+    verifyToken: Schema.boolean().description('是否验证令牌。'),
+    verifySignature: Schema.boolean().description('是否验证签名。'),
   })
 }

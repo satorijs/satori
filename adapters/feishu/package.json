@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-feishu",
   "description": "Feishu Adapter for Satorijs",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -14,13 +14,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/satorijs/node-sdk.git",
+    "url": "git+https://github.com/satorijs/satori.git",
     "directory": "adapters/feishu"
   },
   "bugs": {
-    "url": "https://github.com/satorijs/node-sdk/issues"
+    "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.js.org/api/adapter/feishu.html",
+  "homepage": "https://koishi.chat/plugins/adapter/feishu.html",
   "keywords": [
     "bot",
     "feishu",
@@ -28,8 +28,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^1.0.1",
-    "@satorijs/satori": "^1.0.1"
+    "@satorijs/satori": "^1.4.3"
   },
   "dependencies": {
     "form-data": "^4.0.0"

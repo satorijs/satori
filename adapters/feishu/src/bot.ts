@@ -1,5 +1,4 @@
-import { Bot, Context } from '@satorijs/core'
-import { Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { FeishuMessenger } from './message'
@@ -88,7 +87,7 @@ export namespace FeishuBot {
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
-      verificationToken: Schema.string().description('事件推送的 Varification Token'),
+      verificationToken: Schema.string().description('事件推送的验证令牌。'),
     }),
     Quester.Config,
     HttpServer.Config,
