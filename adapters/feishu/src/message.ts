@@ -14,10 +14,10 @@ export interface Addition {
 }
 
 export class FeishuMessenger extends Messenger<FeishuBot> {
-  private mode: 'default' | 'figure' = 'default'
   private quote: string | undefined
   private content = ''
   private addition: Addition
+  // TODO: currently not used, would be supported in the future
   private richText: MessageContent.RichText[string]
 
   async post(data?: any) {
@@ -52,7 +52,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       }
     }
     if (this.richText) {
-      message = { zh_cn: this.richText } as MessageContent.RichText
+      message = { zh_cn: this.richText }
     }
     if (this.content) {
       message = { text: this.content }
@@ -124,33 +124,6 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
 
-    // render rich text post
-    if (this.mode === 'figure') {
-      if (!this.richText) {
-        this.richText = { title: '', content: [] }
-      }
-      switch (type) {
-        case 'text':
-          this.richText.content.push([{ tag: 'text', text: attrs.content }])
-          break
-        case 'a':
-          this.richText.content.push([{ tag: 'a', text: attrs.text, href: attrs.href }])
-          break
-        case 'at':
-          this.richText.content.push([{ tag: 'at', user_id: attrs.id }])
-          break
-        case 'image':
-          const data = await this.sendFile('image', attrs.url)
-          this.richText.content.push([{ tag: 'img', image_key: (data.file as MessageContent.Image).image_key }])
-          break
-        case 'video':
-          const video = await this.sendFile('video', attrs.url)
-          this.richText.content.push([{ tag: 'media', file_key: (video.file as MessageContent.Media).file_key }])
-          break
-      }
-      return
-    }
-
     switch (type) {
       case 'text':
         this.content += attrs.content
@@ -183,12 +156,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
           this.addition = await this.sendFile(type, attrs.url)
         }
         break
-      case 'figure':
-        await this.flush()
-        this.mode = 'figure'
-        await this.render(children, true)
-        this.mode = 'default'
-        break
+      case 'figure': // FIXME: treat as message element for now
       case 'message':
         await this.flush()
         await this.render(children, true)
