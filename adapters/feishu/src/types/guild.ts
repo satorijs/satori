@@ -1,4 +1,5 @@
 import { Dict } from '@satorijs/satori'
+
 import { Feishu } from '.'
 import { Internal } from './internal'
 import { Paginated, Pagination } from './utils'

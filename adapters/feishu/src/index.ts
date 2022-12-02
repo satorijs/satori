@@ -1,5 +1,5 @@
-import * as Feishu from './types'
 import { FeishuBot } from './bot'
+import * as Feishu from './types'
 
 export { Feishu }
 

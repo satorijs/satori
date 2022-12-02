@@ -1,16 +1,9 @@
-import { createReadStream } from 'fs'
-import internal from 'stream'
-
 import { Bot, Context } from '@satorijs/core'
-import { Logger, Quester, Schema, segment } from '@satorijs/satori'
-import FormData from 'form-data'
+import { Logger, Quester, Schema } from '@satorijs/satori'
 
-import { FeishuMessenger } from './message'
 import { HttpServer } from './http'
-import { Internal, MessageContent, MessagePayload, MessageType } from './types'
-import { extractIdType } from './utils'
-
-type AssetType = 'image' | 'audio' | 'video' | 'file'
+import { FeishuMessenger } from './message'
+import { Internal } from './types'
 
 const logger = new Logger('feishu')
 

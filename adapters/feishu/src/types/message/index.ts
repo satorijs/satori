@@ -1,5 +1,6 @@
 import { Feishu, Internal } from '..'
 import { Paginated, Pagination } from '../utils'
+
 import { MessageContent } from './content'
 
 export * from './content'

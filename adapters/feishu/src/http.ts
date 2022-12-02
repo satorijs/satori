@@ -1,6 +1,7 @@
+import internal from 'stream'
+
 import { Adapter, Context } from '@satorijs/core'
 import { Schema, Logger } from '@satorijs/satori'
-import internal from 'stream'
 
 import { FeishuBot } from './bot'
 import { AllEvents } from './types'
