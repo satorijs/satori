@@ -135,7 +135,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     } else if (type === 'message') {
       await this.flush()
       // qqguild does not support forward messages
-      if (attrs.forward && !this.bot.parent) {
+      if ('forward' in attrs && !this.bot.parent) {
         this.stack.unshift(new State('forward'))
         await this.render(children)
         await this.flush()

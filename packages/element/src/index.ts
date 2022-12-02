@@ -320,7 +320,7 @@ namespace Element {
       if (result === true) {
         output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
-        output.push(...toElementArray(result))
+        output.push(...normalize(result))
       }
     })
     return typeof source === 'string' ? output.join('') : output
@@ -339,7 +339,7 @@ namespace Element {
       if (result === true) {
         return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
-        return toElementArray(result)
+        return normalize(result)
       } else {
         return []
       }
