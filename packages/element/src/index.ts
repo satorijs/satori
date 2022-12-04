@@ -106,9 +106,9 @@ namespace Element {
   export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
   export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
-  export function normalize(source: Fragment) {
+  export function normalize(source: Fragment, context?: any) {
     if (typeof source !== 'string') return toElementArray(source)
-    return Element.parse(source)
+    return Element.parse(source, context)
   }
 
   export function escape(source: string, inline = false) {
@@ -320,7 +320,7 @@ namespace Element {
       if (result === true) {
         output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
-        output.push(...toElementArray(result))
+        output.push(...normalize(result))
       }
     })
     return typeof source === 'string' ? output.join('') : output
@@ -339,7 +339,7 @@ namespace Element {
       if (result === true) {
         return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
-        return toElementArray(result)
+        return normalize(result)
       } else {
         return []
       }

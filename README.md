@@ -7,7 +7,7 @@
 
 - Infrastructure
   - [x] @satorijs/core
-  - [ ] @satorijs/element
+  - [x] @satorijs/element
   - [x] @satorijs/satori
   - [ ] @satorijs/database
   - [ ] @satorijs/server
@@ -17,7 +17,8 @@
   - [x] OneBot (v11)
   - [x] QQ Guild
   - [x] KOOK (Kaiheila)
-  - [ ] Feishu
+  - [x] Feishu
+  - [ ] Dingding
   - [ ] Wecom
 
 ## Examples

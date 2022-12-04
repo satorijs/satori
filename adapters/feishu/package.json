@@ -1,26 +1,29 @@
 {
-  "name": "@satorijs/adapter-onebot",
-  "description": "OneBot Adapter for Satorijs",
-  "version": "5.4.4",
+  "name": "@satorijs/adapter-feishu",
+  "description": "Feishu Adapter for Satorijs",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib"
   ],
-  "author": "Shigma <shigma10826@gmail.com>",
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "adapters/onebot"
+    "directory": "adapters/feishu"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.chat/plugins/adapter/onebot.html",
+  "homepage": "https://koishi.chat/plugins/adapter/feishu.html",
   "keywords": [
     "bot",
-    "onebot",
+    "feishu",
     "chatbot",
     "satori"
   ],
@@ -28,6 +31,6 @@
     "@satorijs/satori": "^1.4.3"
   },
   "dependencies": {
-    "qface": "^1.2.0"
+    "form-data": "^4.0.0"
   }
 }
