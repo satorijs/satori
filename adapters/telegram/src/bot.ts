@@ -32,6 +32,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   file: Quester
   internal?: Telegram.Internal
   local?: boolean
+  server?: string
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
@@ -50,6 +51,16 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       ctx.plugin(HttpServer, this)
     } else if (config.protocol === 'polling') {
       ctx.plugin(HttpPolling, this)
+    }
+    const selfUrl: string = config['selfUrl'] || ctx.root.config.selfUrl
+    if (config.files.server ?? selfUrl) {
+      const route = `/telegram/${this.selfId}`
+      this.server = selfUrl + route
+      ctx.router.get(route + '/:file+', async ctx => {
+        const { buffer, mime } = await this.$getFile(ctx.params.file)
+        ctx.set('content-type', mime)
+        ctx.body = buffer
+      })
     }
   }
 
@@ -113,7 +124,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
     if (message.photo) {
       const photo = message.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
-      segments.push(segment('image', await this.$getFileData(photo.file_id)))
+      segments.push(segment('image', await this.$getFileFromId(photo.file_id)))
     }
     if (message.sticker) {
       // TODO: Convert tgs to gif
@@ -124,19 +135,19 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         if (file.file_path.endsWith('.tgs')) {
           throw new Error('tgs is not supported now')
         }
-        segments.push(segment('image', await this.$getFileContent(file.file_path)))
+        segments.push(segment('image', await this.$getFileFromPath(file.file_path)))
       } catch (e) {
         logger.warn('get file error', e)
         segments.push(segment('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
     } else if (message.animation) {
-      segments.push(segment('image', await this.$getFileData(message.animation.file_id)))
+      segments.push(segment('image', await this.$getFileFromId(message.animation.file_id)))
     } else if (message.voice) {
-      segments.push(segment('audio', await this.$getFileData(message.voice.file_id)))
+      segments.push(segment('audio', await this.$getFileFromId(message.voice.file_id)))
     } else if (message.video) {
-      segments.push(segment('video', await this.$getFileData(message.video.file_id)))
+      segments.push(segment('video', await this.$getFileFromId(message.video.file_id)))
     } else if (message.document) {
-      segments.push(segment('file', await this.$getFileData(message.document.file_id)))
+      segments.push(segment('file', await this.$getFileFromId(message.document.file_id)))
     }
 
     session.content = segments.join('')
@@ -230,34 +241,46 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     return user
   }
 
-  async $getFileData(file_id: string) {
+  async $getFile(filePath: string) {
+    let buffer: Buffer
+    if (this.local) {
+      buffer = await fs.promises.readFile(filePath)
+    } else {
+      buffer = await this.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
+    }
+    const { mime } = await fromBuffer(buffer)
+    return { mime, buffer }
+  }
+
+  async $getFileFromId(file_id: string) {
     try {
       const file = await this.internal.getFile({ file_id })
-      return await this.$getFileContent(file.file_path)
+      return await this.$getFileFromPath(file.file_path)
     } catch (e) {
       logger.warn('get file error', e)
     }
   }
 
-  async $getFileContent(filePath: string) {
-    let res: Buffer
-    if (this.local) {
-      res = await fs.promises.readFile(filePath)
-    } else {
-      res = await this.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
+  async $getFileFromPath(filePath: string) {
+    if (this.server) {
+      return { url: `${this.server}/${filePath}` }
     }
-    const { mime } = await fromBuffer(res)
-    const base64 = `data:${mime};base64,` + res.toString('base64')
+    const { mime, buffer } = await this.$getFile(filePath)
+    const base64 = `data:${mime};base64,` + buffer.toString('base64')
     return { url: base64 }
   }
 
   private async setAvatarUrl(user: Universal.User) {
-    const { endpoint } = this.file.config
     const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
     if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]
     const file = await this.internal.getFile({ file_id })
-    user.avatar = `${endpoint}/${file.file_path}`
+    if (this.server) {
+      user.avatar = `${this.server}/${file.file_path}`
+    } else {
+      const { endpoint } = this.file.config
+      user.avatar = `${endpoint}/${file.file_path}`
+    }
   }
 }
 
@@ -276,6 +299,7 @@ export namespace TelegramBot {
     export interface Files {
       endpoint?: string
       local?: boolean
+      server?: boolean
     }
   }
 
@@ -293,6 +317,7 @@ export namespace TelegramBot {
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),
         local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
+        server: Schema.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
       }),
     }).description('文件设置'),
   ] as const)
