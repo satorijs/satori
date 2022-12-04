@@ -317,7 +317,7 @@ export namespace TelegramBot {
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),
         local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
-        server: Schema.boolean().description('是否启用文件代理，若开启将会使用 selfUrl 进行反代，否则会下载所有文件资源（包括图片、视频等）。默认将根据 selfUrl 来判断是否开启。'),
+        server: Schema.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
       }),
     }).description('文件设置'),
   ] as const)
