@@ -31,12 +31,12 @@
     "shx": "^0.3.4",
     "typescript": "^4.9.3",
     "yakumo": "^0.3.7",
-    "yakumo-esbuild": "^0.3.18",
+    "yakumo-esbuild": "^0.3.19",
     "yakumo-mocha": "^0.3.1",
     "yakumo-publish": "^0.3.1",
     "yakumo-publish-sync": "^0.3.2",
     "yakumo-tsc": "^0.3.6",
     "yakumo-upgrade": "^0.3.2",
-    "yakumo-version": "^0.3.1"
+    "yakumo-version": "^0.3.2"
   }
 }
