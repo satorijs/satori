@@ -2,7 +2,7 @@ import * as cordis from 'cordis'
 import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Selector } from './selector'
-import { Session } from './session'
+import { SendOptions, Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
@@ -51,10 +51,10 @@ declare global {
   }
 }
 
-type EventCallback<T = void> = (this: Session, session: Session) => T
+type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<keyof Satori.Events, EventCallback> {
-  'before-send': EventCallback<Awaitable<void | boolean>>
+  'before-send': EventCallback<Awaitable<void | boolean>, [SendOptions]>
   'bot-added'(client: Bot): void
   'bot-removed'(client: Bot): void
   'bot-status-updated'(client: Bot): void

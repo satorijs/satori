@@ -39,7 +39,7 @@ export abstract class Messenger<B extends Bot = Bot> {
 
   async send(content: segment.Fragment) {
     this.session.elements = segment.normalize(content)
-    if (await this.session.app.serial(this.session, 'before-send', this.session)) return
+    if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
     await this.render(this.session.elements)
     await this.flush()
     if (this.errors.length) {
