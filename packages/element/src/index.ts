@@ -7,8 +7,8 @@ function isElement(source: any): source is Element {
 }
 
 function toElement(content: string | Element) {
-  if (typeof content === 'string') {
-    if (content) return Element('text', { content })
+  if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') {
+    if (content) return Element('text', { content: '' + content })
   } else if (isElement(content)) {
     return content
   } else if (!isNullable(content)) {
@@ -231,11 +231,15 @@ namespace Element {
   }
 
   export function parse(source: string, context?: any) {
-    const tokens: (string | Token)[] = []
+    const tokens: (Element | Token)[] = []
+    function pushText(content: string) {
+      if (content) tokens.push(Element('text', { content }))
+    }
+
     const attrRegExp = context ? attrRegExp2 : attrRegExp1
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
-      pushText(source.slice(0, tagCap.index))
+      parseContent(source.slice(0, tagCap.index))
       const [_, close, type, attrs, empty] = tagCap
       source = source.slice(tagCap.index + _.length)
       if (_.startsWith('<!')) continue
@@ -250,23 +254,22 @@ namespace Element {
       tokens.push(token)
     }
 
-    pushText(source)
-    function pushText(source: string) {
+    parseContent(source)
+    function parseContent(source: string) {
       source = source
         .replace(/^\s*\n\s*/, '')
         .replace(/\s*\n\s*$/, '')
-      let result = ''
       if (context) {
         let interpCap: RegExpExecArray
         while ((interpCap = interpRegExp.exec(source))) {
           const [_, expr] = interpCap
-          result += unescape(source.slice(0, interpCap.index))
-          result += interpolate(expr, context)
+          pushText(unescape(source.slice(0, interpCap.index)))
           source = source.slice(interpCap.index + _.length)
+          const content = interpolate(expr, context)
+          tokens.push(...toElementArray(content))
         }
       }
-      result += unescape(source)
-      if (result) tokens.push(result)
+      pushText(unescape(source))
     }
 
     const stack = [Element(Fragment)]
@@ -280,8 +283,8 @@ namespace Element {
     }
 
     for (const token of tokens) {
-      if (typeof token === 'string') {
-        stack[0].children.push(Element('text', { content: token }))
+      if (isElement(token)) {
+        stack[0].children.push(token)
       } else if (token.close) {
         let index = 0
         while (index < stack.length && stack[index].type !== token.type) index++

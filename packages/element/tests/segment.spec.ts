@@ -33,12 +33,12 @@ describe('Element API', () => {
     })
 
     it('interpolate', () => {
-      expect(Element.parse('<tag bar={bar}>1{foo}1</tag>', { foo: 2, bar: 3 }))
-        .to.deep.equal([Element('tag', { bar: '3' }, '121')])
+      expect(Element.parse('<tag bar={bar}>1{foo}1</tag>', { foo: 233, bar: 666 }))
+        .to.deep.equal([Element('tag', { bar: '666' }, '1', '233', '1')])
       expect(Element.parse('<tag>&gt;{"&gt;"}</tag>', {}))
-        .to.deep.equal([Element('tag', '>&gt;')])
+        .to.deep.equal([Element('tag', '>', '&gt;')])
       expect(Element.parse('<tag>{0}{1+1}</tag>', [233, 666]))
-        .to.deep.equal([Element('tag', '2332')])
+        .to.deep.equal([Element('tag', '233', '2')])
     })
 
     it('whitespace', () => {
