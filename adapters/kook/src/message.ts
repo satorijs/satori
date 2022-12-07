@@ -131,7 +131,8 @@ export class KookMessenger extends Messenger<KookBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content.replace(/[\\*_`~()]/g, '\\$&')
+      // https://github.com/satorijs/satori/issues/51
+      this.buffer += attrs.content.replace(/[\\*`~()]/g, '\\$&')
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
