@@ -94,6 +94,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   async visit(element: segment) {
     const { type, attrs, children } = element
     if (type === 'text') {
+      // https://github.com/satorijs/satori/issues/51
       this.buffer += attrs.content.replace(/[\\*`~|()]/g, '\\$&')
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
