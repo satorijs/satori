@@ -103,8 +103,8 @@ namespace Element {
 
   export type Fragment = string | Element | (string | Element)[]
   export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
-  export type Transformer<S> = boolean | Fragment | Render<boolean | Fragment, S>
-  export type AsyncTransformer<S> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
+  export type Transformer<S = never> = boolean | Fragment | Render<boolean | Fragment, S>
+  export type AsyncTransformer<S = never> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
   export function normalize(source: Fragment, context?: any) {
     if (typeof source !== 'string') return toElementArray(source)
@@ -309,8 +309,8 @@ namespace Element {
     return stack[0].children
   }
 
-  export function transform<S>(source: string, rules: Dict<Transformer<S>>, session?: S): string
-  export function transform<S>(source: Element[], rules: Dict<Transformer<S>>, session?: S): Element[]
+  export function transform<S = never>(source: string, rules: Dict<Transformer<S>>, session?: S): string
+  export function transform<S = never>(source: Element[], rules: Dict<Transformer<S>>, session?: S): Element[]
   export function transform<S>(source: string | Element[], rules: Dict<Transformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const output: Element[] = []
@@ -329,8 +329,8 @@ namespace Element {
     return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync<S>(source: string, rules: Dict<AsyncTransformer<S>>, session?: S): Promise<string>
-  export async function transformAsync<S>(source: Element[], rules: Dict<AsyncTransformer<S>>, session?: S): Promise<Element[]>
+  export async function transformAsync<S = never>(source: string, rules: Dict<AsyncTransformer<S>>, session?: S): Promise<string>
+  export async function transformAsync<S = never>(source: Element[], rules: Dict<AsyncTransformer<S>>, session?: S): Promise<Element[]>
   export async function transformAsync<S>(source: string | Element[], rules: Dict<AsyncTransformer<S>>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const children = (await Promise.all(elements.map(async (element) => {
@@ -378,6 +378,7 @@ namespace Element {
     }
   }
 
+  export const text = createFactory<[content: any]>('text', 'content')
   export const at = createFactory<[id: any]>('at', 'id')
   export const sharp = createFactory<[id: any]>('sharp', 'id')
   export const quote = createFactory<[id: any]>('quote', 'id')

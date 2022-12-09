@@ -1,4 +1,4 @@
-import { Server } from 'net'
+import net from 'net'
 
 export interface ListenOptions {
   host?: string
@@ -6,7 +6,7 @@ export interface ListenOptions {
   maxPort?: number
 }
 
-export function listen(server: Server, { host, port, maxPort = port }: ListenOptions) {
+export function listen(server: net.Server, { host, port, maxPort = port }: ListenOptions) {
   return new Promise<number>((resolve, reject) => {
     function onListen() {
       server.removeListener('error', onError)
