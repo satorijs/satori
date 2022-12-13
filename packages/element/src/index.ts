@@ -27,9 +27,9 @@ function toElementArray(content: Element.Fragment) {
 interface Element {
   [kElement]: true
   type: string
-  attrs: Dict<string>
+  attrs: Dict
   /** @deprecated use `attrs` instead */
-  data: Dict<string>
+  data: Dict
   children: Element[]
   source?: string
   toString(strip?: boolean): string
@@ -49,7 +49,8 @@ class ElementConstructor {
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
       key = hyphenate(key)
-      if (value === '') return ` ${key}`
+      if (value === true) return ` ${key}`
+      if (value === false) return ` no-${key}`
       return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
     if (!this.children.length) return `<${this.type}${attrs}/>`
@@ -64,19 +65,15 @@ function Element(type: string, ...children: Element.Fragment[]): Element
 function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
-  let attrs: Dict<string> = {}, children: Element[] = []
+  let attrs: Dict = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
     for (const [key, value] of Object.entries(args.shift())) {
       if (isNullable(value)) continue
       // https://github.com/reactjs/rfcs/pull/107
       if (key === 'children') {
         children = toElementArray(value as Element.Fragment)
-      } else if (value === true) {
-        attrs[key] = ''
-      } else if (value === false) {
-        attrs['no' + capitalize(key)] = ''
-      } else if (!isNullable(value)) {
-        attrs[key] = '' + value
+      } else {
+        attrs[key] = value
       }
     }
   }
@@ -226,7 +223,7 @@ namespace Element {
     type: string
     close: string
     empty: string
-    attrs: Dict<string>
+    attrs: Dict
     source: string
   }
 
@@ -246,10 +243,16 @@ namespace Element {
       const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, v1 = '', v2 = v1, v3] = attrCap
-        token.attrs[camelize(key)] = v3
-          ? interpolate(v3, context)
-          : unescape(v2)
+        const [_, key, v1, v2 = v1, v3] = attrCap
+        if (v3) {
+          token.attrs[camelize(key)] = interpolate(v3, context)
+        } else if (!isNullable(v2)) {
+          token.attrs[camelize(key)] = unescape(v2)
+        } else if (key.startsWith('no-')) {
+          token.attrs[camelize(key.slice(3))] = false
+        } else {
+          token.attrs[camelize(key)] = true
+        }
       }
       tokens.push(token)
     }

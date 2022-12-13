@@ -21,8 +21,8 @@ describe('Element API', () => {
         .to.deep.equal([Element('img', { src: 'https://test.com/?foo=1&bar=2' })])
       expect(Element.parse(`<tag foo="'" bar='"'>text</tag>`))
         .to.deep.equal([Element('tag', { foo: "'", bar: '"' }, 'text')])
-      expect(Element.parse('<tag foo no-bar>text</tag>'))
-        .to.deep.equal([Element('tag', { foo: true, bar: false }, 'text')])
+      expect(Element.parse('<tag no-foo bar-qux>text</tag>'))
+        .to.deep.equal([Element('tag', { foo: false, barQux: true }, 'text')])
     })
 
     it('mismatched tags', () => {
@@ -34,7 +34,7 @@ describe('Element API', () => {
 
     it('interpolate', () => {
       expect(Element.parse('<tag bar={bar}>1{foo}1</tag>', { foo: 233, bar: 666 }))
-        .to.deep.equal([Element('tag', { bar: '666' }, '1', '233', '1')])
+        .to.deep.equal([Element('tag', { bar: 666 }, '1', '233', '1')])
       expect(Element.parse('<tag>&gt;{"&gt;"}</tag>', {}))
         .to.deep.equal([Element('tag', '>', '&gt;')])
       expect(Element.parse('<tag>{0}{1+1}</tag>', [233, 666]))
@@ -54,9 +54,9 @@ describe('Element API', () => {
     it('basic support', () => {
       expect(Element('img', { src: 'https://test.com/?foo=1&bar=2' }).toString())
         .to.equal('<img src="https://test.com/?foo=1&amp;bar=2"/>')
-      expect(Element('tag', { foo: true, bar: false, qux: null }, 'text').toString())
-        .to.equal('<tag foo no-bar>text</tag>')
-      expect(Element('template', Element.parse('<tag foo no-qux>bar</tag>')).toString(true)).to.equal('bar')
+      expect(Element('tag', { foo: false, barQux: true }, 'text').toString())
+        .to.equal('<tag no-foo bar-qux>text</tag>')
+      expect(Element('template', Element.parse('<tag foo>bar</tag>')).toString(true)).to.equal('bar')
     })
 
     it('validate children', () => {
