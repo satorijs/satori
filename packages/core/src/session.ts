@@ -62,6 +62,10 @@ export class Session {
   get cid() {
     return `${this.platform}:${this.channelId}`
   }
+  
+  get bid() {
+    return `${this.platform}:${this.channelId}:${this.userId}`
+  }
 
   get sid() {
     return `${this.platform}:${this.selfId}`
