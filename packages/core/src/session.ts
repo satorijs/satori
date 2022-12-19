@@ -63,7 +63,7 @@ export class Session {
     return `${this.platform}:${this.channelId}`
   }
   
-  get bid() {
+  get fid() {
     return `${this.platform}:${this.channelId}:${this.userId}`
   }
 
