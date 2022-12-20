@@ -14,6 +14,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       ...config,
       headers: {
         Authorization: `Bot ${config.token}`,
+        'User-Agent': `DiscordBot (https://koishi.chat/, 1.0)`,
         ...config.headers,
       },
     })
