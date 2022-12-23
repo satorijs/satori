@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "1.4.10",
+  "version": "1.4.11",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "engines": {
@@ -32,12 +32,12 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "1.4.10",
+    "@satorijs/core": "1.4.11",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.3",
     "agent-base": "^6.0.2",
-    "koa": "^2.13.4",
+    "koa": "^2.14.1",
     "koa-bodyparser": "^4.3.0",
     "http-proxy-agent": "^5.0.0",
     "https-proxy-agent": "^5.0.1",
