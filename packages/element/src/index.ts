@@ -1,4 +1,4 @@
-import { Awaitable, camelize, capitalize, defineProperty, Dict, hyphenate, is, isNullable } from 'cosmokit'
+import { Awaitable, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
 
 const kElement = Symbol.for('satori.element')
 
@@ -67,11 +67,12 @@ function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   let attrs: Dict = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
-    for (const [key, value] of Object.entries(args.shift())) {
+    const props = args.shift()
+    for (const [key, value] of Object.entries(props)) {
       if (isNullable(value)) continue
       // https://github.com/reactjs/rfcs/pull/107
       if (key === 'children') {
-        children = toElementArray(value as Element.Fragment)
+        args.push(...makeArray(value))
       } else {
         attrs[key] = value
       }
