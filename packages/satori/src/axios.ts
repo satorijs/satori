@@ -1,5 +1,5 @@
 import { Quester } from '@satorijs/core'
-import { defineProperty, Dict } from 'cosmokit'
+import { base64ToArrayBuffer, defineProperty, Dict } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import { Agent } from 'agent-base'
 import { WebSocket } from 'ws'
@@ -15,6 +15,12 @@ import Schema from 'schemastery'
 const oldFile = Quester.prototype.file
 Quester.prototype.file = async function file(this: Quester, url: string) {
   // for backward compatibility
+  if (url.startsWith('base64://')) {
+    const data = base64ToArrayBuffer(url.slice(9))
+    const result = await fromBuffer(data)
+    const name = 'file' + (result ? '.' + result.ext : '')
+    return { mime: result?.mime, filename: name, data }
+  }
   if (url.startsWith('file://')) {
     const data = await fs.readFile(fileURLToPath(url))
     const result = await fromBuffer(data)

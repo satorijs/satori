@@ -1,7 +1,6 @@
 import { Context } from 'cordis'
-import { Dict, pick, trimSlash } from 'cosmokit'
+import { Dict, base64ToArrayBuffer, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
-import { fromBuffer } from 'file-type'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as types from 'axios'
@@ -16,19 +15,6 @@ declare module 'cordis' {
     interface Config {
       request?: Quester.Config
     }
-  }
-}
-
-export function base64ToArrayBuffer(base64: string) {
-  if (typeof Buffer !== 'undefined') {
-    return Buffer.from(base64, 'base64').buffer
-  } else {
-    const binary = atob(base64.replace(/\s/g, ''))
-    const buffer = new Uint8Array(binary.length)
-    for (let i = 0; i < binary.length; i++) {
-      buffer[i] = binary.charCodeAt(i)
-    }
-    return buffer
   }
 }
 
@@ -88,13 +74,6 @@ export class Quester {
   }
 
   async file(url: string): Promise<Quester.File> {
-    // for backward compatibility
-    if (url.startsWith('base64://')) {
-      const data = base64ToArrayBuffer(url.slice(9))
-      const result = await fromBuffer(data)
-      const name = 'file' + (result ? '.' + result.ext : '')
-      return { mime: result?.mime, filename: name, data }
-    }
     const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
     if (capture) {
       const [, mime, base64] = capture

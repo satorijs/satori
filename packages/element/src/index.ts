@@ -1,4 +1,4 @@
-import { Awaitable, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
+import { arrayBufferToBase64, Awaitable, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
 
 const kElement = Symbol.for('satori.element')
 
@@ -371,14 +371,23 @@ namespace Element {
     }
   }
 
-  function createAssetFactory(type: string): Factory<[data: string | Buffer | ArrayBuffer]> {
-    return (value, attrs = {}) => {
-      if (is('Buffer', value)) {
-        value = 'base64://' + value.toString('base64')
-      } else if (is('ArrayBuffer', value)) {
-        value = 'base64://' + Buffer.from(value).toString('base64')
+  export let warn: (message: string) => void = () => {}
+
+  function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer, type: string]> {
+    return (url, ...args) => {
+      let prefix = 'base64://'
+      if (typeof args[0] === 'string') {
+        prefix = `data:${args.shift()};base64,`
       }
-      return Element(type, { ...attrs, url: value })
+      if (is('Buffer', url)) {
+        url = prefix + url.toString('base64')
+      } else if (is('ArrayBuffer', url)) {
+        url = prefix + arrayBufferToBase64(url)
+      }
+      if (url.startsWith('base64://')) {
+        warn(`protocol "base64:" is deprecated and will be removed in the future, please use "data:" instead`)
+      }
+      return Element(type, { ...args[0] as {}, url })
     }
   }
 
