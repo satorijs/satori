@@ -8,7 +8,8 @@ function isElement(source: any): source is Element {
 
 function toElement(content: string | Element) {
   if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') {
-    if (content) return Element('text', { content: '' + content })
+    content = '' + content
+    if (content) return Element('text', { content })
   } else if (isElement(content)) {
     return content
   } else if (!isNullable(content)) {
