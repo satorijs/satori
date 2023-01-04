@@ -20,6 +20,7 @@ declare module 'cordis' {
 
 export interface Quester {
   <T = any>(method: Method, url: string, config?: AxiosRequestConfig): Promise<T>
+  axios<T = any>(config?: AxiosRequestConfig): Promise<AxiosResponse<T>>
   axios<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>>
   config: Quester.Config
 }
@@ -125,12 +126,12 @@ export namespace Quester {
   export function create(this: typeof Quester, config: Quester.Config = {}) {
     const endpoint = trimSlash(config.endpoint || '')
 
-    const request = async (url: string, config: AxiosRequestConfig = {}) => {
+    const request = async (config: AxiosRequestConfig = {}) => {
       const options = http.prepare()
       return axios({
         ...options,
         ...config,
-        url: endpoint + url,
+        url: endpoint + config.url,
         headers: {
           ...options.headers,
           ...config.headers,
@@ -139,7 +140,7 @@ export namespace Quester {
     }
 
     const http = (async (method, url, config) => {
-      const response = await request(url, { ...config, method })
+      const response = await request({ url, ...config, method })
       return response.data
     }) as Quester
 
@@ -149,7 +150,13 @@ export namespace Quester {
     }
 
     http.config = config
-    http.axios = request
+    http.axios = (...args: any[]) => {
+      if (typeof args[0] === 'string') {
+        return request({ url: args[0], ...args[1] })
+      } else {
+        return request(args[0])
+      }
+    }
     return http
   }
 }
