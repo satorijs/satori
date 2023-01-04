@@ -8,12 +8,16 @@ import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import segment from '@satorijs/element'
 import { Fragment, Render, escape, unescape } from '@satorijs/element'
+import { Internal } from './internal'
+
+segment.warn = new Logger('element').warn
 
 export { Fragment, Render, escape, unescape }
 export { Schema, Logger, segment, segment as Element, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
+export * from './internal'
 export * from './message'
 export * from './selector'
 export * from './session'
@@ -102,6 +106,8 @@ Session.prototype[Context.filter] = function (ctx: Context) {
 }
 
 Context.service('selector', Selector)
+
+Context.service('internal', Internal)
 
 Context.service('bots', class {
   constructor(root: Context) {

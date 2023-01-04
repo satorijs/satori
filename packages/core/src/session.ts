@@ -79,6 +79,10 @@ export class Session {
     this.elements = segment.parse(value)
   }
 
+  async transform(elements: segment[]): Promise<segment[]> {
+    return await segment.transformAsync(elements, this.app.internal.transformers, this)
+  }
+
   toJSON(): Session.Payload {
     return Object.fromEntries(Object.entries(this).filter(([key]) => {
       return !key.startsWith('_') && !key.startsWith('$')
