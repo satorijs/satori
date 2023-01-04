@@ -21,6 +21,7 @@ export namespace Component {
 export class Internal {
   static readonly methods = ['component']
 
+  public counter = 0
   public transformers: Dict<Component> = Object.create(null)
 
   constructor(private app: Context) {

@@ -46,19 +46,6 @@ ctx.on('message', (session) => {
 await ctx.start()
 ```
 
-### Event filters
-
-```ts
-// only listen to messages from discord user 123456789
-ctx.platform('discord').user('123456789').on('message', callback)
-
-// do not listen to private messages from telegram
-ctx.exclude(ctx.platform('telegram').private()).on('message', callback)
-
-// set manipulations
-ctx1.union(ctx2).intersect(ctx3).on('message', callback)
-```
-
 ### Specifying protocol
 
 ```ts

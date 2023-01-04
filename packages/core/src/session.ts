@@ -45,7 +45,7 @@ export class Session {
     this.platform = bot.platform
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
-    defineProperty(this, 'id', bot.ctx.bots.counter)
+    defineProperty(this, 'id', ++bot.ctx.internal.counter)
     this.initialize()
   }
 

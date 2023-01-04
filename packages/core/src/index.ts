@@ -1,7 +1,6 @@
 import * as cordis from 'cordis'
 import { Awaitable, Dict } from 'cosmokit'
 import { Bot } from './bot'
-import { Selector } from './selector'
 import { SendOptions, Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
@@ -19,7 +18,6 @@ export * from './bot'
 export * from './adapter'
 export * from './internal'
 export * from './message'
-export * from './selector'
 export * from './session'
 export * from './universal'
 
@@ -70,7 +68,7 @@ export interface Events<C extends Context = Context> extends cordis.Events<C>, R
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
-  bots: Bot[] & Dict<Bot> & { counter: number }
+  bots: Bot[] & Dict<Bot>
 }
 
 export class Context extends cordis.Context {
@@ -101,24 +99,16 @@ export namespace Context {
   }
 }
 
-Session.prototype[Context.filter] = function (ctx: Context) {
-  return ctx.filter(this)
-}
-
-Context.service('selector', Selector)
-
 Context.service('internal', Internal)
 
 Context.service('bots', class {
   constructor(root: Context) {
     const list: Bot[] = []
-    let counter = 0
     return new Proxy(list, {
       get(target, prop) {
         if (prop in target || typeof prop === 'symbol') {
           return target[prop]
         }
-        if (prop === 'counter') return counter++
         return list.find(bot => bot.sid === prop)
       },
       deleteProperty(target, prop) {
