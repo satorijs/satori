@@ -18,8 +18,8 @@ Quester.prototype.file = async function file(this: Quester, url: string) {
   if (url.startsWith('base64://')) {
     const data = base64ToArrayBuffer(url.slice(9))
     const result = await fromBuffer(data)
-    const name = 'file' + (result ? '.' + result.ext : '')
-    return { mime: result?.mime, filename: name, data }
+    const filename = 'file' + (result ? '.' + result.ext : '')
+    return { mime: result?.mime, filename, data }
   }
   if (url.startsWith('file://')) {
     const data = await fs.readFile(fileURLToPath(url))

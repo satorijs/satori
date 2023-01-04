@@ -1,15 +1,16 @@
 {
   "name": "@satorijs/adapter-telegram",
   "description": "Telegram Adapter for Satorijs",
-  "version": "3.5.3",
+  "version": "3.6.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib"
   ],
   "author": "undefined <i@undefined.moe>",
-  "maintainers": [
+  "contributors": [
     "Shigma <shigma10826@gmail.com>",
+    "anillc",
     "undefined <i@undefined.moe>"
   ],
   "license": "MIT",
@@ -29,7 +30,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.5.0"
+    "@satorijs/satori": "^2.0.0"
   },
   "dependencies": {
     "file-type": "^16.5.4",

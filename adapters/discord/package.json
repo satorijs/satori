@@ -1,14 +1,14 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "3.3.2",
+  "version": "3.4.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib"
   ],
   "author": "LittleC <i@ltlec.cn>",
-  "maintainers": [
+  "contributors": [
     "Shigma <shigma10826@gmail.com>",
     "LittleC <i@ltlec.cn>"
   ],
@@ -29,7 +29,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^1.5.0"
+    "@satorijs/satori": "^2.0.0"
   },
   "dependencies": {
     "file-type": "^16.5.4",
