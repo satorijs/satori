@@ -83,6 +83,9 @@ export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result
         segment.image(qface.getUrl(id)),
       ])
     },
+    record(attrs) {
+      return segment('audio', attrs)
+    },
   })
   if (result.elements[0]?.type === 'reply') {
     const reply = result.elements.shift()
