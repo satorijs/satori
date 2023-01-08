@@ -14,7 +14,7 @@ export abstract class Messenger<B extends Bot = Bot> {
   public results: Session[] = []
   public session: Session
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options?: SendOptions) {
+  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {
     this.session = bot.session({
       type: 'send',
       author: bot,
