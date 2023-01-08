@@ -99,8 +99,8 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     return items.map(adaptGroup)
   }
 
-  async getGuildMemberList() {
-    const { items } = await this.request<Kook.GuildMemberList>('GET', '/guild/user-list')
+  async getGuildMemberList(guild_id: string) {
+    const { items } = await this.request<Kook.GuildMemberList>('GET', '/guild/user-list', { guild_id })
     return items.map(adaptAuthor)
   }
 
