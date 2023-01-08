@@ -84,8 +84,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         if (e.type === 'mention') {
           if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
           const atName = eText.slice(1)
-          if (eText === '@' + this.username) segs.push(segment('at', { id: this.selfId, name: atName }))
-          // TODO handle @others
+          if (eText === '@' + this.username) {
+            segs.push(segment('at', { id: this.selfId, name: atName }))
+          } else {
+            // TODO handle @others
+            segs.push(segment('text', { content: eText }))
+          }
         } else if (e.type === 'text_mention') {
           segs.push(segment('at', { id: e.user.id }))
         } else {
