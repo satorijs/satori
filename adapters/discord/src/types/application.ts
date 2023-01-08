@@ -60,6 +60,8 @@ export interface ReadyEvent {
   guilds: Partial<Guild>[]
   /** used for resuming connections */
   session_id: string
+  /** gateway URL for resuming connections */
+  resume_gateway_url: string
   /** the shard information associated with this session, if sent when identifying */
   shard?: [shard_id: integer, num_shards: integer]
   /** contains id and flags */
