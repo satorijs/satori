@@ -216,7 +216,7 @@ namespace Element {
     return value ?? ''
   }
 
-  const tagRegExp = /<!--[\s\S]*?-->|<(\/?)\s*([^!\s>/]*)([^>]*?)\s*(\/?)>/
+  const tagRegExp = /<!--[\s\S]*?-->|<(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>/
   const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
   const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
   const interpRegExp = /\{([^}]*)\}/
