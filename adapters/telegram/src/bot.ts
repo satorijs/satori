@@ -93,12 +93,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         } else if (e.type === 'text_mention') {
           segs.push(segment('at', { id: e.user.id }))
         } else {
-          continue
+          // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
+          //       text_link, custom_emoji
+          segs.push(segment('text', { content: eText }))
         }
         if (e.offset > curr) {
           segs.splice(-1, 0, segment('text', { content: text.slice(curr, e.offset) }))
-          curr = e.offset + e.length
         }
+        curr = e.offset + e.length
       }
       if (curr < text?.length || 0) {
         segs.push(segment('text', { content: text.slice(curr) }))
