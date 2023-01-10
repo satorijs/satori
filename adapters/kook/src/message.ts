@@ -1,4 +1,4 @@
-import { Messenger, Schema, segment } from '@satorijs/satori'
+import { Messenger, Schema, SendOptions, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -13,8 +13,8 @@ export class KookMessenger extends Messenger<KookBot> {
   private additional = {} as Partial<Kook.MessageParams>
   private buffer: string = ''
 
-  constructor(bot: KookBot, channelId: string, guildId?: string) {
-    super(bot, channelId, guildId)
+  constructor(bot: KookBot, channelId: string, guildId?: string, options?: SendOptions) {
+    super(bot, channelId, guildId, options)
     if (channelId.length > 30) {
       this.params.chat_code = channelId
       this.path = '/user-chat/create-msg'

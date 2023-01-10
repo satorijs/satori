@@ -1,4 +1,4 @@
-import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, Session, Time, Universal } from '@satorijs/satori'
+import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, SendOptions, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { TelegramMessenger } from './message'
@@ -169,12 +169,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
-    return new TelegramMessenger(this, channelId, guildId).send(fragment)
+  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
+    return new TelegramMessenger(this, channelId, guildId, options).send(fragment)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment) {
-    return this.sendMessage('private:' + userId, content)
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    return this.sendMessage('private:' + userId, content, null, options)
   }
 
   async getMessage() {

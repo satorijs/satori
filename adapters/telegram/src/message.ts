@@ -1,6 +1,6 @@
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
-import { Dict, Logger, Messenger, segment } from '@satorijs/satori'
+import { Dict, Logger, Messenger, SendOptions, segment } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
@@ -77,8 +77,8 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
   private payload: Dict
   private mode: RenderMode = 'default'
 
-  constructor(bot: TelegramBot, channelId: string, guildId?: string) {
-    super(bot, channelId, guildId)
+  constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
+    super(bot, channelId, guildId, options)
     const chat_id = channelId.startsWith('private:')
       ? channelId.slice(8)
       : channelId
