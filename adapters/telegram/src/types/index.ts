@@ -1,3 +1,4 @@
+// version: December 30, 2022
 import { Internal } from './internal'
 import { CallbackGame, Game } from './game'
 import { Sticker } from './sticker'
@@ -114,6 +115,10 @@ export interface Chat {
   slow_mode_delay?: Integer
   /** Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned only in getChat. */
   message_auto_delete_time?: Integer
+  /** Optional. True, if aggressive anti-spam checks are enabled in the supergroup. The field is only available to chat administrators. Returned only in getChat. */
+  has_aggressive_anti_spam_enabled?: boolean
+  /** Optional. True, if non-administrators can only get the list of bots and administrators in the chat. Returned only in getChat. */
+  has_hidden_members?: boolean
   /** Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat. */
   has_protected_content?: boolean
   /** Optional. For supergroups, name of group sticker set. Returned only in getChat. */
@@ -193,6 +198,8 @@ export interface Message {
   caption?: string
   /** Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption */
   caption_entities?: MessageEntity[]
+  /** Optional. True, if the message media is covered by a spoiler animation */
+  has_media_spoiler?: boolean
   /** Optional. Message is a shared contact, information about the contact */
   contact?: Contact
   /** Optional. Message is a dice with random value */
@@ -235,6 +242,14 @@ export interface Message {
   proximity_alert_triggered?: ProximityAlertTriggered
   /** Optional. Service message: forum topic created */
   forum_topic_created?: ForumTopicCreated
+  /** Optional. Service message: forum topic edited */
+  forum_topic_edited?: ForumTopicEdited
+  /** Optional. Service message: the 'General' forum topic hidden */
+  general_forum_topic_hidden?: GeneralForumTopicHidden
+  /** Optional. Service message: the 'General' forum topic unhidden */
+  general_forum_topic_unhidden?: GeneralForumTopicUnhidden
+  /** Optional. Service message: the user allowed the bot added to the attachment menu to write messages */
+  write_access_allowed?: WriteAccessAllowed
   /** Optional. Service message: forum topic closed */
   forum_topic_closed?: ForumTopicClosed
   /** Optional. Service message: forum topic reopened */
@@ -665,10 +680,39 @@ export interface ForumTopicCreated {
 export interface ForumTopicClosed {}
 
 /**
+ * This object represents a service message about an edited forum topic.
+ * @see https://core.telegram.org/bots/api#forumtopicedited
+ */
+export interface ForumTopicEdited {
+  /** Optional. New name of the topic, if it was edited */
+  name?: string
+  /** Optional. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed */
+  icon_custom_emoji_id?: string
+}
+
+/**
  * This object represents a service message about a forum topic reopened in the chat. Currently holds no information.
  * @see https://core.telegram.org/bots/api#forumtopicreopened
  */
 export interface ForumTopicReopened {}
+
+/**
+ * This object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#generalforumtopicunhidden
+ */
+export interface GeneralForumTopicUnhidden {}
+
+/**
+ * This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#writeaccessallowed
+ */
+export interface WriteAccessAllowed {}
+
+/**
+ * This object represents a service message about General forum topic hidden in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#generalforumtopichidden
+ */
+export interface GeneralForumTopicHidden {}
 
 /**
  * This object represents a service message about a voice chat scheduled in the chat.
@@ -746,6 +790,8 @@ export interface WebAppInfo {
 export interface ReplyKeyboardMarkup {
   /** button rows, each represented by an Array of KeyboardButton objects */
   keyboard?: KeyboardButton[][]
+  /** Optional. Requests clients to always show the keyboard when the regular keyboard is hidden. Defaults to false, in which case the custom keyboard can be hidden and opened with a keyboard icon. */
+  is_persistent?: boolean
   /** Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard. */
   resize_keyboard?: boolean
   /** Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false. */
@@ -1390,6 +1436,8 @@ export interface InputMediaPhoto {
   parse_mode?: string
   /** Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Optional. Pass True if the photo needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1417,6 +1465,8 @@ export interface InputMediaVideo {
   duration?: Integer
   /** Optional. Pass True, if the uploaded video is suitable for streaming */
   supports_streaming?: boolean
+  /** Optional. Pass True if the video needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1442,6 +1492,8 @@ export interface InputMediaAnimation {
   height?: Integer
   /** Optional. Animation duration in seconds */
   duration?: Integer
+  /** Optional. Pass True if the animation needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1576,6 +1628,8 @@ export interface SendPhotoPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the photo needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
   disable_notification?: boolean
   /** Protects the contents of the sent message from forwarding and saving */
@@ -1671,6 +1725,8 @@ export interface SendVideoPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the video needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Pass True, if the uploaded video is suitable for streaming */
   supports_streaming?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
@@ -1706,6 +1762,8 @@ export interface SendAnimationPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the animation needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
   disable_notification?: boolean
   /** Protects the contents of the sent message from forwarding and saving */
@@ -1969,6 +2027,8 @@ export interface SendDicePayload {
 export interface SendChatActionPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread; supergroups only */
+  message_thread_id?: number
   /** Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes. */
   action?: string
 }
@@ -2183,6 +2243,33 @@ export interface UnpinChatMessagePayload {
 export interface UnpinAllChatMessagesPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+}
+
+export interface EditGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+  /** New topic name, 1-128 characters */
+  name: string
+}
+
+export interface CloseGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface ReopenGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface HideGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface UnhideGeneralForumTopicPaylad {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
 }
 
 export interface LeaveChatPayload {
@@ -2718,6 +2805,31 @@ declare module './internal' {
      */
     unpinAllForumTopicMessages(payload: UnpinAllChatMessagesPayload): Promise<boolean>
     /**
+     * Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#editgeneralforumtopic
+     */
+    editGeneralForumTopic(payload: EditGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#closegeneralforumtopic
+     */
+    closeGeneralForumTopic(payload: CloseGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically unhidden if it was hidden. Returns True on success.
+     * @see https://core.telegram.org/bots/api#reopengeneralforumtopic
+     */
+    reopenGeneralForumTopic(payload: ReopenForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically closed if it was open. Returns True on success.
+     * @see https://core.telegram.org/bots/api#hidegeneralforumtopic
+     */
+    hideGeneralForumTopic(payload: HideGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to unhide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#unhidegeneralforumtopic
+     */
+    unhideGeneralForumTopic(payload: UnhideGeneralForumTopicPaylad): Promise<boolean>
+    /**
      * Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
      *
      * Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via @Botfather and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
@@ -2859,6 +2971,11 @@ Internal.define('closeForumTopic')
 Internal.define('reopenForumTopic')
 Internal.define('deleteForumTopic')
 Internal.define('unpinAllForumTopicMessages')
+Internal.define('editGeneralForumTopic')
+Internal.define('closeGeneralForumTopic')
+Internal.define('reopenGeneralForumTopic')
+Internal.define('hideGeneralForumTopic')
+Internal.define('unhideGeneralForumTopic')
 Internal.define('answerCallbackQuery')
 Internal.define('setMyCommands')
 Internal.define('deleteMyCommands')
