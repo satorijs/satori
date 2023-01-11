@@ -3,6 +3,8 @@ import { InlineKeyboardMarkup, Integer, Internal, Message, MessageEntity, PhotoS
 export interface SendGamePayload {
   /** Unique identifier for the target chat */
   chat_id?: Integer
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Short name of the game, serves as the unique identifier for the game. Set up your games via Botfather. */
   game_short_name?: string
   /** Sends the message silently. Users will receive a notification with no sound. */

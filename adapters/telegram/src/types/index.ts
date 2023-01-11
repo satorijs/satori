@@ -1,5 +1,7 @@
+// version: December 30, 2022
 import { Internal } from './internal'
 import { CallbackGame, Game } from './game'
+import { Sticker } from './sticker'
 
 export * from './internal'
 export * from './inline'
@@ -54,6 +56,10 @@ export interface User {
   username?: string
   /** Optional. IETF language tag of the user's language */
   language_code?: string
+  /** Optional. True, if this user is a Telegram Premium user */
+  is_premium?: boolean
+  /** Optional. True, if this user added the bot to the attachment menu */
+  added_to_attachment_menu?: boolean
   /** Optional. True, if the bot can be invited to groups. Returned only in getMe. */
   can_join_groups?: boolean
   /** Optional. True, if privacy mode is disabled for the bot. Returned only in getMe. */
@@ -79,12 +85,24 @@ export interface Chat {
   first_name?: string
   /** Optional. Last name of the other party in a private chat */
   last_name?: string
+  /** Optional. True, if the supergroup chat is a forum (has topics enabled) */
+  is_forum?: true
   /** Optional. Chat photo. Returned only in getChat. */
   photo?: ChatPhoto
+  /** Optional. If non-empty, the list of all active chat usernames; for private chats, supergroups and channels. Returned only in getChat. */
+  active_usernames?: string[]
+  /** Optional. Custom emoji identifier of emoji status of the other party in a private chat. Returned only in getChat. */
+  emoji_status_custom_emoji_id?: string
   /** Optional. Bio of the other party in a private chat. Returned only in getChat. */
   bio?: string
   /** Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat. */
   has_private_forwards?: boolean
+  /** Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat. */
+  has_restricted_voice_and_video_messages?: boolean
+  /** Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat. */
+  join_to_send_messages?: boolean
+  /** Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat. */
+  join_by_request?: boolean
   /** Optional. Description, for groups, supergroups and channel chats. Returned only in getChat. */
   description?: string
   /** Optional. Primary invite link, for groups, supergroups and channel chats. Returned only in getChat. */
@@ -97,6 +115,10 @@ export interface Chat {
   slow_mode_delay?: Integer
   /** Optional. The time after which all messages sent to the chat will be automatically deleted; in seconds. Returned only in getChat. */
   message_auto_delete_time?: Integer
+  /** Optional. True, if aggressive anti-spam checks are enabled in the supergroup. The field is only available to chat administrators. Returned only in getChat. */
+  has_aggressive_anti_spam_enabled?: boolean
+  /** Optional. True, if non-administrators can only get the list of bots and administrators in the chat. Returned only in getChat. */
+  has_hidden_members?: boolean
   /** Optional. True, if messages from the chat can't be forwarded to other chats. Returned only in getChat. */
   has_protected_content?: boolean
   /** Optional. For supergroups, name of group sticker set. Returned only in getChat. */
@@ -116,6 +138,8 @@ export interface Chat {
 export interface Message {
   /** Unique message identifier inside this chat */
   message_id?: Integer
+  /** Optional. Unique identifier of a message thread to which the message belongs; for supergroups only */
+  message_thread_id?: number
   /** Optional. Sender of the message; empty for messages sent to channels. For backward compatibility, the field contains a fake sender user in non-channel chats, if the message was sent on behalf of a chat. */
   from?: User
   /** Optional. Sender of the message, sent on behalf of a chat. For example, the channel itself for channel posts, the supergroup itself for messages from anonymous group administrators, the linked channel for messages automatically forwarded to the discussion group. For backward compatibility, the field from contains a fake sender user in non-channel chats, if the message was sent on behalf of a chat. */
@@ -136,6 +160,8 @@ export interface Message {
   forward_sender_name?: string
   /** Optional. For forwarded messages, date the original message was sent in Unix time */
   forward_date?: Integer
+  /** Optional. True, if the message is sent to a forum topic */
+  is_topic_message?: boolean
   /** Optional. True, if the message is a channel post that was automatically forwarded to the connected discussion group */
   is_automatic_forward?: boolean
   /** Optional. For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply. */
@@ -172,6 +198,8 @@ export interface Message {
   caption?: string
   /** Optional. For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption */
   caption_entities?: MessageEntity[]
+  /** Optional. True, if the message media is covered by a spoiler animation */
+  has_media_spoiler?: boolean
   /** Optional. Message is a shared contact, information about the contact */
   contact?: Contact
   /** Optional. Message is a dice with random value */
@@ -212,14 +240,50 @@ export interface Message {
   connected_website?: string
   /** Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live Location. */
   proximity_alert_triggered?: ProximityAlertTriggered
-  /** Optional. Service message: voice chat scheduled */
+  /** Optional. Service message: forum topic created */
+  forum_topic_created?: ForumTopicCreated
+  /** Optional. Service message: forum topic edited */
+  forum_topic_edited?: ForumTopicEdited
+  /** Optional. Service message: the 'General' forum topic hidden */
+  general_forum_topic_hidden?: GeneralForumTopicHidden
+  /** Optional. Service message: the 'General' forum topic unhidden */
+  general_forum_topic_unhidden?: GeneralForumTopicUnhidden
+  /** Optional. Service message: the user allowed the bot added to the attachment menu to write messages */
+  write_access_allowed?: WriteAccessAllowed
+  /** Optional. Service message: forum topic closed */
+  forum_topic_closed?: ForumTopicClosed
+  /** Optional. Service message: forum topic reopened */
+  forum_topic_reopened?: ForumTopicReopened
+  /**
+   * Optional. Service message: voice chat scheduled
+   * @deprecated
+   */
   voice_chat_scheduled?: VoiceChatScheduled
-  /** Optional. Service message: voice chat started */
+  /** Optional. Service message: voice chat scheduled */
+  video_chat_scheduled?: VoiceChatScheduled
+  /**
+   * Optional. Service message: voice chat started
+   * @deprecated
+   */
   voice_chat_started?: VoiceChatStarted
-  /** Optional. Service message: voice chat ended */
+  /** Optional. Service message: voice chat started */
+  video_chat_started?: VoiceChatStarted
+  /**
+   * Optional. Service message: voice chat ended
+   * @deprecated
+   */
   voice_chat_ended?: VoiceChatEnded
-  /** Optional. Service message: new participants invited to a voice chat */
+  /** Optional. Service message: voice chat ended */
+  video_chat_ended?: VoiceChatEnded
+  /**
+   * Optional. Service message: new participants ivited to a voice chat
+   * @deprecated
+   */
   voice_chat_participants_invited?: VoiceChatParticipantsInvited
+  /** Optional. Service message: new participants invited to a voice chat */
+  video_chat_participants_invited?: VoiceChatParticipantsInvited
+  /** Optional. Service message: data sent by a Web App */
+  web_app_data?: WebAppData
   /** Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons. */
   reply_markup?: InlineKeyboardMarkup
 }
@@ -273,6 +337,7 @@ export interface MessageEntity {
    * - "pre" (monowidth block)
    * - "text_link" (for clickable text URLs)
    * - "text_mention" (for users without usernames)
+   * - "custom_emoji" (for inline custom emoji stickers)
    */
   type?: MessageEntityType
   /** Offset in UTF-16 code units to the start of the entity */
@@ -285,6 +350,8 @@ export interface MessageEntity {
   user?: User
   /** Optional. For "pre" only, the programming language of the entity text */
   language?: string
+  /** Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker */
+  custom_emoji_id?: string
 }
 
 /**
@@ -560,6 +627,18 @@ export interface Venue {
 }
 
 /**
+ * Describes data sent from a Web App to the bot.
+ * @see https://core.telegram.org/bots/api#webappdata
+ */
+
+export interface WebAppData {
+  /** The data. Be aware that a bad client can send arbitrary data in this field. */
+  data: string
+  /** Text of the web_app keyboard button from which the Web App was opened. Be aware that a bad client can send arbitrary data in this field. */
+  button_text: string
+}
+
+/**
  * This object represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
  * @see https://core.telegram.org/bots/api#proximityalerttriggered
  */
@@ -580,6 +659,60 @@ export interface MessageAutoDeleteTimerChanged {
   /** New auto-delete time for messages in the chat; in seconds */
   message_auto_delete_time?: Integer
 }
+
+/**
+ * This object represents a service message about a new forum topic created in the chat.
+ * @see https://core.telegram.org/bots/api#forumtopiccreated
+ */
+export interface ForumTopicCreated {
+  /** Name of the topic */
+  name: string
+  /** Color of the topic icon in RGB format */
+  icon_color: number
+  /** Optional. Unique identifier of the custom emoji shown as the topic icon */
+  icon_custom_emoji_id?: string
+}
+
+/**
+ * This object represents a service message about a forum topic closed in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#forumtopicclosed
+ */
+export interface ForumTopicClosed {}
+
+/**
+ * This object represents a service message about an edited forum topic.
+ * @see https://core.telegram.org/bots/api#forumtopicedited
+ */
+export interface ForumTopicEdited {
+  /** Optional. New name of the topic, if it was edited */
+  name?: string
+  /** Optional. New identifier of the custom emoji shown as the topic icon, if it was edited; an empty string if the icon was removed */
+  icon_custom_emoji_id?: string
+}
+
+/**
+ * This object represents a service message about a forum topic reopened in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#forumtopicreopened
+ */
+export interface ForumTopicReopened {}
+
+/**
+ * This object represents a service message about General forum topic unhidden in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#generalforumtopicunhidden
+ */
+export interface GeneralForumTopicUnhidden {}
+
+/**
+ * This object represents a service message about a user allowing a bot added to the attachment menu to write messages. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#writeaccessallowed
+ */
+export interface WriteAccessAllowed {}
+
+/**
+ * This object represents a service message about General forum topic hidden in the chat. Currently holds no information.
+ * @see https://core.telegram.org/bots/api#generalforumtopichidden
+ */
+export interface GeneralForumTopicHidden {}
 
 /**
  * This object represents a service message about a voice chat scheduled in the chat.
@@ -642,12 +775,23 @@ export interface File {
 }
 
 /**
+ * Describes a Web App.
+ * @see https://core.telegram.org/bots/api#webappinfo
+ */
+export interface WebAppInfo {
+  /** An HTTPS URL of a Web App to be opened with additional data as specified in Initializing Web Apps */
+  url: string
+}
+
+/**
  * This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
  * @see https://core.telegram.org/bots/api#replykeyboardmarkup
  */
 export interface ReplyKeyboardMarkup {
   /** button rows, each represented by an Array of KeyboardButton objects */
   keyboard?: KeyboardButton[][]
+  /** Optional. Requests clients to always show the keyboard when the regular keyboard is hidden. Defaults to false, in which case the custom keyboard can be hidden and opened with a keyboard icon. */
+  is_persistent?: boolean
   /** Optional. Requests clients to resize the keyboard vertically for optimal fit (e.g., make the keyboard smaller if there are just two rows of buttons). Defaults to false, in which case the custom keyboard is always of the same height as the app's standard keyboard. */
   resize_keyboard?: boolean
   /** Optional. Requests clients to hide the keyboard as soon as it's been used. The keyboard will still be available, but clients will automatically display the usual letter-keyboard in the chat – the user can press a special button in the input field to see the custom keyboard again. Defaults to false. */
@@ -673,6 +817,8 @@ export interface KeyboardButton {
   request_location?: boolean
   /** Optional. If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only */
   request_poll?: KeyboardButtonPollType
+  /** Optional. If specified, the described Web App will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only. */
+  web_app?: WebAppInfo
 }
 
 /**
@@ -719,6 +865,8 @@ export interface InlineKeyboardButton {
   login_url?: LoginUrl
   /** Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes */
   callback_data?: string
+  /** Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. */
+  web_app?: WebAppInfo
   /**
    * Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted.
    *
@@ -842,6 +990,37 @@ export interface ChatInviteLink {
 }
 
 /**
+ * Represents the rights of an administrator in a chat.
+ * @see https://core.telegram.org/bots/api#chatadministratorrights
+ */
+export interface ChatAdministratorRights {
+  /** True, if the user's presence in the chat is hidden */
+  is_anonymous: boolean
+  /** True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege */
+  can_manage_chat: boolean
+  /** True, if the administrator can delete messages of other users */
+  can_delete_messages: boolean
+  /** True, if the administrator can manage video chats */
+  can_manage_video_chats: boolean
+  /** True, if the administrator can restrict, ban or unban chat members */
+  can_restrict_members: boolean
+  /** True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user) */
+  can_promote_members: boolean
+  /** True, if the user is allowed to change the chat title, photo and other settings */
+  can_change_info: boolean
+  /** True, if the user is allowed to invite new users to the chat */
+  can_invite_users: boolean
+  /** Optional. True, if the administrator can post in the channel; channels only */
+  can_post_messages?: boolean
+  /** Optional. True, if the administrator can edit messages of other users and can pin messages; channels only */
+  can_edit_messages?: boolean
+  /** Optional. True, if the user is allowed to pin messages; groups and supergroups only */
+  can_pin_messages?: boolean
+  /** Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only */
+  can_manage_topics?: boolean
+}
+
+/**
  * This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
  * - ChatMemberOwner
  * - ChatMemberAdministrator
@@ -891,8 +1070,13 @@ export interface ChatMemberAdministrator {
   can_manage_chat?: boolean
   /** True, if the administrator can delete messages of other users */
   can_delete_messages?: boolean
-  /** True, if the administrator can manage voice chats */
+  /**
+   * True, if the administrator can manage voice chats
+   * @deprecated
+   */
   can_manage_voice_chats?: boolean
+  /** True, if the administrator can manage voice chats */
+  can_manage_video_chats?: boolean
   /** True, if the administrator can restrict, ban or unban chat members */
   can_restrict_members?: boolean
   /** True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user) */
@@ -907,6 +1091,8 @@ export interface ChatMemberAdministrator {
   can_edit_messages?: boolean
   /** Optional. True, if the user is allowed to pin messages; groups and supergroups only */
   can_pin_messages?: boolean
+  /** Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only */
+  can_manage_topics?: boolean
   /** Optional. Custom title for this user */
   custom_title?: string
 }
@@ -939,6 +1125,8 @@ export interface ChatMemberRestricted {
   can_invite_users?: boolean
   /** True, if the user is allowed to pin messages */
   can_pin_messages?: boolean
+  /** True, if the user is allowed to create forum topics */
+  can_manage_topics: boolean
   /** True, if the user is allowed to send text messages, contacts, locations and venues */
   can_send_messages?: boolean
   /** True, if the user is allowed to send audios, documents, photos, videos, video notes and voice notes */
@@ -1034,6 +1222,8 @@ export interface ChatPermissions {
   can_invite_users?: boolean
   /** Optional. True, if the user is allowed to pin messages. Ignored in public supergroups */
   can_pin_messages?: boolean
+  /** Optional. True, if the user is allowed to create forum topics. If omitted defaults to the value of can_pin_messages */
+  can_manage_topics?: boolean
 }
 
 /**
@@ -1045,6 +1235,17 @@ export interface ChatLocation {
   location?: Location
   /** Location address; 1-64 characters, as defined by the chat owner */
   address?: string
+}
+
+export interface ForumTopic {
+  /** Unique identifier of the forum topic */
+  message_thread_id: number
+  /** Name of the topic */
+  name: string
+  /** Color of the topic icon in RGB format */
+  icon_color: number
+  /** Optional. Unique identifier of the custom emoji shown as the topic icon */
+  icon_custom_emoji_id?: string
 }
 
 /**
@@ -1150,6 +1351,50 @@ export interface BotCommandScopeChatMember {
 }
 
 /**
+ * This object describes the bot's menu button in a private chat. It should be one of
+ * - MenuButtonCommands
+ * - MenuButtonWebApp
+ * - MenuButtonDefault
+ * If a menu button other than MenuButtonDefault is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
+ * @see https://core.telegram.org/bots/api#menubutton
+ */
+export type MenuButton =
+  | MenuButtonCommands
+  | MenuButtonWebApp
+  | MenuButtonDefault
+
+/**
+ * Represents a menu button, which opens the bot's list of commands.
+ * @see https://core.telegram.org/bots/api#menubuttoncommands
+ */
+export interface MenuButtonCommands {
+  /** Type of the button, must be commands */
+  type: string
+}
+
+/**
+ * Represents a menu button, which launches a Web App.
+ * @see https://core.telegram.org/bots/api#menubuttonwebapp
+ */
+export interface MenuButtonWebApp {
+  /** Type of the button, must be web_app */
+  type: string
+  /** Text on the button */
+  text: string
+  /** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. */
+  web_app: WebAppInfo
+}
+
+/**
+ * Describes that no specific value for the menu button was set.
+ * @see https://core.telegram.org/bots/api#menubuttondefault
+ */
+export interface MenuButtonDefault {
+  /** Type of the button, must be default */
+  type: string
+}
+
+/**
  * Contains information about why a request was unsuccessful.
  * @see https://core.telegram.org/bots/api#responseparameters
  */
@@ -1191,6 +1436,8 @@ export interface InputMediaPhoto {
   parse_mode?: string
   /** Optional. List of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Optional. Pass True if the photo needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1218,6 +1465,8 @@ export interface InputMediaVideo {
   duration?: Integer
   /** Optional. Pass True, if the uploaded video is suitable for streaming */
   supports_streaming?: boolean
+  /** Optional. Pass True if the video needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1243,6 +1492,8 @@ export interface InputMediaAnimation {
   height?: Integer
   /** Optional. Animation duration in seconds */
   duration?: Integer
+  /** Optional. Pass True if the animation needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
 }
 
 /**
@@ -1300,6 +1551,8 @@ export type InputFile = any
 export interface SendMessagePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Text of the message to be sent, 1-4096 characters after entities parsing */
   text?: string
   /** Mode for parsing entities in the message text. See formatting options for more details. */
@@ -1323,6 +1576,8 @@ export interface SendMessagePayload {
 export interface ForwardMessagePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) */
   from_chat_id?: Integer | string
   /** Sends the message silently. Users will receive a notification with no sound. */
@@ -1336,6 +1591,8 @@ export interface ForwardMessagePayload {
 export interface CopyMessagePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) */
   from_chat_id?: Integer | string
   /** Message identifier in the chat specified in from_chat_id */
@@ -1361,6 +1618,8 @@ export interface CopyMessagePayload {
 export interface SendPhotoPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. The photo must be at most 10 MB in size. The photo's width and height must not exceed 10000 in total. Width and height ratio must be at most 20. More info on Sending Files » */
   photo?: InputFile | string
   /** Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing */
@@ -1369,6 +1628,8 @@ export interface SendPhotoPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the photo needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
   disable_notification?: boolean
   /** Protects the contents of the sent message from forwarding and saving */
@@ -1384,6 +1645,8 @@ export interface SendPhotoPayload {
 export interface SendAudioPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
   audio?: InputFile | string
   /** Audio caption, 0-1024 characters after entities parsing */
@@ -1415,6 +1678,8 @@ export interface SendAudioPayload {
 export interface SendDocumentPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
   document?: InputFile | string
   /** Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass "attach://<file_attach_name>" if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. More info on Sending Files » */
@@ -1442,6 +1707,8 @@ export interface SendDocumentPayload {
 export interface SendVideoPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data. More info on Sending Files » */
   video?: InputFile | string
   /** Duration of sent video in seconds */
@@ -1458,6 +1725,8 @@ export interface SendVideoPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the video needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Pass True, if the uploaded video is suitable for streaming */
   supports_streaming?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
@@ -1475,6 +1744,8 @@ export interface SendVideoPayload {
 export interface SendAnimationPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Animation to send. Pass a file_id as String to send an animation that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an animation from the Internet, or upload a new animation using multipart/form-data. More info on Sending Files » */
   animation?: InputFile | string
   /** Duration of sent animation in seconds */
@@ -1491,6 +1762,8 @@ export interface SendAnimationPayload {
   parse_mode?: string
   /** A JSON-serialized list of special entities that appear in the caption, which can be specified instead of parse_mode */
   caption_entities?: MessageEntity[]
+  /** Pass True if the animation needs to be covered with a spoiler animation */
+  has_spoiler?: boolean
   /** Sends the message silently. Users will receive a notification with no sound. */
   disable_notification?: boolean
   /** Protects the contents of the sent message from forwarding and saving */
@@ -1506,6 +1779,8 @@ export interface SendAnimationPayload {
 export interface SendVoicePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Audio file to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
   voice?: InputFile | string
   /** Voice message caption, 0-1024 characters after entities parsing */
@@ -1531,6 +1806,8 @@ export interface SendVoicePayload {
 export interface SendVideoNotePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Video note to send. Pass a file_id as String to send a video note that exists on the Telegram servers (recommended) or upload a new video using multipart/form-data. More info on Sending Files ». Sending video notes by a URL is currently unsupported */
   video_note?: InputFile | string
   /** Duration of sent video in seconds */
@@ -1554,6 +1831,8 @@ export interface SendVideoNotePayload {
 export interface SendMediaGroupPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** A JSON-serialized array describing messages to be sent, must include 2-10 items */
   media?: (InputMediaAudio | InputMediaDocument | InputMediaPhoto | InputMediaVideo)[]
   /** Sends messages silently. Users will receive a notification with no sound. */
@@ -1569,6 +1848,8 @@ export interface SendMediaGroupPayload {
 export interface SendLocationPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Latitude of the location */
   latitude?: Float
   /** Longitude of the location */
@@ -1628,6 +1909,8 @@ export interface StopMessageLiveLocationPayload {
 export interface SendVenuePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Latitude of the venue */
   latitude?: Float
   /** Longitude of the venue */
@@ -1659,6 +1942,8 @@ export interface SendVenuePayload {
 export interface SendContactPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Contact's phone number */
   phone_number?: string
   /** Contact's first name */
@@ -1682,6 +1967,8 @@ export interface SendContactPayload {
 export interface SendPollPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Poll question, 1-300 characters */
   question?: string
   /** A JSON-serialized list of answer options, 2-10 strings 1-100 characters each */
@@ -1721,6 +2008,8 @@ export interface SendPollPayload {
 export interface SendDicePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Emoji on which the dice throw animation is based. Currently, must be one of "", "", "", "", "", or "". Dice can have values 1-6 for "", "" and "", values 1-5 for "" and "", and values 1-64 for "". Defaults to "" */
   emoji?: string
   /** Sends the message silently. Users will receive a notification with no sound. */
@@ -1738,6 +2027,8 @@ export interface SendDicePayload {
 export interface SendChatActionPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread; supergroups only */
+  message_thread_id?: number
   /** Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_voice or upload_voice for voice notes, upload_document for general files, choose_sticker for stickers, find_location for location data, record_video_note or upload_video_note for video notes. */
   action?: string
 }
@@ -1802,8 +2093,13 @@ export interface PromoteChatMemberPayload {
   can_edit_messages?: boolean
   /** Pass True, if the administrator can delete messages of other users */
   can_delete_messages?: boolean
-  /** Pass True, if the administrator can manage voice chats */
+  /**
+   * Pass True, if the administrator can manage voice chats
+   * @deprecated
+   */
   can_manage_voice_chats?: boolean
+  /** Pass True, if the administrator can manage voice chats */
+  can_manage_video_chats?: boolean
   /** Pass True, if the administrator can restrict, ban or unban chat members */
   can_restrict_members?: boolean
   /** Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him) */
@@ -1814,6 +2110,8 @@ export interface PromoteChatMemberPayload {
   can_invite_users?: boolean
   /** Pass True, if the administrator can pin messages, supergroups only */
   can_pin_messages?: boolean
+  /** Pass True if the user is allowed to create, rename, close, and reopen forum topics, supergroups only */
+  can_manage_topics?: boolean
 }
 
 export interface SetChatAdministratorCustomTitlePayload {
@@ -1947,6 +2245,33 @@ export interface UnpinAllChatMessagesPayload {
   chat_id?: Integer | string
 }
 
+export interface EditGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+  /** New topic name, 1-128 characters */
+  name: string
+}
+
+export interface CloseGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface ReopenGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface HideGeneralForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
+export interface UnhideGeneralForumTopicPaylad {
+  /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
+  chat_id: Integer | string
+}
+
 export interface LeaveChatPayload {
   /** Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername) */
   chat_id?: Integer | string
@@ -1984,6 +2309,56 @@ export interface SetChatStickerSetPayload {
 export interface DeleteChatStickerSetPayload {
   /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
   chat_id?: Integer | string
+}
+
+export interface CreateForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Topic name, 1-128 characters */
+  name: string
+  /** Color of the topic icon in RGB format. Currently, must be one of 7322096 (0x6FB9F0), 16766590 (0xFFD67E), 13338331 (0xCB86DB), 9367192 (0x8EEE98), 16749490 (0xFF93B2), or 16478047 (0xFB6F5F) */
+  icon_color?: number
+  /** Unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers. */
+  icon_custom_emoji_id?: string
+}
+
+export interface EditForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Unique identifier for the target message thread of the forum topic */
+  message_thread_id: number
+  /** New topic name, 0-128 characters. If not specified or empty, the current name of the topic will be kept */
+  name?: string
+  /** New unique identifier of the custom emoji shown as the topic icon. Use getForumTopicIconStickers to get all allowed custom emoji identifiers. Pass an empty string to remove the icon. If not specified, the current icon will be kept */
+  icon_custom_emoji_id?: string
+}
+
+export interface CloseForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Unique identifier for the target message thread of the forum topic */
+  message_thread_id: number
+}
+
+export interface ReopenForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Unique identifier for the target message thread of the forum topic */
+  message_thread_id: number
+}
+
+export interface DeleteForumTopicPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Unique identifier for the target message thread of the forum topic */
+  message_thread_id: number
+}
+
+export interface UnpinAllForumTopicMessagesPayload {
+  /** Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername) */
+  chat_id: number | string
+  /** Unique identifier for the target message thread of the forum topic */
+  message_thread_id: number
 }
 
 export interface AnswerCallbackQueryPayload {
@@ -2024,6 +2399,30 @@ export interface GetMyCommandsPayload {
   scope?: BotCommandScope
   /** A two-letter ISO 639-1 language code or an empty string */
   language_code?: string
+}
+
+export interface SetChatMenuButtonPayload {
+  /** Unique identifier for the target private chat. If not specified, default bot's menu button will be changed */
+  chat_id?: number
+  /** A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault */
+  menu_button?: MenuButton
+}
+
+export interface GetChatMenuButtonPayload {
+  /** Unique identifier for the target private chat. If not specified, default bot's menu button will be returned */
+  getChatMenuButton?: number
+}
+
+export interface SetMyDefaultAdministratorRightsPayload {
+  /** A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared. */
+  rights?: ChatAdministratorRights
+  /** Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed. */
+  for_channels?: boolean
+}
+
+export interface GetMyDefaultAdministratorRightsPayload {
+  /** Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned. */
+  for_channels?: boolean
 }
 
 export interface EditMessageTextPayload {
@@ -2371,6 +2770,66 @@ declare module './internal' {
      */
     deleteChatStickerSet(payload: DeleteChatStickerSetPayload): Promise<boolean>
     /**
+     * Use this method to get custom emoji stickers, which can be used as a forum topic icon by any user. Requires no parameters. Returns an Array of Sticker objects.
+     * @see https://core.telegram.org/bots/api#getforumtopiciconstickers
+     */
+    getForumTopicIconStickers(): Promise<Sticker[]>
+    /**
+     * Use this method to create a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns information about the created topic as a ForumTopic object.
+     * @see https://core.telegram.org/bots/api#createforumtopic
+     */
+    createForumTopic(payload: CreateForumTopicPayload): Promise<ForumTopic>
+    /**
+     * Use this method to edit name and icon of a topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+     * @see https://core.telegram.org/bots/api#editforumtopic
+     */
+    editForumTopic(payload: EditForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to close an open topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+     * @see https://core.telegram.org/bots/api#closeforumtopic
+     */
+    closeForumTopic(payload: CloseForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to reopen a closed topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights, unless it is the creator of the topic. Returns True on success.
+     * @see https://core.telegram.org/bots/api#reopenforumtopic
+     */
+    reopenForumTopic(payload: ReopenForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to delete a forum topic along with all its messages in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_delete_messages administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#deleteforumtopic
+     */
+    deleteForumTopic(payload: DeleteForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to clear the list of pinned messages in a forum topic. The bot must be an administrator in the chat for this to work and must have the can_pin_messages administrator right in the supergroup. Returns True on success.
+     * @see https://core.telegram.org/bots/api#unpinallforumtopicmessages
+     */
+    unpinAllForumTopicMessages(payload: UnpinAllChatMessagesPayload): Promise<boolean>
+    /**
+     * Use this method to edit the name of the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#editgeneralforumtopic
+     */
+    editGeneralForumTopic(payload: EditGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to close an open 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#closegeneralforumtopic
+     */
+    closeGeneralForumTopic(payload: CloseGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to reopen a closed 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically unhidden if it was hidden. Returns True on success.
+     * @see https://core.telegram.org/bots/api#reopengeneralforumtopic
+     */
+    reopenGeneralForumTopic(payload: ReopenForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to hide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. The topic will be automatically closed if it was open. Returns True on success.
+     * @see https://core.telegram.org/bots/api#hidegeneralforumtopic
+     */
+    hideGeneralForumTopic(payload: HideGeneralForumTopicPayload): Promise<boolean>
+    /**
+     * Use this method to unhide the 'General' topic in a forum supergroup chat. The bot must be an administrator in the chat for this to work and must have the can_manage_topics administrator rights. Returns True on success.
+     * @see https://core.telegram.org/bots/api#unhidegeneralforumtopic
+     */
+    unhideGeneralForumTopic(payload: UnhideGeneralForumTopicPaylad): Promise<boolean>
+    /**
      * Use this method to send answers to callback queries sent from inline keyboards. The answer will be displayed to the user as a notification at the top of the chat screen or as an alert. On success, True is returned.
      *
      * Alternatively, the user can be redirected to the specified Game URL. For this option to work, you must first create a game for your bot via @Botfather and accept the terms. Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
@@ -2392,6 +2851,26 @@ declare module './internal' {
      * @see https://core.telegram.org/bots/api#getmycommands
      */
     getMyCommands(payload: GetMyCommandsPayload): Promise<BotCommand[]>
+    /**
+     * Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+     * @see https://core.telegram.org/bots/api#setchatmenubutton
+     */
+    setChatMenuButton(payload: SetChatMenuButtonPayload): Promise<boolean>
+    /**
+     * Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns MenuButton on success.
+     * @see https://core.telegram.org/bots/api#getchatmenubutton
+     */
+    getChatMenuButton(payload: GetChatMenuButtonPayload): Promise<MenuButton>
+    /**
+     * Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the list before adding the bot. Returns True on success.
+     * @see https://core.telegram.org/bots/api#setmydefaultadministratorrights
+     */
+    setMyDefaultAdministratorRights(payload: SetMyDefaultAdministratorRightsPayload): Promise<boolean>
+    /**
+     * Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on success.
+     * @see https://core.telegram.org/bots/api#getmydefaultadministratorrights
+     */
+    getMyDefaultAdministratorRights(payload: GetMyDefaultAdministratorRightsPayload): Promise<ChatAdministratorRights>
     /**
      * Use this method to edit text and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
      * @see https://core.telegram.org/bots/api#editmessagetext
@@ -2485,10 +2964,26 @@ Internal.define('getChatMemberCount')
 Internal.define('getChatMember')
 Internal.define('setChatStickerSet')
 Internal.define('deleteChatStickerSet')
+Internal.define('getForumTopicIconStickers')
+Internal.define('createForumTopic')
+Internal.define('editForumTopic')
+Internal.define('closeForumTopic')
+Internal.define('reopenForumTopic')
+Internal.define('deleteForumTopic')
+Internal.define('unpinAllForumTopicMessages')
+Internal.define('editGeneralForumTopic')
+Internal.define('closeGeneralForumTopic')
+Internal.define('reopenGeneralForumTopic')
+Internal.define('hideGeneralForumTopic')
+Internal.define('unhideGeneralForumTopic')
 Internal.define('answerCallbackQuery')
 Internal.define('setMyCommands')
 Internal.define('deleteMyCommands')
 Internal.define('getMyCommands')
+Internal.define('setChatMenuButton')
+Internal.define('getChatMenuButton')
+Internal.define('setMyDefaultAdministratorRights')
+Internal.define('getMyDefaultAdministratorRights')
 Internal.define('editMessageText')
 Internal.define('editMessageCaption')
 Internal.define('editMessageMedia')
