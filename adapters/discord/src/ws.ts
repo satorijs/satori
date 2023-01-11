@@ -9,9 +9,10 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
   _d = 0
   _ping: NodeJS.Timeout
   _sessionId = ''
+  _resumeUrl: string
 
   prepare() {
-    return this.bot.http.ws(this.bot.config.gateway)
+    return this.bot.http.ws(this._resumeUrl || this.bot.config.gateway)
   }
 
   heartbeat() {
@@ -66,6 +67,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       if (parsed.op === GatewayOpcode.DISPATCH) {
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
+          this._resumeUrl = parsed.d.resume_gateway_url
           const self: any = adaptUser(parsed.d.user)
           self.selfId = self.userId
           delete self.userId
