@@ -77,6 +77,8 @@ export interface MaskPosition {
 export interface SendStickerPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
   sticker?: InputFile | string
   /** Sends the message silently. Users will receive a notification with no sound. */

@@ -3,6 +3,8 @@ import { InlineKeyboardMarkup, Integer, Internal, Message, User } from '.'
 export interface SendInvoicePayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Product name, 1-32 characters */
   title?: string
   /** Product description, 1-255 characters */
