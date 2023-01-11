@@ -1,4 +1,4 @@
-import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, Session, Time, Universal } from '@satorijs/satori'
+import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, SendOptions, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { TelegramMessenger } from './message'
@@ -93,12 +93,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         } else if (e.type === 'text_mention') {
           segs.push(segment('at', { id: e.user.id }))
         } else {
-          continue
+          // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
+          //       text_link, custom_emoji
+          segs.push(segment('text', { content: eText }))
         }
         if (e.offset > curr) {
           segs.splice(-1, 0, segment('text', { content: text.slice(curr, e.offset) }))
-          curr = e.offset + e.length
         }
+        curr = e.offset + e.length
       }
       if (curr < text?.length || 0) {
         segs.push(segment('text', { content: text.slice(curr) }))
@@ -167,12 +169,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string) {
-    return new TelegramMessenger(this, channelId, guildId).send(fragment)
+  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
+    return new TelegramMessenger(this, channelId, guildId, options).send(fragment)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment) {
-    return this.sendMessage('private:' + userId, content)
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    return this.sendMessage('private:' + userId, content, null, options)
   }
 
   async getMessage() {

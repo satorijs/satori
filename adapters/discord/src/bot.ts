@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, SendOptions, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordMessenger } from './message'
 import { Internal } from './types'
@@ -26,12 +26,12 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return adaptUser(data)
   }
 
-  async sendMessage(channelId: string, content: Fragment, guildId?: string) {
-    return new DiscordMessenger(this, channelId, guildId).send(content)
+  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+    return new DiscordMessenger(this, channelId, guildId, options).send(content)
   }
 
-  async sendPrivateMessage(channelId: string, content: Fragment) {
-    return new DiscordMessenger(this, channelId).send(content)
+  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions) {
+    return new DiscordMessenger(this, channelId, null, options).send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {

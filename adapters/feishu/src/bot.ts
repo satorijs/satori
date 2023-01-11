@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema, SendOptions } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { FeishuMessenger } from './message'
@@ -59,12 +59,12 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
     this.http.config.headers.Authorization = `Bearer ${v}`
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string): Promise<string[]> {
-    return new FeishuMessenger(this, channelId, guildId).send(content)
+  async sendMessage(channelId: string, content: string, guildId?: string, options?: SendOptions): Promise<string[]> {
+    return new FeishuMessenger(this, channelId, guildId, options).send(content)
   }
 
-  async sendPrivateMessage(userId: string, content: string): Promise<string[]> {
-    return this.sendMessage(userId, content)
+  async sendPrivateMessage(userId: string, content: string, options?: SendOptions): Promise<string[]> {
+    return this.sendMessage(userId, content, null, options)
   }
 
   async deleteMessage(channelId: string, messageId: string): Promise<void> {

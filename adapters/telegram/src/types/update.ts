@@ -40,6 +40,8 @@ export interface SetWebhookPayload {
   allowed_updates?: string[]
   /** Pass True to drop all pending updates */
   drop_pending_updates?: boolean
+  /** A secret token to be sent in a header “X-Telegram-Bot-Api-Secret-Token” in every webhook request, 1-256 characters. Only characters A-Z, a-z, 0-9, _ and - are allowed. The header is useful to ensure that the request comes from a webhook set by you. */
+  secret_token?: string
 }
 
 export interface DeleteWebhookPayload {
@@ -64,6 +66,8 @@ export interface WebhookInfo {
   last_error_date?: Integer
   /** Optional. Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook */
   last_error_message?: string
+  /** Optional. Unix time of the most recent error that happened when trying to synchronize available updates with Telegram datacenters */
+  last_synchronization_error_date?: number
   /** Optional. Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery */
   max_connections?: Integer
   /** Optional. A list of update types the bot is subscribed to. Defaults to all update types except chat_member */

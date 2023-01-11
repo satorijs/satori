@@ -1,4 +1,4 @@
-import { Float, ForceReply, InlineKeyboardMarkup, InputFile, Integer, Internal, Message, PhotoSize, ReplyKeyboardMarkup, ReplyKeyboardRemove } from '.'
+import { File, Float, ForceReply, InlineKeyboardMarkup, InputFile, Integer, Internal, Message, PhotoSize, ReplyKeyboardMarkup, ReplyKeyboardRemove } from '.'
 
 /**
  * This object represents a sticker.
@@ -23,8 +23,12 @@ export interface Sticker {
   emoji?: string
   /** Optional. Name of the sticker set to which the sticker belongs */
   set_name?: string
+  /** Optional. For premium regular stickers, premium animation for the sticker */
+  premium_animation?: File
   /** Optional. For mask stickers, the position where the mask should be placed */
   mask_position?: MaskPosition
+  /** Optional. For custom emoji stickers, unique identifier of the custom emoji */
+  custom_emoji_id?: string
   /** Optional. File size in bytes */
   file_size?: Integer
 }
@@ -38,11 +42,16 @@ export interface StickerSet {
   name?: string
   /** Sticker set title */
   title?: string
+  /** Type of stickers in the set, currently one of “regular”, “mask”, “custom_emoji” */
+  sticker_type: string
   /** True, if the sticker set contains animated stickers */
   is_animated?: boolean
   /** True, if the sticker set contains video stickers */
   is_video?: boolean
-  /** True, if the sticker set contains masks */
+  /**
+   * True, if the sticker set contains masks
+   * @deprecated
+   */
   contains_masks?: boolean
   /** List of all set stickers */
   stickers?: Sticker[]
@@ -68,6 +77,8 @@ export interface MaskPosition {
 export interface SendStickerPayload {
   /** Unique identifier for the target chat or username of the target channel (in the format @channelusername) */
   chat_id?: Integer | string
+  /** Unique identifier for the target message thread (topic) of the forum; for forum supergroups only */
+  message_thread_id?: number
   /** Sticker to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a .WEBP file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files » */
   sticker?: InputFile | string
   /** Sends the message silently. Users will receive a notification with no sound. */
@@ -85,6 +96,11 @@ export interface SendStickerPayload {
 export interface GetStickerSetPayload {
   /** Name of the sticker set */
   name?: string
+}
+
+export interface GetCustomEmojiStickersPayload {
+  /** List of custom emoji identifiers. At most 200 custom emoji identifiers can be specified. */
+  custom_emoji_ids: string[]
 }
 
 export interface UploadStickerFilePayload {
@@ -107,9 +123,14 @@ export interface CreateNewStickerSetPayload {
   tgs_sticker?: InputFile
   /** WEBM video with the sticker, uploaded using multipart/form-data. See https://core.telegram.org/stickers#video-sticker-requirements for technical requirements */
   webm_sticker?: InputFile
+  /** Type of stickers in the set, pass “regular” or “mask”. Custom emoji sticker sets can't be created via the Bot API at the moment. By default, a regular sticker set is created. */
+  sticker_type?: string
   /** One or more emoji corresponding to the sticker */
   emojis?: string
-  /** Pass True, if a set of mask stickers should be created */
+  /**
+   * Pass True, if a set of mask stickers should be created
+   * @deprecated
+   */
   contains_masks?: boolean
   /** A JSON-serialized object for position where the mask should be placed on faces */
   mask_position?: MaskPosition
@@ -173,6 +194,11 @@ declare module './internal' {
      */
     getStickerSet(payload: GetStickerSetPayload): Promise<StickerSet>
     /**
+     * Use this method to get information about custom emoji stickers by their identifiers. Returns an Array of Sticker objects.
+     * @see https://core.telegram.org/bots/api#getcustomemojistickers
+     */
+    getCustomEmojiStickers(payload: GetCustomEmojiStickersPayload): Promise<Sticker[]>
+    /**
      * Use this method to upload a .PNG file with a sticker for later use in createNewStickerSet and addStickerToSet methods (can be used multiple times). Returns the uploaded File on success.
      * @see https://core.telegram.org/bots/api#uploadstickerfile
      */
@@ -207,6 +233,7 @@ declare module './internal' {
 
 Internal.define('sendSticker')
 Internal.define('getStickerSet')
+Internal.define('getCustomEmojiStickers')
 Internal.define('uploadStickerFile')
 Internal.define('createNewStickerSet')
 Internal.define('addStickerToSet')
