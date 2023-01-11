@@ -212,14 +212,36 @@ export interface Message {
   connected_website?: string
   /** Optional. Service message. A user in the chat triggered another user's proximity alert while sharing Live Location. */
   proximity_alert_triggered?: ProximityAlertTriggered
-  /** Optional. Service message: voice chat scheduled */
+  /**
+   * Optional. Service message: voice chat scheduled
+   * @deprecated
+   */
   voice_chat_scheduled?: VoiceChatScheduled
-  /** Optional. Service message: voice chat started */
+  /** Optional. Service message: voice chat scheduled */
+  video_chat_scheduled?: VoiceChatScheduled
+  /**
+   * Optional. Service message: voice chat started
+   * @deprecated
+   */
   voice_chat_started?: VoiceChatStarted
-  /** Optional. Service message: voice chat ended */
+  /** Optional. Service message: voice chat started */
+  video_chat_started?: VoiceChatStarted
+  /**
+   * Optional. Service message: voice chat ended
+   * @deprecated
+   */
   voice_chat_ended?: VoiceChatEnded
-  /** Optional. Service message: new participants invited to a voice chat */
+  /** Optional. Service message: voice chat ended */
+  video_chat_ended?: VoiceChatEnded
+  /**
+   * Optional. Service message: new participants ivited to a voice chat
+   * @deprecated
+   */
   voice_chat_participants_invited?: VoiceChatParticipantsInvited
+  /** Optional. Service message: new participants invited to a voice chat */
+  video_chat_participants_invited?: VoiceChatParticipantsInvited
+  /** Optional. Service message: data sent by a Web App */
+  web_app_data?: WebAppData
   /** Optional. Inline keyboard attached to the message. login_url buttons are represented as ordinary url buttons. */
   reply_markup?: InlineKeyboardMarkup
 }
@@ -560,6 +582,18 @@ export interface Venue {
 }
 
 /**
+ * Describes data sent from a Web App to the bot.
+ * @see https://core.telegram.org/bots/api#webappdata
+ */
+
+export interface WebAppData {
+  /** The data. Be aware that a bad client can send arbitrary data in this field. */
+  data: string
+  /** Text of the web_app keyboard button from which the Web App was opened. Be aware that a bad client can send arbitrary data in this field. */
+  button_text: string
+}
+
+/**
  * This object represents the content of a service message, sent whenever a user in the chat triggers a proximity alert set by another user.
  * @see https://core.telegram.org/bots/api#proximityalerttriggered
  */
@@ -642,6 +676,15 @@ export interface File {
 }
 
 /**
+ * Describes a Web App.
+ * @see https://core.telegram.org/bots/api#webappinfo
+ */
+export interface WebAppInfo {
+  /** An HTTPS URL of a Web App to be opened with additional data as specified in Initializing Web Apps */
+  url: string
+}
+
+/**
  * This object represents a custom keyboard with reply options (see Introduction to bots for details and examples).
  * @see https://core.telegram.org/bots/api#replykeyboardmarkup
  */
@@ -673,6 +716,8 @@ export interface KeyboardButton {
   request_location?: boolean
   /** Optional. If specified, the user will be asked to create a poll and send it to the bot when the button is pressed. Available in private chats only */
   request_poll?: KeyboardButtonPollType
+  /** Optional. If specified, the described Web App will be launched when the button is pressed. The Web App will be able to send a “web_app_data” service message. Available in private chats only. */
+  web_app?: WebAppInfo
 }
 
 /**
@@ -719,6 +764,8 @@ export interface InlineKeyboardButton {
   login_url?: LoginUrl
   /** Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes */
   callback_data?: string
+  /** Optional. Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. Available only in private chats between a user and the bot. */
+  web_app?: WebAppInfo
   /**
    * Optional. If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted.
    *
@@ -842,6 +889,37 @@ export interface ChatInviteLink {
 }
 
 /**
+ * Represents the rights of an administrator in a chat.
+ * @see https://core.telegram.org/bots/api#chatadministratorrights
+ */
+export interface ChatAdministratorRights {
+  /** True, if the user's presence in the chat is hidden */
+  is_anonymous: boolean
+  /** True, if the administrator can access the chat event log, chat statistics, message statistics in channels, see channel members, see anonymous administrators in supergroups and ignore slow mode. Implied by any other administrator privilege */
+  can_manage_chat: boolean
+  /** True, if the administrator can delete messages of other users */
+  can_delete_messages: boolean
+  /** True, if the administrator can manage video chats */
+  can_manage_video_chats: boolean
+  /** True, if the administrator can restrict, ban or unban chat members */
+  can_restrict_members: boolean
+  /** True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user) */
+  can_promote_members: boolean
+  /** True, if the user is allowed to change the chat title, photo and other settings */
+  can_change_info: boolean
+  /** True, if the user is allowed to invite new users to the chat */
+  can_invite_users: boolean
+  /** Optional. True, if the administrator can post in the channel; channels only */
+  can_post_messages?: boolean
+  /** Optional. True, if the administrator can edit messages of other users and can pin messages; channels only */
+  can_edit_messages?: boolean
+  /** Optional. True, if the user is allowed to pin messages; groups and supergroups only */
+  can_pin_messages?: boolean
+  /** Optional. True, if the user is allowed to create, rename, close, and reopen forum topics; supergroups only */
+  can_manage_topics?: boolean
+}
+
+/**
  * This object contains information about one member of a chat. Currently, the following 6 types of chat members are supported:
  * - ChatMemberOwner
  * - ChatMemberAdministrator
@@ -891,8 +969,13 @@ export interface ChatMemberAdministrator {
   can_manage_chat?: boolean
   /** True, if the administrator can delete messages of other users */
   can_delete_messages?: boolean
-  /** True, if the administrator can manage voice chats */
+  /**
+   * True, if the administrator can manage voice chats
+   * @deprecated
+   */
   can_manage_voice_chats?: boolean
+  /** True, if the administrator can manage voice chats */
+  can_manage_video_chats?: boolean
   /** True, if the administrator can restrict, ban or unban chat members */
   can_restrict_members?: boolean
   /** True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user) */
@@ -1147,6 +1230,50 @@ export interface BotCommandScopeChatMember {
   chat_id?: Integer | string
   /** Unique identifier of the target user */
   user_id?: Integer
+}
+
+/**
+ * This object describes the bot's menu button in a private chat. It should be one of
+ * - MenuButtonCommands
+ * - MenuButtonWebApp
+ * - MenuButtonDefault
+ * If a menu button other than MenuButtonDefault is set for a private chat, then it is applied in the chat. Otherwise the default menu button is applied. By default, the menu button opens the list of bot commands.
+ * @see https://core.telegram.org/bots/api#menubutton
+ */
+export type MenuButton =
+  | MenuButtonCommands
+  | MenuButtonWebApp
+  | MenuButtonDefault
+
+/**
+ * Represents a menu button, which opens the bot's list of commands.
+ * @see https://core.telegram.org/bots/api#menubuttoncommands
+ */
+export interface MenuButtonCommands {
+  /** Type of the button, must be commands */
+  type: string
+}
+
+/**
+ * Represents a menu button, which launches a Web App.
+ * @see https://core.telegram.org/bots/api#menubuttonwebapp
+ */
+export interface MenuButtonWebApp {
+  /** Type of the button, must be web_app */
+  type: string
+  /** Text on the button */
+  text: string
+  /** Description of the Web App that will be launched when the user presses the button. The Web App will be able to send an arbitrary message on behalf of the user using the method answerWebAppQuery. */
+  web_app: WebAppInfo
+}
+
+/**
+ * Describes that no specific value for the menu button was set.
+ * @see https://core.telegram.org/bots/api#menubuttondefault
+ */
+export interface MenuButtonDefault {
+  /** Type of the button, must be default */
+  type: string
 }
 
 /**
@@ -1802,8 +1929,13 @@ export interface PromoteChatMemberPayload {
   can_edit_messages?: boolean
   /** Pass True, if the administrator can delete messages of other users */
   can_delete_messages?: boolean
-  /** Pass True, if the administrator can manage voice chats */
+  /**
+   * Pass True, if the administrator can manage voice chats
+   * @deprecated
+   */
   can_manage_voice_chats?: boolean
+  /** Pass True, if the administrator can manage voice chats */
+  can_manage_video_chats?: boolean
   /** Pass True, if the administrator can restrict, ban or unban chat members */
   can_restrict_members?: boolean
   /** Pass True, if the administrator can add new administrators with a subset of their own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him) */
@@ -2024,6 +2156,30 @@ export interface GetMyCommandsPayload {
   scope?: BotCommandScope
   /** A two-letter ISO 639-1 language code or an empty string */
   language_code?: string
+}
+
+export interface SetChatMenuButtonPayload {
+  /** Unique identifier for the target private chat. If not specified, default bot's menu button will be changed */
+  chat_id?: number
+  /** A JSON-serialized object for the bot's new menu button. Defaults to MenuButtonDefault */
+  menu_button?: MenuButton
+}
+
+export interface GetChatMenuButtonPayload {
+  /** Unique identifier for the target private chat. If not specified, default bot's menu button will be returned */
+  getChatMenuButton?: number
+}
+
+export interface SetMyDefaultAdministratorRightsPayload {
+  /** A JSON-serialized object describing new default administrator rights. If not specified, the default administrator rights will be cleared. */
+  rights?: ChatAdministratorRights
+  /** Pass True to change the default administrator rights of the bot in channels. Otherwise, the default administrator rights of the bot for groups and supergroups will be changed. */
+  for_channels?: boolean
+}
+
+export interface GetMyDefaultAdministratorRightsPayload {
+  /** Pass True to get default administrator rights of the bot in channels. Otherwise, default administrator rights of the bot for groups and supergroups will be returned. */
+  for_channels?: boolean
 }
 
 export interface EditMessageTextPayload {
@@ -2393,6 +2549,26 @@ declare module './internal' {
      */
     getMyCommands(payload: GetMyCommandsPayload): Promise<BotCommand[]>
     /**
+     * Use this method to change the bot's menu button in a private chat, or the default menu button. Returns True on success.
+     * @see https://core.telegram.org/bots/api#setchatmenubutton
+     */
+    setChatMenuButton(payload: SetChatMenuButtonPayload): Promise<boolean>
+    /**
+     * Use this method to get the current value of the bot's menu button in a private chat, or the default menu button. Returns MenuButton on success.
+     * @see https://core.telegram.org/bots/api#getchatmenubutton
+     */
+    getChatMenuButton(payload: GetChatMenuButtonPayload): Promise<MenuButton>
+    /**
+     * Use this method to change the default administrator rights requested by the bot when it's added as an administrator to groups or channels. These rights will be suggested to users, but they are are free to modify the list before adding the bot. Returns True on success.
+     * @see https://core.telegram.org/bots/api#setmydefaultadministratorrights
+     */
+    setMyDefaultAdministratorRights(payload: SetMyDefaultAdministratorRightsPayload): Promise<boolean>
+    /**
+     * Use this method to get the current default administrator rights of the bot. Returns ChatAdministratorRights on success.
+     * @see https://core.telegram.org/bots/api#getmydefaultadministratorrights
+     */
+    getMyDefaultAdministratorRights(payload: GetMyDefaultAdministratorRightsPayload): Promise<ChatAdministratorRights>
+    /**
      * Use this method to edit text and game messages. On success, if the edited message is not an inline message, the edited Message is returned, otherwise True is returned.
      * @see https://core.telegram.org/bots/api#editmessagetext
      */
@@ -2489,6 +2665,10 @@ Internal.define('answerCallbackQuery')
 Internal.define('setMyCommands')
 Internal.define('deleteMyCommands')
 Internal.define('getMyCommands')
+Internal.define('setChatMenuButton')
+Internal.define('getChatMenuButton')
+Internal.define('setMyDefaultAdministratorRights')
+Internal.define('getMyDefaultAdministratorRights')
 Internal.define('editMessageText')
 Internal.define('editMessageCaption')
 Internal.define('editMessageMedia')

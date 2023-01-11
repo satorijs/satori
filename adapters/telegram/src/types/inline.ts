@@ -813,6 +813,22 @@ export interface ChosenInlineResult {
   query?: string
 }
 
+export interface AnswerWebAppQueryPayload {
+  /** Unique identifier for the query to be answered */
+  web_app_query_id: string
+  /** A JSON-serialized object describing the message to be sent */
+  result: InlineQueryResult
+}
+
+/**
+ * Describes an inline message sent by a Web App on behalf of a user.
+ * @see https://core.telegram.org/bots/api#sentwebappmessage
+ */
+export interface SentWebAppMessage {
+  /** Optional. Identifier of the sent inline message. Available only if there is an inline keyboard attached to the message. */
+  inline_message_id?: string
+}
+
 declare module './update' {
   interface Update {
     /** Optional. New incoming inline query */
@@ -829,7 +845,13 @@ declare module './internal' {
      * @see https://core.telegram.org/bots/api#answerinlinequery
      */
     answerInlineQuery(payload: AnswerInlineQueryPayload): Promise<boolean>
+    /**
+     * Use this method to set the result of an interaction with a Web App and send a corresponding message on behalf of the user to the chat from which the query originated. On success, a SentWebAppMessage object is returned.
+     * @see https://core.telegram.org/bots/api#answerwebappquery
+     */
+    answerWebAppQuery(payload: AnswerWebAppQueryPayload): Promise<SentWebAppMessage>
   }
 }
 
 Internal.define('answerInlineQuery')
+Internal.define('answerWebAppQuery')
