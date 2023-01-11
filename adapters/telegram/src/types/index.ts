@@ -89,6 +89,8 @@ export interface Chat {
   bio?: string
   /** Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat. */
   has_private_forwards?: boolean
+  /** Optional. True, if the privacy settings of the other party restrict sending voice and video note messages in the private chat. Returned only in getChat. */
+  has_restricted_voice_and_video_messages?: boolean
   /** Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat. */
   join_to_send_messages?: boolean
   /** Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat. */
@@ -303,6 +305,7 @@ export interface MessageEntity {
    * - "pre" (monowidth block)
    * - "text_link" (for clickable text URLs)
    * - "text_mention" (for users without usernames)
+   * - "custom_emoji" (for inline custom emoji stickers)
    */
   type?: MessageEntityType
   /** Offset in UTF-16 code units to the start of the entity */
@@ -315,6 +318,8 @@ export interface MessageEntity {
   user?: User
   /** Optional. For "pre" only, the programming language of the entity text */
   language?: string
+  /** Optional. For “custom_emoji” only, unique identifier of the custom emoji. Use getCustomEmojiStickers to get full information about the sticker */
+  custom_emoji_id?: string
 }
 
 /**
