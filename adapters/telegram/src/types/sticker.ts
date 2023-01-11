@@ -1,4 +1,4 @@
-import { Float, ForceReply, InlineKeyboardMarkup, InputFile, Integer, Internal, Message, PhotoSize, ReplyKeyboardMarkup, ReplyKeyboardRemove } from '.'
+import { File, Float, ForceReply, InlineKeyboardMarkup, InputFile, Integer, Internal, Message, PhotoSize, ReplyKeyboardMarkup, ReplyKeyboardRemove } from '.'
 
 /**
  * This object represents a sticker.
@@ -23,6 +23,8 @@ export interface Sticker {
   emoji?: string
   /** Optional. Name of the sticker set to which the sticker belongs */
   set_name?: string
+  /** Optional. For premium regular stickers, premium animation for the sticker */
+  premium_animation?: File
   /** Optional. For mask stickers, the position where the mask should be placed */
   mask_position?: MaskPosition
   /** Optional. File size in bytes */

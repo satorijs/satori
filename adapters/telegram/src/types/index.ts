@@ -54,6 +54,10 @@ export interface User {
   username?: string
   /** Optional. IETF language tag of the user's language */
   language_code?: string
+  /** Optional. True, if this user is a Telegram Premium user */
+  is_premium?: boolean
+  /** Optional. True, if this user added the bot to the attachment menu */
+  added_to_attachment_menu?: boolean
   /** Optional. True, if the bot can be invited to groups. Returned only in getMe. */
   can_join_groups?: boolean
   /** Optional. True, if privacy mode is disabled for the bot. Returned only in getMe. */
@@ -85,6 +89,10 @@ export interface Chat {
   bio?: string
   /** Optional. True, if privacy settings of the other party in the private chat allows to use tg://user?id=<user_id> links only in chats with the user. Returned only in getChat. */
   has_private_forwards?: boolean
+  /** Optional. True, if users need to join the supergroup before they can send messages. Returned only in getChat. */
+  join_to_send_messages?: boolean
+  /** Optional. True, if all users directly joining the supergroup need to be approved by supergroup administrators. Returned only in getChat. */
+  join_by_request?: boolean
   /** Optional. Description, for groups, supergroups and channel chats. Returned only in getChat. */
   description?: string
   /** Optional. Primary invite link, for groups, supergroups and channel chats. Returned only in getChat. */
