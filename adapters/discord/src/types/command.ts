@@ -1,4 +1,4 @@
-import { Channel, Internal, Locale, snowflake } from '.'
+import { Channel, integer, Internal, Locale, snowflake } from '.'
 
 /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure */
 export interface ApplicationCommand {
@@ -28,6 +28,10 @@ export interface ApplicationCommand {
   default_permission?: boolean
   /** autoincrementing version identifier updated during substantial record changes */
   version: snowflake
+  /** for option type `STRING`, the minimum allowed length (minimum of `0`, maximum of `6000`) */
+  min_length?: integer
+  /** for option type `STRING`, the maximum allowed length (minimum of `1`, maximum of `6000`) */
+  max_length?: integer
 }
 
 export namespace ApplicationCommand {

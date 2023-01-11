@@ -24,6 +24,12 @@ export interface Interaction {
   version: integer
   /** for components, the message they were attached to */
   message?: Message
+  /** bitwise set of permissions the app or bot has within the channel the interaction was sent from */
+  app_permissions?: string
+  /** selected language of the invoking user */
+  locale?: string
+  /** guild's preferred locale, if invoked in a guild */
+  guild_locale?: string
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type */
