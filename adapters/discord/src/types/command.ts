@@ -1,4 +1,4 @@
-import { Channel, Internal, Locale, snowflake, integer } from '.'
+import { Channel, integer, Internal, Locale, snowflake } from '.'
 
 /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure */
 export interface ApplicationCommand {
