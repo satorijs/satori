@@ -79,10 +79,9 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
     super(bot, channelId, guildId, options)
-    const chat_id = channelId.startsWith('private:')
-      ? channelId.slice(8)
-      : channelId
+    const chat_id = guildId ? guildId : channelId.slice(8)
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
+    if (guildId && channelId !== guildId) this.payload.message_thread_id = +channelId
   }
 
   async addResult(result: Telegram.Message) {
@@ -117,6 +116,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
         text: this.payload.caption,
         parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
+        message_thread_id: this.payload.message_thread_id,
       })
       await this.addResult(result)
       delete this.payload.reply_to_message
