@@ -111,7 +111,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     session.messageId = message.message_id.toString()
     session.timestamp = message.date * 1000
     const segments: segment[] = []
-    if (message.reply_to_message) {
+    // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
+    if (message.reply_to_message && !(message.is_topic_message && message.reply_to_message.forum_topic_created)) {
       session.quote = {}
       await this.adaptMessage(message.reply_to_message, session.quote as Session)
     }
@@ -159,13 +160,17 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     session.content = segments.join('')
     session.userId = message.from.id.toString()
     session.author = adaptUser(message.from)
-    session.channelId = message.chat.id.toString()
     if (message.chat.type === 'private') {
       session.subtype = 'private'
-      session.channelId = 'private:' + session.channelId
+      session.channelId = 'private:' + message.chat.id
     } else {
       session.subtype = 'group'
-      session.guildId = session.channelId
+      session.guildId =  message.chat.id.toString()
+      if (message.is_topic_message) {
+        session.channelId = message.message_thread_id.toString()
+      } else {
+        session.channelId = session.guildId
+      }
     }
   }
 
