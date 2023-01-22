@@ -22,7 +22,7 @@ export interface Emoji {
 
 export namespace Emoji {
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#guild-emojis-update-guild-emojis-update-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-emojis-update-guild-emojis-update-event-fields */
     export interface Update {
       /** id of the guild */
       guild_id: snowflake

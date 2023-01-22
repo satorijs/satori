@@ -59,6 +59,8 @@ export namespace AutoModerationRule {
   export interface TriggerMetadata {
     /** associated with `KEYWORD`: substrings which will be searched for in content */
     keyword_filter: string[]
+    /** 	regular expression patterns which will be matched against content (Maximum of 10) */
+    regex_patterns: string[]
     /** associated with `KEYWORD_PRESET`: the internally pre-defined wordsets which will be searched for in content */
     presets: KeywordPresetType[]
     /** associated with `KEYWORD_PRESET`: substrings which will be exempt from triggering the preset trigger type */
@@ -115,7 +117,7 @@ export namespace AutoModerationAction {
     SEND_ALERT_MESSAGE = 2,
     /**
      * timeout user for a specified duration
-     * 
+     *
      * A `TIMEOUT` action can only be set up for `KEYWORD` and `MENTION_SPAM` rules.
      * The `MODERATE_MEMBERS` permission is required to use the `TIMEOUT` action type.)
      */
@@ -124,7 +126,7 @@ export namespace AutoModerationAction {
 
   /** @see https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-action-metadata */
   export interface Metadata {
-    /** 
+    /**
      * associated with `SEND_ALERT_MESSAGE`:
      * channel to which user content should be logged
      */

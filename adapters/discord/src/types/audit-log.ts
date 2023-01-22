@@ -1,9 +1,15 @@
-import { Channel, integer, Integration, Internal, snowflake, User, Webhook } from '.'
+import { ApplicationCommand, AutoModerationRule, Channel, GuildScheduledEvent, integer, Integration, Internal, snowflake, User, Webhook } from '.'
 
 /** https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure */
 export interface AuditLog {
+  /** list of application commands referenced in the audit log */
+  application_commands: ApplicationCommand[]
   /** list of audit log entries */
   audit_log_entries: AuditLog.Entry[]
+  /**	list of auto moderation rules referenced in the audit log */
+  auto_moderation_rules: AutoModerationRule[]
+  /** list of guild scheduled events referenced in the audit log */
+  guild_scheduled_events: GuildScheduledEvent[]
   /** list of partial integration objects */
   integrations: Partial<Integration>[]
   /** list of threads found in the audit log* */
@@ -147,6 +153,12 @@ export namespace AuditLog {
 
   /** https://discord.com/developers/docs/resources/audit-log#audit-log-entry-object-optional-audit-entry-info */
   export interface OptionalInfo {
+    /** ID of the app whose permissions were targeted */
+    application_id: snowflake
+    /**	name of the Auto Moderation rule that was triggered */
+    auto_moderation_rule_name: string
+    /** trigger type of the Auto Moderation rule that was triggered */
+    auto_moderation_rule_trigger_type: string
     /** channel in which the entities were targeted */
     channel_id: snowflake
     /** number of entities that were targeted */
@@ -177,13 +189,15 @@ export namespace AuditLog {
 
   /** https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log-query-string-params */
   export interface GetParams {
-    /** filter the log for actions made by a user */
+    /** entries from a specific user ID */
     user_id?: snowflake
-    /** the type of audit log event */
+    /** entries for a specific audit log event */
     action_type?: Type
-    /** filter the log before a certain entry id */
+    /** entries that preceded a specific audit log entry ID */
     before?: snowflake
-    /** how many entries are returned (default 50, minimum 1, maximum 100) */
+    /** entries that succeeded a specific audit log entry ID */
+    after?: snowflake
+    /** maximum number of entries (between 1-100) to return, defaults to 50 */
     limit?: integer
   }
 }

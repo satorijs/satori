@@ -1,6 +1,6 @@
 import { Activity, integer, Internal, snowflake, StatusType } from '.'
 
-/** https://discord.com/developers/docs/topics/gateway#payloads-gateway-payload-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#payloads-gateway-payload-structure */
 export interface GatewayPayloadStructure<O extends GatewayOpcode, T extends keyof GatewayEvents, D> {
   /** opcode for the payload */
   op: O
@@ -46,7 +46,7 @@ export enum GatewayOpcode {
   HEARTBEAT_ACK = 11,
 }
 
-/** https://discord.com/developers/docs/topics/gateway#gateway-intents */
+/** https://discord.com/developers/docs/topics/gateway-events#gateway-intents */
 export enum GatewayIntent {
   /**
    * - GUILD_CREATE
@@ -150,20 +150,20 @@ export enum GatewayIntent {
   /**
    * `MESSAGE_CONTENT` is a unique privileged intent that isn't directly associated with any Gateway events.
    * Instead, access to `MESSAGE_CONTENT` permits your app to receive message content data across the APIs.
-   * 
+   *
    * Any fields affected by the message content intent are noted in the relevant documentation.
    * For example, the content, embeds, attachments, and components fields in message objects all contain message content and therefore require the intent.
-   * 
+   *
    * Like other privileged intents, `MESSAGE_CONTENT` must be approved for your app.
    * After your app is verified, you can apply for the intent from your app's settings within the Developer Portal.
    * You can read more about the message content intent review policy in the [Help Center](https://support-dev.discord.com/hc/en-us/articles/5324827539479).
-   * 
+   *
    * Apps without the intent will receive empty values in fields that contain user-inputted content with a few exceptions:
    * - Content in messages that an app sends
    * - Content in DMs with the app
    * - Content in which the app is mentioned
-   * 
-   * @see https://discord.com/developers/docs/topics/gateway#message-content-intent
+   *
+   * @see https://discord.com/developers/docs/topics/gateway-events#message-content-intent
    */
   MESSAGE_CONTENT = 1 << 15,
   /**
@@ -179,11 +179,11 @@ export enum GatewayIntent {
    * - AUTO_MODERATION_RULE_UPDATE
    * - AUTO_MODERATION_RULE_DELETE
    */
-  AUTO_MODERATION_CONFIGURATION = 1 << 17,
+  AUTO_MODERATION_CONFIGURATION = 1 << 20,
   /**
    * - AUTO_MODERATION_ACTION_EXECUTION
    */
-  AUTO_MODERATION_EXECUTION = 1 << 18,
+  AUTO_MODERATION_EXECUTION = 1 << 21,
 }
 
 export interface GatewayParams {
@@ -195,10 +195,10 @@ export interface GatewayParams {
   [GatewayOpcode.PRESENCE_UPDATE]: PresenceUpdateParams
 }
 
-/** https://discord.com/developers/docs/topics/gateway#commands-and-events-gateway-events */
+/** https://discord.com/developers/docs/topics/gateway-events#commands-and-events-gateway-events */
 export interface GatewayEvents {}
 
-/** https://discord.com/developers/docs/topics/gateway#identify-identify-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure */
 export interface IdentifyParams {
   /** authentication token */
   token: string
@@ -216,7 +216,7 @@ export interface IdentifyParams {
   intents: integer
 }
 
-/** https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties */
+/** https://discord.com/developers/docs/topics/gateway-events-events#identify-identify-connection-properties */
 export interface ConnectionProperties {
   /** Your operating system */
   os: string
@@ -226,7 +226,7 @@ export interface ConnectionProperties {
   device: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#resume-resume-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#resume-resume-structure */
 export interface ResumeParams {
   /** session token */
   token: string
@@ -236,7 +236,7 @@ export interface ResumeParams {
   seq: integer
 }
 
-/** https://discord.com/developers/docs/topics/gateway#request-guild-members-guild-request-members-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#request-guild-members-guild-request-members-structure */
 export interface RequestGuildMembersParams {
   /** id of the guild to get members for */
   guild_id: snowflake
@@ -252,7 +252,7 @@ export interface RequestGuildMembersParams {
   nonce?: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#update-voice-state-gateway-voice-state-update-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#update-voice-state-gateway-voice-state-update-structure */
 export interface VoiceStateUpdateParams {
   /** id of the guild */
   guild_id: snowflake
@@ -264,7 +264,7 @@ export interface VoiceStateUpdateParams {
   self_deaf: boolean
 }
 
-/** https://discord.com/developers/docs/topics/gateway#update-presence-gateway-presence-update-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#update-presence-gateway-presence-update-structure */
 export interface PresenceUpdateParams {
   /** unix time (in milliseconds) of when the client went idle, or null if the client is not idle */
   since?: integer
@@ -276,13 +276,13 @@ export interface PresenceUpdateParams {
   afk: boolean
 }
 
-/** https://discord.com/developers/docs/topics/gateway#hello-hello-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#hello-hello-structure */
 export interface HelloParams {
   /** the interval (in milliseconds) the client should heartbeat with */
   heartbeat_interval: integer
 }
 
-/** https://discord.com/developers/docs/topics/gateway#session-start-limit-object-session-start-limit-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#session-start-limit-object-session-start-limit-structure */
 export interface SessionStartLimit {
   /** The total number of session starts the current user is allowed */
   total: integer
@@ -298,12 +298,12 @@ declare module './internal' {
   interface Internal {
     /**
      * Returns an object with a single valid WSS URL, which the client can use for Connecting. Clients should cache this value and only call this endpoint to retrieve a new URL if they are unable to properly establish a connection using the cached version of the URL.
-     * @see https://discord.com/developers/docs/topics/gateway#get-gateway
+     * @see https://discord.com/developers/docs/topics/gateway-events#get-gateway
      */
     getGateway(): Promise<any>
     /**
      * Returns an object based on the information in Get Gateway, plus additional metadata that can help during the operation of large or sharded bots. Unlike the Get Gateway, this route should not be cached for extended periods of time as the value is not guaranteed to be the same per-call, and changes as the bot joins/leaves guilds.
-     * @see https://discord.com/developers/docs/topics/gateway#get-gateway-bot
+     * @see https://discord.com/developers/docs/topics/gateway-events#get-gateway-bot
      */
     getGatewayBot(): Promise<any>
   }

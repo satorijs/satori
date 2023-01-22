@@ -79,6 +79,7 @@ export namespace ApplicationCommand {
     MENTIONABLE = 9,
     /** Any double between -2^53 and 2^53 */
     NUMBER = 10,
+    ATTACHMENT = 11
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure */
@@ -87,6 +88,8 @@ export namespace ApplicationCommand {
     name: string
     /** value of the choice, up to 100 characters if string */
     value: string | number
+    /** localization dictionary for the name field. Values follow the same restrictions as name */
+    name_localizations?: Record<Locale, string>
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure */
@@ -128,26 +131,46 @@ export namespace ApplicationCommand {
     export interface Create {
       /** 1-32 character name */
       name: string
+      /**	localization dictionary for the name field. Values follow the same restrictions as name */
+      name_localizations?: Record<Locale, string>
       /** 1-100 character description */
-      description: string
+      description?: string
+      /** localization dictionary for the description field. Values follow the same restrictions as description */
+      description_localizations?: Record<Locale, string>
       /** the parameters for the command */
       options?: Option[]
+      /**	set of permissions represented as a bit set */
+      default_member_permissions?: string
+      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+      dm_permission?: boolean
       /** whether the command is enabled by default when the app is added to a guild */
       default_permission?: boolean
       /** the type of command, defaults 1 if not set */
       type?: Type
+      /**	indicates whether the command is age-restricted */
+      nsfw?: boolean
     }
 
     /** https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command-json-params */
     export interface Edit {
       /** 1-32 character name */
-      name?: string
+      name: string
+      /**	localization dictionary for the name field. Values follow the same restrictions as name */
+      name_localizations?: Record<Locale, string>
       /** 1-100 character description */
       description?: string
+      /** localization dictionary for the description field. Values follow the same restrictions as description */
+      description_localizations?: Record<Locale, string>
       /** the parameters for the command */
       options?: Option[]
+      /**	set of permissions represented as a bit set */
+      default_member_permissions?: string
+      /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+      dm_permission?: boolean
       /** whether the command is enabled by default when the app is added to a guild */
       default_permission?: boolean
+      /**	indicates whether the command is age-restricted */
+      nsfw?: boolean
     }
 
     /** https://discord.com/developers/docs/interactions/application-commands#edit-application-command-permissions-json-params */
@@ -162,7 +185,7 @@ declare module './gateway' {
   interface GatewayEvents {
     /**
      * sent when an application command's permissions are updated
-     * @see https://discord.com/developers/docs/topics/gateway-events#application-command-permissions-update
+     * @see https://discord.com/developers/docs/topics/gateway-events-events#application-command-permissions-update
      */
     APPLICATION_COMMAND_PERMISSIONS_UPDATE: ApplicationCommand.GuildPermissions
   }

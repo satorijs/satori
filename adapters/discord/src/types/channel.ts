@@ -1,4 +1,4 @@
-import { GuildMember, integer, Internal, snowflake, timestamp, User } from '.'
+import { GuildMember, integer, Internal, snowflake, ThreadMember, ThreadMetadata, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
 export interface Channel {
@@ -42,8 +42,46 @@ export interface Channel {
   rtc_region?: string
   /** the camera video quality mode of the voice channel, 1 when not present */
   video_quality_mode?: integer
+  /** number of messages (not including the initial message or deleted messages) in a thread. */
+  message_count?: integer
+  /** an approximate count of users in a thread, stops counting at 50 */
+  member_count?: integer
+  /** thread-specific fields not needed by other channels */
+  thread_metadata?: ThreadMetadata
+  /** thread member object for the current user, if they have joined the thread, only included on certain API endpoints */
+  member?: ThreadMember
+  /** default duration, copied onto newly created threads, in minutes, threads will stop showing in the channel list after the specified period of inactivity, can be set to: 60, 1440, 4320, 10080 */
+  default_auto_archive_duration?: integer
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the resolved data received on a slash command interaction */
   permissions?: string
+  /** channel flags combined as a bitfield */
+  flags?: integer
+  /** number of messages ever sent in a thread, it's similar to message_count on message creation, but will not decrement the number when a message is deleted */
+  total_message_sent?: integer
+  /** the set of tags that can be used in a GUILD_FORUM channel */
+  available_tags?: ForumTag[]
+  /** the IDs of the set of tags that have been applied to a thread in a GUILD_FORUM channel */
+  applied_tags?: snowflake[]
+  /** the emoji to show in the add reaction button on a thread in a GUILD_FORUM channel */
+  default_reaction_emoji?: DefaultReaction
+  /** the initial rate_limit_per_user to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
+  default_thread_rate_limit_per_user?: integer
+  /** the default sort order type used to order posts in GUILD_FORUM channels. Defaults to null, which indicates a preferred sort order hasn't been set by a channel admin */
+  default_sort_order?: integer
+  /** the default forum layout view used to display posts in GUILD_FORUM channels. Defaults to 0, which indicates a layout view has not been set by a channel admin */
+  default_forum_layout?: integer
+}
+
+/** https://discord.com/developers/docs/resources/channel#role-subscription-data-object */
+export interface RoleSubscriptionData {
+  /** the id of the sku and listing that the user is subscribed to */
+  role_subscription_listing_id: snowflake
+  /** the name of the tier that the user is subscribed to */
+  tier_name: string
+  /** the cumulative number of months that the user has been subscribed for */
+  total_months_subscribed: integer
+  /** whether this notification is for a renewal rather than a new purchase */
+  is_renewal: boolean
 }
 
 export namespace Channel {
@@ -263,7 +301,7 @@ export interface ChannelUpdateEvent extends Channel {}
 
 export interface ChannelDeleteEvent extends Channel {}
 
-/** https://discord.com/developers/docs/topics/gateway#channel-pins-update-channel-pins-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#channel-pins-update-channel-pins-update-event-fields */
 export interface ChannelPinsUpdateEvent {
   /** the id of the guild */
   guild_id?: snowflake
@@ -273,7 +311,7 @@ export interface ChannelPinsUpdateEvent {
   last_pin_timestamp?: timestamp
 }
 
-/** https://discord.com/developers/docs/topics/gateway#typing-start-typing-start-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#typing-start-typing-start-event-fields */
 export interface TypingStartEvent {
   /** id of the channel */
   channel_id: snowflake
@@ -285,6 +323,52 @@ export interface TypingStartEvent {
   timestamp: integer
   /** the member who started typing if this happened in a guild */
   member?: GuildMember
+}
+
+/** https://discord.com/developers/docs/resources/channel#forum-tag-object */
+export interface ForumTag {
+  /** the id of the tag */
+  id: snowflake
+  /** the name of the tag (0-20 characters) */
+  name: string
+  /** whether this tag can only be added to or removed from threads by a member with the MANAGE_THREADS permission */
+  moderated: boolean
+  /** the id of a guild's custom emoji */
+  emoji_id?: snowflake
+  /** the unicode character of the emoji */
+  emoji_name?: string
+}
+
+/** https://discord.com/developers/docs/resources/channel#default-reaction-object */
+export interface DefaultReaction {
+  /**	the id of a guild's custom emoji */
+  emoji_id?: snowflake
+  /**	the unicode character of the emoji */
+  emoji_name?: string
+}
+
+/** https://discord.com/developers/docs/resources/channel#attachment-object */
+export interface Attachment {
+  /**	attachment id */
+  id: snowflake
+  /**	name of file attached */
+  filename: string
+  /**	description for the file (max 1024 characters) */
+  description?: string
+  /**	the attachment's media type */
+  content_type?: string
+  /**	size of file in bytes */
+  size: number
+  /**	source url of file */
+  url: string
+  /**	a proxied url of file */
+  proxy_url: string
+  /** height of file (if image) */
+  height?: number
+  /** width of file (if image) */
+  width?: number
+  /**	whether this attachment is ephemeral */
+  ephemeral?: boolean
 }
 
 declare module './gateway' {

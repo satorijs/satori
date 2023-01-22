@@ -12,7 +12,7 @@ export interface Reaction {
 
 export namespace Reaction {
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#message-reaction-add-message-reaction-add-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-reaction-add-message-reaction-add-event-fields */
     export interface Add {
       /** the id of the user */
       user_id: snowflake
@@ -28,7 +28,7 @@ export namespace Reaction {
       emoji: Partial<Emoji>
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#message-reaction-remove-message-reaction-remove-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-reaction-remove-message-reaction-remove-event-fields */
     export interface Remove {
       /** the id of the user */
       user_id: snowflake
@@ -42,7 +42,7 @@ export namespace Reaction {
       emoji: Partial<Emoji>
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#message-reaction-remove-all-message-reaction-remove-all-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-reaction-remove-all-message-reaction-remove-all-event-fields */
     export interface RemoveAll {
       /** the id of the channel */
       channel_id: snowflake
@@ -52,7 +52,7 @@ export namespace Reaction {
       guild_id?: snowflake
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#message-reaction-remove-emoji-message-reaction-remove-emoji */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-reaction-remove-emoji-message-reaction-remove-emoji */
     export interface RemoveEmoji {
       /** the id of the channel */
       channel_id: snowflake

@@ -1,4 +1,4 @@
-import { Application, Channel, Guild, GuildMember, integer, Internal, snowflake, timestamp, User } from '.'
+import { Application, Channel, Guild, GuildMember, GuildScheduledEvent, integer, Internal, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
 export interface Invite {
@@ -24,6 +24,8 @@ export interface Invite {
   expires_at?: timestamp
   /** stage instance data if there is a public Stage instance in the Stage channel this invite is for */
   stage_instance?: Invite.StageInstance
+  /**	guild scheduled event data, only included if guild_scheduled_event_id contains a valid guild scheduled event id */
+  guild_scheduled_event?: GuildScheduledEvent
 }
 
 export namespace Invite {
@@ -60,7 +62,7 @@ export namespace Invite {
   }
 
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#invite-create-invite-create-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#invite-create-invite-create-event-fields */
     export interface Create {
       /** the channel the invite is for */
       channel_id: snowflake
@@ -88,7 +90,7 @@ export namespace Invite {
       uses: integer
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#invite-delete-invite-delete-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#invite-delete-invite-delete-event-fields */
     export interface Delete {
       /** the channel of the invite */
       channel_id: snowflake

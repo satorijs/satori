@@ -64,7 +64,7 @@ export interface VoiceRegion {
 
 export interface VoiceStateUpdateEvent extends VoiceState {}
 
-/** https://discord.com/developers/docs/topics/gateway#voice-server-update-voice-server-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#voice-server-update-voice-server-update-event-fields */
 export interface VoiceServerUpdateEvent {
   /** voice connection token */
   token: string

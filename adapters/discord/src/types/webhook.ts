@@ -1,4 +1,4 @@
-import { AllowedMentions, Attachment, Channel, Component, Embed, Guild, Internal, Message, snowflake, User } from '.'
+import { AllowedMentions, Attachment, Channel, Component, Embed, Guild, integer, Internal, Message, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure */
 export interface Webhook {
@@ -87,6 +87,10 @@ export namespace Webhook {
     payload_json: string
     /** attachment objects with filename and description */
     attachments: Partial<Attachment>[]
+    /** message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
+    flags: integer
+    /** name of thread to create (requires the webhook channel to be a forum channel) */
+    thread_name: string
   }
 
   /** https://discord.com/developers/docs/resources/webhook#get-webhook-message-query-string-params */
@@ -114,7 +118,7 @@ export namespace Webhook {
   }
 }
 
-/** https://discord.com/developers/docs/topics/gateway#webhooks-update-webhook-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#webhooks-update-webhooks-update-event-fields */
 export interface WebhooksUpdateEvent {
   /** id of the guild */
   guild_id: snowflake

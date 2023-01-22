@@ -1,4 +1,4 @@
-import { Channel, Emoji, GuildMember, integer, Internal, PresenceUpdateEvent, Role, snowflake, StageInstance, Sticker, timestamp, VoiceState } from '.'
+import { Channel, Emoji, GuildMember, integer, Internal, PresenceUpdateEvent, Role, snowflake, StageInstance, Sticker, timestamp, User, VoiceState } from '.'
 
 /** https://discord.com/developers/docs/resources/guild#guild-object-guild-structure */
 export interface Guild {
@@ -52,24 +52,6 @@ export interface Guild {
   system_channel_flags: integer
   /** the id of the channel where Community guilds can display rules and/or guidelines */
   rules_channel_id?: snowflake
-  /** when this guild was joined at */
-  joined_at?: timestamp
-  /** true if this is considered a large guild */
-  large?: boolean
-  /** true if this guild is unavailable due to an outage */
-  unavailable?: boolean
-  /** total number of members in this guild */
-  member_count?: integer
-  /** states of members currently in voice channels; lacks the guild_id key */
-  voice_states?: Partial<VoiceState>[]
-  /** users in the guild */
-  members?: GuildMember[]
-  /** channels in the guild */
-  channels?: Channel[]
-  /** all active threads in the guild that current user has permission to view */
-  threads?: Channel[]
-  /** presences of the members in the guild, will only include non-offline members if the size is greater than large threshold */
-  presences?: Partial<PresenceUpdateEvent>[]
   /** the maximum number of presences for the guild (null is always returned, apart from the largest of guilds) */
   max_presences?: integer
   /** the maximum number of members for the guild */
@@ -98,10 +80,10 @@ export interface Guild {
   welcome_screen?: WelcomeScreen
   /** guild NSFW level */
   nsfw_level: integer
-  /** Stage instances in the guild */
-  stage_instances?: StageInstance[]
   /** custom guild stickers */
   stickers?: Sticker[]
+  /**	whether the guild has the boost progress bar enabled */
+  premium_progress_bar_enabled: boolean
 }
 
 export namespace Guild {
@@ -242,6 +224,12 @@ export enum SystemChannelFlag {
   SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
   /** Suppress server setup tips */
   SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2,
+  /**	Hide member join sticker reply buttons */
+  SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3,
+  /**	Suppress role subscription purchase and renewal notifications */
+  SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4,
+  /** Hide role subscription sticker reply buttons */
+  SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
 }
 
 /** https://discord.com/developers/docs/resources/guild#guild-object-guild-features */
@@ -314,14 +302,24 @@ export interface GuildPreview {
   approximate_presence_count: integer
   /** the description for the guild, if the guild is discoverable */
   description?: string
+  /**	custom guild stickers */
+  stickers: Sticker[]
 }
 
 /** https://discord.com/developers/docs/resources/guild#guild-widget-object-guild-widget-structure */
 export interface GuildWidget {
-  /** whether the widget is enabled */
-  enabled: boolean
-  /** the widget channel id */
-  channel_id?: snowflake
+  /** guild id */
+  id: snowflake
+  /** guild name (2-100 characters) */
+  name: string
+  /** instant invite for the guilds specified widget invite channel */
+  instant_invite?: string
+  /** voice and stage channels which are accessible by everyone */
+  channels: Partial<Channel>[]
+  /**	special widget user objects that includes users presence (Limit 100) */
+  members: Partial<User>[]
+  /**	number of online members in this guild */
+  presence_count: integer
 }
 
 /** https://discord.com/developers/docs/resources/guild#welcome-screen-object-welcome-screen-structure */

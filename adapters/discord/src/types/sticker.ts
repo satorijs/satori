@@ -13,7 +13,7 @@ export interface Sticker {
   /** autocomplete/suggestion tags for the sticker (max 200 characters) */
   tags: string
   /** Deprecated previously the sticker asset hash, now an empty string */
-  asset: string
+  asset?: string
   /** type of sticker */
   type: Sticker.Type
   /** type of sticker format */
@@ -42,6 +42,7 @@ export namespace Sticker {
     PNG = 1,
     APNG = 2,
     LOTTIE = 3,
+    GIF = 4
   }
 
   /** https://discord.com/developers/docs/resources/sticker#sticker-item-object-sticker-item-structure */
@@ -73,7 +74,7 @@ export namespace Sticker {
   }
 
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#guild-stickers-update-guild-stickers-update-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-stickers-update-guild-stickers-update-event-fields */
     export interface Update {
       /** id of the guild */
       guild_id: snowflake
