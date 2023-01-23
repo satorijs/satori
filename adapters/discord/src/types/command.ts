@@ -26,12 +26,10 @@ export interface ApplicationCommand {
   dm_permission?: boolean
   /** whether the command is enabled by default when the app is added to a guild */
   default_permission?: boolean
+  /** Indicates whether the command is age-restricted, defaults to false */
+  nsfw?: boolean
   /** autoincrementing version identifier updated during substantial record changes */
   version: snowflake
-  /** for option type `STRING`, the minimum allowed length (minimum of `0`, maximum of `6000`) */
-  min_length?: integer
-  /** for option type `STRING`, the maximum allowed length (minimum of `1`, maximum of `6000`) */
-  max_length?: integer
 }
 
 export namespace ApplicationCommand {
@@ -51,8 +49,12 @@ export namespace ApplicationCommand {
     type: OptionType
     /** 1-32 character name */
     name: string
+    /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+    name_localizations?: Record<Locale, string>
     /** 1-100 character description */
     description: string
+    /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+    description_localizations?: Record<Locale, string>
     /** if the parameter is required or optional--default false */
     required?: boolean
     /** choices for STRING, INTEGER, and NUMBER types for the user to pick from, max 25 */
@@ -61,6 +63,16 @@ export namespace ApplicationCommand {
     options?: Option[]
     /** if the option is a channel type, the channels shown will be restricted to these types */
     channel_types?: Channel.Type[]
+    /** if the option is an `INTEGER` or `NUMBER` type, the minimum value permitted. integer for `INTEGER` options, double for `NUMBER` options */
+    min_value?: number
+    /** if the option is an `INTEGER` or `NUMBER` type, the maximum  value permitted. integer for `INTEGER` options, double for `NUMBER` options */
+    max_value?: number
+    /**	For option type `STRING`, the minimum allowed length (minimum of 0, maximum of 6000) */
+    min_length?: integer
+    /**	For option type `STRING`, the minimum allowed length (maximum of 1, maximum of 6000) */
+    max_length?: integer
+    /** If autocomplete interactions are enabled for this `STRING`, `INTEGER`, or `NUMBER` type option */
+    autocomplete?: boolean
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type */

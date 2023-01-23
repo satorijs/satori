@@ -262,11 +262,17 @@ export interface FollowedChannel {
 }
 
 /** https://discord.com/developers/docs/resources/channel#overwrite-object-overwrite-structure */
+export enum OverwriteType {
+  ROLE = 0,
+  MEMBER = 1,
+}
+
+/** https://discord.com/developers/docs/resources/channel#overwrite-object-overwrite-structure */
 export interface Overwrite {
   /** role or user id */
   id: snowflake
   /** either 0 (role) or 1 (member) */
-  type: integer
+  type: OverwriteType
   /** permission bit set */
   allow: string
   /** permission bit set */

@@ -1,4 +1,4 @@
-import { AllowedMentions, ApplicationCommand, Attachment, Channel, Component, ComponentType, Embed, GuildMember, integer, Internal, Message, Role, SelectOption, snowflake, User } from '.'
+import { AllowedMentions, ApplicationCommand, Attachment, Channel, Component, ComponentType, Embed, GuildMember, integer, Internal, Message, Role, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure */
 export interface Interaction {
@@ -9,7 +9,7 @@ export interface Interaction {
   /** the type of interaction */
   type: InteractionType
   /** the command data payload */
-  data?: ApplicationCommandData | MessageComponentData | ModalSubmitData
+  data?: InteractionData
   /** the guild it was sent from */
   guild_id?: snowflake
   /** the channel it was sent from */
@@ -30,6 +30,48 @@ export interface Interaction {
   locale?: string
   /** guild's preferred locale, if invoked in a guild */
   guild_locale?: string
+}
+
+export type InteractionData =
+  | InteractionData.ApplicationCommand
+  | InteractionData.MessageComponent
+  | InteractionData.ModalSubmit
+
+export namespace InteractionData {
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure */
+  export interface ApplicationCommand {
+    /** the ID of the invoked command */
+    id: snowflake
+    /** the name of the invoked command */
+    name: string
+    /** the type of the invoked command */
+    type: integer
+    /** converted users + roles + channels */
+    resolved?: ResolvedData
+    /** the params + values from the user */
+    options?: ApplicationCommandInteractionDataOption[]
+    /** the id of the guild the command is registered to */
+    guild_id?: snowflake
+    /**	id of the user or message targeted by a user or message command */
+    target_id?: snowflake
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure */
+  export interface MessageComponent {
+    /** the custom_id of the component */
+    custom_id: string
+    /** the type of the component */
+    component_type: ComponentType
+    /** 	values the user selected in a select menu component */
+    values?: string[]
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-modal-submit-data-structure */
+  export interface ModalSubmit {
+    custom_id: string
+    components: Component[]
+  }
+
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type */
@@ -53,40 +95,6 @@ export interface ApplicationCommandInteractionDataOption {
   options?: ApplicationCommandInteractionDataOption[]
   /** true if this option is the currently focused option for autocomplete */
   focused?: boolean
-}
-
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure */
-export interface ApplicationCommandData {
-  /** the ID of the invoked command */
-  id: snowflake
-  /** the name of the invoked command */
-  name: string
-  /** the type of the invoked command */
-  type: integer
-  /** converted users + roles + channels */
-  resolved?: ResolvedData
-  /** the params + values from the user */
-  options?: ApplicationCommandInteractionDataOption[]
-  /** the id of the guild the command is registered to */
-  guild_id?: snowflake
-  /**	id of the user or message targeted by a user or message command */
-  target_id?: snowflake
-}
-
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure */
-export interface MessageComponentData {
-  /** the custom_id of the component */
-  custom_id: string
-  /** the type of the component */
-  component_type: ComponentType
-  /** 	values the user selected in a select menu component */
-  values?: string[]
-}
-
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-modal-submit-data-structure */
-export interface ModalSubmitData {
-  custom_id: string
-  components: Component[]
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure */
@@ -124,7 +132,7 @@ export interface InteractionResponse {
   /** the type of response */
   type: InteractionCallbackType
   /** an optional response message */
-  data?: MessagesCallbackData | AutocompleteCallbackData | ModalCallbackData
+  data?: InteractionCallbackData
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-callback-type */
@@ -154,41 +162,49 @@ export enum InteractionCallbackType {
   MODAL = 9,
 }
 
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-messages */
-export interface MessagesCallbackData {
-  /** is the response TTS */
-  tts?: boolean
-  /** message content */
-  content?: string
-  /** supports up to 10 embeds */
-  embeds?: Embed[]
-  /** allowed mentions object */
-  allowed_mentions?: AllowedMentions
-  /** interaction callback data flags */
-  flags?: integer
-  /** message components */
-  components?: Component[]
-  /** attachment objects with filename and description */
-  attachments?: Partial<Attachment>[]
+export type InteractionCallbackData =
+  | InteractionCallbackData.Messages
+  | InteractionCallbackData.Autocomplete
+  | InteractionCallbackData.Modal
+
+export namespace InteractionCallbackData {
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-messages */
+  export interface Messages {
+    /** is the response TTS */
+    tts?: boolean
+    /** message content */
+    content?: string
+    /** supports up to 10 embeds */
+    embeds?: Embed[]
+    /** allowed mentions object */
+    allowed_mentions?: AllowedMentions
+    /** interaction callback data flags */
+    flags?: integer
+    /** message components */
+    components?: Component[]
+    /** attachment objects with filename and description */
+    attachments?: Partial<Attachment>[]
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete */
+  export interface Autocomplete {
+    /** 	autocomplete choices (max of 25 choices) */
+    choices: ApplicationCommand.OptionChoice[]
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal */
+  export interface Modal {
+    /** a developer-defined identifier for the modal, max 100 characters */
+    custom_id: string
+    /** the title of the popup modal, max 45 characters */
+    title: string
+    /** between 1 and 5 (inclusive) components that make up the modal */
+    components: Component[]
+  }
 }
 
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete */
-export interface AutocompleteCallbackData {
-  /** 	autocomplete choices (max of 25 choices) */
-  choices: ApplicationCommand.OptionChoice[]
-}
-
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal */
-export interface ModalCallbackData {
-  /** a developer-defined identifier for the modal, max 100 characters */
-  custom_id: string
-  /** the title of the popup modal, max 45 characters */
-  title: string
-  /** between 1 and 5 (inclusive) components that make up the modal */
-  components: Component[]
-}
-
-export interface InteractionCreateEvent extends Interaction {}
+export interface InteractionCreateEvent extends Interaction { }
 
 declare module './gateway' {
   interface GatewayEvents {

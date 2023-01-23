@@ -3,6 +3,7 @@
 export * from './internal'
 
 export * from './application'
+export * from './application-role-connection'
 export * from './audit-log'
 export * from './auto-moderation'
 export * from './ban'

@@ -27,7 +27,7 @@ export interface Button {
   /** 2 for a button */
   type: ComponentType.BUTTON
   /** one of button styles */
-  style: integer
+  style: ButtonStyles
   /** text that appears on the button, max 80 characters */
   label?: string
   /** name, id, and animated */
@@ -38,6 +38,20 @@ export interface Button {
   url?: string
   /** whether the button is disabled (default false) */
   disabled?: boolean
+}
+
+/** https://discord.com/developers/docs/interactions/message-components#button-object-button-styles */
+export const enum ButtonStyles {
+  /** blurple */
+  PRIMARY = 1,
+  /** grey */
+  SECONDARY = 2,
+  /** green */
+  SUCCESS = 3,
+  /** red */
+  DANGER = 4,
+  /** grey, navigates to a URL */
+  LINK = 5,
 }
 
 /** https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure */
