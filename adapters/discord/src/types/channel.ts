@@ -347,30 +347,6 @@ export interface DefaultReaction {
   emoji_name?: string
 }
 
-/** https://discord.com/developers/docs/resources/channel#attachment-object */
-export interface Attachment {
-  /**	attachment id */
-  id: snowflake
-  /**	name of file attached */
-  filename: string
-  /**	description for the file (max 1024 characters) */
-  description?: string
-  /**	the attachment's media type */
-  content_type?: string
-  /**	size of file in bytes */
-  size: number
-  /**	source url of file */
-  url: string
-  /**	a proxied url of file */
-  proxy_url: string
-  /** height of file (if image) */
-  height?: number
-  /** width of file (if image) */
-  width?: number
-  /**	whether this attachment is ephemeral */
-  ephemeral?: boolean
-}
-
 declare module './gateway' {
   interface GatewayEvents {
     /** new guild channel created */
