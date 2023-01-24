@@ -1,6 +1,6 @@
 import { Activity, integer, Internal, snowflake, StatusType } from '.'
 
-/** https://discord.com/developers/docs/topics/gateway-events#payloads-gateway-payload-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#payload-structure */
 export interface GatewayPayloadStructure<O extends GatewayOpcode, T extends keyof GatewayEvents, D> {
   /** opcode for the payload */
   op: O
@@ -46,7 +46,7 @@ export enum GatewayOpcode {
   HEARTBEAT_ACK = 11,
 }
 
-/** https://discord.com/developers/docs/topics/gateway-events#gateway-intents */
+/** https://discord.com/developers/docs/topics/gateway#gateway-intents */
 export enum GatewayIntent {
   /**
    * - GUILD_CREATE
@@ -163,7 +163,7 @@ export enum GatewayIntent {
    * - Content in DMs with the app
    * - Content in which the app is mentioned
    *
-   * @see https://discord.com/developers/docs/topics/gateway-events#message-content-intent
+   * @see https://discord.com/developers/docs/topics/gateway#message-content-intent
    */
   MESSAGE_CONTENT = 1 << 15,
   /**
@@ -195,7 +195,7 @@ export interface GatewayParams {
   [GatewayOpcode.PRESENCE_UPDATE]: PresenceUpdateParams
 }
 
-/** https://discord.com/developers/docs/topics/gateway-events#commands-and-events-gateway-events */
+/** https://discord.com/developers/docs/topics/gateway-events#gateway-events */
 export interface GatewayEvents {}
 
 /** https://discord.com/developers/docs/topics/gateway-events#identify-identify-structure */
@@ -216,7 +216,7 @@ export interface IdentifyParams {
   intents: integer
 }
 
-/** https://discord.com/developers/docs/topics/gateway-events-events#identify-identify-connection-properties */
+/** https://discord.com/developers/docs/topics/gateway-events#identify-identify-connection-properties */
 export interface ConnectionProperties {
   /** Your operating system */
   os: string
@@ -298,12 +298,12 @@ declare module './internal' {
   interface Internal {
     /**
      * Returns an object with a single valid WSS URL, which the client can use for Connecting. Clients should cache this value and only call this endpoint to retrieve a new URL if they are unable to properly establish a connection using the cached version of the URL.
-     * @see https://discord.com/developers/docs/topics/gateway-events#get-gateway
+     * @see https://discord.com/developers/docs/topics/gateway#get-gateway
      */
     getGateway(): Promise<any>
     /**
      * Returns an object based on the information in Get Gateway, plus additional metadata that can help during the operation of large or sharded bots. Unlike the Get Gateway, this route should not be cached for extended periods of time as the value is not guaranteed to be the same per-call, and changes as the bot joins/leaves guilds.
-     * @see https://discord.com/developers/docs/topics/gateway-events#get-gateway-bot
+     * @see https://discord.com/developers/docs/topics/gateway#get-gateway-bot
      */
     getGatewayBot(): Promise<any>
   }

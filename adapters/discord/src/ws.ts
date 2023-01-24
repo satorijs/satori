@@ -49,7 +49,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         this._d = parsed.s
       }
 
-      // https://discord.com/developers/docs/topics/gateway-events#identifying
+      // https://discord.com/developers/docs/topics/gateway#identifying
       if (parsed.op === GatewayOpcode.HELLO) {
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) return

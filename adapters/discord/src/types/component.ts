@@ -1,4 +1,4 @@
-import { Emoji, integer } from '.'
+import { Emoji, integer, Channel } from '.'
 
 export type Component = Button | SelectMenu | TextInput
 
@@ -12,13 +12,13 @@ export enum ComponentType {
   SELECT_MENU = 3,
   /** A text input object */
   TEXT_INPUT = 4,
-  /**	Select menu for users */
+  /** Select menu for users */
   USER_SELECT = 5,
-  /**	Select menu for roles */
+  /** Select menu for roles */
   ROLE_SELECT = 6,
-  /**	Select menu for mentionables (users and roles) */
+  /** Select menu for mentionables (users and roles) */
   MENTIONABLE_SELECT = 7,
-  /**	Select menu for channels */
+  /** Select menu for channels */
   CHANNEL_SELECT = 8
 }
 
@@ -57,11 +57,13 @@ export const enum ButtonStyles {
 /** https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure */
 export interface SelectMenu {
   /** 3 for a select menu */
-  type: ComponentType.SELECT_MENU
+  type: ComponentType.SELECT_MENU | ComponentType.USER_SELECT | ComponentType.ROLE_SELECT | ComponentType.MENTIONABLE_SELECT | ComponentType.CHANNEL_SELECT
   /** a developer-defined identifier for the button, max 100 characters */
   custom_id: string
   /** the choices in the select, max 25 */
   options: SelectOption[]
+  /** list of channel types to include in the channel select component (type 8) */
+  channel_types?: Channel.Type[]
   /** custom placeholder text if nothing is selected, max 100 characters */
   placeholder?: string
   /** the minimum number of items that must be chosen; default 1, min 0, max 25 */

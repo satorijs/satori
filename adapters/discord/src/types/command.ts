@@ -197,7 +197,7 @@ declare module './gateway' {
   interface GatewayEvents {
     /**
      * sent when an application command's permissions are updated
-     * @see https://discord.com/developers/docs/topics/gateway-events-events#application-command-permissions-update
+     * @see https://discord.com/developers/docs/topics/gateway-events#application-command-permissions-update
      */
     APPLICATION_COMMAND_PERMISSIONS_UPDATE: ApplicationCommand.GuildPermissions
   }

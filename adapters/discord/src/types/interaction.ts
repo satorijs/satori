@@ -71,7 +71,6 @@ export namespace InteractionData {
     custom_id: string
     components: Component[]
   }
-
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type */

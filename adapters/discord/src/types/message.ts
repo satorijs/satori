@@ -64,7 +64,7 @@ export interface Message {
   sticker_items?: Sticker.Item[]
   /** a generally increasing integer (there may be gaps or duplicates) that represents the approximate position of the message in a thread, it can be used to estimate the relative position of the message in a thread in company with total_message_sent on parent thread */
   position?: integer
-  /**	data of the role subscription purchase or renewal that prompted this ROLE_SUBSCRIPTION_PURCHASE message */
+  /** data of the role subscription purchase or renewal that prompted this ROLE_SUBSCRIPTION_PURCHASE message */
   role_subscription_data?: RoleSubscriptionData
 }
 

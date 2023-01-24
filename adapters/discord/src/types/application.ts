@@ -22,8 +22,7 @@ export interface Application {
   privacy_policy_url?: string
   /** partial user object containing info on the owner of the application */
   owner?: Partial<User>
-  /** deprecated, if this application is a game sold on Discord, this field will be the summary field for the store page of its primary sku
-  */
+  /** deprecated, if this application is a game sold on Discord, this field will be the summary field for the store page of its primary sku */
   summary: string
   /** the hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verify_key: string
@@ -43,9 +42,9 @@ export interface Application {
   tags?: [string, string?, string?, string?, string?]
   /** settings for the application's default in-app authorization link, if enabled */
   install_params?: InstallParams
-  /**	the application's default custom authorization link, if enabled */
+  /** the application's default custom authorization link, if enabled */
   custom_install_url?: string
-  /**	the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
+  /** the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
   role_connections_verification_url?: string
 }
 
