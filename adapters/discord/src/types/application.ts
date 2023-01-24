@@ -72,6 +72,8 @@ declare module './gateway' {
   interface GatewayEvents {
     /** contains the initial state information */
     READY: ReadyEvent
+    /** response to Resume */
+    RESUMED: {}
   }
 }
 
