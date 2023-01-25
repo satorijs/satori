@@ -24,7 +24,7 @@ export enum ComponentType {
 
 /** https://discord.com/developers/docs/interactions/message-components#action-rows */
 export interface ActionRow {
-  type: ComponentType.ACTION_ROW,
+  type: ComponentType.ACTION_ROW
   components: Component[]
 }
 
