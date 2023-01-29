@@ -4,7 +4,6 @@ import { ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as types from 'axios'
-import Schema from 'schemastery'
 
 declare module 'cordis' {
   interface Context {
@@ -107,20 +106,6 @@ export namespace Quester {
     endpoint?: string
     timeout?: number
     proxyAgent?: string
-  }
-
-  export const Config: Schema<Config> = Schema.object({
-    timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-  }).description('请求设置')
-
-  export function createConfig(this: typeof Quester, endpoint: string | boolean): Schema<Config> {
-    return Schema.object({
-      endpoint: Schema.string().role('link').description('要连接的服务器地址。')
-        .default(typeof endpoint === 'string' ? endpoint : null)
-        .required(typeof endpoint === 'boolean' ? endpoint : false),
-      headers: Schema.dict(String).description('要附加的额外请求头。'),
-      ...this.Config.dict,
-    }).description('请求设置')
   }
 
   export function create(this: typeof Quester, config: Quester.Config = {}) {
