@@ -10,11 +10,11 @@ export namespace ApplicationRoleConnection {
     /** name of the metadata field (1-100 characters) */
     name: string
     /** translations of the name */
-    name_localizations?: Record<Locale, 'string'>
+    name_localizations?: Record<Locale, string>
     /** description of the metadata field (1-200 characters) */
     description: string
     /** translations of the description */
-    description_localizations?: Record<Locale, 'string'>
+    description_localizations?: Record<Locale, string>
   }
 
   /** https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object-application-role-connection-metadata-type */
