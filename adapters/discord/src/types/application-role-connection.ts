@@ -1,4 +1,4 @@
-import { Internal, Locale } from "."
+import { Internal, Locale } from '.'
 
 export namespace ApplicationRoleConnection {
   /** https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object-application-role-connection-metadata-structure */
@@ -52,7 +52,6 @@ declare module './internal' {
     updateApplicationRoleConnectionMetadataRecords(): Promise<ApplicationRoleConnection.Metadata[]>
   }
 }
-
 
 Internal.define({
   '/applications/{application.id}/role-connections/metadata': {

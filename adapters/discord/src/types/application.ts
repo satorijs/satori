@@ -65,7 +65,7 @@ export enum ApplicationFlag {
   EMBEDDED = 1 << 17,
   GATEWAY_MESSAGE_CONTENT = 1 << 18,
   GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19,
-  APPLICATION_COMMAND_BADGE = 1 << 23
+  APPLICATION_COMMAND_BADGE = 1 << 23,
 }
 
 /** https://discord.com/developers/docs/topics/gateway-events#ready-ready-event-fields */

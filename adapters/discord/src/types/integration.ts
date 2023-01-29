@@ -32,7 +32,7 @@ export interface Integration {
   revoked?: boolean
   /** The bot/OAuth2 application for discord integrations */
   application?: IntegrationApplication
-  /**	the scopes the application has been authorized for */
+  /** the scopes the application has been authorized for */
   scopes?: string[]
 }
 

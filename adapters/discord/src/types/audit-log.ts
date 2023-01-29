@@ -6,7 +6,7 @@ export interface AuditLog {
   application_commands: ApplicationCommand[]
   /** list of audit log entries */
   audit_log_entries: AuditLog.Entry[]
-  /**	list of auto moderation rules referenced in the audit log */
+  /** list of auto moderation rules referenced in the audit log */
   auto_moderation_rules: AutoModerationRule[]
   /** list of guild scheduled events referenced in the audit log */
   guild_scheduled_events: GuildScheduledEvent[]
@@ -155,7 +155,7 @@ export namespace AuditLog {
   export interface OptionalInfo {
     /** ID of the app whose permissions were targeted */
     application_id: snowflake
-    /**	name of the Auto Moderation rule that was triggered */
+    /** name of the Auto Moderation rule that was triggered */
     auto_moderation_rule_name: string
     /** trigger type of the Auto Moderation rule that was triggered */
     auto_moderation_rule_trigger_type: string

@@ -59,7 +59,7 @@ export namespace AutoModerationRule {
   export interface TriggerMetadata {
     /** associated with `KEYWORD`: substrings which will be searched for in content */
     keyword_filter: string[]
-    /** 	regular expression patterns which will be matched against content (Maximum of 10) */
+    /** regular expression patterns which will be matched against content (Maximum of 10) */
     regex_patterns: string[]
     /** associated with `KEYWORD_PRESET`: the internally pre-defined wordsets which will be searched for in content */
     presets: KeywordPresetType[]

@@ -82,7 +82,7 @@ export interface Guild {
   nsfw_level: integer
   /** custom guild stickers */
   stickers?: Sticker[]
-  /**	whether the guild has the boost progress bar enabled */
+  /** whether the guild has the boost progress bar enabled */
   premium_progress_bar_enabled: boolean
 }
 
@@ -224,9 +224,9 @@ export enum SystemChannelFlag {
   SUPPRESS_PREMIUM_SUBSCRIPTIONS = 1 << 1,
   /** Suppress server setup tips */
   SUPPRESS_GUILD_REMINDER_NOTIFICATIONS = 1 << 2,
-  /**	Hide member join sticker reply buttons */
+  /** Hide member join sticker reply buttons */
   SUPPRESS_JOIN_NOTIFICATION_REPLIES = 1 << 3,
-  /**	Suppress role subscription purchase and renewal notifications */
+  /** Suppress role subscription purchase and renewal notifications */
   SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4,
   /** Hide role subscription sticker reply buttons */
   SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5
@@ -302,7 +302,7 @@ export interface GuildPreview {
   approximate_presence_count: integer
   /** the description for the guild, if the guild is discoverable */
   description?: string
-  /**	custom guild stickers */
+  /** custom guild stickers */
   stickers: Sticker[]
 }
 
@@ -316,9 +316,9 @@ export interface GuildWidget {
   instant_invite?: string
   /** voice and stage channels which are accessible by everyone */
   channels: Partial<Channel>[]
-  /**	special widget user objects that includes users presence (Limit 100) */
+  /** special widget user objects that includes users presence (Limit 100) */
   members: Partial<User>[]
-  /**	number of online members in this guild */
+  /** number of online members in this guild */
   presence_count: integer
 }
 

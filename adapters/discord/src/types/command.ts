@@ -67,9 +67,9 @@ export namespace ApplicationCommand {
     min_value?: number
     /** if the option is an `INTEGER` or `NUMBER` type, the maximum  value permitted. integer for `INTEGER` options, double for `NUMBER` options */
     max_value?: number
-    /**	For option type `STRING`, the minimum allowed length (minimum of 0, maximum of 6000) */
+    /** For option type `STRING`, the minimum allowed length (minimum of 0, maximum of 6000) */
     min_length?: integer
-    /**	For option type `STRING`, the minimum allowed length (maximum of 1, maximum of 6000) */
+    /** For option type `STRING`, the minimum allowed length (maximum of 1, maximum of 6000) */
     max_length?: integer
     /** If autocomplete interactions are enabled for this `STRING`, `INTEGER`, or `NUMBER` type option */
     autocomplete?: boolean
@@ -143,7 +143,7 @@ export namespace ApplicationCommand {
     export interface Create {
       /** 1-32 character name */
       name: string
-      /**	localization dictionary for the name field. Values follow the same restrictions as name */
+      /** localization dictionary for the name field. Values follow the same restrictions as name */
       name_localizations?: Record<Locale, string>
       /** 1-100 character description */
       description?: string
@@ -151,7 +151,7 @@ export namespace ApplicationCommand {
       description_localizations?: Record<Locale, string>
       /** the parameters for the command */
       options?: Option[]
-      /**	set of permissions represented as a bit set */
+      /** set of permissions represented as a bit set */
       default_member_permissions?: string
       /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
       dm_permission?: boolean
@@ -159,7 +159,7 @@ export namespace ApplicationCommand {
       default_permission?: boolean
       /** the type of command, defaults 1 if not set */
       type?: Type
-      /**	indicates whether the command is age-restricted */
+      /** indicates whether the command is age-restricted */
       nsfw?: boolean
     }
 
@@ -167,7 +167,7 @@ export namespace ApplicationCommand {
     export interface Edit {
       /** 1-32 character name */
       name: string
-      /**	localization dictionary for the name field. Values follow the same restrictions as name */
+      /** localization dictionary for the name field. Values follow the same restrictions as name */
       name_localizations?: Record<Locale, string>
       /** 1-100 character description */
       description?: string
@@ -175,13 +175,13 @@ export namespace ApplicationCommand {
       description_localizations?: Record<Locale, string>
       /** the parameters for the command */
       options?: Option[]
-      /**	set of permissions represented as a bit set */
+      /** set of permissions represented as a bit set */
       default_member_permissions?: string
       /** Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
       dm_permission?: boolean
       /** whether the command is enabled by default when the app is added to a guild */
       default_permission?: boolean
-      /**	indicates whether the command is age-restricted */
+      /** indicates whether the command is age-restricted */
       nsfw?: boolean
     }
 

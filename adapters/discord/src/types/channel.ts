@@ -347,9 +347,9 @@ export interface ForumTag {
 
 /** https://discord.com/developers/docs/resources/channel#default-reaction-object */
 export interface DefaultReaction {
-  /**	the id of a guild's custom emoji */
+  /** the id of a guild's custom emoji */
   emoji_id?: snowflake
-  /**	the unicode character of the emoji */
+  /** the unicode character of the emoji */
   emoji_name?: string
 }
 

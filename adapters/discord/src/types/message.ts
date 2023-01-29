@@ -1,4 +1,4 @@
-import { AllowedMentions, Application, Channel, Component, GuildMember, integer, Internal, MessageInteraction, Reaction, snowflake, Sticker, timestamp, User, RoleSubscriptionData } from '.'
+import { AllowedMentions, Application, Channel, Component, GuildMember, integer, Internal, MessageInteraction, Reaction, RoleSubscriptionData, snowflake, Sticker, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#message-object-message-structure */
 export interface Message {

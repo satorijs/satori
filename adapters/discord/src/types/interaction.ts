@@ -52,7 +52,7 @@ export namespace InteractionData {
     options?: ApplicationCommandInteractionDataOption[]
     /** the id of the guild the command is registered to */
     guild_id?: snowflake
-    /**	id of the user or message targeted by a user or message command */
+    /** id of the user or message targeted by a user or message command */
     target_id?: snowflake
   }
 
@@ -62,7 +62,7 @@ export namespace InteractionData {
     custom_id: string
     /** the type of the component */
     component_type: ComponentType
-    /** 	values the user selected in a select menu component */
+    /** values the user selected in a select menu component */
     values?: string[]
   }
 
@@ -79,7 +79,7 @@ export enum InteractionType {
   APPLICATION_COMMAND = 2,
   MESSAGE_COMPONENT = 3,
   APPLICATION_COMMAND_AUTOCOMPLETE = 4,
-  MODAL_SUBMIT = 5
+  MODAL_SUBMIT = 5,
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-interaction-data-option-structure */
@@ -188,7 +188,7 @@ export namespace InteractionCallbackData {
 
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete */
   export interface Autocomplete {
-    /** 	autocomplete choices (max of 25 choices) */
+    /** autocomplete choices (max of 25 choices) */
     choices: ApplicationCommand.OptionChoice[]
   }
 

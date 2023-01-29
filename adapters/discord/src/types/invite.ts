@@ -24,7 +24,7 @@ export interface Invite {
   expires_at?: timestamp
   /** stage instance data if there is a public Stage instance in the Stage channel this invite is for */
   stage_instance?: Invite.StageInstance
-  /**	guild scheduled event data, only included if guild_scheduled_event_id contains a valid guild scheduled event id */
+  /** guild scheduled event data, only included if guild_scheduled_event_id contains a valid guild scheduled event id */
   guild_scheduled_event?: GuildScheduledEvent
 }
 

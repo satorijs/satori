@@ -1,4 +1,4 @@
-import { Emoji, integer, Channel } from '.'
+import { Channel, Emoji, integer } from '.'
 
 export type Component = Button | SelectMenu | TextInput | ActionRow
 
@@ -19,7 +19,7 @@ export enum ComponentType {
   /** Select menu for mentionables (users and roles) */
   MENTIONABLE_SELECT = 7,
   /** Select menu for channels */
-  CHANNEL_SELECT = 8
+  CHANNEL_SELECT = 8,
 }
 
 /** https://discord.com/developers/docs/interactions/message-components#action-rows */
