@@ -27,7 +27,7 @@ declare module '@satorijs/core' {
 }
 
 defineProperty(Context.Config, 'Network', Schema.object({
-  host: Schema.string().default('localhost').description('要监听的 IP 地址。如果将此设置为 `0.0.0.0` 将监听所有地址，包括局域网和公网地址。'),
+  host: Schema.string().default('127.0.0.1').description('要监听的 IP 地址。如果将此设置为 `0.0.0.0` 将监听所有地址，包括局域网和公网地址。'),
   port: Schema.natural().max(65535).description('要监听的初始端口号。'),
   maxPort: Schema.natural().max(65535).description('允许监听的最大端口号。'),
   selfUrl: Schema.string().role('link').description('应用暴露在公网的地址。'),
@@ -47,9 +47,11 @@ Context.prototype.start = async function (this: Context, ...args) {
   }
 
   if (this.root.config.port) {
-    const { host, port } = this.root.config
-    await listen(this.router._http, this.root.config)
-    logger.info('server listening at %c', `http://${host}:${port}`)
+    const { host } = this.root.config
+    this.router.host = host
+    this.router.port = await listen(this.root.config)
+    this.router._http.listen(this.router.port, host)
+    logger.info('server listening at %c', this.router.selfUrl)
     this.on('dispose', () => {
       logger.info('http server closing')
       this.router._ws?.close()

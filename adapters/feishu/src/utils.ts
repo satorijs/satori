@@ -29,7 +29,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
 
 export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
-  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.config.selfUrl ?? `http://localhost:${bot.ctx.config.port}/`) + bot.config.path + '/assets'
+  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.root.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | segment)[] = []
   switch (data.message.message_type) {
     case 'text': {
