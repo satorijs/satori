@@ -92,7 +92,7 @@ export namespace ApplicationCommand {
     /** Any double between -2^53 and 2^53 */
     NUMBER = 10,
     /** attachment object */
-    ATTACHMENT = 11
+    ATTACHMENT = 11,
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-choice-structure */
