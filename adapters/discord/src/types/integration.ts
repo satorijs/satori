@@ -32,6 +32,8 @@ export interface Integration {
   revoked?: boolean
   /** The bot/OAuth2 application for discord integrations */
   application?: IntegrationApplication
+  /** the scopes the application has been authorized for */
+  scopes?: string[]
 }
 
 /** https://discord.com/developers/docs/resources/guild#integration-object-integration-expire-behaviors */
@@ -58,31 +60,29 @@ export interface IntegrationApplication {
   icon?: string
   /** the description of the app */
   description: string
-  /** the summary of the app */
-  summary: string
   /** the bot associated with this application */
   bot?: User
 }
 
-/** https://discord.com/developers/docs/topics/gateway#guild-integrations-update-guild-integrations-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#guild-integrations-update-guild-integrations-update-event-fields */
 export interface GuildIntegrationsUpdateEvent {
   /** id of the guild whose integrations were updated */
   guild_id: snowflake
 }
 
-/** https://discord.com/developers/docs/topics/gateway#integration-create-integration-create-event-additional-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#integration-create-integration-create-event-additional-fields */
 export interface IntegrationCreateEvent extends Integration {
   /** id of the guild */
   guild_id: snowflake
 }
 
-/** https://discord.com/developers/docs/topics/gateway#integration-update-integration-update-event-additional-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#integration-update-integration-update-event-additional-fields */
 export interface IntegrationUpdateEvent extends Integration {
   /** id of the guild */
   guild_id: snowflake
 }
 
-/** https://discord.com/developers/docs/topics/gateway#integration-delete-integration-delete-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#integration-delete-integration-delete-event-fields */
 export interface IntegrationDeleteEvent {
   /** integration id */
   id: snowflake

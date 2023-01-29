@@ -1,4 +1,4 @@
-import { Channel, integer, Internal, snowflake, timestamp } from '.'
+import { AllowedMentions, Attachment, Channel, Component, Embed, GuildMember, integer, Internal, snowflake, timestamp } from '.'
 
 declare module './channel' {
   interface Channel {
@@ -25,6 +25,8 @@ export interface ThreadMember {
   join_timestamp: timestamp
   /** any user-thread settings, currently only used for notifications */
   flags: integer
+  /** additional information about the user */
+  member?: GuildMember
 }
 
 /** https://discord.com/developers/docs/resources/channel#thread-metadata-object-thread-metadata-structure */
@@ -39,6 +41,8 @@ export interface ThreadMetadata {
   locked: boolean
   /** whether non-moderators can add other non-moderators to a thread; only available on private threads */
   invitable?: boolean
+  /** timestamp when the thread was created; only populated for threads created after 2022-01-09 */
+  create_timestamp?: timestamp
 }
 
 /** @see https://discord.com/developers/docs/resources/guild#list-active-guild-threads */
@@ -52,8 +56,8 @@ export interface ListActiveGuildThreadsResult {
 export interface Thread extends Channel {}
 
 export namespace Thread {
-  /** https://discord.com/developers/docs/resources/channel#start-thread-with-message-json-params */
-  export interface StartWithMessageParams {
+  /** https://discord.com/developers/docs/resources/channel#start-thread-from-message */
+  export interface StartFromMessageParams {
     /** 1-100 character channel name */
     name: string
     /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
@@ -74,6 +78,42 @@ export namespace Thread {
     invitable?: boolean
     /** amount of seconds a user has to wait before sending another message (0-21600) */
     rate_limit_per_user?: integer
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel-forum-thread-message-params-object */
+  export interface StartThreadInFormChannelParams {
+    /** 1-100 character channel name */
+    name: string
+    /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
+    auto_archive_duration?: integer
+    /** amount of seconds a user has to wait before sending another message (0-21600) */
+    rate_limit_per_user?: integer
+    /** contents of the first message in the forum thread */
+    message: FormThreadMessageParams
+    /** the IDs of the set of tags that have been applied to a thread in a GUILD_FORUM channel */
+    applied_tags?: snowflake[]
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel-forum-thread-message-params-object */
+  export interface FormThreadMessageParams {
+    /** Message contents (up to 2000 characters) */
+    content?: string
+    /** Embedded rich content (up to 6000 characters) */
+    embeds?: Embed[]
+    /** Allowed mentions for the message */
+    allowed_mentions?: AllowedMentions
+    /** Components to include with the message */
+    components?: Component[]
+    /** IDs of up to 3 stickers in the server to send in the message */
+    sticker_ids?: snowflake[]
+    /** Contents of the file being sent. */
+    files: any[]
+    /** JSON-encoded body of non-file params, only for multipart/form-data requests. */
+    payload_json?: string
+    /** Attachment objects with filename and description. */
+    attachments?: Partial<Attachment>[]
+    /** Message flags combined as a bitfield (only SUPPRESS_EMBEDS can be set) */
+    flags?: integer
   }
 
   /** https://discord.com/developers/docs/resources/channel#list-active-threads-response-body */
@@ -111,7 +151,7 @@ export namespace Thread {
   }
 
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#thread-list-sync-thread-list-sync-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#thread-list-sync-thread-list-sync-event-fields */
     export interface ListSync {
       /** the id of the guild */
       guild_id: snowflake
@@ -125,7 +165,7 @@ export namespace Thread {
 
     export interface MemberUpdate extends ThreadMember {}
 
-    /** https://discord.com/developers/docs/topics/gateway#thread-members-update-thread-members-update-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#thread-members-update-thread-members-update-event-fields */
     export interface MembersUpdate {
       /** the id of the thread */
       id: snowflake
@@ -161,9 +201,14 @@ declare module './internal' {
     listActiveGuildThreads(guild_id: snowflake): Promise<ListActiveGuildThreadsResult>
     /**
      * Creates a new thread from an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
-     * @see https://discord.com/developers/docs/resources/channel#start-thread-with-message
+     * @see https://discord.com/developers/docs/resources/channel#start-thread-from-message
      */
-    startThreadWithMessage(channel_id: snowflake, message_id: snowflake, params: Thread.StartWithMessageParams): Promise<Channel>
+    startThreadFromMessage(channel_id: snowflake, message_id: snowflake, params: Thread.StartFromMessageParams): Promise<Channel>
+    /**
+     * Creates a new thread in a forum channel, and sends a message within the created thread. Returns a channel, with a nested message object, on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and Message Create Gateway event.
+     * @see https://discord.com/developers/docs/resources/channel#start-thread-in-forum-channel
+     */
+    startThreadInForumChannel(channel_id: snowflake, params: Thread.StartThreadInFormChannelParams): Promise<Channel>
     /**
      * Creates a new thread that is not connected to an existing message. The created thread defaults to a GUILD_PRIVATE_THREAD*. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-without-message
@@ -223,14 +268,11 @@ declare module './internal' {
 }
 
 Internal.define({
-  '/guilds/{guild.id}/threads/active': {
-    GET: 'listActiveGuildThreads',
-  },
   '/channels/{channel.id}/messages/{message.id}/threads': {
-    POST: 'startThreadwithMessage',
+    POST: 'startThreadFromMessage',
   },
   '/channels/{channel.id}/threads': {
-    POST: 'startThreadwithoutMessage',
+    POST: ['startThreadWithoutMessage', 'startThreadInForumChannel'],
   },
   '/channels/{channel.id}/thread-members/@me': {
     PUT: 'joinThread',
@@ -243,9 +285,6 @@ Internal.define({
   },
   '/channels/{channel.id}/thread-members': {
     GET: 'listThreadMembers',
-  },
-  '/channels/{channel.id}/threads/active': {
-    GET: 'listActiveThreads',
   },
   '/channels/{channel.id}/threads/archived/public': {
     GET: 'listPublicArchivedThreads',

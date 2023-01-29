@@ -146,7 +146,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.type = 'message-updated'
     const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
-    // https://discord.com/developers/docs/topics/gateway#message-update
+    // https://discord.com/developers/docs/topics/gateway-events#message-update
     await adaptMessage(bot, msg, session)
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_DELETE') {

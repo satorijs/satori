@@ -1,6 +1,6 @@
 import { Emoji, integer, snowflake, User } from '.'
 
-/** https://discord.com/developers/docs/topics/gateway#presence-update-presence-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#presence-update-presence-update-event-fields */
 export interface PresenceUpdateEvent {
   /** the user presence is being updated for */
   user: User
@@ -14,7 +14,7 @@ export interface PresenceUpdateEvent {
   client_status: ClientStatus
 }
 
-/** https://discord.com/developers/docs/topics/gateway#update-presence-status-types */
+/** https://discord.com/developers/docs/topics/gateway-events#update-presence-status-types */
 export enum StatusType {
   /** Online */
   ONLINE = 'ONLINE',
@@ -22,13 +22,11 @@ export enum StatusType {
   DND = 'DND',
   /** AFK */
   IDLE = 'IDLE',
-  /** Invisible and shown as offline */
-  INVISIBLE = 'INVISIBLE',
   /** Offline */
   OFFLINE = 'OFFLINE',
 }
 
-/** https://discord.com/developers/docs/topics/gateway#client-status-object */
+/** https://discord.com/developers/docs/topics/gateway-events#client-status-object */
 export interface ClientStatus {
   /** the user's status set for an active desktop (Windows, Linux, Mac) application session */
   desktop?: string
@@ -38,12 +36,12 @@ export interface ClientStatus {
   web?: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-structure */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-structure */
 export interface Activity {
   /** the activity's name */
   name: string
   /** activity type */
-  type: integer
+  type: ActivityType
   /** stream url, is validated when type is 1 */
   url?: string
   /** unix timestamp (in milliseconds) of when the activity was added to the user's session */
@@ -72,7 +70,7 @@ export interface Activity {
   buttons?: ActivityButton[]
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-timestamps */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-timestamps */
 export interface ActivityTimestamps {
   /** unix time (in milliseconds) of when the activity started */
   start?: integer
@@ -80,7 +78,7 @@ export interface ActivityTimestamps {
   end?: integer
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-emoji */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-emoji */
 export interface ActivityEmoji {
   /** the name of the emoji */
   name: string
@@ -90,7 +88,7 @@ export interface ActivityEmoji {
   animated?: boolean
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-party */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-party */
 export interface ActivityParty {
   /** the id of the party */
   id?: string
@@ -98,7 +96,7 @@ export interface ActivityParty {
   size?: [current_size: integer, max_size: integer]
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-assets */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-assets */
 export interface ActivityAssets {
   /** the id for a large asset of the activity, usually a snowflake */
   large_image?: string
@@ -110,19 +108,17 @@ export interface ActivityAssets {
   small_text?: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-secrets */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-secrets */
 export interface ActivitySecrets {
-  /** the id for a large asset of the activity, usually a snowflake */
-  large_image?: string
-  /** text displayed when hovering over the large image of the activity */
-  large_text?: string
-  /** the id for a small asset of the activity, usually a snowflake */
-  small_image?: string
-  /** text displayed when hovering over the small image of the activity */
-  small_text?: string
+  /** Secret for joining a party */
+  join?: string
+  /** Secret for spectating a game */
+  spectate?: string
+  /** Secret for a specific instanced match */
+  match?: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-button */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-button */
 export interface ActivityButton {
   /** the text shown on the button (1-32 characters) */
   label: string
@@ -130,7 +126,7 @@ export interface ActivityButton {
   url: string
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-types */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-types */
 export enum ActivityType {
   /** Playing {name} */
   GAME = 0,
@@ -146,7 +142,7 @@ export enum ActivityType {
   COMPETING = 5,
 }
 
-/** https://discord.com/developers/docs/topics/gateway#activity-object-activity-flags */
+/** https://discord.com/developers/docs/topics/gateway-events#activity-object-activity-flags */
 export enum ActivityFlag {
   INSTANCE = 1 << 0,
   JOIN = 1 << 1,
@@ -154,6 +150,9 @@ export enum ActivityFlag {
   JOIN_REQUEST = 1 << 3,
   SYNC = 1 << 4,
   PLAY = 1 << 5,
+  PARTY_PRIVACY_FRIENDS = 1 << 6,
+  PARTY_PRIVACY_VOICE_CHANNEL= 1 << 7,
+  EMBEDDED = 1 << 8,
 }
 
 declare module './gateway' {

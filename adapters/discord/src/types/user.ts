@@ -29,7 +29,7 @@ export interface User {
   /** the flags on a user's account */
   flags?: integer
   /** the type of Nitro subscription on a user's account */
-  premium_type?: integer
+  premium_type?: PremiumType
   /** the public flags on a user's account */
   public_flags?: integer
 }
@@ -62,6 +62,16 @@ export enum UserFlag {
   VERIFIED_BOT = 1 << 16,
   EARLY_VERIFIED_BOT_DEVELOPER = 1 << 17,
   DISCORD_CERTIFIED_MODERATOR = 1 << 18,
+  BOT_HTTP_INTERACTIONS = 1 << 19,
+  ACTIVE_DEVELOPER = 1 << 22,
+}
+
+/** https://discord.com/developers/docs/resources/user#user-object-premium-types */
+export enum PremiumType {
+  NONE = 0,
+  NITRO_CLASSIC = 1,
+  NITRO = 2,
+  NITRO_BASIC = 3,
 }
 
 /** https://discord.com/developers/docs/resources/user#connection-object-connection-structure */
@@ -82,6 +92,8 @@ export interface Connection {
   friend_sync: boolean
   /** whether activities related to this connection will be shown in presence updates */
   show_activity: boolean
+  /** whether this connection has a corresponding third party OAuth2 token */
+  two_way_link: boolean
   /** visibility of this connection */
   visibility: integer
 }

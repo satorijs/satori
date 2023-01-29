@@ -32,6 +32,8 @@ export interface GuildScheduledEvent {
   creator?: User
   /** the number of users subscribed to the scheduled event */
   user_count?: integer
+  /** the cover image hash of the scheduled event */
+  image?: string
 }
 
 export namespace GuildScheduledEvent {
@@ -86,6 +88,8 @@ export namespace GuildScheduledEvent {
     description?: string
     /** the entity type of the scheduled event */
     entity_type: EntityType
+    /** the cover image of the scheduled event */
+    image?: string
   }
 
   /** https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-query-string-params */
@@ -114,6 +118,8 @@ export namespace GuildScheduledEvent {
     entity_type?: EntityType
     /** the status of the scheduled event */
     status?: Status
+    /** the cover image of the scheduled event */
+    image?: string
   }
 }
 

@@ -22,7 +22,7 @@ export interface Application {
   privacy_policy_url?: string
   /** partial user object containing info on the owner of the application */
   owner?: Partial<User>
-  /** if this application is a game sold on Discord, this field will be the summary field for the store page of its primary sku */
+  /** deprecated, if this application is a game sold on Discord, this field will be the summary field for the store page of its primary sku */
   summary: string
   /** the hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verify_key: string
@@ -38,6 +38,21 @@ export interface Application {
   cover_image?: string
   /** the application's public flags */
   flags?: integer
+  /** up to 5 tags describing the content and functionality of the application */
+  tags?: [string, string?, string?, string?, string?]
+  /** settings for the application's default in-app authorization link, if enabled */
+  install_params?: InstallParams
+  /** the application's default custom authorization link, if enabled */
+  custom_install_url?: string
+  /** the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
+  role_connections_verification_url?: string
+}
+
+export interface InstallParams {
+  /** the scopes to add the application to the server with */
+  scopes: string[]
+  /** 	the permissions to request for the bot role */
+  permissions: string
 }
 
 /** https://discord.com/developers/docs/resources/application#application-object-application-flags */
@@ -48,9 +63,12 @@ export enum ApplicationFlag {
   GATEWAY_GUILD_MEMBERS_LIMITED = 1 << 15,
   VERIFICATION_PENDING_GUILD_LIMIT = 1 << 16,
   EMBEDDED = 1 << 17,
+  GATEWAY_MESSAGE_CONTENT = 1 << 18,
+  GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19,
+  APPLICATION_COMMAND_BADGE = 1 << 23,
 }
 
-/** https://discord.com/developers/docs/topics/gateway#ready-ready-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#ready-ready-event-fields */
 export interface ReadyEvent {
   /** gateway version */
   v: integer

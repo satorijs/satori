@@ -22,6 +22,8 @@ export interface GuildMember {
   pending?: boolean
   /** total permissions of the member in the channel, including overwrites, returned when in the interaction object */
   permissions?: string
+  /** when the user's timeout will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out */
+  communication_disabled_until?: timestamp
 }
 
 export namespace GuildMember {
@@ -98,13 +100,13 @@ export namespace GuildMember {
   }
 
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#guild-member-add-guild-member-add-extra-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-member-add-guild-member-add-extra-fields */
     export interface Add extends GuildMember {
       /** id of the guild */
       guild_id: snowflake
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#guild-member-remove-guild-member-remove-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-member-remove-guild-member-remove-event-fields */
     export interface Remove {
       /** the id of the guild */
       guild_id: snowflake
@@ -112,7 +114,7 @@ export namespace GuildMember {
       user: User
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#guild-member-update-guild-member-update-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-member-update-guild-member-update-event-fields */
     export interface Update {
       /** the id of the guild */
       guild_id: snowflake
@@ -134,9 +136,11 @@ export namespace GuildMember {
       mute?: boolean
       /** whether the user has not yet passed the guild's Membership Screening requirements */
       pending?: boolean
+      /** when the user's timeout will expire and the user will be able to communicate in the guild again, null or a time in the past if the user is not timed out */
+      communication_disabled_until?: timestamp
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#guild-members-chunk-guild-members-chunk-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-members-chunk-guild-members-chunk-event-fields */
     export interface Chunk {
       /** the id of the guild */
       guild_id: snowflake

@@ -1,4 +1,4 @@
-import { AllowedMentions, Application, Channel, Component, GuildMember, integer, Internal, MessageInteraction, Reaction, snowflake, Sticker, timestamp, User } from '.'
+import { AllowedMentions, Application, Channel, Component, GuildMember, integer, Internal, MessageInteraction, Reaction, RoleSubscriptionData, snowflake, Sticker, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#message-object-message-structure */
 export interface Message {
@@ -62,6 +62,10 @@ export interface Message {
   components?: Component[]
   /** sent if the message contains stickers */
   sticker_items?: Sticker.Item[]
+  /** a generally increasing integer (there may be gaps or duplicates) that represents the approximate position of the message in a thread, it can be used to estimate the relative position of the message in a thread in company with total_message_sent on parent thread */
+  position?: integer
+  /** data of the role subscription purchase or renewal that prompted this ROLE_SUBSCRIPTION_PURCHASE message */
+  role_subscription_data?: RoleSubscriptionData
 }
 
 export namespace Message {
@@ -90,6 +94,10 @@ export namespace Message {
     THREAD_STARTER_MESSAGE = 21,
     GUILD_INVITE_REMINDER = 22,
     CONTEXT_MENU_COMMAND = 23,
+    AUTO_MODERATION_ACTION = 24,
+    ROLE_SUBSCRIPTION_PURCHASE = 25,
+    INTERACTION_PREMIUM_UPSELL = 26,
+    GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32,
   }
 
   /** https://discord.com/developers/docs/resources/channel#message-object-message-activity-structure */
@@ -126,6 +134,8 @@ export namespace Message {
     EPHEMERAL = 1 << 6,
     /** this message is an Interaction Response and the bot is "thinking" */
     LOADING = 1 << 7,
+    /** this message failed to mention some roles and add their members to the thread */
+    FAILED_TO_MENTION_SOME_ROLES_IN_THREAD = 1 << 8,
   }
 
   /** https://discord.com/developers/docs/resources/channel#message-reference-object-message-reference-structure */
@@ -337,7 +347,7 @@ export namespace Message {
 
     export interface Update extends Message {}
 
-    /** https://discord.com/developers/docs/topics/gateway#message-delete-message-delete-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-message-delete-event-fields */
     export interface Delete {
       /** the id of the message */
       id: snowflake
@@ -347,7 +357,7 @@ export namespace Message {
       guild_id?: snowflake
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#message-delete-bulk-message-delete-bulk-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-bulk-message-delete-bulk-event-fields */
     export interface DeleteBulk {
       /** the ids of the messages */
       ids: snowflake[]

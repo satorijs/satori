@@ -1,8 +1,9 @@
-// Last updated: Sep 14, 2022
+// Last updated: Jan 24, 2023
 
 export * from './internal'
 
 export * from './application'
+export * from './application-role-connection'
 export * from './audit-log'
 export * from './auto-moderation'
 export * from './ban'
