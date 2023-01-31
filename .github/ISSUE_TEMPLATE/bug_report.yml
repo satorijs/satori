@@ -55,7 +55,7 @@ body:
       options:
         - Koishi Desktop
         - Koishi Android
-        - Koishi (independent)
+        - Koishi (standalone)
         - Others
 
   - type: dropdown
