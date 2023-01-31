@@ -80,5 +80,5 @@ body:
       description: 填写你的环境信息
       value: |
         plugin: <!-- 出问题的插件版本 -->
-        koishi:
+        Koishi:
         NodeJS:
