@@ -78,6 +78,11 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
       }
+      
+      if (parsed.op === GatewayOpcode.INVALID_SESSION) {
+        this._sessionId = ''
+        this.bot.socket.close()
+      }
     })
 
     this.bot.socket.on('close', () => {
