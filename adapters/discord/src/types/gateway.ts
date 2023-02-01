@@ -294,18 +294,29 @@ export interface SessionStartLimit {
   max_concurrency: integer
 }
 
+/** https://discord.com/developers/docs/topics/gateway#get-gateway-example-response */
+export interface GetGatewayResponse {
+  url: string
+}
+
+/** https://discord.com/developers/docs/topics/gateway#get-gateway-bot-json-response */
+export interface GetGatewayBotResponse extends GetGatewayResponse {
+  shards: integer
+  session_start_limit: SessionStartLimit
+}
+
 declare module './internal' {
   interface Internal {
     /**
      * Returns an object with a single valid WSS URL, which the client can use for Connecting. Clients should cache this value and only call this endpoint to retrieve a new URL if they are unable to properly establish a connection using the cached version of the URL.
      * @see https://discord.com/developers/docs/topics/gateway#get-gateway
      */
-    getGateway(): Promise<any>
+    getGateway(): Promise<GetGatewayResponse>
     /**
      * Returns an object based on the information in Get Gateway, plus additional metadata that can help during the operation of large or sharded bots. Unlike the Get Gateway, this route should not be cached for extended periods of time as the value is not guaranteed to be the same per-call, and changes as the bot joins/leaves guilds.
      * @see https://discord.com/developers/docs/topics/gateway#get-gateway-bot
      */
-    getGatewayBot(): Promise<any>
+    getGatewayBot(): Promise<GetGatewayBotResponse>
   }
 }
 

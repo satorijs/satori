@@ -11,8 +11,9 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
   _sessionId = ''
   _resumeUrl: string
 
-  prepare() {
-    return this.bot.http.ws(this._resumeUrl || this.bot.config.gateway)
+  async prepare() {
+    const { url } = await this.bot.internal.getGatewayBot() as { url: string }
+    return this.bot.http.ws(this._resumeUrl || url)
   }
 
   heartbeat() {
@@ -103,13 +104,11 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
 export namespace WsClient {
   export interface Config extends Adapter.WsClient.Config {
-    gateway?: string
     intents?: number
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      gateway: Schema.string().default('wss://gateway.discord.gg/?v=10&encoding=json').description('要连接的 WebSocket 网关。'),
       intents: Schema.bitset(GatewayIntent).description('需要订阅的机器人事件。').default(0
         | GatewayIntent.GUILD_MESSAGES
         | GatewayIntent.GUILD_MESSAGE_REACTIONS
