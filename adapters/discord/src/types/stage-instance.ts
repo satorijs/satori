@@ -14,6 +14,8 @@ export interface StageInstance {
   privacy_level: integer
   /** Whether or not Stage Discovery is disabled */
   discoverable_disabled: boolean
+  /** The id of the scheduled event for this Stage instance */
+  guild_scheduled_event_id?: snowflake
 }
 
 export namespace StageInstance {
@@ -34,6 +36,8 @@ export namespace StageInstance {
       topic: string
       /** The privacy level of the Stage instance (default GUILD_ONLY) */
       privacy_level?: integer
+      /** Notify @everyone that a Stage instance has started */
+      send_start_notification?: boolean
     }
 
     /** https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance-json-params */

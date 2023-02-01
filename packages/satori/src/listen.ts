@@ -6,15 +6,19 @@ export interface ListenOptions {
   maxPort?: number
 }
 
-export function listen(server: net.Server, { host, port, maxPort = port }: ListenOptions) {
+export function listen({ host, port, maxPort = port }: ListenOptions) {
+  const server = net.createServer()
+
   return new Promise<number>((resolve, reject) => {
     function onListen() {
-      server.removeListener('error', onError)
-      resolve(port)
+      server.off('error', onError)
+      server.close((err) => {
+        err ? reject(err) : resolve(port)
+      })
     }
 
     function onError(err: NodeJS.ErrnoException) {
-      server.removeListener('listening', onListen)
+      server.off('listening', onListen)
       if (!(err.code == 'EADDRINUSE' || err.code == 'EACCES')) {
         return reject(err)
       }

@@ -80,6 +80,8 @@ export enum Permission {
   SEND_MESSAGES_IN_THREADS = 1 << 38,
   /** Allows for launching activities (applications with the EMBEDDED flag) in a voice channel */
   START_EMBEDDED_ACTIVITIES = 1 << 39,
+  /** Allows for timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels */
+  MODERATE_MEMBERS = 1 << 40,
 }
 
 /** https://discord.com/developers/docs/topics/permissions#role-object-role-structure */
@@ -164,9 +166,15 @@ export interface RoleTags {
   integration_id?: snowflake
   /** whether this is the guild's premium subscriber role */
   premium_subscriber?: null
+  /** the id of this role's subscription sku and listing */
+  subscription_listing_id?: snowflake
+  /** whether this role is available for purchase */
+  available_for_purchase?: null
+  /** whether this role is a guild's linked role */
+  guild_connections?: null
 }
 
-/** https://discord.com/developers/docs/topics/gateway#guild-role-create-guild-role-create-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#guild-role-create-guild-role-create-event-fields */
 export interface GuildRoleCreateEvent {
   /** the id of the guild */
   guild_id: snowflake
@@ -174,7 +182,7 @@ export interface GuildRoleCreateEvent {
   role: Role
 }
 
-/** https://discord.com/developers/docs/topics/gateway#guild-role-update-guild-role-update-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#guild-role-update-guild-role-update-event-fields */
 export interface GuildRoleUpdateEvent {
   /** the id of the guild */
   guild_id: snowflake
@@ -182,7 +190,7 @@ export interface GuildRoleUpdateEvent {
   role: Role
 }
 
-/** https://discord.com/developers/docs/topics/gateway#guild-role-delete-guild-role-delete-event-fields */
+/** https://discord.com/developers/docs/topics/gateway-events#guild-role-delete-guild-role-delete-event-fields */
 export interface GuildRoleDeleteEvent {
   /** id of the guild */
   guild_id: snowflake

@@ -1,5 +1,5 @@
 import * as cordis from 'cordis'
-import { Awaitable, Dict } from 'cosmokit'
+import { Awaitable, Dict, defineProperty } from 'cosmokit'
 import { Bot } from './bot'
 import { SendOptions, Session } from './session'
 import Schema from 'schemastery'
@@ -12,7 +12,7 @@ import { Internal } from './internal'
 segment.warn = new Logger('element').warn
 
 export { Fragment, Render, escape, unescape }
-export { Schema, Logger, segment, segment as Element, segment as h, Quester }
+export { Schema, Schema as z, Logger, segment, segment as Element, segment as h, Quester }
 
 export * from './bot'
 export * from './adapter'
@@ -52,6 +52,27 @@ declare global {
       'notice/honor/emotion': {}
     }
   }
+}
+
+declare module 'cordis-axios' {
+  namespace Quester {
+    export const Config: Schema<Config>
+    export function createConfig(this: typeof Quester, endpoint: string | boolean): Schema<Config>
+  }
+}
+
+defineProperty(Quester, 'Config', Schema.object({
+  timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+}).description('请求设置'))
+
+Quester.createConfig = function createConfig(this, endpoint) {
+  return Schema.object({
+    endpoint: Schema.string().role('link').description('要连接的服务器地址。')
+      .default(typeof endpoint === 'string' ? endpoint : null)
+      .required(typeof endpoint === 'boolean' ? endpoint : false),
+    headers: Schema.dict(String).role('table').description('要附加的额外请求头。'),
+    ...this.Config.dict,
+  }).description('请求设置')
 }
 
 type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T

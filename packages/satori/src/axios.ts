@@ -1,4 +1,4 @@
-import { Quester } from '@satorijs/core'
+import { Quester, Schema } from '@satorijs/core'
 import { base64ToArrayBuffer, defineProperty, Dict } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import { Agent } from 'agent-base'
@@ -10,7 +10,6 @@ import { fileURLToPath } from 'url'
 import createHttpProxyAgent from 'http-proxy-agent'
 import createHttpsProxyAgent from 'https-proxy-agent'
 import createSocksProxyAgent from 'socks-proxy-agent'
-import Schema from 'schemastery'
 
 const oldFile = Quester.prototype.file
 Quester.prototype.file = async function file(this: Quester, url: string) {

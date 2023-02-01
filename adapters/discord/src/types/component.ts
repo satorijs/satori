@@ -1,32 +1,6 @@
-import { Emoji, integer } from '.'
+import { Channel, Emoji, integer } from '.'
 
-/** https://discord.com/developers/docs/interactions/message-components#component-object-component-structure */
-export interface Component {
-  /** component type */
-  type: ComponentType
-  /** a developer-defined identifier for the component, max 100 characters */
-  custom_id?: string
-  /** whether the component is disabled, default false */
-  disabled?: boolean
-  /** one of button styles */
-  style?: integer
-  /** text that appears on the button, max 80 characters */
-  label?: string
-  /** name, id, and animated */
-  emoji?: Partial<Emoji>
-  /** a url for link-style buttons */
-  url?: string
-  /** the choices in the select, max 25 */
-  options?: SelectOption[]
-  /** custom placeholder text if nothing is selected, max 100 characters */
-  placeholder?: string
-  /** the minimum number of items that must be chosen; default 1, min 0, max 25 */
-  min_values?: integer
-  /** the maximum number of items that can be chosen; default 1, max 25 */
-  max_values?: integer
-  /** a list of child components */
-  components?: Component[]
-}
+export type Component = Button | SelectMenu | TextInput | ActionRow
 
 /** https://discord.com/developers/docs/interactions/message-components#component-object-component-types */
 export enum ComponentType {
@@ -38,6 +12,20 @@ export enum ComponentType {
   SELECT_MENU = 3,
   /** A text input object */
   TEXT_INPUT = 4,
+  /** Select menu for users */
+  USER_SELECT = 5,
+  /** Select menu for roles */
+  ROLE_SELECT = 6,
+  /** Select menu for mentionables (users and roles) */
+  MENTIONABLE_SELECT = 7,
+  /** Select menu for channels */
+  CHANNEL_SELECT = 8,
+}
+
+/** https://discord.com/developers/docs/interactions/message-components#action-rows */
+export interface ActionRow {
+  type: ComponentType.ACTION_ROW
+  components: Component[]
 }
 
 /** https://discord.com/developers/docs/interactions/message-components#button-object-button-structure */
@@ -45,7 +33,7 @@ export interface Button {
   /** 2 for a button */
   type: ComponentType.BUTTON
   /** one of button styles */
-  style: integer
+  style: ButtonStyles
   /** text that appears on the button, max 80 characters */
   label?: string
   /** name, id, and animated */
@@ -58,14 +46,30 @@ export interface Button {
   disabled?: boolean
 }
 
+/** https://discord.com/developers/docs/interactions/message-components#button-object-button-styles */
+export const enum ButtonStyles {
+  /** blurple */
+  PRIMARY = 1,
+  /** grey */
+  SECONDARY = 2,
+  /** green */
+  SUCCESS = 3,
+  /** red */
+  DANGER = 4,
+  /** grey, navigates to a URL */
+  LINK = 5,
+}
+
 /** https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure */
 export interface SelectMenu {
   /** 3 for a select menu */
-  type: ComponentType.SELECT_MENU
+  type: ComponentType.SELECT_MENU | ComponentType.USER_SELECT | ComponentType.ROLE_SELECT | ComponentType.MENTIONABLE_SELECT | ComponentType.CHANNEL_SELECT
   /** a developer-defined identifier for the button, max 100 characters */
   custom_id: string
   /** the choices in the select, max 25 */
   options: SelectOption[]
+  /** list of channel types to include in the channel select component (type 8) */
+  channel_types?: Channel.Type[]
   /** custom placeholder text if nothing is selected, max 100 characters */
   placeholder?: string
   /** the minimum number of items that must be chosen; default 1, min 0, max 25 */

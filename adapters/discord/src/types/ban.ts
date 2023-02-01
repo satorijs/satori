@@ -10,7 +10,7 @@ export interface Ban {
 
 export namespace Ban {
   export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway#guild-ban-add-guild-ban-add-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-ban-add-guild-ban-add-event-fields */
     export interface Add {
       /** id of the guild */
       guild_id: snowflake
@@ -18,7 +18,7 @@ export namespace Ban {
       user: User
     }
 
-    /** https://discord.com/developers/docs/topics/gateway#guild-ban-remove-guild-ban-remove-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#guild-ban-remove-guild-ban-remove-event-fields */
     export interface Remove {
       /** id of the guild */
       guild_id: snowflake
@@ -39,10 +39,10 @@ export namespace Ban {
 
   /** @see https://discord.com/developers/docs/resources/guild#create-guild-ban-json-params */
   export interface CreateParams {
-    /** number of days to delete messages for (0-7) */
+    /** number of days to delete messages for (0-7) (deprecated) */
     delete_message_days?: integer
-    /** reason for the ban (deprecated) */
-    reason?: string
+    /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
+    delete_message_seconds?: integer
   }
 }
 

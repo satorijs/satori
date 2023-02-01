@@ -1,0 +1,84 @@
+name: Bug Report
+discription: 报告在使用过程中遇到的问题
+title: "[Bug]: "
+labels:
+  - bug
+  
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      title: What Happened?
+      description: 详细描述你所遇到的问题。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      title: Steps to reproduce
+      description: 描述复现该问题的步骤。
+      placeholder: |
+        1. 打开...
+        2. 滚动到...
+        3. 点击...
+        4. 报错...
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-expected
+    attributes:
+      title: What is expected?
+      description: 详细描述你期望的行为。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: What platform?
+      multiple: true
+      options:
+        - Discord
+        - Feishu
+        - Kook
+        - OneBot
+        - QQGuild
+        - Telegram
+
+  - type: dropdown
+    id: satori-agent
+    attributes:
+      label: What agent for Koishi / Satori?
+      multiple: true
+      options:
+        - Koishi Desktop
+        - Koishi Android
+        - Koishi (standalone)
+        - Others
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: What operating system?
+      multiple: true
+      options:
+        - Windows 11 / 10 / 8
+        - Windows 7 or below
+        - macOS
+        - Ubuntu
+        - CentOS
+        - Other Linux
+        - Android
+        - Other
+
+  - type: textarea
+    id: versions
+    attributes:
+      title: Versions
+      description: 填写你的环境信息
+      value: |
+        plugin: <!-- 出问题的插件版本 -->
+        Koishi:
+        NodeJS:

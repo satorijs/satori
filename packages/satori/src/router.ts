@@ -50,9 +50,12 @@ export class WebSocketLayer {
 }
 
 export class Router extends KoaRouter {
-  _http?: Server
-  _ws?: WebSocket.Server
-  wsStack: WebSocketLayer[] = []
+  public _http?: Server
+  public _ws?: WebSocket.Server
+  public wsStack: WebSocketLayer[] = []
+
+  public host: string
+  public port: number
 
   constructor(ctx: Context) {
     super()
@@ -74,6 +77,10 @@ export class Router extends KoaRouter {
       }
       socket.close()
     })
+  }
+
+  get selfUrl() {
+    return `http://${this.host}:${this.port}`
   }
 
   /**
