@@ -83,7 +83,7 @@ export namespace HttpPolling {
 
   export const Config: Schema<Config> = Schema.object({
     protocol: Schema.const('polling' as const).required(),
-    pollingTimeout: Schema.natural().role('ms').default(Time.second * 25).description('通过长轮询获取更新时请求的超时 (单位为毫秒，这里使用 1000 的倍数)。'),
+    pollingTimeout: Schema.natural().role('ms').default(Time.second * 25).description('通过长轮询获取更新时请求的超时 (单位为毫秒)。'),
     retryTimes: Schema.natural().description('初次连接时的最大重试次数。').default(6),
     retryInterval: Schema.natural().role('ms').default(Time.second * 5).description('长轮询断开后的重试时间间隔 (单位为毫秒)。'),
   })
