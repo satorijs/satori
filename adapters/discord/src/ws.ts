@@ -11,8 +11,12 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
   _sessionId = ''
   _resumeUrl: string
 
-  prepare() {
-    return this.bot.http.ws(this._resumeUrl || this.bot.config.gateway)
+  async prepare() {
+    if (this._resumeUrl) {
+      return this.bot.http.ws(this._resumeUrl)
+    }
+    const { url } = await this.bot.internal.getGatewayBot()
+    return this.bot.http.ws(url)
   }
 
   heartbeat() {
@@ -24,19 +28,6 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
   }
 
   accept() {
-    if (this._sessionId) {
-      logger.debug('resuming')
-      this.bot.socket.send(JSON.stringify({
-        op: GatewayOpcode.RESUME,
-        d: {
-          token: this.bot.config.token,
-          session_id: this._sessionId,
-          seq: this._d,
-        },
-      }))
-      this.bot.online()
-    }
-
     this.bot.socket.on('message', async (data) => {
       let parsed: GatewayPayload
       try {
@@ -49,19 +40,38 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         this._d = parsed.s
       }
 
-      // https://discord.com/developers/docs/topics/gateway#identifying
+      // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
       if (parsed.op === GatewayOpcode.HELLO) {
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
-        if (this._sessionId) return
-        this.bot.socket.send(JSON.stringify({
-          op: GatewayOpcode.IDENTIFY,
-          d: {
-            token: this.bot.config.token,
-            properties: {},
-            compress: false,
-            intents: this.bot.config.intents,
-          },
-        }))
+        if (this._sessionId) {
+          logger.debug('resuming')
+          this.bot.socket.send(JSON.stringify({
+            op: GatewayOpcode.RESUME,
+            d: {
+              token: this.bot.config.token,
+              session_id: this._sessionId,
+              seq: this._d,
+            },
+          }))
+        } else {
+          this.bot.socket.send(JSON.stringify({
+            op: GatewayOpcode.IDENTIFY,
+            d: {
+              token: this.bot.config.token,
+              properties: {},
+              compress: false,
+              intents: this.bot.config.intents,
+            },
+          }))
+        }
+      }
+
+      if (parsed.op === GatewayOpcode.INVALID_SESSION) {
+        if (parsed.d) return;
+        this._sessionId = ''
+        logger.warn('offline: invalid session')
+        this.bot.offline()
+        this.bot.socket?.close()
       }
 
       if (parsed.op === GatewayOpcode.DISPATCH) {
@@ -75,8 +85,17 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
           logger.debug('session_id ' + this._sessionId)
           return this.bot.online()
         }
+        if (parsed.t === "RESUMED") {
+          return this.bot.online()
+        }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
+      }
+
+      if (parsed.op === GatewayOpcode.RECONNECT) {
+        this.bot.offline()
+        logger.warn('offline: discord request reconnect')
+        this.bot.socket?.close()
       }
     })
 
@@ -88,13 +107,11 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
 export namespace WsClient {
   export interface Config extends Adapter.WsClient.Config {
-    gateway?: string
     intents?: number
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      gateway: Schema.string().default('wss://gateway.discord.gg/?v=10&encoding=json').description('要连接的 WebSocket 网关。'),
       intents: Schema.bitset(GatewayIntent).description('需要订阅的机器人事件。').default(0
         | GatewayIntent.GUILD_MESSAGES
         | GatewayIntent.GUILD_MESSAGE_REACTIONS
