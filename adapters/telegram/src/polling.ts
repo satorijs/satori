@@ -35,7 +35,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
         try {
           const updates = await bot.internal.getUpdates({
             offset: this.offset + 1,
-            timeout: bot.config.pollingTimeout,
+            timeout: Math.ceil(bot.config.pollingTimeout / 1000),
           })
           bot.online()
           _retryCount = 0
