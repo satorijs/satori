@@ -52,7 +52,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
           type: 'node',
           data: {
             name: data.nickname || data.username || this.bot.nickname || this.bot.username,
-            uin: data.userId || this.bot.userId,
+            uin: data.userId || data['user-id'] || this.bot.userId,
             content: this.children as any,
             time: `${(+data.time || Date.now()) / 1000}`
           },
@@ -156,7 +156,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       } else if ('id' in attrs) {
         this.stack[0].data = attrs.id.toString()
       } else {
-        Object.assign(this.stack[0].data, pick(attrs, ['userId', 'username', 'nickname', 'avatar']))
+        Object.assign(this.stack[0].data, pick(attrs, ['userId', 'user-id', 'username', 'nickname', 'time']))
         await this.render(children)
         await this.flush()
       }
