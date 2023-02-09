@@ -1,12 +1,13 @@
 import { Bot, Context, Fragment, Quester, Schema, SendOptions, segment } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordMessenger } from './message'
-import { Internal } from './types'
+import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
 
 export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
+  public webhooks: Record<string, Webhook> = {}
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
