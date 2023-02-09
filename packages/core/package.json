@@ -34,7 +34,7 @@
     "@types/ws": "^8.5.3"
   },
   "dependencies": {
-    "@satorijs/element": "^2.3.1",
+    "@satorijs/element": "^2.3.2",
     "cordis": "^2.7.2",
     "cordis-axios": "^3.0.0",
     "cosmokit": "^1.4.0",
