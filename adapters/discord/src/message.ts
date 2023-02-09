@@ -121,7 +121,11 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       this.buffer += '`'
     } else if (type === 'a') {
       await this.render(children)
-      this.buffer += ` (${attrs.href}) `
+      if (this.options.linkPreview !== false) {
+        this.buffer += ` (${attrs.href}) `
+      } else {
+        this.buffer += ` (<${attrs.href}>) `
+      }
     } else if (type === 'p') {
       await this.render(children)
       this.buffer += '\n'

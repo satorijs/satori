@@ -6,6 +6,7 @@ import segment from '@satorijs/element'
 
 export interface SendOptions {
   session?: Session
+  linkPreview?: boolean
 }
 
 export interface Session extends Session.Payload, Satori.Session {}
