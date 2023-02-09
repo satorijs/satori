@@ -117,7 +117,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
         parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
         message_thread_id: this.payload.message_thread_id,
-        disable_web_page_preview: this.options.linkPreview === false,
+        disable_web_page_preview: !this.options.linkPreview,
       })
       await this.addResult(result)
       delete this.payload.reply_to_message
