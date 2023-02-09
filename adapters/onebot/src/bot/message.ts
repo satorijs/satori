@@ -4,7 +4,7 @@ import { CQCode } from './cqcode'
 import { Author } from '../types'
 
 class State {
-  data: Partial<Author> | string = {}
+  author: Partial<Author> | string = {}
   children: CQCode[] = []
 
   constructor(public type: 'message' | 'forward' | 'reply') {}
@@ -44,24 +44,24 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     }
 
     // flush
-    const { type, data } = this.stack[0]
-    if (!this.children.length && typeof data !== 'string') return
+    const { type, author } = this.stack[0]
+    if (!this.children.length && typeof author !== 'string') return
     if (type === 'forward') {
-      if (typeof data !== 'object') {
+      if (typeof author !== 'object') {
         this.stack[1].children.push({
           type: 'node',
           data: {
-            id: data
+            id: author
           },
         })
       } else {
         this.stack[1].children.push({
           type: 'node',
           data: {
-            name: data.nickname || data.username || this.bot.nickname || this.bot.username,
-            uin: data.userId || data['user-id'] || this.bot.userId,
+            name: author.nickname || author.username || this.bot.nickname || this.bot.username,
+            uin: author.userId || author['user-id'] || this.bot.userId,
             content: this.children as any,
-            time: `${(+data.time || Date.now()) / 1000}`
+            time: `${(+author.time || Date.now()) / 1000}`
           },
         })
       }
@@ -130,7 +130,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       await this.flush()
       this.children.push({ type: 'gift', data: attrs })
     } else if (type === 'author') {
-      Object.assign(this.stack[0].data, attrs)
+      Object.assign(this.stack[0].author, attrs)
     } else if (type === 'figure' && !this.bot.parent) {
       await this.flush()
       this.stack.unshift(new State('forward'))
@@ -154,9 +154,9 @@ export class OneBotMessenger extends Messenger<BaseBot> {
         this.stack.shift()
         await this.forward()
       } else if ('id' in attrs) {
-        this.stack[0].data = attrs.id.toString()
+        this.stack[0].author = attrs.id.toString()
       } else {
-        Object.assign(this.stack[0].data, pick(attrs, ['userId', 'user-id', 'username', 'nickname', 'time']))
+        Object.assign(this.stack[0].author, pick(attrs, ['userId', 'user-id', 'username', 'nickname', 'time']))
         await this.render(children)
         await this.flush()
       }
