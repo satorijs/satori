@@ -45,7 +45,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
 
     // flush
     const { type, data } = this.stack[0]
-    if (!this.children.length && typeof data !== 'number') return
+    if (!this.children.length && typeof data !== 'string') return
     if (type === 'forward') {
       if (typeof data === 'object') {
         this.stack[1].children.push({
