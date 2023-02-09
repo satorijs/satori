@@ -91,6 +91,7 @@ export interface UnidirectionalFriendInfo extends AccountInfo {
 
 export interface Author extends Universal.Author {
   time?: string | number
+  messageId?: string
 }
 
 export interface GroupBase {
