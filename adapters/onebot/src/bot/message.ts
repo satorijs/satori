@@ -47,7 +47,14 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     const { type, data } = this.stack[0]
     if (!this.children.length && typeof data !== 'string') return
     if (type === 'forward') {
-      if (typeof data === 'object') {
+      if (typeof data !== 'object') {
+        this.stack[1].children.push({
+          type: 'node',
+          data: {
+            id: data
+          },
+        })
+      } else {
         this.stack[1].children.push({
           type: 'node',
           data: {
@@ -55,13 +62,6 @@ export class OneBotMessenger extends Messenger<BaseBot> {
             uin: data.userId || data['user-id'] || this.bot.userId,
             content: this.children as any,
             time: `${(+data.time || Date.now()) / 1000}`
-          },
-        })
-      } else {
-        this.stack[1].children.push({
-          type: 'node',
-          data: {
-            id: data
           },
         })
       }
