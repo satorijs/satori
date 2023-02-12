@@ -10,7 +10,6 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "yakumo preinstall || true",
     "build": "yakumo esbuild && yakumo tsc",
     "bump": "yakumo version",
     "dep": "yakumo upgrade",
