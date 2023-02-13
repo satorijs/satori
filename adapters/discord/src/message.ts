@@ -226,7 +226,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         ...this.addition,
         embeds: [{ ...attrs }],
       })
-    } else if (type === 'record') {
+    } else if (type === 'audio') {
       await this.sendAsset('file', attrs, {
         ...this.addition,
         content: this.buffer.trim(),
@@ -242,35 +242,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       })
       this.buffer = ''
       this.mode = 'default'
-    } else if (type === 'quote') {
-
-      const parse = (val: string) => val.replace(/\\([\\*_`~|()])/g, "$1")
-
-      let message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
-      if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
-        // no quote and author, send by bot
-        await this.flush()
-        this.addition.message_reference = {
-          message_id: attrs.id,
-        }
-      } else {
-        let replyId = attrs.id, channelId = this.channelId
-        if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
-          // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
-          replyId = this.stack[0].fakeMessageMap[attrs.id][0].messageId
-          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channelId
-        }
-        let quoted = await this.bot.getMessage(channelId, replyId)
-        this.addition.embeds = [{
-          description: `${sanity(quoted.author.nickname || quoted.author.username)} <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
-          footer: {
-            text: parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30),
-            icon_url: quoted.author.avatar
-          }
-        }]
-      }
-    }
-    else if (type === 'message' && !attrs.forward) {
+    } else if (type === 'message' && !attrs.forward) {
       if (this.mode === 'figure') {
         await this.render(children)
         this.buffer += '\n'
@@ -279,9 +251,8 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         await this.flush()
 
         // author
-        const authors = segment.select(children, 'author')
-        if (authors.length) {
-          const author = authors[0]
+        const [author] = segment.select(children, 'author')
+        if (author) {
           const { avatar, nickname } = author.attrs
           if (avatar) this.addition.avatar_url = avatar
           if (nickname) this.addition.username = nickname
@@ -290,6 +261,45 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
           }
           if (this.stack[0].type === 'forward') {
             this.stack[1].author = author.attrs
+          }
+        }
+
+        // quote
+        const [quote] = segment.select(children, 'quote')
+        if (quote) {
+          const parse = (val: string) => val.replace(/\\([\\*_`~|()])/g, "$1")
+
+          let message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
+          if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
+            // no quote and author, send by bot
+            await this.flush()
+            this.addition.message_reference = {
+              message_id: quote.attrs.id,
+            }
+          } else {
+            // quote
+            let replyId = quote.attrs.id, channelId = this.channelId
+            if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[quote.attrs.id]?.length >= 1) {
+              // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
+              replyId = this.stack[0].fakeMessageMap[quote.attrs.id][0].messageId
+              channelId = this.stack[0].fakeMessageMap[quote.attrs.id][0].channelId
+            }
+            let quoted = await this.bot.getMessage(channelId, replyId)
+            this.addition.embeds = [{
+              description: `${parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              author: {
+                name: quoted.author.nickname || quoted.author.username,
+                icon_url: quoted.author.avatar
+              }
+            }]
+
+            // this.addition.embeds = [{
+            //   description: `${sanity(quoted.author.nickname || quoted.author.username)} <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+            //   footer: {
+            //     text: parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30) || " ",
+            //     icon_url: quoted.author.avatar
+            //   }
+            // }]
           }
         }
 
