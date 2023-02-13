@@ -44,7 +44,9 @@ class ElementConstructor {
   }
 
   toString(strip = false) {
-    if (this.type === 'text') return Element.escape(this.attrs.content)
+    if (this.type === 'text') {
+      return strip ? this.attrs.content : Element.escape(this.attrs.content)
+    }
     const inner = this.children.map(child => child.toString(strip)).join('')
     if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
