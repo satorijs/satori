@@ -8,6 +8,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
   public webhooks: Record<string, Webhook> = {}
+  public webhookLock: Record<string, Promise<Webhook>> = {}
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
@@ -20,6 +21,19 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
+  }
+
+  async _ensureWebhook(channelId: string) {
+    let webhook: Webhook;
+    let webhooks = await this.internal.getChannelWebhooks(channelId)
+    if (!webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)) {
+      webhook = await this.internal.createWebhook(channelId, {
+        name: "Koishi"
+      })
+    } else {
+      webhook = webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)
+    }
+    return webhook
   }
 
   async getSelf() {

@@ -138,6 +138,12 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
   const session = bot.session()
   if (input.t === 'MESSAGE_CREATE') {
+    if (input.d.webhook_id) {
+      if ((await bot._ensureWebhook(input.d.channel_id)).id === input.d.webhook_id) {
+        // koishi's webhook
+        return
+      }
+    }
     session.type = 'message'
     await adaptMessage(bot, input.d, session)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
@@ -145,6 +151,9 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
     const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
+    if (msg.application_id === bot.selfId) {
+      return
+    }
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
     await adaptMessage(bot, msg, session)
