@@ -43,8 +43,12 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       }
       if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
         // 发送到子区
-        await this.ensureWebhook()
-        url = `/webhooks/${this.webhook.id}/${this.webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
+        if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
+          await this.ensureWebhook()
+          url = `/webhooks/${this.webhook.id}/${this.webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
+        } else {
+          url = `/channels/${this.stack[0].channel.id}/messages`
+        }
       }
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
