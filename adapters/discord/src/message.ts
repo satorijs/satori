@@ -113,7 +113,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
 
     const mode = data.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
-    if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
+    if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file' || this.stack[0].quote || this.stack[1]?.quote) {
       return sendDownload()
     } else if (mode === 'direct') {
       return sendDirect()
@@ -123,7 +123,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     return await this.bot.ctx.http.head(data.url, {
       headers: { accept: type + '/*' },
     }).then((headers) => {
-      if (headers['content-type'].startsWith(type) && !this.stack[0].quote) {
+      if (headers['content-type'].startsWith(type)) {
         return sendDirect()
       } else {
         return sendDownload()
