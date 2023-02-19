@@ -158,7 +158,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   async visit(element: segment) {
     const sanity = (val: string) =>
       val
-        .replace(/[\\*_`~|()]/g, "\\$&")
+        .replace(/[\\*_`~|()\[\]]/g, "\\$&")
         .replace(/@everyone/g, () => "\\@everyone")
         .replace(/@here/g, () => "\\@here");
     const { type, attrs, children } = element
@@ -271,7 +271,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         // quote
         const [quote] = segment.select(children, 'quote')
         if (quote) {
-          const parse = (val: string) => val.replace(/\\([\\*_`~|()])/g, "$1")
+          const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, "$1")
 
           let message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
           if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
@@ -290,7 +290,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
             }
             let quoted = await this.bot.getMessage(channelId, replyId)
             this.addition.embeds = [{
-              description: `${parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              description: `${sanity(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
               author: {
                 name: quoted.author.nickname || quoted.author.username,
                 icon_url: quoted.author.avatar

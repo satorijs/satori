@@ -144,6 +144,9 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
         return
       }
     }
+    if (input.d.author.id === bot.selfId) {
+      return
+    }
     session.type = 'message'
     await adaptMessage(bot, input.d, session)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
@@ -152,6 +155,9 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.type = 'message-updated'
     const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     if (msg.application_id === bot.selfId) {
+      return
+    }
+    if (msg.author.id === bot.selfId) {
       return
     }
     // Unlike creates, message updates may contain only a subset of the full message object payload
