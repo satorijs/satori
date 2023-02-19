@@ -172,9 +172,10 @@ namespace Element {
   }
 
   export function select(source: string | Element[], query: string | Selector[][]): Element[] {
+    if (!source || !query) return []
     if (typeof source === 'string') source = parse(source)
     if (typeof query === 'string') query = parseSelector(query)
-    if (!query.length) return
+    if (!query.length) return []
     let adjacent: Selector[][] = []
     const results: Element[] = []
     for (const [index, element] of source.entries()) {
