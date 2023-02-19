@@ -81,7 +81,11 @@ export class Session {
   }
 
   async transform(elements: segment[]): Promise<segment[]> {
-    return await segment.transformAsync(elements, this.app.internal.transformers, this)
+    const rules = Object.fromEntries(Object
+      .getOwnPropertyNames(Context.prototype)
+      .filter(key => key.startsWith('component:'))
+      .map(key => [key.slice(10), this.app[key]]))
+    return await segment.transformAsync(elements, rules, this)
   }
 
   toJSON(): Session.Payload {

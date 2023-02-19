@@ -21,10 +21,9 @@ export class Internal {
   static readonly methods = ['component']
 
   public counter = 0
-  public transformers: Dict<Component> = Object.create(null)
 
-  constructor(private app: Context) {
-    defineProperty(this, Context.current, app)
+  constructor(private root: Context) {
+    defineProperty(this, Context.current, root)
   }
 
   protected get caller() {
@@ -39,11 +38,12 @@ export class Internal {
       const result = await component(attrs, children, session)
       return session.transform(segment.normalize(result))
     }
-    this.transformers[name] = render
+    const key = 'component:' + name
+    Context.service(key)
+    this.root[key] = render
     return this.caller.collect('component', () => {
-      const shouldDelete = this.transformers[name] === render
-      if (shouldDelete) delete this.transformers[name]
-      return shouldDelete
+      this.root[key] = null
+      return true
     })
   }
 }
