@@ -38,11 +38,11 @@ export class Internal {
       const result = await component(attrs, children, session)
       return session.transform(segment.normalize(result))
     }
-    const key = 'component:' + name
-    Context.service(key)
-    this.root[key] = render
+    const service = 'component:' + name
+    Context.service(service)
+    this.root[service] = render
     return this.caller.collect('component', () => {
-      this.root[key] = null
+      this.root[service] = null
       return true
     })
   }
