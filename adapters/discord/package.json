@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "3.5.1",
+  "version": "3.5.5",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -32,7 +32,7 @@
     "@satorijs/satori": "^2.1.6"
   },
   "dependencies": {
-    "file-type": "^16.5.4",
+    "cosmokit": "^1.4.0",
     "form-data": "^4.0.0"
   }
 }
