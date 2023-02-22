@@ -2,7 +2,6 @@ import { Adapter, Logger, Schema, Time } from '@satorijs/satori'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
-import WebSocket from 'ws'
 
 const logger = new Logger('kook')
 
@@ -16,7 +15,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
   async prepare(bot: KookBot) {
     const { url } = await bot.request('GET', '/gateway/index?compress=0')
     const headers = { Authorization: `Bot ${bot.config.token}` }
-    return new WebSocket(url, { headers })
+    return bot.ctx.http.ws(url, { headers })
   }
 
   heartbeat(bot: KookBot) {
@@ -40,7 +39,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
     this._sn = 0
     clearInterval(this._heartbeat)
 
-    bot.socket.on('message', async (data) => {
+    bot.socket.addEventListener('message', async ({ data }) => {
       let parsed: Payload
       try {
         parsed = JSON.parse(data.toString())

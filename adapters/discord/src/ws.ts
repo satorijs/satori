@@ -28,7 +28,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
   }
 
   accept() {
-    this.bot.socket.on('message', async (data) => {
+    this.bot.socket.addEventListener('message', async ({ data }) => {
       let parsed: GatewayPayload
       try {
         parsed = JSON.parse(data.toString())
@@ -99,7 +99,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       }
     })
 
-    this.bot.socket.on('close', () => {
+    this.bot.socket.addEventListener('close', () => {
       clearInterval(this._ping)
     })
   }

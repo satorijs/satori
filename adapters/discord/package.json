@@ -32,7 +32,6 @@
     "@satorijs/satori": "^2.1.6"
   },
   "dependencies": {
-    "cosmokit": "^1.4.0",
     "form-data": "^4.0.0"
   }
 }

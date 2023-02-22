@@ -81,7 +81,7 @@ let counter = 0
 const listeners: Record<number, (response: Response) => void> = {}
 
 export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
-  bot.socket.on('message', (data) => {
+  bot.socket.addEventListener('message', ({ data }) => {
     let parsed: any
     try {
       parsed = JSON.parse(data.toString())
@@ -98,7 +98,7 @@ export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
     }
   })
 
-  bot.socket.on('close', () => {
+  bot.socket.addEventListener('close', () => {
     delete bot.internal._request
   })
 

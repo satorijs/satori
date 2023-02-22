@@ -30,7 +30,7 @@ export interface TelegramResponse {
 export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   http: Quester
   file: Quester
-  internal?: Telegram.Internal
+  internal: Telegram.Internal
   local?: boolean
   server?: string
 

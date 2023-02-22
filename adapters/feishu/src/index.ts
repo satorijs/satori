@@ -1,6 +1,8 @@
 import { FeishuBot } from './bot'
 import * as Feishu from './types'
 
+export * from './bot'
+
 export { Feishu }
 
 export default FeishuBot
