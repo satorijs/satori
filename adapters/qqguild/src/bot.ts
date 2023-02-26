@@ -41,7 +41,11 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     session.userId = author.id
     session.guildId = msg.guildId
     session.channelId = msg.channelId
-    session.subtype = 'group'
+    session.subtype =  msg.isPrivate? 'private' : 'group'
+    if(msg.isPrivate) {
+      session.channelId = session.guildId
+      session.guildId = ''
+    }
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => segment.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => segment.sharp($1).toString())

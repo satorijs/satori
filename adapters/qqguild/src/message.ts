@@ -109,7 +109,7 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       if (url.startsWith('file:')) {
         file = {
           type: 'filepath',
-          data: url.slice(5),
+          data: url.slice(8),
         }
       } else if (['data:', 'base64:'].some((prefix) => url.startsWith(prefix))) {
         file = {
