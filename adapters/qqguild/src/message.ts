@@ -107,6 +107,7 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       }
       let file: Partial<File>
       if (url.startsWith('file:')) {
+        // the length of 'file:///' is 8
         file = {
           type: 'filepath',
           data: url.slice(8),
