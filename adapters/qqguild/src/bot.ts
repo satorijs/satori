@@ -42,7 +42,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     session.guildId = msg.guildId
     session.channelId = msg.channelId
     session.subtype =  msg.isPrivate? 'private' : 'group'
-    if(msg.isPrivate) {
+    if (msg.isPrivate) {
       session.channelId = session.guildId
       session.guildId = ''
     }
