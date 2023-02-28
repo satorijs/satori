@@ -254,7 +254,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (this.local) {
       return await this.ctx.http.file(filePath)
     } else {
-      return await this.file.file(`/${filePath}`)
+      const { endpoint } = this.file.config
+      return await this.file.file(`${endpoint}/${filePath}`)
     }
   }
 
