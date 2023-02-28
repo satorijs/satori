@@ -96,7 +96,7 @@ export namespace Quester {
   export interface File {
     mime?: string
     filename: string
-    data: ArrayBuffer
+    data: ArrayBufferLike
   }
 
   export const isAxiosError = axios.isAxiosError

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-qqguild",
   "description": "QQ Guild Adapter for Satorijs",
-  "version": "3.4.0",
+  "version": "3.4.4",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -26,10 +26,10 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.1.6"
+    "@satorijs/satori": "^2.2.0"
   },
   "dependencies": {
     "@qq-guild-sdk/core": "^2.1.5",
-    "qface": "^1.2.0"
+    "qface": "^1.3.0"
   }
 }

@@ -23,21 +23,21 @@
   "devDependencies": {
     "@types/chai": "^4.3.4",
     "@types/mocha": "^9.1.1",
-    "@types/node": "^18.11.17",
-    "c8": "^7.12.0",
+    "@types/node": "^18.14.2",
+    "c8": "^7.13.0",
     "chai": "^4.3.7",
-    "esbuild": "^0.17.6",
+    "esbuild": "^0.17.10",
     "esbuild-register": "^3.4.2",
     "mocha": "^9.2.2",
     "shx": "^0.3.4",
-    "typescript": "^4.9.4",
+    "typescript": "^4.9.5",
     "yakumo": "^0.3.9",
     "yakumo-esbuild": "^0.3.22",
     "yakumo-mocha": "^0.3.1",
     "yakumo-publish": "^0.3.3",
     "yakumo-publish-sync": "^0.3.2",
     "yakumo-tsc": "^0.3.7",
-    "yakumo-upgrade": "^0.3.2",
-    "yakumo-version": "^0.3.2"
+    "yakumo-upgrade": "^0.3.3",
+    "yakumo-version": "^0.3.3"
   }
 }

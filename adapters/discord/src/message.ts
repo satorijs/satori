@@ -23,11 +23,16 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
   }
 
-  async sendEmbed(buffer: ArrayBuffer, payload: Dict, filename: string) {
-    const fd = new FormData()
-    fd.append('file', buffer, filename)
-    fd.append('payload_json', JSON.stringify(payload))
-    return this.post(fd, fd.getHeaders())
+  async sendEmbed(attrs: Dict, payload: Dict) {
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url)
+    const form = new FormData()
+    // https://github.com/form-data/form-data/issues/468
+    const value = process.env.KOISHI_ENV === 'browser'
+      ? new Blob([data], { type: mime })
+      : Buffer.from(data)
+    form.append('file', value, attrs.file || filename)
+    form.append('payload_json', JSON.stringify(payload))
+    return this.post(form, form.getHeaders())
   }
 
   async sendContent(content: string, addition: Dict) {
@@ -49,10 +54,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       return this.post({ ...addition, content: attrs.url })
     }
 
-    const sendDownload = async () => {
-      const { filename, data } = await this.bot.ctx.http.file(attrs.url)
-      return this.sendEmbed(data, addition, attrs.file || filename)
-    }
+    const sendDownload = () => this.sendEmbed(attrs, addition)
 
     if (['file:', 'data:', 'base64:'].some((prefix) => attrs.url.startsWith(prefix))) {
       return await sendDownload()
