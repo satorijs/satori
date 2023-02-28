@@ -7,9 +7,9 @@ type RenderMode = 'default' | 'figure'
 
 type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
-async function appendAsset(form: FormData, element: segment): Promise<AssetType> {
+async function appendAsset(bot: TelegramBot, form: FormData, element: segment): Promise<AssetType> {
   let assetType: AssetType
-  const { filename, data, mime } = await this.bot.ctx.http.file(element.attrs.url)
+  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url)
   if (element.type === 'image') {
     assetType = mime === 'image/gif' ? 'animation' : 'photo'
   } else if (element.type === 'file') {
@@ -59,7 +59,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
     for (const key in this.payload) {
       form.append(key, this.payload[key].toString())
     }
-    const type = await appendAsset(form, this.asset)
+    const type = await appendAsset(this.bot, form, this.asset)
     const result = await this.bot.internal[assetApi[type]](form as any)
     await this.addResult(result)
     delete this.payload.reply_to_message
