@@ -33,7 +33,6 @@
     "@satorijs/satori": "^2.2.0"
   },
   "dependencies": {
-    "file-type": "^16.5.4",
     "form-data": "^4.0.0"
   }
 }
