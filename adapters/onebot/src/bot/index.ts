@@ -112,7 +112,9 @@ export namespace OneBotBot {
   export const BaseConfig: Schema<BaseConfig> = Schema.object({
     selfId: Schema.string().description('机器人的账号。').required(),
     token: Schema.string().role('secret').description('发送信息时用于验证的字段，应与 OneBot 配置文件中的 `access_token` 保持一致。'),
-    protocol: Schema.union(['http', 'ws', 'ws-reverse']).description('选择要使用的协议。').default('ws-reverse'),
+    protocol: process.env.KOISHI_ENV === 'browser'
+      ? Schema.const('ws').default('ws')
+      : Schema.union(['http', 'ws', 'ws-reverse']).description('选择要使用的协议。').default('ws-reverse'),
     qqguild: QQGuildConfig.hidden(),
   })
 

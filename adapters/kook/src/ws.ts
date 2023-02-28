@@ -72,7 +72,7 @@ export namespace WsClient {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      protocol: Schema.const('ws' as const).required(),
+      protocol: Schema.const('ws' as const).required(process.env.KOISHI_ENV !== 'browser'),
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     Adapter.WsClient.Config,

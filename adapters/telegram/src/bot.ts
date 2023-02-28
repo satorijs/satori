@@ -317,7 +317,9 @@ export namespace TelegramBot {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
-      protocol: Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
+      protocol: process.env.KOISHI_ENV === 'browser'
+        ? Schema.const('polling').default('polling')
+        : Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
       HttpServer.Config,

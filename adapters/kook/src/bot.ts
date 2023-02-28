@@ -124,7 +124,9 @@ export namespace KookBot {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      protocol: Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
+      protocol: process.env.KOISHI_ENV === 'browser'
+        ? Schema.const('ws').default('ws')
+        : Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
       WsClient.Config,
