@@ -1,11 +1,9 @@
-import { Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, SendOptions, Session, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, SendOptions, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { TelegramMessenger } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
-import { fromBuffer } from 'file-type'
-import fs from 'fs'
 
 const logger = new Logger('telegram')
 
@@ -57,9 +55,9 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route
       ctx.router.get(route + '/:file+', async ctx => {
-        const { buffer, mime } = await this.$getFile(ctx.params.file)
+        const { data, mime } = await this.$getFile(ctx.params.file)
         ctx.set('content-type', mime)
-        ctx.body = buffer
+        ctx.body = data
       })
     }
   }
@@ -253,14 +251,11 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async $getFile(filePath: string) {
-    let buffer: Buffer
     if (this.local) {
-      buffer = await fs.promises.readFile(filePath)
+      return await this.ctx.http.file(filePath)
     } else {
-      buffer = await this.file.get(`/${filePath}`, { responseType: 'arraybuffer' })
+      return await this.file.file(`/${filePath}`)
     }
-    const { mime } = await fromBuffer(buffer)
-    return { mime, buffer }
   }
 
   async $getFileFromId(file_id: string) {
@@ -276,8 +271,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (this.server) {
       return { url: `${this.server}/${filePath}` }
     }
-    const { mime, buffer } = await this.$getFile(filePath)
-    const base64 = `data:${mime};base64,` + buffer.toString('base64')
+    const { mime, data } = await this.$getFile(filePath)
+    const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
     return { url: base64 }
   }
 
@@ -332,6 +327,6 @@ export namespace TelegramBot {
         local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
         server: Schema.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
       }),
-    }).description('文件设置'),
+    }).hidden(process.env.KOISHI_ENV === 'browser').description('文件设置'),
   ] as const)
 }
