@@ -4,6 +4,9 @@ import { DiscordMessenger } from './message'
 import { Internal } from './types'
 import { WsClient } from './ws'
 
+// @ts-ignore
+import { version } from '../package.json'
+
 export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
@@ -14,7 +17,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       ...config,
       headers: {
         Authorization: `Bot ${config.token}`,
-        'User-Agent': `DiscordBot (https://koishi.chat/, 1.0)`,
+        'User-Agent': `Koishi (https://koishi.chat/, ${version})`,
         ...config.headers,
       },
     })
