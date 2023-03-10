@@ -7,7 +7,7 @@ import { WsClient } from './ws'
 export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
-  public webhooks: Record<string, Webhook> = {}
+  public webhooks: Record<string, Promise<Webhook>> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
 
   constructor(ctx: Context, config: DiscordBot.Config) {
@@ -23,10 +23,11 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     ctx.plugin(WsClient, this)
   }
 
-  async _ensureWebhook(channelId: string) {
+  private async _ensureWebhook(channelId: string) {
     let webhook: Webhook;
     let webhooks = await this.internal.getChannelWebhooks(channelId)
-    if (!webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)) {
+    let selfId = this.selfId
+    if (!webhooks.find(v => v.name === "Koishi" && v.user.id === selfId)) {
       webhook = await this.internal.createWebhook(channelId, {
         name: "Koishi"
       })
@@ -34,6 +35,18 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       webhook = webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)
     }
     return webhook
+  }
+
+  async ensureWebhook(channelId: string) {
+    if (this.webhooks[channelId] === null) {
+      delete this.webhookLock[channelId]
+    }
+    if (this.webhooks[channelId]) {
+      delete this.webhookLock[channelId]
+      return this.webhooks[channelId]
+    }
+    this.webhookLock[channelId] = this._ensureWebhook(channelId)
+    return this.webhookLock[channelId]
   }
 
   async getSelf() {

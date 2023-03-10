@@ -1,9 +1,9 @@
-import { Dict, Messenger, Schema, segment, Universal, Session } from '@satorijs/satori'
+import { Dict, Messenger, Schema, segment, Universal, Session, Quester } from '@satorijs/satori'
 import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
-import { adaptMessage } from './utils'
+import { adaptMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
@@ -38,14 +38,14 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     try {
       let url = `/channels/${this.channelId}/messages`
       if (this.stack[0].author.nickname || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
-        await this.ensureWebhook()
-        url = `/webhooks/${this.webhook.id}/${this.webhook.token}?wait=true`
+        let webhook = await this.ensureWebhook()
+        url = `/webhooks/${webhook.id}/${webhook.token}?wait=true`
       }
       if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
         // 发送到子区
         if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
-          await this.ensureWebhook()
-          url = `/webhooks/${this.webhook.id}/${this.webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
+          let webhook = await this.ensureWebhook()
+          url = `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
         } else {
           url = `/channels/${this.stack[0].channel.id}/messages`
         }
@@ -67,7 +67,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
       return message
     } catch (e) {
-      if (e?.response?.status === 404 || e?.response?.data?.code === 10015) {
+      if (Quester.isAxiosError(e) && e.response.data.code === 10015) {
         this.webhook = null
         await this.ensureWebhook()
         return this.post(data, headers)
@@ -113,7 +113,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
 
     const mode = data.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
-    if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file' || this.stack[0].quote || this.stack[1]?.quote) {
+    if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
       return sendDirect()
@@ -131,20 +131,9 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }, sendDownload)
   }
 
-  private async _ensureWebhook() {
-    if (this.webhook === null) {
-      delete this.bot.webhookLock[this.channelId]
-    }
-    if (this.webhook) {
-      delete this.bot.webhookLock[this.channelId]
-      return this.webhook;
-    }
-    this.bot.webhookLock[this.channelId] = this.bot._ensureWebhook(this.channelId)
-    return this.bot.webhookLock[this.channelId]
-  }
 
   async ensureWebhook() {
-    return this.webhook = await (this.bot.webhookLock[this.channelId] ||= this._ensureWebhook())
+    return this.webhook = this.bot.webhookLock[this.channelId] ||= this.bot.ensureWebhook(this.channelId)
   }
 
   async flush() {
@@ -156,14 +145,9 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   }
 
   async visit(element: segment) {
-    const sanity = (val: string) =>
-      val
-        .replace(/[\\*_`~|()\[\]]/g, "\\$&")
-        .replace(/@everyone/g, () => "\\@everyone")
-        .replace(/@here/g, () => "\\@here");
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += sanity(attrs.content);
+      this.buffer += sanitize(attrs.content);
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
@@ -290,7 +274,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
             }
             let quoted = await this.bot.getMessage(channelId, replyId)
             this.addition.embeds = [{
-              description: `${sanity(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              description: `${sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
               author: {
                 name: quoted.author.nickname || quoted.author.username,
                 icon_url: quoted.author.avatar
