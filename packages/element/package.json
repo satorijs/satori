@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/element",
   "description": "Element Manipulation",
-  "version": "2.3.2",
+  "version": "2.3.4",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
@@ -51,6 +51,6 @@
     "chai-shape": "^1.0.0"
   },
   "dependencies": {
-    "cosmokit": "^1.4.0"
+    "cosmokit": "^1.4.1"
   }
 }

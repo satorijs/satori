@@ -1,5 +1,4 @@
 import { Dict, Messenger, Schema, segment, Universal, Session, Quester } from '@satorijs/satori'
-import { fromBuffer } from 'file-type'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
@@ -76,15 +75,19 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
   }
 
-  async sendEmbed(fileBuffer: ArrayBuffer, payload_json: Dict, filename: string) {
-    const fd = new FormData()
-    filename ||= 'file.' + (await fromBuffer(fileBuffer)).ext
-    fd.append('file', Buffer.from(fileBuffer), filename)
-    fd.append('payload_json', JSON.stringify(payload_json))
-    return this.post(fd, fd.getHeaders())
+  async sendEmbed(attrs: Dict, payload: Dict) {
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url)
+    const form = new FormData()
+    // https://github.com/form-data/form-data/issues/468
+    const value = process.env.KOISHI_ENV === 'browser'
+      ? new Blob([data], { type: mime })
+      : Buffer.from(data)
+    form.append('file', value, attrs.file || filename)
+    form.append('payload_json', JSON.stringify(payload))
+    return this.post(form, form.getHeaders())
   }
 
-  async sendAsset(type: string, data: Dict<string>, addition: Dict) {
+  async sendAsset(type: string, attrs: Dict<string>, addition: Dict) {
     const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessenger.Config
 
     if (handleMixedContent === 'separate' && addition.content) {
@@ -92,27 +95,20 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       addition.content = ''
     }
 
-    if (['file:', 'data:', 'base64:'].some((prefix) => data.url.startsWith(prefix))) {
-      const result = await this.bot.ctx.http.file(data.url)
-      return await this.sendEmbed(result.data, addition, data.file || result.filename)
-    }
-
     const sendDirect = async () => {
       if (addition.content) {
         await this.post(addition)
       }
-      return this.post({ ...addition, content: data.url })
+      return this.post({ ...addition, content: attrs.url })
     }
 
-    const sendDownload = async () => {
-      const buffer = await this.bot.ctx.http.get<ArrayBuffer>(data.url, {
-        headers: { accept: type + '/*' },
-        responseType: 'arraybuffer',
-      })
-      return this.sendEmbed(buffer, addition, data.file)
+    const sendDownload = () => this.sendEmbed(attrs, addition)
+
+    if (['file:', 'data:', 'base64:'].some((prefix) => attrs.url.startsWith(prefix))) {
+      return await sendDownload()
     }
 
-    const mode = data.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
+    const mode = attrs.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
@@ -120,7 +116,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
 
     // auto mode
-    return await this.bot.ctx.http.head(data.url, {
+    return await this.bot.ctx.http.head(attrs.url, {
       headers: { accept: type + '/*' },
     }).then((headers) => {
       if (headers['content-type'].startsWith(type)) {

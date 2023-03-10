@@ -1,5 +1,4 @@
-import { Adapter, Logger, Schema } from '@satorijs/satori'
-import { sanitize, trimSlash } from 'cosmokit'
+import { Adapter, Logger, sanitize, Schema, trimSlash } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'

@@ -25,7 +25,7 @@ export namespace WsClient {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      protocol: Schema.const('ws' as const),
+      protocol: Schema.const('ws' as const).required(process.env.KOISHI_ENV !== 'browser'),
       responseTimeout: Schema.natural().role('time').default(Time.minute).description('等待响应的时间 (单位为毫秒)。'),
     }).description('连接设置'),
     Quester.createConfig(true),
@@ -71,7 +71,7 @@ export namespace WsServer {
   }
 
   export const Config: Schema<Config> = Schema.object({
-    protocol: Schema.const('ws-reverse' as const),
+    protocol: Schema.const('ws-reverse' as const).required(process.env.KOISHI_ENV === 'browser'),
     path: Schema.string().description('服务器监听的路径。').default('/onebot'),
     responseTimeout: Schema.natural().role('time').default(Time.minute).description('等待响应的时间 (单位为毫秒)。'),
   }).description('连接设置')
@@ -81,7 +81,7 @@ let counter = 0
 const listeners: Record<number, (response: Response) => void> = {}
 
 export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
-  bot.socket.on('message', (data) => {
+  bot.socket.addEventListener('message', ({ data }) => {
     let parsed: any
     try {
       parsed = JSON.parse(data.toString())
@@ -98,7 +98,7 @@ export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
     }
   })
 
-  bot.socket.on('close', () => {
+  bot.socket.addEventListener('close', () => {
     delete bot.internal._request
   })
 

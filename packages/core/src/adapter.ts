@@ -65,9 +65,11 @@ export namespace Adapter {
         const socket = await this.prepare(bot)
         const url = socket.url.replace(/\?.+/, '')
 
-        socket.onerror = error => logger.debug(error)
+        socket.addEventListener('error', ({ error }) => {
+          logger.debug(error)
+        })
 
-        socket.onclose = ({ code, reason }) => {
+        socket.addEventListener('close', ({ code, reason }) => {
           bot.socket = null
           logger.debug(`websocket closed with ${code}`)
           if (bot.status === 'disconnect') {
@@ -92,14 +94,14 @@ export namespace Adapter {
           setTimeout(() => {
             if (bot.status === 'reconnect') reconnect()
           }, timeout)
-        }
+        })
 
-        socket.onopen = () => {
+        socket.addEventListener('open', () => {
           _retryCount = 0
           bot.socket = socket
           logger.info('connect to server: %c', url)
           this.accept(bot)
-        }
+        })
       }
 
       reconnect(true)

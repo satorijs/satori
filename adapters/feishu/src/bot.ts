@@ -10,7 +10,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
   _token?: string
   http: Quester
   assetsQuester: Quester
-  internal?: Internal
+  internal: Internal
 
   constructor(ctx: Context, config: FeishuBot.Config) {
     super(ctx, config)

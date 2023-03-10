@@ -81,7 +81,10 @@ export class Session {
   }
 
   async transform(elements: segment[]): Promise<segment[]> {
-    return await segment.transformAsync(elements, this.app.internal.transformers, this)
+    return await segment.transformAsync(elements, ({ type, attrs, children }, session) => {
+      const render = this.app['component:' + type]
+      return render?.(attrs, children, session) ?? true
+    }, this)
   }
 
   toJSON(): Session.Payload {
