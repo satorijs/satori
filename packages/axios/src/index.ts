@@ -86,7 +86,7 @@ export class Quester {
       const name = 'file' + (ext ? '.' + ext : '')
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
-    let [_, name] = this.resolve(url).match(/.+\/([^/]*)(?=\?)/)
+    let [_, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
     const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
     const mime = headers['content-type']
     if (!name.includes('.')){
