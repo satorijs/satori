@@ -10,8 +10,16 @@ type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 async function appendAsset(bot: TelegramBot, form: FormData, element: segment): Promise<AssetType> {
   let assetType: AssetType
   const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url)
+  let assetName: string = element.attrs.file || filename
   if (element.type === 'image') {
     assetType = mime === 'image/gif' ? 'animation' : 'photo'
+    if(!assetName.includes('.')){
+      // lack of extension
+      assetName += `.${mime.split('/')[1]}`
+    }else if(assetName.includes('.image')){
+      // .image cannot be displayed
+      assetName = assetName.replace('.image', `.${mime.split('/')[1]}`)
+    }
   } else if (element.type === 'file') {
     assetType = 'document'
   } else {
@@ -21,7 +29,7 @@ async function appendAsset(bot: TelegramBot, form: FormData, element: segment): 
   const value = process.env.KOISHI_ENV === 'browser'
     ? new Blob([data], { type: mime })
     : Buffer.from(data)
-  form.append(assetType, value, filename)
+  form.append(assetType, value, assetName)
   return assetType
 }
 
