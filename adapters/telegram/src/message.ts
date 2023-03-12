@@ -14,7 +14,7 @@ async function appendAsset(bot: TelegramBot, form: FormData, element: segment): 
   if (element.type === 'image') {
     assetType = mime === 'image/gif' ? 'animation' : 'photo'
     if(!assetName.includes('.')){
-      // lack of extension
+      // missing extension
       assetName += `.${mime.split('/')[1]}`
     }else if(assetName.includes('.image')){
       // .image cannot be displayed
