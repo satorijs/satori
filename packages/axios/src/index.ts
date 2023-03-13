@@ -89,7 +89,7 @@ export class Quester {
     let [_, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
     const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
     const mime = headers['content-type']
-    if (!name.includes('.')){
+    if (!name.includes('.')) {
       const ext = mimedb[mime]?.extensions?.[0]
       name += ext ? '.' + ext : ''
     }
