@@ -1,10 +1,12 @@
-import { Dict, Messenger, Schema, segment, Universal, Session, Quester } from '@satorijs/satori'
+import { Dict, Messenger, Schema, segment, Universal, Session, Quester, Logger } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
 import { adaptMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
+
+const logger = new Logger('discord')
 
 class State {
   author: Partial<Universal.Author> = {}
@@ -22,16 +24,6 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   private addition: Dict = {}
   private figure: segment = null
   private mode: RenderMode = 'default'
-
-  get webhook() {
-    return this.bot.webhooks[this.channelId]
-  }
-  set webhook(val) {
-    if (!val) {
-      delete this.bot.webhookLock[this.channelId]
-    }
-    this.bot.webhooks[this.channelId] = val
-  }
 
   async post(data?: any, headers?: any) {
     try {
@@ -66,8 +58,9 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
       return message
     } catch (e) {
-      if (Quester.isAxiosError(e) && e.response.data.code === 10015) {
-        this.webhook = null
+      if (Quester.isAxiosError(e) && e.response?.data.code === 10015) {
+        logger.debug('webhook has been deleted, recreating..., %o, lock %o', e.response.data, this.bot.webhookLock[this.channelId])
+        if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
         await this.ensureWebhook()
         return this.post(data, headers)
       }
@@ -129,7 +122,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
 
   async ensureWebhook() {
-    return this.webhook = this.bot.webhookLock[this.channelId] ||= this.bot.ensureWebhook(this.channelId)
+    return this.bot.ensureWebhook(this.channelId)
   }
 
   async flush() {

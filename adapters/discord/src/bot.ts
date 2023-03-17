@@ -10,7 +10,7 @@ import { version } from '../package.json'
 export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
-  public webhooks: Record<string, Promise<Webhook>> = {}
+  public webhooks: Record<string, Webhook> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
 
   constructor(ctx: Context, config: DiscordBot.Config) {
@@ -35,22 +35,24 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       webhook = await this.internal.createWebhook(channelId, {
         name: "Koishi"
       })
+      // webhook may be `AxiosError: Request failed with status code 429` error
     } else {
       webhook = webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)
     }
-    return webhook
+    return this.webhooks[channelId] = webhook
   }
 
   async ensureWebhook(channelId: string) {
     if (this.webhooks[channelId] === null) {
+      delete this.webhooks[channelId]
       delete this.webhookLock[channelId]
     }
     if (this.webhooks[channelId]) {
       delete this.webhookLock[channelId]
       return this.webhooks[channelId]
     }
-    this.webhookLock[channelId] = this._ensureWebhook(channelId)
-    return this.webhookLock[channelId]
+    if (this.webhookLock[channelId]) return this.webhookLock[channelId]
+    return this.webhookLock[channelId] = this._ensureWebhook(channelId)
   }
 
   async getSelf() {
