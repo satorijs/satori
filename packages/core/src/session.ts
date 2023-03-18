@@ -38,7 +38,7 @@ export namespace Session {
 export class Session {
   public id: string
   public bot: Bot
-  public app: Context
+  public app: Context['root']
 
   constructor(bot: Bot, payload?: Partial<Session.Payload>) {
     Object.assign(this, payload)
