@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { Messenger, segment } from '@satorijs/satori'
+import { Messenger, Quester, segment } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { FeishuBot } from './bot'
@@ -37,6 +37,13 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       session.app.emit(session, 'send', session)
       this.results.push(session)
     } catch (e) {
+      // try to extract error message from Feishu API
+      if (Quester.isAxiosError(e)) {
+        if (e.response?.data?.code) {
+          const generalErrorMsg = `Check error code at https://open.feishu.cn/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
+          e.message += ` (Feishu error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
+        }
+      }
       this.errors.push(e)
     }
   }
