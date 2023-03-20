@@ -39,9 +39,9 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     } catch (e) {
       // try to extract error message from Feishu API
       if (Quester.isAxiosError(e)) {
-        if (e?.response?.data?.code) {
+        if (e.response?.data?.code) {
           const generalErrorMsg = `Check error code at https://open.feishu.cn/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
-          e.message += ` (Feishu error code ${e.response.data.code}: ${e.response.data?.msg ?? generalErrorMsg})`
+          e.message += ` (Feishu error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
         }
       }
       this.errors.push(e)
