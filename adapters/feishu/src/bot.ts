@@ -8,6 +8,7 @@ const logger = new Logger('feishu')
 
 export class FeishuBot extends Bot<FeishuBot.Config> {
   _token?: string
+  _refresher?: NodeJS.Timeout
   http: Quester
   assetsQuester: Quester
   internal: Internal
@@ -47,6 +48,10 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
     })
     logger.debug('refreshed token %s', token)
     this.token = token
+    // Token would be expired in 2 hours, refresh it every 1 hour
+    // see https://open.feishu.cn/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal
+    if (this._refresher) clearTimeout(this._refresher)
+    this._refresher = setTimeout(() => this.refreshToken(), 3600 * 1000)
     this.online()
   }
 
