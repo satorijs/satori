@@ -155,6 +155,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       segments.push(segment('file', await this.$getFileFromId(message.document.file_id)))
     }
 
+    session.elements = segments
     session.content = segments.join('')
     session.userId = message.from.id.toString()
     session.author = adaptUser(message.from)
@@ -163,7 +164,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       session.channelId = 'private:' + message.chat.id
     } else {
       session.subtype = 'group'
-      session.guildId =  message.chat.id.toString()
+      session.guildId = message.chat.id.toString()
       if (message.is_topic_message) {
         session.channelId = message.message_thread_id.toString()
       } else {
