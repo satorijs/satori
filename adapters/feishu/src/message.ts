@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { Messenger, Quester, segment } from '@satorijs/satori'
+import { h, Messenger, Quester } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { FeishuBot } from './bot'
@@ -25,8 +25,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       let resp: BaseResponse & { data: Message }
       if (this.quote) {
         resp = await this.bot.internal?.replyMessage(this.quote, data)
-      }
-      else {
+      } else {
         data.receive_id = this.channelId
         resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
       }
@@ -66,7 +65,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
     await this.post({
       msg_type: this.richText ? 'post' : this.addition ? this.addition.type : 'text',
-      content: JSON.stringify(message)
+      content: JSON.stringify(message),
     })
 
     // reset cached content
@@ -129,7 +128,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
 
     switch (type) {

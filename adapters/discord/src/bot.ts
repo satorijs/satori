@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, SendOptions, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordMessenger } from './message'
 import { Internal } from './types'
@@ -43,7 +43,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async editMessage(channelId: string, messageId: string, content: Fragment) {
-    const elements = segment.normalize(content)
+    const elements = h.normalize(content)
     content = elements.toString()
     const image = elements.find(v => v.type === 'image')
     if (image) {

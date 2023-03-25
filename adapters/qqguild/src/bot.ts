@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, SendOptions, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
@@ -43,20 +43,20 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     session.channelId = msg.channelId
     session.subtype = 'group'
     session.content = (msg.content ?? '')
-      .replace(/<@!(.+)>/, (_, $1) => segment.at($1).toString())
-      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1).toString())
+      .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
+      .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
     if (attachments.length > 0) {
       session.content += attachments.map((attachment) => {
         if (attachment.contentType.startsWith('image')) {
-          return segment.image(attachment.url)
+          return h.image(attachment.url)
         }
       }).join('')
     }
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
-      .reduce((content, attachment) => content + segment.image(attachment.url), session.content)
-    session.elements = segment.parse(session.content)
+      .reduce((content, attachment) => content + h.image(attachment.url), session.content)
+    session.elements = h.parse(session.content)
     return session
   }
 }

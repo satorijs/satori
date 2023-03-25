@@ -67,7 +67,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       }
 
       if (parsed.op === GatewayOpcode.INVALID_SESSION) {
-        if (parsed.d) return;
+        if (parsed.d) return
         this._sessionId = ''
         logger.warn('offline: invalid session')
         this.bot.offline()
@@ -85,7 +85,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
           logger.debug('session_id ' + this._sessionId)
           return this.bot.online()
         }
-        if (parsed.t === "RESUMED") {
+        if (parsed.t === 'RESUMED') {
           return this.bot.online()
         }
         const session = await adaptSession(this.bot, parsed)

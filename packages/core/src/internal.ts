@@ -1,4 +1,4 @@
-import { Awaitable, Dict, defineProperty } from 'cosmokit'
+import { Awaitable, defineProperty } from 'cosmokit'
 import { Context, Session } from '.'
 import segment from '@satorijs/element'
 
