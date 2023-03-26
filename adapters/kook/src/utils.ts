@@ -131,7 +131,8 @@ export function adaptSession(bot: Bot, input: any) {
         adaptReaction(body, session)
         break
       case 'message_btn_click':
-        session.type = 'kook/message-btn-click'
+        session.type = 'kook'
+        session.subtype = 'message-btn-click'
         session.messageId = body.msg_id
         session.userId = body.user_id
         session.content = body.value
