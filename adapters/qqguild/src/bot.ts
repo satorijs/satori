@@ -26,6 +26,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     try {
       return await messenger.send(fragment)
     } catch (e) {
+      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#%E9%94%99%E8%AF%AF%E7%A0%81%E5%A4%84%E7%90%86:~:text=304031,%E6%8B%89%E7%A7%81%E4%BF%A1%E9%94%99%E8%AF%AF
       if ([304031, 304032, 304033].includes(e.code)) {
         await this.internal.createDMS(channelId, guildId)
         return await messenger.send(fragment)
