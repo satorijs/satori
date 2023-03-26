@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { h, Session, trimSlash } from '@satorijs/satori'
+import { defineProperty, h, Session, trimSlash } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
@@ -64,12 +64,10 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
       break
   }
 
-  session.timestamp = Number(data.message.create_time)
+  session.timestamp = +data.message.create_time
   session.messageId = data.message.message_id
   session.channelId = data.message.chat_id
   session.content = content.map((c) => c.toString()).join(' ')
-  session.platform = 'feishu'
-  session.selfId = bot.selfId
 
   return session
 }
@@ -77,6 +75,10 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
 export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
   const session = bot.session()
   session.selfId = bot.selfId
+  const internal = Object.create(bot.internal)
+  Object.assign(internal, body)
+  defineProperty(session, 'feishu', internal)
+  defineProperty(session, 'lark', internal)
 
   switch (body.type) {
     case 'im.message.receive_v1':

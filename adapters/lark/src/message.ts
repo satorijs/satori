@@ -13,7 +13,7 @@ export interface Addition {
   type: MessageType
 }
 
-export class FeishuMessenger extends Messenger<FeishuBot> {
+export class LarkMessenger extends Messenger<FeishuBot> {
   private quote: string | undefined
   private content = ''
   private addition: Addition
@@ -173,3 +173,5 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
   }
 }
+
+export { LarkMessenger as FeishuMessenger }

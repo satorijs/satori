@@ -6,14 +6,14 @@ import { Internal } from './types'
 
 const logger = new Logger('lark')
 
-export class FeishuBot extends Bot<FeishuBot.Config> {
+export class LarkBot extends Bot<LarkBot.Config> {
   _token?: string
   _refresher?: NodeJS.Timeout
   http: Quester
   assetsQuester: Quester
   internal: Internal
 
-  constructor(ctx: Context, config: FeishuBot.Config) {
+  constructor(ctx: Context, config: LarkBot.Config) {
     super(ctx, config)
 
     // lark bot needs config.selfUrl to be set as it should be serve on a public url
@@ -24,7 +24,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
     this.selfId = config.appId
 
     this.http = ctx.http.extend({
-      endpoint: config.endpoint ?? 'https://open.feishu.cn/open-apis/',
+      endpoint: config.endpoint,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
       },
@@ -77,9 +77,8 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
   }
 }
 
-export namespace FeishuBot {
+export namespace LarkBot {
   export interface Config extends Bot.Config, HttpServer.Config, Quester.Config {
-    path?: string
     appId: string
     appSecret: string
     encryptKey?: string
@@ -88,15 +87,29 @@ export namespace FeishuBot {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      path: Schema.string().role('url').description('要连接的服务器地址。').default('/feishu'),
+      platform: Schema.union(['feishu', 'lark']).required().description('平台名称。'),
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
       verificationToken: Schema.string().description('事件推送的验证令牌。'),
     }),
-    Quester.Config,
-    HttpServer.Config,
+    Schema.union([
+      Schema.intersect([
+        Schema.object({
+          platform: Schema.const('feishu').required(),
+        }),
+        Quester.createConfig('https://open.feishu.cn/open-apis/'),
+        HttpServer.createConfig('/feishu'),
+      ]),
+      Schema.intersect([
+        Schema.object({
+          platform: Schema.const('lark').required(),
+        }),
+        Quester.createConfig('https://open.larksuite.com/open-apis/'),
+        HttpServer.createConfig('/lark'),
+      ]),
+    ]),
   ])
 }
 
-FeishuBot.prototype.platform = 'feishu'
+export { LarkBot as FeishuBot }

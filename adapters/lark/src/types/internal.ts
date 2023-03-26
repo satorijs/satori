@@ -3,7 +3,8 @@ import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
 
 export interface Internal {}
 
-const logger = new Logger('feishu')
+const logger = new Logger('lark')
+
 export interface BaseResponse {
   /** error code. would be 0 if success, and non-0 if failed. */
   code: number

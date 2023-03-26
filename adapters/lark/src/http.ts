@@ -6,7 +6,7 @@ import { FeishuBot } from './bot'
 import { AllEvents } from './types'
 import { adaptSession, Cipher } from './utils'
 
-const logger = new Logger('feishu')
+const logger = new Logger('lark')
 
 export class HttpServer extends Adapter.Server<FeishuBot> {
   private ciphers: Record<string, Cipher> = {}
@@ -19,7 +19,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   }
 
   async start(bot: FeishuBot) {
-    const { path = '/feishu' } = bot.config
+    const { path } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       this._refreshCipher()
 
@@ -137,13 +137,15 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 export namespace HttpServer {
   export interface Config {
     selfUrl?: string
+    path?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
 
-  export const Config: Schema<HttpServer.Config> = Schema.object({
+  export const createConfig = (path: string): Schema<Config> => Schema.object({
+    path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     verifyToken: Schema.boolean().description('是否验证令牌。'),
     verifySignature: Schema.boolean().description('是否验证签名。'),
-  })
+  }).description('服务端设置')
 }
