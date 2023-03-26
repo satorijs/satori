@@ -1,6 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
-import { h } from '@satorijs/core'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
