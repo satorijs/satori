@@ -1,6 +1,6 @@
-import { defineProperty, hyphenate, Logger, segment, Universal } from '@satorijs/satori'
+import { defineProperty, h, hyphenate, Logger, Universal } from '@satorijs/satori'
 import * as qface from 'qface'
-import { CQCode, BaseBot } from './bot'
+import { BaseBot, CQCode } from './bot'
 import * as OneBot from './types'
 
 export * from './types'
@@ -73,18 +73,18 @@ export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result
     })
   }
 
-  result.elements = segment.transform(chain, {
+  result.elements = h.transform(chain, {
     at({ qq }) {
-      if (qq !== 'all') return segment.at(qq)
-      return segment('at', { type: 'all' })
+      if (qq !== 'all') return h.at(qq)
+      return h('at', { type: 'all' })
     },
     face({ id }) {
-      return segment('face', { id, platform: bot.platform }, [
-        segment.image(qface.getUrl(id)),
+      return h('face', { id, platform: bot.platform }, [
+        h.image(qface.getUrl(id)),
       ])
     },
     record(attrs) {
-      return segment('audio', attrs)
+      return h('audio', attrs)
     },
   })
   if (result.elements[0]?.type === 'reply') {

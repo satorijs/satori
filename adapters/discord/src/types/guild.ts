@@ -1,4 +1,4 @@
-import { Channel, Emoji, GuildMember, integer, Internal, PresenceUpdateEvent, Role, snowflake, StageInstance, Sticker, timestamp, User, VoiceState } from '.'
+import { Channel, Emoji, GuildMember, integer, Internal, Role, snowflake, Sticker, User } from '.'
 
 /** https://discord.com/developers/docs/resources/guild#guild-object-guild-structure */
 export interface Guild {

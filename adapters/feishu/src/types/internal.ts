@@ -1,5 +1,5 @@
 import FormData from 'form-data'
-import { Dict, Logger, Quester, makeArray } from '@satorijs/satori'
+import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
 
 export interface Internal {}
 
@@ -37,7 +37,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.AxiosRequestConfig= {}
+            const config: Quester.AxiosRequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

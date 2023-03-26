@@ -1,4 +1,4 @@
-import { Messenger, pick, segment, Universal } from '@satorijs/satori'
+import { h, Messenger, pick, Universal } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
 
@@ -73,11 +73,19 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     this.children.push({ type: 'text', data: { text } })
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     let { type, attrs, children } = element
     if (type === 'text') {
       this.text(attrs.content)
     } else if (type === 'p') {
+      const prev = this.children[this.children.length - 1]
+      if (prev?.type === 'text') {
+        if (!prev.data.text.endsWith('\n')) {
+          prev.data.text += '\n'
+        }
+      } else {
+        this.text('\n')
+      }
       await this.render(children)
       this.text('\n')
     } else if (type === 'at') {

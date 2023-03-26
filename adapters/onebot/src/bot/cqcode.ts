@@ -1,10 +1,10 @@
-import { Dict, segment } from '@satorijs/satori'
+import { Dict, h } from '@satorijs/satori'
 
 export function CQCode(type: string, attrs: Dict<string>) {
   if (type === 'text') return attrs.content
   let output = '[CQ:' + type
   for (const key in attrs) {
-    if (attrs[key]) output += `,${key}=${segment.escape(attrs[key], true)}`
+    if (attrs[key]) output += `,${key}=${h.escape(attrs[key], true)}`
   }
   return output + ']'
 }
@@ -52,23 +52,23 @@ export namespace CQCode {
     if (typeof source !== 'string') {
       return source.map(({ type, data }) => {
         if (type === 'text') {
-          return segment('text', { content: data.text })
+          return h('text', { content: data.text })
         } else {
-          return segment(type, data)
+          return h(type, data)
         }
       })
     }
-    const elements: segment[] = []
+    const elements: h[] = []
     let result: ReturnType<typeof from>
     while ((result = from(source))) {
       const { type, data, capture } = result
       if (capture.index) {
-        elements.push(segment('text', { content: unescape(source.slice(0, capture.index)) }))
+        elements.push(h('text', { content: unescape(source.slice(0, capture.index)) }))
       }
-      elements.push(segment(type, data))
+      elements.push(h(type, data))
       source = source.slice(capture.index + capture[0].length)
     }
-    if (source) elements.push(segment('text', { content: unescape(source) }))
+    if (source) elements.push(h('text', { content: unescape(source) }))
     return elements
   }
 }

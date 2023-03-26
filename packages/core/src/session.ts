@@ -38,7 +38,7 @@ export namespace Session {
 export class Session {
   public id: string
   public bot: Bot
-  public app: Context
+  public app: Context['root']
 
   constructor(bot: Bot, payload?: Partial<Session.Payload>) {
     Object.assign(this, payload)
@@ -63,7 +63,7 @@ export class Session {
   get cid() {
     return `${this.platform}:${this.channelId}`
   }
-  
+
   get fid() {
     return `${this.platform}:${this.channelId}:${this.userId}`
   }

@@ -1,5 +1,5 @@
 import { Context } from 'cordis'
-import { Dict, base64ToArrayBuffer, pick, trimSlash } from 'cosmokit'
+import { base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
@@ -86,9 +86,13 @@ export class Quester {
       const name = 'file' + (ext ? '.' + ext : '')
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
-    const [_, name] = this.resolve(url).match(/.+\/([^/]*)/)
+    let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
     const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
     const mime = headers['content-type']
+    if (!name.includes('.')) {
+      const ext = mimedb[mime]?.extensions?.[0]
+      name += ext ? '.' + ext : ''
+    }
     return { mime, filename: name, data }
   }
 }

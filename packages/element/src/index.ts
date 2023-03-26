@@ -44,7 +44,7 @@ class ElementConstructor {
   }
 
   toString(strip = false) {
-    if (this.type === 'text') {
+    if (this.type === 'text' && 'content' in this.attrs) {
       return strip ? this.attrs.content : Element.escape(this.attrs.content)
     }
     const inner = this.children.map(child => child.toString(strip)).join('')
@@ -68,7 +68,7 @@ function Element(type: string, ...children: Element.Fragment[]): Element
 function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
-  let attrs: Dict = {}, children: Element[] = []
+  const attrs: Dict = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
     const props = args.shift()
     for (const [key, value] of Object.entries(props)) {
@@ -252,7 +252,7 @@ namespace Element {
       const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, v1, v2 = v1, v3] = attrCap
+        const [, key, v1, v2 = v1, v3] = attrCap
         if (v3) {
           token.attrs[camelize(key)] = interpolate(v3, context)
         } else if (!isNullable(v2)) {
@@ -386,6 +386,7 @@ namespace Element {
     }
   }
 
+  // eslint-disable-next-line prefer-const
   export let warn: (message: string) => void = () => {}
 
   function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer, type: string]> {

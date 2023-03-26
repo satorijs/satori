@@ -1,4 +1,4 @@
-import { Dict, Messenger, Schema, segment } from '@satorijs/satori'
+import { Dict, h, Messenger, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { adaptMessage } from './utils'
@@ -8,7 +8,7 @@ type RenderMode = 'default' | 'figure'
 export class DiscordMessenger extends Messenger<DiscordBot> {
   private buffer: string = ''
   private addition: Dict = {}
-  private figure: segment = null
+  private figure: h = null
   private mode: RenderMode = 'default'
 
   async post(data?: any, headers?: any) {
@@ -87,7 +87,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     this.addition = {}
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content.replace(/[\\*_`~|()]/g, '\\$&')

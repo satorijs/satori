@@ -1,4 +1,4 @@
-import { arrayBufferToBase64, Bot, Context, Dict, Fragment, Logger, Quester, Schema, segment, SendOptions, Session, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, Fragment, h, Logger, Quester, Schema, SendOptions, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptGuildMember, adaptUser } from './utils'
 import { TelegramMessenger } from './message'
@@ -74,41 +74,41 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async adaptMessage(message: Telegram.Message, session: Session) {
-    const parseText = (text: string, entities: Telegram.MessageEntity[]): segment[] => {
+    const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
       let curr = 0
-      const segs: segment[] = []
+      const segs: h[] = []
       for (const e of entities) {
         const eText = text.substr(e.offset, e.length)
         if (e.type === 'mention') {
           if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
           const atName = eText.slice(1)
           if (eText === '@' + this.username) {
-            segs.push(segment('at', { id: this.selfId, name: atName }))
+            segs.push(h('at', { id: this.selfId, name: atName }))
           } else {
             // TODO handle @others
-            segs.push(segment('text', { content: eText }))
+            segs.push(h('text', { content: eText }))
           }
         } else if (e.type === 'text_mention') {
-          segs.push(segment('at', { id: e.user.id }))
+          segs.push(h('at', { id: e.user.id }))
         } else {
           // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
           //       text_link, custom_emoji
-          segs.push(segment('text', { content: eText }))
+          segs.push(h('text', { content: eText }))
         }
         if (e.offset > curr) {
-          segs.splice(-1, 0, segment('text', { content: text.slice(curr, e.offset) }))
+          segs.splice(-1, 0, h('text', { content: text.slice(curr, e.offset) }))
         }
         curr = e.offset + e.length
       }
       if (curr < text?.length || 0) {
-        segs.push(segment('text', { content: text.slice(curr) }))
+        segs.push(h('text', { content: text.slice(curr) }))
       }
       return segs
     }
 
     session.messageId = message.message_id.toString()
     session.timestamp = message.date * 1000
-    const segments: segment[] = []
+    const segments: h[] = []
     // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
     if (message.reply_to_message && !(message.is_topic_message && message.reply_to_message.forum_topic_created)) {
       session.quote = {}
@@ -121,15 +121,15 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
     if (message.caption) {
       // add a space to separate caption from media
-      segments.push(segment('text', { content: ' ' }))
+      segments.push(h('text', { content: ' ' }))
     }
 
     if (message.location) {
-      segments.push(segment('location', { lat: message.location.latitude, lon: message.location.longitude }))
+      segments.push(h('location', { lat: message.location.latitude, lon: message.location.longitude }))
     }
     if (message.photo) {
       const photo = message.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
-      segments.push(segment('image', await this.$getFileFromId(photo.file_id)))
+      segments.push(h('image', await this.$getFileFromId(photo.file_id)))
     }
     if (message.sticker) {
       // TODO: Convert tgs to gif
@@ -140,21 +140,22 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         if (file.file_path.endsWith('.tgs')) {
           throw new Error('tgs is not supported now')
         }
-        segments.push(segment('image', await this.$getFileFromPath(file.file_path)))
+        segments.push(h('image', await this.$getFileFromPath(file.file_path)))
       } catch (e) {
         logger.warn('get file error', e)
-        segments.push(segment('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
+        segments.push(h('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
     } else if (message.animation) {
-      segments.push(segment('image', await this.$getFileFromId(message.animation.file_id)))
+      segments.push(h('image', await this.$getFileFromId(message.animation.file_id)))
     } else if (message.voice) {
-      segments.push(segment('audio', await this.$getFileFromId(message.voice.file_id)))
+      segments.push(h('audio', await this.$getFileFromId(message.voice.file_id)))
     } else if (message.video) {
-      segments.push(segment('video', await this.$getFileFromId(message.video.file_id)))
+      segments.push(h('video', await this.$getFileFromId(message.video.file_id)))
     } else if (message.document) {
-      segments.push(segment('file', await this.$getFileFromId(message.document.file_id)))
+      segments.push(h('file', await this.$getFileFromId(message.document.file_id)))
     }
 
+    session.elements = segments
     session.content = segments.join('')
     session.userId = message.from.id.toString()
     session.author = adaptUser(message.from)
@@ -163,7 +164,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       session.channelId = 'private:' + message.chat.id
     } else {
       session.subtype = 'group'
-      session.guildId =  message.chat.id.toString()
+      session.guildId = message.chat.id.toString()
       if (message.is_topic_message) {
         session.channelId = message.message_thread_id.toString()
       } else {

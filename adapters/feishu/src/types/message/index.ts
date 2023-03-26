@@ -194,5 +194,5 @@ Internal.define({
   },
   '/im/v1/messages/{message_id}/read_users': {
     GET: 'getMessageReadUsers',
-  }
+  },
 })
