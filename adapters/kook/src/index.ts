@@ -10,3 +10,11 @@ export * from './ws'
 export * from './utils'
 
 export default KookBot
+
+declare global {
+    namespace Satori {
+      interface Events {
+        'kook/message-btn-click': {}
+      }
+    }
+}
