@@ -1,6 +1,6 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
-import { segment } from '@satorijs/core'
+import { Element } from '@satorijs/core'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
@@ -35,7 +35,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     }
   }
 
-  async sendPrivateMessage(userId: string, content: segment.Fragment, options?: SendOptions): Promise<string[]> {
+  async sendPrivateMessage(userId: string, content: Element, options?: SendOptions): Promise<string[]> {
     return this.sendMessage(userId, content, options.session.guildId, options)
   }
 
