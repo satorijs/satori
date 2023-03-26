@@ -1,5 +1,6 @@
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
+import { segment } from '@satorijs/core'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
@@ -21,7 +22,20 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    return await new QQGuildMessenger(this, channelId, guildId, opts).send(fragment)
+    const messenger = new QQGuildMessenger(this, channelId, guildId, opts)
+    try {
+      return await messenger.send(fragment)
+    } catch (e) {
+      if ([304031, 304032, 304033].includes(e.code)) {
+        await this.internal.createDMS(channelId, guildId)
+        return await messenger.send(fragment)
+      }
+      throw e
+    }
+  }
+
+  async sendPrivateMessage(userId: string, content: segment.Fragment, options?: SendOptions): Promise<string[]> {
+    return this.sendMessage(userId, content, options.session.guildId, options)
   }
 
   async getGuildList() {
@@ -39,9 +53,18 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     })
     session.author = adaptUser(msg.author)
     session.userId = author.id
-    session.guildId = msg.guildId
-    session.channelId = msg.channelId
-    session.subtype = 'group'
+    // TODO https://github.com/satorijs/satori/blob/fbcf4665c77381ff80c8718106d2282a931d5736/packages/core/src/message.ts#L23
+    //      satori core need set guildId is undefined when isPrivate
+    //      this is a temporary solution
+    if (msg.isPrivate) {
+      session.guildId = undefined
+      session.channelId = msg.guildId
+    } else {
+      session.guildId = msg.guildId
+      session.channelId = msg.channelId
+    }
+    // it's useless, but I need it
+    session.subtype = msg.isPrivate ? 'private' : 'group'
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
