@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'url'
 import * as QQGuild from '@qq-guild-sdk/core'
 import { Dict, h, Logger, Messenger, Quester } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
@@ -109,7 +110,7 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       if (url.startsWith('file:')) {
         file = {
           type: 'filepath',
-          data: url.slice(5),
+          data: fileURLToPath(url),
         }
       } else if (['data:', 'base64:'].some((prefix) => url.startsWith(prefix))) {
         file = {
