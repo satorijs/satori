@@ -4,7 +4,7 @@ import { HttpServer } from './http'
 import { FeishuMessenger } from './message'
 import { Internal } from './types'
 
-const logger = new Logger('feishu')
+const logger = new Logger('lark')
 
 export class FeishuBot extends Bot<FeishuBot.Config> {
   _token?: string
@@ -16,8 +16,8 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
   constructor(ctx: Context, config: FeishuBot.Config) {
     super(ctx, config)
 
-    // feishu bot needs config.selfUrl to be set as it should be serve on a public url
-    if (!config.selfUrl && !ctx.config.selfUrl) {
+    // lark bot needs config.selfUrl to be set as it should be serve on a public url
+    if (!config.selfUrl && !ctx.root.config.selfUrl) {
       logger.warn('selfUrl is not set, some features may not work')
     }
 
@@ -49,7 +49,7 @@ export class FeishuBot extends Bot<FeishuBot.Config> {
     logger.debug('refreshed token %s', token)
     this.token = token
     // Token would be expired in 2 hours, refresh it every 1 hour
-    // see https://open.feishu.cn/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal
+    // see https://open.larksuite.com/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal
     if (this._refresher) clearTimeout(this._refresher)
     this._refresher = setTimeout(() => this.refreshToken(), 3600 * 1000)
     this.online()

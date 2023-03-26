@@ -91,8 +91,7 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
 
 /**
  * Get ID type from id string
- *
- * @see https://open.feishu.cn/document/home/user-identity-introduction/introduction
+ * @see https://open.larksuite.com/document/home/user-identity-introduction/introduction
  */
 export function extractIdType(id: string): Feishu.ReceiveIdType {
   if (id.startsWith('ou')) return 'open_id'

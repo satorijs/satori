@@ -8,7 +8,7 @@ export * from './message'
 export namespace Feishu {
   /**
    * A user in Feishu has several different IDs.
-   * @see https://open.feishu.cn/document/home/user-identity-introduction/introduction
+   * @see https://open.larksuite.com/document/home/user-identity-introduction/introduction
    */
   export interface UserIds {
     union_id: string
@@ -32,7 +32,7 @@ export namespace Feishu {
    * The id type when specify a receiver, would be used in the request query.
    *
    * NOTE: we always use **open_id** to identify a user, use **chat_id** to identify a channel.
-   * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
+   * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
    */
   export type ReceiveIdType = UserIdType | 'email' | 'chat_id'
 }

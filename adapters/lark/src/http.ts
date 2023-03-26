@@ -25,7 +25,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 
       // compare signature if encryptKey is set
       // But not every message contains signature
-      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
+      // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
       const signature = ctx.get('X-Lark-Signature')
       const enabledSignatureVerify = this.bots.filter((bot) => bot.config.verifySignature)
       if (signature && enabledSignatureVerify.length) {
@@ -43,7 +43,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       // try to decrypt message first if encryptKey is set
       const body = this._tryDecryptBody(ctx.request.body)
       // respond challenge message
-      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/request-url-configuration-case
+      // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/request-url-configuration-case
       if (body?.type === 'url_verification' && body?.challenge && typeof body.challenge === 'string') {
         ctx.response.body = { challenge: body.challenge }
         return
@@ -104,7 +104,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   private _tryDecryptBody(body: any): any {
     this._refreshCipher()
     // try to decrypt message if encryptKey is set
-    // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case
+    // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case
     const ciphers = Object.values(this.ciphers)
     if (ciphers.length && typeof body.encrypt === 'string') {
       for (const cipher of ciphers) {

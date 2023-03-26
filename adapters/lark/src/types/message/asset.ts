@@ -17,7 +17,7 @@ declare module '../internal' {
      * The data should contain:
      * - `image_type`: 'message' | 'avatar'
      * - `image': Buffer
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create
+     * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create
      */
     uploadImage(data: FormData): Promise<Image>
 
@@ -35,7 +35,7 @@ declare module '../internal' {
      * - `file_name`: string, include extension
      * - `duration`?: number, the duration of audio/video file in milliseconds
      * - `file`: Buffer
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create
+     * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create
      */
     uploadFile(data: FormData): Promise<File>
   }
