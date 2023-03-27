@@ -1,6 +1,6 @@
 {
   "name": "@satorijs/adapter-lark",
-  "description": "Feishu Adapter for Satorijs",
+  "description": "Lark / Feishu Adapter for Satorijs",
   "version": "2.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",

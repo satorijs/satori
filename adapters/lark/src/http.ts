@@ -64,7 +64,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       logger.debug('received decryped event: %o', body)
       this.dispatchSession(body)
 
-      // Feishu requires 200 OK response to make sure event is received
+      // Lark requires 200 OK response to make sure event is received
       return ctx.status = 200
     })
 

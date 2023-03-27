@@ -1,4 +1,4 @@
-import { Feishu, Internal } from '..'
+import { Internal, Lark } from '..'
 import { Paginated, Pagination } from '../utils'
 
 import { MessageContent } from './content'
@@ -21,11 +21,11 @@ export interface MessageContentMap {
 }
 export type MessageContentType<T extends MessageType> = T extends keyof MessageContentMap ? MessageContentMap[T] : any
 
-export interface Sender extends Feishu.UserIdentifiers {
+export interface Sender extends Lark.UserIdentifiers {
   sender_type: string
   tenant_key: string
 }
-export interface Mention extends Feishu.UserIdentifiers {
+export interface Mention extends Lark.UserIdentifiers {
   key: string
   name: string
   tenant_key: string
@@ -39,7 +39,7 @@ declare module '../event' {
      */
     'im.message.receive_v1': EventSkeleton<'im.message.receive_v1', {
       sender: {
-        sender_id: Feishu.UserIds
+        sender_id: Lark.UserIds
         sender_type?: string
         tenant_key: string
       }
@@ -54,7 +54,7 @@ declare module '../event' {
         content: string
         mentions: {
           key: string
-          id: Feishu.UserIds
+          id: Lark.UserIds
           name: string
           tenant_key: string
         }[]
@@ -66,7 +66,7 @@ declare module '../event' {
      */
     'im.message.message_read_v1': EventSkeleton<'im.message.message_read_v1', {
       reader: {
-        reader_id: Feishu.UserIds
+        reader_id: Lark.UserIds
         read_time: string
         tenant_key: string
       }
@@ -160,7 +160,7 @@ export interface Message {
 }
 
 export interface ReadUser {
-  user_id_type: Feishu.UserIdType
+  user_id_type: Lark.UserIdType
   user_id: string
   timestamp: string
   tenant_key: string
@@ -169,7 +169,7 @@ export interface ReadUser {
 declare module '../internal' {
   export interface Internal {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create */
-    sendMessage(receive_id_type: Feishu.ReceiveIdType, message: MessagePayload): Promise<BaseResponse & { data: Message }>
+    sendMessage(receive_id_type: Lark.ReceiveIdType, message: MessagePayload): Promise<BaseResponse & { data: Message }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/reply */
     replyMessage(message_id: string, message: MessagePayload): Promise<BaseResponse & { data: Message }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/get */
@@ -177,7 +177,7 @@ declare module '../internal' {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/delete */
     deleteMessage(message_id: string): Promise<BaseResponse>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users */
-    getMessageReadUsers(message_id: string, params: Pagination<{ user_id_type: Feishu.UserIdType }>): Promise<BaseResponse & { data: Paginated<ReadUser> }>
+    getMessageReadUsers(message_id: string, params: Pagination<{ user_id_type: Lark.UserIdType }>): Promise<BaseResponse & { data: Paginated<ReadUser> }>
   }
 }
 

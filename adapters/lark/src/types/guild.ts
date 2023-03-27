@@ -1,11 +1,11 @@
 import { Dict } from '@satorijs/satori'
 
-import { Feishu } from '.'
+import { Lark } from '.'
 import { Internal } from './internal'
 import { Paginated, Pagination } from './utils'
 
 declare module '.' {
-  export namespace Feishu {
+  export namespace Lark {
     export interface Guild {
       avatar: string
       name: string
@@ -33,7 +33,7 @@ declare module '.' {
 }
 
 export interface GuildMember {
-  member_id_type: Feishu.UserIdType
+  member_id_type: Lark.UserIdType
   member_id: string
   name: string
   tenant_key: string
@@ -42,11 +42,11 @@ export interface GuildMember {
 declare module './internal' {
   export interface Internal {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/list */
-    getCurrentUserGuilds(params: Pagination<{ user_id_type: Feishu.UserIdType }>): Promise<{ data: Paginated<Feishu.Guild> }>
+    getCurrentUserGuilds(params: Pagination<{ user_id_type: Lark.UserIdType }>): Promise<{ data: Paginated<Lark.Guild> }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/get */
-    getGuildInfo(chat_id: string, params: { user_id_type: string }): Promise<BaseResponse & { data: Feishu.Guild }>
+    getGuildInfo(chat_id: string, params: { user_id_type: string }): Promise<BaseResponse & { data: Lark.Guild }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-members/get */
-    getGuildMembers(chat_id: string, params: Pagination<{ member_id_type: Feishu.UserIdType }>): Promise<{ data: Paginated<GuildMember> }>
+    getGuildMembers(chat_id: string, params: Pagination<{ member_id_type: Lark.UserIdType }>): Promise<{ data: Paginated<GuildMember> }>
   }
 }
 

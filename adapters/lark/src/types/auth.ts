@@ -1,7 +1,7 @@
 import { BaseResponse, Internal } from '.'
 
 /**
- * Feishu defines three types of token:
+ * Lark defines three types of token:
  * - app_access_token: to access the API in an app (published on App Store).
  * - tenant_access_token: to access the API as an enterprise or a team (tenant).
  *   *We commonly use this one*

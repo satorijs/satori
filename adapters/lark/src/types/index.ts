@@ -1,13 +1,12 @@
 export * from './internal'
-
 export * from './auth'
 export * from './event'
 export * from './guild'
 export * from './message'
 
-export namespace Feishu {
+export namespace Lark {
   /**
-   * A user in Feishu has several different IDs.
+   * A user in Lark has several different IDs.
    * @see https://open.larksuite.com/document/home/user-identity-introduction/introduction
    */
   export interface UserIds {
@@ -18,8 +17,8 @@ export namespace Feishu {
   }
 
   /**
-   * Identify a user in Feishu.
-   * This behaves like {@link Feishu.UserIds}, but it only contains *open_id*.
+   * Identify a user in Lark.
+   * This behaves like {@link Lark.UserIds}, but it only contains *open_id*.
    * (i.e. the id_type is always `open_id`)
    */
   export interface UserIdentifiers {
@@ -36,3 +35,5 @@ export namespace Feishu {
    */
   export type ReceiveIdType = UserIdType | 'email' | 'chat_id'
 }
+
+export { Lark as Feishu }

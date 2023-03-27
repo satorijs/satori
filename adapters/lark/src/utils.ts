@@ -3,15 +3,15 @@ import crypto from 'crypto'
 import { defineProperty, h, Session, trimSlash } from '@satorijs/satori'
 
 import { FeishuBot } from './bot'
-import { AllEvents, Events, Feishu, MessageContentType, MessageType } from './types'
+import { AllEvents, Events, Lark, MessageContentType, MessageType } from './types'
 
 export type Sender =
   | {
-      sender_id: Feishu.UserIds
+      sender_id: Lark.UserIds
       sender_type?: string
       tenant_key: string
     }
-  | (Feishu.UserIdentifiers & { sender_type?: string; tenant_key: string })
+  | (Lark.UserIdentifiers & { sender_type?: string; tenant_key: string })
 
 export function adaptSender(sender: Sender, session: Session): Session {
   let userId: string | undefined
@@ -39,7 +39,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
         break
       }
 
-      // Feishu's `at` Element would be `@user_id` in text
+      // Lark's `at` Element would be `@user_id` in text
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)
@@ -95,7 +95,7 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
  * Get ID type from id string
  * @see https://open.larksuite.com/document/home/user-identity-introduction/introduction
  */
-export function extractIdType(id: string): Feishu.ReceiveIdType {
+export function extractIdType(id: string): Lark.ReceiveIdType {
   if (id.startsWith('ou')) return 'open_id'
   if (id.startsWith('on')) return 'union_id'
   if (id.startsWith('oc')) return 'chat_id'

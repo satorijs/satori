@@ -36,11 +36,11 @@ export class LarkMessenger extends Messenger<FeishuBot> {
       session.app.emit(session, 'send', session)
       this.results.push(session)
     } catch (e) {
-      // try to extract error message from Feishu API
+      // try to extract error message from Lark API
       if (Quester.isAxiosError(e)) {
         if (e.response?.data?.code) {
           const generalErrorMsg = `Check error code at https://open.larksuite.com/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
-          e.message += ` (Feishu error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
+          e.message += ` (Lark error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
         }
       }
       this.errors.push(e)
