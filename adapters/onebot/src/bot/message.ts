@@ -1,4 +1,4 @@
-import { h, Messenger, pick, Universal } from '@satorijs/satori'
+import { h, Messenger, pick } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
 import { Author } from '../types'
@@ -65,7 +65,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
           },
         })
       }
-      
+
       this.children = []
       return
     }
