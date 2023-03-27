@@ -51,7 +51,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
         this.stack[1].children.push({
           type: 'node',
           data: {
-            id: author.messageId
+            id: author.messageId,
           },
         })
       } else {
@@ -59,9 +59,9 @@ export class OneBotMessenger extends Messenger<BaseBot> {
           type: 'node',
           data: {
             name: author.nickname || author.username || this.bot.nickname || this.bot.username,
-            uin: author.userId || author['user-id'] || this.bot.userId,
+            uin: author.userId || this.bot.userId,
             content: this.children as any,
-            time: `${(+author.time || Date.now()) / 1000}`
+            time: `${Math.floor((+author.time || Date.now()) / 1000)}`,
           },
         })
       }
@@ -164,7 +164,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       } else if ('id' in attrs) {
         this.stack[0].author.messageId = attrs.id.toString()
       } else {
-        Object.assign(this.stack[0].author, pick(attrs, ['userId', 'user-id', 'username', 'nickname', 'time']))
+        Object.assign(this.stack[0].author, pick(attrs, ['userId', 'username', 'nickname', 'time']))
         await this.render(children)
         await this.flush()
       }
