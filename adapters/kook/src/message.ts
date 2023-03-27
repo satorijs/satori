@@ -1,4 +1,4 @@
-import { Messenger, Schema, SendOptions, segment } from '@satorijs/satori'
+import { h, Messenger, Schema, SendOptions } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -37,7 +37,7 @@ export class KookMessenger extends Messenger<KookBot> {
     }
   }
 
-  private async transformUrl({ type, attrs }: segment) {
+  private async transformUrl({ type, attrs }: h) {
     if (['file:', 'base64:', 'data:'].some(protocol => attrs.url.startsWith(protocol))) {
       const payload = new FormData()
       const result = await this.bot.ctx.http.file(attrs.url)
@@ -60,7 +60,7 @@ export class KookMessenger extends Messenger<KookBot> {
     }
   }
 
-  private async _sendCard(chain: segment[], useMarkdown: boolean) {
+  private async _sendCard(chain: h[], useMarkdown: boolean) {
     const type = useMarkdown ? 'kmarkdown' : 'plain-text'
     let text: Kook.Card.Text = { type, content: '' }
     let card: Kook.Card = { type: 'card', modules: [] }
@@ -128,7 +128,7 @@ export class KookMessenger extends Messenger<KookBot> {
     this.additional = {}
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
       // https://github.com/satorijs/satori/issues/51

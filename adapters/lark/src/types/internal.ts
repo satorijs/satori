@@ -1,9 +1,10 @@
 import FormData from 'form-data'
-import { Dict, Logger, Quester, makeArray } from '@satorijs/satori'
+import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
 
 export interface Internal {}
 
-const logger = new Logger('feishu')
+const logger = new Logger('lark')
+
 export interface BaseResponse {
   /** error code. would be 0 if success, and non-0 if failed. */
   code: number
@@ -37,7 +38,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.AxiosRequestConfig= {}
+            const config: Quester.AxiosRequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

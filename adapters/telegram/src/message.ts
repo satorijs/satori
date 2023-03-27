@@ -1,65 +1,28 @@
-import { createReadStream } from 'fs'
-import { fileURLToPath } from 'url'
-import { Dict, Logger, Messenger, SendOptions, segment } from '@satorijs/satori'
-import { fromBuffer } from 'file-type'
+import { Dict, h, Messenger, SendOptions } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
 type RenderMode = 'default' | 'figure'
 
-const logger = new Logger('telegram')
-
 type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
-async function maybeFile(payload: Dict, field: AssetType): Promise<[string?, Buffer?, string?]> {
-  if (!payload[field]) return []
-  let content: any
-  let filename = 'file'
-
-  const { protocol } = new URL(payload[field])
-
-  // Because the base64 string is not url encoded, so it will contain slash
-  // and can't parse with URL.pathname
-  let data = payload[field].split('://')[1]
-
-  if (protocol === 'file:') {
-    content = createReadStream(fileURLToPath(payload[field]))
-    delete payload[field]
-  } else if (protocol === 'base64:') {
-    content = Buffer.from(data, 'base64')
-    delete payload[field]
-  } else if (protocol === 'data:') {
-    data = payload[field].split('base64,')[1]
-    content = Buffer.from(data, 'base64')
-    delete payload[field]
+async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetType> {
+  let assetType: AssetType
+  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url)
+  if (element.type === 'image') {
+    assetType = mime === 'image/gif' ? 'animation' : 'photo'
+  } else if (element.type === 'file') {
+    assetType = 'document'
+  } else {
+    assetType = element.type as any
   }
-  // add file extension for base64 document (general file)
-  if (field === 'document' && (protocol === 'base64:' || protocol === 'data:')) {
-    const type = await fromBuffer(content)
-    if (!type) {
-      logger.warn('Can not infer file mime')
-    } else filename = `file.${type.ext}`
-  }
-  return [field, content, filename]
-}
-
-async function isGif(url: string) {
-  if (url.toLowerCase().endsWith('.gif')) return true
-  const { protocol } = new URL(url)
-  let data: string
-  if (protocol === 'base64:') {
-    data = url.split('://')[1]
-  } else if (protocol === 'data:') {
-    data = url.split('base64,')[1]
-  }
-  if (data) {
-    const type = await fromBuffer(Buffer.from(data, 'base64'))
-    if (!type) {
-      logger.warn('Can not infer file mime')
-    } else if (type.ext === 'gif') return true
-  }
-  return false
+  // https://github.com/form-data/form-data/issues/468
+  const value = process.env.KOISHI_ENV === 'browser'
+    ? new Blob([data], { type: mime })
+    : Buffer.from(data)
+  form.append(assetType, value, filename)
+  return assetType
 }
 
 const assetApi = {
@@ -73,13 +36,13 @@ const assetApi = {
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
 export class TelegramMessenger extends Messenger<TelegramBot> {
-  private assetType: AssetType = null
+  private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
     super(bot, channelId, guildId, options)
-    const chat_id = guildId ? guildId : channelId.slice(8)
+    const chat_id = guildId || channelId.slice(8)
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
     if (guildId && channelId !== guildId) this.payload.message_thread_id = +channelId
   }
@@ -92,22 +55,20 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
   }
 
   async sendAsset() {
-    const [field, content, filename] = await maybeFile(this.payload, this.assetType)
-    const payload = new FormData()
+    const form = new FormData()
     for (const key in this.payload) {
-      payload.append(key, this.payload[key].toString())
+      form.append(key, this.payload[key].toString())
     }
-    if (field && content) payload.append(field, content, filename)
-    const result = await this.bot.internal[assetApi[this.assetType]](payload as any)
+    const type = await appendAsset(this.bot, form, this.asset)
+    const result = await this.bot.internal[assetApi[type]](form as any)
     await this.addResult(result)
-    delete this.payload[this.assetType]
     delete this.payload.reply_to_message
-    this.assetType = null
+    this.asset = null
     this.payload.caption = ''
   }
 
   async flush() {
-    if (this.assetType) {
+    if (this.asset) {
       // send previous asset if there is any
       await this.sendAsset()
     } else if (this.payload.caption) {
@@ -117,6 +78,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
         parse_mode: this.payload.parse_mode,
         reply_to_message_id: this.payload.reply_to_message_id,
         message_thread_id: this.payload.message_thread_id,
+        disable_web_page_preview: !this.options.linkPreview,
       })
       await this.addResult(result)
       delete this.payload.reply_to_message
@@ -124,10 +86,10 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.payload.caption += segment.escape(attrs.content)
+      this.payload.caption += h.escape(attrs.content)
     } else if (type === 'p') {
       await this.render(children)
       this.payload.caption += '\n'
@@ -139,7 +101,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
       this.payload.caption += '</tg-spoiler>'
     } else if (type === 'code') {
       const { lang } = attrs
-      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${segment.escape(attrs.content)}</code>`
+      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${h.escape(attrs.content)}</code>`
     } else if (type === 'at') {
       if (attrs.id) {
         this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`
@@ -148,14 +110,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
       if (this.mode === 'default') {
         await this.flush()
       }
-      if (type === 'image') {
-        this.assetType = await isGif(attrs.url) ? 'animation' : 'photo'
-      } else if (type === 'file') {
-        this.assetType = 'document'
-      } else {
-        this.assetType = type as any
-      }
-      this.payload[this.assetType] = attrs.url
+      this.asset = element
     } else if (type === 'figure') {
       await this.flush()
       this.mode = 'figure'

@@ -34,7 +34,7 @@ export class WebSocketLayer {
   accept(socket: WebSocket, request: IncomingMessage) {
     if (!this.regexp.test(parseUrl(request).pathname)) return
     this.clients.add(socket)
-    socket.on('close', () => {
+    socket.addEventListener('close', () => {
       this.clients.delete(socket)
     })
     this.callback?.(socket, request)

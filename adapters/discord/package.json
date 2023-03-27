@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "3.5.0",
+  "version": "3.5.7",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -29,10 +29,9 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.1.1"
+    "@satorijs/satori": "^2.2.3"
   },
   "dependencies": {
-    "file-type": "^16.5.4",
     "form-data": "^4.0.0"
   }
 }

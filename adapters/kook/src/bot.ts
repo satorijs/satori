@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, SendOptions, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
@@ -55,7 +55,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async editMessage(channelId: string, msg_id: string, content: Fragment) {
-    content = segment.normalize(content).join('')
+    content = h.normalize(content).join('')
     if (channelId.length > 30) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
@@ -124,7 +124,9 @@ export namespace KookBot {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      protocol: Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
+      protocol: process.env.KOISHI_ENV === 'browser'
+        ? Schema.const('ws').default('ws')
+        : Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
       WsClient.Config,

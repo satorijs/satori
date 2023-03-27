@@ -16,7 +16,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   public hidden = false
   public platform: string
   public selfId: string
-  public internal?: any
+  public internal = null
   public adapter?: Adapter<this>
   public error?: Error
 

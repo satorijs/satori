@@ -51,7 +51,7 @@ export interface Application {
 export interface InstallParams {
   /** the scopes to add the application to the server with */
   scopes: string[]
-  /** 	the permissions to request for the bot role */
+  /** the permissions to request for the bot role */
   permissions: string
 }
 

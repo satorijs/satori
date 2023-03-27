@@ -6,6 +6,7 @@ import segment from '@satorijs/element'
 
 export interface SendOptions {
   session?: Session
+  linkPreview?: boolean
 }
 
 export interface Session extends Session.Payload, Satori.Session {}
@@ -37,7 +38,7 @@ export namespace Session {
 export class Session {
   public id: string
   public bot: Bot
-  public app: Context
+  public app: Context['root']
 
   constructor(bot: Bot, payload?: Partial<Session.Payload>) {
     Object.assign(this, payload)
@@ -62,7 +63,7 @@ export class Session {
   get cid() {
     return `${this.platform}:${this.channelId}`
   }
-  
+
   get fid() {
     return `${this.platform}:${this.channelId}:${this.userId}`
   }
@@ -80,7 +81,10 @@ export class Session {
   }
 
   async transform(elements: segment[]): Promise<segment[]> {
-    return await segment.transformAsync(elements, this.app.internal.transformers, this)
+    return await segment.transformAsync(elements, ({ type, attrs, children }, session) => {
+      const render = this.app['component:' + type]
+      return render?.(attrs, children, session) ?? true
+    }, this)
   }
 
   toJSON(): Session.Payload {

@@ -1,4 +1,4 @@
-import { Bot, segment, Session, Universal } from '@satorijs/satori'
+import { Bot, h, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
@@ -18,28 +18,6 @@ export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   nickname: author.nickname,
 })
 
-interface Rule {
-  pattern: RegExp
-  transform: (...args: string[]) => segment
-}
-
-const rules: Rule[] = [{
-  pattern: /@(.+?)#(\d+)/,
-  transform: (_, name, id) => segment('at', { id, name }),
-}, {
-  pattern: /@全体成员/,
-  transform: () => segment('at', { type: 'all' }),
-}, {
-  pattern: /@在线成员/,
-  transform: () => segment('at', { type: 'here' }),
-}, {
-  pattern: /@role:(\d+);/,
-  transform: (_, role) => segment('at', { role }),
-}, {
-  pattern: /#channel:(\d+);/,
-  transform: (_, id) => segment.sharp(id),
-}]
-
 function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.MessageBase = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
@@ -47,27 +25,27 @@ function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, sessio
   }
   if (base.type === Kook.Type.text) {
     session.content = base.content
-      .replace(/@(.+?)#(\d+)/, (_, name, id) => segment('at', { id, name }).toString())
-      .replace(/@全体成员/, () => segment('at', { type: 'all' }).toString())
-      .replace(/@在线成员/, () => segment('at', { type: 'here' }).toString())
-      .replace(/@role:(\d+);/, (_, role) => segment('at', { role }).toString())
-      .replace(/#channel:(\d+);/, (_, id) => segment.sharp(id).toString())
-    session.elements = segment.parse(session.content)
+      .replace(/@(.+?)#(\d+)/, (_, name, id) => h('at', { id, name }).toString())
+      .replace(/@全体成员/, () => h('at', { type: 'all' }).toString())
+      .replace(/@在线成员/, () => h('at', { type: 'here' }).toString())
+      .replace(/@role:(\d+);/, (_, role) => h('at', { role }).toString())
+      .replace(/#channel:(\d+);/, (_, id) => h.sharp(id).toString())
+    session.elements = h.parse(session.content)
   } else if (base.type === Kook.Type.image) {
-    const element = segment('image', { url: base.content, file: meta.attachments?.name })
+    const element = h('image', { url: base.content, file: meta.attachments?.name })
     session.elements = [element]
     session.content = element.toString()
-  } else if (base.type == Kook.Type.kmarkdown) {
+  } else if (base.type === Kook.Type.kmarkdown) {
     session.content = base.content
-      .replace(/\(met\)all\(met\)/g, () => segment('at', { type: 'all' }).toString())
-      .replace(/\(met\)here\(met\)/g, () => segment('at', { type: 'here' }).toString())
-      .replace(/\(chn\)(\d+)\(chn\)/g, (_, id) => segment.sharp(id).toString())
+      .replace(/\(met\)all\(met\)/g, () => h('at', { type: 'all' }).toString())
+      .replace(/\(met\)here\(met\)/g, () => h('at', { type: 'here' }).toString())
+      .replace(/\(chn\)(\d+)\(chn\)/g, (_, id) => h.sharp(id).toString())
     for (const mention of meta.kmarkdown.mention_part) {
       session.content = session.content
-        .replace(`(met)${mention.id}(met)`, segment.at(mention.id, { name: mention.username }).toString())
+        .replace(`(met)${mention.id}(met)`, h.at(mention.id, { name: mention.username }).toString())
     }
     for (const mention of meta.kmarkdown.mention_role_part) {
-      const element = segment('at', { role: mention.role_id, name: mention.name })
+      const element = h('at', { role: mention.role_id, name: mention.name })
       session.content = session.content.replace(`(rol)${mention.role_id}(rol)`, element.toString())
     }
     session.content = session.content
@@ -75,7 +53,7 @@ function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, sessio
       .replace(/\\\\/g, () => '\\')
       .replace(/\\\(/g, () => '(')
       .replace(/\\\)/g, () => ')')
-    session.elements = segment.parse(session.content)
+    session.elements = h.parse(session.content)
   }
   return session
 }
@@ -151,6 +129,14 @@ export function adaptSession(bot: Bot, input: any) {
       case 'private_deleted_reaction':
         session.type = 'reaction-deleted'
         adaptReaction(body, session)
+        break
+      case 'message_btn_click':
+        session.type = 'kook'
+        session.subtype = 'message-btn-click'
+        session.messageId = body.msg_id
+        session.userId = body.user_id
+        session.content = body.value
+        session.targetId = body.target_id
         break
       default: return
     }

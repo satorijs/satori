@@ -1,6 +1,6 @@
-import { Awaitable, Dict, defineProperty } from 'cosmokit'
-import { Fragment, Render } from '@satorijs/element'
+import { Awaitable, defineProperty } from 'cosmokit'
 import { Context, Session } from '.'
+import segment from '@satorijs/element'
 
 declare module '.' {
   interface Context {
@@ -9,12 +9,11 @@ declare module '.' {
   }
 }
 
-export type Component = Render<Awaitable<Fragment>, Session>
+export type Component = segment.Render<Awaitable<segment.Fragment>, Session>
 
 export namespace Component {
   export interface Options {
     session?: boolean
-    passive?: boolean
   }
 }
 
@@ -22,10 +21,9 @@ export class Internal {
   static readonly methods = ['component']
 
   public counter = 0
-  public transformers: Dict<Component> = Object.create(null)
 
-  constructor(private app: Context) {
-    defineProperty(this, Context.current, app)
+  constructor(private root: Context) {
+    defineProperty(this, Context.current, root)
   }
 
   protected get caller() {
@@ -37,16 +35,15 @@ export class Internal {
       if (options.session && session.type === 'send') {
         throw new Error('interactive components is not available outside sessions')
       }
-      if (!options.passive) {
-        children = await session.transform(children)
-      }
-      return component(attrs, children, session)
+      const result = await component(attrs, children, session)
+      return session.transform(segment.normalize(result))
     }
-    this.transformers[name] = render
+    const service = 'component:' + name
+    Context.service(service)
+    this.root[service] = render
     return this.caller.collect('component', () => {
-      const shouldDelete = this.transformers[name] === render
-      if (shouldDelete) delete this.transformers[name]
-      return shouldDelete
+      this.root[service] = null
+      return true
     })
   }
 }

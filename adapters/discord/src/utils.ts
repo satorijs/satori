@@ -1,4 +1,4 @@
-import { segment, Session, Universal } from '@satorijs/satori'
+import { h, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -45,23 +45,23 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
     session.content = meta.content
       .replace(/<@[!&]?(.+?)>/g, (_, id) => {
         if (meta.mention_roles.includes(id)) {
-          return segment('at', { role: id }).toString()
+          return h('at', { role: id }).toString()
         } else {
           const user = meta.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
-          return segment.at(id, { name: user?.username }).toString()
+          return h.at(id, { name: user?.username }).toString()
         }
       })
       .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
         const animated = _[1] === 'a'
-        return segment('face', { id, name, animated, platform }, [
-          segment.image(`https://cdn.discordapp.com/emojis/${id}.gif?quality=lossless`)
+        return h('face', { id, name, animated, platform }, [
+          h.image(`https://cdn.discordapp.com/emojis/${id}.gif?quality=lossless`),
         ]).toString()
       })
-      .replace(/@everyone/g, () => segment('at', { type: 'all' }).toString())
-      .replace(/@here/g, () => segment('at', { type: 'here' }).toString())
+      .replace(/@everyone/g, () => h('at', { type: 'all' }).toString())
+      .replace(/@here/g, () => h('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
         const channel = meta.mention_channels?.find(c => c.id === id)
-        return segment.sharp(id, { name: channel?.name }).toString()
+        return h.sharp(id, { name: channel?.name }).toString()
       })
   }
 
@@ -70,25 +70,25 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
     if (session.content) session.content += ' '
     session.content += meta.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
-        return segment('image', {
+        return h('image', {
           url: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else if (v.height && v.width && v.content_type?.startsWith('video/')) {
-        return segment('video', {
+        return h('video', {
           url: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else if (v.content_type?.startsWith('audio/')) {
-        return segment('record', {
+        return h('record', {
           url: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else {
-        return segment('file', {
+        return h('file', {
           url: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
@@ -100,16 +100,16 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
     // not using embed types
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-types
     if (embed.image) {
-      session.content += segment('image', { url: embed.image.url, proxy_url: embed.image.proxy_url })
+      session.content += h('image', { url: embed.image.url, proxy_url: embed.image.proxy_url })
     }
     if (embed.thumbnail) {
-      session.content += segment('image', { url: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
+      session.content += h('image', { url: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
     }
     if (embed.video) {
-      session.content += segment('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
+      session.content += h('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
     }
   }
-  session.elements = segment.parse(session.content)
+  session.elements = h.parse(session.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
   if (meta.message_reference) {
     const { message_id, channel_id } = meta.message_reference

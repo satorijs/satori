@@ -1,5 +1,5 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, SendOptions, Schema, segment } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessenger } from './message'
 import { WsClient } from './ws'
@@ -21,7 +21,21 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    return await new QQGuildMessenger(this, channelId, guildId, opts).send(fragment)
+    const messenger = new QQGuildMessenger(this, channelId, guildId, opts)
+    try {
+      return await messenger.send(fragment)
+    } catch (e) {
+      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
+      if ([304031, 304032, 304033].includes(e.code)) {
+        await this.internal.createDMS(channelId, guildId)
+        return await messenger.send(fragment)
+      }
+      throw e
+    }
+  }
+
+  async sendPrivateMessage(userId: string, content: h.Fragment, options?: SendOptions): Promise<string[]> {
+    return this.sendMessage(userId, content, options.session.guildId, options)
   }
 
   async getGuildList() {
@@ -39,24 +53,33 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     })
     session.author = adaptUser(msg.author)
     session.userId = author.id
-    session.guildId = msg.guildId
-    session.channelId = msg.channelId
-    session.subtype = 'group'
+    // TODO https://github.com/satorijs/satori/blob/fbcf4665c77381ff80c8718106d2282a931d5736/packages/core/src/message.ts#L23
+    //      satori core need set guildId is undefined when isPrivate
+    //      this is a temporary solution
+    if (msg.isPrivate) {
+      session.guildId = undefined
+      session.channelId = msg.guildId
+    } else {
+      session.guildId = msg.guildId
+      session.channelId = msg.channelId
+    }
+    // it's useless, but I need it
+    session.subtype = msg.isPrivate ? 'private' : 'group'
     session.content = (msg.content ?? '')
-      .replace(/<@!(.+)>/, (_, $1) => segment.at($1).toString())
-      .replace(/<#(.+)>/, (_, $1) => segment.sharp($1).toString())
+      .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
+      .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
     if (attachments.length > 0) {
       session.content += attachments.map((attachment) => {
         if (attachment.contentType.startsWith('image')) {
-          return segment.image(attachment.url)
+          return h.image(attachment.url)
         }
       }).join('')
     }
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
-      .reduce((content, attachment) => content + segment.image(attachment.url), session.content)
-    session.elements = segment.parse(session.content)
+      .reduce((content, attachment) => content + h.image(attachment.url), session.content)
+    session.elements = h.parse(session.content)
     return session
   }
 }

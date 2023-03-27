@@ -56,7 +56,7 @@ describe('Element API', () => {
         .to.equal('<img src="https://test.com/?foo=1&amp;bar=2"/>')
       expect(Element('tag', { foo: false, barQux: true }, 'text').toString())
         .to.equal('<tag no-foo bar-qux>text</tag>')
-      expect(Element('template', Element.parse('<tag foo>bar</tag>')).toString(true)).to.equal('bar')
+      expect(Element('template', Element.parse('<tag foo>&lt;bar&gt;</tag>')).toString(true)).to.equal('<bar>')
     })
 
     it('validate children', () => {

@@ -1,7 +1,7 @@
 {
-  "name": "@satorijs/adapter-feishu",
+  "name": "@satorijs/adapter-lark",
   "description": "Feishu Adapter for Satorijs",
-  "version": "1.1.3",
+  "version": "2.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -15,20 +15,22 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "adapters/feishu"
+    "directory": "adapters/lark"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.chat/plugins/adapter/feishu.html",
+  "homepage": "https://koishi.chat/plugins/adapter/lark.html",
   "keywords": [
     "bot",
+    "lark",
     "feishu",
+    "adapter",
     "chatbot",
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.1.1"
+    "@satorijs/satori": "^2.2.3"
   },
   "dependencies": {
     "form-data": "^4.0.0"

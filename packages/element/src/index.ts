@@ -44,7 +44,9 @@ class ElementConstructor {
   }
 
   toString(strip = false) {
-    if (this.type === 'text') return Element.escape(this.attrs.content)
+    if (this.type === 'text' && 'content' in this.attrs) {
+      return strip ? this.attrs.content : Element.escape(this.attrs.content)
+    }
     const inner = this.children.map(child => child.toString(strip)).join('')
     if (strip) return inner
     const attrs = Object.entries(this.attrs).map(([key, value]) => {
@@ -66,7 +68,7 @@ function Element(type: string, ...children: Element.Fragment[]): Element
 function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
 function Element(type: string, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
-  let attrs: Dict = {}, children: Element[] = []
+  const attrs: Dict = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
     const props = args.shift()
     for (const [key, value] of Object.entries(props)) {
@@ -101,9 +103,13 @@ namespace Element {
   export const Fragment = 'template'
 
   export type Fragment = string | Element | (string | Element)[]
+  export type Visit<T, S> = (element: Element, session: S) => T
   export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
-  export type Transformer<S = never> = boolean | Fragment | Render<boolean | Fragment, S>
-  export type AsyncTransformer<S = never> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
+  export type SyncTransformer<S = never> = boolean | Fragment | Render<boolean | Fragment, S>
+  export type Transformer<S = never> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
+
+  type SyncVisitor<S> = Dict<SyncTransformer<S>> | Visit<boolean | Fragment, S>
+  type Visitor<S> = Dict<Transformer<S>> | Visit<Awaitable<boolean | Fragment>, S>
 
   export function normalize(source: Fragment, context?: any) {
     if (typeof source !== 'string') return toElementArray(source)
@@ -170,9 +176,10 @@ namespace Element {
   }
 
   export function select(source: string | Element[], query: string | Selector[][]): Element[] {
+    if (!source || !query) return []
     if (typeof source === 'string') source = parse(source)
     if (typeof query === 'string') query = parseSelector(query)
-    if (!query.length) return
+    if (!query.length) return []
     let adjacent: Selector[][] = []
     const results: Element[] = []
     for (const [index, element] of source.entries()) {
@@ -245,7 +252,7 @@ namespace Element {
       const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
       let attrCap: RegExpExecArray
       while ((attrCap = attrRegExp.exec(attrs))) {
-        const [_, key, v1, v2 = v1, v3] = attrCap
+        const [, key, v1, v2 = v1, v3] = attrCap
         if (v3) {
           token.attrs[camelize(key)] = interpolate(v3, context)
         } else if (!isNullable(v2)) {
@@ -314,17 +321,27 @@ namespace Element {
     return stack[0].children
   }
 
-  export function transform<S = never>(source: string, rules: Dict<Transformer<S>>, session?: S): string
-  export function transform<S = never>(source: Element[], rules: Dict<Transformer<S>>, session?: S): Element[]
-  export function transform<S>(source: string | Element[], rules: Dict<Transformer<S>>, session?: S) {
+  function visit<S>(element: Element, rules: Visitor<S>, session: S) {
+    const { type, attrs, children } = element
+    if (typeof rules === 'function') {
+      return rules(element, session)
+    } else {
+      let result: any = rules[type] ?? rules.default ?? true
+      if (typeof result === 'function') {
+        result = result(attrs, children, session)
+      }
+      return result
+    }
+  }
+
+  export function transform<S = never>(source: string, rules: SyncVisitor<S>, session?: S): string
+  export function transform<S = never>(source: Element[], rules: SyncVisitor<S>, session?: S): Element[]
+  export function transform<S>(source: string | Element[], rules: SyncVisitor<S>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const output: Element[] = []
     elements.forEach((element) => {
       const { type, attrs, children } = element
-      let result = rules[type] ?? rules.default ?? true
-      if (typeof result === 'function') {
-        result = result(attrs, children, session)
-      }
+      const result = visit(element, rules, session)
       if (result === true) {
         output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
@@ -334,16 +351,13 @@ namespace Element {
     return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync<S = never>(source: string, rules: Dict<AsyncTransformer<S>>, session?: S): Promise<string>
-  export async function transformAsync<S = never>(source: Element[], rules: Dict<AsyncTransformer<S>>, session?: S): Promise<Element[]>
-  export async function transformAsync<S>(source: string | Element[], rules: Dict<AsyncTransformer<S>>, session?: S) {
+  export async function transformAsync<S = never>(source: string, rules: Visitor<S>, session?: S): Promise<string>
+  export async function transformAsync<S = never>(source: Element[], rules: Visitor<S>, session?: S): Promise<Element[]>
+  export async function transformAsync<S>(source: string | Element[], rules: Visitor<S>, session?: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const children = (await Promise.all(elements.map(async (element) => {
       const { type, attrs, children } = element
-      let result = rules[type] ?? rules.default ?? true
-      if (typeof result === 'function') {
-        result = await result(attrs, children, session)
-      }
+      const result = await visit(element, rules, session)
       if (result === true) {
         return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
@@ -372,6 +386,7 @@ namespace Element {
     }
   }
 
+  // eslint-disable-next-line prefer-const
   export let warn: (message: string) => void = () => {}
 
   function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer, type: string]> {

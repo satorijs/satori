@@ -1,5 +1,6 @@
+import { fileURLToPath } from 'url'
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, Logger, Messenger, segment, Quester } from '@satorijs/satori'
+import { Dict, h, Logger, Messenger, Quester } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -71,7 +72,7 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       this.addition.reference = null
     }
 
-    let sender = this.session.bot.internal.send as QQGuild.Sender
+    const sender = this.session.bot.internal.send as QQGuild.Sender
     let result: QQGuild.Message.Response
 
     try {
@@ -109,12 +110,12 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       if (url.startsWith('file:')) {
         file = {
           type: 'filepath',
-          data: url.slice(5),
+          data: fileURLToPath(url),
         }
       } else if (['data:', 'base64:'].some((prefix) => url.startsWith(prefix))) {
         file = {
           type: 'buffer',
-          data: urlToBuffer(url)
+          data: urlToBuffer(url),
         }
       } else {
         throw new Error(`Unsupported url: ${url}`)
@@ -125,7 +126,7 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.content += attrs.content

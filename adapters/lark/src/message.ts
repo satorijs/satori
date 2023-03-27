@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { Messenger, segment } from '@satorijs/satori'
+import { h, Messenger, Quester } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { FeishuBot } from './bot'
@@ -13,7 +13,7 @@ export interface Addition {
   type: MessageType
 }
 
-export class FeishuMessenger extends Messenger<FeishuBot> {
+export class LarkMessenger extends Messenger<FeishuBot> {
   private quote: string | undefined
   private content = ''
   private addition: Addition
@@ -25,8 +25,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       let resp: BaseResponse & { data: Message }
       if (this.quote) {
         resp = await this.bot.internal?.replyMessage(this.quote, data)
-      }
-      else {
+      } else {
         data.receive_id = this.channelId
         resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
       }
@@ -37,6 +36,13 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
       session.app.emit(session, 'send', session)
       this.results.push(session)
     } catch (e) {
+      // try to extract error message from Feishu API
+      if (Quester.isAxiosError(e)) {
+        if (e.response?.data?.code) {
+          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
+          e.message += ` (Feishu error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
+        }
+      }
       this.errors.push(e)
     }
   }
@@ -59,7 +65,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
     await this.post({
       msg_type: this.richText ? 'post' : this.addition ? this.addition.type : 'text',
-      content: JSON.stringify(message)
+      content: JSON.stringify(message),
     })
 
     // reset cached content
@@ -122,7 +128,7 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
 
     switch (type) {
@@ -167,3 +173,5 @@ export class FeishuMessenger extends Messenger<FeishuBot> {
     }
   }
 }
+
+export { LarkMessenger as FeishuMessenger }

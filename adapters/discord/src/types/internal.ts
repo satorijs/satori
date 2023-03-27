@@ -1,5 +1,4 @@
-import { Dict, makeArray } from 'cosmokit'
-import { Quester } from '@satorijs/satori'
+import { Dict, makeArray, Quester } from '@satorijs/satori'
 
 export class Internal {
   constructor(private http: Quester) {}

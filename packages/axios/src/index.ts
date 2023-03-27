@@ -1,5 +1,5 @@
 import { Context } from 'cordis'
-import { Dict, base64ToArrayBuffer, pick, trimSlash } from 'cosmokit'
+import { base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
@@ -73,6 +73,11 @@ export class Quester {
     return pick(this.config, ['timeout', 'headers'])
   }
 
+  resolve(url: string) {
+    // do not use new URL(url, this.config.endpoint) here
+    return trimSlash(this.config.endpoint || '') + url
+  }
+
   async file(url: string): Promise<Quester.File> {
     const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
     if (capture) {
@@ -81,9 +86,13 @@ export class Quester {
       const name = 'file' + (ext ? '.' + ext : '')
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
-    const [_, name] = new URL(url).pathname.match(/.+\/([^/]*)/)
+    let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
     const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
     const mime = headers['content-type']
+    if (!name.includes('.')) {
+      const ext = mimedb[mime]?.extensions?.[0]
+      name += ext ? '.' + ext : ''
+    }
     return { mime, filename: name, data }
   }
 }
@@ -96,7 +105,7 @@ export namespace Quester {
   export interface File {
     mime?: string
     filename: string
-    data: ArrayBuffer
+    data: ArrayBufferLike
   }
 
   export const isAxiosError = axios.isAxiosError
@@ -109,14 +118,12 @@ export namespace Quester {
   }
 
   export function create(this: typeof Quester, config: Quester.Config = {}) {
-    const endpoint = trimSlash(config.endpoint || '')
-
     const request = async (config: AxiosRequestConfig = {}) => {
       const options = http.prepare()
       return axios({
         ...options,
         ...config,
-        url: endpoint + config.url,
+        url: http.resolve(config.url),
         headers: {
           ...options.headers,
           ...config.headers,
