@@ -77,7 +77,7 @@ function Element(type: string, ...args: any[]) {
       if (key === 'children') {
         args.push(...makeArray(value))
       } else {
-        attrs[key] = value
+        attrs[camelize(key)] = value
       }
     }
   }
@@ -254,13 +254,13 @@ namespace Element {
       while ((attrCap = attrRegExp.exec(attrs))) {
         const [, key, v1, v2 = v1, v3] = attrCap
         if (v3) {
-          token.attrs[camelize(key)] = interpolate(v3, context)
+          token.attrs[key] = interpolate(v3, context)
         } else if (!isNullable(v2)) {
-          token.attrs[camelize(key)] = unescape(v2)
+          token.attrs[key] = unescape(v2)
         } else if (key.startsWith('no-')) {
-          token.attrs[camelize(key.slice(3))] = false
+          token.attrs[key.slice(3)] = false
         } else {
-          token.attrs[camelize(key)] = true
+          token.attrs[key] = true
         }
       }
       tokens.push(token)
