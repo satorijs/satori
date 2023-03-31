@@ -56,12 +56,14 @@ export interface Data<E = any> extends MessageBase {
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'file'
 type NoticeType =
+  | 'user_updated'
   | 'message_btn_click'
   | 'added_reaction' | 'deleted_reaction'
   | 'updated_message' | 'deleted_message'
   | 'pinned_message' | 'unpinned_message'
   | 'joined_guild' | 'exited_guild' | 'updated_guild_member'
   | 'updated_guild' | 'deleted_guild'
+  | 'self_joined_guild' | 'self_exited_guild'
   | 'added_role' | 'deleted_role' | 'updated_role'
   | 'added_block_list' | 'deleted_block_list'
   | 'added_emoji' | 'updated_emoji'

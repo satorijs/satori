@@ -147,20 +147,20 @@ export function adaptSession(bot: Bot, input: any) {
       case 'exited_guild':
       case 'updated_guild':
       case 'deleted_guild':
+      case 'self_joined_guild':
+      case 'self_exited_guild':
       case 'updated_guild_member':
-        if (type === 'updated_guild_member') {
-          session.type = 'guild-member-updated'
-        } else if (type === 'updated_guild') {
-          session.type = 'guild-updated'
-        } else if (type === 'deleted_guild') {
-          session.type = 'guild-deleted'
-        } else if (session.userId === bot.selfId) {
-          session.type = type === 'joined_guild' ? 'guild-added' : 'guild-deleted'
-        } else {
-          session.type = type === 'joined_guild' ? 'guild-member-added' : 'guild-member-deleted'
-        }
+        session.type = {
+          joined_guild: 'guild-member-added',
+          exited_guild: 'guild-member-deleted',
+          updated_guild: 'guild-updated',
+          deleted_guild: 'guild-deleted',
+          self_joined_guild: 'guild-added',
+          self_exited_guild: 'guild-deleted',
+          updated_guild_member: 'guild-member-updated',
+        }[type]
         session.guildId = input.target_id
-        session.userId = body.user_id
+        session.userId = body.user_id || bot.selfId
         break
       case 'guild_member_online':
       case 'guild_member_offline':
@@ -178,6 +178,20 @@ export function adaptSession(bot: Bot, input: any) {
         session.type = 'kook'
         session.subtype = hyphenate(type)
         session.guildId = input.target_id
+        session.extra = body
+        break
+      case 'joined_channel':
+      case 'exited_channel':
+        session.type = 'kook'
+        session.subtype = hyphenate(type)
+        session.guildId = input.target_id
+        session.channelId = body.channel_id
+        session.userId = body.user_id
+        break
+      case 'user_updated':
+        session.type = 'kook'
+        session.subtype = hyphenate(type)
+        session.userId = body.user_id
         session.extra = body
         break
       case 'message_btn_click':
