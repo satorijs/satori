@@ -18,6 +18,12 @@ export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   nickname: author.nickname,
 })
 
+function transformCardElement(data: any) {
+  const { type, modules, text, elements, fields, ...attrs } = data
+  const children = modules || elements || fields || (text ? [text] : [])
+  return h(type, attrs, children.map(transformCardElement))
+}
+
 function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.MessageBase = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
@@ -35,6 +41,10 @@ function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, sessio
     const element = h('image', { url: base.content, file: meta.attachments?.name })
     session.elements = [element]
     session.content = element.toString()
+  } else if (base.type === Kook.Type.card) {
+    const data = JSON.parse(base.content)
+    session.elements = data.map(transformCardElement)
+    session.content = session.elements.join('')
   } else if (base.type === Kook.Type.kmarkdown) {
     session.content = base.content
       .replace(/\(met\)all\(met\)/g, () => h('at', { type: 'all' }).toString())
