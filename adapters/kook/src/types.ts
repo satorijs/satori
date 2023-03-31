@@ -40,10 +40,9 @@ export interface MessageParams {
 export interface MessageBase {
   type: Type
   content: string
-  extra: MessageExtra | Notice
 }
 
-export interface Data extends MessageBase {
+export interface Data<E = any> extends MessageBase {
   channel_type: 'GROUP' | 'PERSON' | 'WEBHOOK_CHALLENGE'
   challenge: string
   verify_token: string
@@ -52,6 +51,7 @@ export interface Data extends MessageBase {
   msg_id: string
   msg_timestamp: number
   nonce: string
+  extra: E
 }
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'file'
@@ -59,6 +59,7 @@ type NoticeType =
   | 'message_btn_click'
   | 'added_reaction' | 'deleted_reaction'
   | 'updated_message' | 'deleted_message'
+  | 'pinned_message' | 'unpinned_message'
   | 'joined_guild' | 'exited_guild'
   | 'updated_guild_member'
   | 'added_channel' | 'updated_channel' | 'deleted_channel'
@@ -107,6 +108,7 @@ export interface Message extends MessageBase, MessageMeta {
   embeds: any[]
   reactions: any[]
   mention_info: object
+  extra: MessageExtra | Notice
 }
 
 export interface Card {
@@ -261,6 +263,7 @@ export interface NoticeBody extends Channel, MessageMeta {
   msg_id: string
   target_id: string
   channel_id: string
+  operator_id: string
   emoji: Emoji
   content: string
   icon: string

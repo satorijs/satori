@@ -1,4 +1,4 @@
-import { Bot, h, Session, Universal } from '@satorijs/satori'
+import { Bot, h, hyphenate, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
@@ -129,6 +129,32 @@ export function adaptSession(bot: Bot, input: any) {
       case 'private_deleted_reaction':
         session.type = 'reaction-deleted'
         adaptReaction(body, session)
+        break
+      case 'updated_channel':
+      case 'deleted_channel':
+        session.type = 'channel-deleted'
+        session.subtype = 'group'
+        session.channelId = body.id
+        break
+      case 'pinned_message':
+      case 'unpinned_message':
+        session.type = type === 'pinned_message' ? 'message-pinned' : 'message-unpinned'
+        session.operatorId = body.operator_id
+        session.messageId = body.msg_id
+        session.channelId = body.channel_id
+        break
+      case 'joined_guild':
+      case 'exited_guild':
+      case 'updated_guild_member':
+        session.type = type === 'joined_guild' ? 'guild-member-added' : 'guild-member-deleted'
+        session.guildId = input.target_id
+        session.userId = body.user_id
+        break
+      case 'guild_member_online':
+      case 'guild_member_offline':
+        session.type = 'kook'
+        session.subtype = hyphenate(type)
+        session.userId = body.user_id
         break
       case 'message_btn_click':
         session.type = 'kook'
