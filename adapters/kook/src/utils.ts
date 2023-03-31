@@ -82,7 +82,7 @@ function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: P
   session.subtype = subtype
   if (meta.quote) {
     session.quote = adaptMessageMeta(meta.quote, meta.quote)
-    session.quote.messageId = meta.quote.id
+    session.quote.messageId = meta.quote.rong_id
     session.quote.channelId = session.channelId
     session.quote.subtype = subtype
   }
