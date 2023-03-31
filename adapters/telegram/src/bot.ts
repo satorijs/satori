@@ -1,6 +1,6 @@
 import { arrayBufferToBase64, Bot, Context, Dict, Fragment, h, Logger, Quester, Schema, SendOptions, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
-import { adaptGuildMember, adaptUser } from './utils'
+import { adaptAuthorMeta, adaptGuildMember, adaptMessageMeta, adaptUser } from './utils'
 import { TelegramMessenger } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
@@ -106,7 +106,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       return segs
     }
 
-    session.messageId = message.message_id.toString()
     session.timestamp = message.date * 1000
     const segments: h[] = []
     // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
@@ -157,20 +156,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
     session.elements = segments
     session.content = segments.join('')
-    session.userId = message.from.id.toString()
-    session.author = adaptUser(message.from)
-    if (message.chat.type === 'private') {
-      session.subtype = 'private'
-      session.channelId = 'private:' + message.chat.id
-    } else {
-      session.subtype = 'group'
-      session.guildId = message.chat.id.toString()
-      if (message.is_topic_message) {
-        session.channelId = message.message_thread_id.toString()
-      } else {
-        session.channelId = session.guildId
-      }
-    }
+    adaptMessageMeta(session, message)
+    adaptAuthorMeta(session, message.from)
   }
 
   async sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
