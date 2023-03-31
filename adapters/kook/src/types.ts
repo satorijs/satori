@@ -110,6 +110,7 @@ export interface MessageExtra extends MessageMeta {
 
 export interface Message extends MessageBase, MessageMeta {
   id: string
+  rong_id?: string
   embeds: any[]
   reactions: any[]
   mention_info: object
