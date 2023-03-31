@@ -145,8 +145,20 @@ export function adaptSession(bot: Bot, input: any) {
         break
       case 'joined_guild':
       case 'exited_guild':
+      case 'updated_guild':
+      case 'deleted_guild':
       case 'updated_guild_member':
-        session.type = type === 'joined_guild' ? 'guild-member-added' : 'guild-member-deleted'
+        if (type === 'updated_guild_member') {
+          session.type = 'guild-member-updated'
+        } else if (type === 'updated_guild') {
+          session.type = 'guild-updated'
+        } else if (type === 'deleted_guild') {
+          session.type = 'guild-deleted'
+        } else if (session.userId === bot.selfId) {
+          session.type = type === 'joined_guild' ? 'guild-added' : 'guild-deleted'
+        } else {
+          session.type = type === 'joined_guild' ? 'guild-member-added' : 'guild-member-deleted'
+        }
         session.guildId = input.target_id
         session.userId = body.user_id
         break
@@ -156,9 +168,21 @@ export function adaptSession(bot: Bot, input: any) {
         session.subtype = hyphenate(type)
         session.userId = body.user_id
         break
+      case 'added_role':
+      case 'deleted_role':
+      case 'updated_role':
+      case 'added_block_list':
+      case 'deleted_block_list':
+      case 'added_emoji':
+      case 'updated_emoji':
+        session.type = 'kook'
+        session.subtype = hyphenate(type)
+        session.guildId = input.target_id
+        session.extra = body
+        break
       case 'message_btn_click':
         session.type = 'kook'
-        session.subtype = 'message-btn-click'
+        session.subtype = hyphenate(type)
         session.messageId = body.msg_id
         session.userId = body.user_id
         session.content = body.value

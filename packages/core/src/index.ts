@@ -34,6 +34,8 @@ declare global {
       'message': {}
       'message-deleted': {}
       'message-updated': {}
+      'message-pinned': {}
+      'message-unpinned': {}
       'reaction-added': {}
       'reaction-deleted': {}
       'reaction-deleted/one': {}
