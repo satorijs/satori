@@ -28,16 +28,16 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   private async _ensureWebhook(channelId: string) {
-    let webhook: Webhook;
-    let webhooks = await this.internal.getChannelWebhooks(channelId)
-    let selfId = this.selfId
-    if (!webhooks.find(v => v.name === "Koishi" && v.user.id === selfId)) {
+    let webhook: Webhook
+    const webhooks = await this.internal.getChannelWebhooks(channelId)
+    const selfId = this.selfId
+    if (!webhooks.find(v => v.name === 'Koishi' && v.user.id === selfId)) {
       webhook = await this.internal.createWebhook(channelId, {
-        name: "Koishi"
+        name: 'Koishi',
       })
       // webhook may be `AxiosError: Request failed with status code 429` error
     } else {
-      webhook = webhooks.find(v => v.name === "Koishi" && v.user.id === this.selfId)
+      webhook = webhooks.find(v => v.name === 'Koishi' && v.user.id === this.selfId)
     }
     return this.webhooks[channelId] = webhook
   }

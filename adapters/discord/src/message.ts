@@ -1,4 +1,4 @@
-import { Dict, h, Messenger, Schema, segment, Universal, Session, Quester, Logger } from '@satorijs/satori'
+import { Dict, h, Logger, Messenger, Quester, Schema, segment, Session, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
@@ -29,13 +29,13 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     try {
       let url = `/channels/${this.channelId}/messages`
       if (this.stack[0].author.nickname || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
-        let webhook = await this.ensureWebhook()
+        const webhook = await this.ensureWebhook()
         url = `/webhooks/${webhook.id}/${webhook.token}?wait=true`
       }
       if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
         // 发送到子区
         if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
-          let webhook = await this.ensureWebhook()
+          const webhook = await this.ensureWebhook()
           url = `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
         } else {
           url = `/channels/${this.stack[0].channel.id}/messages`
@@ -49,7 +49,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
       if (this.stack[0].type === 'forward' && !this.stack[0].threadCreated) {
         this.stack[0].threadCreated = true
-        let thread = await this.bot.internal.startThreadFromMessage(this.channelId, result.id, {
+        const thread = await this.bot.internal.startThreadFromMessage(this.channelId, result.id, {
           name: 'Forward',
           auto_archive_duration: 60,
         })
@@ -120,7 +120,6 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }, sendDownload)
   }
 
-
   async ensureWebhook() {
     return this.bot.ensureWebhook(this.channelId)
   }
@@ -136,7 +135,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += sanitize(attrs.content);
+      this.buffer += sanitize(attrs.content)
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
@@ -224,7 +223,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         await this.render(children)
         this.buffer += '\n'
       } else {
-        let resultLength = +this.results.length
+        const resultLength = +this.results.length
         await this.flush()
 
         // author
@@ -244,9 +243,9 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         // quote
         const [quote] = segment.select(children, 'quote')
         if (quote) {
-          const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, "$1")
+          const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, '$1')
 
-          let message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
+          const message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
           if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
             // no quote and author, send by bot
             await this.flush()
@@ -261,13 +260,13 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
               replyId = this.stack[0].fakeMessageMap[quote.attrs.id][0].messageId
               channelId = this.stack[0].fakeMessageMap[quote.attrs.id][0].channelId
             }
-            let quoted = await this.bot.getMessage(channelId, replyId)
+            const quoted = await this.bot.getMessage(channelId, replyId)
             this.addition.embeds = [{
               description: `${sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
               author: {
                 name: quoted.author.nickname || quoted.author.username,
-                icon_url: quoted.author.avatar
-              }
+                icon_url: quoted.author.avatar,
+              },
             }]
 
             // this.addition.embeds = [{
@@ -282,7 +281,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
         await this.render(children)
         await this.flush()
-        let newLength = +this.results.length
+        const newLength = +this.results.length
         const sentMessages = this.results.slice(resultLength, newLength)
         if (this.stack[0].type === 'forward' && attrs.id) {
           this.stack[0].fakeMessageMap[attrs.id] = sentMessages
@@ -300,11 +299,10 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       await this.flush()
       await this.bot.internal.modifyChannel(this.stack[0].channel.id, {
         archived: true,
-        locked: true
+        locked: true,
       })
       this.stack.shift()
-    }
-    else {
+    } else {
       await this.render(children)
     }
   }

@@ -4,9 +4,9 @@ import * as Discord from './types'
 
 export const sanitize = (val: string) =>
   val
-    .replace(/[\\*_`~|()\[\]]/g, "\\$&")
-    .replace(/@everyone/g, () => "\\@everyone")
-    .replace(/@here/g, () => "\\@here");
+    .replace(/[\\*_`~|()\[\]]/g, '\\$&')
+    .replace(/@everyone/g, () => '\\@everyone')
+    .replace(/@here/g, () => '\\@here')
 
 export const adaptUser = (user: Discord.User): Universal.User => ({
   userId: user.id,
@@ -146,7 +146,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
   if (input.t === 'MESSAGE_CREATE') {
     if (input.d.webhook_id) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)
-      if(webhook.id === input.d.webhook_id) {
+      if (webhook.id === input.d.webhook_id) {
         // koishi's webhook
         return
       }
