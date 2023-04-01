@@ -70,6 +70,10 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
     return data.map(OneBot.adaptGuild)
   }
 
+  async getChannelList(guildId: string) {
+    return [await this.getChannel(guildId)]
+  }
+
   async getGuildMember(guildId: string, userId: string) {
     const data = await this.internal.getGroupMemberInfo(guildId, userId)
     return OneBot.adaptGuildMember(data)

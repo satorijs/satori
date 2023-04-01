@@ -6,7 +6,7 @@ import { FeishuBot } from './bot'
 import { AllEvents } from './types'
 import { adaptSession, Cipher } from './utils'
 
-const logger = new Logger('feishu')
+const logger = new Logger('lark')
 
 export class HttpServer extends Adapter.Server<FeishuBot> {
   private ciphers: Record<string, Cipher> = {}
@@ -19,13 +19,13 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   }
 
   async start(bot: FeishuBot) {
-    const { path = '/feishu' } = bot.config
+    const { path } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       this._refreshCipher()
 
       // compare signature if encryptKey is set
       // But not every message contains signature
-      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
+      // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
       const signature = ctx.get('X-Lark-Signature')
       const enabledSignatureVerify = this.bots.filter((bot) => bot.config.verifySignature)
       if (signature && enabledSignatureVerify.length) {
@@ -43,7 +43,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       // try to decrypt message first if encryptKey is set
       const body = this._tryDecryptBody(ctx.request.body)
       // respond challenge message
-      // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/request-url-configuration-case
+      // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/request-url-configuration-case
       if (body?.type === 'url_verification' && body?.challenge && typeof body.challenge === 'string') {
         ctx.response.body = { challenge: body.challenge }
         return
@@ -64,7 +64,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       logger.debug('received decryped event: %o', body)
       this.dispatchSession(body)
 
-      // Feishu requires 200 OK response to make sure event is received
+      // Lark requires 200 OK response to make sure event is received
       return ctx.status = 200
     })
 
@@ -104,7 +104,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
   private _tryDecryptBody(body: any): any {
     this._refreshCipher()
     // try to decrypt message if encryptKey is set
-    // https://open.feishu.cn/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case
+    // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case
     const ciphers = Object.values(this.ciphers)
     if (ciphers.length && typeof body.encrypt === 'string') {
       for (const cipher of ciphers) {
@@ -137,13 +137,15 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 export namespace HttpServer {
   export interface Config {
     selfUrl?: string
+    path?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
 
-  export const Config: Schema<HttpServer.Config> = Schema.object({
+  export const createConfig = (path: string): Schema<Config> => Schema.object({
+    path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     verifyToken: Schema.boolean().description('是否验证令牌。'),
     verifySignature: Schema.boolean().description('是否验证签名。'),
-  })
+  }).description('服务端设置')
 }

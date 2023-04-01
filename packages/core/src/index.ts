@@ -1,5 +1,5 @@
 import * as cordis from 'cordis'
-import { Awaitable, Dict, defineProperty } from 'cosmokit'
+import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { SendOptions, Session } from './session'
 import Schema from 'schemastery'
@@ -34,6 +34,8 @@ declare global {
       'message': {}
       'message-deleted': {}
       'message-updated': {}
+      'message-pinned': {}
+      'message-unpinned': {}
       'reaction-added': {}
       'reaction-deleted': {}
       'reaction-deleted/one': {}

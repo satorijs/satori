@@ -1,4 +1,4 @@
-import { defineProperty, hyphenate, Logger, Universal } from '@satorijs/satori'
+import { defineProperty, hyphenate, Logger, Session, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -14,6 +14,29 @@ export const adaptUser = (data: Telegram.User): Universal.User => ({
 })
 
 export const adaptGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => adaptUser(data.user)
+
+export function adaptMessageMeta(session: Session, message: Telegram.Message) {
+  if (!message) return
+  session.messageId = message.message_id.toString()
+  if (message.chat.type === 'private') {
+    session.subtype ||= 'private'
+    session.channelId = 'private:' + message.chat.id
+  } else {
+    session.subtype ||= 'group'
+    session.guildId = message.chat.id.toString()
+    if (message.is_topic_message) {
+      session.channelId = message.message_thread_id.toString()
+    } else {
+      session.channelId = session.guildId
+    }
+  }
+}
+
+export function adaptAuthorMeta(session: Session, from: Telegram.User) {
+  if (!from) return
+  session.userId = from.id.toString()
+  session.author = adaptUser(from)
+}
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   logger.debug('receive %s', JSON.stringify(update))
@@ -52,6 +75,8 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     if (subtype) {
       session.type = 'telegram'
       session.subtype = hyphenate(subtype)
+      adaptMessageMeta(session, update[subtype].message)
+      adaptAuthorMeta(session, update[subtype].from)
     }
   }
 

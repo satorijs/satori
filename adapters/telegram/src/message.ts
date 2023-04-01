@@ -1,4 +1,4 @@
-import { Dict, Messenger, SendOptions, segment } from '@satorijs/satori'
+import { Dict, h, Messenger, SendOptions } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
@@ -7,7 +7,7 @@ type RenderMode = 'default' | 'figure'
 
 type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
-async function appendAsset(bot: TelegramBot, form: FormData, element: segment): Promise<AssetType> {
+async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetType> {
   let assetType: AssetType
   const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url)
   if (element.type === 'image') {
@@ -36,13 +36,13 @@ const assetApi = {
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
 export class TelegramMessenger extends Messenger<TelegramBot> {
-  private asset: segment = null
+  private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
     super(bot, channelId, guildId, options)
-    const chat_id = guildId ? guildId : channelId.slice(8)
+    const chat_id = guildId || channelId.slice(8)
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
     if (guildId && channelId !== guildId) this.payload.message_thread_id = +channelId
   }
@@ -86,10 +86,10 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.payload.caption += segment.escape(attrs.content)
+      this.payload.caption += h.escape(attrs.content)
     } else if (type === 'p') {
       await this.render(children)
       this.payload.caption += '\n'
@@ -101,7 +101,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
       this.payload.caption += '</tg-spoiler>'
     } else if (type === 'code') {
       const { lang } = attrs
-      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${segment.escape(attrs.content)}</code>`
+      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${h.escape(attrs.content)}</code>`
     } else if (type === 'at') {
       if (attrs.id) {
         this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`

@@ -1,14 +1,13 @@
 export * from './internal'
-
 export * from './auth'
 export * from './event'
 export * from './guild'
 export * from './message'
 
-export namespace Feishu {
+export namespace Lark {
   /**
-   * A user in Feishu has several different IDs.
-   * @see https://open.feishu.cn/document/home/user-identity-introduction/introduction
+   * A user in Lark has several different IDs.
+   * @see https://open.larksuite.com/document/home/user-identity-introduction/introduction
    */
   export interface UserIds {
     union_id: string
@@ -18,8 +17,8 @@ export namespace Feishu {
   }
 
   /**
-   * Identify a user in Feishu.
-   * This behaves like {@link Feishu.UserIds}, but it only contains *open_id*.
+   * Identify a user in Lark.
+   * This behaves like {@link Lark.UserIds}, but it only contains *open_id*.
    * (i.e. the id_type is always `open_id`)
    */
   export interface UserIdentifiers {
@@ -32,7 +31,9 @@ export namespace Feishu {
    * The id type when specify a receiver, would be used in the request query.
    *
    * NOTE: we always use **open_id** to identify a user, use **chat_id** to identify a channel.
-   * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
+   * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
    */
   export type ReceiveIdType = UserIdType | 'email' | 'chat_id'
 }
+
+export { Lark as Feishu }

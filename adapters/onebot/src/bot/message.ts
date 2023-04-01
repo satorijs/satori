@@ -1,9 +1,10 @@
-import { Messenger, pick, segment, Universal } from '@satorijs/satori'
+import { h, Messenger, pick } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
+import { Author } from '../types'
 
 class State {
-  author: Partial<Universal.Author> = {}
+  author: Partial<Author> = {}
   children: CQCode[] = []
 
   constructor(public type: 'message' | 'forward' | 'reply') {}
@@ -43,17 +44,28 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     }
 
     // flush
-    if (!this.children.length) return
     const { type, author } = this.stack[0]
+    if (!this.children.length && !author.messageId) return
     if (type === 'forward') {
-      this.stack[1].children.push({
-        type: 'node',
-        data: {
-          name: author.nickname || author.username || this.bot.nickname || this.bot.username,
-          uin: author.userId || this.bot.userId,
-          content: this.children as any,
-        },
-      })
+      if (author.messageId) {
+        this.stack[1].children.push({
+          type: 'node',
+          data: {
+            id: author.messageId,
+          },
+        })
+      } else {
+        this.stack[1].children.push({
+          type: 'node',
+          data: {
+            name: author.nickname || author.username || this.bot.nickname || this.bot.username,
+            uin: author.userId || this.bot.userId,
+            content: this.children as any,
+            time: `${Math.floor((+author.time || Date.now()) / 1000)}`,
+          },
+        })
+      }
+
       this.children = []
       return
     }
@@ -73,7 +85,7 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     this.children.push({ type: 'text', data: { text } })
   }
 
-  async visit(element: segment) {
+  async visit(element: h) {
     let { type, attrs, children } = element
     if (type === 'text') {
       this.text(attrs.content)
@@ -149,8 +161,10 @@ export class OneBotMessenger extends Messenger<BaseBot> {
         await this.flush()
         this.stack.shift()
         await this.forward()
+      } else if ('id' in attrs) {
+        this.stack[0].author.messageId = attrs.id.toString()
       } else {
-        Object.assign(this.stack[0].author, pick(attrs, ['userId', 'username', 'nickname', 'avatar']))
+        Object.assign(this.stack[0].author, pick(attrs, ['userId', 'username', 'nickname', 'time']))
         await this.render(children)
         await this.flush()
       }

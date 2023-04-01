@@ -19,7 +19,7 @@ export function listen({ host, port, maxPort = port }: ListenOptions) {
 
     function onError(err: NodeJS.ErrnoException) {
       server.off('listening', onListen)
-      if (!(err.code == 'EADDRINUSE' || err.code == 'EACCES')) {
+      if (!(err.code === 'EADDRINUSE' || err.code === 'EACCES')) {
         return reject(err)
       }
       port++

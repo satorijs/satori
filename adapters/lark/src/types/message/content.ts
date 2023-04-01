@@ -1,4 +1,4 @@
-// https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json
+// https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json
 
 export namespace MessageContent {
   export type Contents =

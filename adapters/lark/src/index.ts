@@ -1,14 +1,15 @@
 import { FeishuBot } from './bot'
-import * as Feishu from './types'
+import * as Lark from './types'
 
 export * from './bot'
 
-export { Feishu }
+export { Lark, Lark as Feishu }
 
 export default FeishuBot
 
 declare module '@satorijs/core' {
   interface Session {
-    feishu: Feishu.Internal
+    feishu: Lark.Internal
+    lark: Lark.Internal
   }
 }

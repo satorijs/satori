@@ -40,10 +40,9 @@ export interface MessageParams {
 export interface MessageBase {
   type: Type
   content: string
-  extra: MessageExtra | Notice
 }
 
-export interface Data extends MessageBase {
+export interface Data<E = any> extends MessageBase {
   channel_type: 'GROUP' | 'PERSON' | 'WEBHOOK_CHALLENGE'
   challenge: string
   verify_token: string
@@ -52,15 +51,22 @@ export interface Data extends MessageBase {
   msg_id: string
   msg_timestamp: number
   nonce: string
+  extra: E
 }
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'file'
 type NoticeType =
+  | 'user_updated'
   | 'message_btn_click'
   | 'added_reaction' | 'deleted_reaction'
   | 'updated_message' | 'deleted_message'
-  | 'joined_guild' | 'exited_guild'
-  | 'updated_guild_member'
+  | 'pinned_message' | 'unpinned_message'
+  | 'joined_guild' | 'exited_guild' | 'updated_guild_member'
+  | 'updated_guild' | 'deleted_guild'
+  | 'self_joined_guild' | 'self_exited_guild'
+  | 'added_role' | 'deleted_role' | 'updated_role'
+  | 'added_block_list' | 'deleted_block_list'
+  | 'added_emoji' | 'updated_emoji'
   | 'added_channel' | 'updated_channel' | 'deleted_channel'
   | 'updated_private_message' | 'deleted_private_message'
   | 'private_added_reaction' | 'private_deleted_reaction'
@@ -104,9 +110,11 @@ export interface MessageExtra extends MessageMeta {
 
 export interface Message extends MessageBase, MessageMeta {
   id: string
+  rong_id?: string
   embeds: any[]
   reactions: any[]
   mention_info: object
+  extra: MessageExtra | Notice
 }
 
 export interface Card {
@@ -261,6 +269,7 @@ export interface NoticeBody extends Channel, MessageMeta {
   msg_id: string
   target_id: string
   channel_id: string
+  operator_id: string
   emoji: Emoji
   content: string
   icon: string
@@ -322,7 +331,7 @@ export interface Guild {
 
 export interface GuildList extends List<Guild> {}
 
-export interface GuildMember extends User {
+export interface GuildUser extends User {
   joined_at: number
   active_time: number
   roles: number[]
@@ -330,7 +339,7 @@ export interface GuildMember extends User {
   abbr: string
 }
 
-export interface GuildMemberList extends List<GuildMember> {
+export interface GuildUserList extends List<GuildUser> {
   user_count: number
   online_count: number
   offline_count: number
@@ -342,9 +351,42 @@ interface Pagination {
   sort?: string[]
 }
 
+interface GuildMute {
+  type: GuildMute.Type
+  user_ids: string[]
+}
+
+namespace GuildMute {
+  export enum Type {
+    mic = 1,
+    headset = 2,
+  }
+}
+
+interface GuildMuteList {
+  mic: GuildMute
+  headset: GuildMute
+}
+
+interface GuildBoost {
+  user_id: string
+  guild_id: string
+  start_time: number
+  end_time: number
+  user: User
+}
+
 export interface Internal {
   getGuildList(param?: Pagination): Promise<List<Guild>>
   getGuildView(param: { guild_id: string }): Promise<Guild>
+  getGuildUserList(param: { guild_id: string } & Pagination): Promise<GuildUserList>
+  setGuildUserNickname(param: { guild_id: string; user_id: string; nickname: string }): Promise<void>
+  leaveGuild(param: { guild_id: string }): Promise<void>
+  kickoutGuildUser(param: { guild_id: string; target_id: string }): Promise<void>
+  getGuildMuteList(param: { guild_id: string }): Promise<GuildMuteList>
+  createGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
+  deleteGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
+  getGuildBoostHistory(param: { guild_id: string; start_time: number; end_time: number }): Promise<List<GuildBoost>>
 }
 
 export class Internal {
@@ -370,5 +412,81 @@ Internal.define('setGuildUserNickname', 'POST', '/guild/nickname')
 Internal.define('leaveGuild', 'POST', '/guild/leave')
 Internal.define('kickoutGuildUser', 'POST', '/guild/kickout')
 Internal.define('getGuildMuteList', 'GET', '/guild-mute/list')
-Internal.define('setGuildMute', 'POST', '/guild-mute/create')
-Internal.define('unsetGuildMute', 'POST', '/guild-mute/delete')
+Internal.define('createGuildMute', 'POST', '/guild-mute/create')
+Internal.define('deleteGuildMute', 'POST', '/guild-mute/delete')
+Internal.define('getGuildBoostHistory', 'GET', '/guild-boost/history')
+
+Internal.define('getChannelList', 'GET', '/channel/list')
+Internal.define('getChannelView', 'GET', '/channel/view')
+Internal.define('createChannel', 'POST', '/channel/create')
+Internal.define('updateChannel', 'POST', '/channel/update')
+Internal.define('deleteChannel', 'POST', '/channel/delete')
+Internal.define('getChannelUserList', 'GET', '/channel/user-list')
+Internal.define('moveChannelUser', 'POST', '/channel/move-user')
+Internal.define('getChannelRoleIndex', 'GET', '/channel-role/index')
+Internal.define('createChannelRole', 'POST', '/channel-role/create')
+Internal.define('updateChannelRole', 'POST', '/channel-role/update')
+Internal.define('deleteChannelRole', 'POST', '/channel-role/delete')
+
+Internal.define('getMessageList', 'GET', '/message/list')
+Internal.define('getMessageView', 'GET', '/message/view')
+Internal.define('createMessage', 'POST', '/message/create')
+Internal.define('updateMessage', 'POST', '/message/update')
+Internal.define('deleteMessage', 'POST', '/message/delete')
+Internal.define('getMessageReactionList', 'GET', '/message/reaction-list')
+Internal.define('addMessageReaction', 'POST', '/message/add-reaction')
+Internal.define('deleteMessageReaction', 'POST', '/message/delete-reaction')
+
+Internal.define('getChannelUserList', 'GET', '/channel-user/get-joined-channel')
+
+Internal.define('getPrivateChatList', 'GET', '/user-chat/list')
+Internal.define('getPrivateChatView', 'GET', '/user-chat/view')
+Internal.define('createPrivateChat', 'POST', '/user-chat/create')
+Internal.define('deletePrivateChat', 'POST', '/user-chat/delete')
+
+Internal.define('getDirectMessageList', 'GET', '/direct-message/list')
+Internal.define('getDirectMessageView', 'GET', '/direct-message/view')
+Internal.define('createDirectMessage', 'POST', '/direct-message/create')
+Internal.define('updateDirectMessage', 'POST', '/direct-message/update')
+Internal.define('deleteDirectMessage', 'POST', '/direct-message/delete')
+Internal.define('getDirectMessageReactionList', 'GET', '/direct-message/reaction-list')
+Internal.define('addDirectMessageReaction', 'POST', '/direct-message/add-reaction')
+Internal.define('deleteDirectMessageReaction', 'POST', '/direct-message/delete-reaction')
+
+Internal.define('getGateway', 'GET', '/gateway/index')
+Internal.define('getToken', 'POST', '/oauth2/token')
+Internal.define('createAsset', 'POST', '/asset/create')
+
+Internal.define('getUserMe', 'GET', '/user/me')
+Internal.define('getUserView', 'GET', '/user/view')
+Internal.define('offline', 'POST', '/user/offline')
+
+Internal.define('createGuildRole', 'POST', '/guild-role/create')
+Internal.define('updateGuildRole', 'POST', '/guild-role/update')
+Internal.define('deleteGuildRole', 'POST', '/guild-role/delete')
+Internal.define('grantGuildRole', 'POST', '/guild-role/grant')
+Internal.define('revokeGuildRole', 'POST', '/guild-role/revoke')
+
+Internal.define('getIntimacy', 'GET', '/intimacy/index')
+Internal.define('updateIntimacy', 'POST', '/intimacy/update')
+
+Internal.define('getGuildEmojiList', 'GET', '/guild-emoji/list')
+Internal.define('createGuildEmoji', 'POST', '/guild-emoji/create')
+Internal.define('updateGuildEmoji', 'POST', '/guild-emoji/update')
+Internal.define('deleteGuildEmoji', 'POST', '/guild-emoji/delete')
+
+Internal.define('getInviteList', 'GET', '/invite/list')
+Internal.define('createInvite', 'POST', '/invite/create')
+Internal.define('deleteInvite', 'POST', '/invite/delete')
+
+Internal.define('getBlacklist', 'GET', '/blacklist/list')
+Internal.define('createBlacklist', 'POST', '/blacklist/create')
+Internal.define('deleteBlacklist', 'POST', '/blacklist/delete')
+
+Internal.define('getGuildBadge', 'GET', '/badge/guild')
+Internal.define('getGameList', 'GET', '/game')
+Internal.define('createGame', 'POST', '/game/create')
+Internal.define('updateGame', 'POST', '/game/update')
+Internal.define('deleteGame', 'POST', '/game/delete')
+Internal.define('createGameActivity', 'POST', '/game/activity')
+Internal.define('deleteGameActivity', 'POST', '/game/delete-activity')
