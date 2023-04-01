@@ -19,10 +19,10 @@ export function adaptMessageMeta(session: Session, message: Telegram.Message) {
   if (!message) return
   session.messageId = message.message_id.toString()
   if (message.chat.type === 'private') {
-    session.subtype = 'private'
+    session.subtype ||= 'private'
     session.channelId = 'private:' + message.chat.id
   } else {
-    session.subtype = 'group'
+    session.subtype ||= 'group'
     session.guildId = message.chat.id.toString()
     if (message.is_topic_message) {
       session.channelId = message.message_thread_id.toString()
