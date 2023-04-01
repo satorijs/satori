@@ -167,9 +167,9 @@ export namespace Channel {
     }
 
     export type Modify =
-      | Modify.GroupDM
-      | Modify.GuildChannel
-      | Modify.Thread
+      | Partial<Modify.GroupDM>
+      | Partial<Modify.GuildChannel>
+      | Partial<Modify.Thread>
 
     export namespace Modify {
       /** https://discord.com/developers/docs/resources/channel#modify-channel-json-params-group-dm */

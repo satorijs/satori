@@ -2,6 +2,12 @@ import { h, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
+export const sanitize = (val: string) =>
+  val
+    .replace(/[\\*_`~|()\[\]]/g, '\\$&')
+    .replace(/@everyone/g, () => '\\@everyone')
+    .replace(/@here/g, () => '\\@here')
+
 export const adaptUser = (user: Discord.User): Universal.User => ({
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
@@ -138,6 +144,13 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
   const session = bot.session()
   if (input.t === 'MESSAGE_CREATE') {
+    if (input.d.webhook_id) {
+      const webhook = await bot.ensureWebhook(input.d.channel_id)
+      if (webhook.id === input.d.webhook_id) {
+        // koishi's webhook
+        return
+      }
+    }
     session.type = 'message'
     await adaptMessage(bot, input.d, session)
     // dc 情况特殊 可能有 embeds 但是没有消息主体

@@ -1,11 +1,25 @@
-import { Dict, h, Messenger, Schema } from '@satorijs/satori'
+import { Dict, h, Logger, Messenger, Quester, Schema, segment, Session, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
-import { adaptMessage } from './utils'
+import { Channel, Message } from './types'
+import { adaptMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
+const logger = new Logger('discord')
+
+class State {
+  author: Partial<Universal.Author> = {}
+  quote: Partial<Universal.Message> = {}
+  channel: Partial<Channel> = {}
+  fakeMessageMap: Record<string, Session[]> = {} // [userInput] = discord messages
+  threadCreated = false // forward: send the first message and create a thread
+
+  constructor(public type: 'message' | 'forward') { }
+}
+
 export class DiscordMessenger extends Messenger<DiscordBot> {
+  private stack: State[] = [new State('message')]
   private buffer: string = ''
   private addition: Dict = {}
   private figure: h = null
@@ -13,12 +27,43 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
 
   async post(data?: any, headers?: any) {
     try {
-      const result = await this.bot.http.post(`/channels/${this.channelId}/messages`, data, { headers })
+      let url = `/channels/${this.channelId}/messages`
+      if (this.stack[0].author.nickname || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
+        const webhook = await this.ensureWebhook()
+        url = `/webhooks/${webhook.id}/${webhook.token}?wait=true`
+      }
+      if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
+        // 发送到子区
+        if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
+          const webhook = await this.ensureWebhook()
+          url = `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
+        } else {
+          url = `/channels/${this.stack[0].channel.id}/messages`
+        }
+      }
+      const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
-      await adaptMessage(this.bot, result, session)
+      const message = await adaptMessage(this.bot, result, session)
       session.app.emit(session, 'send', session)
       this.results.push(session)
+
+      if (this.stack[0].type === 'forward' && !this.stack[0].threadCreated) {
+        this.stack[0].threadCreated = true
+        const thread = await this.bot.internal.startThreadFromMessage(this.channelId, result.id, {
+          name: 'Forward',
+          auto_archive_duration: 60,
+        })
+        this.stack[0].channel = thread
+      }
+
+      return message
     } catch (e) {
+      if (Quester.isAxiosError(e) && e.response?.data.code === 10015) {
+        logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
+        if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
+        await this.ensureWebhook()
+        return this.post(data, headers)
+      }
       this.errors.push(e)
     }
   }
@@ -33,10 +78,6 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     form.append('file', value, attrs.file || filename)
     form.append('payload_json', JSON.stringify(payload))
     return this.post(form, form.getHeaders())
-  }
-
-  async sendContent(content: string, addition: Dict) {
-    return this.post({ ...addition, content })
   }
 
   async sendAsset(type: string, attrs: Dict<string>, addition: Dict) {
@@ -79,6 +120,10 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }, sendDownload)
   }
 
+  async ensureWebhook() {
+    return this.bot.ensureWebhook(this.channelId)
+  }
+
   async flush() {
     const content = this.buffer.trim()
     if (!content) return
@@ -90,7 +135,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += attrs.content.replace(/[\\*_`~|()]/g, '\\$&')
+      this.buffer += sanitize(attrs.content)
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '**'
       await this.render(children)
@@ -157,7 +202,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         ...this.addition,
         embeds: [{ ...attrs }],
       })
-    } else if (type === 'record') {
+    } else if (type === 'audio') {
       await this.sendAsset('file', attrs, {
         ...this.addition,
         content: this.buffer.trim(),
@@ -173,20 +218,90 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       })
       this.buffer = ''
       this.mode = 'default'
-    } else if (type === 'quote') {
-      await this.flush()
-      this.addition.message_reference = {
-        message_id: attrs.id,
-      }
-    } else if (type === 'message') {
+    } else if (type === 'message' && !attrs.forward) {
       if (this.mode === 'figure') {
         await this.render(children)
         this.buffer += '\n'
       } else {
+        const resultLength = +this.results.length
         await this.flush()
+
+        // author
+        const [author] = segment.select(children, 'author')
+        if (author) {
+          const { avatar, nickname } = author.attrs
+          if (avatar) this.addition.avatar_url = avatar
+          if (nickname) this.addition.username = nickname
+          if (this.stack[0].type === 'message') {
+            this.stack[0].author = author.attrs
+          }
+          if (this.stack[0].type === 'forward') {
+            this.stack[1].author = author.attrs
+          }
+        }
+
+        // quote
+        const [quote] = segment.select(children, 'quote')
+        if (quote) {
+          const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, '$1')
+
+          const message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
+          if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
+            // no quote and author, send by bot
+            await this.flush()
+            this.addition.message_reference = {
+              message_id: quote.attrs.id,
+            }
+          } else {
+            // quote
+            let replyId = quote.attrs.id, channelId = this.channelId
+            if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[quote.attrs.id]?.length >= 1) {
+              // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
+              replyId = this.stack[0].fakeMessageMap[quote.attrs.id][0].messageId
+              channelId = this.stack[0].fakeMessageMap[quote.attrs.id][0].channelId
+            }
+            const quoted = await this.bot.getMessage(channelId, replyId)
+            this.addition.embeds = [{
+              description: `${sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              author: {
+                name: quoted.author.nickname || quoted.author.username,
+                icon_url: quoted.author.avatar,
+              },
+            }]
+
+            // this.addition.embeds = [{
+            //   description: `${sanity(quoted.author.nickname || quoted.author.username)} <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+            //   footer: {
+            //     text: parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30) || " ",
+            //     icon_url: quoted.author.avatar
+            //   }
+            // }]
+          }
+        }
+
         await this.render(children)
         await this.flush()
+        const newLength = +this.results.length
+        const sentMessages = this.results.slice(resultLength, newLength)
+        if (this.stack[0].type === 'forward' && attrs.id) {
+          this.stack[0].fakeMessageMap[attrs.id] = sentMessages
+        }
+        if (this.stack[0].type === 'message') {
+          this.stack[0].author = {}
+        }
+        if (this.stack[0].type === 'forward') {
+          this.stack[1].author = {}
+        }
       }
+    } else if (type === 'message' && attrs.forward) {
+      this.stack.unshift(new State('forward'))
+      await this.render(children)
+      await this.flush()
+      await this.bot.internal.modifyChannel(this.stack[0].channel.id, {
+        archived: true,
+        locked: true,
+      })
+      this.stack.shift()
     } else {
       await this.render(children)
     }

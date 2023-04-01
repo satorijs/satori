@@ -1,7 +1,7 @@
 import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { DiscordMessenger } from './message'
-import { Internal } from './types'
+import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
 
 // @ts-ignore
@@ -10,6 +10,8 @@ import { version } from '../package.json'
 export class DiscordBot extends Bot<DiscordBot.Config> {
   public http: Quester
   public internal: Internal
+  public webhooks: Record<string, Webhook> = {}
+  public webhookLock: Record<string, Promise<Webhook>> = {}
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
@@ -23,6 +25,33 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
+  }
+
+  private async _ensureWebhook(channelId: string) {
+    let webhook: Webhook
+    const webhooks = await this.internal.getChannelWebhooks(channelId)
+    const selfId = this.selfId
+    if (!webhooks.find(v => v.name === 'Koishi' && v.user.id === selfId)) {
+      webhook = await this.internal.createWebhook(channelId, {
+        name: 'Koishi',
+      })
+      // webhook may be `AxiosError: Request failed with status code 429` error
+    } else {
+      webhook = webhooks.find(v => v.name === 'Koishi' && v.user.id === this.selfId)
+    }
+    return this.webhooks[channelId] = webhook
+  }
+
+  async ensureWebhook(channelId: string) {
+    if (this.webhooks[channelId] === null) {
+      delete this.webhooks[channelId]
+      delete this.webhookLock[channelId]
+    }
+    if (this.webhooks[channelId]) {
+      delete this.webhookLock[channelId]
+      return this.webhooks[channelId]
+    }
+    return this.webhookLock[channelId] ||= this._ensureWebhook(channelId)
   }
 
   async getSelf() {
