@@ -1,7 +1,15 @@
 import { Bot, Schema } from '@satorijs/satori'
+import { IMAP } from './mail'
 
 export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
-  
+  imap: IMAP
+  async start() {
+    this.imap = new IMAP(this.config)
+  }
+
+  async stop() {
+    
+  }
 }
 
 export namespace MailBot {
@@ -21,8 +29,8 @@ export namespace MailBot {
   }
 
   export const Config = Schema.object({
-    username: Schema.string().default('用户名').required(),
-    password: Schema.string().default('密码').required(),
+    username: Schema.string().description('用户名').required(),
+    password: Schema.string().description('密码').required(),
     imap: Schema.intersect([
       Schema.object({
         host: Schema.string().description('IMAP 服务器地址').required(),
