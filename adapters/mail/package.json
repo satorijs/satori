@@ -1,0 +1,30 @@
+{
+  "name": "@satorijs/adapter-mail",
+  "description": "Mail Adapter for Satorijs",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "Anillc <void@anillc.cn>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/discord"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://koishi.chat/plugins/adapter/mail.html",
+  "keywords": [
+    "bot",
+    "mail",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^2.2.3"
+  }
+}
