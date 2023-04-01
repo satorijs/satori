@@ -409,21 +409,23 @@ export interface Internal {
   getChannelUserList(param: { channel_id: string }): Promise<List<User>>
   moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
   getChannelRoleIndex(param: { channel_id: string }): Promise<{ permission_overwrites: Overwrite; permission_users: List<User>; permission_sync: 0 | 1 }>
-  createChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<{
-    user_id?: string // 此处待修改
-    role_id?: string // 此处待修改
+  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }): Promise<{
+    user_id: string
     allow: number
     deny: number
   }>
-  updateChannelRole(param: {
-    channel_id: string
-    type?: 'role_id' | 'user_id'
-    value?: string
-    allow?: number
-    deny?: number
-  }): Promise<{
-    user_id?: string // 此处待修改
-    role_id?: string // 此处待修改
+  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }): Promise<{
+    role_id: string
+    allow: number
+    deny: number
+  }>
+  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }): Promise<{
+    user_id: string
+    allow: number
+    deny: number
+  }>
+  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }): Promise<{
+    role_id: string
     allow: number
     deny: number
   }>
