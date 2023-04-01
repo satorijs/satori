@@ -1,7 +1,6 @@
 import { Quester, Schema } from '@satorijs/core'
-import { base64ToArrayBuffer, defineProperty, Dict } from 'cosmokit'
+import { base64ToArrayBuffer, defineProperty } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
-import { Agent } from 'agent-base'
 import { WebSocket } from 'ws'
 import { fromBuffer } from 'file-type'
 import { basename } from 'path'
@@ -30,7 +29,7 @@ Quester.prototype.file = async function file(this: Quester, url: string) {
 
 Quester.prototype.ws = function ws(this: Quester, url: string, options: ClientRequestArgs = {}) {
   return new WebSocket(url, {
-    agent: getAgent(this.config.proxyAgent),
+    agent: this.agent(this.config.proxyAgent),
     handshakeTimeout: this.config.timeout,
     ...options,
     headers: {
@@ -43,8 +42,8 @@ Quester.prototype.ws = function ws(this: Quester, url: string, options: ClientRe
 const _prepare = Quester.prototype.prepare
 Quester.prototype.prepare = function prepare(this: Quester) {
   const options = _prepare.call(this)
-  options.httpAgent = getAgent(this.config.proxyAgent)
-  options.httpsAgent = getAgent(this.config.proxyAgent)
+  options.httpAgent = this.agent(this.config.proxyAgent)
+  options.httpsAgent = this.agent(this.config.proxyAgent)
   return options
 }
 
@@ -53,25 +52,6 @@ defineProperty(Quester, 'Config', Schema.object({
   proxyAgent: Schema.string().description('使用的代理服务器地址。'),
 }).description('请求设置'))
 
-type CreateAgent = (opts: string) => Agent
-
-const agents: Dict<Agent> = Object.create(null)
-const proxies: Dict<CreateAgent> = Object.create(null)
-
-export function register(protocols: string[], callback: CreateAgent) {
-  for (const protocol of protocols) {
-    proxies[protocol] = callback
-  }
-}
-
-register(['http'], createHttpProxyAgent)
-register(['https'], createHttpsProxyAgent)
-register(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], createSocksProxyAgent)
-
-export function getAgent(url: string) {
-  if (!url) return
-  if (agents[url]) return agents[url]
-  const { protocol } = new URL(url)
-  const callback = proxies[protocol.slice(0, -1)]
-  return agents[url] ||= callback(url)
-}
+Quester.defineAgent(['http'], createHttpProxyAgent)
+Quester.defineAgent(['https'], createHttpsProxyAgent)
+Quester.defineAgent(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], createSocksProxyAgent)

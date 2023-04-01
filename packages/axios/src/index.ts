@@ -1,4 +1,5 @@
 import { Context } from 'cordis'
+import { Agent } from 'agent-base'
 import { base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
@@ -25,6 +26,8 @@ export interface Quester {
 }
 
 export class Quester {
+  agents: Dict<Agent> = Object.create(null)
+
   constructor(ctx: Context, config: Context.Config) {
     return Quester.create(config.request)
   }
@@ -38,6 +41,17 @@ export class Quester {
         ...newConfig.headers,
       },
     })
+  }
+
+  agent(url: string, persist = true) {
+    if (!url) return
+    if (this.agents[url]) return this.agents[url]
+    const { protocol } = new URL(url)
+    const callback = Quester.proxies[protocol.slice(0, -1)]
+    if (this.agents[url]) return this.agents[url]
+    const agent = callback(url)
+    if (persist) this.agents[url] = agent
+    return agent
   }
 
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
@@ -101,6 +115,15 @@ export namespace Quester {
   export type Method = types.Method
   export type AxiosResponse = types.AxiosResponse
   export type AxiosRequestConfig = types.AxiosRequestConfig
+  export type CreateAgent = (opts: string) => Agent
+
+  export const proxies: Dict<CreateAgent> = Object.create(null)
+
+  export function defineAgent(protocols: string[], callback: CreateAgent) {
+    for (const protocol of protocols) {
+      proxies[protocol] = callback
+    }
+  }
 
   export interface File {
     mime?: string
