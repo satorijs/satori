@@ -41,8 +41,8 @@ body:
       multiple: true
       options:
         - Discord
-        - Feishu
-        - Kook
+        - Kook (开黑啦)
+        - Lark (飞书)
         - OneBot
         - QQGuild
         - Telegram

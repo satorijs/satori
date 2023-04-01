@@ -17,7 +17,7 @@
   - [x] OneBot (v11)
   - [x] QQ Guild
   - [x] KOOK (Kaiheila)
-  - [x] Feishu
+  - [x] Lark (Feishu)
   - [ ] Dingding
   - [ ] Wecom
 
