@@ -51,8 +51,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       delete this.webhookLock[channelId]
       return this.webhooks[channelId]
     }
-    if (this.webhookLock[channelId]) return this.webhookLock[channelId]
-    return this.webhookLock[channelId] = this._ensureWebhook(channelId)
+    return this.webhookLock[channelId] ||= this._ensureWebhook(channelId)
   }
 
   async getSelf() {

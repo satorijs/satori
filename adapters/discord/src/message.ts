@@ -59,7 +59,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       return message
     } catch (e) {
       if (Quester.isAxiosError(e) && e.response?.data.code === 10015) {
-        logger.debug('webhook has been deleted, recreating..., %o, lock %o', e.response.data, this.bot.webhookLock[this.channelId])
+        logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
         if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
         await this.ensureWebhook()
         return this.post(data, headers)
