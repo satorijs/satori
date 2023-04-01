@@ -253,8 +253,8 @@ export interface Channel {
   name: string
   user_id: string
   guild_id: string
-  isCategory: number
-  parentId: string
+  is_category: number
+  parent_id: string
   topic: string
   type: number
   level: number
