@@ -480,7 +480,7 @@ Internal.define('getMessageReactionList', 'GET', '/message/reaction-list')
 Internal.define('addMessageReaction', 'POST', '/message/add-reaction')
 Internal.define('deleteMessageReaction', 'POST', '/message/delete-reaction')
 
-Internal.define('getChannelUserList', 'GET', '/channel-user/get-joined-channel')
+Internal.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel')
 
 Internal.define('getPrivateChatList', 'GET', '/user-chat/list')
 Internal.define('getPrivateChatView', 'GET', '/user-chat/view')
