@@ -388,7 +388,7 @@ export interface Internal {
   deleteGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
   getGuildBoostHistory(param: { guild_id: string; start_time: number; end_time: number }): Promise<List<GuildBoost>>
 
-  getChannelList(param: { guild_id: string }): Promise<List<Channel>>
+  getChannelList(param: { guild_id: string } & Pagination): Promise<List<Channel>>
   getChannelView(param: { target_id: string }): Promise<Channel>
   createChannel(param: {
     guild_id: string
@@ -430,6 +430,21 @@ export interface Internal {
     deny: number
   }>
   deleteChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<void>
+
+  getMessageList(param: { target_id: string; msg_id?: string; pin?: 0 | 1; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<List<Message>>
+  getMessageView(param: { msg_id: string }): Promise<Message>
+  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id: string }): Promise<{
+    msg_id: string
+    msg_timestamp: number
+    nonce: string
+  }>
+  updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id: string }): Promise<void>
+  deleteMessage(param: { msg_id: string }): Promise<void>
+  getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<User[]>
+  addMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
+  deleteMessageReaction(param: { msg_id: string; emoji: string; user_id?: string}): Promise<void>
+
+  getChannelJoinedUserList(param: { guild_id: string; user_id: string } & Pagination): Promise<List<Channel>>
 }
 
 export class Internal {
