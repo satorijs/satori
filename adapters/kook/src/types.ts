@@ -547,7 +547,7 @@ export interface Internal {
     token_type: 'Bearer'
     scope: string
   }>
-  createAsset(param: { file: FormData }): Promise<{ url: string }>
+  // createAsset(param: { file: FormData }): Promise<{ url: string }>
 
   getUserMe(): Promise<User>
   getUserView(param: { user_id: string; guild_id?: string }): Promise<User>
@@ -584,7 +584,7 @@ export interface Internal {
   updateIntimacy(param: { user_id: string; score?: number; social_info?: string; img_id?: string }): Promise<void>
 
   getGuildEmojiList(param?: Pagination): Promise<List<Emoji>>
-  createGuildEmoji(param: { name?: string; guild_id: string; emoji: FormData }): Promise<Emoji>
+  // createGuildEmoji(param: { name?: string; guild_id: string; emoji: FormData }): Promise<Emoji>
   updateGuildEmoji(param: { name: string; id: string }): Promise<void>
   deleteGuildEmoji(param: { id: string }): Promise<void>
 
