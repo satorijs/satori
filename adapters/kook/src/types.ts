@@ -432,6 +432,17 @@ interface GuildBoost {
   user: User
 }
 
+interface Game {
+  id: number
+  name: string
+  type: 0|1|2
+  options: string
+  kmhook_admin: boolean
+  process_name: string[]
+  product_name: string[]
+  icon: string
+}
+
 export interface Internal {
   getGuildList(param?: Pagination): Promise<List<Guild>>
   getGuildView(param: { guild_id: string }): Promise<Guild>
@@ -572,6 +583,42 @@ export interface Internal {
     }>
   updateIntimacy(param: { user_id: string; score?: number; social_info?: string; img_id?: string }): Promise<void>
 
+  getGuildEmojiList(param?: Pagination): Promise<List<Emoji>>
+  createGuildEmoji(param: { name?: string; guild_id: string; emoji: FormData }): Promise<Emoji>
+  updateGuildEmoji(param: { name: string; id: string }): Promise<void>
+  deleteGuildEmoji(param: { id: string }): Promise<void>
+
+  getInviteList(param: EitherOr<{ guild_id: string; channel_id: string }, 'guild_id', 'channel_id'> & Pagination):
+    Promise<List<{
+      guild_id: string
+      channel_id: string
+      url_code: string
+      url: string
+      user: User
+    }>>
+  createInvite(param: EitherOr<{ guild_id: string; channel_id: string }, 'guild_id', 'channel_id'> & { duration?: number; setting_times?: number }):
+    Promise<{ url: string }>
+  deleteInvite(param: { url_code: string; guild_id?: string; channel_id?: string }): Promise<void>
+
+  getBlacklist(param: { guild_id: string } & Pagination):
+    Promise<List<{
+      user_id: string
+      created_time: number
+      remark: string
+      user: User
+    }>>
+  createBlacklist(param: { guild_id: string; target_id: string; remark?: string; del_msg_days?: 0|1|2|3|4|5|6|7 }): Promise<void>
+  deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>
+
+  // getGuildBadge(param: { guild_id: string; style?: 0|1|2 }): Promise<void> // 未实现
+  getGameList(param?: { type?: '0'|'1'|'2' }): Promise<List<Game>>
+  createGame(param: { name: string; icon?: string }): Promise<List<Game>>
+  updateGame(param: { id: number; name?: string; icon?: string }): Promise<List<Game>>
+  deleteGame(param: { id: number }): Promise<void>
+  createGameActivity(param: { id: number; data_type: 1|2; software?: 'cloudmusic'|'qqmusic'|'kugou'; singer?: string; music_name?: string}): Promise<void>
+  deleteGameActivity(param: { data_type: 1|2 }): Promise<void>
+
+  hasPermission(permissions: number, permission: Permissions): boolean
 }
 
 type FilterOptional<T> = Pick<
@@ -609,7 +656,9 @@ type EitherOr<O extends Object, L extends string, R extends string> =
   ) & Omit<O, L | R>
 
 export class Internal {
-  constructor(private http: Quester) {}
+  constructor(private http: Quester) {
+    Internal.prototype['hasPermission'] = hasPermission
+  }
 
   static define(name: string, method: Quester.Method, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
