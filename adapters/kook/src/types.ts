@@ -367,6 +367,51 @@ interface GuildMute {
   user_ids: string[]
 }
 
+interface GuildRole {
+  role_id: number
+  name: string
+  color: number
+  position: number
+  hoist: 0 | 1
+  mentionable: 0 | 1
+  permissions: number
+}
+
+export enum Permissions {
+  GUILD_ADMIN = 0,
+  GUILD_MANAGE = 1,
+  GUILD_LOG = 2,
+  GUILD_INVITE_CREATE = 3,
+  GUILD_INVITE_MANAGE = 4,
+  CHANNEL_MANAGE = 5,
+  GUILD_USER_KICK = 6,
+  GUILD_USER_BAN = 7,
+  GUILD_EMOJI_MANAGE = 8,
+  GUILD_USER_NAME_CHANGE = 9,
+  GUILD_ROLE_MANAGE = 10,
+  CHANNEL_VIEW = 11,
+  CHANNEL_MESSAGE = 12,
+  CHANNEL_MANAGE_MESSAGE = 13,
+  CHANNEL_UPLOAD = 14,
+  CHANNEL_VOICE_CONNECT = 15,
+  CHANNEL_VOICE_MANAGE = 16,
+  CHANNEL_MESSAGE_AT_ALL = 17,
+  CHANNEL_MESSAGE_REACTION_CREATE = 18,
+  CHANNEL_MESSAGE_REACTION_FOLLOW = 19,
+  CHANNEL_VOICE_CONNECT_PASSIVE = 20,
+  CHANNEL_VOICE_SPEAK_KEY_ONLY = 21,
+  CHANNEL_VOICR_SPEAK_FREE = 22,
+  CHANNEL_VOICE_SPEAK = 23,
+  GUILD_USER_DEAFEN = 24,
+  GUILD_USER_NAME_CHANGE_OTHER = 25,
+  GUILD_USER_MUTE = 26,
+  CHANNEL_VOICE_BGM = 27
+}
+
+export function hasPermission(permissions: number, permission: Permissions) {
+  return (permissions & (1 << permission)) === (1 << permission)
+}
+
 namespace GuildMute {
   export enum Type {
     mic = 1,
@@ -496,6 +541,23 @@ export interface Internal {
   getUserMe(): Promise<User>
   getUserView(param: { user_id: string; guild_id?: string }): Promise<User>
   offline(): Promise<void>
+
+  getGuildRoleList(param: { guild_id: string } & Pagination): Promise<List<GuildRole>>
+  createGuildRole(param: { name?: string; guild_id: string }): Promise<GuildRole>
+  updateGuildRole(param: { guild_id: string; role_id: number } & Partial<Omit<GuildRole, 'role_id'>>): Promise<GuildRole>
+  deleteGuildRole(param: { guild_id: string; role_id: number }): Promise<void>
+  grantGuildRole(param: { guild_id: string; user_id?: string; role_id: number }):
+    Promise<{
+      user_id: string
+      guild_id: string
+      roles: []
+    }>
+  revokeGuildRole(param: { guild_id: string; user_id?: string; role_id: number }):
+  Promise<{
+    user_id: string
+    guild_id: string
+    roles: []
+  }>
 }
 
 type FilterOptional<T> = Pick<
@@ -605,6 +667,7 @@ Internal.define('getUserMe', 'GET', '/user/me')
 Internal.define('getUserView', 'GET', '/user/view')
 Internal.define('offline', 'POST', '/user/offline')
 
+Internal.define('getGuildRoleList', 'GET', '/guild-role/list')
 Internal.define('createGuildRole', 'POST', '/guild-role/create')
 Internal.define('updateGuildRole', 'POST', '/guild-role/update')
 Internal.define('deleteGuildRole', 'POST', '/guild-role/delete')
