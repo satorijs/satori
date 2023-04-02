@@ -482,6 +482,20 @@ export interface Internal {
   getDirectMessageReactionList(param: { msg_id: string; emoji?: string}): Promise<User[]>
   addDirectMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
   deleteDirectMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>
+
+  getGateway(param: { compress?: 0|1 }): Promise<{ url: string }>
+  getToken(param: { grant_type: 'authorization_code'; client_id: string; client_secret: string; code: string; redirect_uri: string}):
+  Promise<{
+    access_token: string
+    expires_in?: number
+    token_type: 'Bearer'
+    scope: string
+  }>
+  createAsset(param: { file: FormData }): Promise<{ url: string }>
+
+  getUserMe(): Promise<User>
+  getUserView(param: { user_id: string; guild_id?: string }): Promise<User>
+  offline(): Promise<void>
 }
 
 type FilterOptional<T> = Pick<
@@ -529,7 +543,9 @@ export class Internal {
       } else {
         config.data = args[0]
       }
-      return (await this.http(method, path, config))?.data
+      const req = await this.http(method, path, config)
+      if (req?.code !== 0) throw new Error(req?.message || 'Unexpected Error')
+      return req?.data
     }
   }
 }
