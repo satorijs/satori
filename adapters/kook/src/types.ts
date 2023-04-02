@@ -96,14 +96,7 @@ export interface PrivateChat {
   is_friend: boolean
   is_blocked: boolean
   is_target_blocked: boolean
-  target_info: PrivateChatUserMeta
-}
-
-export interface PrivateChatUserMeta {
-  id: string
-  username: string
-  online: boolean
-  avatar: string
+  target_info: User
 }
 
 export interface KmarkdownUserMeta {
@@ -427,35 +420,40 @@ export interface Internal {
   getChannelUserList(param: { channel_id: string }): Promise<List<User>>
   moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
   getChannelRoleIndex(param: { channel_id: string }): Promise<{ permission_overwrites: Overwrite; permission_users: List<User>; permission_sync: 0 | 1 }>
-  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }): Promise<{
-    user_id: string
-    allow: number
-    deny: number
-  }>
-  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }): Promise<{
-    role_id: string
-    allow: number
-    deny: number
-  }>
-  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }): Promise<{
-    user_id: string
-    allow: number
-    deny: number
-  }>
-  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }): Promise<{
-    role_id: string
-    allow: number
-    deny: number
-  }>
+  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }):
+    Promise<{
+      user_id: string
+      allow: number
+      deny: number
+    }>
+  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }):
+    Promise<{
+      role_id: string
+      allow: number
+      deny: number
+    }>
+  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }):
+    Promise<{
+      user_id: string
+      allow: number
+      deny: number
+    }>
+  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }):
+    Promise<{
+      role_id: string
+      allow: number
+      deny: number
+    }>
   deleteChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<void>
 
   getMessageList(param: { target_id: string; msg_id?: string; pin?: 0 | 1; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<List<Message>>
   getMessageView(param: { msg_id: string }): Promise<Message>
-  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id: string }): Promise<{
-    msg_id: string
-    msg_timestamp: number
-    nonce: string
-  }>
+  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id: string }):
+    Promise<{
+      msg_id: string
+      msg_timestamp: number
+      nonce: string
+    }>
   updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id: string }): Promise<void>
   deleteMessage(param: { msg_id: string }): Promise<void>
   getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<User[]>
@@ -468,7 +466,57 @@ export interface Internal {
   getPrivateChatView(param: { chat_code: string }): Promise<PrivateChat>
   createPrivateChat(param: { target_id: string }): Promise<PrivateChat>
   deletePrivateChat(param: { chat_code: string }): Promise<void>
+
+  getDirectMessageList(param: EitherOr<{ target_id: string; chat_code: string }, 'target_id', 'chat_code'> &
+  { msg_id?: string; flag?: 'before' | 'around' | 'after' } & Pagination):
+    Promise<{ items: Message[] }>
+  createDirectMessage(param: { type?: Type; content: string; quote?: string; nonce?: string} &
+    EitherOr<{ target_id: string; chat_code: string }, 'target_id', 'chat_code'>):
+    Promise<{
+    msg_id: string
+    msg_timestamp: number
+    nonce: string
+  }>
+  updateDirectMessage(param: { msg_id: string; content: string; quote?: string}): Promise<void>
+  deleteDirectMessage(param: { msg_id: string }): Promise<void>
+  getDirectMessageReactionList(param: { msg_id: string; emoji?: string}): Promise<User[]>
+  addDirectMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
+  deleteDirectMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>
 }
+
+type FilterOptional<T> = Pick<
+  T,
+  Exclude<
+    {
+      [K in keyof T]: T extends Record<K, T[K]> ? K : never;
+    }[keyof T],
+    undefined
+  >
+>
+
+type FilterNotOptional<T> = Pick<
+  T,
+  Exclude<
+    {
+      [K in keyof T]: T extends Record<K, T[K]> ? never : K;
+    }[keyof T],
+    undefined
+  >
+>
+
+type PartialEither<T, K extends keyof any> = { [P in Exclude<keyof FilterOptional<T>, K>]-?: T[P] } &
+  { [P in Exclude<keyof FilterNotOptional<T>, K>]?: T[P] } &
+  { [P in Extract<keyof T, K>]?: undefined }
+
+type Object = {
+  [name: string]: any
+}
+
+type EitherOr<O extends Object, L extends string, R extends string> =
+  (
+    PartialEither<Pick<O, L | R>, L> |
+    PartialEither<Pick<O, L | R>, R>
+  ) & Omit<O, L | R>
 
 export class Internal {
   constructor(private http: Quester) {}
@@ -526,7 +574,6 @@ Internal.define('createPrivateChat', 'POST', '/user-chat/create')
 Internal.define('deletePrivateChat', 'POST', '/user-chat/delete')
 
 Internal.define('getDirectMessageList', 'GET', '/direct-message/list')
-Internal.define('getDirectMessageView', 'GET', '/direct-message/view')
 Internal.define('createDirectMessage', 'POST', '/direct-message/create')
 Internal.define('updateDirectMessage', 'POST', '/direct-message/update')
 Internal.define('deleteDirectMessage', 'POST', '/direct-message/delete')
