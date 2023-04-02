@@ -253,8 +253,8 @@ export interface Channel {
   name: string
   user_id: string
   guild_id: string
-  isCategory: number
-  parentId: string
+  is_category: number
+  parent_id: string
   topic: string
   type: number
   level: number
@@ -387,20 +387,63 @@ export interface Internal {
   createGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
   deleteGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
   getGuildBoostHistory(param: { guild_id: string; start_time: number; end_time: number }): Promise<List<GuildBoost>>
+
+  getChannelList(param: { guild_id: string }): Promise<List<Channel>>
+  getChannelView(param: { target_id: string }): Promise<Channel>
+  createChannel(param: {
+    guild_id: string
+    parent_id?: string
+    name: string
+    type?: number
+    limit_amount?: number
+    voice_quality?: string
+    is_category?: 0|1
+  }): Promise<Channel>
+  updateChannel(param: {
+    channel_id: string
+    name?: string
+    topic?: string
+    slow_mode?: 0|5000|10000|15000|30000|60000|120000|300000|600000|900000|1800000|3600000|7200000|21600000
+  }): Promise<Channel>
+  deleteChannel(param: { channel_id: string }): Promise<void>
+  getChannelUserList(param: { channel_id: string }): Promise<List<User>>
+  moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
+  getChannelRoleIndex(param: { channel_id: string }): Promise<{ permission_overwrites: Overwrite; permission_users: List<User>; permission_sync: 0 | 1 }>
+  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }): Promise<{
+    user_id: string
+    allow: number
+    deny: number
+  }>
+  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }): Promise<{
+    role_id: string
+    allow: number
+    deny: number
+  }>
+  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }): Promise<{
+    user_id: string
+    allow: number
+    deny: number
+  }>
+  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }): Promise<{
+    role_id: string
+    allow: number
+    deny: number
+  }>
+  deleteChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<void>
 }
 
 export class Internal {
   constructor(private http: Quester) {}
 
   static define(name: string, method: Quester.Method, path: string) {
-    Internal.prototype[name] = function (this: Internal, ...args: any[]) {
+    Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
       const config: Quester.AxiosRequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
         config.params = args[0]
       } else {
         config.data = args[0]
       }
-      return this.http(method, path, config)
+      return (await this.http(method, path, config))?.data
     }
   }
 }
@@ -437,7 +480,7 @@ Internal.define('getMessageReactionList', 'GET', '/message/reaction-list')
 Internal.define('addMessageReaction', 'POST', '/message/add-reaction')
 Internal.define('deleteMessageReaction', 'POST', '/message/delete-reaction')
 
-Internal.define('getChannelUserList', 'GET', '/channel-user/get-joined-channel')
+Internal.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel')
 
 Internal.define('getPrivateChatList', 'GET', '/user-chat/list')
 Internal.define('getPrivateChatView', 'GET', '/user-chat/view')

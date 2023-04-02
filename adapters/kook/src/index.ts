@@ -13,6 +13,10 @@ export default KookBot
 
 declare global {
     namespace Satori {
+      interface Session {
+        kook?: Kook.Internal
+      }
+
       interface Events {
         'kook/message-btn-click': {}
       }
