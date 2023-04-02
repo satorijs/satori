@@ -88,6 +88,24 @@ export interface MessageMeta {
   }
 }
 
+export interface PrivateChat {
+  code: string
+  last_read_time: number
+  latest_msg_time: number
+  unread_count: number
+  is_friend: boolean
+  is_blocked: boolean
+  is_target_blocked: boolean
+  target_info: PrivateChatUserMeta
+}
+
+export interface PrivateChatUserMeta {
+  id: string
+  username: string
+  online: boolean
+  avatar: string
+}
+
 export interface KmarkdownUserMeta {
   id: string
   username: string
@@ -445,6 +463,11 @@ export interface Internal {
   deleteMessageReaction(param: { msg_id: string; emoji: string; user_id?: string}): Promise<void>
 
   getChannelJoinedUserList(param: { guild_id: string; user_id: string } & Pagination): Promise<List<Channel>>
+
+  getPrivateChatList(param?: Pagination): Promise<List<Omit<PrivateChat, 'is_friend' | 'is_blocked' | 'is_target_blocked'>>>
+  getPrivateChatView(param: { chat_code: string }): Promise<PrivateChat>
+  createPrivateChat(param: { target_id: string }): Promise<PrivateChat>
+  deletePrivateChat(param: { chat_code: string }): Promise<void>
 }
 
 export class Internal {
