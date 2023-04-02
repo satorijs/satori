@@ -550,14 +550,28 @@ export interface Internal {
     Promise<{
       user_id: string
       guild_id: string
-      roles: []
+      roles: number[]
     }>
   revokeGuildRole(param: { guild_id: string; user_id?: string; role_id: number }):
-  Promise<{
-    user_id: string
-    guild_id: string
-    roles: []
-  }>
+    Promise<{
+      user_id: string
+      guild_id: string
+      roles: number[]
+    }>
+
+  getIntimacy(param: { user_id: string }):
+    Promise<{
+      img_url: string
+      social_info: string
+      last_read: number
+      score: number
+      img_list: {
+        id: string
+        url: string
+      }[]
+    }>
+  updateIntimacy(param: { user_id: string; score?: number; social_info?: string; img_id?: string }): Promise<void>
+
 }
 
 type FilterOptional<T> = Pick<
