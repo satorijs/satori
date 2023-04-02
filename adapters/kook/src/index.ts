@@ -14,7 +14,7 @@ export default KookBot
 declare global {
     namespace Satori {
       interface Session {
-        kook?: Kook.Internal
+        kook?: Kook.Payload & Kook.Internal
       }
 
       interface Events {
