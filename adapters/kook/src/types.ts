@@ -474,6 +474,7 @@ export interface Internal {
   }): Promise<Channel>
   deleteChannel(param: { channel_id: string }): Promise<void>
   getChannelUserList(param: { channel_id: string }): Promise<List<User>>
+  kickChannelUser(param: { channel_id: string; user_id: string}): Promise<void>
   moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
   getChannelRoleIndex(param: { channel_id: string }): Promise<{ permission_overwrites: Overwrite; permission_users: List<User>; permission_sync: 0 | 1 }>
   createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }):
@@ -692,6 +693,7 @@ Internal.define('createChannel', 'POST', '/channel/create')
 Internal.define('updateChannel', 'POST', '/channel/update')
 Internal.define('deleteChannel', 'POST', '/channel/delete')
 Internal.define('getChannelUserList', 'GET', '/channel/user-list')
+Internal.define('kickChannelUser', 'POST', '/channel/kickout')
 Internal.define('moveChannelUser', 'POST', '/channel/move-user')
 Internal.define('getChannelRoleIndex', 'GET', '/channel-role/index')
 Internal.define('createChannelRole', 'POST', '/channel-role/create')
