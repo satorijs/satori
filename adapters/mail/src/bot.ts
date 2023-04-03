@@ -1,10 +1,13 @@
 import { Bot, Schema } from '@satorijs/satori'
-import { IMAP } from './mail'
+import { IMAP, SMTP } from './mail'
 
 export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
   imap: IMAP
+  smtp: SMTP
   async start() {
-    this.imap = new IMAP(this.config)
+    this.imap = new IMAP(this.config, () => {})
+    this.smtp = new SMTP(this.config)
+    this.smtp.send('i@anillc.cn', 'qwq')
   }
 
   async stop() {
@@ -14,6 +17,7 @@ export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
 
 export namespace MailBot {
   export interface Config extends Bot.Config {
+    name: string
     username: string
     password: string
     imap: {
@@ -29,6 +33,8 @@ export namespace MailBot {
   }
 
   export const Config = Schema.object({
+    selfId: Schema.string().description('邮件地址 (为空则与用户名相同)'),
+    name: Schema.string().description('发送邮件时显示的名称'),
     username: Schema.string().description('用户名').required(),
     password: Schema.string().description('密码').required(),
     imap: Schema.intersect([
@@ -55,7 +61,7 @@ export namespace MailBot {
       Schema.union([
         Schema.object({
           tls: Schema.const(true),
-          port: Schema.number().description('SMTP 服务器端口').default(587),
+          port: Schema.number().description('SMTP 服务器端口').default(465),
         }),
         Schema.object({
           tls: Schema.const(false),

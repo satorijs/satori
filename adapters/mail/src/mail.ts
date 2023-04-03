@@ -1,8 +1,8 @@
 import NodeIMAP from 'node-imap'
-import {} from 'nodemailer'
+import { Transporter, createTransport } from 'nodemailer'
 import { ParsedMail, simpleParser } from 'mailparser'
-import { MailBot } from './bot'
 import { Logger } from '@satorijs/satori'
+import { MailBot } from './bot'
 import { condition } from './utils'
 
 const logger = new Logger('adapter-mail')
@@ -16,7 +16,7 @@ export class IMAP {
   imap: NodeIMAP
   constructor(
     config: MailBot.Config,
-    public cb: (mail: Mail) => void
+    public onMail: (mail: Mail) => void,
   ) {
     this.imap = new NodeIMAP({
       user: config.username,
@@ -24,7 +24,6 @@ export class IMAP {
       host: config.imap.host,
       port: config.imap.port,
       tls: config.imap.tls,
-      debug: console.log
     })
     this.imap.once('ready', () => {
       this.imap.openBox('INBOX', false, this.inbox.bind(this))
@@ -70,10 +69,35 @@ export class IMAP {
               this.error(error)
               return
             }
-            uid.then(uid => this.cb({ uid, mail }))
+            uid.then(uid => this.onMail({ uid, mail }))
           })
         })
       })
     })
+  }
+}
+
+export class SMTP {
+  transporter: Transporter
+  from: string
+  constructor(config: MailBot.Config) {
+    this.transporter = createTransport({
+      host: config.smtp.host,
+      port: config.smtp.port,
+      secure: config.smtp.tls,
+      auth: {
+        user: config.username,
+        pass: config.password,
+      },
+    })
+    const address = config.selfId || config.username
+    this.from = config.name ? `${config.name} <${address}>` : address
+  }
+  async send(to: string, html: string, subject?: string): Promise<string> {
+    const info = await this.transporter.sendMail({
+      from: this.from,
+      to, subject, html,
+    })
+    return info.messageId
   }
 }
