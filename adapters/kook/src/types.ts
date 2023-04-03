@@ -505,13 +505,13 @@ export interface Internal {
 
   getMessageList(param: { target_id: string; msg_id?: string; pin?: 0 | 1; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<List<Message>>
   getMessageView(param: { msg_id: string }): Promise<Message>
-  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id: string }):
+  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id?: string }):
     Promise<{
       msg_id: string
       msg_timestamp: number
       nonce: string
     }>
-  updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id: string }): Promise<void>
+  updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id?: string }): Promise<void>
   deleteMessage(param: { msg_id: string }): Promise<void>
   getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<User[]>
   addMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
