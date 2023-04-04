@@ -1,17 +1,35 @@
-import { Bot, Schema } from '@satorijs/satori'
+import { Bot, Logger, Schema } from '@satorijs/satori'
+import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
+
+const logger = new Logger('adapter-mail')
 
 export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
   imap: IMAP
   smtp: SMTP
   async start() {
-    this.imap = new IMAP(this.config, () => {})
+    // TODO: reconnect
+    this.imap = new IMAP(
+      this.config,
+      this.online.bind(this),
+      this.offline.bind(this),
+      this.onMail.bind(this),
+      this.onError.bind(this),
+    )
     this.smtp = new SMTP(this.config)
     this.smtp.send('i@anillc.cn', 'qwq')
   }
 
   async stop() {
-    
+    this.imap.stop()
+  }
+
+  onError(error: Error) {
+    logger.error(error)
+  }
+
+  onMail(mail: ParsedMail) {
+
   }
 }
 

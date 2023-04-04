@@ -1,22 +1,16 @@
 import NodeIMAP from 'node-imap'
 import { Transporter, createTransport } from 'nodemailer'
 import { ParsedMail, simpleParser } from 'mailparser'
-import { Logger } from '@satorijs/satori'
 import { MailBot } from './bot'
-import { condition } from './utils'
-
-const logger = new Logger('adapter-mail')
-
-export interface Mail {
-  uid: number
-  mail: ParsedMail
-}
 
 export class IMAP {
   imap: NodeIMAP
   constructor(
     config: MailBot.Config,
-    public onMail: (mail: Mail) => void,
+    public onReady: () => void,
+    public onEnd: () => void,
+    public onMail: (mail: ParsedMail) => void,
+    public onError: (error: Error) => void,
   ) {
     this.imap = new NodeIMAP({
       user: config.username,
@@ -28,52 +22,51 @@ export class IMAP {
     this.imap.once('ready', () => {
       this.imap.openBox('INBOX', false, this.inbox.bind(this))
     })
-    this.imap.on('error', this.error.bind(this))
+    this.imap.on('error', this.onError)
+    this.imap.on('end', this.onEnd)
     this.imap.connect()
   }
 
   inbox(error: Error, box: NodeIMAP.Box) {
     if (error) {
-      this.error(error)
+      this.onError(error)
       return
     }
+    this.onReady()
     this.scan()
     this.imap.on('mail', this.scan.bind(this))
-  }
-
-  error(error: Error) {
-    logger.error(error)
-    throw error
   }
 
   scan() {
     this.imap.search(['UNSEEN'], (error, uids) => {
       if (error) {
-        this.error(error)
+        this.onError(error)
         return
       }
       if (uids.length === 0) return
 
       this.imap.setFlags(uids, ['\\SEEN'], (error) => {
-        if (error) this.error(error)
+        if (error) this.onError(error)
       })
 
       // markSeen doesn't work
       const mails = this.imap.fetch(uids, { bodies: '' })
       mails.on('message', message => {
-        const [resolve, uid] = condition<number>()
-        message.once('attributes', attrs => resolve(attrs.uid))
         message.once('body', (stream) => {
           simpleParser(stream, (error, mail) => {
             if (error) {
-              this.error(error)
+              this.onError(error)
               return
             }
-            uid.then(uid => this.onMail({ uid, mail }))
+            this.onMail(mail)
           })
         })
       })
     })
+  }
+
+  stop() {
+    this.imap.end()
   }
 }
 
