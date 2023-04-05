@@ -1,6 +1,7 @@
 import { Bot, Logger, Schema } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
+import { dispatchSession } from './utils'
 
 const logger = new Logger('adapter-mail')
 
@@ -17,7 +18,6 @@ export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
       this.onError.bind(this),
     )
     this.smtp = new SMTP(this.config)
-    this.smtp.send('i@anillc.cn', 'qwq')
   }
 
   async stop() {
@@ -29,7 +29,7 @@ export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
   }
 
   onMail(mail: ParsedMail) {
-
+    dispatchSession(this, mail)
   }
 }
 

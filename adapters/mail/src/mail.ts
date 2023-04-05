@@ -27,7 +27,7 @@ export class IMAP {
     this.imap.connect()
   }
 
-  inbox(error: Error, box: NodeIMAP.Box) {
+  inbox(error: Error) {
     if (error) {
       this.onError(error)
       return
@@ -86,6 +86,7 @@ export class SMTP {
     const address = config.selfId || config.username
     this.from = config.name ? `${config.name} <${address}>` : address
   }
+  // TODO: attachments
   async send(to: string, html: string, subject?: string): Promise<string> {
     const info = await this.transporter.sendMail({
       from: this.from,
