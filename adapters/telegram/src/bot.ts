@@ -178,6 +178,9 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async deleteMessage(chat_id: string, message_id: string | number) {
+    if (chat_id.startsWith('private:')) {
+      chat_id = chat_id.substring(8)
+    }
     message_id = +message_id
     await this.internal.deleteMessage({ chat_id, message_id })
   }
