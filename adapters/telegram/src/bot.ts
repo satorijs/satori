@@ -123,14 +123,19 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       segments.push(h('text', { content: ' ' }))
     }
 
+    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document) => {
+      segments.push(h(type, {
+        ...await this.$getFileFromId(data.file_id),
+        filename: data.file_name,
+      }))
+    }
+
     if (message.location) {
       segments.push(h('location', { lat: message.location.latitude, lon: message.location.longitude }))
-    }
-    if (message.photo) {
+    } else if (message.photo) {
       const photo = message.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
       segments.push(h('image', await this.$getFileFromId(photo.file_id)))
-    }
-    if (message.sticker) {
+    } else if (message.sticker) {
       // TODO: Convert tgs to gif
       // https://github.com/ed-asriyan/tgs-to-gif
       // Currently use thumb only
@@ -144,14 +149,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         logger.warn('get file error', e)
         segments.push(h('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
-    } else if (message.animation) {
-      segments.push(h('image', await this.$getFileFromId(message.animation.file_id)))
     } else if (message.voice) {
-      segments.push(h('audio', await this.$getFileFromId(message.voice.file_id)))
+      segments.push(h('audio', await this.internal.getFile({ file_id: message.voice.file_id })))
+    } else if (message.animation) {
+      await addResource('image', message.animation)
     } else if (message.video) {
-      segments.push(h('video', await this.$getFileFromId(message.video.file_id)))
+      await addResource('video', message.video)
     } else if (message.document) {
-      segments.push(h('file', await this.$getFileFromId(message.document.file_id)))
+      await addResource('file', message.document)
     }
 
     session.elements = segments
