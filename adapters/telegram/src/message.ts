@@ -42,7 +42,7 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
     super(bot, channelId, guildId, options)
-    const chat_id = guildId || channelId.slice(8)
+    const chat_id = guildId || channelId
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
     if (guildId && channelId !== guildId) this.payload.message_thread_id = +channelId
   }
