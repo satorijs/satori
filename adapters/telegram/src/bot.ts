@@ -170,7 +170,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    return this.sendMessage('private:' + userId, content, null, options)
+    return this.sendMessage(userId, content, null, options)
   }
 
   async getMessage() {
