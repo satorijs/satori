@@ -52,12 +52,15 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       // compare verification token
       const enabledVeirfyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
       if (enabledVeirfyTokenVerify.length) {
-        const result = enabledVeirfyTokenVerify.some((bot) => {
-          const token = ctx.request.body?.token
-          if (token === bot.config.verificationToken) return true
-          else return false
-        })
-        if (!result) return (ctx.status = 403)
+        const token = ctx.request.body?.token
+        // only compare token if token exists
+        if (token) {
+          const result = enabledVeirfyTokenVerify.some((bot) => {
+            if (token === bot.config.verificationToken) return true
+            else return false
+          })
+          if (!result) return (ctx.status = 403)
+        }
       }
 
       // dispatch message
