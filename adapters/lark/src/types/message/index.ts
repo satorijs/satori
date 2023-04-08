@@ -19,6 +19,7 @@ export interface MessageContentMap {
   'share_chat': MessageContent.ShareChat
   'share_user': MessageContent.ShareUser
 }
+
 export type MessageContentType<T extends MessageType> = T extends keyof MessageContentMap ? MessageContentMap[T] : any
 
 export interface Sender extends Lark.UserIdentifiers {

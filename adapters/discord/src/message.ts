@@ -262,20 +262,15 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
             }
             const quoted = await this.bot.getMessage(channelId, replyId)
             this.addition.embeds = [{
-              description: `${sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30))}\n\n <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              description: [
+                sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
+                `<t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+              ].join('\n\n'),
               author: {
                 name: quoted.author.nickname || quoted.author.username,
                 icon_url: quoted.author.avatar,
               },
             }]
-
-            // this.addition.embeds = [{
-            //   description: `${sanity(quoted.author.nickname || quoted.author.username)} <t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
-            //   footer: {
-            //     text: parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30) || " ",
-            //     icon_url: quoted.author.avatar
-            //   }
-            // }]
           }
         }
 
