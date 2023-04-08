@@ -26,8 +26,6 @@ export interface Quester {
 }
 
 export class Quester {
-  agents: Dict<Agent> = Object.create(null)
-
   constructor(ctx: Context, config: Context.Config) {
     return Quester.create(config.request)
   }
@@ -45,12 +43,12 @@ export class Quester {
 
   agent(url: string, persist = true) {
     if (!url) return
-    if (this.agents[url]) return this.agents[url]
+    if (Quester.agents[url]) return Quester.agents[url]
     const { protocol } = new URL(url)
     const callback = Quester.proxies[protocol.slice(0, -1)]
-    if (this.agents[url]) return this.agents[url]
+    if (!callback) return
     const agent = callback(url)
-    if (persist) this.agents[url] = agent
+    if (persist) Quester.agents[url] = agent
     return agent
   }
 
@@ -117,6 +115,7 @@ export namespace Quester {
   export type AxiosRequestConfig = types.AxiosRequestConfig
   export type CreateAgent = (opts: string) => Agent
 
+  export const agents: Dict<Agent> = Object.create(null)
   export const proxies: Dict<CreateAgent> = Object.create(null)
 
   export function defineAgent(protocols: string[], callback: CreateAgent) {
