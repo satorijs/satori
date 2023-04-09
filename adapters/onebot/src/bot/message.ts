@@ -137,6 +137,18 @@ export class OneBotMessenger extends Messenger<BaseBot> {
     } else if (type === 'onebot:gift') {
       await this.flush()
       this.children.push({ type: 'gift', data: attrs })
+    } else if (type === 'onebot:share') {
+      await this.flush()
+      this.children.push({ type: 'share', data: attrs })
+    } else if (type === 'onebot:json') {
+      await this.flush()
+      this.children.push({ type: 'json', data: attrs })
+    } else if (type === 'onebot:xml') {
+      await this.flush()
+      this.children.push({ type: 'xml', data: attrs })
+    } else if (type === 'onebot:cardimage') {
+      await this.flush()
+      this.children.push({ type: 'cardimage', data: attrs })
     } else if (type === 'author') {
       Object.assign(this.stack[0].author, attrs)
     } else if (type === 'figure' && !this.bot.parent) {
