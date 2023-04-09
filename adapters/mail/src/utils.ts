@@ -12,7 +12,7 @@ export async function adaptMessage(
   message.messageId = mail.messageId
   message.userId = mail.from.value[0].address
   message.channelId = `private:${message.userId}`
-  message.guildId= message.userId
+  message.guildId = message.userId
   message.timestamp = +mail.date
   message.author = {
     userId: mail.from.value[0].address,
@@ -140,7 +140,7 @@ const entities = {
   gt: '>',
   quot: '"',
   amp: '&',
-  apos: '\''
+  apos: '\'',
 }
 
 function decodeHE(text: string) {

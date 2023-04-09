@@ -1,4 +1,4 @@
-import { Messenger, Element } from '@satorijs/satori'
+import { Element, Messenger } from '@satorijs/satori'
 import { MailBot } from './bot'
 import { Attachment } from './mail'
 
@@ -33,6 +33,7 @@ export class MailMessenger extends Messenger<MailBot> {
     this.reply = undefined
     this.attachments = []
   }
+
   async visit(element: Element) {
     const { type, attrs, children } = element
     if (type === 'text') {
@@ -78,7 +79,8 @@ export class MailMessenger extends Messenger<MailBot> {
         const cid = randomId()
         const { filename, mime, data } = await this.bot.ctx.http.file(attrs.url)
         this.attachments.push({
-          filename, cid,
+          cid,
+          filename,
           content: Buffer.from(data),
           contentType: mime,
         })

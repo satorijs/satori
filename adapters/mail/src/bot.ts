@@ -87,7 +87,7 @@ export namespace MailBot {
         Schema.object({
           tls: Schema.const(false),
           port: Schema.number().description('IMAP 服务器端口').default(143),
-        })
+        }),
       ]),
     ]),
     smtp: Schema.intersect([
@@ -103,7 +103,7 @@ export namespace MailBot {
         Schema.object({
           tls: Schema.const(false),
           port: Schema.number().description('SMTP 服务器端口').default(25),
-        })
+        }),
       ]),
     ]),
   })

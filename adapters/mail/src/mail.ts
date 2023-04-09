@@ -1,5 +1,5 @@
 import NodeIMAP from 'node-imap'
-import { Transporter, createTransport } from 'nodemailer'
+import { createTransport, Transporter } from 'nodemailer'
 import { ParsedMail, simpleParser } from 'mailparser'
 import { MailBot } from './bot'
 
@@ -105,6 +105,7 @@ export class SMTP {
     const address = config.selfId || config.username
     this.from = config.name ? `${config.name} <${address}>` : address
   }
+
   async send(options: SendOptions): Promise<string> {
     const info = await this.transporter.sendMail({
       ...options,
