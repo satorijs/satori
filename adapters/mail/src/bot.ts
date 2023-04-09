@@ -1,11 +1,12 @@
-import { Bot, Logger, Schema } from '@satorijs/satori'
+import { Bot, Fragment, Logger, Schema, SendOptions } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
+import { MailMessenger } from './message'
 import { dispatchSession } from './utils'
 
 const logger = new Logger('adapter-mail')
 
-export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
+export class MailBot extends Bot<MailBot.Config> {
   imap: IMAP
   smtp: SMTP
   async start() {
@@ -31,6 +32,14 @@ export class MailBot<T extends MailBot.Config = MailBot.Config> extends Bot<T> {
   onMail(mail: ParsedMail) {
     dispatchSession(this, mail)
   }
+
+  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+    return await new MailMessenger(this, channelId, guildId, options).send(content)
+  }
+
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    return await this.sendMessage(`private:${userId}`, content, null, options)
+  }
 }
 
 export namespace MailBot {
@@ -38,6 +47,7 @@ export namespace MailBot {
     name: string
     username: string
     password: string
+    subject: string
     imap: {
       host: string
       port: number
@@ -55,6 +65,7 @@ export namespace MailBot {
     name: Schema.string().description('发送邮件时显示的名称'),
     username: Schema.string().description('用户名').required(),
     password: Schema.string().description('密码').required(),
+    subject: Schema.string().description('机器人发送的邮件主题').default('Koishi'),
     imap: Schema.intersect([
       Schema.object({
         host: Schema.string().description('IMAP 服务器地址').required(),

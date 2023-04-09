@@ -70,6 +70,21 @@ export class IMAP {
   }
 }
 
+export interface Attachment {
+  filename?: string
+  content: Buffer
+  contentType: string
+  cid?: string
+}
+
+export interface SendOptions {
+  to: string
+  html: string
+  attachments?: Attachment[]
+  subject?: string
+  inReplyTo?: string
+}
+
 export class SMTP {
   transporter: Transporter
   from: string
@@ -86,11 +101,10 @@ export class SMTP {
     const address = config.selfId || config.username
     this.from = config.name ? `${config.name} <${address}>` : address
   }
-  // TODO: attachments
-  async send(to: string, html: string, subject?: string): Promise<string> {
+  async send(options: SendOptions): Promise<string> {
     const info = await this.transporter.sendMail({
+      ...options,
       from: this.from,
-      to, subject, html,
     })
     return info.messageId
   }

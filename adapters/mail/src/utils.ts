@@ -10,7 +10,9 @@ export async function adaptMessage(
 ): Promise<Universal.Message> {
   message.subtype = 'private'
   message.messageId = mail.messageId
-  message.channelId = `private:${bot.selfId}`
+  message.userId = mail.from.value[0].address
+  message.channelId = `private:${message.userId}`
+  message.guildId= message.userId
   message.timestamp = mail.date.getTime()
   message.author = {
     userId: mail.from.value[0].address,
@@ -65,8 +67,9 @@ export async function adaptMessage(
               break
             }
             case 'p': {
+              content += '<p>'
               visit(node.body)
-              content += '\n'
+              content += '</p>'
               break
             }
             case 'sub': {
@@ -88,7 +91,7 @@ export async function adaptMessage(
                 if (alt) content += alt
                 break
               }
-              if (src.startsWith('data:') || src.startsWith('https:') || src.startsWith('http:')) {
+              if (src.match(/^(data|https?):/)) {
                 content += `<image url="${src}"/>`
                 break
               }
