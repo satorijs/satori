@@ -10,11 +10,10 @@ export class MailBot extends Bot<MailBot.Config> {
   imap: IMAP
   smtp: SMTP
   async start() {
-    // TODO: reconnect
     this.imap = new IMAP(
       this.config,
       this.online.bind(this),
-      this.offline.bind(this),
+      this.onClose.bind(this),
       this.onMail.bind(this),
       this.onError.bind(this),
     )
@@ -31,6 +30,15 @@ export class MailBot extends Bot<MailBot.Config> {
 
   onMail(mail: ParsedMail) {
     dispatchSession(this, mail)
+  }
+
+  onClose() {
+    if (this.status === 'disconnect') {
+      this.offline()
+      return
+    }
+    logger.info('IMAP disconnected, reconnecting...')
+    this.imap.connect()
   }
 
   async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {

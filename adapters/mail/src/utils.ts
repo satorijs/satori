@@ -1,4 +1,4 @@
-import { segment, Universal } from '@satorijs/satori'
+import { defineProperty, segment, Universal } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { INode, parse, SyntaxKind } from 'html5parser'
 import { MailBot } from './bot'
@@ -20,12 +20,12 @@ export async function adaptMessage(
   }
   let content = ''
   if (!mail.html) {
-    content = segment.escape(mail.text)
+    content = mail.text
   } else {
     function visit(nodes: INode[]) {
       for (const node of nodes) {
         if (node.type === SyntaxKind.Text) {
-          content += segment.escape(node.value)
+          content += node.value
         } else {
           switch (node.name) {
             case 'a': {
@@ -101,9 +101,10 @@ export async function adaptMessage(
             case 'head':
             case 'script':
             case 'style':
+            case 'meta':
               break
             default:
-              visit(node.body)
+              if (node.body) visit(node.body)
           }
         }
       }
@@ -122,5 +123,6 @@ export async function dispatchSession(bot: MailBot, mail: ParsedMail) {
   if (!await adaptMessage(bot, mail, session)) {
     return null
   }
+  defineProperty(session, 'mail', mail)
   bot.dispatch(session)
 }

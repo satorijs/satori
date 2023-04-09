@@ -6,25 +6,33 @@ import { MailBot } from './bot'
 export class IMAP {
   imap: NodeIMAP
   constructor(
-    config: MailBot.Config,
+    public config: MailBot.Config,
     public onReady: () => void,
-    public onEnd: () => void,
+    public onClose: () => void,
     public onMail: (mail: ParsedMail) => void,
     public onError: (error: Error) => void,
   ) {
+    this.connect()
+  }
+
+  connect() {
     this.imap = new NodeIMAP({
-      user: config.username,
-      password: config.password,
-      host: config.imap.host,
-      port: config.imap.port,
-      tls: config.imap.tls,
+      user: this.config.username,
+      password: this.config.password,
+      host: this.config.imap.host,
+      port: this.config.imap.port,
+      tls: this.config.imap.tls,
     })
-    this.imap.once('ready', () => {
+    this.imap.on('ready', () => {
       this.imap.openBox('INBOX', false, this.inbox.bind(this))
     })
     this.imap.on('error', this.onError)
-    this.imap.on('end', this.onEnd)
+    this.imap.on('close', this.onClose)
     this.imap.connect()
+  }
+
+  stop() {
+    this.imap.end()
   }
 
   inbox(error: Error) {
@@ -63,10 +71,6 @@ export class IMAP {
         })
       })
     })
-  }
-
-  stop() {
-    this.imap.end()
   }
 }
 
