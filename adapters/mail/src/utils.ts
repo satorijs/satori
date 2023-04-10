@@ -20,12 +20,12 @@ export async function adaptMessage(
   }
   let content = ''
   if (!mail.html) {
-    content = mail.text
+    content = segment.escape(mail.text)
   } else {
     function visit(nodes: INode[]) {
       for (const node of nodes) {
         if (node.type === SyntaxKind.Text) {
-          content += node.value
+          content += segment.escape(decodeHE(node.value).trim() || ' ')
         } else {
           switch (node.name) {
             case 'a': {
@@ -125,4 +125,37 @@ export async function dispatchSession(bot: MailBot, mail: ParsedMail) {
   }
   defineProperty(session, 'mail', mail)
   bot.dispatch(session)
+}
+
+// this is not a full list
+const entities = {
+  nbsp: ' ',
+  cent: '¢',
+  pound: '£',
+  yen: '¥',
+  euro: '€',
+  copy: '©',
+  reg: '®',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  amp: '&',
+  apos: '\''
+}
+
+function decodeHE(text: string) {
+  const regex = /&(([a-z0-9]+)|(#[0-9]{1,6})|(#x[0-9a-fA-F]{1,6}));/ig
+  return text.replace(regex, (_1, _2, name: string, dec: string, hex: string) => {
+    if (name) {
+      if (name in entities) {
+        return entities[name]
+      } else {
+        return text
+      }
+    } else if (dec) {
+      return String.fromCharCode(+dec.substring(1))
+    } else if (hex) {
+      return String.fromCharCode(parseInt(hex.substring(2), 16))
+    }
+  })
 }
