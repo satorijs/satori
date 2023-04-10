@@ -15,13 +15,20 @@ export class MailMessenger extends Messenger<MailBot> {
   figure = false
   async flush() {
     if (!this.buffer && this.attachments.length === 0) return
-    await this.bot.smtp.send({
+    const messageId = await this.bot.smtp.send({
       to: this.channelId.substring(8),
-      html: this.buffer,
+      html: `<pre>${this.buffer}</pre>`,
       attachments: this.attachments,
       inReplyTo: this.reply,
       subject: this.bot.config.subject,
     })
+    const session = this.bot.session()
+    session.messageId = messageId
+    session.timestamp = +new Date()
+    session.userId = this.bot.selfId
+    this.results.push(session)
+    session.app.emit(session, 'send', session)
+
     this.buffer = ''
     this.reply = undefined
     this.attachments = []
@@ -29,7 +36,7 @@ export class MailMessenger extends Messenger<MailBot> {
   async visit(element: Element) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += `<pre>${attrs.content}</pre>`
+      this.buffer += attrs.content
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '<b>'
       await this.render(children)
@@ -55,9 +62,8 @@ export class MailMessenger extends Messenger<MailBot> {
       await this.render(children)
       this.buffer += `</a>`
     } else if (type === 'p') {
-      this.buffer += `</p>`
       await this.render(children)
-      this.buffer += `</p>`
+      this.buffer += `\n`
     } else if (type === 'at') {
       if (attrs.id) {
         this.buffer += `<a href="mailto:${attrs.id}">@${attrs.id}</a>`

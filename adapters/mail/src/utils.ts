@@ -13,7 +13,7 @@ export async function adaptMessage(
   message.userId = mail.from.value[0].address
   message.channelId = `private:${message.userId}`
   message.guildId= message.userId
-  message.timestamp = mail.date.getTime()
+  message.timestamp = +mail.date
   message.author = {
     userId: mail.from.value[0].address,
     nickname: mail.from.value[0].name,
