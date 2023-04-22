@@ -22,7 +22,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@koishijs/eslint-config": "^1.0.1",
+    "@koishijs/eslint-config": "^1.0.2",
     "@types/chai": "^4.3.4",
     "@types/mocha": "^9.1.1",
     "@types/node": "^18.15.3",

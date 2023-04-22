@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-mail",
   "description": "Mail Adapter for Satorijs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "adapters/discord"
+    "directory": "adapters/mail"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.2.3"
+    "@satorijs/satori": "^2.3.2"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.0",
@@ -35,7 +35,6 @@
     "nodemailer": "^6.9.1"
   },
   "devDependencies": {
-    "@types/mailparser": "^3.4.0",
     "@types/node-imap": "^0.9.0",
     "@types/nodemailer": "^6.4.7"
   }

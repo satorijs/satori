@@ -9,6 +9,7 @@ const logger = new Logger('adapter-mail')
 export class MailBot extends Bot<MailBot.Config> {
   imap: IMAP
   smtp: SMTP
+
   async start() {
     this.imap = new IMAP(
       this.config,
@@ -69,40 +70,40 @@ export namespace MailBot {
   }
 
   export const Config = Schema.object({
-    selfId: Schema.string().description('邮件地址 (为空则与用户名相同)'),
-    name: Schema.string().description('发送邮件时显示的名称'),
-    username: Schema.string().description('用户名').required(),
-    password: Schema.string().description('密码').required(),
-    subject: Schema.string().description('机器人发送的邮件主题').default('Koishi'),
+    username: Schema.string().description('用户名。').required(),
+    password: Schema.string().description('密码。').required(),
+    selfId: Schema.string().description('邮件地址 (默认与用户名相同)。'),
+    name: Schema.string().description('发送邮件时显示的名称。'),
+    subject: Schema.string().description('机器人发送的邮件主题。').default('Koishi'),
     imap: Schema.intersect([
       Schema.object({
-        host: Schema.string().description('IMAP 服务器地址').required(),
-        tls: Schema.boolean().description('是否开启 TLS 加密').default(true),
+        host: Schema.string().description('IMAP 服务器地址。').required(),
+        tls: Schema.boolean().description('是否开启 TLS 加密。').default(true),
       }),
       Schema.union([
         Schema.object({
           tls: Schema.const(true),
-          port: Schema.number().description('IMAP 服务器端口').default(993),
+          port: Schema.number().description('IMAP 服务器端口。').default(993),
         }),
         Schema.object({
           tls: Schema.const(false),
-          port: Schema.number().description('IMAP 服务器端口').default(143),
+          port: Schema.number().description('IMAP 服务器端口。').default(143),
         }),
       ]),
     ]),
     smtp: Schema.intersect([
       Schema.object({
-        host: Schema.string().description('SMTP 服务器地址').required(),
-        tls: Schema.boolean().description('是否开启 TLS 加密').default(true),
+        host: Schema.string().description('SMTP 服务器地址。').required(),
+        tls: Schema.boolean().description('是否开启 TLS 加密。').default(true),
       }),
       Schema.union([
         Schema.object({
           tls: Schema.const(true),
-          port: Schema.number().description('SMTP 服务器端口').default(465),
+          port: Schema.number().description('SMTP 服务器端口。').default(465),
         }),
         Schema.object({
           tls: Schema.const(false),
-          port: Schema.number().description('SMTP 服务器端口').default(25),
+          port: Schema.number().description('SMTP 服务器端口。').default(25),
         }),
       ]),
     ]),
