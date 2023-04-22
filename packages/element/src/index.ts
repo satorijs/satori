@@ -104,7 +104,7 @@ namespace Element {
 
   export type Fragment = string | Element | (string | Element)[]
   export type Visit<T, S> = (element: Element, session: S) => T
-  export type Render<T, S> = (attrs: Dict<any>, children: Element[], session: S) => T
+  export type Render<T, S> = (attrs: Dict, children: Element[], session: S) => T
   export type SyncTransformer<S = never> = boolean | Fragment | Render<boolean | Fragment, S>
   export type Transformer<S = never> = boolean | Fragment | Render<Awaitable<boolean | Fragment>, S>
 
@@ -369,7 +369,7 @@ namespace Element {
     return typeof source === 'string' ? children.join('') : children
   }
 
-  export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict<any>]) => Element
+  export type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict]) => Element
 
   function createFactory<R extends any[] = any[]>(type: string, ...keys: string[]): Factory<R> {
     return (...args: any[]) => {
@@ -415,6 +415,10 @@ namespace Element {
   export const video = createAssetFactory('video')
   export const audio = createAssetFactory('audio')
   export const file = createAssetFactory('file')
+
+  export function i18n(path: string | Dict, children: any[]) {
+    return Element('i18n', typeof path === 'string' ? { path } : path, children)
+  }
 }
 
 export = Element
