@@ -367,7 +367,7 @@ interface GuildMute {
   user_ids: string[]
 }
 
-interface GuildRole {
+export interface GuildRole {
   role_id: number
   name: string
   color: number
