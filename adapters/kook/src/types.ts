@@ -128,6 +128,12 @@ export interface Message extends MessageBase, MessageMeta {
   extra: MessageExtra | Notice
 }
 
+export interface MessageReturn {
+  msg_id: string
+  msg_timestamp: number
+  nonce: string
+}
+
 export interface Card {
   type: 'card'
   theme?: Card.Theme
@@ -300,6 +306,19 @@ export interface NoticeBody extends Channel, MessageMeta {
   guilds: string[]
 }
 
+export interface ChannelRoleIndex {
+  permission_overwrites: Overwrite
+  permission_users: List<User>
+  permission_sync: 0 | 1
+}
+
+export interface ChannelRole {
+  user_id?: string
+  role_id?: string
+  allow: number
+  deny: number
+}
+
 export interface Emoji {
   id: string
   name: string
@@ -377,6 +396,12 @@ export interface GuildRole {
   permissions: number
 }
 
+export interface GuildRoleReturn {
+  user_id: string
+  guild_id: string
+  roles: number[]
+}
+
 export enum Permissions {
   GUILD_ADMIN = 0,
   GUILD_MANAGE = 1,
@@ -412,19 +437,19 @@ export function hasPermission(permissions: number, permission: Permissions) {
   return (permissions & (1 << permission)) === (1 << permission)
 }
 
-namespace GuildMute {
+export namespace GuildMute {
   export enum Type {
     mic = 1,
     headset = 2,
   }
 }
 
-interface GuildMuteList {
+export interface GuildMuteList {
   mic: GuildMute
   headset: GuildMute
 }
 
-interface GuildBoost {
+export interface GuildBoost {
   user_id: string
   guild_id: string
   start_time: number
@@ -432,7 +457,7 @@ interface GuildBoost {
   user: User
 }
 
-interface Game {
+export interface Game {
   id: number
   name: string
   type: 0 | 1 | 2
@@ -441,6 +466,39 @@ interface Game {
   process_name: string[]
   product_name: string[]
   icon: string
+}
+
+export interface AccessToken {
+  access_token: string
+  expires_in?: number
+  token_type: 'Bearer'
+  scope: string
+}
+
+export interface Intimacy {
+  img_url: string
+  social_info: string
+  last_read: number
+  score: number
+  img_list: {
+    id: string
+    url: string
+  }[]
+}
+
+export interface Invite {
+  guild_id: string
+  channel_id: string
+  url_code: string
+  url: string
+  user: User
+}
+
+export interface BlackList {
+  user_id: string
+  created_time: number
+  remark: string
+  user: User
 }
 
 export interface Internal {
@@ -457,60 +515,22 @@ export interface Internal {
 
   getChannelList(param: { guild_id: string } & Pagination): Promise<List<Channel>>
   getChannelView(param: { target_id: string }): Promise<Channel>
-  createChannel(param: {
-    guild_id: string
-    parent_id?: string
-    name: string
-    type?: number
-    limit_amount?: number
-    voice_quality?: string
-    is_category?: 0|1
-  }): Promise<Channel>
-  updateChannel(param: {
-    channel_id: string
-    name?: string
-    topic?: string
-    slow_mode?: 0|5000|10000|15000|30000|60000|120000|300000|600000|900000|1800000|3600000|7200000|21600000
-  }): Promise<Channel>
+  createChannel(param: { guild_id: string; parent_id?: string; name: string; type?: number; limit_amount?: number; voice_quality?: string; is_category?: 0|1 }): Promise<Channel>
+  updateChannel(param: { channel_id: string; name?: string; topic?: string; slow_mode?: 0|5000|10000|15000|30000|60000|120000|300000|600000|900000|1800000|3600000|7200000|21600000 }): Promise<Channel>
   deleteChannel(param: { channel_id: string }): Promise<void>
   getChannelUserList(param: { channel_id: string }): Promise<List<User>>
   kickChannelUser(param: { channel_id: string; user_id: string}): Promise<void>
   moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
-  getChannelRoleIndex(param: { channel_id: string }): Promise<{ permission_overwrites: Overwrite; permission_users: List<User>; permission_sync: 0 | 1 }>
-  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }):
-    Promise<{
-      user_id: string
-      allow: number
-      deny: number
-    }>
-  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }):
-    Promise<{
-      role_id: string
-      allow: number
-      deny: number
-    }>
-  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }):
-    Promise<{
-      user_id: string
-      allow: number
-      deny: number
-    }>
-  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }):
-    Promise<{
-      role_id: string
-      allow: number
-      deny: number
-    }>
+  getChannelRoleIndex(param: { channel_id: string }): Promise<ChannelRoleIndex>
+  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }): Promise<Omit<ChannelRole, 'role_id'>>
+  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }): Promise<Omit<ChannelRole, 'user_id'>>
+  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }): Promise<Omit<ChannelRole, 'role_id'>>
+  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }): Promise<Omit<ChannelRole, 'user_id'>>
   deleteChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<void>
 
   getMessageList(param: { target_id: string; msg_id?: string; pin?: 0 | 1; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<List<Message>>
   getMessageView(param: { msg_id: string }): Promise<Message>
-  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id?: string }):
-    Promise<{
-      msg_id: string
-      msg_timestamp: number
-      nonce: string
-    }>
+  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id?: string }): Promise<MessageReturn>
   updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id?: string }): Promise<void>
   deleteMessage(param: { msg_id: string }): Promise<void>
   getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<User[]>
@@ -524,16 +544,8 @@ export interface Internal {
   createPrivateChat(param: { target_id: string }): Promise<PrivateChat>
   deletePrivateChat(param: { chat_code: string }): Promise<void>
 
-  getDirectMessageList(param: EitherOr<{ target_id: string; chat_code: string }, 'target_id', 'chat_code'> &
-  { msg_id?: string; flag?: 'before' | 'around' | 'after' } & Pagination):
-    Promise<{ items: Message[] }>
-  createDirectMessage(param: { type?: Type; content: string; quote?: string; nonce?: string} &
-    EitherOr<{ target_id: string; chat_code: string }, 'target_id', 'chat_code'>):
-    Promise<{
-    msg_id: string
-    msg_timestamp: number
-    nonce: string
-  }>
+  getDirectMessageList(param: { target_id?: string; chat_code?: string; msg_id?: string; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<{ items: Message[] }>
+  createDirectMessage(param: { target_id?: string; chat_code?: string; type?: Type; content: string; quote?: string; nonce?: string}): Promise<MessageReturn>
   updateDirectMessage(param: { msg_id: string; content: string; quote?: string}): Promise<void>
   deleteDirectMessage(param: { msg_id: string }): Promise<void>
   getDirectMessageReactionList(param: { msg_id: string; emoji?: string}): Promise<User[]>
@@ -541,13 +553,7 @@ export interface Internal {
   deleteDirectMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>
 
   getGateway(param: { compress?: 0|1 }): Promise<{ url: string }>
-  getToken(param: { grant_type: 'authorization_code'; client_id: string; client_secret: string; code: string; redirect_uri: string}):
-  Promise<{
-    access_token: string
-    expires_in?: number
-    token_type: 'Bearer'
-    scope: string
-  }>
+  getToken(param: { grant_type: 'authorization_code'; client_id: string; client_secret: string; code: string; redirect_uri: string}): Promise<AccessToken>
   // createAsset(param: { file: FormData }): Promise<{ url: string }>
 
   getUserMe(): Promise<User>
@@ -558,30 +564,10 @@ export interface Internal {
   createGuildRole(param: { name?: string; guild_id: string }): Promise<GuildRole>
   updateGuildRole(param: { guild_id: string; role_id: number } & Partial<Omit<GuildRole, 'role_id'>>): Promise<GuildRole>
   deleteGuildRole(param: { guild_id: string; role_id: number }): Promise<void>
-  grantGuildRole(param: { guild_id: string; user_id?: string; role_id: number }):
-    Promise<{
-      user_id: string
-      guild_id: string
-      roles: number[]
-    }>
-  revokeGuildRole(param: { guild_id: string; user_id?: string; role_id: number }):
-    Promise<{
-      user_id: string
-      guild_id: string
-      roles: number[]
-    }>
+  grantGuildRole(param: { guild_id: string; user_id?: string; role_id: number }): Promise<GuildRoleReturn>
+  revokeGuildRole(param: { guild_id: string; user_id?: string; role_id: number }): Promise<GuildRoleReturn>
 
-  getIntimacy(param: { user_id: string }):
-    Promise<{
-      img_url: string
-      social_info: string
-      last_read: number
-      score: number
-      img_list: {
-        id: string
-        url: string
-      }[]
-    }>
+  getIntimacy(param: { user_id: string }): Promise<Intimacy>
   updateIntimacy(param: { user_id: string; score?: number; social_info?: string; img_id?: string }): Promise<void>
 
   getGuildEmojiList(param?: Pagination): Promise<List<Emoji>>
@@ -589,25 +575,11 @@ export interface Internal {
   updateGuildEmoji(param: { name: string; id: string }): Promise<void>
   deleteGuildEmoji(param: { id: string }): Promise<void>
 
-  getInviteList(param: EitherOr<{ guild_id: string; channel_id: string }, 'guild_id', 'channel_id'> & Pagination):
-    Promise<List<{
-      guild_id: string
-      channel_id: string
-      url_code: string
-      url: string
-      user: User
-    }>>
-  createInvite(param: EitherOr<{ guild_id: string; channel_id: string }, 'guild_id', 'channel_id'> & { duration?: number; setting_times?: number }):
-    Promise<{ url: string }>
+  getInviteList(param: { guild_id?: string; channel_id?: string } & Pagination): Promise<List<Invite>>
+  createInvite(param: { guild_id?: string; channel_id?: string; duration?: number; setting_times?: number }): Promise<{ url: string }>
   deleteInvite(param: { url_code: string; guild_id?: string; channel_id?: string }): Promise<void>
 
-  getBlacklist(param: { guild_id: string } & Pagination):
-    Promise<List<{
-      user_id: string
-      created_time: number
-      remark: string
-      user: User
-    }>>
+  getBlacklist(param: { guild_id: string } & Pagination): Promise<List<BlackList>>
   createBlacklist(param: { guild_id: string; target_id: string; remark?: string; del_msg_days?: 0|1|2|3|4|5|6|7 }): Promise<void>
   deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>
 
@@ -621,40 +593,6 @@ export interface Internal {
 
   hasPermission(permissions: number, permission: Permissions): boolean
 }
-
-type FilterOptional<T> = Pick<
-  T,
-  Exclude<
-    {
-      [K in keyof T]: T extends Record<K, T[K]> ? K : never;
-    }[keyof T],
-    undefined
-  >
->
-
-type FilterNotOptional<T> = Pick<
-  T,
-  Exclude<
-    {
-      [K in keyof T]: T extends Record<K, T[K]> ? never : K;
-    }[keyof T],
-    undefined
-  >
->
-
-type PartialEither<T, K extends keyof any> = { [P in Exclude<keyof FilterOptional<T>, K>]-?: T[P] } &
-  { [P in Exclude<keyof FilterNotOptional<T>, K>]?: T[P] } &
-  { [P in Extract<keyof T, K>]?: undefined }
-
-type Object = {
-  [name: string]: any
-}
-
-type EitherOr<O extends Object, L extends string, R extends string> =
-  (
-    PartialEither<Pick<O, L | R>, L> |
-    PartialEither<Pick<O, L | R>, R>
-  ) & Omit<O, L | R>
 
 export class Internal {
   constructor(private http: Quester) {}
