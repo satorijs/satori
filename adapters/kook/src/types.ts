@@ -585,7 +585,7 @@ export interface Internal {
   deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>
 
   // getGuildBadge(param: { guild_id: string; style?: 0|1|2 }): Promise<void> // 未实现
-  getGameList(param?: { type?: '0'|'1'|'2' }): Promise<List<Game>>
+  getGameList(param?: { type?: 0 | 1 | 2 }): Promise<List<Game>>
   createGame(param: { name: string; icon?: string }): Promise<List<Game>>
   updateGame(param: { id: number; name?: string; icon?: string }): Promise<List<Game>>
   deleteGame(param: { id: number }): Promise<void>
