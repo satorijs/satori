@@ -79,7 +79,8 @@ export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result
       return h('at', { type: 'all' })
     },
     face({ id }) {
-      return h('face', { id, platform: bot.platform }, [
+      const name = qface.get(id)?.QDes.slice(1)
+      return h('face', { id, name, platform: bot.platform }, [
         h.image(qface.getUrl(id)),
       ])
     },

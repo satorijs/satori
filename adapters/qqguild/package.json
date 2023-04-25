@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "@qq-guild-sdk/core": "^2.2.2",
-    "qface": "^1.4.0"
+    "qface": "^1.4.1"
   }
 }
