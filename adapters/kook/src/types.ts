@@ -405,7 +405,7 @@ export enum Permissions {
   GUILD_USER_DEAFEN = 24,
   GUILD_USER_NAME_CHANGE_OTHER = 25,
   GUILD_USER_MUTE = 26,
-  CHANNEL_VOICE_BGM = 27
+  CHANNEL_VOICE_BGM = 27,
 }
 
 export function hasPermission(permissions: number, permission: Permissions) {
