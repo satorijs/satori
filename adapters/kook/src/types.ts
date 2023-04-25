@@ -657,9 +657,7 @@ type EitherOr<O extends Object, L extends string, R extends string> =
   ) & Omit<O, L | R>
 
 export class Internal {
-  constructor(private http: Quester) {
-    Internal.prototype['hasPermission'] = hasPermission
-  }
+  constructor(private http: Quester) {}
 
   static define(name: string, method: Quester.Method, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
