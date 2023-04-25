@@ -435,7 +435,7 @@ interface GuildBoost {
 interface Game {
   id: number
   name: string
-  type: 0|1|2
+  type: 0 | 1 | 2
   options: string
   kmhook_admin: boolean
   process_name: string[]
