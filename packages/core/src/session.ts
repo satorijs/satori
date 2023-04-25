@@ -1,4 +1,4 @@
-import { defineProperty } from 'cosmokit'
+import { defineProperty, isNullable } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
 import { Universal } from './universal'
@@ -74,11 +74,11 @@ export class Session {
   }
 
   get content() {
-    return this.elements.join('')
+    return this.elements?.join('')
   }
 
   set content(value: string) {
-    this.elements = segment.parse(value)
+    this.elements = isNullable(value) ? value : segment.parse(value)
   }
 
   async transform(elements: segment[]): Promise<segment[]> {
