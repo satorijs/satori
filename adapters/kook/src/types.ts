@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Quester } from '@satorijs/satori'
 
 export enum Signal {
@@ -88,6 +89,17 @@ export interface MessageMeta {
   }
 }
 
+export interface PrivateChat {
+  code: string
+  last_read_time: number
+  latest_msg_time: number
+  unread_count: number
+  is_friend: boolean
+  is_blocked: boolean
+  is_target_blocked: boolean
+  target_info: User
+}
+
 export interface KmarkdownUserMeta {
   id: string
   username: string
@@ -115,6 +127,12 @@ export interface Message extends MessageBase, MessageMeta {
   reactions: any[]
   mention_info: object
   extra: MessageExtra | Notice
+}
+
+export interface MessageReturn {
+  msg_id: string
+  msg_timestamp: number
+  nonce: string
 }
 
 export interface Card {
@@ -253,8 +271,8 @@ export interface Channel {
   name: string
   user_id: string
   guild_id: string
-  isCategory: number
-  parentId: string
+  is_category: number
+  parent_id: string
   topic: string
   type: number
   level: number
@@ -287,6 +305,19 @@ export interface NoticeBody extends Channel, MessageMeta {
   chat_code: string
   event_time: number
   guilds: string[]
+}
+
+export interface ChannelRoleIndex {
+  permission_overwrites: Overwrite
+  permission_users: List<User>
+  permission_sync: 0 | 1
+}
+
+export interface ChannelRole {
+  user_id?: string
+  role_id?: string
+  allow: number
+  deny: number
 }
 
 export interface Emoji {
@@ -356,23 +387,118 @@ interface GuildMute {
   user_ids: string[]
 }
 
-namespace GuildMute {
+export interface GuildRole {
+  role_id: number
+  name: string
+  color: number
+  position: number
+  hoist: 0 | 1
+  mentionable: 0 | 1
+  permissions: number
+}
+
+export interface GuildRoleReturn {
+  user_id: string
+  guild_id: string
+  roles: number[]
+}
+
+export enum Permissions {
+  GUILD_ADMIN = 0,
+  GUILD_MANAGE = 1,
+  GUILD_LOG = 2,
+  GUILD_INVITE_CREATE = 3,
+  GUILD_INVITE_MANAGE = 4,
+  CHANNEL_MANAGE = 5,
+  GUILD_USER_KICK = 6,
+  GUILD_USER_BAN = 7,
+  GUILD_EMOJI_MANAGE = 8,
+  GUILD_USER_NAME_CHANGE = 9,
+  GUILD_ROLE_MANAGE = 10,
+  CHANNEL_VIEW = 11,
+  CHANNEL_MESSAGE = 12,
+  CHANNEL_MANAGE_MESSAGE = 13,
+  CHANNEL_UPLOAD = 14,
+  CHANNEL_VOICE_CONNECT = 15,
+  CHANNEL_VOICE_MANAGE = 16,
+  CHANNEL_MESSAGE_AT_ALL = 17,
+  CHANNEL_MESSAGE_REACTION_CREATE = 18,
+  CHANNEL_MESSAGE_REACTION_FOLLOW = 19,
+  CHANNEL_VOICE_CONNECT_PASSIVE = 20,
+  CHANNEL_VOICE_SPEAK_KEY_ONLY = 21,
+  CHANNEL_VOICR_SPEAK_FREE = 22,
+  CHANNEL_VOICE_SPEAK = 23,
+  GUILD_USER_DEAFEN = 24,
+  GUILD_USER_NAME_CHANGE_OTHER = 25,
+  GUILD_USER_MUTE = 26,
+  CHANNEL_VOICE_BGM = 27,
+}
+
+export function hasPermission(permissions: number, permission: Permissions) {
+  return (permissions & (1 << permission)) === (1 << permission)
+}
+
+export namespace GuildMute {
   export enum Type {
     mic = 1,
     headset = 2,
   }
 }
 
-interface GuildMuteList {
+export interface GuildMuteList {
   mic: GuildMute
   headset: GuildMute
 }
 
-interface GuildBoost {
+export interface GuildBoost {
   user_id: string
   guild_id: string
   start_time: number
   end_time: number
+  user: User
+}
+
+export interface Game {
+  id: number
+  name: string
+  type: 0 | 1 | 2
+  options: string
+  kmhook_admin: boolean
+  process_name: string[]
+  product_name: string[]
+  icon: string
+}
+
+export interface AccessToken {
+  access_token: string
+  expires_in?: number
+  token_type: 'Bearer'
+  scope: string
+}
+
+export interface Intimacy {
+  img_url: string
+  social_info: string
+  last_read: number
+  score: number
+  img_list: {
+    id: string
+    url: string
+  }[]
+}
+
+export interface Invite {
+  guild_id: string
+  channel_id: string
+  url_code: string
+  url: string
+  user: User
+}
+
+export interface BlackList {
+  user_id: string
+  created_time: number
+  remark: string
   user: User
 }
 
@@ -387,20 +513,102 @@ export interface Internal {
   createGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
   deleteGuildMute(param: { guild_id: string; user_id: string; type: GuildMute.Type }): Promise<void>
   getGuildBoostHistory(param: { guild_id: string; start_time: number; end_time: number }): Promise<List<GuildBoost>>
+
+  getChannelList(param: { guild_id: string } & Pagination): Promise<List<Channel>>
+  getChannelView(param: { target_id: string }): Promise<Channel>
+  createChannel(param: { guild_id: string; parent_id?: string; name: string; type?: number; limit_amount?: number; voice_quality?: string; is_category?: 0|1 }): Promise<Channel>
+  updateChannel(param: { channel_id: string; name?: string; topic?: string; slow_mode?: 0|5000|10000|15000|30000|60000|120000|300000|600000|900000|1800000|3600000|7200000|21600000 }): Promise<Channel>
+  deleteChannel(param: { channel_id: string }): Promise<void>
+  getChannelUserList(param: { channel_id: string }): Promise<List<User>>
+  kickChannelUser(param: { channel_id: string; user_id: string}): Promise<void>
+  moveChannelUser(param: { target_id: string; user_ids: [] }): Promise<void>
+  getChannelRoleIndex(param: { channel_id: string }): Promise<ChannelRoleIndex>
+  createChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string }): Promise<Omit<ChannelRole, 'role_id'>>
+  createChannelRole(param: { channel_id: string; type: 'role_id'; value?: string }): Promise<Omit<ChannelRole, 'user_id'>>
+  updateChannelRole(param: { channel_id: string; type?: 'user_id'; value?: string; allow?: number; deny?: number }): Promise<Omit<ChannelRole, 'role_id'>>
+  updateChannelRole(param: { channel_id: string; type: 'role_id'; value?: string; allow?: number; deny?: number }): Promise<Omit<ChannelRole, 'user_id'>>
+  deleteChannelRole(param: { channel_id: string; type?: 'role_id' | 'user_id'; value?: string }): Promise<void>
+
+  getMessageList(param: { target_id: string; msg_id?: string; pin?: 0 | 1; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<List<Message>>
+  getMessageView(param: { msg_id: string }): Promise<Message>
+  createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id?: string }): Promise<MessageReturn>
+  updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id?: string }): Promise<void>
+  deleteMessage(param: { msg_id: string }): Promise<void>
+  getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<User[]>
+  addMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
+  deleteMessageReaction(param: { msg_id: string; emoji: string; user_id?: string}): Promise<void>
+
+  getChannelJoinedUserList(param: { guild_id: string; user_id: string } & Pagination): Promise<List<Channel>>
+
+  getPrivateChatList(param?: Pagination): Promise<List<Omit<PrivateChat, 'is_friend' | 'is_blocked' | 'is_target_blocked'>>>
+  getPrivateChatView(param: { chat_code: string }): Promise<PrivateChat>
+  createPrivateChat(param: { target_id: string }): Promise<PrivateChat>
+  deletePrivateChat(param: { chat_code: string }): Promise<void>
+
+  getDirectMessageList(param: { target_id?: string; chat_code?: string; msg_id?: string; flag?: 'before' | 'around' | 'after' } & Pagination): Promise<{ items: Message[] }>
+  createDirectMessage(param: { target_id?: string; chat_code?: string; type?: Type; content: string; quote?: string; nonce?: string}): Promise<MessageReturn>
+  updateDirectMessage(param: { msg_id: string; content: string; quote?: string}): Promise<void>
+  deleteDirectMessage(param: { msg_id: string }): Promise<void>
+  getDirectMessageReactionList(param: { msg_id: string; emoji?: string}): Promise<User[]>
+  addDirectMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>
+  deleteDirectMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>
+
+  getGateway(param: { compress?: 0|1 }): Promise<{ url: string }>
+  getToken(param: { grant_type: 'authorization_code'; client_id: string; client_secret: string; code: string; redirect_uri: string}): Promise<AccessToken>
+  // createAsset(param: { file: FormData }): Promise<{ url: string }>
+
+  getUserMe(): Promise<User>
+  getUserView(param: { user_id: string; guild_id?: string }): Promise<User>
+  offline(): Promise<void>
+
+  getGuildRoleList(param: { guild_id: string } & Pagination): Promise<List<GuildRole>>
+  createGuildRole(param: { name?: string; guild_id: string }): Promise<GuildRole>
+  updateGuildRole(param: { guild_id: string; role_id: number } & Partial<Omit<GuildRole, 'role_id'>>): Promise<GuildRole>
+  deleteGuildRole(param: { guild_id: string; role_id: number }): Promise<void>
+  grantGuildRole(param: { guild_id: string; user_id?: string; role_id: number }): Promise<GuildRoleReturn>
+  revokeGuildRole(param: { guild_id: string; user_id?: string; role_id: number }): Promise<GuildRoleReturn>
+
+  getIntimacy(param: { user_id: string }): Promise<Intimacy>
+  updateIntimacy(param: { user_id: string; score?: number; social_info?: string; img_id?: string }): Promise<void>
+
+  getGuildEmojiList(param?: Pagination): Promise<List<Emoji>>
+  // createGuildEmoji(param: { name?: string; guild_id: string; emoji: FormData }): Promise<Emoji>
+  updateGuildEmoji(param: { name: string; id: string }): Promise<void>
+  deleteGuildEmoji(param: { id: string }): Promise<void>
+
+  getInviteList(param: { guild_id?: string; channel_id?: string } & Pagination): Promise<List<Invite>>
+  createInvite(param: { guild_id?: string; channel_id?: string; duration?: number; setting_times?: number }): Promise<{ url: string }>
+  deleteInvite(param: { url_code: string; guild_id?: string; channel_id?: string }): Promise<void>
+
+  getBlacklist(param: { guild_id: string } & Pagination): Promise<List<BlackList>>
+  createBlacklist(param: { guild_id: string; target_id: string; remark?: string; del_msg_days?: 0|1|2|3|4|5|6|7 }): Promise<void>
+  deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>
+
+  // getGuildBadge(param: { guild_id: string; style?: 0|1|2 }): Promise<void> // 未实现
+  getGameList(param?: { type?: 0 | 1 | 2 }): Promise<List<Game>>
+  createGame(param: { name: string; icon?: string }): Promise<List<Game>>
+  updateGame(param: { id: number; name?: string; icon?: string }): Promise<List<Game>>
+  deleteGame(param: { id: number }): Promise<void>
+  createGameActivity(param: { id: number; data_type: 1|2; software?: 'cloudmusic'|'qqmusic'|'kugou'; singer?: string; music_name?: string}): Promise<void>
+  deleteGameActivity(param: { data_type: 1|2 }): Promise<void>
+
+  hasPermission(permissions: number, permission: Permissions): boolean
 }
 
 export class Internal {
   constructor(private http: Quester) {}
 
   static define(name: string, method: Quester.Method, path: string) {
-    Internal.prototype[name] = function (this: Internal, ...args: any[]) {
+    Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
       const config: Quester.AxiosRequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
         config.params = args[0]
       } else {
         config.data = args[0]
       }
-      return this.http(method, path, config)
+      const req = await this.http(method, path, config)
+      if (req?.code !== 0) throw new Error(req?.message || 'Unexpected Error')
+      return req?.data
     }
   }
 }
@@ -422,6 +630,7 @@ Internal.define('createChannel', 'POST', '/channel/create')
 Internal.define('updateChannel', 'POST', '/channel/update')
 Internal.define('deleteChannel', 'POST', '/channel/delete')
 Internal.define('getChannelUserList', 'GET', '/channel/user-list')
+Internal.define('kickChannelUser', 'POST', '/channel/kickout')
 Internal.define('moveChannelUser', 'POST', '/channel/move-user')
 Internal.define('getChannelRoleIndex', 'GET', '/channel-role/index')
 Internal.define('createChannelRole', 'POST', '/channel-role/create')
@@ -437,7 +646,7 @@ Internal.define('getMessageReactionList', 'GET', '/message/reaction-list')
 Internal.define('addMessageReaction', 'POST', '/message/add-reaction')
 Internal.define('deleteMessageReaction', 'POST', '/message/delete-reaction')
 
-Internal.define('getChannelUserList', 'GET', '/channel-user/get-joined-channel')
+Internal.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel')
 
 Internal.define('getPrivateChatList', 'GET', '/user-chat/list')
 Internal.define('getPrivateChatView', 'GET', '/user-chat/view')
@@ -445,7 +654,6 @@ Internal.define('createPrivateChat', 'POST', '/user-chat/create')
 Internal.define('deletePrivateChat', 'POST', '/user-chat/delete')
 
 Internal.define('getDirectMessageList', 'GET', '/direct-message/list')
-Internal.define('getDirectMessageView', 'GET', '/direct-message/view')
 Internal.define('createDirectMessage', 'POST', '/direct-message/create')
 Internal.define('updateDirectMessage', 'POST', '/direct-message/update')
 Internal.define('deleteDirectMessage', 'POST', '/direct-message/delete')
@@ -461,6 +669,7 @@ Internal.define('getUserMe', 'GET', '/user/me')
 Internal.define('getUserView', 'GET', '/user/view')
 Internal.define('offline', 'POST', '/user/offline')
 
+Internal.define('getGuildRoleList', 'GET', '/guild-role/list')
 Internal.define('createGuildRole', 'POST', '/guild-role/create')
 Internal.define('updateGuildRole', 'POST', '/guild-role/update')
 Internal.define('deleteGuildRole', 'POST', '/guild-role/delete')

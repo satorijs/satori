@@ -1,4 +1,4 @@
-import { Bot, h, hyphenate, Session, Universal } from '@satorijs/satori'
+import { Bot, defineProperty, h, hyphenate, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
@@ -117,6 +117,8 @@ function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
 
 export function adaptSession(bot: Bot, input: any) {
   const session = bot.session()
+  defineProperty(session, 'kook', Object.create(bot.internal))
+  Object.assign(session.kook, input)
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
     switch (type) {
