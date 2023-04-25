@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { Quester } from '@satorijs/satori'
 
 export enum Signal {
