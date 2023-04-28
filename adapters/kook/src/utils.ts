@@ -213,6 +213,7 @@ export function adaptSession(bot: Bot, input: any) {
         session.userId = body.user_id
         session.content = body.value
         session.targetId = body.target_id
+        session.extra = body
         break
       default: return
     }
