@@ -416,7 +416,7 @@ namespace Element {
   export const audio = createAssetFactory('audio')
   export const file = createAssetFactory('file')
 
-  export function i18n(path: string | Dict, children: any[]) {
+  export function i18n(path: string | Dict, children?: any[]) {
     return Element('i18n', typeof path === 'string' ? { path } : path, children)
   }
 }
