@@ -40,7 +40,7 @@ export class KookMessenger extends Messenger<KookBot> {
   private async transformUrl({ type, attrs }: h) {
     if (['file:', 'base64:', 'data:'].some(protocol => attrs.url.startsWith(protocol))) {
       const payload = new FormData()
-      const result = await this.bot.ctx.http.file(attrs.url)
+      const result = await this.bot.ctx.http.file(attrs.url, attrs)
       payload.append('file', Buffer.from(result.data), {
         filename: attrs.file || result.filename,
       })
@@ -50,6 +50,7 @@ export class KookMessenger extends Messenger<KookBot> {
       const res = await this.bot.ctx.http.get<internal.Readable>(attrs.url, {
         headers: { accept: type + '/*' },
         responseType: 'stream',
+        timeout: +attrs.timeout || undefined,
       })
       const payload = new FormData()
       payload.append('file', res, {

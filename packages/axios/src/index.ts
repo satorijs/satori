@@ -90,7 +90,7 @@ export class Quester {
     return trimSlash(this.config.endpoint || '') + url
   }
 
-  async file(url: string): Promise<Quester.File> {
+  async file(url: string, options: Quester.FileOptions = {}): Promise<Quester.File> {
     const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
     if (capture) {
       const [, mime, base64] = capture
@@ -99,7 +99,11 @@ export class Quester {
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
     let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
-    const { headers, data } = await this.axios(url, { method: 'GET', responseType: 'arraybuffer' })
+    const { headers, data } = await this.axios(url, {
+      method: 'GET',
+      responseType: 'arraybuffer',
+      timeout: +options.timeout || undefined,
+    })
     const mime = headers['content-type']
     if (!name.includes('.')) {
       const ext = mimedb[mime]?.extensions?.[0]
@@ -128,6 +132,10 @@ export namespace Quester {
     mime?: string
     filename: string
     data: ArrayBufferLike
+  }
+
+  export interface FileOptions {
+    timeout?: number | string
   }
 
   export const isAxiosError = axios.isAxiosError

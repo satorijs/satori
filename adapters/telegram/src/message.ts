@@ -9,7 +9,7 @@ type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
 
 async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetType> {
   let assetType: AssetType
-  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url)
+  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url, element.attrs)
   if (element.type === 'image') {
     assetType = mime === 'image/gif' ? 'animation' : 'photo'
   } else if (element.type === 'file') {

@@ -69,7 +69,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   }
 
   async sendEmbed(attrs: Dict, payload: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
     const form = new FormData()
     // https://github.com/form-data/form-data/issues/468
     const value = process.env.KOISHI_ENV === 'browser'
@@ -111,6 +111,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     // auto mode
     return await this.bot.ctx.http.head(attrs.url, {
       headers: { accept: type + '/*' },
+      timeout: +attrs.timeout || undefined,
     }).then((headers) => {
       if (headers['content-type'].startsWith(type)) {
         return sendDirect()
