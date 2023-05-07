@@ -122,6 +122,11 @@ export class OneBotMessenger extends Messenger<BaseBot> {
       attrs = { ...attrs }
       attrs.file = attrs.url
       delete attrs.url
+      if (attrs.cache) {
+        attrs.cache = 1
+      } else {
+        attrs.cache = 0
+      }
       const cap = /^data:([\w/-]+);base64,/.exec(attrs.file)
       if (cap) attrs.file = 'base64://' + attrs.file.slice(cap[0].length)
       this.children.push({ type, data: attrs })
