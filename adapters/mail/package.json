@@ -25,14 +25,14 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.3.4"
+    "@satorijs/satori": "^2.3.6"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.0",
     "html5parser": "^2.0.2",
     "mailparser": "^3.6.4",
     "node-imap": "^0.9.6",
-    "nodemailer": "^6.9.1"
+    "nodemailer": "^6.9.2"
   },
   "devDependencies": {
     "@types/node-imap": "^0.9.0",

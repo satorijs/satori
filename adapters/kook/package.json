@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "Kook (Kaiheila) Adapter for Satorijs",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -26,7 +26,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.3.4"
+    "@satorijs/satori": "^2.3.6"
   },
   "dependencies": {
     "form-data": "^4.0.0"
