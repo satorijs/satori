@@ -204,9 +204,6 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
       case 'friend_add':
         session.type = 'friend-added'
         break
-      case 'group_upload':
-        session.type = 'guild-file-added'
-        break
       case 'group_admin':
         session.type = 'guild-member'
         session.subtype = 'role'
@@ -251,6 +248,18 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
       case 'channel_destroyed':
         session.type = 'onebot'
         session.subtype = 'channel-destroyed'
+        break
+      case 'offline_file':
+        session.elements = [h('file', data.file)]
+        session.type = 'message'
+        session.subtype = 'private'
+        session.subsubtype = 'offline-file-added'
+        break
+      case 'group_upload':
+        session.elements = [h('file', data.file)]
+        session.type = 'message'
+        session.subtype = 'group'
+        session.subsubtype = 'guild-file-added'
         break
       default: return
     }

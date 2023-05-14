@@ -398,6 +398,13 @@ export interface Payload extends Message {
   new_info: ChannelInfo
   channel_info: ChannelInfo
   current_reactions: ReactionInfo[]
+  file: File
+}
+
+export interface File {
+  name: string
+  size: number
+  url: string
 }
 
 type id = string | number
