@@ -251,14 +251,12 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
         break
       case 'offline_file':
         session.elements = [h('file', data.file)]
-        session.content = session.elements.join('')
         session.type = 'message'
         session.subtype = 'private'
         session.subsubtype = 'offline-file-added'
         break
       case 'group_upload':
         session.elements = [h('file', data.file)]
-        session.content = session.elements.join('')
         session.type = 'message'
         session.subtype = 'group'
         session.subsubtype = 'guild-file-added'
