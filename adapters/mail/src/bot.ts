@@ -11,6 +11,7 @@ export class MailBot extends Bot<MailBot.Config> {
   smtp: SMTP
 
   async start() {
+    this.username = this.config.username
     this.imap = new IMAP(
       this.config,
       this.online.bind(this),
@@ -79,7 +80,7 @@ export namespace MailBot {
       Schema.object({
         host: Schema.string().description('IMAP 服务器地址。').required(),
         tls: Schema.boolean().description('是否开启 TLS 加密。').default(true),
-      }),
+      }).description('IMAP 设置'),
       Schema.union([
         Schema.object({
           tls: Schema.const(true),
@@ -95,7 +96,7 @@ export namespace MailBot {
       Schema.object({
         host: Schema.string().description('SMTP 服务器地址。').required(),
         tls: Schema.boolean().description('是否开启 TLS 加密。').default(true),
-      }),
+      }).description('SMTP 设置'),
       Schema.union([
         Schema.object({
           tls: Schema.const(true),

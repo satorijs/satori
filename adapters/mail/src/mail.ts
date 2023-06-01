@@ -5,6 +5,7 @@ import { MailBot } from './bot'
 
 export class IMAP {
   imap: NodeIMAP
+
   constructor(
     public config: MailBot.Config,
     public onReady: () => void,
@@ -92,6 +93,7 @@ export interface SendOptions {
 export class SMTP {
   transporter: Transporter
   from: string
+
   constructor(config: MailBot.Config) {
     this.transporter = createTransport({
       host: config.smtp.host,
