@@ -68,7 +68,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     this.status = 'connect'
     try {
       await this.context.parallel('bot-connect', this)
-      await this.adapter.start(this)
+      await this.adapter?.start(this)
     } catch (error) {
       this.offline(error)
     }
@@ -79,7 +79,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     this.status = 'disconnect'
     try {
       await this.context.parallel('bot-disconnect', this)
-      await this.adapter.stop(this)
+      await this.adapter?.stop(this)
     } catch (error) {
       this.context.emit('internal/warning', error)
       this.offline()
