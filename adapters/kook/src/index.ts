@@ -12,13 +12,13 @@ export * from './utils'
 export default KookBot
 
 declare global {
-    namespace Satori {
-      interface Session {
-        kook?: Kook.Payload & Kook.Internal
-      }
-
-      interface Events {
-        'kook/message-btn-click': {}
-      }
+  namespace Satori {
+    interface Session {
+      kook?: Kook.Payload & Kook.Internal
     }
+
+    interface Events {
+      'kook/message-btn-click': {}
+    }
+  }
 }
