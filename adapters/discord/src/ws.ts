@@ -13,10 +13,10 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
   async prepare() {
     if (this._resumeUrl) {
-      return this.bot.http.ws(this._resumeUrl)
+      return this.bot.http.ws(this._resumeUrl + '/?v=10&encoding=json')
     }
     const { url } = await this.bot.internal.getGatewayBot()
-    return this.bot.http.ws(url)
+    return this.bot.http.ws(url + '/?v=10&encoding=json')
   }
 
   heartbeat() {
