@@ -13,6 +13,7 @@ export class MailMessenger extends Messenger<MailBot> {
   reply: string
   attachments: Attachment[] = []
   figure = false
+
   async flush() {
     if (!this.buffer && this.attachments.length === 0) return
     const messageId = await this.bot.smtp.send({

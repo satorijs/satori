@@ -13,7 +13,7 @@ export namespace Universal {
 
     // user
     getSelf(): Promise<User>
-    getUser(userId: string): Promise<User>
+    getUser(userId: string, guildId?: string): Promise<User>
     getFriendList(): Promise<User[]>
     deleteFriend(userId: string): Promise<void>
 
