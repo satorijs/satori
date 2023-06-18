@@ -229,10 +229,18 @@ export interface User {
   avatar: string
   online: boolean
   bot?: boolean
+  roles: number[]
+  vip_avatar?: string
+  is_vip?: boolean
+  mobile_verified: boolean
+  joined_at?: number
+  active_time?: number
+  status: UserStatus
 }
 
 export enum UserStatus {
   normal = 0,
+  normal_1 = 1,
   banned = 10,
 }
 
@@ -271,15 +279,20 @@ export interface Channel {
   name: string
   user_id: string
   guild_id: string
-  is_category: number
+  is_category: boolean
   parent_id: string
   topic: string
-  type: number
+  type: 0 | 1 | 2
   level: number
-  slow_mode: number
-  permission_overwrites: Overwrite
-  permission_users: any
-  permission_sync: 0 | 1
+  slow_mode?: 0 | 5000 | 10000 | 15000 | 30000 | 60000 | 120000 | 300000 | 600000 | 900000 | 1800000 | 3600000 | 7200000 | 21600000
+  has_password?: boolean
+  limit_amount: number
+  permission_overwrites?: Overwrite[]
+  permission_users?: any[]
+  permission_sync?: 0 | 1
+  voice_quality?: '1' | '2' | '3'
+  server_url?: string
+  children?: string[]
 }
 
 export interface NoticeBody extends Channel, MessageMeta {
@@ -365,7 +378,6 @@ export interface GuildList extends List<Guild> {}
 export interface GuildUser extends User {
   joined_at: number
   active_time: number
-  roles: number[]
   is_master: boolean
   abbr: string
 }
@@ -429,8 +441,8 @@ export enum Permissions {
   CHANNEL_VOICR_SPEAK_FREE = 22,
   CHANNEL_VOICE_SPEAK = 23,
   GUILD_USER_DEAFEN = 24,
-  GUILD_USER_NAME_CHANGE_OTHER = 25,
-  GUILD_USER_MUTE = 26,
+  GUILD_USER_MUTEGUILD_USER_NAME_CHANGE_OTHER = 25,
+  GUILD_USER_NAME_CHANGE_OTHER = 26,
   CHANNEL_VOICE_BGM = 27,
 }
 
