@@ -63,7 +63,7 @@ export namespace HttpServer {
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      protocol: Schema.const('http' as const).required(),
+      protocol: Schema.const('http').required(),
       path: Schema.string().description('服务器监听的路径。').default('/onebot'),
       secret: Schema.string().description('接收事件推送时用于验证的字段，应该与 OneBot 的 secret 配置保持一致。').role('secret'),
     }).description('连接设置'),

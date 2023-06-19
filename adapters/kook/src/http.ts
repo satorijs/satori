@@ -44,7 +44,7 @@ export namespace HttpServer {
   }
 
   export const Config: Schema<Config> = Schema.object({
-    protocol: Schema.const('http' as const).required(),
+    protocol: Schema.const('http').required(),
     path: Schema.string().description('服务器监听的路径。').default('/kook'),
     token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     verifyToken: Schema.string().description('机器人的验证令牌。').role('secret').required(),

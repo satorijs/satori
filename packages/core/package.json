@@ -40,6 +40,6 @@
     "cosmokit": "^1.4.2",
     "ws": "^8.13.0",
     "reggol": "^1.4.2",
-    "schemastery": "^3.9.0"
+    "schemastery": "^3.10.0"
   }
 }

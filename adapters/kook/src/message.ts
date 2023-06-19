@@ -205,9 +205,9 @@ export namespace KookMessenger {
 
   export const Config: Schema<KookMessenger.Config> = Schema.object({
     handleMixedContent: Schema.union([
-      Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
-      Schema.const('card' as const).description('使用卡片发送内容'),
-      Schema.const('mixed' as const).description('使用混合模式发送内容'),
+      Schema.const('separate').description('将每个不同形式的内容分开发送'),
+      Schema.const('card').description('使用卡片发送内容'),
+      Schema.const('mixed').description('使用混合模式发送内容'),
     ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
   }).description('发送设置')
 }
