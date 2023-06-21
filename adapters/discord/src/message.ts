@@ -5,6 +5,7 @@ import { Channel, Message } from './types'
 import { adaptMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
+const MaxResourcePerMessage = 10
 
 const logger = new Logger('discord')
 
@@ -24,6 +25,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   private addition: Dict = {}
   private figure: h = null
   private mode: RenderMode = 'default'
+  private resourceBuffer: h[] = []
 
   async post(data?: any, headers?: any) {
     try {
@@ -68,41 +70,53 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }
   }
 
-  async sendEmbed(attrs: Dict, payload: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+  async sendEmbed(resources: h[], payload: Dict) {
     const form = new FormData()
-    // https://github.com/form-data/form-data/issues/468
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
-    form.append('file', value, attrs.file || filename)
+    let attachments = []
+    for (const [idx, element] of resources.entries()) {
+      const { attrs } = element
+      const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+      // https://github.com/form-data/form-data/issues/468
+      const value = process.env.KOISHI_ENV === 'browser'
+        ? new Blob([data], { type: mime })
+        : Buffer.from(data)
+      form.append(`files[${idx}]`, value, attrs.file || filename)
+    }
+
+    payload.attachments = attachments
     form.append('payload_json', JSON.stringify(payload))
     return this.post(form, form.getHeaders())
   }
 
-  async sendAsset(type: string, attrs: Dict<string>, addition: Dict) {
+  async sendAsset(element: h, addition: Dict) {
+    const { attrs, type } = element
     const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessenger.Config
 
-    if (handleMixedContent === 'separate' && addition.content) {
-      await this.post(addition)
-      addition.content = ''
+    if (handleMixedContent === 'separate' && this.buffer.trim().length) {
+      await this.post({ content: this.buffer.trim() })
+      this.buffer = ''
     }
 
     const sendDirect = async () => {
-      if (addition.content) {
-        await this.post(addition)
+      if (this.buffer.trim().length) {
+        await this.post({ ...addition, content: this.buffer.trim() })
+        this.buffer = ''
       }
-      return this.post({ ...addition, content: attrs.url })
+      return this.post({ ...addition, content: encodeURI(attrs.url) })
     }
 
-    const sendDownload = () => this.sendEmbed(attrs, addition)
+    let that = this
+
+    const sendDownload = () => {
+      that.resourceBuffer.push(element)
+    }
 
     if (['file:', 'data:', 'base64:'].some((prefix) => attrs.url.startsWith(prefix))) {
-      return await sendDownload()
+      return sendDownload()
     }
 
     const mode = attrs.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
-    if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
+    if (mode === 'download' || handleMixedContent === 'attach' || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
       return sendDirect()
@@ -121,20 +135,38 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
     }, sendDownload)
   }
 
+  async flushAssets(content: string) {
+    const { handleExternalAsset } = this.bot.config as DiscordMessenger.Config
+    const mode = handleExternalAsset
+    if (mode === 'download') {
+      return this.sendEmbed(this.resourceBuffer, { ...this.addition, content })
+    } else if (mode === 'direct') {
+      return this.post({ ...this.addition, content })
+    }
+  }
+
   async ensureWebhook() {
     return this.bot.ensureWebhook(this.channelId)
   }
 
   async flush() {
     const content = this.buffer.trim()
-    if (!content) return
-    await this.post({ ...this.addition, content })
+    if (!content && !this.resourceBuffer.length) return
+    this.resourceBuffer.length ? await this.flushAssets(content)
+      : await this.post({ ...this.addition, content })
     this.buffer = ''
-    this.addition = {}
+    this.resourceBuffer = []
   }
 
   async visit(element: h) {
     const { type, attrs, children } = element
+    // split text and resources
+    if (!["image", "audio", "video", "file"].includes(type) && this.resourceBuffer.length) {
+      await this.flush()
+    }
+    if (this.resourceBuffer.length >= MaxResourcePerMessage) {
+      await this.flush()
+    }
     if (type === 'text') {
       this.buffer += sanitize(attrs.content)
     } else if (type === 'b' || type === 'strong') {
@@ -191,11 +223,9 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       if (this.mode === 'figure') {
         this.figure = element
       } else {
-        await this.sendAsset(type, attrs, {
-          ...this.addition,
-          content: this.buffer.trim(),
+        await this.sendAsset(element, {
+          ...this.addition
         })
-        this.buffer = ''
       }
     } else if (type === 'share') {
       await this.flush()
@@ -204,16 +234,15 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
         embeds: [{ ...attrs }],
       })
     } else if (type === 'audio') {
-      await this.sendAsset('file', attrs, {
-        ...this.addition,
-        content: this.buffer.trim(),
+      await this.sendAsset(element, {
+        ...this.addition
       })
-      this.buffer = ''
     } else if (type === 'figure') {
       await this.flush()
       this.mode = 'figure'
       await this.render(children)
-      await this.sendAsset(this.figure.type, this.figure.attrs, {
+      await this.flush()
+      await this.sendAsset(this.figure, {
         ...this.addition,
         content: this.buffer.trim(),
       })
