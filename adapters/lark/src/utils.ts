@@ -84,6 +84,7 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
     case 'im.message.receive_v1':
       session.type = 'message'
       session.subtype = body.event.message.chat_type
+      if (session.subtype === 'p2p') session.subtype = 'private'
       adaptSender(body.event.sender, session)
       adaptMessage(bot, body.event, session)
       break

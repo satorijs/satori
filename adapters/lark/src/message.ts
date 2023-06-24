@@ -75,7 +75,7 @@ export class LarkMessenger extends Messenger<FeishuBot> {
     this.richText = undefined
   }
 
-  async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string): Promise<Addition> {
+  async sendFile(type: 'image' | 'video' | 'audio' | 'file', url: string): Promise<Addition> {
     const payload = new FormData()
 
     const assetKey = type === 'image' ? 'image' : 'file'

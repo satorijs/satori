@@ -81,7 +81,7 @@ export namespace MailBot {
 
   export const Config = Schema.object({
     username: Schema.string().description('用户名。').required(),
-    password: Schema.string().description('密码。').required(),
+    password: Schema.string().description('密码或授权码。').required(),
     selfId: Schema.string().description('邮件地址 (默认与用户名相同)。'),
     name: Schema.string().description('发送邮件时显示的名称。'),
     subject: Schema.string().description('机器人发送的邮件主题。').default('Koishi'),
