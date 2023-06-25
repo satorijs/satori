@@ -72,7 +72,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       this.addition.reference = null
     }
 
-    const sender = this.session.bot.internal.send as QQGuild.Sender
+    const sender = this.bot.internal.send as QQGuild.Sender
     let result: QQGuild.Message.Response
 
     try {
@@ -172,7 +172,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     } catch (e) {
       // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
       if ([304031, 304032, 304033].includes(e.code)) {
-        await this.bot.internal.createDMS(this.channelId, this.guildId || this.options.session.guildId)
+        await this.bot.internal.createDMS(this.session.channelId, this.session.guildId || this.options.session.guildId)
         return await super.send(content)
       }
       throw e

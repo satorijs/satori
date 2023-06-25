@@ -1,6 +1,6 @@
-import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
-import { DiscordMessenger } from './message'
+import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
 
@@ -8,6 +8,8 @@ import { WsClient } from './ws'
 import { version } from '../package.json'
 
 export class DiscordBot extends Bot<DiscordBot.Config> {
+  static MessageEncoder = DiscordMessageEncoder
+
   public http: Quester
   public internal: Internal
   public webhooks: Record<string, Webhook> = {}
@@ -57,14 +59,6 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async getSelf() {
     const data = await this.internal.getCurrentUser()
     return adaptUser(data)
-  }
-
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
-    return new DiscordMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions) {
-    return new DiscordMessenger(this, channelId, null, options).send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -139,7 +133,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, DiscordMessenger.Config, WsClient.Config {
+  export interface Config extends Bot.Config, Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
     token: string
   }
 
@@ -148,7 +142,7 @@ export namespace DiscordBot {
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     WsClient.Config,
-    DiscordMessenger.Config,
+    DiscordMessageEncoder.Config,
     Quester.createConfig('https://discord.com/api/v10'),
   ])
 }

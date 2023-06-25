@@ -1,4 +1,4 @@
-import { Dict, h, Logger, Messenger, Quester, Schema, segment, Session, Universal } from '@satorijs/satori'
+import { Dict, h, Logger, MessageEncoder, Quester, Schema, segment, Session, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
@@ -18,7 +18,7 @@ class State {
   constructor(public type: 'message' | 'forward') { }
 }
 
-export class DiscordMessenger extends Messenger<DiscordBot> {
+export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private stack: State[] = [new State('message')]
   private buffer: string = ''
   private addition: Dict = {}
@@ -81,7 +81,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   }
 
   async sendAsset(type: string, attrs: Dict<string>, addition: Dict) {
-    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessenger.Config
+    const { handleMixedContent, handleExternalAsset } = this.bot.config as DiscordMessageEncoder.Config
 
     if (handleMixedContent === 'separate' && addition.content) {
       await this.post(addition)
@@ -101,7 +101,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
       return await sendDownload()
     }
 
-    const mode = attrs.mode as DiscordMessenger.HandleExternalAsset || handleExternalAsset
+    const mode = attrs.mode as DiscordMessageEncoder.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
       return sendDownload()
     } else if (mode === 'direct') {
@@ -304,7 +304,7 @@ export class DiscordMessenger extends Messenger<DiscordBot> {
   }
 }
 
-export namespace DiscordMessenger {
+export namespace DiscordMessageEncoder {
   export type HandleExternalAsset = 'auto' | 'download' | 'direct'
   export type HandleMixedContent = 'auto' | 'separate' | 'attach'
 
@@ -325,7 +325,7 @@ export namespace DiscordMessenger {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<DiscordMessenger.Config> = Schema.object({
+  export const Config: Schema<DiscordMessageEncoder.Config> = Schema.object({
     handleExternalAsset: Schema.union([
       Schema.const('download').description('先下载后发送'),
       Schema.const('direct').description('直接发送链接'),

@@ -1,12 +1,14 @@
-import { Bot, Context, Logger, Quester, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
 
 import { HttpServer } from './http'
-import { FeishuMessenger } from './message'
+import { LarkMessageEncoder } from './message'
 import { Internal } from './types'
 
 const logger = new Logger('lark')
 
 export class LarkBot extends Bot<LarkBot.Config> {
+  static MessageEncoder = LarkMessageEncoder
+
   _token?: string
   _refresher?: NodeJS.Timeout
   http: Quester
@@ -62,14 +64,6 @@ export class LarkBot extends Bot<LarkBot.Config> {
   set token(v: string) {
     this._token = v
     this.http.config.headers.Authorization = `Bearer ${v}`
-  }
-
-  async sendMessage(channelId: string, content: string, guildId?: string, options?: SendOptions): Promise<string[]> {
-    return new FeishuMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(userId: string, content: string, options?: SendOptions): Promise<string[]> {
-    return this.sendMessage(userId, content, null, options)
   }
 
   async deleteMessage(channelId: string, messageId: string): Promise<void> {

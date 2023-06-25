@@ -14,19 +14,9 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
   public results: Session[] = []
   public session: Session
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {
-    this.session = bot.session({
-      type: 'send',
-      author: bot,
-      channelId,
-      guildId,
-      subtype: options.session.subtype ?? (guildId ? 'group' : 'private'),
-    })
-    defineProperty(this.session, bot.platform, Object.create(bot.internal))
-    this.prepare()
-  }
+  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
 
-  prepare() {}
+  async prepare() {}
 
   abstract flush(): Promise<void>
   abstract visit(element: segment): Promise<void>
@@ -41,6 +31,15 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
   }
 
   async send(content: segment.Fragment) {
+    this.session = this.bot.session({
+      type: 'send',
+      author: this.bot,
+      channelId: this.channelId,
+      guildId: this.guildId,
+      subtype: this.options.session.subtype ?? (this.guildId ? 'group' : 'private'),
+    })
+    defineProperty(this.session, this.bot.platform, Object.create(this.bot.internal))
+    await this.prepare()
     this.session.elements = segment.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
     const session = this.options.session ?? this.session

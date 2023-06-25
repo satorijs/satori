@@ -17,7 +17,7 @@ export class MailMessageEncoder extends MessageEncoder<MailBot> {
   async flush() {
     if (!this.buffer && this.attachments.length === 0) return
     const messageId = await this.bot.smtp.send({
-      to: this.channelId,
+      to: this.session.channelId,
       html: `<pre>${this.buffer}</pre>`,
       attachments: this.attachments,
       inReplyTo: this.reply,

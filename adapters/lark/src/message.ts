@@ -1,10 +1,10 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { h, Messenger, Quester } from '@satorijs/satori'
+import { h, MessageEncoder, Quester } from '@satorijs/satori'
 import FormData from 'form-data'
 
-import { FeishuBot } from './bot'
+import { LarkBot } from './bot'
 import { BaseResponse, Message, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
 
@@ -13,7 +13,7 @@ export interface Addition {
   type: MessageType
 }
 
-export class LarkMessenger extends Messenger<FeishuBot> {
+export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
   private quote: string | undefined
   private content = ''
   private addition: Addition
@@ -174,4 +174,4 @@ export class LarkMessenger extends Messenger<FeishuBot> {
   }
 }
 
-export { LarkMessenger as FeishuMessenger }
+export { LarkMessageEncoder as FeishuMessageEncoder }

@@ -1,4 +1,4 @@
-import { h, Messenger, Schema, SendOptions } from '@satorijs/satori'
+import { h, MessageEncoder, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -7,19 +7,22 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class KookMessenger extends Messenger<KookBot> {
+export class KookMessageEncoder extends MessageEncoder<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
   private buffer: string = ''
 
-  constructor(bot: KookBot, channelId: string, guildId?: string, options?: SendOptions) {
-    super(bot, channelId, guildId, options)
-    if (channelId.length > 30) {
-      this.params.chat_code = channelId
+  async prepare() {
+    if (this.session.subtype === 'private') {
+      const { code } = await this.bot.request('POST', '/user-chat/create', { target_id: this.session.channelId })
+      this.session.channelId = code
+    }
+    if (this.session.channelId.length > 30) {
+      this.params.chat_code = this.session.channelId
       this.path = '/user-chat/create-msg'
     } else {
-      this.params.target_id = channelId
+      this.params.target_id = this.session.channelId
       this.path = '/message/create'
     }
   }
@@ -196,14 +199,14 @@ export class KookMessenger extends Messenger<KookBot> {
   }
 }
 
-export namespace KookMessenger {
+export namespace KookMessageEncoder {
   export type HandleMixedContent = 'card' | 'separate' | 'mixed'
 
   export interface Config {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<KookMessenger.Config> = Schema.object({
+  export const Config: Schema<KookMessageEncoder.Config> = Schema.object({
     handleMixedContent: Schema.union([
       Schema.const('separate').description('将每个不同形式的内容分开发送'),
       Schema.const('card').description('使用卡片发送内容'),

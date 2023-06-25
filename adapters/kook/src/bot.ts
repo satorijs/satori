@@ -1,11 +1,11 @@
-import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema } from '@satorijs/satori'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { KookMessenger } from './message'
+import { KookMessageEncoder } from './message'
 
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   http: Quester
@@ -35,15 +35,6 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
       data = data instanceof FormData ? data : JSON.stringify(data)
       return (await this.http(method, path, { data, headers })).data
     }
-  }
-
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
-    return new KookMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(target_id: string, content: Fragment, options?: SendOptions) {
-    const { code } = await this.request('POST', '/user-chat/create', { target_id })
-    return this.sendMessage(code, content, null, options)
   }
 
   async deleteMessage(channelId: string, msg_id: string) {
@@ -118,7 +109,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessenger.Config {}
+  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessageEncoder.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -132,7 +123,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    KookMessenger.Config,
+    KookMessageEncoder.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }
