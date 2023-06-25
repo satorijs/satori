@@ -63,6 +63,7 @@ export namespace Adapter {
       const reconnect = async (initial = false) => {
         logger.debug('websocket client opening')
         const socket = await this.prepare(bot)
+        // remove query args to protect privacy
         const url = socket.url.replace(/\?.+/, '')
 
         socket.addEventListener('error', ({ error }) => {
@@ -76,7 +77,6 @@ export namespace Adapter {
             return bot.status = 'offline'
           }
 
-          // remove query args to protect privacy
           const message = reason.toString() || `failed to connect to ${url}, code: ${code}`
           let timeout = retryInterval
           if (_retryCount >= retryTimes) {

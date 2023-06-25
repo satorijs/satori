@@ -176,6 +176,17 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     await this.internal.deleteMessage({ chat_id, message_id })
   }
 
+  async editMessage(chat_id: string, message_id: string | number, content: h.Fragment): Promise<void> {
+    message_id = +message_id
+    const payload: Telegram.EditMessageTextPayload = {
+      chat_id,
+      message_id,
+      parse_mode: 'html',
+    }
+    payload.text = h.normalize(content).join('')
+    await this.internal.editMessageText(payload)
+  }
+
   static adaptGroup(data: Telegram.Chat): Universal.Guild {
     data['guildId'] = data.id + ''
     data['guildName'] = data.title
