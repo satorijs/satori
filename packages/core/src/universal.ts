@@ -35,6 +35,14 @@ export namespace Universal {
     kickGuildMember(guildId: string, userId: string, permanent?: boolean): Promise<void>
     muteGuildMember(guildId: string, userId: string, duration: number, reason?: string): Promise<void>
 
+    // role
+    setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
+    unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
+    getGuildRoles(guildId: string): Promise<Role[]>
+    createGuildRole(guildId: string, data: Partial<Role>): Promise<Role>
+    modifyGuildRole(guildId: string, roleId: string, data: Partial<Role>): Promise<void>
+    deleteGuildRole(guildId: string, roleId: string): Promise<void>
+
     // channel
     getChannel(channelId: string, guildId?: string): Promise<Channel>
     getChannelList(guildId: string): Promise<Channel[]>
@@ -54,6 +62,16 @@ export namespace Universal {
   export interface Guild {
     guildId: string
     guildName?: string
+  }
+
+  export interface Role {
+    id: string
+    name: string
+    color: number
+    position: number
+    permissions: bigint
+    hoist: boolean
+    mentionable: boolean
   }
 
   export interface UserBase {

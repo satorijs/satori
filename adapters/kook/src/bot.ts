@@ -1,6 +1,6 @@
 import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
 import { Method } from 'axios'
-import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
+import { adaptAuthor, adaptGroup, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
@@ -107,7 +107,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
   }
 
-  createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+  createReaction(channelId: string, messageId: string, emoji: string) {
     if (isDirectChannel(channelId)) {
       return this.internal.addDirectMessageReaction({ msg_id: messageId, emoji })
     } else {
@@ -115,7 +115,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string): Promise<void> {
+  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string) {
     if (isDirectChannel(channelId)) {
       return this.internal.deleteDirectMessageReaction({ msg_id: messageId, emoji, user_id: userId })
     } else {
@@ -131,6 +131,39 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
       users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji })
     }
     return users.map(adaptUser)
+  }
+
+  async setGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    await this.internal.grantGuildRole({ guild_id: guildId, user_id: userId, role_id: +roleId })
+  }
+
+  async unsetGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    await this.internal.revokeGuildRole({ guild_id: guildId, user_id: userId, role_id: +roleId })
+  }
+
+  async getGuildRoles(guildId: string): Promise<Universal.Role[]> {
+    const { items } = await this.internal.getGuildRoleList({ guild_id: guildId })
+    return items.map(decodeRole)
+  }
+
+  async createGuildRole(guildId: string, data: Partial<Universal.Role>) {
+    const role = await this.internal.createGuildRole({
+      guild_id: guildId,
+      ...data,
+    })
+    return decodeRole(role)
+  }
+
+  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.Role>) {
+    await this.internal.updateGuildRole({
+      guild_id: guildId,
+      ...encodeRole(data),
+      role_id: +roleId,
+    })
+  }
+
+  async deleteGuildRole(guildId: string, roleId: string) {
+    await this.internal.deleteGuildRole({ guild_id: guildId, role_id: +roleId })
   }
 }
 

@@ -31,6 +31,16 @@ export const adaptAuthor = (author: Discord.User): Universal.Author => ({
   nickname: author.username,
 })
 
+export const decodeRole = (role: Discord.Role): Universal.Role => ({
+  ...role,
+  permissions: BigInt(role.permissions),
+})
+
+export const encodeRole = (role: Partial<Universal.Role>): Partial<Discord.Role> => ({
+  ...role,
+  permissions: role.permissions && '' + role.permissions,
+})
+
 export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
   const { platform } = bot
 

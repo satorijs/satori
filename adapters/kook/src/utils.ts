@@ -1,4 +1,4 @@
-import { Bot, defineProperty, h, hyphenate, Session, Universal } from '@satorijs/satori'
+import { Bot, defineProperty, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
@@ -16,6 +16,26 @@ export const adaptUser = (user: Kook.User): Universal.User => ({
 export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   ...adaptUser(author),
   nickname: author.nickname,
+})
+
+export const decodeRole = (role: Kook.GuildRole): Universal.Role => ({
+  ...role,
+  id: '' + role.role_id,
+  permissions: BigInt(role.permissions),
+  hoist: !!role.hoist,
+  mentionable: !!role.mentionable,
+})
+
+function encodeBit(value: boolean) {
+  return isNullable(value) ? value : value ? 1 : 0
+}
+
+export const encodeRole = (role: Partial<Universal.Role>): Partial<Kook.GuildRole> => ({
+  ...role,
+  role_id: +role.id,
+  permissions: role.permissions && Number(role.permissions),
+  hoist: encodeBit(role.hoist),
+  mentionable: encodeBit(role.mentionable),
 })
 
 function transformCardElement(data: any) {

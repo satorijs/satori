@@ -1,5 +1,5 @@
-import { Bot, Context, Fragment, h, Quester, Schema } from '@satorijs/satori'
-import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
+import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
+import { adaptChannel, adaptGuild, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
@@ -154,6 +154,32 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async getReactions(channelId: string, messageId: string, emoji: string) {
     const data = await this.internal.getReactions(channelId, messageId, emoji)
     return data.map(adaptUser)
+  }
+
+  setGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    return this.internal.addGuildMemberRole(guildId, userId, roleId)
+  }
+
+  unsetGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    return this.internal.removeGuildMemberRole(guildId, userId, roleId)
+  }
+
+  async getGuildRoles(guildId: string) {
+    const data = await this.internal.getGuildRoles(guildId)
+    return data.map(decodeRole)
+  }
+
+  async createGuildRole(guildId: string, data: Partial<Universal.Role>) {
+    const role = await this.internal.createGuildRole(guildId, encodeRole(data))
+    return decodeRole(role)
+  }
+
+  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.Role>) {
+    await this.internal.modifyGuildRole(guildId, roleId, encodeRole(data))
+  }
+
+  deleteGuildRole(guildId: string, roleId: string) {
+    return this.internal.deleteGuildRole(guildId, roleId)
   }
 }
 
