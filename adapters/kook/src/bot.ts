@@ -1,11 +1,11 @@
-import { Bot, Context, Fragment, h, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
 import { Method } from 'axios'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { KookMessageEncoder } from './message'
+import { isDirectChannel, KookMessageEncoder } from './message'
 
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   http: Quester
@@ -105,6 +105,32 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async kickGroup(guild_id: string, user_id: string) {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
+  }
+
+  createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+    if (isDirectChannel(channelId)) {
+      return this.internal.addDirectMessageReaction({ msg_id: messageId, emoji })
+    } else {
+      return this.internal.addMessageReaction({ msg_id: messageId, emoji })
+    }
+  }
+
+  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string): Promise<void> {
+    if (isDirectChannel(channelId)) {
+      return this.internal.deleteDirectMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+    } else {
+      return this.internal.deleteMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+    }
+  }
+
+  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+    let users: Kook.User[]
+    if (isDirectChannel(channelId)) {
+      users = await this.internal.getDirectMessageReactionList({ msg_id: messageId, emoji })
+    } else {
+      users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji })
+    }
+    return users.map(adaptUser)
   }
 }
 

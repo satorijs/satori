@@ -7,6 +7,10 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
+export function isDirectChannel(channelId: string) {
+  return channelId.length > 30
+}
+
 export class KookMessageEncoder extends MessageEncoder<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
@@ -18,7 +22,7 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
       const { code } = await this.bot.request('POST', '/user-chat/create', { target_id: this.session.channelId })
       this.session.channelId = code
     }
-    if (this.session.channelId.length > 30) {
+    if (isDirectChannel(this.session.channelId)) {
       this.params.chat_code = this.session.channelId
       this.path = '/user-chat/create-msg'
     } else {

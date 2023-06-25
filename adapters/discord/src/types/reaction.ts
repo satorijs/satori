@@ -1,4 +1,4 @@
-import { Emoji, GuildMember, integer, Internal, snowflake } from '.'
+import { Emoji, GuildMember, integer, Internal, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#reaction-object-reaction-structure */
 export interface Reaction {
@@ -107,7 +107,7 @@ declare module './internal' {
      * Get a list of users that reacted with this emoji. Returns an array of user objects on success. The emoji must be URL Encoded or the request will fail with 10014: Unknown Emoji. To use custom emoji, you must encode it in the format name:id with the emoji name and emoji id.
      * @see https://discord.com/developers/docs/resources/channel#get-reactions
      */
-    getReactions(channel_id: snowflake, message_id: snowflake, emoji: string, params?: Reaction.GetParams): Promise<Reaction[]>
+    getReactions(channel_id: snowflake, message_id: snowflake, emoji: string, params?: Reaction.GetParams): Promise<User[]>
     /**
      * Deletes all reactions on a message. This endpoint requires the 'MANAGE_MESSAGES' permission to be present on the current user. Fires a Message Reaction Remove All Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#delete-all-reactions

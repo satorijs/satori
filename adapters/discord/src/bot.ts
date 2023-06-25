@@ -123,12 +123,37 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getGuildList() {
     const data = await this.internal.getCurrentUserGuilds()
-    return data.map(v => adaptGuild(v))
+    return data.map(adaptGuild)
   }
 
   async getChannelList(guildId: string) {
     const data = await this.internal.getGuildChannels(guildId)
-    return data.map(v => adaptChannel(v))
+    return data.map(adaptChannel)
+  }
+
+  createReaction(channelId: string, messageId: string, emoji: string) {
+    return this.internal.createReaction(channelId, messageId, emoji)
+  }
+
+  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string) {
+    if (!userId) {
+      return this.internal.deleteOwnReaction(channelId, messageId, emoji)
+    } else {
+      return this.internal.deleteUserReaction(channelId, messageId, emoji, userId)
+    }
+  }
+
+  clearReaction(channelId: string, messageId: string, emoji?: string) {
+    if (!emoji) {
+      return this.internal.deleteAllReactions(channelId, messageId)
+    } else {
+      return this.internal.deleteAllReactionsForEmoji(channelId, messageId, emoji)
+    }
+  }
+
+  async getReactions(channelId: string, messageId: string, emoji: string) {
+    const data = await this.internal.getReactions(channelId, messageId, emoji)
+    return data.map(adaptUser)
   }
 }
 

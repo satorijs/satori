@@ -1,6 +1,6 @@
 import { Bot, Fragment, Schema, SendOptions } from '@satorijs/satori'
 import * as OneBot from '../utils'
-import { OneBotMessenger } from './message'
+import { OneBotMessageEncoder } from './message'
 
 export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
   public parent?: BaseBot
@@ -10,7 +10,7 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
     if (!this.parent && !channelId.startsWith('private:')) {
       guildId = channelId
     }
-    return new OneBotMessenger(this, channelId, guildId, options).send(fragment)
+    return new OneBotMessageEncoder(this, channelId, guildId, options).send(fragment)
   }
 
   sendPrivateMessage(userId: string, fragment: Fragment, options?: SendOptions) {
