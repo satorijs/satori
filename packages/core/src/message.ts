@@ -9,7 +9,7 @@ class AggregateError extends Error {
   }
 }
 
-export abstract class Messenger<B extends Bot = Bot> {
+export abstract class MessageEncoder<B extends Bot = Bot> {
   public errors: Error[] = []
   public results: Session[] = []
   public session: Session
@@ -20,10 +20,13 @@ export abstract class Messenger<B extends Bot = Bot> {
       author: bot,
       channelId,
       guildId,
-      subtype: guildId ? 'group' : 'private',
+      subtype: options.session.subtype ?? (guildId ? 'group' : 'private'),
     })
     defineProperty(this.session, bot.platform, Object.create(bot.internal))
+    this.prepare()
   }
+
+  prepare() {}
 
   abstract flush(): Promise<void>
   abstract visit(element: segment): Promise<void>
@@ -51,4 +54,4 @@ export abstract class Messenger<B extends Bot = Bot> {
   }
 }
 
-export { Messenger as Modulator }
+export { MessageEncoder as Modulator, MessageEncoder as Messenger }

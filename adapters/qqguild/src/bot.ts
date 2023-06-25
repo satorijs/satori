@@ -1,10 +1,12 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, h, Schema } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
-import { QQGuildMessenger } from './message'
+import { QQGuildMessageEncoder } from './message'
 import { WsClient } from './ws'
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
+  static MessageEncoder = QQGuildMessageEncoder
+
   internal: QQGuild.Bot
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
@@ -18,24 +20,6 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     user['selfId'] = user.userId
     delete user.userId
     return user
-  }
-
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    const messenger = new QQGuildMessenger(this, channelId, guildId, opts)
-    try {
-      return await messenger.send(fragment)
-    } catch (e) {
-      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
-      if ([304031, 304032, 304033].includes(e.code)) {
-        await this.internal.createDMS(channelId, guildId)
-        return await messenger.send(fragment)
-      }
-      throw e
-    }
-  }
-
-  async sendPrivateMessage(userId: string, content: h.Fragment, options?: SendOptions): Promise<string[]> {
-    return this.sendMessage(userId, content, options.session.guildId, options)
   }
 
   async getGuildList() {

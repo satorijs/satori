@@ -1,7 +1,7 @@
-import { arrayBufferToBase64, Bot, Context, Dict, Fragment, h, Logger, Quester, Schema, SendOptions, Session, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, h, Logger, Quester, Schema, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptAuthorMeta, adaptGuildMember, adaptMessageMeta, adaptUser } from './utils'
-import { TelegramMessenger } from './message'
+import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 
@@ -26,6 +26,8 @@ export interface TelegramResponse {
 }
 
 export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
+  static MessageEncoder = TelegramMessageEncoder
+
   http: Quester
   file: Quester
   internal: Telegram.Internal
@@ -163,14 +165,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     session.content = segments.join('')
     adaptMessageMeta(session, message)
     adaptAuthorMeta(session, message.from)
-  }
-
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
-    return new TelegramMessenger(this, channelId, guildId, options).send(fragment)
-  }
-
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    return this.sendMessage(userId, content, null, options)
   }
 
   async getMessage() {

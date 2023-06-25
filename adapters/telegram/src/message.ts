@@ -1,4 +1,4 @@
-import { Dict, h, Messenger, SendOptions } from '@satorijs/satori'
+import { Dict, h, MessageEncoder, SendOptions } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
@@ -35,7 +35,7 @@ const assetApi = {
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramMessenger extends Messenger<TelegramBot> {
+export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'

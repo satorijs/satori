@@ -1,12 +1,14 @@
-import { Bot, Fragment, Logger, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Logger, Schema } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
-import { MailMessenger } from './message'
+import { MailMessageEncoder } from './message'
 import { dispatchSession } from './utils'
 
 const logger = new Logger('adapter-mail')
 
 export class MailBot extends Bot<MailBot.Config> {
+  static MessageEncoder = MailMessageEncoder
+
   imap: IMAP
   smtp: SMTP
 
@@ -50,14 +52,6 @@ export class MailBot extends Bot<MailBot.Config> {
       }
       this.imap.connect()
     }, 3000)
-  }
-
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
-    return await new MailMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    return await this.sendMessage(`private:${userId}`, content, null, options)
   }
 }
 

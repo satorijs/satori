@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, h, Logger, Messenger, Quester } from '@satorijs/satori'
+import { Dict, h, Logger, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -44,7 +44,7 @@ function checkEmpty(req: QQGuild.Message.Request) {
     // && req.embed === undefined
 }
 
-export class QQGuildMessenger extends Messenger<QQGuildBot> {
+export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private addition = {
@@ -163,6 +163,19 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       }
     } else {
       await this.render(children)
+    }
+  }
+
+  async send(content: h.Fragment) {
+    try {
+      return await super.send(content)
+    } catch (e) {
+      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
+      if ([304031, 304032, 304033].includes(e.code)) {
+        await this.bot.internal.createDMS(this.channelId, this.guildId || this.options.session.guildId)
+        return await super.send(content)
+      }
+      throw e
     }
   }
 }
