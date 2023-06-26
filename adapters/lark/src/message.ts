@@ -39,7 +39,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       // try to extract error message from Lark API
       if (Quester.isAxiosError(e)) {
         if (e.response?.data?.code) {
-          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
+          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
           e.message += ` (Lark error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
         }
       }
