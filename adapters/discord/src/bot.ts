@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -180,6 +180,13 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   deleteGuildRole(guildId: string, roleId: string) {
     return this.internal.deleteGuildRole(guildId, roleId)
+  }
+
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    const channel = await this.internal.createDM({
+      recipient_id: userId,
+    })
+    return this.sendMessage(channel.id, content, null, options)
   }
 }
 

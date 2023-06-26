@@ -385,12 +385,12 @@ declare module './internal' {
      * Create a new DM channel with a user. Returns a DM channel object.
      * @see https://discord.com/developers/docs/resources/user#create-dm
      */
-    createDM(params: Channel.Params.CreateDM): Promise<void>
+    createDM(params: Channel.Params.CreateDM): Promise<Channel>
     /**
      * Create a new group DM channel with multiple users. Returns a DM channel object. This endpoint was intended to be used with the now-deprecated GameBridge SDK. DMs created with this endpoint will not be shown in the Discord client
      * @see https://discord.com/developers/docs/resources/user#create-group-dm
      */
-    createGroupDM(params: Channel.Params.CreateGroupDM): Promise<void>
+    createGroupDM(params: Channel.Params.CreateGroupDM): Promise<Channel>
   }
 }
 

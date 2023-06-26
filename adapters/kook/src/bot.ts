@@ -1,5 +1,4 @@
-import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
-import { Method } from 'axios'
+import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
 import { adaptAuthor, adaptGroup, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
@@ -8,6 +7,8 @@ import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
 
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
+  static MessageEncoder = KookMessageEncoder
+
   http: Quester
   internal: Kook.Internal
 
@@ -28,7 +29,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async request<T = any>(method: Method, path: string, data = {}, headers: any = {}): Promise<T> {
+  async request<T = any>(method: Quester.Method, path: string, data = {}, headers: any = {}): Promise<T> {
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
@@ -38,7 +39,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async deleteMessage(channelId: string, msg_id: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/user-chat/delete-msg', { msg_id })
     } else {
       await this.request('POST', '/message/delete', { msg_id })
@@ -47,7 +48,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async editMessage(channelId: string, msg_id: string, content: Fragment) {
     content = h.normalize(content).join('')
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
       await this.request('POST', '/message/update', { msg_id, content })
@@ -55,7 +56,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async getMessage(channelId: string, msg_id: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       return adaptMessage(await this.request('POST', '/user-chat/view', { msg_id }))
     } else {
       return adaptMessage(await this.request('POST', '/message/view', { msg_id }))
@@ -63,7 +64,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async $createReaction(channelId: string, msg_id: string, emoji: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/direct-message/add-reaction', { msg_id, emoji })
     } else {
       await this.request('POST', '/message/add-reaction', { msg_id, emoji })
@@ -71,7 +72,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async $deleteReaction(channelId: string, messageId: string, emoji: string, user_id?: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/direct-message/delete-reaction', { msg_id: messageId, emoji })
     } else {
       await this.request('POST', '/message/delete-reaction', { msg_id: messageId, emoji, user_id })
@@ -105,6 +106,11 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async kickGroup(guild_id: string, user_id: string) {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
+  }
+
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    const { code } = await this.request('POST', '/user-chat/create', { target_id: userId })
+    return this.sendMessage(code, content, null, options)
   }
 
   createReaction(channelId: string, messageId: string, emoji: string) {

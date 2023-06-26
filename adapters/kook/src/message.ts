@@ -18,10 +18,6 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
   private buffer: string = ''
 
   async prepare() {
-    if (this.session.subtype === 'private') {
-      const { code } = await this.bot.request('POST', '/user-chat/create', { target_id: this.session.channelId })
-      this.session.channelId = code
-    }
     if (isDirectChannel(this.session.channelId)) {
       this.params.chat_code = this.session.channelId
       this.path = '/user-chat/create-msg'
