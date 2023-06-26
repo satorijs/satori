@@ -173,6 +173,8 @@ declare module '../internal' {
     sendMessage(receive_id_type: Lark.ReceiveIdType, message: MessagePayload): Promise<BaseResponse & { data: Message }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/reply */
     replyMessage(message_id: string, message: MessagePayload): Promise<BaseResponse & { data: Message }>
+    /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/update */
+    updateMessage(message_id: string, message: Omit<MessagePayload, 'receive_id'>): Promise<BaseResponse & { data: Message }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/get */
     getMessage(message_id: string): Promise<BaseResponse & { data: Message }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/delete */
@@ -191,6 +193,7 @@ Internal.define({
   },
   '/im/v1/messages/{message_id}': {
     GET: 'getMessage',
+    PUT: 'updateMessage',
     DELETE: 'deleteMessage',
   },
   '/im/v1/messages/{message_id}/read_users': {

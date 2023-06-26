@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, h, Logger, Quester, Schema } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
@@ -38,12 +38,12 @@ export class LarkBot extends Bot<LarkBot.Config> {
     ctx.plugin(HttpServer, this)
   }
 
-  async initialize(): Promise<void> {
+  async initialize() {
     await this.refreshToken()
     this.online()
   }
 
-  private async refreshToken(): Promise<void> {
+  private async refreshToken() {
     const { tenant_access_token: token } = await this.internal.getTenantAccessToken({
       app_id: this.config.appId,
       app_secret: this.config.appSecret,
@@ -66,7 +66,14 @@ export class LarkBot extends Bot<LarkBot.Config> {
     this.http.config.headers.Authorization = `Bearer ${v}`
   }
 
-  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+  async editMessage(channelId: string, messageId: string, content: h.Fragment) {
+    await this.internal.updateMessage(messageId, {
+      content: h.normalize(content).join(''),
+      msg_type: 'text',
+    })
+  }
+
+  async deleteMessage(channelId: string, messageId: string) {
     await this.internal.deleteMessage(messageId)
   }
 }
