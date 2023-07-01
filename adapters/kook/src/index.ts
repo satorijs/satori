@@ -19,6 +19,8 @@ declare global {
 
     interface Events {
       'kook/message-btn-click': {}
+      'kook/joined-channel': (session: Session) => void
+      'kook/exited-channel': (session: Session) => void
     }
   }
 }
