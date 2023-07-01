@@ -19,6 +19,17 @@ declare global {
 
     interface Events {
       'kook/message-btn-click': {}
+      'kook/guild-member-online': {}
+      'kook/guild-member-offline': {},
+      'kook/added-role': {},
+      'kook/deleted-role': {},
+      'kook/updated-role' {},
+      'kook/added-block-list': {},
+      'kook/added-emoji': {},
+      'kook/updated-emoji': {},
+      'kook/joined-channel': {},
+      'kook/exited-channel': {},
+      'kook/user-updated': {}
     }
   }
 }
