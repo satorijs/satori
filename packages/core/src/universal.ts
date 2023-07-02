@@ -142,15 +142,14 @@ export namespace Universal {
     }
   }
 
-  export interface EventData {
-    command?: EventData.Command
+  export interface Argv {
+    name: string
+    arguments: any[]
+    options: Dict
   }
 
-  export namespace EventData {
-    export interface Command {
-      name: string
-      arguments: any[]
-      options: Dict
-    }
+  export interface EventData {
+    role?: Role
+    argv?: Argv
   }
 }

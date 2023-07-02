@@ -295,7 +295,7 @@ export interface Channel {
   children?: string[]
 }
 
-export interface NoticeBody extends Channel, MessageMeta {
+export interface NoticeBody extends Channel, MessageMeta, GuildRole {
   value: string
   msg_id: string
   target_id: string

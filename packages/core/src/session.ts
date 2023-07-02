@@ -35,6 +35,7 @@ export namespace Session {
     operatorId?: string
     targetId?: string
     duration?: number
+    roleId?: string
     data?: Universal.EventData
   }
 }
@@ -45,6 +46,7 @@ export class Session {
   public app: Context['root']
 
   constructor(bot: Bot, payload?: Partial<Session.Payload>) {
+    this.data = {}
     Object.assign(this, payload)
     this.selfId = bot.selfId
     this.platform = bot.platform

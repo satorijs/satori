@@ -202,6 +202,20 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.type = 'reaction-deleted'
     session.subtype = 'emoji'
     setupReaction(session, input.d)
+  } else if (input.t === 'GUILD_ROLE_CREATE') {
+    session.type = 'guild-role-added'
+    session.guildId = input.d.guild_id
+    session.roleId = input.d.role.id
+    session.data.role = decodeRole(input.d.role)
+  } else if (input.t === 'GUILD_ROLE_UPDATE') {
+    session.type = 'guild-role-updated'
+    session.guildId = input.d.guild_id
+    session.roleId = input.d.role.id
+    session.data.role = decodeRole(input.d.role)
+  } else if (input.t === 'GUILD_ROLE_DELETE') {
+    session.type = 'guild-role-added'
+    session.guildId = input.d.guild_id
+    session.roleId = input.d.role_id
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.APPLICATION_COMMAND) {
     const data = input.d.data as Discord.InteractionData.ApplicationCommand
     const command = bot.commands.find(cmd => cmd.name === data.name)
@@ -217,9 +231,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.userId = input.d.member.user.id
     session.messageId = input.d.id
     session.content = ''
-    session.data = {
-      command: decodeArgv(data, command),
-    }
+    session.data.argv = decodeArgv(data, command)
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id
@@ -252,7 +264,7 @@ export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationComman
 })
 
 const decodeArgv = (data: Discord.InteractionData.ApplicationCommand, command: Universal.Command) => {
-  const result = { name: data.name, arguments: [], options: {} } as Universal.EventData.Command
+  const result = { name: data.name, arguments: [], options: {} } as Universal.Argv
   for (const argument of command.arguments) {
     const value = data.options?.find(opt => opt.name === argument.name)?.value
     if (value !== undefined) result.arguments.push(value)

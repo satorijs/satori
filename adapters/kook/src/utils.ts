@@ -204,6 +204,15 @@ export function adaptSession(bot: Bot, input: any) {
       case 'added_role':
       case 'deleted_role':
       case 'updated_role':
+        session.type = {
+          added_role: 'guild-role-added',
+          deleted_role: 'guild-role-deleted',
+          updated_role: 'guild-role-updated',
+        }[type]
+        session.guildId = input.target_id
+        session.roleId = '' + body.role_id
+        session.data.role = decodeRole(body)
+        break
       case 'added_block_list':
       case 'deleted_block_list':
       case 'added_emoji':
