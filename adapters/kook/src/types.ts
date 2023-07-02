@@ -607,6 +607,41 @@ export interface Internal {
   hasPermission(permissions: number, permission: Permissions): boolean
 }
 
+export interface Events {
+  'kook/updated-message'(input: any): void
+  'kook/updated-private-message'(input: any): void
+  'kook/deleted-message'(input: any): void
+  'kook/deleted-private-message'(input: any): void
+  'kook/added-reaction'(input: any): void
+  'kook/private-added-reaction'(input: any): void
+  'kook/deleted-reaction'(input: any): void
+  'kook/private-deleted-reaction'(input: any): void
+  'kook/updated-channel'(input: any): void
+  'kook/deleted-channel'(input: any): void
+  'kook/pinned-message'(input: any): void
+  'kook/unpinned-message'(input: any): void
+  'kook/joined-guild'(input: any): void
+  'kook/exited-guild'(input: any): void
+  'kook/updated-guild'(input: any): void
+  'kook/deleted-guild'(input: any): void
+  'kook/self-joined-guild'(input: any): void
+  'kook/self-exited-guild'(input: any): void
+  'kook/update-guild-member'(input: any): void
+  'kook/guild-member-online'(input: any): void
+  'kook/guild-member-offline'(input: any): void
+  'kook/added-role'(input: any): void
+  'kook/deleted-role'(input: any): void
+  'kook/updated-role'(input: any): void
+  'kook/added-block-list'(input: any): void
+  'kook/deleted-block-list'(input: any): void
+  'kook/added-emoji'(input: any): void
+  'kook/updated-emoji'(input: any): void
+  'kook/joined-channel'(input: any): void
+  'kook/exited-channel'(input: any): void
+  'kook/user-updated'(input: any): void
+  'kook/message-btn-click'(input: any): void
+}
+
 export class Internal {
   constructor(private http: Quester) {}
 

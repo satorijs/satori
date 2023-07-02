@@ -1,6 +1,8 @@
 import { Bot, defineProperty, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
+export * from './types'
+
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
@@ -142,6 +144,7 @@ export function adaptSession(bot: Bot, input: any) {
   defineProperty(session, 'kook', Object.assign(Object.create(bot.internal), input))
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
+    bot.ctx.emit('kook/' + type.replace(/_/g, '-') as any, input.body)
     switch (type) {
       case 'updated_message':
       case 'updated_private_message':
