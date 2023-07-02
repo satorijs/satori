@@ -79,10 +79,10 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       if (checkEmpty(req)) {
         return
       }
-      if (this.session.subtype === 'group') {
-        result = await sender.channel(this.session.channelId, req)
-      } else if (this.session.subtype === 'private') {
+      if (this.session.isDirect) {
         result = await sender.private(this.session.uid, req)
+      } else if (this.session.subtype === 'private') {
+        result = await sender.channel(this.session.channelId, req)
       }
       const session = this.bot.adaptMessage(result)
       this.results.push(session)

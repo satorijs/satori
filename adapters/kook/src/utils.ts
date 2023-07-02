@@ -98,13 +98,14 @@ function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: P
   adaptMessageMeta(data, meta, session)
   session.messageId = data.msg_id
   session.timestamp = data.msg_timestamp
-  const subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
-  session.subtype = subtype
+  session.isDirect = data.channel_type === 'PERSON'
+  session.subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
   if (meta.quote) {
     session.quote = adaptMessageMeta(meta.quote, meta.quote)
     session.quote.messageId = meta.quote.rong_id
     session.quote.channelId = session.channelId
-    session.quote.subtype = subtype
+    session.quote.subtype = session.subtype
+    session.quote.isDirect = session.isDirect
   }
   return session
 }
@@ -118,6 +119,7 @@ function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: P
     session.channelId = data.target_id
   } else {
     session.subtype = 'private'
+    session.isDirect = true
     session.channelId = meta.code
   }
 }

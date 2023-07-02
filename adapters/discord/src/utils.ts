@@ -138,6 +138,7 @@ export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, sess
 
 export function setupMessage(session: Partial<Session>, data: Partial<Discord.Message>) {
   session.guildId = data.guild_id
+  session.isDirect = !data.guild_id
   session.subtype = data.guild_id ? 'group' : 'private'
   session.channelId = data.channel_id
 }
@@ -153,6 +154,7 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
   session.messageId = data.message_id
   session.guildId = data.guild_id
   session.channelId = data.channel_id
+  session.isDirect = !data.guild_id
   session.subtype = data.guild_id ? 'group' : 'private'
   if (!data.emoji) return
   const { id, name } = data.emoji
@@ -204,7 +206,8 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
       type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
     })
-    session.type = 'message-command'
+    session.type = 'interaction/command'
+    session.isDirect = !input.d.guild_id
     session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id

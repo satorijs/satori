@@ -99,7 +99,7 @@ export namespace Universal {
     id: string
   }
 
-  export interface MessageBase {
+  export interface Message {
     messageId?: string
     channelId?: string
     guildId?: string
@@ -109,9 +109,8 @@ export namespace Universal {
     timestamp?: number
     author?: Author
     quote?: Message
-  }
-
-  export interface Message extends MessageBase {
+    isDirect?: boolean
+    /** @deprecated please use `isDirect` instead */
     subtype?: string
   }
 

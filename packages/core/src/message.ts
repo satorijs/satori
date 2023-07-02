@@ -36,6 +36,7 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
       author: this.bot,
       channelId: this.channelId,
       guildId: this.guildId,
+      isDirect: this.options.session?.isDirect ?? !this.guildId,
       subtype: this.options.session?.subtype ?? (this.guildId ? 'group' : 'private'),
     })
     defineProperty(this.session, this.bot.platform, Object.create(this.bot.internal))

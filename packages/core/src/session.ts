@@ -13,10 +13,13 @@ export interface Session extends Session.Payload, Satori.Session {}
 
 export namespace Session {
   export interface Payload {
+    isDirect?: boolean
     platform?: string
     selfId?: string
     type?: string
+    /** @deprecated */
     subtype?: string
+    /** @deprecated */
     subsubtype?: string
     messageId?: string
     channelId?: string
