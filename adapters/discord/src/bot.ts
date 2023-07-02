@@ -1,11 +1,14 @@
-import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
-import { adaptChannel, adaptGuild, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
+import { Bot, Context, Fragment, h, Logger, pick, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { decodeChannel, decodeGuild, decodeMessage, decodeRole, decodeUser, encodeRole } from './utils'
+import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
 
 // @ts-ignore
 import { version } from '../package.json'
+
+const logger = new Logger('discord')
 
 export class DiscordBot extends Bot<DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
@@ -58,7 +61,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getSelf() {
     const data = await this.internal.getCurrentUser()
-    return adaptUser(data)
+    return decodeUser(data)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -79,35 +82,35 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getChannelMessage(channelId, messageId)
-    return await adaptMessage(this, data)
+    return await decodeMessage(this, data)
   }
 
   async getMessageList(channelId: string, before?: string) {
     // doesn't include `before` message
     // 从旧到新
     const data = (await this.internal.getChannelMessages(channelId, { before, limit: 50 })).reverse()
-    return await Promise.all(data.map(data => adaptMessage(this, data)))
+    return await Promise.all(data.map(data => decodeMessage(this, data)))
   }
 
   async getUser(userId: string) {
     const data = await this.internal.getUser(userId)
-    return adaptUser(data)
+    return decodeUser(data)
   }
 
   async getGuildMemberList(guildId: string) {
     const data = await this.internal.listGuildMembers(guildId)
-    return data.map(v => adaptUser(v.user))
+    return data.map(v => decodeUser(v.user))
   }
 
   async getChannel(channelId: string) {
     const data = await this.internal.getChannel(channelId)
-    return adaptChannel(data)
+    return decodeChannel(data)
   }
 
   async getGuildMember(guildId: string, userId: string) {
     const member = await this.internal.getGuildMember(guildId, userId)
     return {
-      ...adaptUser(member.user),
+      ...decodeUser(member.user),
       nickname: member.nick,
     }
   }
@@ -118,17 +121,17 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getGuild(guildId: string) {
     const data = await this.internal.getGuild(guildId)
-    return adaptGuild(data)
+    return decodeGuild(data)
   }
 
   async getGuildList() {
     const data = await this.internal.getCurrentUserGuilds()
-    return data.map(adaptGuild)
+    return data.map(decodeGuild)
   }
 
   async getChannelList(guildId: string) {
     const data = await this.internal.getGuildChannels(guildId)
-    return data.map(adaptChannel)
+    return data.map(decodeChannel)
   }
 
   createReaction(channelId: string, messageId: string, emoji: string) {
@@ -153,7 +156,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getReactions(channelId: string, messageId: string, emoji: string) {
     const data = await this.internal.getReactions(channelId, messageId, emoji)
-    return data.map(adaptUser)
+    return data.map(decodeUser)
   }
 
   setGuildMemberRole(guildId: string, userId: string, roleId: string) {
@@ -187,6 +190,30 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       recipient_id: userId,
     })
     return this.sendMessage(channel.id, content, null, options)
+  }
+
+  async syncCommands(commands: Universal.Command[]) {
+    const local = Object.fromEntries(commands.map(cmd => [cmd.name, cmd] as const))
+    const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId))
+      .filter(cmd => cmd.type === Discord.ApplicationCommand.Type.CHAT_INPUT)
+      .map(cmd => [cmd.name, cmd] as const))
+
+    for (const key in { ...local, ...remote }) {
+      if (!local[key]) {
+        logger.debug('deleting command %s', key)
+        await this.internal.deleteGlobalApplicationCommand(this.selfId, remote[key].id)
+        continue
+      }
+
+      const data = Discord.encodeCommand(local[key])
+      logger.debug('upsert command: %s', local[key].name)
+      logger.debug(data, remote[key])
+      if (!remote[key]) {
+        await this.internal.createGlobalApplicationCommand(this.selfId, data)
+      } else if (remote[key] && JSON.stringify(data) !== JSON.stringify(pick(remote[key], ['name', 'description', 'description_localizations', 'options']))) {
+        await this.internal.editGlobalApplicationCommand(this.selfId, remote[key].id, data)
+      }
+    }
   }
 }
 

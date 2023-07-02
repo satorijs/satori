@@ -1,6 +1,6 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { GatewayIntent, GatewayOpcode, GatewayPayload } from './types'
-import { adaptSession, adaptUser } from './utils'
+import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
 
 const logger = new Logger('discord')
@@ -78,7 +78,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
           this._resumeUrl = parsed.d.resume_gateway_url
-          const self: any = adaptUser(parsed.d.user)
+          const self: any = decodeUser(parsed.d.user)
           self.selfId = self.userId
           delete self.userId
           Object.assign(this.bot, self)

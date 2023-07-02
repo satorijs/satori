@@ -1,11 +1,10 @@
 import { DiscordBot } from './bot'
-import * as Discord from './types'
+import * as Discord from './utils'
 
 export { Discord }
 
 export * from './bot'
 export * from './message'
-export * from './utils'
 export * from './ws'
 
 export default DiscordBot

@@ -1,5 +1,6 @@
 import segment from '@satorijs/element'
 import { SendOptions } from './session'
+import { Dict } from 'cosmokit'
 
 export namespace Universal {
   export interface Methods {
@@ -112,5 +113,30 @@ export namespace Universal {
 
   export interface Message extends MessageBase {
     subtype?: string
+  }
+
+  export interface Command {
+    name: string
+    aliases: string[]
+    description: Dict<string>
+    arguments: Command.Argument[]
+    options: Command.Option[]
+    children: Command[]
+  }
+
+  export namespace Command {
+    export interface Argument {
+      name: string
+      description: Dict<string>
+      type: string
+      required: boolean
+    }
+
+    export interface Option {
+      name: string
+      description: Dict<string>
+      type: string
+      required: boolean
+    }
   }
 }

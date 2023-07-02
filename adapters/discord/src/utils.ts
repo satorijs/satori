@@ -1,6 +1,8 @@
-import { h, Session, Universal } from '@satorijs/satori'
+import { h, pick, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
+
+export * from './types'
 
 export const sanitize = (val: string) =>
   val
@@ -8,7 +10,7 @@ export const sanitize = (val: string) =>
     .replace(/@everyone/g, () => '\\@everyone')
     .replace(/@here/g, () => '\\@here')
 
-export const adaptUser = (user: Discord.User): Universal.User => ({
+export const decodeUser = (user: Discord.User): Universal.User => ({
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
@@ -16,18 +18,18 @@ export const adaptUser = (user: Discord.User): Universal.User => ({
   isBot: user.bot || false,
 })
 
-export const adaptGuild = (data: Discord.Guild): Universal.Guild => ({
+export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
 })
 
-export const adaptChannel = (data: Discord.Channel): Universal.Channel => ({
+export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
   channelId: data.id,
   channelName: data.name,
 })
 
-export const adaptAuthor = (author: Discord.User): Universal.Author => ({
-  ...adaptUser(author),
+export const decodeAuthor = (author: Discord.User): Universal.Author => ({
+  ...decodeUser(author),
   nickname: author.username,
 })
 
@@ -41,14 +43,14 @@ export const encodeRole = (role: Partial<Universal.Role>): Partial<Discord.Role>
   permissions: role.permissions && '' + role.permissions,
 })
 
-export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
+export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
   const { platform } = bot
 
-  prepareMessage(session, meta)
+  setupMessage(session, meta)
   session.messageId = meta.id
   session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
   if (meta.author) {
-    session.author = adaptAuthor(meta.author)
+    session.author = decodeAuthor(meta.author)
     session.userId = meta.author.id
   }
   if (meta.member?.nick) {
@@ -134,13 +136,19 @@ export async function adaptMessage(bot: DiscordBot, meta: Discord.Message, sessi
   return session as Universal.Message
 }
 
-export function prepareMessage(session: Partial<Session>, data: Partial<Discord.Message>) {
+export function setupMessage(session: Partial<Session>, data: Partial<Discord.Message>) {
   session.guildId = data.guild_id
   session.subtype = data.guild_id ? 'group' : 'private'
   session.channelId = data.channel_id
 }
 
-function prepareReactionSession(session: Partial<Session>, data: any) {
+type ReactionEvent = Partial<
+  & Discord.Reaction.Event.Add
+  & Discord.Reaction.Event.Remove
+  & Discord.Reaction.Event.RemoveAll
+  & Discord.Reaction.Event.RemoveEmoji>
+
+function setupReaction(session: Partial<Session>, data: ReactionEvent) {
   session.userId = data.user_id
   session.messageId = data.message_id
   session.guildId = data.guild_id
@@ -153,6 +161,7 @@ function prepareReactionSession(session: Partial<Session>, data: any) {
 
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
   const session = bot.session()
+  session.discord = Object.assign(Object.create(bot.internal), input)
   if (input.t === 'MESSAGE_CREATE') {
     if (input.d.webhook_id) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)
@@ -162,7 +171,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
       }
     }
     session.type = 'message'
-    await adaptMessage(bot, input.d, session)
+    await decodeMessage(bot, input.d, session)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
@@ -170,27 +179,38 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
-    await adaptMessage(bot, msg, session)
+    await decodeMessage(bot, msg, session)
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_DELETE') {
     session.type = 'message-deleted'
     session.messageId = input.d.id
-    prepareMessage(session, input.d)
+    setupMessage(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     session.type = 'reaction-added'
-    prepareReactionSession(session, input.d)
+    setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE') {
     session.type = 'reaction-deleted'
     session.subtype = 'one'
-    prepareReactionSession(session, input.d)
+    setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE_ALL') {
     session.type = 'reaction-deleted'
     session.subtype = 'all'
-    prepareReactionSession(session, input.d)
+    setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE_EMOJI') {
     session.type = 'reaction-deleted'
     session.subtype = 'emoji'
-    prepareReactionSession(session, input.d)
+    setupReaction(session, input.d)
+  } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.APPLICATION_COMMAND) {
+    await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
+      type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+    })
+    session.type = 'message-command'
+    session.subtype = input.d.guild_id ? 'group' : 'private'
+    session.channelId = input.d.channel_id
+    session.guildId = input.d.guild_id
+    session.userId = input.d.member.user.id
+    session.messageId = input.d.id
+    session.content = ''
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id
@@ -200,4 +220,60 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     return
   }
   return session
+}
+
+const types = {
+  text: Discord.ApplicationCommand.OptionType.STRING,
+  string: Discord.ApplicationCommand.OptionType.STRING,
+  boolean: Discord.ApplicationCommand.OptionType.BOOLEAN,
+  number: Discord.ApplicationCommand.OptionType.NUMBER,
+  integer: Discord.ApplicationCommand.OptionType.INTEGER,
+  posint: Discord.ApplicationCommand.OptionType.INTEGER,
+  user: Discord.ApplicationCommand.OptionType.STRING,
+  channel: Discord.ApplicationCommand.OptionType.STRING,
+  guild: Discord.ApplicationCommand.OptionType.STRING,
+}
+
+export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationCommand.Params.Create => ({
+  name: cmd.name,
+  description: cmd.description[''] || '',
+  description_localizations: pick(cmd.description, Discord.Locale),
+  options: encodeCommandOptions(cmd),
+})
+
+export function encodeCommandOptions(cmd: Universal.Command): Discord.ApplicationCommand.Option[] {
+  let list: Discord.ApplicationCommand.Option[] = []
+  if (cmd.children.length) {
+    list.push(...cmd.children.map(child => ({
+      name: child.name.slice(cmd.name.length + 1),
+      type: child.children.length
+        ? Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
+        : Discord.ApplicationCommand.OptionType.SUB_COMMAND,
+      options: encodeCommandOptions(child),
+      description: cmd.description[''] || '',
+      description_localizations: pick(cmd.description, Discord.Locale),
+    })))
+  } else {
+    for (const arg of cmd.arguments) {
+      list.push({
+        name: arg.name.toLowerCase(),
+        description: arg.description[''] || '',
+        description_localizations: pick(arg.description, Discord.Locale),
+        type: types[arg.type] ?? types.text,
+        required: arg.required ?? false,
+      })
+    }
+    for (const option of cmd.options) {
+      list.push({
+        name: option.name.toLowerCase(),
+        description: option.description[''] || '',
+        description_localizations: pick(option.description, Discord.Locale),
+        type: types[option.type] ?? types.text,
+        required: option.required ?? false,
+        min_value: option.type === 'posint' ? 1 : undefined,
+      })
+    }
+  }
+  list = list.sort((a, b) => +b.required - +a.required)
+  return list
 }
