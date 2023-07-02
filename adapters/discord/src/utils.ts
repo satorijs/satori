@@ -1,4 +1,4 @@
-import { defineProperty, h, pick, Session, Universal } from '@satorijs/satori'
+import { h, pick, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -161,9 +161,8 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
   session.content = id ? `${name}:${id}` : name
 }
 
-export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
+export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
   const session = bot.session()
-  defineProperty(session, 'discord', Object.assign(Object.create(bot.internal), input))
   if (input.t === 'MESSAGE_CREATE') {
     if (input.d.webhook_id) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)

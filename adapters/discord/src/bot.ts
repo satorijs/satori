@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, isNullable, Logger, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { Bot, Context, defineProperty, Fragment, h, isNullable, Logger, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
 import { decodeChannel, decodeGuild, decodeMessage, decodeRole, decodeUser, encodeRole } from './utils'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
@@ -31,6 +31,10 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
+  }
+
+  session(payload = {}) {
+    return defineProperty(super.session(), 'discord', Object.assign(Object.create(this.internal), payload))
   }
 
   private async _ensureWebhook(channelId: string) {
