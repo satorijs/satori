@@ -53,6 +53,9 @@ export namespace Universal {
     handleFriendRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
     handleGuildRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
     handleGuildMemberRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
+
+    // commands
+    updateCommands(commands: Command[]): Promise<void>
   }
 
   export interface Channel {
@@ -136,6 +139,18 @@ export namespace Universal {
       description: Dict<string>
       type: string
       required: boolean
+    }
+  }
+
+  export interface EventData {
+    command?: EventData.Command
+  }
+
+  export namespace EventData {
+    export interface Command {
+      name: string
+      arguments: any[]
+      options: Dict
     }
   }
 }

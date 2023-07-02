@@ -35,7 +35,7 @@ export namespace Session {
     operatorId?: string
     targetId?: string
     duration?: number
-    extra?: any
+    data?: Universal.EventData
   }
 }
 

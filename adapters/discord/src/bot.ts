@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Logger, pick, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, isNullable, Logger, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
 import { decodeChannel, decodeGuild, decodeMessage, decodeRole, decodeUser, encodeRole } from './utils'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
@@ -17,6 +17,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   public internal: Internal
   public webhooks: Record<string, Webhook> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
+  public commands: Universal.Command[] = []
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
@@ -192,7 +193,8 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return this.sendMessage(channel.id, content, null, options)
   }
 
-  async syncCommands(commands: Universal.Command[]) {
+  async updateCommands(commands: Universal.Command[]) {
+    this.commands = commands
     const local = Object.fromEntries(commands.map(cmd => [cmd.name, cmd] as const))
     const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId))
       .filter(cmd => cmd.type === Discord.ApplicationCommand.Type.CHAT_INPUT)
@@ -200,21 +202,41 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
     for (const key in { ...local, ...remote }) {
       if (!local[key]) {
-        logger.debug('deleting command %s', key)
+        logger.debug('delete command %s', key)
         await this.internal.deleteGlobalApplicationCommand(this.selfId, remote[key].id)
         continue
       }
 
       const data = Discord.encodeCommand(local[key])
-      logger.debug('upsert command: %s', local[key].name)
       logger.debug(data, remote[key])
       if (!remote[key]) {
+        logger.debug('create command: %s', local[key].name)
         await this.internal.createGlobalApplicationCommand(this.selfId, data)
-      } else if (remote[key] && JSON.stringify(data) !== JSON.stringify(pick(remote[key], ['name', 'description', 'description_localizations', 'options']))) {
+      } else if (shapeEqual(data, remote[key])) {
+        logger.debug('edit command: %s', local[key].name)
         await this.internal.editGlobalApplicationCommand(this.selfId, remote[key].id, data)
       }
     }
   }
+}
+
+function shapeEqual(a: any, b: any, strict = false) {
+  if (a === b) return true
+  if (!strict && isNullable(a) && isNullable(b)) return true
+  if (typeof a !== typeof b) return false
+  if (typeof a !== 'object') return false
+  if (!a || !b) return false
+
+  // check array
+  if (Array.isArray(a)) {
+    if (!Array.isArray(b) || a.length !== b.length) return false
+    return a.every((item, index) => shapeEqual(item, b[index]))
+  } else if (Array.isArray(b)) {
+    return false
+  }
+
+  // check object
+  return Object.keys(a).every(key => shapeEqual(a[key], b[key], strict))
 }
 
 export namespace DiscordBot {

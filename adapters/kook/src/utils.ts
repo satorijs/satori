@@ -44,7 +44,7 @@ function transformCardElement(data: any) {
   return h(type, attrs, children.map(transformCardElement))
 }
 
-function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.MessageBase = {}) {
+function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.Message = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
@@ -139,8 +139,7 @@ function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
 
 export function adaptSession(bot: Bot, input: any) {
   const session = bot.session()
-  defineProperty(session, 'kook', Object.create(bot.internal))
-  Object.assign(session.kook, input)
+  defineProperty(session, 'kook', Object.assign(Object.create(bot.internal), input))
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
     switch (type) {
@@ -212,7 +211,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.type = 'kook'
         session.subtype = hyphenate(type)
         session.guildId = input.target_id
-        session.extra = body
         break
       case 'joined_channel':
       case 'exited_channel':
@@ -226,7 +224,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.type = 'kook'
         session.subtype = hyphenate(type)
         session.userId = body.user_id
-        session.extra = body
         break
       case 'message_btn_click':
         session.type = 'kook'
@@ -235,7 +232,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.userId = body.user_id
         session.content = body.value
         session.targetId = body.target_id
-        session.extra = body
         break
       default: return
     }

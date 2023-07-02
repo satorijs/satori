@@ -1,4 +1,4 @@
-import { h, pick, Session, Universal } from '@satorijs/satori'
+import { defineProperty, h, pick, Session, Universal } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -163,7 +163,7 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
 
 export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayload) {
   const session = bot.session()
-  session.discord = Object.assign(Object.create(bot.internal), input)
+  defineProperty(session, 'discord', Object.assign(Object.create(bot.internal), input))
   if (input.t === 'MESSAGE_CREATE') {
     if (input.d.webhook_id) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)
@@ -203,6 +203,9 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.subtype = 'emoji'
     setupReaction(session, input.d)
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.APPLICATION_COMMAND) {
+    const data = input.d.data as Discord.InteractionData.ApplicationCommand
+    const command = bot.commands.find(cmd => cmd.name === data.name)
+    if (!command) return
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
       type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
     })
@@ -214,6 +217,9 @@ export async function adaptSession(bot: DiscordBot, input: Discord.GatewayPayloa
     session.userId = input.d.member.user.id
     session.messageId = input.d.id
     session.content = ''
+    session.data = {
+      command: decodeArgv(data, command),
+    }
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id
@@ -239,37 +245,51 @@ const types = {
 
 export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationCommand.Params.Create => ({
   name: cmd.name,
-  description: cmd.description[''] || '',
+  type: Discord.ApplicationCommand.Type.CHAT_INPUT,
+  description: cmd.description[''] || cmd.name,
   description_localizations: pick(cmd.description, Discord.Locale),
   options: encodeCommandOptions(cmd),
 })
 
+const decodeArgv = (data: Discord.InteractionData.ApplicationCommand, command: Universal.Command) => {
+  const result = { name: data.name, arguments: [], options: {} } as Universal.EventData.Command
+  for (const argument of command.arguments) {
+    const value = data.options?.find(opt => opt.name === argument.name)?.value
+    if (value !== undefined) result.arguments.push(value)
+  }
+  for (const option of command.options) {
+    const value = data.options?.find(opt => opt.name === option.name)?.value
+    if (value !== undefined) result.options[option.name] = value
+  }
+  return result
+}
+
 export function encodeCommandOptions(cmd: Universal.Command): Discord.ApplicationCommand.Option[] {
-  let list: Discord.ApplicationCommand.Option[] = []
+  const result: Discord.ApplicationCommand.Option[] = []
   if (cmd.children.length) {
-    list.push(...cmd.children.map(child => ({
+    result.push(...cmd.children.map(child => ({
       name: child.name.slice(cmd.name.length + 1),
       type: child.children.length
         ? Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
         : Discord.ApplicationCommand.OptionType.SUB_COMMAND,
       options: encodeCommandOptions(child),
-      description: cmd.description[''] || '',
+      description: cmd.description[''] || child.name,
       description_localizations: pick(cmd.description, Discord.Locale),
     })))
   } else {
     for (const arg of cmd.arguments) {
-      list.push({
-        name: arg.name.toLowerCase(),
-        description: arg.description[''] || '',
+      result.push({
+        name: arg.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
+        description: arg.description[''] || arg.name,
         description_localizations: pick(arg.description, Discord.Locale),
         type: types[arg.type] ?? types.text,
         required: arg.required ?? false,
       })
     }
     for (const option of cmd.options) {
-      list.push({
+      result.push({
         name: option.name.toLowerCase(),
-        description: option.description[''] || '',
+        description: option.description[''] || option.name,
         description_localizations: pick(option.description, Discord.Locale),
         type: types[option.type] ?? types.text,
         required: option.required ?? false,
@@ -277,6 +297,5 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       })
     }
   }
-  list = list.sort((a, b) => +b.required - +a.required)
-  return list
+  return result.sort((a, b) => +b.required - +a.required)
 }
