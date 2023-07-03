@@ -81,7 +81,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       }
       if (this.session.isDirect) {
         result = await sender.private(this.session.uid, req)
-      } else if (this.session.subtype === 'private') {
+      } else {
         result = await sender.channel(this.session.channelId, req)
       }
       const session = this.bot.adaptMessage(result)
