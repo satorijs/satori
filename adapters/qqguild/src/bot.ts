@@ -54,13 +54,6 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
       .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
-    if (attachments.length > 0) {
-      session.content += attachments.map((attachment) => {
-        if (attachment.contentType.startsWith('image')) {
-          return h.image(attachment.url)
-        }
-      }).join('')
-    }
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
       .reduce((content, attachment) => content + h.image(attachment.url), session.content)
