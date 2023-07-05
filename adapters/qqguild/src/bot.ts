@@ -49,6 +49,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     }
     // it's useless, but I need it
     session.subtype = msg.isPrivate ? 'private' : 'group'
+    session.isDirect = msg.isPrivate
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())

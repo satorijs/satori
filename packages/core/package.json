@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
@@ -39,7 +39,7 @@
     "cordis-axios": "^3.1.2",
     "cosmokit": "^1.4.2",
     "ws": "^8.13.0",
-    "reggol": "^1.4.2",
+    "reggol": "^1.4.4",
     "schemastery": "^3.10.1"
   }
 }

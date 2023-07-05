@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-lark",
   "description": "Lark / Feishu Adapter for Satorijs",
-  "version": "2.1.0",
+  "version": "2.1.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.4.0"
+    "@satorijs/satori": "^2.5.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"

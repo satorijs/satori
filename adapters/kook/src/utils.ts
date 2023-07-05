@@ -1,6 +1,8 @@
 import { Bot, defineProperty, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
+export * from './types'
+
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   guildId: data.id,
   guildName: data.name,
@@ -44,7 +46,7 @@ function transformCardElement(data: any) {
   return h(type, attrs, children.map(transformCardElement))
 }
 
-function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.MessageBase = {}) {
+function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.Message = {}) {
   if (meta.author) {
     session.author = adaptAuthor(meta.author)
     session.userId = meta.author.id
@@ -98,13 +100,14 @@ function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: P
   adaptMessageMeta(data, meta, session)
   session.messageId = data.msg_id
   session.timestamp = data.msg_timestamp
-  const subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
-  session.subtype = subtype
+  session.isDirect = data.channel_type === 'PERSON'
+  session.subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
   if (meta.quote) {
     session.quote = adaptMessageMeta(meta.quote, meta.quote)
     session.quote.messageId = meta.quote.rong_id
     session.quote.channelId = session.channelId
-    session.quote.subtype = subtype
+    session.quote.subtype = session.subtype
+    session.quote.isDirect = session.isDirect
   }
   return session
 }
@@ -118,6 +121,7 @@ function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: P
     session.channelId = data.target_id
   } else {
     session.subtype = 'private'
+    session.isDirect = true
     session.channelId = meta.code
   }
 }
@@ -137,10 +141,10 @@ function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
 
 export function adaptSession(bot: Bot, input: any) {
   const session = bot.session()
-  defineProperty(session, 'kook', Object.create(bot.internal))
-  Object.assign(session.kook, input)
+  defineProperty(session, 'kook', Object.assign(Object.create(bot.internal), input))
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
+    bot.ctx.emit('kook/' + type.replace(/_/g, '-') as any, input.body)
     switch (type) {
       case 'updated_message':
       case 'updated_private_message':
@@ -203,6 +207,15 @@ export function adaptSession(bot: Bot, input: any) {
       case 'added_role':
       case 'deleted_role':
       case 'updated_role':
+        session.type = {
+          added_role: 'guild-role-added',
+          deleted_role: 'guild-role-deleted',
+          updated_role: 'guild-role-updated',
+        }[type]
+        session.guildId = input.target_id
+        session.roleId = '' + body.role_id
+        session.data.role = decodeRole(body)
+        break
       case 'added_block_list':
       case 'deleted_block_list':
       case 'added_emoji':
@@ -210,7 +223,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.type = 'kook'
         session.subtype = hyphenate(type)
         session.guildId = input.target_id
-        session.extra = body
         break
       case 'joined_channel':
       case 'exited_channel':
@@ -224,7 +236,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.type = 'kook'
         session.subtype = hyphenate(type)
         session.userId = body.user_id
-        session.extra = body
         break
       case 'message_btn_click':
         session.type = 'kook'
@@ -233,7 +244,6 @@ export function adaptSession(bot: Bot, input: any) {
         session.userId = body.user_id
         session.content = body.value
         session.targetId = body.target_id
-        session.extra = body
         break
       default: return
     }

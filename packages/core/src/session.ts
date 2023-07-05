@@ -13,10 +13,13 @@ export interface Session extends Session.Payload, Satori.Session {}
 
 export namespace Session {
   export interface Payload {
+    isDirect?: boolean
     platform?: string
     selfId?: string
     type?: string
+    /** @deprecated */
     subtype?: string
+    /** @deprecated */
     subsubtype?: string
     messageId?: string
     channelId?: string
@@ -32,7 +35,8 @@ export namespace Session {
     operatorId?: string
     targetId?: string
     duration?: number
-    extra?: any
+    roleId?: string
+    data?: Universal.EventData
   }
 }
 
@@ -42,6 +46,7 @@ export class Session {
   public app: Context['root']
 
   constructor(bot: Bot, payload?: Partial<Session.Payload>) {
+    this.data = {}
     Object.assign(this, payload)
     this.selfId = bot.selfId
     this.platform = bot.platform

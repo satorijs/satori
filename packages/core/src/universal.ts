@@ -1,5 +1,6 @@
 import segment from '@satorijs/element'
 import { SendOptions } from './session'
+import { Dict } from 'cosmokit'
 
 export namespace Universal {
   export interface Methods {
@@ -52,6 +53,9 @@ export namespace Universal {
     handleFriendRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
     handleGuildRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
     handleGuildMemberRequest(messageId: string, approve: boolean, comment?: string): Promise<void>
+
+    // commands
+    updateCommands(commands: Command[]): Promise<void>
   }
 
   export interface Channel {
@@ -98,7 +102,7 @@ export namespace Universal {
     id: string
   }
 
-  export interface MessageBase {
+  export interface Message {
     messageId?: string
     channelId?: string
     guildId?: string
@@ -108,9 +112,44 @@ export namespace Universal {
     timestamp?: number
     author?: Author
     quote?: Message
+    isDirect?: boolean
+    /** @deprecated please use `isDirect` instead */
+    subtype?: string
   }
 
-  export interface Message extends MessageBase {
-    subtype?: string
+  export interface Command {
+    name: string
+    aliases: string[]
+    description: Dict<string>
+    arguments: Command.Argument[]
+    options: Command.Option[]
+    children: Command[]
+  }
+
+  export namespace Command {
+    export interface Argument {
+      name: string
+      description: Dict<string>
+      type: string
+      required: boolean
+    }
+
+    export interface Option {
+      name: string
+      description: Dict<string>
+      type: string
+      required: boolean
+    }
+  }
+
+  export interface Argv {
+    name: string
+    arguments: any[]
+    options: Dict
+  }
+
+  export interface EventData {
+    role?: Role
+    argv?: Argv
   }
 }

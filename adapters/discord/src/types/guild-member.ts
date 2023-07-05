@@ -1,4 +1,4 @@
-import { integer, Internal, PresenceUpdateParams, snowflake, timestamp, User } from '.'
+import { Gateway, integer, Internal, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-structure */
 export interface GuildMember {
@@ -153,7 +153,7 @@ export namespace GuildMember {
       /** if passing an invalid id to REQUEST_GUILD_MEMBERS, it will be returned here */
       not_found?: snowflake[]
       /** if passing true to REQUEST_GUILD_MEMBERS, presences of the returned members will be here */
-      presences?: PresenceUpdateParams[]
+      presences?: Gateway.Params.PresenceUpdate[]
       /** the nonce used in the Guild Members Request */
       nonce?: string
     }

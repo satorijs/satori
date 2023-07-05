@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-telegram",
   "description": "Telegram Adapter for Satorijs",
-  "version": "3.7.9",
+  "version": "3.7.10",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.4.0"
+    "@satorijs/satori": "^2.5.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"

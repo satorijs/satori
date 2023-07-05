@@ -1,5 +1,5 @@
 import { KookBot } from './bot'
-import * as Kook from './types'
+import * as Kook from './utils'
 
 export { Kook }
 
@@ -11,14 +11,10 @@ export * from './utils'
 
 export default KookBot
 
-declare global {
-  namespace Satori {
-    interface Session {
-      kook?: Kook.Payload & Kook.Internal
-    }
+declare module '@satorijs/core' {
+  interface Events extends Kook.Events {}
 
-    interface Events {
-      'kook/message-btn-click': {}
-    }
+  interface Session {
+    kook?: Kook.Payload & Kook.Internal
   }
 }

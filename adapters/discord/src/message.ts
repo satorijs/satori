@@ -2,7 +2,7 @@ import { Dict, h, Logger, MessageEncoder, Quester, Schema, segment, Session, Uni
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
-import { adaptMessage, sanitize } from './utils'
+import { decodeMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
@@ -25,25 +25,35 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private figure: h = null
   private mode: RenderMode = 'default'
 
-  async post(data?: any, headers?: any) {
-    try {
-      let url = `/channels/${this.channelId}/messages`
+  private async getUrl() {
+    const input = this.options.session.discord
+    if (input?.t === 'INTERACTION_CREATE') {
+      // 消息交互
+      return `/webhooks/${input.d.application_id}/${input.d.token}`
+    } else if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
+      // 发送到子区
+      if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
+        const webhook = await this.ensureWebhook()
+        return `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
+      } else {
+        return `/channels/${this.stack[0].channel.id}/messages`
+      }
+    } else {
       if (this.stack[0].author.nickname || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
         const webhook = await this.ensureWebhook()
-        url = `/webhooks/${webhook.id}/${webhook.token}?wait=true`
+        return `/webhooks/${webhook.id}/${webhook.token}?wait=true`
+      } else {
+        return `/channels/${this.channelId}/messages`
       }
-      if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
-        // 发送到子区
-        if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
-          const webhook = await this.ensureWebhook()
-          url = `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
-        } else {
-          url = `/channels/${this.stack[0].channel.id}/messages`
-        }
-      }
+    }
+  }
+
+  async post(data?: any, headers?: any) {
+    try {
+      const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
-      const message = await adaptMessage(this.bot, result, session)
+      const message = await decodeMessage(this.bot, result, session)
       session.app.emit(session, 'send', session)
       this.results.push(session)
 
