@@ -21,6 +21,8 @@ export interface GenericMessageEvent {
   channel: string
   user: string
   bot_id?: string
+  app_id?: string
+  username?: string
   bot_profile?: BotProfile
   text?: string
   ts: string

@@ -1,8 +1,9 @@
 import { Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
-import { GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, RichText, RichTextBlock, SlackUser } from './types/events'
+import { BasicSlackEvent, EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, RichText, RichTextBlock, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
 import { File, SlackChannel, SlackTeam } from './types'
+import { unescape } from './message'
 
 type NewKnownBlock = KnownBlock | RichTextBlock
 
@@ -10,7 +11,7 @@ function adaptRichText(elements: RichText[]) {
   const result: Element[] = []
   for (const text of elements) {
     if (text.type === 'text') {
-      let item = h.text(text.text)
+      let item = h.text(unescape(text.text))
       if (text.style?.bold) item = h('b', {}, item)
       if (text.style?.italic) item = h('i', {}, item)
       if (text.style?.strike) item = h('del', {}, item)
@@ -29,6 +30,25 @@ function adaptRichText(elements: RichText[]) {
   return result
 }
 
+function adaptMarkdown(markdown: string) {
+  let list = markdown.split(/(<(?:.*?)>)/g)
+  list = list.map(v => v.split(/(:(?:[a-zA-Z0-9_]+):)/g)).flat() // face
+  let result: Element[] = []
+  for (const item of list) {
+    if (!item) continue
+    const match = item.match(/<(.*?)>/)
+    if (match) {
+      if (match[0].startsWith("@U")) result.push(h.at(match[0].slice(2)))
+      if (match[0].startsWith("#C")) result.push(h.sharp(match[0].slice(2)))
+    } else if (item.startsWith(":") && item.endsWith(":")) {
+      result.push(h('face', { id: item.slice(1, -1) }))
+    } else {
+      result.push(h.text(item))
+    }
+  }
+  return result
+}
+
 function adaptMessageBlocks(blocks: NewKnownBlock[]) {
   let result: Element[] = []
   for (const block of blocks) {
@@ -42,13 +62,16 @@ function adaptMessageBlocks(blocks: NewKnownBlock[]) {
             )))
         }
       }
+    } else if (block.type === 'section') {
+      result = result.concat(adaptMarkdown(block.text.text))
     }
   }
   return result
 }
 
 const adaptAuthor = (evt: GenericMessageEvent): Universal.Author => ({
-  userId: evt.user,
+  userId: evt.user || evt.app_id,
+  // username: evt.username
 })
 
 const adaptBotProfile = (evt: GenericMessageEvent): Universal.Author => ({
@@ -68,7 +91,7 @@ export function adaptMessage(bot: SlackBot, evt: GenericMessageEvent, session: P
   session.timestamp = ~~(Number(evt.ts) * 1000)
   session.author = evt.bot_profile ? adaptBotProfile(evt) : adaptAuthor(evt)
   session.userId = session.author.userId
-  session.guildId = evt.team
+  if (evt.team) session.guildId = evt.team
 
   let elements = []
   if (evt.thread_ts) elements.push(h.quote(evt.thread_ts))
@@ -122,9 +145,10 @@ export function adaptSentAsset(file: File, session: Partial<Session> = {}) {
   return session as Universal.Message
 }
 
-export async function adaptSession(bot: SlackBot, input: MessageEvent) {
+export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<BasicSlackEvent>) {
   const session = bot.session()
-  if (input.type === 'message') {
+  if (payload.event.type === 'message') {
+    const input = payload.event as GenericMessageEvent
     // @ts-ignore
     if (input.app_id === bot.selfId) return
     if (!input.subtype) {
@@ -137,7 +161,7 @@ export async function adaptSession(bot: SlackBot, input: MessageEvent) {
       const evt = input as unknown as MessageChangedEvent
       session.type = 'message-updated'
       // @ts-ignore
-      session.guildId = evt.message.user_team
+      session.guildId = payload.team_id
       prepareMessage(session, input)
       adaptMessage(bot, evt.message, session)
     }

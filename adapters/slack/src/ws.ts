@@ -1,7 +1,7 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
-import { EnvelopedEvent, MessageEvent, SocketEvent } from './types/events'
+import { BasicSlackEvent, EnvelopedEvent, MessageEvent, SocketEvent } from './types/events'
 
 const logger = new Logger('slack')
 
@@ -24,9 +24,10 @@ export class WsClient extends Adapter.WsClient<SlackBot> {
         return this.bot.online()
       }
       if (type === 'events_api') {
-        const { envelope_id, payload } = parsed as unknown as EnvelopedEvent<MessageEvent>
+        const { envelope_id} = parsed
+        const payload: EnvelopedEvent<BasicSlackEvent> = parsed.payload
         bot.socket.send(JSON.stringify({ envelope_id }))
-        const session = await adaptSession(bot, payload.event)
+        const session = await adaptSession(bot, payload)
 
         if (session) {
           bot.dispatch(session)

@@ -54,8 +54,9 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       messages: GenericMessageEvent[]
     }>('POST', '/conversations.history', {
       channel: channelId,
-      latest: messageId,
+      oldest: messageId,
       limit: 1,
+      inclusive: true
     })
     return adaptMessage(this, msg.messages[0])
   }

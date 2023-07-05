@@ -5,7 +5,7 @@ import { adaptMessage, adaptSentAsset } from './utils'
 import { File } from './types'
 
 // https://api.slack.com/reference/surfaces/formatting#basics
-export const sanitize = (val: string) =>
+export const escape = (val: string) =>
   val
     .replace(/(?<!\u200b)[\*_~`]/g, '\u200B$&')
     .replace(/@everyone/g, () => '@\u200Beveryone')
@@ -15,6 +15,11 @@ export const sanitize = (val: string) =>
     // .replace(/<(\!(?:here|channel|everyone)(?:\|[0-9a-zA-Z?]*)?)>/g, '&lt;$1&gt;')
     .replace(/<(.*?)>/g, '&lt;$1&gt;')
 
+export const unescape = (val: string) =>
+  val
+    .replace(/\u200b([\*_~`])/g, '$1')
+    .replace(/@\u200Beveryone/g, () => '@everyone')
+    .replace(/@\u200Bhere/g, () => '@here')
 export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   buffer = ''
   thread_ts = null
@@ -27,15 +32,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       channel: this.channelId,
       ...this.addition,
       thread_ts: this.thread_ts,
-      'blocks': [
-        {
-          'type': 'section',
-          'text': {
-            'type': 'mrkdwn',
-            'text': this.buffer,
-          },
-        },
-      ],
+      text: this.buffer
     })
     const session = this.bot.session()
     adaptMessage(this.bot, r.message, session)
@@ -71,13 +68,15 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.buffer += sanitize(attrs.content)
+      this.buffer += escape(attrs.content)
     } else if (type === 'image' && attrs.url) {
       await this.sendAsset(element)
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += `<#${attrs.id}>`
     } else if (type === 'at') {
       if (attrs.id) this.buffer += `<@${attrs.id}>`
+      if (attrs.type === "all") this.buffer += `<!everyone>`
+      if (attrs.type === "here") this.buffer += `<!here>`
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '*'
       await this.render(children)
@@ -103,6 +102,8 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     } else if (type === 'p') {
       this.buffer += `\n`
       await this.render(children)
+    } else if (type === 'face') {
+      this.buffer += `:${attrs.id}:`
     } else if (type === 'author') {
       this.addition = {
         username: attrs.nickname,
