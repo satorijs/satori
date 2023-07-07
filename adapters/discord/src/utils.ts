@@ -46,8 +46,8 @@ export const encodeRole = (role: Partial<Universal.Role>): Partial<Discord.Role>
 export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
   const { platform } = bot
 
-  setupMessage(session, meta)
   session.messageId = meta.id
+  session.channelId = meta.channel_id
   session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
   if (meta.author) {
     session.author = decodeAuthor(meta.author)
@@ -136,11 +136,10 @@ export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, sess
   return session as Universal.Message
 }
 
-export function setupMessage(session: Partial<Session>, data: Partial<Discord.Message>) {
-  session.guildId = data.guild_id
-  session.isDirect = !data.guild_id
-  session.subtype = data.guild_id ? 'group' : 'private'
-  session.channelId = data.channel_id
+export function setupMessageGuildId(session: Partial<Session>, guildId: string) {
+  session.guildId = guildId
+  session.isDirect = !guildId
+  session.subtype = guildId ? 'group' : 'private'
 }
 
 type ReactionEvent = Partial<
@@ -173,19 +172,23 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     }
     session.type = 'message'
     await decodeMessage(bot, input.d, session)
+    setupMessageGuildId(session, input.d.guild_id)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
-    const msg = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
+    const message = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
-    await decodeMessage(bot, msg, session)
+    await decodeMessage(bot, message, session)
+    const channel = await bot.internal.getChannel(input.d.channel_id)
+    setupMessageGuildId(session, channel.guild_id)
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_DELETE') {
     session.type = 'message-deleted'
     session.messageId = input.d.id
-    setupMessage(session, input.d)
+    session.channelId = input.d.channel_id
+    setupMessageGuildId(session, input.d.guild_id)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     session.type = 'reaction-added'
     setupReaction(session, input.d)
