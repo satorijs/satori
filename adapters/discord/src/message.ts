@@ -1,4 +1,4 @@
-import { Dict, h, Logger, MessageEncoder, Quester, Schema, segment, Session, Universal } from '@satorijs/satori'
+import { Dict, h, Logger, MessageEncoder, Quester, Schema, Session, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
@@ -26,7 +26,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private mode: RenderMode = 'default'
 
   private async getUrl() {
-    const input = this.options.session.discord
+    const input = this.options?.session?.discord
     if (input?.t === 'INTERACTION_CREATE') {
       // 消息交互
       return `/webhooks/${input.d.application_id}/${input.d.token}`
@@ -68,11 +68,15 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
 
       return message
     } catch (e) {
-      if (Quester.isAxiosError(e) && e.response?.data.code === 10015) {
-        logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
-        if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
-        await this.ensureWebhook()
-        return this.post(data, headers)
+      if (Quester.isAxiosError(e) && e.response) {
+        if (e.response.data?.code === 10015) {
+          logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
+          if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
+          await this.ensureWebhook()
+          return this.post(data, headers)
+        } else {
+          e = new Error(`[${e.response.status}] ${JSON.stringify(e.response.data)}`)
+        }
       }
       this.errors.push(e)
     }
@@ -219,6 +223,47 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
         content: this.buffer.trim(),
       })
       this.buffer = ''
+    } else if (type === 'author') {
+      const { avatar, nickname } = attrs
+      if (avatar) this.addition.avatar_url = avatar
+      if (nickname) this.addition.username = nickname
+      if (this.stack[0].type === 'message') {
+        this.stack[0].author = attrs
+      }
+      if (this.stack[0].type === 'forward') {
+        this.stack[1].author = attrs
+      }
+    } else if (type === 'quote') {
+      await this.flush()
+      const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, '$1')
+
+      const message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
+      if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
+        // no quote and author, send by bot
+        await this.flush()
+        this.addition.message_reference = {
+          message_id: attrs.id,
+        }
+      } else {
+        // quote
+        let replyId = attrs.id, channelId = this.channelId
+        if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
+          // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
+          replyId = this.stack[0].fakeMessageMap[attrs.id][0].messageId
+          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channelId
+        }
+        const quoted = await this.bot.getMessage(channelId, replyId)
+        this.addition.embeds = [{
+          description: [
+            sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
+            `<t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+          ].join('\n\n'),
+          author: {
+            name: quoted.author.nickname || quoted.author.username,
+            icon_url: quoted.author.avatar,
+          },
+        }]
+      }
     } else if (type === 'figure') {
       await this.flush()
       this.mode = 'figure'
@@ -236,54 +281,6 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       } else {
         const resultLength = +this.results.length
         await this.flush()
-
-        // author
-        const [author] = segment.select(children, 'author')
-        if (author) {
-          const { avatar, nickname } = author.attrs
-          if (avatar) this.addition.avatar_url = avatar
-          if (nickname) this.addition.username = nickname
-          if (this.stack[0].type === 'message') {
-            this.stack[0].author = author.attrs
-          }
-          if (this.stack[0].type === 'forward') {
-            this.stack[1].author = author.attrs
-          }
-        }
-
-        // quote
-        const [quote] = segment.select(children, 'quote')
-        if (quote) {
-          const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, '$1')
-
-          const message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
-          if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
-            // no quote and author, send by bot
-            await this.flush()
-            this.addition.message_reference = {
-              message_id: quote.attrs.id,
-            }
-          } else {
-            // quote
-            let replyId = quote.attrs.id, channelId = this.channelId
-            if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[quote.attrs.id]?.length >= 1) {
-              // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
-              replyId = this.stack[0].fakeMessageMap[quote.attrs.id][0].messageId
-              channelId = this.stack[0].fakeMessageMap[quote.attrs.id][0].channelId
-            }
-            const quoted = await this.bot.getMessage(channelId, replyId)
-            this.addition.embeds = [{
-              description: [
-                sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
-                `<t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
-              ].join('\n\n'),
-              author: {
-                name: quoted.author.nickname || quoted.author.username,
-                icon_url: quoted.author.avatar,
-              },
-            }]
-          }
-        }
 
         await this.render(children)
         await this.flush()
