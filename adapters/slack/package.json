@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@slack/types": "^2.8.0",
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.0",
+    "seratch-slack-types": "^0.8.0"
   }
 }

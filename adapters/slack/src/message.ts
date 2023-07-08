@@ -32,10 +32,10 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       channel: this.channelId,
       ...this.addition,
       thread_ts: this.thread_ts,
-      text: this.buffer
+      text: this.buffer,
     })
     const session = this.bot.session()
-    adaptMessage(this.bot, r.message, session)
+    await adaptMessage(this.bot, r.message, session)
     session.app.emit(session, 'send', session)
     this.results.push(session)
     this.buffer = ''
@@ -75,8 +75,8 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       this.buffer += `<#${attrs.id}>`
     } else if (type === 'at') {
       if (attrs.id) this.buffer += `<@${attrs.id}>`
-      if (attrs.type === "all") this.buffer += `<!everyone>`
-      if (attrs.type === "here") this.buffer += `<!here>`
+      if (attrs.type === 'all') this.buffer += `<!everyone>`
+      if (attrs.type === 'here') this.buffer += `<!here>`
     } else if (type === 'b' || type === 'strong') {
       this.buffer += '*'
       await this.render(children)

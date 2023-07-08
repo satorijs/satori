@@ -5,6 +5,7 @@ import { adaptChannel, adaptGuild, adaptMessage, adaptUser, AuthTestResponse } f
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import FormData from 'form-data'
+import * as WebApi from 'seratch-slack-types/web-api'
 
 export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
   static MessageEncoder = SlackMessageEncoder
@@ -20,6 +21,8 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 
     if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this)
+    } else {
+      ctx.plugin(HttpServer, this)
     }
   }
 
@@ -28,9 +31,11 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
-      data = data instanceof FormData ? data : JSON.stringify(data)
-      const type = data instanceof FormData ? 'multipart/form-data' : 'application/json; charset=utf-8'
-      headers['content-type'] = type
+      if (!headers['content-type']) {
+        data = data instanceof FormData ? data : JSON.stringify(data)
+        const type = data instanceof FormData ? 'multipart/form-data' : 'application/json; charset=utf-8'
+        headers['content-type'] = type
+      }
       return (await this.http(method, path, { data, headers }))
     }
   }
@@ -56,7 +61,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       channel: channelId,
       oldest: messageId,
       limit: 1,
-      inclusive: true
+      inclusive: true,
     })
     return adaptMessage(this, msg.messages[0])
   }
@@ -131,6 +136,39 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       users: channelId,
     })
     return this.sendMessage(channel.id, content, undefined, options)
+  }
+
+  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+    const { message } = await this.request<WebApi.ReactionsGetResponse>('POST', '/reactions.get', `channel=${channelId}&timestamp=${messageId}&emoji=${emoji}`, {
+      'content-type': 'application/x-www-form-urlencoded',
+    })
+    return message.reactions.find(v => v.name === emoji)?.users.map(v => ({
+      userId: v,
+    })) ?? []
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+    // reactions.write
+    return this.request('POST', '/reactions.add', {
+      channel: channelId,
+      timestamp: messageId,
+      name: emoji,
+    })
+  }
+
+  async clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void> {
+    const { message } = await this.request<WebApi.ReactionsGetResponse>('POST', '/reactions.get', `channel=${channelId}&timestamp=${messageId}&full=true`, {
+      'content-type': 'application/x-www-form-urlencoded',
+    })
+    for (const reaction of message.reactions) {
+      if (!emoji || reaction.name === emoji) {
+        await this.request('POST', '/reactions.remove', {
+          channel: channelId,
+          timestamp: messageId,
+          name: reaction.name,
+        })
+      }
+    }
   }
 }
 

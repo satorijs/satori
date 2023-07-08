@@ -7,6 +7,8 @@ const logger = new Logger('slack')
 
 export class WsClient extends Adapter.WsClient<SlackBot> {
   async prepare(bot: SlackBot) {
+    const { userId } = await bot.getSelf()
+    bot.selfId = userId
     const data = await bot.request('POST', '/apps.connections.open', {}, {}, true)
     const { url } = data
     logger.debug('ws url: %s', url)
@@ -20,11 +22,11 @@ export class WsClient extends Adapter.WsClient<SlackBot> {
       const { type } = parsed
       if (type === 'hello') {
         // @ts-ignore
-        this.bot.selfId = parsed.connection_info.app_id
+        // this.bot.selfId = parsed.connection_info.app_id
         return this.bot.online()
       }
       if (type === 'events_api') {
-        const { envelope_id} = parsed
+        const { envelope_id } = parsed
         const payload: EnvelopedEvent<BasicSlackEvent> = parsed.payload
         bot.socket.send(JSON.stringify({ envelope_id }))
         const session = await adaptSession(bot, payload)

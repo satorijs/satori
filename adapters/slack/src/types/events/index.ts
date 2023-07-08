@@ -19,7 +19,7 @@ export {
   File,
 } from './message-events'
 
-export type SocketEvent = HelloEvent | EventsApiEvent
+export type SocketEvent = HelloEvent | EventsApiEvent | UrlVerificationEvent | EnvelopedEvent
 
 export interface HelloEvent {
   type: 'hello'
@@ -29,6 +29,12 @@ export interface EventsApiEvent {
   type: 'events_api'
   envelope_id: string
   payload: EnvelopedEvent
+}
+
+export interface UrlVerificationEvent {
+  type: 'url_verification'
+  token: string
+  challenge: string
 }
 
 /**

@@ -1,6 +1,6 @@
 import { Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
-import { BasicSlackEvent, EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, RichText, RichTextBlock, SlackUser } from './types/events'
+import { BasicSlackEvent, EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
 import { File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
@@ -33,14 +33,14 @@ function adaptRichText(elements: RichText[]) {
 function adaptMarkdown(markdown: string) {
   let list = markdown.split(/(<(?:.*?)>)/g)
   list = list.map(v => v.split(/(:(?:[a-zA-Z0-9_]+):)/g)).flat() // face
-  let result: Element[] = []
+  const result: Element[] = []
   for (const item of list) {
     if (!item) continue
     const match = item.match(/<(.*?)>/)
     if (match) {
-      if (match[0].startsWith("@U")) result.push(h.at(match[0].slice(2)))
-      if (match[0].startsWith("#C")) result.push(h.sharp(match[0].slice(2)))
-    } else if (item.startsWith(":") && item.endsWith(":")) {
+      if (match[0].startsWith('@U')) result.push(h.at(match[0].slice(2)))
+      if (match[0].startsWith('#C')) result.push(h.sharp(match[0].slice(2)))
+    } else if (item.startsWith(':') && item.endsWith(':')) {
       result.push(h('face', { id: item.slice(1, -1) }))
     } else {
       result.push(h.text(item))
@@ -81,20 +81,24 @@ const adaptBotProfile = (evt: GenericMessageEvent): Universal.Author => ({
   avatar: evt.bot_profile.icons.image_72,
 })
 
-export function prepareMessage(session: Partial<Session>, evt: MessageEvent) {
-  session.subtype = evt.channel_type === 'channel' ? 'group' : 'private'
+export async function adaptMessage(bot: SlackBot, evt: GenericMessageEvent, session: Partial<Session> = {}) {
+  session.isDirect = evt.channel_type === 'im'
   session.channelId = evt.channel
-}
-
-export function adaptMessage(bot: SlackBot, evt: GenericMessageEvent, session: Partial<Session> = {}) {
   session.messageId = evt.ts
-  session.timestamp = ~~(Number(evt.ts) * 1000)
+  session.timestamp = Math.floor(Number(evt.ts) * 1000)
   session.author = evt.bot_profile ? adaptBotProfile(evt) : adaptAuthor(evt)
   session.userId = session.author.userId
   if (evt.team) session.guildId = evt.team
 
   let elements = []
-  if (evt.thread_ts) elements.push(h.quote(evt.thread_ts))
+  // if a message(parent message) was a thread, it has thread_ts property too
+  if (evt.thread_ts && evt.thread_ts !== evt.ts) {
+    const quoted = await bot.getMessage(session.channelId, evt.thread_ts)
+    session.quote = quoted
+    session.quote.channelId = session.channelId
+  }
+
+  // if (evt.thread_ts) elements.push(h.quote(evt.thread_ts))
   elements = [...elements, ...adaptMessageBlocks(evt.blocks as unknown as NewKnownBlock[])]
   for (const file of evt.files ?? []) {
     if (file.mimetype.startsWith('video/')) {
@@ -120,12 +124,12 @@ export function adaptMessage(bot: SlackBot, evt: GenericMessageEvent, session: P
 }
 
 export function adaptMessageDeleted(bot: SlackBot, evt: MessageDeletedEvent, session: Partial<Session> = {}) {
-  session.subtype = evt.channel_type === 'channel' ? 'group' : 'private'
+  session.isDirect = evt.channel_type === 'im'
   session.channelId = evt.channel
   session.guildId = evt.previous_message.team
   session.type = 'message-deleted'
   session.messageId = evt.previous_message.ts
-  session.timestamp = ~~(Number(evt.previous_message.ts) * 1000)
+  session.timestamp = Math.floor(Number(evt.previous_message.ts) * 1000)
 
   adaptMessage(bot, evt.previous_message, session)
 }
@@ -145,16 +149,25 @@ export function adaptSentAsset(file: File, session: Partial<Session> = {}) {
   return session as Universal.Message
 }
 
-export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<BasicSlackEvent>) {
+function setupReaction(session: Partial<Session>, data: EnvelopedEvent<ReactionAddedEvent> | EnvelopedEvent<ReactionRemovedEvent>) {
+  session.guildId = data.team_id
+  session.channelId = data.event.item.channel
+  session.messageId = data.event.item.ts
+  session.timestamp = Math.floor(Number(data.event.item.ts) * 1000)
+  session.userId = data.event.user
+  session.content = data.event.reaction
+}
+
+export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackEvent>) {
   const session = bot.session()
+  // https://api.slack.com/events
   if (payload.event.type === 'message') {
     const input = payload.event as GenericMessageEvent
     // @ts-ignore
-    if (input.app_id === bot.selfId) return
+    if (input.user === bot.selfId) return
     if (!input.subtype) {
       session.type = 'message'
-      prepareMessage(session, input)
-      adaptMessage(bot, input as unknown as GenericMessageEvent, session)
+      await adaptMessage(bot, input as unknown as GenericMessageEvent, session)
     }
     if (input.subtype === 'message_deleted') adaptMessageDeleted(bot, input as unknown as MessageDeletedEvent, session)
     if (input.subtype === 'message_changed') {
@@ -162,11 +175,23 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<BasicS
       session.type = 'message-updated'
       // @ts-ignore
       session.guildId = payload.team_id
-      prepareMessage(session, input)
-      adaptMessage(bot, evt.message, session)
+      await adaptMessage(bot, evt.message, session)
     }
-    return session
+  } else if (payload.event.type === 'channel_left') {
+    session.type = 'channel-removed'
+    session.channelId = payload.event.channel
+    session.timestamp = Math.floor(Number(payload.event.event_ts) * 1000)
+    session.guildId = payload.team_id
+  } else if (payload.event.type === 'reaction_added') {
+    session.type = 'reaction-added'
+    setupReaction(session, payload as any)
+  } else if (payload.event.type === 'reaction_removed') {
+    session.type = 'reaction-deleted'
+    setupReaction(session, payload as any)
+  } else {
+    return
   }
+  return session
 }
 
 export interface AuthTestResponse {
