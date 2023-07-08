@@ -125,11 +125,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       segments.push(h('text', { content: ' ' }))
     }
 
-    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document) => {
-      segments.push(h(type, {
-        ...await this.$getFileFromId(data.file_id),
-        filename: data.file_name,
-      }))
+    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document | Telegram.Voice) => {
+      const attrs: Dict<string> = await this.$getFileFromId(data.file_id)
+      if (data['file_name']) {
+        attrs.filename = data['file_name']
+      }
+      segments.push(h(type, attrs))
     }
 
     if (message.location) {
@@ -152,7 +153,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         segments.push(h('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
     } else if (message.voice) {
-      segments.push(h('audio', await this.internal.getFile({ file_id: message.voice.file_id })))
+      await addResource('audio', message.voice)
     } else if (message.animation) {
       await addResource('image', message.animation)
     } else if (message.video) {
