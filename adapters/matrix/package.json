@@ -27,6 +27,7 @@
     "@satorijs/satori": "^2.5.0"
   },
   "dependencies": {
-    "image-size": "^1.0.2"
+    "image-size": "^1.0.2",
+    "html5parser": "^2.0.2"
   }
 }

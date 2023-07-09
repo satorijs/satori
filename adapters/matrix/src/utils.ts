@@ -1,8 +1,7 @@
 import { defineProperty, segment, Session, Universal } from '@satorijs/satori'
 import { MatrixBot } from './bot'
 import * as Matrix from './types'
-
-export interface AdapterConfig { }
+import { INode, ITag, parse, SyntaxKind } from 'html5parser'
 
 export function adaptAuthor(bot: MatrixBot, event: Matrix.ClientEvent): Universal.Author {
   return {
@@ -21,15 +20,14 @@ export async function adaptMessage(bot: MatrixBot, event: Matrix.ClientEvent, re
   result.author = adaptAuthor(bot, event)
   const content = event.content as Matrix.M_ROOM_MESSAGE
   const reply = content['m.relates_to']?.['m.in_reply_to']
-  let { body } = content
   if (reply) {
     result.quote = await bot.getMessage(event.room_id, reply.event_id)
-    body = body.substring(content.body.indexOf('\n\n') + 2)
   }
   switch (content.msgtype) {
     case 'm.text':
-    case 'm.emote': {
-      result.content = body
+    case 'm.emote':
+    case 'm.notice': {
+      result.content = parsseContent(bot, content)
       break
     }
     case 'm.image':
@@ -123,4 +121,133 @@ export async function dispatchSession(bot: MatrixBot, event: Matrix.ClientEvent)
   defineProperty(session, 'matrix', Object.create(bot.internal))
   Object.assign(session.matrix, event)
   bot.dispatch(session)
+}
+
+function parsseContent(bot: MatrixBot, content: Matrix.M_ROOM_MESSAGE) {
+  if (content['format'] !== 'org.matrix.custom.html') {
+    return content.body
+  }
+  const { formatted_body } = content as Matrix.M_TEXT
+  let result = ''
+
+  ;(function visit(nodes: INode[]) {
+    if (!nodes) return
+    for (const node of nodes) {
+      if (node.type === SyntaxKind.Text) {
+        result += segment.escape(decodeHE(node.value).trim() || '')
+      } else {
+        function tag(name: string) {
+          result += `<${name}>`
+          visit((node as ITag).body)
+          result += `</${name}>`
+        }
+        switch (node.name) {
+          case 'del': tag('s'); break
+          case 'p': tag('p'); break
+          case 'b': tag('b'); break
+          case 'i': tag('i'); break
+          case 'u': tag('u'); break
+          case 'strong': tag('b'); break
+          case 'em': tag('em'); break
+          case 'strike': tag('s'); break
+          case 'code': tag('code'); break
+          case 'sup': tag('sup'); break
+          case 'sub': tag('sub'); break
+          case 'a': {
+            const href = node.attributeMap.href?.value.value || '#'
+            if (href.startsWith('https://matrix.to/#/@')) {
+              result += `<at id="${href.substring(20)}">`
+              visit(node.body)
+              result += '</at>'
+              break
+            } else if (href.startsWith('https://matrix.to/#/#')) {
+              result += `<sharp id="${href.substring(20)}">`
+              visit(node.body)
+              result += '</sharp>'
+              break
+            }
+            result += `<a href="${href}">`
+            visit(node.body)
+            result += '</a>'
+            break
+          }
+          case 'li': {
+            visit(node.body)
+            result += '\n'
+            break
+          }
+          case 'hr': {
+            result += '\n\n'
+            break
+          }
+          case 'br': {
+            result += '\n'
+            break
+          }
+          case 'img': {
+            const src = node.attributeMap.src?.value.value
+            const alt = node.attributeMap.src?.value.value
+            if (!src) {
+              if (alt) result += alt
+              break
+            }
+            if (src.match(/^(data|https?):/)) {
+              result += `<image url="${src}"/>`
+              break
+            } else if (src.startsWith('mxc://')) {
+              result += `<image url="${bot.internal.getAssetUrl(src)}">`
+              break
+            }
+            break
+          }
+          case 'blockquote': {
+            result += '> '
+            visit(node.body)
+            break
+          }
+          case 'mx-reply':
+            // ignore
+            break
+          // div table thead tbody tr th td caption pre span
+          // details summary ul ol font h1 h2 h3 h4 h5 h6
+          default:
+            visit(node.body)
+        }
+      }
+    }
+  })(parse(formatted_body, { setAttributeMap: true }))
+  return result
+}
+
+// this is not a full list
+const entities = {
+  nbsp: ' ',
+  cent: '¢',
+  pound: '£',
+  yen: '¥',
+  euro: '€',
+  copy: '©',
+  reg: '®',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  amp: '&',
+  apos: '\'',
+}
+
+function decodeHE(text: string) {
+  const regex = /&(([a-z0-9]+)|(#[0-9]{1,6})|(#x[0-9a-fA-F]{1,6}));/ig
+  return text.replace(regex, (_1, _2, name: string, dec: string, hex: string) => {
+    if (name) {
+      if (name in entities) {
+        return entities[name]
+      } else {
+        return text
+      }
+    } else if (dec) {
+      return String.fromCharCode(+dec.substring(1))
+    } else if (hex) {
+      return String.fromCharCode(parseInt(hex.substring(2), 16))
+    }
+  })
 }
