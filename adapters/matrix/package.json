@@ -1,0 +1,33 @@
+{
+  "name": "@satorijs/adapter-matrix",
+  "description": "Matrix Adapter for Satorijs",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "Anillc <void@anillc.cn>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/matrix"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "keywords": [
+    "bot",
+    "matrix",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^2.5.0"
+  },
+  "dependencies": {
+    "image-size": "^1.0.2",
+    "html5parser": "^2.0.2"
+  }
+}
