@@ -5,7 +5,6 @@ import { adaptChannel, adaptGuild, adaptMessage, adaptUser, AuthTestResponse } f
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import FormData from 'form-data'
-import * as WebApi from 'seratch-slack-types/web-api'
 import { Internal, Token } from './types/internal'
 
 export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {

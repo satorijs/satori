@@ -169,15 +169,18 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
       session.channelId = input.channel
       await adaptMessage(bot, input as unknown as GenericMessageEvent, session)
     }
-    if (input.subtype === 'message_deleted') adaptMessageDeleted(bot, input as unknown as MessageDeletedEvent, session)
-    if (input.subtype === 'message_changed') {
+    else if (input.subtype === 'message_deleted') adaptMessageDeleted(bot, input as unknown as MessageDeletedEvent, session)
+    else if (input.subtype === 'message_changed') {
       const evt = input as unknown as MessageChangedEvent
+      if (evt.message.subtype === 'thread_broadcast') return
       session.type = 'message-updated'
       // @ts-ignore
       session.guildId = payload.team_id
       session.isDirect = input.channel_type === 'im'
       session.channelId = input.channel
       await adaptMessage(bot, evt.message, session)
+    } else {
+      return
     }
   } else if (payload.event.type === 'channel_left') {
     session.type = 'channel-removed'
