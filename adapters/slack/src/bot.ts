@@ -6,18 +6,18 @@ import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import FormData from 'form-data'
 import * as WebApi from 'seratch-slack-types/web-api'
+import { Internal, Token } from './types/internal'
 
 export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
   static MessageEncoder = SlackMessageEncoder
   public http: Quester
+  public internal: Internal
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
-    this.http = ctx.http.extend({
-      headers: {
-        // 'Authorization': `Bearer ${config.token}`,
-      },
-    }).extend(config)
+    this.http = ctx.http.extend(config)
+
+    this.internal = new Internal(this, this.http)
 
     if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this)
@@ -41,7 +41,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
   }
 
   async getSelf() {
-    const data = await this.request<AuthTestResponse>('POST', '/auth.test')
+    const data = await this.internal.authTest(Token.BOT)
     return {
       userId: data.user_id,
       avatar: null,
@@ -51,18 +51,20 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
   }
 
   async deleteMessage(channelId: string, messageId: string): Promise<void> {
-    return this.request('POST', '/chat.delete', { channel: channelId, ts: messageId })
+    await this.internal.chatDelete(Token.BOT, {
+      channel: channelId,
+      ts: Number(messageId),
+    })
   }
 
   async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
-    const msg = await this.request<{
-      messages: GenericMessageEvent[]
-    }>('POST', '/conversations.history', {
+    const msg = await this.internal.conversationsHistory(Token.BOT, {
       channel: channelId,
-      oldest: messageId,
+      oldest: Number(messageId),
       limit: 1,
       inclusive: true,
     })
+    // @ts-ignore
     return adaptMessage(this, msg.messages[0])
   }
 
@@ -73,7 +75,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       channel: channelId,
       latest: before,
     })
-    return msg.messages.map(v => adaptMessage(this, v))
+    return Promise.all(msg.messages.map(v => adaptMessage(this, v)))
   }
 
   async getUser(userId: string, guildId?: string): Promise<Universal.User> {
@@ -128,19 +130,18 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 
   async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions): Promise<string[]> {
     // "channels:write,groups:write,mpim:write,im:write",
-    const { channel } = await this.request<{
-      channel: {
-        id: string
-      }
-    }>('POST', '/conversations.open', {
+    const { channel } = await this.internal.conversationsOpen(Token.BOT, {
       users: channelId,
     })
+    // @ts-ignore
     return this.sendMessage(channel.id, content, undefined, options)
   }
 
   async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
-    const { message } = await this.request<WebApi.ReactionsGetResponse>('POST', '/reactions.get', `channel=${channelId}&timestamp=${messageId}&emoji=${emoji}`, {
-      'content-type': 'application/x-www-form-urlencoded',
+    const { message } = await this.internal.reactionsGet(Token.BOT, {
+      channel: channelId,
+      timestamp: messageId,
+      full: true,
     })
     return message.reactions.find(v => v.name === emoji)?.users.map(v => ({
       userId: v,
@@ -149,7 +150,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
     // reactions.write
-    return this.request('POST', '/reactions.add', {
+    await this.internal.reactionsAdd(Token.BOT, {
       channel: channelId,
       timestamp: messageId,
       name: emoji,
@@ -157,12 +158,14 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
   }
 
   async clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void> {
-    const { message } = await this.request<WebApi.ReactionsGetResponse>('POST', '/reactions.get', `channel=${channelId}&timestamp=${messageId}&full=true`, {
-      'content-type': 'application/x-www-form-urlencoded',
+    const { message } = await this.internal.reactionsGet(Token.BOT, {
+      channel: channelId,
+      timestamp: messageId,
+      full: true,
     })
     for (const reaction of message.reactions) {
       if (!emoji || reaction.name === emoji) {
-        await this.request('POST', '/reactions.remove', {
+        await this.internal.reactionsRemove(Token.BOT, {
           channel: channelId,
           timestamp: messageId,
           name: reaction.name,

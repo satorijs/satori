@@ -2,7 +2,7 @@ import { Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import { BasicSlackEvent, EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
-import { File, SlackChannel, SlackTeam } from './types'
+import { Definitions, File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
 
 type NewKnownBlock = KnownBlock | RichTextBlock
@@ -69,21 +69,19 @@ function adaptMessageBlocks(blocks: NewKnownBlock[]) {
   return result
 }
 
-const adaptAuthor = (evt: GenericMessageEvent): Universal.Author => ({
-  userId: evt.user || evt.app_id,
+const adaptAuthor = (evt: Partial<GenericMessageEvent>): Universal.Author => ({
+  userId: evt.user || evt.bot_id as string,
   // username: evt.username
 })
 
-const adaptBotProfile = (evt: GenericMessageEvent): Universal.Author => ({
+const adaptBotProfile = (evt: Partial<GenericMessageEvent>): Universal.Author => ({
   userId: evt.bot_profile.app_id,
   username: evt.bot_profile.name,
   isBot: true,
   avatar: evt.bot_profile.icons.image_72,
 })
 
-export async function adaptMessage(bot: SlackBot, evt: GenericMessageEvent, session: Partial<Session> = {}) {
-  session.isDirect = evt.channel_type === 'im'
-  session.channelId = evt.channel
+export async function adaptMessage(bot: SlackBot, evt: Partial<GenericMessageEvent>, session: Partial<Session> = {}) {
   session.messageId = evt.ts
   session.timestamp = Math.floor(Number(evt.ts) * 1000)
   session.author = evt.bot_profile ? adaptBotProfile(evt) : adaptAuthor(evt)
@@ -167,6 +165,8 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
     if (input.user === bot.selfId) return
     if (!input.subtype) {
       session.type = 'message'
+      session.isDirect = input.channel_type === 'im'
+      session.channelId = input.channel
       await adaptMessage(bot, input as unknown as GenericMessageEvent, session)
     }
     if (input.subtype === 'message_deleted') adaptMessageDeleted(bot, input as unknown as MessageDeletedEvent, session)
@@ -175,6 +175,8 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
       session.type = 'message-updated'
       // @ts-ignore
       session.guildId = payload.team_id
+      session.isDirect = input.channel_type === 'im'
+      session.channelId = input.channel
       await adaptMessage(bot, evt.message, session)
     }
   } else if (payload.event.type === 'channel_left') {

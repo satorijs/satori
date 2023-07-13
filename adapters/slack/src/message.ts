@@ -28,7 +28,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   results: Session[] = []
   async flush() {
     if (!this.buffer.length) return
-    const r = await this.bot.request('POST', '/chat.postMessage', {
+    const r = await this.bot.internal.chatPostMessage(this.bot.config.botToken, {
       channel: this.channelId,
       ...this.addition,
       thread_ts: this.thread_ts,
@@ -36,6 +36,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     })
     const session = this.bot.session()
     await adaptMessage(this.bot, r.message, session)
+    session.channelId = this.channelId
     session.app.emit(session, 'send', session)
     this.results.push(session)
     this.buffer = ''
