@@ -1,7 +1,9 @@
-import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
+
+const logger = new Logger('line')
 
 export class LineBot extends Bot<LineBot.Config> {
   static MessageEncoder = LineMessageEncoder
@@ -10,6 +12,11 @@ export class LineBot extends Bot<LineBot.Config> {
   public internal: Internal
   constructor(ctx: Context, config: LineBot.Config) {
     super(ctx, config)
+
+    if (!ctx.root.config.selfUrl) {
+      logger.warn('selfUrl is not set, some features may not work')
+    }
+
     ctx.plugin(HttpServer, this)
     this.http = ctx.http.extend({
       ...config.api,
@@ -80,13 +87,10 @@ export class LineBot extends Bot<LineBot.Config> {
 
 export namespace LineBot {
   export interface Config extends Bot.Config {
-    privateKey: string
-    secret: string
-    kid?: string
-    channelId: string
     token: string
     api: Quester.Config
     content: Quester.Config
+    secret: string
   }
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
@@ -96,11 +100,8 @@ export namespace LineBot {
       content: Quester.createConfig('https://api-data.line.me/'),
     }),
     Schema.object({
-      privateKey: Schema.string().role('secret'),
-      secret: Schema.string().role('secret'),
-      kid: Schema.string(),
-      channelId: Schema.string(),
       token: Schema.string().required(),
+      secret: Schema.string().required(),
     }),
   ] as const)
 }
