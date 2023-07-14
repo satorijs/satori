@@ -12,7 +12,6 @@ export class LineBot extends Bot<LineBot.Config> {
   public internal: Internal
   constructor(ctx: Context, config: LineBot.Config) {
     super(ctx, config)
-
     if (!ctx.root.config.selfUrl) {
       logger.warn('selfUrl is not set, some features may not work')
     }
@@ -47,7 +46,10 @@ export class LineBot extends Bot<LineBot.Config> {
     let userIds: string[] = []
     let start: string
     do {
-      const res = await this.internal.getFollowers(start, 1000)
+      const res = await this.internal.getFollowers({
+        start,
+        limit: 1000,
+      })
       userIds = userIds.concat(res.userIds)
       start = res.next
     } while (start)
@@ -67,7 +69,7 @@ export class LineBot extends Bot<LineBot.Config> {
     let userIds: string[] = []
     let start: string
     do {
-      const res = await this.internal.getGroupMembersIds(guildId, start)
+      const res = await this.internal.getGroupMembersIds(guildId, { start })
       userIds = userIds.concat(res.memberIds)
       start = res.next
     } while (start)

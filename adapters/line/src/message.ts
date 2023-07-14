@@ -1,6 +1,6 @@
 import { h, MessageEncoder } from '@satorijs/satori'
 import { LineBot } from './bot'
-import { Message, Sender, TextMessage } from './types'
+import { Definitions } from './types'
 
 export const escape = (val: string) =>
   val
@@ -12,21 +12,17 @@ export const unescape = (val: string) =>
 
 export class LineMessageEncoder extends MessageEncoder<LineBot> {
   buffer = ''
-  blocks: Message[] = []
-  block: Message = null
-  sender: Sender = {}
-  emojis: TextMessage['emojis'] = []
+  blocks: Definitions.Message[] = []
+  block: Definitions.Message = null
+  sender: Definitions.Sender = {}
+  emojis: Definitions.Emoji[] = []
   async flush(): Promise<void> {
     await this.insertBlock()
     // https://developers.line.biz/en/reference/messaging-api/#send-push-message
     for (let i = 0; i < this.blocks.length; i += 5) {
-      await this.bot.http.post('/v2/bot/message/push', {
+      await this.bot.internal.pushMessage({
         to: this.channelId,
         messages: this.blocks.slice(i, i + 5),
-      }, {
-        headers: {
-          Authorization: `Bearer ${this.bot.config.token}`,
-        },
       })
     }
   }
