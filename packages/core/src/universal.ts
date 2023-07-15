@@ -40,7 +40,7 @@ export namespace Universal {
     setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
     unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
     getGuildRoles(guildId: string): Promise<Role[]>
-    createGuildRole(guildId: string, data: Partial<Role>): Promise<Role>
+    createGuildRole(guildId: string, data: Partial<Role>): Promise<string>
     modifyGuildRole(guildId: string, roleId: string, data: Partial<Role>): Promise<void>
     deleteGuildRole(guildId: string, roleId: string): Promise<void>
 

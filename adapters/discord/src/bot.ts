@@ -179,7 +179,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async createGuildRole(guildId: string, data: Partial<Universal.Role>) {
     const role = await this.internal.createGuildRole(guildId, encodeRole(data))
-    return decodeRole(role)
+    return role.id
   }
 
   async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.Role>) {
