@@ -23,7 +23,7 @@ async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promis
   const value = process.env.KOISHI_ENV === 'browser'
     ? new Blob([data], { type: mime })
     : Buffer.from(data)
-  form.append(method, value, filename)
+  form.append(method.slice(4).toLowerCase(), value, filename)
   return method
 }
 
