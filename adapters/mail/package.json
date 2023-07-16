@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-mail",
   "description": "Mail Adapter for Satorijs",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.5.0"
+    "@satorijs/satori": "^2.5.3"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.0",

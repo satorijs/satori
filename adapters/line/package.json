@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-line",
   "description": "Line Adapter for Satorijs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -26,8 +26,6 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.4.0"
-  },
-  "dependencies": {},
-  "devDependencies": {}
+    "@satorijs/satori": "^2.5.3"
+  }
 }
