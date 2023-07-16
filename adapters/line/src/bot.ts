@@ -90,22 +90,23 @@ export class LineBot extends Bot<LineBot.Config> {
 export namespace LineBot {
   export interface Config extends Bot.Config {
     token: string
+    secret: string
     api: Quester.Config
     content: Quester.Config
-    secret: string
   }
+
   export const Config: Schema<Config> = Schema.intersect([
+    Schema.object({
+      token: Schema.string().required().description('机器人令牌。'),
+      secret: Schema.string().required().description('机器人密钥。'),
+    }),
     Schema.object({
       api: Quester.createConfig('https://api.line.me/'),
     }),
     Schema.object({
       content: Quester.createConfig('https://api-data.line.me/'),
     }),
-    Schema.object({
-      token: Schema.string().required(),
-      secret: Schema.string().required(),
-    }),
-  ] as const)
+  ])
 }
 
 LineBot.prototype.platform = 'line'
