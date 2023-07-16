@@ -24,6 +24,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private addition: Dict = {}
   private figure: h = null
   private mode: RenderMode = 'default'
+  private listType: 'ol' | 'ul' = null
 
   private async getUrl() {
     const input = this.options?.session?.discord
@@ -183,7 +184,26 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
         this.buffer += ` (<${attrs.href}>) `
       }
     } else if (type === 'p') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      this.buffer += '\n'
+    } else if (type === 'blockquote') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      this.buffer += '> '
+      await this.render(children)
+      this.buffer += '\n'
+    } else if (type === 'ul' || type === 'ol') {
+      this.listType = type
+      await this.render(children)
+      this.listType = null
+    } else if (type === 'li') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      if (this.listType === 'ol') {
+        this.buffer += '0. '
+      } else if (this.listType === 'ul') {
+        this.buffer += '- '
+      }
+      this.render(children)
       this.buffer += '\n'
     } else if (type === 'at') {
       if (attrs.id) {
