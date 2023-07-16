@@ -33,8 +33,8 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     ctx.plugin(WsClient, this)
   }
 
-  session(payload = {}) {
-    return defineProperty(super.session(), 'discord', Object.assign(Object.create(this.internal), payload))
+  session(payload?: any, input?: any) {
+    return defineProperty(super.session(payload), 'discord', Object.assign(Object.create(this.internal), input))
   }
 
   private async _ensureWebhook(channelId: string) {

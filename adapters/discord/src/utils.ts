@@ -161,7 +161,7 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
 }
 
 export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
-  const session = bot.session()
+  const session = bot.session({}, input)
   if (input.t === 'MESSAGE_CREATE') {
     if (input.d.webhook_id) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)
