@@ -33,8 +33,10 @@ export class LineBot extends Bot<LineBot.Config> {
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
-    const { userId } = await this.internal.getBotInfo()
+    const { userId, pictureUrl, displayName } = await this.internal.getBotInfo()
     this.selfId = userId
+    this.username = displayName
+    if (pictureUrl) this.avatar = pictureUrl
     await callback(this)
     this.online()
   }
