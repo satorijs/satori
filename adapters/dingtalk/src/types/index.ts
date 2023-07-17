@@ -5,7 +5,6 @@ export type AtUser = {
 
 export type DingtalkRequestBase = {
   msgtype: string; // 消息类型
-  content: string; // 消息文本
   msgId: string; // 加密的消息ID
   createAt: string; // 消息的时间戳，单位毫秒
   conversationType: string; // 1：单聊 2：群聊
@@ -25,11 +24,64 @@ export type DingtalkRequestBase = {
   robotCode: string
 };
 
-export type Message = TextMessage
+export type Message = TextMessage | RichTextMessage
 
 export interface TextMessage extends DingtalkRequestBase {
   msgtype: "text"
   text: {
     content: string
+  }
+}
+
+export interface PictureMessage extends DingtalkRequestBase {
+  msgtype: "picture"
+  content: {
+    downloadCode: string
+  }
+}
+
+export interface RichTextMessage extends DingtalkRequestBase {
+  msgtype: "richText"
+  content: {
+    richText: ({
+      text: string
+    } & {
+      pictureDownloadCode: string
+      downloadCode: string
+      type: "picture"
+    })[]
+  }
+}
+
+// https://open.dingtalk.com/document/orgapp/types-of-messages-sent-by-robots
+export interface SendMessageData {
+  sampleText: { content: string }
+  sampleMarkdown: {
+    title?: string
+    text: string
+  }
+  sampleImageMsg: {
+    photoURL: string
+  }
+  sampleLink: {
+    text: string
+    title: string
+    picUrl: string
+    messageUrl: string
+  }
+  sampleAudio: {
+    mediaId: string
+    duration: string
+  }
+  sampleFile: {
+    mediaId: string
+    fileName: string
+    fileType: string
+  }
+  sampleVideo: {
+    duration: string
+    videoMediaId: string
+    videoType: string
+    picMediaId: string
   }
 }

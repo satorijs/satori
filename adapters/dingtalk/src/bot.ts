@@ -4,6 +4,7 @@ import { DingtalkMessageEncoder } from './message'
 
 const logger = new Logger('dingtalk')
 
+// https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
 export class DingtalkBot extends Bot<DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
   public oldHttp: Quester
@@ -11,6 +12,9 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend(config)
+    this.oldHttp = ctx.http.extend({
+      endpoint: 'https://oapi.dingtalk.com/'
+    })
     ctx.plugin(HttpServer, this)
   }
 
@@ -32,6 +36,14 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
         'x-acs-dingtalk-access-token': data.accessToken
       }
     }).extend(this.config)
+  }
+
+  // https://open.dingtalk.com/document/orgapp/download-the-file-content-of-the-robot-receiving-message
+  async downloadFile(downloadCode: string): Promise<string> {
+    const { downloadUrl } = await this.http.post('/robot/messageFiles/download', {
+      downloadCode, robotCode: this.selfId
+    })
+    return downloadUrl
   }
 }
 
