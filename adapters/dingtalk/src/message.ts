@@ -24,12 +24,12 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
   hasRichContent = true
   async flush(): Promise<void> {
     if (this.buffer.length && !this.hasRichContent) {
-      await this.sendMessage("sampleText", {
-        content: this.buffer
+      await this.sendMessage('sampleText', {
+        content: this.buffer,
       })
     } else if (this.buffer.length && this.hasRichContent) {
-      await this.sendMessage("sampleMarkdown", {
-        text: this.buffer.replace(/\n/g, '\n\n')
+      await this.sendMessage('sampleMarkdown', {
+        text: this.buffer.replace(/\n/g, '\n\n'),
       })
     }
   }
@@ -40,15 +40,15 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     const { processQueryKey } = await this.bot.http.post(
       this.session.isDirect ? '/robot/oToMessages/batchSend' : '/robot/groupMessages/send', {
       // https://open.dingtalk.com/document/orgapp/types-of-messages-sent-by-robots
-      msgKey: msgType,
-      msgParam: JSON.stringify(msgParam),
-      robotCode: this.bot.config.appkey,
-      ...this.session.isDirect ? {
-        userIds: [this.session.channelId]
-      } : {
-        openConversationId: this.channelId
-      }
-    })
+        msgKey: msgType,
+        msgParam: JSON.stringify(msgParam),
+        robotCode: this.bot.config.appkey,
+        ...this.session.isDirect ? {
+          userIds: [this.session.channelId],
+        } : {
+          openConversationId: this.channelId,
+        },
+      })
     const session = this.bot.session()
     session.messageId = processQueryKey
     this.results.push(session)
@@ -62,18 +62,18 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     const value = process.env.KOISHI_ENV === 'browser'
       ? new Blob([data], { type: mime })
       : Buffer.from(data)
-    let type;
-    if (mime.startsWith("image/") || mime.startsWith("video/")) {
-      type = mime.split("/")[0]
-    } else if (mime.startsWith("audio/")) {
-      type = "voice"
+    let type
+    if (mime.startsWith('image/') || mime.startsWith('video/')) {
+      type = mime.split('/')[0]
+    } else if (mime.startsWith('audio/')) {
+      type = 'voice'
     } else {
-      type = "file"
+      type = 'file'
     }
-    form.append("type", type)
+    form.append('type', type)
     form.append('media', value)
     const { media_id } = await this.bot.oldHttp.post('/media/upload', form, {
-      headers: form.getHeaders()
+      headers: form.getHeaders(),
     })
     return media_id
   }

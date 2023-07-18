@@ -1,12 +1,12 @@
 import { h, Session } from '@satorijs/satori'
-import { Message } from './types';
-import { DingtalkBot } from './bot';
+import { Message } from './types'
+import { DingtalkBot } from './bot'
 
 export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Session> {
   const session = bot.session()
-  session.type = "message"
+  session.type = 'message'
   session.messageId = body.msgId
-  session.isDirect = body.conversationType === "1"
+  session.isDirect = body.conversationType === '1'
   session.guildId = body.chatbotCorpId
 
   if (body.conversationTitle) session.channelName = body.conversationTitle
@@ -17,10 +17,10 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
     roles: body.isAdmin ? ['admin'] : [],
   }
   session.timestamp = Number(body.createAt)
-  if (body.msgtype === "text") {
+  if (body.msgtype === 'text') {
     session.elements = [h.text(body.text.content)]
   } else if (body.msgtype === 'richText') {
-    let elements: h[] = []
+    const elements: h[] = []
     for (const item of body.content.richText) {
       if (item.text) elements.push(h.text(item.text))
       if (item.downloadCode) {
