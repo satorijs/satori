@@ -11,7 +11,6 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
   logger: Logger
   prepare(): Promise<void> {
     this.logger = this.bot.ctx.logger('whatsapp')
-    return
   }
 
   async flush(): Promise<void> {
@@ -29,7 +28,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
     const { messages } = await this.bot.http.post<{
       messages: { id: string }[]
     }>(`/${this.bot.selfId}/messages`, {
-      'messaging_product': 'whatsapp',
+      messaging_product: 'whatsapp',
       to: this.channelId,
       recipient_type: 'individual',
       type,
@@ -93,6 +92,9 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       if (!id) return
       await this.flushTextMessage()
       await this.sendMessage('document', { id })
+    } else if (type === 'face' && attrs.id) {
+      await this.flushTextMessage()
+      await this.sendMessage('sticker', { id: attrs.id })
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)

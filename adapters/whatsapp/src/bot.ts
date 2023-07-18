@@ -18,12 +18,34 @@ export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
   }
 
   async initialize() {
-    const { data } = await this.http('GET', `/v17.0/${this.config.id}/phone_numbers`)
+    const { data } = await this.http<{
+      data: {
+        verified_name: string
+        code_verification_status: string
+        display_phone_number: string
+        quality_rating: string
+        id: string
+      }[]
+    }>('GET', `/v17.0/${this.config.id}/phone_numbers`)
+    this.ctx.logger('whatsapp').debug(require('util').inspect(data, false, null, true))
     if (data.length) {
-      console.log(data[0])
       this.selfId = data[0].id
-      this.username = data[0].display_phone_number
+      this.username = data[0].verified_name
     }
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+    // https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#reaction-messages
+    await this.http.post(`/${this.selfId}/messages`, {
+      messaging_product: 'whatsapp',
+      to: channelId,
+      recipient_type: 'individual',
+      type: 'reaction',
+      reaction: {
+        message_id: messageId,
+        emoji,
+      },
+    })
   }
 }
 
