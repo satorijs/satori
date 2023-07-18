@@ -77,7 +77,13 @@ export interface SendMessageBase {
   to: string
 }
 
-export type SendMessage = SendTextMessage | SendMediaMessage<'image'> | SendMediaMessage<'audio'> | SendMediaMessage<'video'> | SendMediaMessage<'document'> | SendMediaMessage<'sticker'>
+export type SendMessage =
+  SendTextMessage |
+  SendMediaMessage<'image'> |
+  SendMediaMessage<'audio'> |
+  SendMediaMessage<'video'> |
+  SendMediaMessage<'document'> |
+  SendMediaMessage<'sticker'>
 
 export interface SendTextMessage extends SendMessageBase {
   type: 'text'

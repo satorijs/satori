@@ -3,26 +3,41 @@ import { WhatsAppBot } from './bot'
 import { WebhookBody } from './types'
 import { decodeMessage } from './utils'
 import internal from 'stream'
+import crypto from 'crypto'
 
 export class HttpServer extends Adapter.Server<WhatsAppBot> {
   logger = new Logger('whatsapp')
-  constructor(ctx: Context, bot: WhatsAppBot) {
-    super()
+
+  fork(ctx: Context, bot: WhatsAppBot) {
+    super.fork(ctx, bot)
+    return bot.initialize()
   }
 
   async start(bot: WhatsAppBot) {
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
-    await bot.initialize()
     bot.ctx.router.post('/whatsapp', async (ctx) => {
+      const receivedSignature = ctx.get('X-Hub-Signature-256').split('sha256=')[1]
+
+      const payload = JSON.stringify(ctx.request.body)
+
+      const generatedSignature = crypto
+        .createHmac('sha256', bot.config.secret)
+        .update(payload)
+        .digest('hex')
+      if (receivedSignature !== generatedSignature) return ctx.status = 403
+
       const parsed = ctx.request.body as WebhookBody
       this.logger.debug(require('util').inspect(parsed, false, null, true))
       ctx.body = 'ok'
       ctx.status = 200
       if (parsed.object !== 'whatsapp_business_account') return
       for (const entry of parsed.entry) {
-        const session = await decodeMessage(bot, entry)
-        if (session.length) session.forEach(bot.dispatch.bind(bot))
+        const phone_number_id = entry.changes[0].value.metadata.phone_number_id
+        const localBot = this.bots.find((bot) => bot.selfId === phone_number_id)
+        const session = await decodeMessage(localBot, entry)
+        if (session.length) session.forEach(localBot.dispatch.bind(localBot))
+        this.logger.debug('handling bot: %s', localBot.sid)
         this.logger.debug(require('util').inspect(session, false, null, true))
       }
     })

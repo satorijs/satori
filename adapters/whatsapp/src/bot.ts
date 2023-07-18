@@ -1,6 +1,6 @@
-import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema } from '@satorijs/satori'
 import { WhatsAppMessageEncoder } from './message'
-import { HttpServer } from './http'
+import { WhatsAppBusiness } from '.'
 
 export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
   static MessageEncoder = WhatsAppMessageEncoder
@@ -8,7 +8,6 @@ export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
 
   constructor(ctx: Context, config: WhatsAppBot.Config) {
     super(ctx, config)
-    ctx.plugin(HttpServer, this)
     this.http = ctx.http.extend({
       ...config,
       headers: {
@@ -18,20 +17,7 @@ export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
   }
 
   async initialize() {
-    const { data } = await this.http<{
-      data: {
-        verified_name: string
-        code_verification_status: string
-        display_phone_number: string
-        quality_rating: string
-        id: string
-      }[]
-    }>('GET', `/v17.0/${this.config.id}/phone_numbers`)
-    this.ctx.logger('whatsapp').debug(require('util').inspect(data, false, null, true))
-    if (data.length) {
-      this.selfId = data[0].id
-      this.username = data[0].verified_name
-    }
+    this.selfId = this.config.phoneNumber
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
@@ -50,18 +36,14 @@ export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
 }
 
 export namespace WhatsAppBot {
-  export interface Config extends Bot.Config, Quester.Config {
-    systemToken: string
-    verifyToken: string
-    id: string
+  export interface Config extends WhatsAppBusiness.Config, Bot.Config {
+    phoneNumber: string
   }
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      systemToken: Schema.string(),
-      verifyToken: Schema.string().required(),
-      id: Schema.string().description('WhatsApp Business Account ID').required(),
+      phoneNumber: Schema.string().description('手机号').required(),
     }),
-    Quester.createConfig('https://graph.facebook.com'),
+    WhatsAppBusiness.Config,
   ] as const)
 }
 

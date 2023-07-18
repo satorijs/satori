@@ -1,4 +1,4 @@
-import { Dict, h, Logger, MessageEncoder } from '@satorijs/satori'
+import { Dict, h, MessageEncoder } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
 import FormData from 'form-data'
 import { SendMessage } from './types'
@@ -8,22 +8,19 @@ const SUPPORTED_MEDIA = 'audio/aac, audio/mp4, audio/mpeg, audio/amr, audio/ogg,
 export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
   private buffer = ''
   quoteId: string = null
-  logger: Logger
-  prepare(): Promise<void> {
-    this.logger = this.bot.ctx.logger('whatsapp')
-  }
 
   async flush(): Promise<void> {
     await this.flushTextMessage()
   }
 
   async flushTextMessage() {
-    await this.sendMessage('text', { body: this.buffer })
+    await this.sendMessage('text', { body: this.buffer, preview_url: this.options.linkPreview })
     this.buffer = ''
   }
 
   async sendMessage<T extends SendMessage['type']>(type: T, data: Dict) {
     if (type === 'text' && !this.buffer.length) return
+    if (type !== 'text' && this.buffer.length) await this.flushTextMessage()
     // https://developers.facebook.com/docs/whatsapp/api/messages/text
     const { messages } = await this.bot.http.post<{
       messages: { id: string }[]
@@ -44,7 +41,15 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       const session = this.bot.session()
       session.type = 'message'
       session.messageId = msg.id
-      // @TODO session body
+      session.channelId = this.channelId
+      session.guildId = this.channelId
+      session.isDirect = true
+      session.userId = this.bot.selfId
+      session.author = {
+        userId: this.bot.selfId,
+        username: this.bot.username,
+      }
+      session.timestamp = Date.now()
       session.app.emit(session, 'send', session)
       this.results.push(session)
     }
@@ -55,7 +60,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
 
     if (!SUPPORTED_MEDIA.includes(mime)) {
-      this.logger.warn(`Unsupported media type: ${mime}`)
+      this.bot.ctx.logger('whatsapp').warn(`Unsupported media type: ${mime}`)
       return
     }
 
@@ -85,22 +90,36 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       // https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#supported-media-types
       const id = await this.uploadMedia(attrs)
       if (!id) return
-      await this.flushTextMessage()
       await this.sendMessage(type, { id })
     } else if (type === 'file') {
       const id = await this.uploadMedia(attrs)
       if (!id) return
-      await this.flushTextMessage()
       await this.sendMessage('document', { id })
-    } else if (type === 'face' && attrs.id) {
-      await this.flushTextMessage()
-      await this.sendMessage('sticker', { id: attrs.id })
+    } else if (type === 'face') {
+      if (attrs.platform && attrs.platform !== this.bot.platform) {
+        return this.render(children)
+      } else {
+        await this.sendMessage('sticker', { id: attrs.id })
+      }
+    } else if (type === 'p') {
+      await this.render(children)
+      this.buffer += '\n'
+    } else if (type === 'a') {
+      await this.render(children)
+      this.buffer += ` (${attrs.href}) `
+    } else if (type === 'at') {
+      if (attrs.id) {
+        this.buffer += `@${attrs.id}`
+      }
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
       await this.flush()
+      this.quoteId = null
     } else if (type === 'quote') {
       this.quoteId = attrs.id
+    } else {
+      await this.render(children)
     }
   }
 }
