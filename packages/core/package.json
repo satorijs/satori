@@ -31,15 +31,15 @@
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.4"
+    "@types/ws": "^8.5.5"
   },
   "dependencies": {
     "@satorijs/element": "^2.4.2",
-    "cordis": "^2.8.3",
+    "cordis": "^2.8.5",
     "cordis-axios": "^3.1.2",
     "cosmokit": "^1.4.2",
     "ws": "^8.13.0",
     "reggol": "^1.4.4",
-    "schemastery": "^3.10.1"
+    "schemastery": "^3.11.0"
   }
 }

@@ -103,7 +103,7 @@ export namespace OneBotBot {
   export interface QQGuildConfig extends Bot.Config {}
 
   export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
-    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称'),
+    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称。'),
   })
 
   export interface BaseConfig extends BaseBot.Config {

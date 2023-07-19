@@ -62,7 +62,7 @@ declare global {
 declare module 'cordis-axios' {
   namespace Quester {
     export const Config: Schema<Config>
-    export function createConfig(this: typeof Quester, endpoint: string | boolean): Schema<Config>
+    export function createConfig(this: typeof Quester, endpoint?: string | boolean): Schema<Config>
   }
 }
 
