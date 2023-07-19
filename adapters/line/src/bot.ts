@@ -32,6 +32,15 @@ export class LineBot extends Bot<LineBot.Config> {
     this.internal = new Internal(this.http)
   }
 
+  async initialize(callback: (bot: this) => Promise<void>) {
+    const { userId, pictureUrl, displayName } = await this.internal.getBotInfo()
+    this.selfId = userId
+    this.username = displayName
+    if (pictureUrl) this.avatar = pictureUrl
+    await callback(this)
+    this.online()
+  }
+
   // https://developers.line.biz/en/reference/messaging-api/#get-profile
   async getSelf(): Promise<Universal.User> {
     const { userId, displayName, pictureUrl } = await this.internal.getBotInfo()

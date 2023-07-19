@@ -12,20 +12,20 @@ export class HttpServer extends Adapter.Server<LineBot> {
   }
 
   async start(bot: LineBot) {
-    const { userId } = await bot.internal.getBotInfo()
-    bot.selfId = userId
-    bot.online()
     bot.ctx.router.post('/line', async (ctx) => {
       const sign = ctx.headers['x-line-signature']?.toString()
-      const hash = crypto.createHmac('SHA256', bot.config.secret).update(ctx.request.rawBody || '').digest('base64')
+      const parsed = ctx.request.body as WebhookRequestBody
+      const { destination } = parsed
+      const localBot = this.bots.find(bot => bot.selfId === destination)
+      if (!localBot) return ctx.status = 403
+      const hash = crypto.createHmac('SHA256', localBot?.config?.secret).update(ctx.request.rawBody || '').digest('base64')
       if (hash !== sign) {
         return ctx.status = 403
       }
-      const parsed = ctx.request.body as WebhookRequestBody
       this.logger.debug(require('util').inspect(parsed, false, null, true))
       for (const event of parsed.events) {
-        const sessions = await adaptSessions(bot, event)
-        if (sessions.length) sessions.forEach(bot.dispatch.bind(bot))
+        const sessions = await adaptSessions(localBot, event)
+        if (sessions.length) sessions.forEach(localBot.dispatch.bind(localBot))
         this.logger.debug(require('util').inspect(sessions, false, null, true))
       }
       ctx.status = 200
@@ -44,6 +44,12 @@ export class HttpServer extends Adapter.Server<LineBot> {
       ctx.set('cache-control', resp.headers['cache-control'])
       ctx.response.body = resp.data
       ctx.status = 200
+    })
+    bot.initialize(async (bot) => {
+      await bot.internal.setWebhookEndpoint({
+        endpoint: bot.ctx.root.config.selfUrl + '/line',
+      })
+      this.logger.debug('listening updates %c', 'line:' + bot.selfId)
     })
   }
 }
