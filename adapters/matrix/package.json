@@ -24,7 +24,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.5.3"
+    "@satorijs/satori": "^2.5.4"
   },
   "dependencies": {
     "image-size": "^1.0.2",
