@@ -29,15 +29,21 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
       }
     }
     session.elements = elements
+  } else if (body.msgtype === 'picture') {
+    session.elements = [h.image(await bot.downloadFile(body.content.downloadCode))]
+  } else if (body.msgtype === 'file') {
+    session.elements = [h.file(await bot.downloadFile(body.content.downloadCode))]
   } else {
     return
   }
   if (!session.isDirect) {
     // group message
-    session.elements = [h.at(body.robotCode), ...session.elements]
+    const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => h.at(v.staffId))
+    session.elements = [h.at(body.robotCode), ...atUsers, ...session.elements]
     session.channelId = body.conversationId
   } else {
     session.channelId = session.userId
   }
+  session.content = session.elements.join("")
   return session
 }

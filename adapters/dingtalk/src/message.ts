@@ -37,18 +37,18 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
   // https://open.dingtalk.com/document/orgapp/the-robot-sends-a-group-message
   async sendMessage<T extends keyof SendMessageData>(msgType: T, msgParam: SendMessageData[T]) {
     console.log(this.session)
-    const { processQueryKey } = await this.bot.http.post(
-      this.session.isDirect ? '/robot/oToMessages/batchSend' : '/robot/groupMessages/send', {
+    const { processQueryKey } = this.session.isDirect ? await this.bot.internal.batchSendOTO({
+      msgKey: msgType,
+      msgParam: JSON.stringify(msgParam),
+      robotCode: this.bot.config.appkey,
+      userIds: [this.session.channelId],
+    }) : await this.bot.internal.orgGroupSend({
       // https://open.dingtalk.com/document/orgapp/types-of-messages-sent-by-robots
-        msgKey: msgType,
-        msgParam: JSON.stringify(msgParam),
-        robotCode: this.bot.config.appkey,
-        ...this.session.isDirect ? {
-          userIds: [this.session.channelId],
-        } : {
-          openConversationId: this.channelId,
-        },
-      })
+      msgKey: msgType,
+      msgParam: JSON.stringify(msgParam),
+      robotCode: this.bot.config.appkey,
+      openConversationId: this.channelId,
+    })
     const session = this.bot.session()
     session.messageId = processQueryKey
     this.results.push(session)
@@ -83,7 +83,6 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      console.log(attrs.content)
       this.buffer += escape(attrs.content)
     } else if (type === 'image' && attrs.url) {
       // await this.flush()

@@ -24,12 +24,22 @@ export type DingtalkRequestBase = {
   robotCode: string
 }
 
-export type Message = TextMessage | RichTextMessage
+export type Message = TextMessage | RichTextMessage | PictureMessage | FileMessage
 
 export interface TextMessage extends DingtalkRequestBase {
   msgtype: 'text'
   text: {
     content: string
+  }
+}
+
+export interface FileMessage extends DingtalkRequestBase {
+  msgtype: 'file'
+  content: {
+    spaceId: string
+    fileName: string
+    downloadCode: string
+    fileId: string
   }
 }
 
@@ -85,3 +95,46 @@ export interface SendMessageData {
     picMediaId: string
   }
 }
+
+export * from '../api/oauth2'
+export * from '../api/oapi'
+export * from '../api/contact'
+export * from '../api/swform'
+export * from '../api/hrm'
+export * from '../api/todo'
+export * from '../api/attendance'
+export * from '../api/calendar'
+export * from '../api/blackboard'
+export * from '../api/microApp'
+export * from '../api/im'
+export * from '../api/connector'
+export * from '../api/exclusive'
+export * from '../api/alitrip'
+export * from '../api/project'
+export * from '../api/edu'
+export * from '../api/crm'
+export * from '../api/yida'
+export * from '../api/drive'
+export * from '../api/workbench'
+export * from '../api/robot'
+export * from '../api/conference'
+export * from '../api/serviceGroup'
+export * from '../api/customerService'
+export * from '../api/esign'
+export * from '../api/jzcrm'
+export * from '../api/badge'
+export * from '../api/datacenter'
+export * from '../api/resident'
+export * from '../api/wiki'
+export * from '../api/storage'
+export * from '../api/doc'
+export * from '../api/diot'
+export * from '../api/h3yun'
+export * from '../api/link'
+export * from '../api/pedia'
+export * from '../api/devicemng'
+export * from '../api/convFile'
+export * from '../api/industry'
+export * from '../api/live'
+export * from '../api/card'
+export * from '../api/rooms'

@@ -36,8 +36,10 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
           }))
         }
       } else if (parsed.type === 'CALLBACK') {
+        this.ctx.logger('dingtalk').debug(require('util').inspect(JSON.parse(parsed.data), false, null, true))
         const session = await decodeMessage(this.bot, JSON.parse(parsed.data))
         if (session) this.bot.dispatch(session)
+        this.ctx.logger('dingtalk').debug(require('util').inspect(session, false, null, true))
       }
     })
   }

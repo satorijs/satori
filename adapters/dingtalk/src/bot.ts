@@ -2,6 +2,7 @@ import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
+import { Internal } from './internal'
 
 const logger = new Logger('dingtalk')
 
@@ -11,12 +12,14 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public oldHttp: Quester
   public http: Quester
   refreshTokenTimer: NodeJS.Timeout
+  public internal: Internal
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config)
     this.http = ctx.http.extend(config)
     this.oldHttp = ctx.http.extend({
       endpoint: 'https://oapi.dingtalk.com/',
     })
+    this.internal = new Internal(this)
 
     if (config.protocol === 'http') {
       ctx.plugin(HttpServer, this)
@@ -33,7 +36,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public token: string
 
   async refreshToken() {
-    const data = await this.http.post('/oauth2/accessToken', {
+    const data = await this.internal.getAccessToken({
       appKey: this.config.appkey,
       appSecret: this.config.secret,
     })
@@ -50,7 +53,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
 
   // https://open.dingtalk.com/document/orgapp/download-the-file-content-of-the-robot-receiving-message
   async downloadFile(downloadCode: string): Promise<string> {
-    const { downloadUrl } = await this.http.post('/robot/messageFiles/download', {
+    const { downloadUrl } = await this.internal.robotMessageFileDownload({
       downloadCode, robotCode: this.selfId,
     })
     return downloadUrl
