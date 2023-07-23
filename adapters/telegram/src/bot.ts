@@ -267,7 +267,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 
-  async $getFileFromPath(filePath: string, retrieveMime: boolean) {
+  async $getFileFromPath(filePath: string) {
     if (this.server) {
       return { url: `${this.server}/${filePath}` }
     }
