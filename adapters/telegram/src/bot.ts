@@ -4,6 +4,7 @@ import { adaptAuthorMeta, adaptGuildMember, adaptMessageMeta, adaptUser } from '
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
+import FileType from 'file-type'
 
 const logger = new Logger('telegram')
 
@@ -266,11 +267,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 
-  async $getFileFromPath(filePath: string) {
+  async $getFileFromPath(filePath: string, retrieveMime: boolean) {
     if (this.server) {
       return { url: `${this.server}/${filePath}` }
     }
-    const { mime, data } = await this.$getFile(filePath)
+    let { mime, data } = await this.$getFile(filePath)
+    if (mime === 'application/octet-stream') {
+      mime = await FileType.fromBuffer(data)?.mime
+    }
     const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
     return { url: base64 }
   }
