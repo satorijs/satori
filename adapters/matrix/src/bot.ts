@@ -120,6 +120,32 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     return await Promise.all(children.map(this.getChannel.bind(this)))
   }
 
+  async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
+    const state = await this.internal.getState(guildId)
+    const levels = state.find(event => event.type === 'm.room.power_levels').content as Matrix.M_ROOM_POWER_LEVELS
+    return state
+      .filter(event => event.type === 'm.room.member')
+      .map(event => {
+        const content = event.content as Matrix.M_ROOM_MEMBER
+        return {
+          userId: event.state_key,
+          username: event.state_key,
+          nickname: content.displayname,
+          avatar: this.internal.getAssetUrl(content.avatar_url),
+          isBot: !!this.ctx.bots.find(bot => bot.userId === event.state_key),
+          roles: [levels.users[event.state_key].toString()],
+        }
+      })
+  }
+
+  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+    return (await this.getGuildMemberList(guildId)).find(user => user.userId === userId)
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+    await this.internal.sendReaction(channelId, this.userId, messageId, emoji)
+  }
+
   async handleFriendRequest(): Promise<void> { }
 
   // as utils.ts commented, messageId is roomId

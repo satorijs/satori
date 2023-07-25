@@ -120,10 +120,6 @@ export interface User {
   user_id?: string
 }
 
-export interface RoomId {
-  room_id: string
-}
-
 export interface Sync {
   account_data?: AccountData
   // device_lists? // end to end
@@ -211,6 +207,34 @@ export interface LeftRoom {
   timeline?: Timeline
 }
 
+export interface Invite3pid {
+  address: string
+  id_access_token: string
+  id_server: string
+  medium: string
+}
+
+export interface StateEvent {
+  content: EventContent
+  state_key?: string
+  type: string
+}
+
+export interface RoomCreation {
+  creation_content?: Partial<M_ROOM_CREATE>
+  initial_state?: StateEvent[]
+  invite?: string[]
+  invite_3pid?: Invite3pid
+  is_direct?: boolean
+  name: string
+  power_level_content_override?: M_ROOM_POWER_LEVELS
+  preset?: 'private_chat' | 'public_chat' | 'trusted_private_chat'
+  room_alias_name?: string
+  room_version?: string
+  topic?: string
+  visibility?: 'public' | 'private'
+}
+
 export interface EventContent {}
 
 export interface Relation {
@@ -241,7 +265,7 @@ export interface M_ROOM_JOIN_RULES extends EventContent {
 
 export interface M_ROOM_MEMBER extends EventContent {
   avatar_url?: string
-  displayname?: string[]
+  displayname?: string
   is_direct?: boolean
   join_authorised_via_users_server?: string
   membership?: 'invite' | 'join' | 'knock' | 'leave' | 'ban'
@@ -445,6 +469,15 @@ export interface M_SPACE_PARENT extends EventContent {
   via?: string[]
 }
 
+export interface M_ANNOTATION extends Relation {
+  rel_type: 'm.annotation'
+  key: string
+}
+
+export interface M_REACTION extends EventContent {
+  'm.relates_to'?: M_ANNOTATION
+}
+
 export class Internal {
   private txnId = Math.round(Math.random() * 1000)
 
@@ -494,6 +527,19 @@ export class Internal {
     return response.event_id
   }
 
+  async sendReaction(roomId: string, userId: string, messageId: string, key: string): Promise<string> {
+    const eventContent: M_REACTION = {
+      'm.relates_to': {
+        rel_type: 'm.annotation',
+        event_id: messageId,
+        key,
+      },
+    }
+    const response = await this.bot.http.put(
+      `/client/v3/rooms/${roomId}/send/m.reaction/${this.txnId++}?user_id=${userId}`, eventContent)
+    return response.event_id
+  }
+
   async getEvent(roomId: string, eventId: string): Promise<ClientEvent> {
     return await this.bot.http.get(`/client/v3/rooms/${roomId}/event/${eventId}`)
   }
@@ -516,12 +562,23 @@ export class Internal {
     await this.bot.http.put(`/client/v3/profile/${userId}/avatar_url`, { avatar_url: uri })
   }
 
-  async joinRoom(roomId: string, reason?: string): Promise<RoomId> {
-    return await this.bot.http.post(`/client/v3/join/${roomId}`, { reason })
+  async createRoom(creation: RoomCreation): Promise<string> {
+    const response = await this.bot.http.post('/client/v3/createRoom', creation)
+    return response.room_id
   }
 
-  async leaveRoom(roomId: string, reason?: string): Promise<RoomId> {
-    return await this.bot.http.post(`/client/v3/rooms/${roomId}/leave`, { reason })
+  async joinRoom(roomId: string, reason?: string): Promise<string> {
+    const response = await this.bot.http.post(`/client/v3/join/${roomId}`, { reason })
+    return response.room_id
+  }
+
+  async leaveRoom(roomId: string, reason?: string): Promise<string> {
+    const response = await this.bot.http.post(`/client/v3/rooms/${roomId}/leave`, { reason })
+    return response.room_id
+  }
+
+  async invite(roomId: string, userId: string, reason?: string): Promise<void> {
+    await this.bot.http.post(`/client/v3/rooms/${roomId}/invite`, { user_id: userId, reason })
   }
 
   async sync(fullSstate: boolean = false): Promise<Sync> {
@@ -532,6 +589,12 @@ export class Internal {
 
   async getState(roomId: string): Promise<ClientEvent[]> {
     return await this.bot.http.get(`/client/v3/rooms/${roomId}/state`)
+  }
+
+  async setState(roomId: string, eventType: string, event: EventContent, state?: string): Promise<string> {
+    const statePath = state ? `/${state}` : ''
+    const response = await this.bot.http.put(`/client/v3/rooms/${roomId}/state/${eventType}${statePath}`, event)
+    return response.event_id
   }
 
   async getJoinedRooms(): Promise<string[]> {
