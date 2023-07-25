@@ -36,7 +36,6 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
 
   // https://open.dingtalk.com/document/orgapp/the-robot-sends-a-group-message
   async sendMessage<T extends keyof SendMessageData>(msgType: T, msgParam: SendMessageData[T]) {
-    console.log(this.session)
     const { processQueryKey } = this.session.isDirect ? await this.bot.internal.batchSendOTO({
       msgKey: msgType,
       msgParam: JSON.stringify(msgParam),
@@ -51,6 +50,10 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     })
     const session = this.bot.session()
     session.messageId = processQueryKey
+    session.channelId = this.session.channelId
+    session.guildId = this.session.guildId
+    console.log(session, processQueryKey)
+    session.app.emit(session, 'send', session)
     this.results.push(session)
   }
 
@@ -109,7 +112,6 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       this.buffer += `* `
     } else if (type === 'a' && attrs.href) {
       this.buffer += `[`
-      console.log(children)
       await this.render(children)
       this.buffer += `](${encodeURI(attrs.href)})`
     } else if (type === 'ul' || type === 'ol') {
@@ -126,7 +128,6 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       this.render(children)
       this.buffer += '\n'
     } else if (type === 'blockquote') {
-      console.log(children)
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       this.buffer += '> '
       await this.render(children)

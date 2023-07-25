@@ -30,6 +30,9 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const quester = isOldApi ? this.bot.oldHttp : this.bot.http
+            if (isOldApi) {
+              config.params = { ...config.params, access_token: this.bot.token }
+            }
             try {
               return await quester(method, url, config)
             } catch (error) {

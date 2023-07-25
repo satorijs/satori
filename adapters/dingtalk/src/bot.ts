@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -15,10 +15,8 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public internal: Internal
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config)
-    this.http = ctx.http.extend(config)
-    this.oldHttp = ctx.http.extend({
-      endpoint: 'https://oapi.dingtalk.com/',
-    })
+    this.http = ctx.http.extend(config.api)
+    this.oldHttp = ctx.http.extend(config.oldApi)
     this.internal = new Internal(this)
 
     if (config.protocol === 'http') {
@@ -26,6 +24,13 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     } else if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this)
     }
+  }
+
+  async initialize() {
+    const { appList } = await this.internal.OapiMicroappList()
+    const self = appList.find(v => v.agentId === this.config.agentId)
+    this.username = self.name
+    this.avatar = self.appIcon
   }
 
   // @ts-ignore
@@ -47,7 +52,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
       headers: {
         'x-acs-dingtalk-access-token': data.accessToken,
       },
-    }).extend(this.config)
+    }).extend(this.config.api)
     this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (data.expireIn - 10) * 1000)
   }
 
@@ -58,13 +63,33 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     })
     return downloadUrl
   }
+
+  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+    if (channelId.startsWith("cid")) {
+      await this.internal.orgGroupRecall({
+        robotCode: this.selfId,
+        processQueryKeys: [messageId],
+        openConversationId: channelId
+      })
+    } else {
+      await this.internal.batchRecallOTO({
+        robotCode: this.selfId,
+        processQueryKeys: [messageId]
+      })
+    }
+
+  }
+
 }
 
 export namespace DingtalkBot {
-  export interface Config extends Bot.Config, Quester.Config, WsClient.Config {
+  export interface Config extends Bot.Config, WsClient.Config {
     secret: string
     protocol: string
     appkey: string
+    agentId: number
+    api: Quester.Config,
+    oldApi: Quester.Config
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -75,10 +100,12 @@ export namespace DingtalkBot {
     }),
     Schema.object({
       secret: Schema.string().required().description('机器人密钥。'),
+      agentId: Schema.number().required().description('AgentId'),
       appkey: Schema.string().required(),
+      api: Quester.createConfig('https://api.dingtalk.com/v1.0/'),
+      oldApi: Quester.createConfig('https://oapi.dingtalk.com/')
     }),
     WsClient.Config,
-    Quester.createConfig('https://api.dingtalk.com/v1.0/'),
   ])
 }
 

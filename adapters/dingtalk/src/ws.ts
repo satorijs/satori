@@ -6,6 +6,7 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
   async prepare() {
     await this.bot.refreshToken()
     this.bot.selfId = this.bot.config.appkey
+    await this.bot.initialize()
     const { endpoint, ticket } = await this.bot.http.post<{
       endpoint: string
       ticket: string
@@ -23,6 +24,7 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
   }
 
   accept() {
+    this.bot.online()
     this.bot.socket.addEventListener('message', async ({ data }) => {
       const parsed = JSON.parse(data.toString())
       this.ctx.logger('dingtalk').debug(require('util').inspect(parsed, false, null, true))

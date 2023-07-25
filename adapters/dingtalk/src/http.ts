@@ -13,6 +13,7 @@ export class HttpServer extends Adapter.Server<DingtalkBot> {
   async start(bot: DingtalkBot) {
     await bot.refreshToken()
     bot.selfId = bot.config.appkey
+    await bot.initialize()
     // https://open.dingtalk.com/document/orgapp/receive-message
     bot.ctx.router.post('/dingtalk', async (ctx) => {
       const timestamp = ctx.get('timestamp')
