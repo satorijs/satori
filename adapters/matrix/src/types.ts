@@ -489,19 +489,19 @@ export class Internal {
     return (await this.bot.http.post(`/media/v3/upload?filename=${filename}`, buffer, { headers })).content_uri
   }
 
-  async sendTextMessage(roomId: string, userId: string, content: string, reply?: string): Promise<string> {
+  async sendTextMessage(roomId: string, content: string, reply?: string): Promise<string> {
     const eventContent: M_TEXT = {
       msgtype: 'm.text',
       body: content,
     }
     if (reply) eventContent['m.relates_to'] = { 'm.in_reply_to': { 'event_id': reply } }
     const response = await this.bot.http.put(
-      `/client/v3/rooms/${roomId}/send/m.room.message/${this.txnId++}?user_id=${userId}`, eventContent)
+      `/client/v3/rooms/${roomId}/send/m.room.message/${this.txnId++}`, eventContent)
     return response.event_id
   }
 
   async sendMediaMessage(
-    roomId: string, userId: string, type: 'file' | 'image' | 'video' | 'audio',
+    roomId: string, type: 'file' | 'image' | 'video' | 'audio',
     buffer: Buffer, reply?: string, mimetype?: string, filename: string = 'file',
   ): Promise<string> {
     const uri = await this.uploadFile(filename, buffer, mimetype)
@@ -523,11 +523,11 @@ export class Internal {
     }
     if (reply) eventContent['m.relates_to'] = { 'm.in_reply_to': { 'event_id': reply } }
     const response = await this.bot.http.put(
-      `/client/v3/rooms/${roomId}/send/m.room.message/${this.txnId++}?user_id=${userId}`, eventContent)
+      `/client/v3/rooms/${roomId}/send/m.room.message/${this.txnId++}`, eventContent)
     return response.event_id
   }
 
-  async sendReaction(roomId: string, userId: string, messageId: string, key: string): Promise<string> {
+  async sendReaction(roomId: string, messageId: string, key: string): Promise<string> {
     const eventContent: M_REACTION = {
       'm.relates_to': {
         rel_type: 'm.annotation',
@@ -536,7 +536,7 @@ export class Internal {
       },
     }
     const response = await this.bot.http.put(
-      `/client/v3/rooms/${roomId}/send/m.reaction/${this.txnId++}?user_id=${userId}`, eventContent)
+      `/client/v3/rooms/${roomId}/send/m.reaction/${this.txnId++}`, eventContent)
     return response.event_id
   }
 

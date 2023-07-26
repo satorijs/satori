@@ -149,7 +149,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
-    await this.internal.sendReaction(channelId, this.userId, messageId, emoji)
+    await this.internal.sendReaction(channelId, messageId, emoji)
   }
 
   async handleFriendRequest(): Promise<void> { }
