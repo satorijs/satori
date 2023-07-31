@@ -3,6 +3,31 @@ import { SendOptions } from './session'
 import { Dict } from 'cosmokit'
 
 export namespace Universal {
+  export const Methods = {
+    'message.get': 'getMessage',
+    'message.list': 'getMessageList',
+    'message.update': 'editMessage',
+    'message.delete': 'deleteMessage',
+    'reaction.create': 'createReaction',
+    'reaction.delete': 'deleteReaction',
+    'reaction.clear': 'clearReaction',
+    'reaction.list': 'getReactions',
+    'guild.get': 'getGuild',
+    'guild.list': 'getGuildList',
+    'guild.member.get': 'getGuildMember',
+    'guild.member.list': 'getGuildMemberList',
+    'guild.member.kick': 'kickGuildMember',
+    'guild.member.mute': 'muteGuildMember',
+    'guild.member.role': 'setGuildMemberRole',
+    'guild.role.list': 'getGuildRoles',
+    'guild.role.create': 'createGuildRole',
+    'guild.role.update': 'modifyGuildRole',
+    'guild.role.delete': 'deleteGuildRole',
+    'channel.get': 'getChannel',
+    'channel.list': 'getChannelList',
+    'channel.mute': 'muteChannel',
+  }
+
   export interface Methods {
     // message
     sendMessage(channelId: string, content: segment.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>

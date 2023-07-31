@@ -120,6 +120,10 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     const { MessageEncoder } = this.constructor as typeof Bot
     return new MessageEncoder(this, channelId, null, options).send(content)
   }
+
+  async supports(name: string, session: Partial<Session> = {}) {
+    return !!this[Universal.Methods[name]]
+  }
 }
 
 export namespace Bot {

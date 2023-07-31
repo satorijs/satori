@@ -72,7 +72,7 @@ export class Quester {
     return this('PATCH', url, { ...config, data })
   }
 
-  async head(url: string, config?: AxiosRequestConfig): Promise<Dict<string>> {
+  async head(url: string, config?: AxiosRequestConfig): Promise<Dict<any>> {
     const response = await this.axios(url, { ...config, method: 'HEAD' })
     return response.headers
   }
