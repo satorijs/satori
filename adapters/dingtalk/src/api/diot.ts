@@ -1,18 +1,18 @@
-import { Internal } from "../internal";
+import { Internal } from '../internal'
 // GENERATED CONTENT
 
 export interface UpgradeDeviceResponse {
-  requestId?: string;
+  requestId?: string
 }
 
 // funcName: isOldApi
-Internal.define({ "/diot/upgrade/device": { POST: { upgradeDevice: false } } });
-declare module "../internal" {
+Internal.define({ '/diot/upgrade/device': { POST: { upgradeDevice: false } } })
+declare module '../internal' {
   interface Internal {
     /**
      * 升级设备
      * @see https://developers.dingtalk.com/document/app/upgrade-equipment
      */
-    upgradeDevice(): Promise<UpgradeDeviceResponse>;
+    upgradeDevice(): Promise<UpgradeDeviceResponse>
   }
 }

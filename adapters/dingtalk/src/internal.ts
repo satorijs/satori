@@ -1,4 +1,4 @@
-import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { Dict, Quester } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
 
 export class Internal {

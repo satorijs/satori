@@ -1,20 +1,20 @@
-import { Internal } from "../internal";
+import { Internal } from '../internal'
 // GENERATED CONTENT
 
 export interface QueryBlackboardSpaceQuery {
   /** 操作人userId。 */
-  operationUserId: string;
+  operationUserId: string
 }
 
 export interface QueryBlackboardSpaceResponse {
-  spaceId?: string;
+  spaceId?: string
 }
 
 // funcName: isOldApi
 Internal.define({
-  "/blackboard/spaces": { GET: { queryBlackboardSpace: false } },
-});
-declare module "../internal" {
+  '/blackboard/spaces': { GET: { queryBlackboardSpace: false } },
+})
+declare module '../internal' {
   interface Internal {
     /**
      * 获取公告钉盘空间信息
@@ -22,6 +22,6 @@ declare module "../internal" {
      */
     queryBlackboardSpace(
       query: QueryBlackboardSpaceQuery,
-    ): Promise<QueryBlackboardSpaceResponse>;
+    ): Promise<QueryBlackboardSpaceResponse>
   }
 }

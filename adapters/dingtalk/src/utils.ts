@@ -44,6 +44,6 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
   } else {
     session.channelId = session.userId
   }
-  session.content = session.elements.join("")
+  session.content = session.elements.join('')
   return session
 }

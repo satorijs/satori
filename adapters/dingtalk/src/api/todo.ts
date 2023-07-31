@@ -1,173 +1,173 @@
-import { Internal } from "../internal";
+import { Internal } from '../internal'
 // GENERATED CONTENT
 
 export interface QueryOrgTodoTasksParams {
   /** 分页游标。 */
-  nextToken?: string;
+  nextToken?: string
   /** 待办完成状态。 */
-  isDone?: unknown;
+  isDone?: unknown
 }
 
 export interface QueryOrgTodoTasksResponse {
-  nextToken?: string;
+  nextToken?: string
   todoCards?: {
-    taskId?: string;
-    subject?: string;
-    dueTime?: number;
-    detailUrl?: number;
-    todoCardView?: number;
-    priority?: number;
-    createdTime?: number;
-    modifiedTime?: number;
-    todoStatus?: string;
-    creatorId?: string;
-    sourceId?: string;
-    category?: string;
-    bizTag?: string;
-    originalSource?: number;
-    isDone?: number;
-    orgInfo?: number;
-  }[];
-  totalCount?: number;
+    taskId?: string
+    subject?: string
+    dueTime?: number
+    detailUrl?: number
+    todoCardView?: number
+    priority?: number
+    createdTime?: number
+    modifiedTime?: number
+    todoStatus?: string
+    creatorId?: string
+    sourceId?: string
+    category?: string
+    bizTag?: string
+    originalSource?: number
+    isDone?: number
+    orgInfo?: number
+  }[]
+  totalCount?: number
 }
 
 export interface UpdateTodoTaskExecutorStatusParams {
   /** 执行者状态列表，id需传用户的unionId。 */
-  executorStatusList?: object[];
+  executorStatusList?: object[]
 }
 
 export interface UpdateTodoTaskExecutorStatusQuery {
   /** 当前操作者的用户的unionId。 */
-  operatorId?: string;
+  operatorId?: string
 }
 
 export interface UpdateTodoTaskExecutorStatusResponse {
-  result?: unknown;
+  result?: unknown
 }
 
 export interface CreateTodoTaskParams {
   /** 业务系统侧的唯一标识ID，即业务ID。 */
-  sourceId?: string;
+  sourceId?: string
   /** 待办标题，最大长度1024。 */
-  subject: string;
+  subject: string
   /** 创建者的unionId。 */
-  creatorId?: string;
+  creatorId?: string
   /** 待办备注描述，最大长度4096。 */
-  description?: string;
+  description?: string
   /** 截止时间，Unix时间戳，单位毫秒。 */
-  dueTime?: number;
+  dueTime?: number
   /** 执行者的unionId，最大数量1000。 */
-  executorIds?: string[];
+  executorIds?: string[]
   /** 参与者的unionId，最大数量1000。 */
-  participantIds?: string[];
+  participantIds?: string[]
   /** 详情页url跳转地址。 */
-  detailUrl?: unknown;
+  detailUrl?: unknown
   /** 待办卡片内容区表单自定义字段列表 */
-  contentFieldList?: object[];
+  contentFieldList?: object[]
   /** 生成的待办是否仅展示在执行者的待办列表中。 */
-  isOnlyShowExecutor?: unknown;
+  isOnlyShowExecutor?: unknown
   /** 优先级，取值： */
-  priority?: number;
+  priority?: number
   /** 待办通知配置。 */
-  notifyConfigs?: unknown;
+  notifyConfigs?: unknown
   /** 二级分类。 */
-  bizCategoryId?: string;
+  bizCategoryId?: string
   /** 编辑 */
-  actionList?: object[];
+  actionList?: object[]
 }
 
 export interface CreateTodoTaskQuery {
   /** 当前操作者用户的unionId。 */
-  operatorId?: string;
+  operatorId?: string
 }
 
 export interface CreateTodoTaskResponse {
-  id: string;
-  subject: string;
-  description?: string;
-  startTime?: number;
-  dueTime?: number;
-  finishTime?: number;
-  done?: unknown;
-  executorIds?: string[];
-  participantIds?: string[];
+  id: string
+  subject: string
+  description?: string
+  startTime?: number
+  dueTime?: number
+  finishTime?: number
+  done?: unknown
+  executorIds?: string[]
+  participantIds?: string[]
   detailUrl?: {
-    pcUrl?: string;
-    appUrl?: string;
-  };
-  source?: string;
-  sourceId?: string;
-  createdTime: number;
-  modifiedTime?: number;
-  creatorId: string;
-  modifierId?: string;
-  tenantId?: string;
-  tenantType?: string;
-  bizTag?: string;
-  requestId?: string;
-  cardTypeId?: string;
+    pcUrl?: string
+    appUrl?: string
+  }
+  source?: string
+  sourceId?: string
+  createdTime: number
+  modifiedTime?: number
+  creatorId: string
+  modifierId?: string
+  tenantId?: string
+  tenantType?: string
+  bizTag?: string
+  requestId?: string
+  cardTypeId?: string
   contentFieldList?: {
-    fieldKey?: string;
-    fieldValue?: string;
-  }[];
-  isOnlyShowExecutor?: unknown;
-  priority?: number;
-  sourceTitle?: string;
+    fieldKey?: string
+    fieldValue?: string
+  }[]
+  isOnlyShowExecutor?: unknown
+  priority?: number
+  sourceTitle?: string
   notifyConfigs?: {
-    singleChat?: string;
-    dingNotify?: string;
-  };
+    singleChat?: string
+    dingNotify?: string
+  }
 }
 
 export interface UpdateTodoTaskParams {
   /** 待办标题，最大长度1024。 */
-  subject?: string;
+  subject?: string
   /** 待办描述，最大长度4096。 */
-  description?: string;
+  description?: string
   /** 截止时间，Unix时间戳，单位毫秒。 */
-  dueTime?: number;
+  dueTime?: number
   /** 完成状态。 */
-  done?: unknown;
+  done?: unknown
   /** 执行者的unionId列表，最大数量1000。 */
-  executorIds?: string[];
+  executorIds?: string[]
   /** 参与者的unionId列表，最大数量1000。 */
-  participantIds?: string[];
+  participantIds?: string[]
 }
 
 export interface UpdateTodoTaskQuery {
   /** 当前操作者的unionId。 */
-  operatorId?: string;
+  operatorId?: string
 }
 
 export interface UpdateTodoTaskResponse {
-  result?: unknown;
+  result?: unknown
 }
 
 export interface DeleteTodoTaskQuery {
   /** 当前操作者的用户的unionId。 */
-  operatorId?: string;
+  operatorId?: string
 }
 
 export interface DeleteTodoTaskResponse {
-  result?: unknown;
-  requestId?: string;
+  result?: unknown
+  requestId?: string
 }
 
 // funcName: isOldApi
 Internal.define({
-  "/todo/users/{unionId}/org/tasks/query": {
+  '/todo/users/{unionId}/org/tasks/query': {
     POST: { queryOrgTodoTasks: false },
   },
-  "/todo/users/{unionId}/tasks/{taskId}/executorStatus": {
+  '/todo/users/{unionId}/tasks/{taskId}/executorStatus': {
     PUT: { updateTodoTaskExecutorStatus: false },
   },
-  "/todo/users/{unionId}/tasks": { POST: { createTodoTask: false } },
-  "/todo/users/{unionId}/tasks/{taskId}": {
+  '/todo/users/{unionId}/tasks': { POST: { createTodoTask: false } },
+  '/todo/users/{unionId}/tasks/{taskId}': {
     PUT: { updateTodoTask: false },
     DELETE: { deleteTodoTask: false },
   },
-});
-declare module "../internal" {
+})
+declare module '../internal' {
   interface Internal {
     /**
      * 查询企业下用户待办列表
@@ -176,7 +176,7 @@ declare module "../internal" {
     queryOrgTodoTasks(
       unionId: string,
       params: QueryOrgTodoTasksParams,
-    ): Promise<QueryOrgTodoTasksResponse>;
+    ): Promise<QueryOrgTodoTasksResponse>
     /**
      * 更新钉钉待办执行者状态
      * @see https://developers.dingtalk.com/document/isvapp/update-dingtalk-to-do-status
@@ -186,7 +186,7 @@ declare module "../internal" {
       taskId: string,
       query: UpdateTodoTaskExecutorStatusQuery,
       params: UpdateTodoTaskExecutorStatusParams,
-    ): Promise<UpdateTodoTaskExecutorStatusResponse>;
+    ): Promise<UpdateTodoTaskExecutorStatusResponse>
     /**
      * 创建待办
      * @see https://developers.dingtalk.com/document/isvapp/add-dingtalk-to-do-task
@@ -195,7 +195,7 @@ declare module "../internal" {
       unionId: string,
       query: CreateTodoTaskQuery,
       params: CreateTodoTaskParams,
-    ): Promise<CreateTodoTaskResponse>;
+    ): Promise<CreateTodoTaskResponse>
     /**
      * 更新钉钉待办任务
      * @see https://developers.dingtalk.com/document/isvapp/updates-dingtalk-to-do-tasks
@@ -205,7 +205,7 @@ declare module "../internal" {
       taskId: string,
       query: UpdateTodoTaskQuery,
       params: UpdateTodoTaskParams,
-    ): Promise<UpdateTodoTaskResponse>;
+    ): Promise<UpdateTodoTaskResponse>
     /**
      * 删除钉钉待办任务
      * @see https://developers.dingtalk.com/document/isvapp/delete-dingtalk-to-do-tasks
@@ -214,6 +214,6 @@ declare module "../internal" {
       unionId: string,
       taskId: string,
       query: DeleteTodoTaskQuery,
-    ): Promise<DeleteTodoTaskResponse>;
+    ): Promise<DeleteTodoTaskResponse>
   }
 }

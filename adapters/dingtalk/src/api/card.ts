@@ -1,214 +1,214 @@
-import { Internal } from "../internal";
+import { Internal } from '../internal'
 // GENERATED CONTENT
 
 export interface UpdateCardParams {
   /** 外部卡片实例Id。 */
-  outTrackId: string;
+  outTrackId: string
   /** 卡片数据 */
-  cardData?: unknown;
+  cardData?: unknown
   /** 用户的私有数据。 */
-  privateData?: unknown;
+  privateData?: unknown
   /** 卡片更新选项 */
-  cardUpdateOptions?: unknown;
+  cardUpdateOptions?: unknown
 }
 
 export interface UpdateCardResponse {
-  success?: unknown;
-  result?: unknown;
+  success?: unknown
+  result?: unknown
 }
 
 export interface CreateCardParams {
   /** 卡片创建者的userId。 */
-  userId?: string;
+  userId?: string
   /** 卡片内容模板ID，可通过登录[开发者后台 > 卡片平台](https://open-dev.dingtalk.com/fe/card)获取。 */
-  cardTemplateId: string;
+  cardTemplateId: string
   /** 外部卡片实例Id。 */
-  outTrackId: string;
+  outTrackId: string
   /** 卡片回调的类型： */
-  callbackType?: string;
+  callbackType?: string
   /** 卡片回调HTTP模式时的路由 Key，用于查询注册的 callbackUrl。 */
-  callbackRouteKey?: string;
+  callbackRouteKey?: string
   /** 卡片数据，示例： */
-  cardData: unknown;
+  cardData: unknown
   /** 用户的私有数据： */
-  privateData?: unknown;
+  privateData?: unknown
   /** 动态数据源配置。 */
-  openDynamicDataConfig?: unknown;
+  openDynamicDataConfig?: unknown
   /** IM 群聊场域信息。 */
-  imGroupOpenSpaceModel?: unknown;
+  imGroupOpenSpaceModel?: unknown
   /** IM 单聊场域信息。 */
-  imRobotOpenSpaceModel?: unknown;
+  imRobotOpenSpaceModel?: unknown
   /** 协作场域信息。 */
-  coFeedOpenSpaceModel?: unknown;
+  coFeedOpenSpaceModel?: unknown
   /** 吊顶场域信息。 */
-  topOpenSpaceModel?: unknown;
+  topOpenSpaceModel?: unknown
   /** 用户id类型： */
-  userIdType?: number;
+  userIdType?: number
 }
 
 export interface CreateCardResponse {
-  success?: unknown;
-  result?: string;
+  success?: unknown
+  result?: string
 }
 
 export interface CreateAndDeliverParams {
   /** 卡片创建者的userId。 */
-  userId?: string;
+  userId?: string
   /** 卡片内容模板ID，可通过登录[开发者后台 > 卡片平台](https://open-dev.dingtalk.com/fe/card)获取。 */
-  cardTemplateId: string;
+  cardTemplateId: string
   /** 外部卡片实例Id。 */
-  outTrackId: string;
+  outTrackId: string
   /** 卡片回调的类型： */
-  callbackType?: string;
+  callbackType?: string
   /** 卡片回调HTTP模式时的路由 Key，用于查询注册的 callbackUrl。 */
-  callbackRouteKey?: string;
+  callbackRouteKey?: string
   /** 卡片数据，示例： */
-  cardData: unknown;
+  cardData: unknown
   /** 用户的私有数据： */
-  privateData?: unknown;
+  privateData?: unknown
   /** 动态数据源配置。 */
-  openDynamicDataConfig?: unknown;
+  openDynamicDataConfig?: unknown
   /** IM群聊场域信息。 */
-  imGroupOpenSpaceModel?: unknown;
+  imGroupOpenSpaceModel?: unknown
   /** IM机器人单聊场域信息。 */
-  imRobotOpenSpaceModel?: unknown;
+  imRobotOpenSpaceModel?: unknown
   /** 协作场域信息。 */
-  coFeedOpenSpaceModel?: unknown;
+  coFeedOpenSpaceModel?: unknown
   /** 吊顶场域信息。 */
-  topOpenSpaceModel?: unknown;
+  topOpenSpaceModel?: unknown
   /** 表示场域及其场域id，其格式为`dtv1.card//spaceType1.spaceId1;spaceType2.spaceId2_1;spaceType2.spaceId2_2;spaceType3.spaceId3`。 */
-  openSpaceId: string;
+  openSpaceId: string
   /** 群聊投放参数。 */
-  imGroupOpenDeliverModel?: unknown;
+  imGroupOpenDeliverModel?: unknown
   /** IM机器人单聊投放参数。 */
-  imRobotOpenDeliverModel?: unknown;
+  imRobotOpenDeliverModel?: unknown
   /** 吊顶投放参数。 */
-  topOpenDeliverModel?: unknown;
+  topOpenDeliverModel?: unknown
   /** 协作投放参数。 */
-  coFeedOpenDeliverModel?: unknown;
+  coFeedOpenDeliverModel?: unknown
   /** 文档投放参数 */
-  docOpenDeliverModel?: unknown;
+  docOpenDeliverModel?: unknown
   /** 用户userId类型： */
-  userIdType?: number;
+  userIdType?: number
 }
 
 export interface CreateAndDeliverResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    outTrackId?: string;
-    deliverResults?: number;
-  };
+    outTrackId?: string
+    deliverResults?: number
+  }
 }
 
 export interface RegisterCallbackParams {
   /** 回调地址的路由 Key，一个 callbackRouteKey 仅可映射一个 callbackUrl */
-  callbackRouteKey: string;
+  callbackRouteKey: string
   /** 接受动态卡片回调的 URL 地址 */
-  callbackUrl: string;
+  callbackUrl: string
   /** 加密密钥用于校验来源 */
-  apiSecret?: string;
+  apiSecret?: string
   /** 是否强制覆盖更新，默认 false。 */
-  forceUpdate?: unknown;
+  forceUpdate?: unknown
 }
 
 export interface RegisterCallbackResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    callbackUrl?: string;
-    apiSecret?: string;
-  };
+    callbackUrl?: string
+    apiSecret?: string
+  }
 }
 
 export interface AppendSpaceParams {
   /** 外部卡片实例Id。 */
-  outTrackId: string;
+  outTrackId: string
   /** IM群聊场域信息 */
-  imGroupOpenSpaceModel?: unknown;
+  imGroupOpenSpaceModel?: unknown
   /** 机器人单聊场域参数 */
-  imRobotOpenSpaceModel?: unknown;
+  imRobotOpenSpaceModel?: unknown
   /** 吊顶场域信息 */
-  topOpenSpaceModel?: unknown;
+  topOpenSpaceModel?: unknown
   /** 协作场域信息 */
-  coFeedOpenSpaceModel?: unknown;
+  coFeedOpenSpaceModel?: unknown
 }
 
 export interface AppendSpaceResponse {
-  success?: unknown;
-  result?: unknown;
+  success?: unknown
+  result?: unknown
 }
 
 export interface DeliverCardParams {
   /** 外部卡片实例Id。 */
-  outTrackId: string;
+  outTrackId: string
   /** 表示场域及其场域id，其格式为dtv1.card//spaceType1.spaceId1;spaceType2,spaceId2;spaceType3,spaceId3 */
-  openSpaceId: string;
+  openSpaceId: string
   /** 单聊场域投放参数 */
-  imSingleOpenDeliverModel?: unknown;
+  imSingleOpenDeliverModel?: unknown
   /** 群聊投放参数 */
-  imGroupOpenDeliverModel?: unknown;
+  imGroupOpenDeliverModel?: unknown
   /** 吊顶投放参数 */
-  topOpenDeliverModel?: unknown;
+  topOpenDeliverModel?: unknown
   /** 协作投放参数 */
-  coFeedOpenDeliverModel?: unknown;
+  coFeedOpenDeliverModel?: unknown
   /** 工作台投放参数 */
-  workBenchOpenDeliverModel?: unknown;
+  workBenchOpenDeliverModel?: unknown
 }
 
 export interface DeliverCardResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    spaceType?: string;
-    spaceId?: string;
-    success?: number;
-  }[];
+    spaceType?: string
+    spaceId?: string
+    success?: number
+  }[]
 }
 
 // funcName: isOldApi
 Internal.define({
-  "/card/instances": {
+  '/card/instances': {
     PUT: { updateCard: false },
     POST: { createCard: false },
   },
-  "/card/instances/createAndDeliver": { POST: { createAndDeliver: false } },
-  "/card/callbacks/register": { POST: { registerCallback: false } },
-  "/card/instances/spaces": { PUT: { appendSpace: false } },
-  "/card/instances/deliver": { POST: { deliverCard: false } },
-});
-declare module "../internal" {
+  '/card/instances/createAndDeliver': { POST: { createAndDeliver: false } },
+  '/card/callbacks/register': { POST: { registerCallback: false } },
+  '/card/instances/spaces': { PUT: { appendSpace: false } },
+  '/card/instances/deliver': { POST: { deliverCard: false } },
+})
+declare module '../internal' {
   interface Internal {
     /**
      * 更新卡片
      * @see https://developers.dingtalk.com/document/orgapp/interactive-card-update-interface
      */
-    updateCard(params: UpdateCardParams): Promise<UpdateCardResponse>;
+    updateCard(params: UpdateCardParams): Promise<UpdateCardResponse>
     /**
      * 创建卡片
      * @see https://developers.dingtalk.com/document/orgapp/interface-for-creating-a-card-instance
      */
-    createCard(params: CreateCardParams): Promise<CreateCardResponse>;
+    createCard(params: CreateCardParams): Promise<CreateCardResponse>
     /**
      * 创建并投放卡片
      * @see https://developers.dingtalk.com/document/orgapp/create-and-deliver-cards
      */
     createAndDeliver(
       params: CreateAndDeliverParams,
-    ): Promise<CreateAndDeliverResponse>;
+    ): Promise<CreateAndDeliverResponse>
     /**
      * 注册卡片回调地址
      * @see https://developers.dingtalk.com/document/orgapp/register-card-callback-address
      */
     registerCallback(
       params: RegisterCallbackParams,
-    ): Promise<RegisterCallbackResponse>;
+    ): Promise<RegisterCallbackResponse>
     /**
      * 新增或更新卡片的场域信息
      * @see https://developers.dingtalk.com/document/orgapp/add-field-interface
      */
-    appendSpace(params: AppendSpaceParams): Promise<AppendSpaceResponse>;
+    appendSpace(params: AppendSpaceParams): Promise<AppendSpaceResponse>
     /**
      * 投放卡片
      * @see https://developers.dingtalk.com/document/isvapp/delivery-card-interface
      */
-    deliverCard(params: DeliverCardParams): Promise<DeliverCardResponse>;
+    deliverCard(params: DeliverCardParams): Promise<DeliverCardResponse>
   }
 }

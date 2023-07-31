@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -65,21 +65,19 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   }
 
   async deleteMessage(channelId: string, messageId: string): Promise<void> {
-    if (channelId.startsWith("cid")) {
+    if (channelId.startsWith('cid')) {
       await this.internal.orgGroupRecall({
         robotCode: this.selfId,
         processQueryKeys: [messageId],
-        openConversationId: channelId
+        openConversationId: channelId,
       })
     } else {
       await this.internal.batchRecallOTO({
         robotCode: this.selfId,
-        processQueryKeys: [messageId]
+        processQueryKeys: [messageId],
       })
     }
-
   }
-
 }
 
 export namespace DingtalkBot {
@@ -88,7 +86,7 @@ export namespace DingtalkBot {
     protocol: string
     appkey: string
     agentId: number
-    api: Quester.Config,
+    api: Quester.Config
     oldApi: Quester.Config
   }
 
@@ -103,7 +101,7 @@ export namespace DingtalkBot {
       agentId: Schema.number().required().description('AgentId'),
       appkey: Schema.string().required(),
       api: Quester.createConfig('https://api.dingtalk.com/v1.0/'),
-      oldApi: Quester.createConfig('https://oapi.dingtalk.com/')
+      oldApi: Quester.createConfig('https://oapi.dingtalk.com/'),
     }),
     WsClient.Config,
   ])

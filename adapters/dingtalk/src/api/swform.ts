@@ -1,70 +1,70 @@
-import { Internal } from "../internal";
+import { Internal } from '../internal'
 // GENERATED CONTENT
 
 export interface GetFormInstanceQuery {
   /** 填表类型。 */
-  bizType?: number;
+  bizType?: number
 }
 
 export interface GetFormInstanceResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    createTime?: string;
-    modifyTime?: string;
-    formCode?: string;
-    title?: string;
-    creator?: string;
-    forms?: number;
-  };
+    createTime?: string
+    modifyTime?: string
+    formCode?: string
+    title?: string
+    creator?: string
+    forms?: number
+  }
 }
 
 export interface ListFormInstancesQuery {
   /** 填表类型。 */
-  bizType?: number;
+  bizType?: number
   /** 时间，格式要求为yyyy-MM-dd。 */
-  actionDate?: string;
+  actionDate?: string
   /** 分页游标。 */
-  nextToken: number;
+  nextToken: number
   /** 每页最大条目数，最大值100。 */
-  maxResults: number;
+  maxResults: number
 }
 
 export interface ListFormInstancesResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    hasMore?: number;
-    nextToken?: number;
-    list?: number;
-  };
+    hasMore?: number
+    nextToken?: number
+    list?: number
+  }
 }
 
 export interface ListFormSchemasByCreatorQuery {
   /** 每页最大条目数，最大值200。 */
-  maxResults: number;
+  maxResults: number
   /** 填表类型。 */
-  bizType?: number;
+  bizType?: number
   /** 填表创建人userid。 */
-  creator?: string;
+  creator?: string
   /** 分页游标。 */
-  nextToken: number;
+  nextToken: number
 }
 
 export interface ListFormSchemasByCreatorResponse {
-  success?: unknown;
+  success?: unknown
   result?: {
-    hasMore?: number;
-    nextToken?: number;
-    list?: number;
-  };
+    hasMore?: number
+    nextToken?: number
+    list?: number
+  }
 }
 
 // funcName: isOldApi
 Internal.define({
-  "/swform/instances/{formInstanceId}": { GET: { getFormInstance: false } },
-  "/swform/forms/{formCode}/instances": { GET: { listFormInstances: false } },
-  "/swform/users/forms": { GET: { listFormSchemasByCreator: false } },
-});
-declare module "../internal" {
+  '/swform/instances/{formInstanceId}': { GET: { getFormInstance: false } },
+  '/swform/forms/{formCode}/instances': { GET: { listFormInstances: false } },
+  '/swform/users/forms': { GET: { listFormSchemasByCreator: false } },
+})
+declare module '../internal' {
   interface Internal {
     /**
      * 获取单条填表实例详情
@@ -73,7 +73,7 @@ declare module "../internal" {
     getFormInstance(
       formInstanceId: string,
       query: GetFormInstanceQuery,
-    ): Promise<GetFormInstanceResponse>;
+    ): Promise<GetFormInstanceResponse>
     /**
      * 获取填表实例列表
      * @see https://developers.dingtalk.com/document/isvapp/obtain-the-table-filling-instance-list-data
@@ -81,13 +81,13 @@ declare module "../internal" {
     listFormInstances(
       formCode: string,
       query: ListFormInstancesQuery,
-    ): Promise<ListFormInstancesResponse>;
+    ): Promise<ListFormInstancesResponse>
     /**
      * 获取用户创建的填表模板列表
      * @see https://developers.dingtalk.com/document/isvapp/new-obtains-the-template-that-a-user-creates
      */
     listFormSchemasByCreator(
       query: ListFormSchemasByCreatorQuery,
-    ): Promise<ListFormSchemasByCreatorResponse>;
+    ): Promise<ListFormSchemasByCreatorResponse>
   }
 }
