@@ -15,7 +15,6 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
-    this.selfId = config.selfId
     this.internal = new OneBot.Internal()
     this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
 

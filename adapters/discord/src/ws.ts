@@ -79,10 +79,8 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
           this._resumeUrl = parsed.d.resume_gateway_url
-          const self: any = decodeUser(parsed.d.user)
-          self.selfId = self.userId
-          delete self.userId
-          Object.assign(this.bot, self)
+          const user = decodeUser(parsed.d.user)
+          Object.assign(this.bot, user)
           logger.debug('session_id ' + this._sessionId)
           return this.bot.online()
         }

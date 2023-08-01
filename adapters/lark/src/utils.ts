@@ -74,7 +74,6 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
 
 export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
   const session = bot.session()
-  session.selfId = bot.selfId
   const internal = Object.create(bot.internal)
   Object.assign(internal, body)
   defineProperty(session, 'feishu', internal)

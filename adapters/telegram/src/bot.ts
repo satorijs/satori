@@ -65,11 +65,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
-    const { username, userId, avatar, nickname } = await this.getLoginInfo()
-    this.username = username
-    this.avatar = avatar
-    this.selfId = userId
-    this.nickname = nickname
+    const user = await this.getLoginInfo()
+    Object.assign(this, user)
     await callback(this)
     logger.debug('connected to %c', 'telegram:' + this.selfId)
     this.online()

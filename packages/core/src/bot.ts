@@ -8,6 +8,7 @@ import WebSocket from 'ws'
 
 export interface Bot extends Universal.Methods, Universal.User {
   socket?: WebSocket
+  internal: any
 }
 
 export abstract class Bot<T extends Bot.Config = Bot.Config> {
@@ -19,7 +20,6 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   public hidden = false
   public platform: string
   public selfId: string
-  public internal = null
   public adapter?: Adapter<this>
   public error?: Error
 
@@ -43,6 +43,14 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
       this.context.emit('bot-removed', this)
       this.stop()
     })
+  }
+
+  get userId() {
+    return this.selfId
+  }
+
+  set userId(value) {
+    this.selfId = value
   }
 
   get status() {
