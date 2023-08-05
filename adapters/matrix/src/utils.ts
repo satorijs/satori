@@ -69,10 +69,20 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
   session.timestamp = event.origin_server_ts
   session.author = adaptAuthor(bot, event)
   switch (event.type) {
-    case 'm.room.redaction':
-      session.type = 'message-delete'
+    case 'm.room.redaction': {
+      session.type = 'message-deleted'
+      session.subtype = 'group'
       session.messageId = event.redacts
       break
+    }
+    case 'm.reaction': {
+      const content = event.content as Matrix.M_REACTION
+      session.type = 'reaction-added'
+      session.subtype = 'group'
+      session.content = content['m.relates_to'].key
+      session.messageId = content['m.relates_to'].event_id
+      break
+    }
     case 'm.room.member': {
       bot.syncRooms()
       const memberEvent = event.content as Matrix.M_ROOM_MEMBER

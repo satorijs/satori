@@ -102,13 +102,19 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     const sync = await this.syncRooms()
     const joined = sync?.rooms?.join
     if (!joined) return []
-    const result: string[] = []
-    for (const [roomId, room] of Object.entries(joined)) {
-      const create = room.state?.events?.find(event => event.type === 'm.room.create')
-      const space = (create?.content as Matrix.M_ROOM_CREATE)?.type === 'm.space'
-      if (space) result.push(roomId)
+    const result: Universal.Guild[] = []
+    for (const roomId of Object.keys(joined)) {
+      const state = await this.internal.getState(roomId)
+      const create = state.find(state => state.type === 'm.room.create')
+      const name = state.find(state => state.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME
+      if (!create) continue
+      if (create.content['type'] !== 'm.space') continue
+      result.push({
+        guildId: roomId,
+        guildName: name?.name,
+      })
     }
-    return await Promise.all(result.map(this.getGuild.bind(this)))
+    return result
   }
 
   async getChannelList(guildId: string): Promise<Universal.Channel[]> {
@@ -118,6 +124,32 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
       .map(event => event.state_key)
       .filter(roomId => this.rooms.includes(roomId))
     return await Promise.all(children.map(this.getChannel.bind(this)))
+  }
+
+  async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
+    const state = await this.internal.getState(guildId)
+    const levels = state.find(event => event.type === 'm.room.power_levels').content as Matrix.M_ROOM_POWER_LEVELS
+    return state
+      .filter(event => event.type === 'm.room.member')
+      .map(event => {
+        const content = event.content as Matrix.M_ROOM_MEMBER
+        return {
+          userId: event.state_key,
+          username: event.state_key,
+          nickname: content.displayname,
+          avatar: this.internal.getAssetUrl(content.avatar_url),
+          isBot: !!this.ctx.bots.find(bot => bot.userId === event.state_key),
+          roles: [levels.users[event.state_key].toString()],
+        }
+      })
+  }
+
+  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+    return (await this.getGuildMemberList(guildId)).find(user => user.userId === userId)
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+    await this.internal.sendReaction(channelId, messageId, emoji)
   }
 
   async handleFriendRequest(): Promise<void> { }
