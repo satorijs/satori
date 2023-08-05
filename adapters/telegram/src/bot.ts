@@ -270,7 +270,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
     let { mime, data } = await this.$getFile(filePath)
     if (mime === 'application/octet-stream') {
-      mime = await FileType.fromBuffer(data)?.mime
+      mime = (await FileType.fromBuffer(data))?.mime
     }
     const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
     return { url: base64 }
