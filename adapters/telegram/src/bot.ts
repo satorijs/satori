@@ -284,6 +284,32 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       user.avatar = `${endpoint}/${file.file_path}`
     }
   }
+
+  async updateCommands(commands: Universal.Command[]) {
+    const languages = this.ctx.i18n.fallback([])
+    const order = languages.filter(v => v.length === 2)
+    const languageSubset = order.map(v => languages.filter(l => l.startsWith(v)))
+    type LangCode = string
+    const result = {} as Record<LangCode, Telegram.BotCommand[]>
+    for (const subset of languageSubset) {
+      const code6391 = subset.find(v => v.length === 2)
+      result[code6391] ||= []
+      for (const cmd of commands) {
+        const { name, description } = cmd
+        const cmdDesc = subset.map(lang => description[lang]).filter(v => v)?.[0] ?? cmd.name
+        result[code6391].push({ command: name, description: cmdDesc })
+      }
+    }
+    for (const lang of Object.keys(result)) {
+      await this.internal.setMyCommands({
+        commands: result[lang],
+        language_code: lang,
+      })
+    }
+    await this.internal.setMyCommands({
+      commands: commands.map(({ name }) => ({ command: name, description: name })),
+    })
+  }
 }
 
 TelegramBot.prototype.platform = 'telegram'

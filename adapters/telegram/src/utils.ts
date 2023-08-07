@@ -46,9 +46,16 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   Object.assign(session.telegram, update)
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
-  if (message) {
+  const isBotCommand = update.message && update.message.entities?.[0].type === 'bot_command'
+  if (message && !isBotCommand) {
     session.type = update.message || update.channel_post ? 'message' : 'message-updated'
     await bot.adaptMessage(message, session)
+  } else if (isBotCommand) {
+    session.type = 'message'
+    const p = bot.ctx.root.config.prefix
+    const prefix = (Array.isArray(p) ? p[0] : p) ?? ''
+    await bot.adaptMessage(message, session)
+    session.content = prefix + session.content.slice(1)
   } else if (update.chat_join_request) {
     session.timestamp = update.chat_join_request.date * 1000
     session.type = 'guild-member-request'
