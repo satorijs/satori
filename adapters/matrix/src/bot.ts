@@ -87,9 +87,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   async deleteFriend(): Promise<void> { }
 
   async getGuild(guildId: string): Promise<Universal.Guild> {
-    const events = await this.internal.getState(guildId)
-    const guildName = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
-    return { guildId, guildName }
+    const { channelName } = await this.getChannel(guildId)
+    return { guildId, guildName: channelName }
   }
 
   async getChannel(channelId: string): Promise<Universal.Channel> {
@@ -99,31 +98,11 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   }
 
   async getGuildList(): Promise<Universal.Guild[]> {
-    const sync = await this.syncRooms()
-    const joined = sync?.rooms?.join
-    if (!joined) return []
-    const result: Universal.Guild[] = []
-    for (const roomId of Object.keys(joined)) {
-      const state = await this.internal.getState(roomId)
-      const create = state.find(state => state.type === 'm.room.create')
-      const name = state.find(state => state.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME
-      if (!create) continue
-      if (create.content['type'] !== 'm.space') continue
-      result.push({
-        guildId: roomId,
-        guildName: name?.name,
-      })
-    }
-    return result
+    return await Promise.all(this.rooms.map(roomId => this.getGuild(roomId)))
   }
 
   async getChannelList(guildId: string): Promise<Universal.Channel[]> {
-    const state = await this.internal.getState(guildId)
-    const children = state
-      .filter(event => event.type === 'm.space.child')
-      .map(event => event.state_key)
-      .filter(roomId => this.rooms.includes(roomId))
-    return await Promise.all(children.map(this.getChannel.bind(this)))
+    return await Promise.all(this.rooms.map(roomId => this.getChannel(roomId)))
   }
 
   async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
