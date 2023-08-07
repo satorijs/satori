@@ -1,0 +1,35 @@
+{
+  "name": "@satorijs/adapter-slack",
+  "description": "Slack Adapter for Satorijs",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "LittleC <i@ltlec.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/slack"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://koishi.chat/plugins/adapter/slack.html",
+  "keywords": [
+    "bot",
+    "slack",
+    "adapter",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^2.4.0"
+  },
+  "dependencies": {
+    "@slack/types": "^2.8.0",
+    "form-data": "^4.0.0"
+  }
+}
