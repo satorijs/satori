@@ -11,10 +11,12 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
   public oldHttp: Quester
   public http: Quester
-  refreshTokenTimer: NodeJS.Timeout
   public internal: Internal
+  refreshTokenTimer: NodeJS.Timeout
+
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config)
+    this.platform = 'dingtalk'
     this.http = ctx.http.extend(config.api)
     this.oldHttp = ctx.http.extend(config.oldApi)
     this.internal = new Internal(this)
@@ -106,5 +108,3 @@ export namespace DingtalkBot {
     WsClient.Config,
   ])
 }
-
-DingtalkBot.prototype.platform = 'dingtalk'

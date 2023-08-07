@@ -10,13 +10,14 @@ export class LineBot extends Bot<LineBot.Config> {
   public http: Quester
   public contentHttp: Quester
   public internal: Internal
+
   constructor(ctx: Context, config: LineBot.Config) {
     super(ctx, config)
     if (!ctx.root.config.selfUrl) {
       logger.warn('selfUrl is not set, some features may not work')
     }
 
-    ctx.plugin(HttpServer, this)
+    this.platform = 'line'
     this.http = ctx.http.extend({
       ...config.api,
       headers: {
@@ -30,6 +31,8 @@ export class LineBot extends Bot<LineBot.Config> {
       },
     })
     this.internal = new Internal(this.http)
+
+    ctx.plugin(HttpServer, this)
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
@@ -115,5 +118,3 @@ export namespace LineBot {
     }),
   ])
 }
-
-LineBot.prototype.platform = 'line'

@@ -11,6 +11,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
+    this.platform = 'qqguild'
     this.internal = new QQGuild.Bot(config as QQGuild.Bot.Options)
     ctx.plugin(WsClient, this)
   }
@@ -75,7 +76,7 @@ export namespace QQGuildBot {
         id: Schema.string().description('机器人 id。').required(),
         key: Schema.string().description('机器人 key。').role('secret').required(),
         token: Schema.string().description('机器人令牌。').role('secret').required(),
-      }),
+      }) as any,
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
@@ -84,5 +85,3 @@ export namespace QQGuildBot {
     WsClient.Config,
   ] as const)
 }
-
-QQGuildBot.prototype.platform = 'qqguild'

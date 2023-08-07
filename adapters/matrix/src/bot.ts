@@ -6,14 +6,17 @@ import { adaptMessage, dispatchSession } from './utils'
 
 export class MatrixBot extends Bot<MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
+
   http: Quester
   id: string
   endpoint: string
   rooms: string[] = []
-  declare internal: Matrix.Internal
+  internal: Matrix.Internal
+
   constructor(ctx: Context, config: MatrixBot.Config) {
     super(ctx, config)
     this.id = config.id
+    this.platform = 'matrix'
     this.selfId = `@${this.id}:${this.config.host}`
     this.userId = this.selfId
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'
@@ -196,5 +199,3 @@ export namespace MatrixBot {
     ...omit(Quester.Config.dict, ['endpoint']),
   })
 }
-
-MatrixBot.prototype.platform = 'matrix'

@@ -37,6 +37,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'telegram'
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
     this.http = this.ctx.http.extend({
@@ -270,7 +271,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
     let { mime, data } = await this.$getFile(filePath)
     if (mime === 'application/octet-stream') {
-      mime = await FileType.fromBuffer(data)?.mime
+      mime = (await FileType.fromBuffer(data))?.mime
     }
     const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
     return { url: base64 }
@@ -289,8 +290,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 }
-
-TelegramBot.prototype.platform = 'telegram'
 
 export namespace TelegramBot {
   export interface BaseConfig extends Bot.Config, Quester.Config {

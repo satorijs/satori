@@ -14,6 +14,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'kook'
     this.http = ctx.http.extend({
       headers: {
         'Authorization': `Bot ${config.token}`,
@@ -192,6 +193,3 @@ export namespace KookBot {
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }
-
-// for backward compatibility
-KookBot.prototype.platform = 'kook'
