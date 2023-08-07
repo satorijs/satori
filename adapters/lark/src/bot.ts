@@ -23,6 +23,7 @@ export class LarkBot extends Bot<LarkBot.Config> {
       logger.warn('selfUrl is not set, some features may not work')
     }
 
+    this.platform = 'lark'
     this.selfId = config.appId
 
     this.http = ctx.http.extend({
