@@ -115,19 +115,19 @@ export namespace Role {
     /** https://discord.com/developers/docs/resources/guild#create-guild-role-json-params */
     export interface Create {
       /** name of the role */
-      name: string
+      name?: string
       /** bitwise value of the enabled/disabled permissions */
-      permissions: string
+      permissions?: string
       /** RGB color value */
-      color: integer
+      color?: integer
       /** whether the role should be displayed separately in the sidebar */
-      hoist: boolean
+      hoist?: boolean
       /** the role's icon image (if the guild has the ROLE_ICONS feature) */
-      icon: string
+      icon?: string
       /** the role's unicode emoji as a standard emoji (if the guild has the ROLE_ICONS feature) */
-      unicode_emoji: string
+      unicode_emoji?: string
       /** whether the role should be mentionable */
-      mentionable: boolean
+      mentionable?: boolean
     }
 
     /** https://discord.com/developers/docs/resources/guild#modify-guild-role-positions-json-params */
@@ -141,19 +141,19 @@ export namespace Role {
     /** https://discord.com/developers/docs/resources/guild#modify-guild-role-json-params */
     export interface Modify {
       /** name of the role */
-      name: string
+      name?: string
       /** bitwise value of the enabled/disabled permissions */
-      permissions: string
+      permissions?: string
       /** RGB color value */
-      color: integer
+      color?: integer
       /** whether the role should be displayed separately in the sidebar */
-      hoist: boolean
+      hoist?: boolean
       /** the role's icon image (if the guild has the ROLE_ICONS feature) */
-      icon: string
+      icon?: string
       /** the role's unicode emoji as a standard emoji (if the guild has the ROLE_ICONS feature) */
-      unicode_emoji: string
+      unicode_emoji?: string
       /** whether the role should be mentionable */
-      mentionable: boolean
+      mentionable?: boolean
     }
   }
 }

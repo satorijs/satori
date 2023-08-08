@@ -50,12 +50,12 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       }
 
       // compare verification token
-      const enabledVeirfyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
-      if (enabledVeirfyTokenVerify.length) {
+      const enabledVerifyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
+      if (enabledVerifyTokenVerify.length) {
         const token = ctx.request.body?.token
         // only compare token if token exists
         if (token) {
-          const result = enabledVeirfyTokenVerify.some((bot) => {
+          const result = enabledVerifyTokenVerify.some((bot) => {
             if (token === bot.config.verificationToken) return true
             else return false
           })
@@ -97,6 +97,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
 
   dispatchSession(body: AllEvents): void {
     const { header } = body
+    if (!header) return
     const { app_id, event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
     const bot = this.bots.find((bot) => bot.selfId === app_id)

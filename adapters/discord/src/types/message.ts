@@ -6,8 +6,6 @@ export interface Message {
   id: snowflake
   /** id of the channel the message was sent in */
   channel_id: snowflake
-  /** id of the guild the message was sent in */
-  guild_id?: snowflake
   /** the author of this message (not guaranteed to be a valid user, see below) */
   author: User
   /** member properties for this message's author */
@@ -343,11 +341,20 @@ export interface ChannelMention {
 
 export namespace Message {
   export namespace Event {
-    export interface Create extends Message {}
+    /** https://discord.com/developers/docs/topics/gateway-events#message-create */
+    export interface Create extends Message {
+      /** ID of the guild the message was sent in - unless it is an ephemeral message */
+      guild_id?: snowflake
+      /** Member properties for this message's author. Missing for ephemeral messages and messages from webhooks */
+      member?: Partial<GuildMember>
+      /** Users specifically mentioned in the message */
+      mentions: (User & { member: Partial<GuildMember> })[]
+    }
 
-    export interface Update extends Message {}
+    /** https://discord.com/developers/docs/topics/gateway-events#message-update */
+    export interface Update extends Partial<Message> {}
 
-    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-message-delete-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-message-delete */
     export interface Delete {
       /** the id of the message */
       id: snowflake
@@ -357,7 +364,7 @@ export namespace Message {
       guild_id?: snowflake
     }
 
-    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-bulk-message-delete-bulk-event-fields */
+    /** https://discord.com/developers/docs/topics/gateway-events#message-delete-bulk-message-delete-bulk */
     export interface DeleteBulk {
       /** the ids of the messages */
       ids: snowflake[]

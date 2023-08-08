@@ -62,7 +62,9 @@ export class Router extends KoaRouter {
 
     // create server
     const koa = new Koa()
-    koa.use(require('koa-bodyparser')())
+    koa.use(require('koa-bodyparser')({
+      enableTypes: ['json', 'form', 'xml'],
+    }))
     koa.use(this.routes())
     koa.use(this.allowedMethods())
 

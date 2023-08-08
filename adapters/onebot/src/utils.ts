@@ -158,6 +158,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
     }
     session.type = 'message'
     session.subtype = data.message_type === 'guild' ? 'group' : data.message_type
+    session.isDirect = data.message_type === 'private'
     session.subsubtype = data.message_type
     return session
   }
@@ -253,6 +254,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
         session.elements = [h('file', data.file)]
         session.type = 'message'
         session.subtype = 'private'
+        session.isDirect = true
         session.subsubtype = 'offline-file-added'
         break
       case 'group_upload':

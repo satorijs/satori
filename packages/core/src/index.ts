@@ -36,6 +36,7 @@ declare global {
       'message-updated': {}
       'message-pinned': {}
       'message-unpinned': {}
+      'interaction/command': {}
       'reaction-added': {}
       'reaction-deleted': {}
       'reaction-deleted/one': {}
@@ -61,7 +62,7 @@ declare global {
 declare module 'cordis-axios' {
   namespace Quester {
     export const Config: Schema<Config>
-    export function createConfig(this: typeof Quester, endpoint: string | boolean): Schema<Config>
+    export function createConfig(this: typeof Quester, endpoint?: string | boolean): Schema<Config>
   }
 }
 

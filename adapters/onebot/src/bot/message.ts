@@ -1,4 +1,4 @@
-import { h, Messenger, pick } from '@satorijs/satori'
+import { h, MessageEncoder, pick } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
 import { Author } from '../types'
@@ -10,7 +10,7 @@ class State {
   constructor(public type: 'message' | 'forward' | 'reply') {}
 }
 
-export class OneBotMessenger extends Messenger<BaseBot> {
+export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
   stack: State[] = [new State('message')]
   children: CQCode[] = []
 

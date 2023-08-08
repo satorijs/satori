@@ -1,14 +1,21 @@
-import { Bot, Fragment, Logger, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, Logger, Schema } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
-import { MailMessenger } from './message'
+import { MailMessageEncoder } from './message'
 import { dispatchSession } from './utils'
 
 const logger = new Logger('adapter-mail')
 
 export class MailBot extends Bot<MailBot.Config> {
+  static MessageEncoder = MailMessageEncoder
+
   imap: IMAP
   smtp: SMTP
+
+  constructor(ctx: Context, config: MailBot.Config) {
+    super(ctx, config)
+    this.platform = 'mail'
+  }
 
   async start() {
     this.username = this.config.username
@@ -51,14 +58,6 @@ export class MailBot extends Bot<MailBot.Config> {
       this.imap.connect()
     }, 3000)
   }
-
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
-    return await new MailMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    return await this.sendMessage(`private:${userId}`, content, null, options)
-  }
 }
 
 export namespace MailBot {
@@ -81,7 +80,7 @@ export namespace MailBot {
 
   export const Config = Schema.object({
     username: Schema.string().description('用户名。').required(),
-    password: Schema.string().description('密码。').required(),
+    password: Schema.string().description('密码或授权码。').required(),
     selfId: Schema.string().description('邮件地址 (默认与用户名相同)。'),
     name: Schema.string().description('发送邮件时显示的名称。'),
     subject: Schema.string().description('机器人发送的邮件主题。').default('Koishi'),
@@ -119,5 +118,3 @@ export namespace MailBot {
     ]),
   })
 }
-
-MailBot.prototype.platform = 'mail'

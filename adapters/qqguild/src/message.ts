@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Dict, h, Logger, Messenger, Quester } from '@satorijs/satori'
+import { Dict, h, Logger, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 
 const logger = new Logger('satori')
@@ -44,7 +44,7 @@ function checkEmpty(req: QQGuild.Message.Request) {
     // && req.embed === undefined
 }
 
-export class QQGuildMessenger extends Messenger<QQGuildBot> {
+export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private addition = {
@@ -72,17 +72,17 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       this.addition.reference = null
     }
 
-    const sender = this.session.bot.internal.send as QQGuild.Sender
+    const sender = this.bot.internal.send as QQGuild.Sender
     let result: QQGuild.Message.Response
 
     try {
       if (checkEmpty(req)) {
         return
       }
-      if (this.session.subtype === 'group') {
-        result = await sender.channel(this.session.channelId, req)
-      } else if (this.session.subtype === 'private') {
+      if (this.session.isDirect) {
         result = await sender.private(this.session.uid, req)
+      } else {
+        result = await sender.channel(this.session.channelId, req)
       }
       const session = this.bot.adaptMessage(result)
       this.results.push(session)
@@ -163,6 +163,19 @@ export class QQGuildMessenger extends Messenger<QQGuildBot> {
       }
     } else {
       await this.render(children)
+    }
+  }
+
+  async send(content: h.Fragment) {
+    try {
+      return await super.send(content)
+    } catch (e) {
+      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
+      if ([304031, 304032, 304033].includes(e.code)) {
+        await this.bot.internal.createDMS(this.session.channelId, this.session.guildId || this.options.session.guildId)
+        return await super.send(content)
+      }
+      throw e
     }
   }
 }

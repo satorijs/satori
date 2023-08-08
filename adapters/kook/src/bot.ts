@@ -1,18 +1,20 @@
-import { Bot, Context, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
-import { Method } from 'axios'
-import { adaptAuthor, adaptGroup, adaptMessage, adaptUser } from './utils'
+import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { adaptAuthor, adaptGroup, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { KookMessenger } from './message'
+import { isDirectChannel, KookMessageEncoder } from './message'
 
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
+  static MessageEncoder = KookMessageEncoder
+
   http: Quester
   internal: Kook.Internal
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'kook'
     this.http = ctx.http.extend({
       headers: {
         'Authorization': `Bot ${config.token}`,
@@ -28,7 +30,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async request<T = any>(method: Method, path: string, data = {}, headers: any = {}): Promise<T> {
+  async request<T = any>(method: Quester.Method, path: string, data = {}, headers: any = {}): Promise<T> {
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
@@ -37,17 +39,8 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
-    return new KookMessenger(this, channelId, guildId, options).send(content)
-  }
-
-  async sendPrivateMessage(target_id: string, content: Fragment, options?: SendOptions) {
-    const { code } = await this.request('POST', '/user-chat/create', { target_id })
-    return this.sendMessage(code, content, null, options)
-  }
-
   async deleteMessage(channelId: string, msg_id: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/user-chat/delete-msg', { msg_id })
     } else {
       await this.request('POST', '/message/delete', { msg_id })
@@ -56,7 +49,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async editMessage(channelId: string, msg_id: string, content: Fragment) {
     content = h.normalize(content).join('')
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
       await this.request('POST', '/message/update', { msg_id, content })
@@ -64,7 +57,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async getMessage(channelId: string, msg_id: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       return adaptMessage(await this.request('POST', '/user-chat/view', { msg_id }))
     } else {
       return adaptMessage(await this.request('POST', '/message/view', { msg_id }))
@@ -72,7 +65,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async $createReaction(channelId: string, msg_id: string, emoji: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/direct-message/add-reaction', { msg_id, emoji })
     } else {
       await this.request('POST', '/message/add-reaction', { msg_id, emoji })
@@ -80,7 +73,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async $deleteReaction(channelId: string, messageId: string, emoji: string, user_id?: string) {
-    if (channelId.length > 30) {
+    if (isDirectChannel(channelId)) {
       await this.request('POST', '/direct-message/delete-reaction', { msg_id: messageId, emoji })
     } else {
       await this.request('POST', '/message/delete-reaction', { msg_id: messageId, emoji, user_id })
@@ -115,10 +108,74 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   async kickGroup(guild_id: string, user_id: string) {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
   }
+
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    const { code } = await this.request('POST', '/user-chat/create', { target_id: userId })
+    return this.sendMessage(code, content, null, options)
+  }
+
+  createReaction(channelId: string, messageId: string, emoji: string) {
+    if (isDirectChannel(channelId)) {
+      return this.internal.addDirectMessageReaction({ msg_id: messageId, emoji })
+    } else {
+      return this.internal.addMessageReaction({ msg_id: messageId, emoji })
+    }
+  }
+
+  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string) {
+    if (isDirectChannel(channelId)) {
+      return this.internal.deleteDirectMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+    } else {
+      return this.internal.deleteMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+    }
+  }
+
+  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+    let users: Kook.User[]
+    if (isDirectChannel(channelId)) {
+      users = await this.internal.getDirectMessageReactionList({ msg_id: messageId, emoji })
+    } else {
+      users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji })
+    }
+    return users.map(adaptUser)
+  }
+
+  async setGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    await this.internal.grantGuildRole({ guild_id: guildId, user_id: userId, role_id: +roleId })
+  }
+
+  async unsetGuildMemberRole(guildId: string, userId: string, roleId: string) {
+    await this.internal.revokeGuildRole({ guild_id: guildId, user_id: userId, role_id: +roleId })
+  }
+
+  async getGuildRoles(guildId: string): Promise<Universal.Role[]> {
+    const { items } = await this.internal.getGuildRoleList({ guild_id: guildId })
+    return items.map(decodeRole)
+  }
+
+  async createGuildRole(guildId: string, data: Partial<Universal.Role>) {
+    const role = await this.internal.createGuildRole({
+      guild_id: guildId,
+      ...data,
+    })
+    return role.role_id.toString()
+  }
+
+  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.Role>) {
+    await this.internal.updateGuildRole({
+      guild_id: guildId,
+      ...encodeRole(data),
+      role_id: +roleId,
+    })
+  }
+
+  async deleteGuildRole(guildId: string, roleId: string) {
+    await this.internal.deleteGuildRole({ guild_id: guildId, role_id: +roleId })
+  }
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessenger.Config {}
+  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessageEncoder.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
@@ -132,10 +189,7 @@ export namespace KookBot {
       WsClient.Config,
       HttpServer.Config,
     ]),
-    KookMessenger.Config,
+    KookMessageEncoder.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }
-
-// for backward compatibility
-KookBot.prototype.platform = 'kook'

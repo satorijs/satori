@@ -8,7 +8,7 @@ export class Internal {
       for (const key in routes[path]) {
         const method = key as Quester.Method
         for (const name of makeArray(routes[path][method])) {
-          Internal.prototype[name] = function (this: Internal, ...args: any[]) {
+          Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
             const url = path.replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
@@ -27,7 +27,12 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            return this.http(method, url, config)
+            try {
+              return await this.http(method, url, config)
+            } catch (error) {
+              if (!Quester.isAxiosError(error) || !error.response) throw error
+              throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
+            }
           }
         }
       }

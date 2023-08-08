@@ -1,9 +1,10 @@
-import { arrayBufferToBase64, Bot, Context, Dict, Fragment, h, Logger, Quester, Schema, SendOptions, Session, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, h, Logger, Quester, Schema, Session, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { adaptAuthorMeta, adaptGuildMember, adaptMessageMeta, adaptUser } from './utils'
-import { TelegramMessenger } from './message'
+import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
+import FileType from 'file-type'
 
 const logger = new Logger('telegram')
 
@@ -26,6 +27,8 @@ export interface TelegramResponse {
 }
 
 export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
+  static MessageEncoder = TelegramMessageEncoder
+
   http: Quester
   file: Quester
   internal: Telegram.Internal
@@ -34,6 +37,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'telegram'
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
     this.http = this.ctx.http.extend({
@@ -63,11 +67,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
-    const { username, userId, avatar, nickname } = await this.getLoginInfo()
-    this.username = username
-    this.avatar = avatar
-    this.selfId = userId
-    this.nickname = nickname
+    const user = await this.getLoginInfo()
+    Object.assign(this, user)
     await callback(this)
     logger.debug('connected to %c', 'telegram:' + this.selfId)
     this.online()
@@ -123,11 +124,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       segments.push(h('text', { content: ' ' }))
     }
 
-    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document) => {
-      segments.push(h(type, {
-        ...await this.$getFileFromId(data.file_id),
-        filename: data.file_name,
-      }))
+    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document | Telegram.Voice) => {
+      const attrs: Dict<string> = await this.$getFileFromId(data.file_id)
+      if (data['file_name']) {
+        attrs.filename = data['file_name']
+      }
+      segments.push(h(type, attrs))
     }
 
     if (message.location) {
@@ -150,7 +152,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
         segments.push(h('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
       }
     } else if (message.voice) {
-      segments.push(h('audio', await this.internal.getFile({ file_id: message.voice.file_id })))
+      await addResource('audio', message.voice)
     } else if (message.animation) {
       await addResource('image', message.animation)
     } else if (message.video) {
@@ -165,14 +167,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     adaptAuthorMeta(session, message.from)
   }
 
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
-    return new TelegramMessenger(this, channelId, guildId, options).send(fragment)
-  }
-
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    return this.sendMessage(userId, content, null, options)
-  }
-
   async getMessage() {
     return null
   }
@@ -180,6 +174,17 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   async deleteMessage(chat_id: string, message_id: string | number) {
     message_id = +message_id
     await this.internal.deleteMessage({ chat_id, message_id })
+  }
+
+  async editMessage(chat_id: string, message_id: string | number, content: h.Fragment): Promise<void> {
+    message_id = +message_id
+    const payload: Telegram.EditMessageTextPayload = {
+      chat_id,
+      message_id,
+      parse_mode: 'html',
+    }
+    payload.text = h.normalize(content).join('')
+    await this.internal.editMessageText(payload)
   }
 
   static adaptGroup(data: Telegram.Chat): Universal.Guild {
@@ -264,7 +269,10 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (this.server) {
       return { url: `${this.server}/${filePath}` }
     }
-    const { mime, data } = await this.$getFile(filePath)
+    let { mime, data } = await this.$getFile(filePath)
+    if (mime === 'application/octet-stream') {
+      mime = (await FileType.fromBuffer(data))?.mime
+    }
     const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
     return { url: base64 }
   }
@@ -282,8 +290,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 }
-
-TelegramBot.prototype.platform = 'telegram'
 
 export namespace TelegramBot {
   export interface BaseConfig extends Bot.Config, Quester.Config {

@@ -1,12 +1,14 @@
-import { Bot, Context, Logger, Quester, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, h, Logger, Quester, Schema } from '@satorijs/satori'
 
 import { HttpServer } from './http'
-import { FeishuMessenger } from './message'
+import { LarkMessageEncoder } from './message'
 import { Internal } from './types'
 
 const logger = new Logger('lark')
 
 export class LarkBot extends Bot<LarkBot.Config> {
+  static MessageEncoder = LarkMessageEncoder
+
   _token?: string
   _refresher?: NodeJS.Timeout
   http: Quester
@@ -21,6 +23,7 @@ export class LarkBot extends Bot<LarkBot.Config> {
       logger.warn('selfUrl is not set, some features may not work')
     }
 
+    this.platform = 'lark'
     this.selfId = config.appId
 
     this.http = ctx.http.extend({
@@ -36,12 +39,12 @@ export class LarkBot extends Bot<LarkBot.Config> {
     ctx.plugin(HttpServer, this)
   }
 
-  async initialize(): Promise<void> {
+  async initialize() {
     await this.refreshToken()
     this.online()
   }
 
-  private async refreshToken(): Promise<void> {
+  private async refreshToken() {
     const { tenant_access_token: token } = await this.internal.getTenantAccessToken({
       app_id: this.config.appId,
       app_secret: this.config.appSecret,
@@ -64,15 +67,14 @@ export class LarkBot extends Bot<LarkBot.Config> {
     this.http.config.headers.Authorization = `Bearer ${v}`
   }
 
-  async sendMessage(channelId: string, content: string, guildId?: string, options?: SendOptions): Promise<string[]> {
-    return new FeishuMessenger(this, channelId, guildId, options).send(content)
+  async editMessage(channelId: string, messageId: string, content: h.Fragment) {
+    await this.internal.updateMessage(messageId, {
+      content: h.normalize(content).join(''),
+      msg_type: 'text',
+    })
   }
 
-  async sendPrivateMessage(userId: string, content: string, options?: SendOptions): Promise<string[]> {
-    return this.sendMessage(userId, content, null, options)
-  }
-
-  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+  async deleteMessage(channelId: string, messageId: string) {
     await this.internal.deleteMessage(messageId)
   }
 }

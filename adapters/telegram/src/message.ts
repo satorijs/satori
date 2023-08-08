@@ -1,41 +1,35 @@
-import { Dict, h, Messenger, SendOptions } from '@satorijs/satori'
+import { Dict, h, MessageEncoder, SendOptions } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
 type RenderMode = 'default' | 'figure'
 
-type AssetType = 'photo' | 'audio' | 'document' | 'video' | 'animation'
+type AssetMethod = 'sendPhoto' | 'sendAudio' | 'sendDocument' | 'sendVideo' | 'sendAnimation' | 'sendVoice'
 
-async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetType> {
-  let assetType: AssetType
+async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetMethod> {
+  let method: AssetMethod
   const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url, element.attrs)
   if (element.type === 'image') {
-    assetType = mime === 'image/gif' ? 'animation' : 'photo'
+    method = mime === 'image/gif' ? 'sendAnimation' : 'sendPhoto'
   } else if (element.type === 'file') {
-    assetType = 'document'
-  } else {
-    assetType = element.type as any
+    method = 'sendDocument'
+  } else if (element.type === 'video') {
+    method = 'sendVideo'
+  } else if (element.type === 'audio') {
+    method = element.attrs.type === 'voice' ? 'sendVoice' : 'sendAudio'
   }
   // https://github.com/form-data/form-data/issues/468
   const value = process.env.KOISHI_ENV === 'browser'
     ? new Blob([data], { type: mime })
     : Buffer.from(data)
-  form.append(assetType, value, filename)
-  return assetType
+  form.append(method.slice(4).toLowerCase(), value, filename)
+  return method
 }
-
-const assetApi = {
-  photo: 'sendPhoto',
-  audio: 'sendAudio',
-  document: 'sendDocument',
-  video: 'sendVideo',
-  animation: 'sendAnimation',
-} as const
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramMessenger extends Messenger<TelegramBot> {
+export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'
@@ -59,8 +53,8 @@ export class TelegramMessenger extends Messenger<TelegramBot> {
     for (const key in this.payload) {
       form.append(key, this.payload[key].toString())
     }
-    const type = await appendAsset(this.bot, form, this.asset)
-    const result = await this.bot.internal[assetApi[type]](form as any)
+    const method = await appendAsset(this.bot, form, this.asset)
+    const result = await this.bot.internal[method](form as any)
     await this.addResult(result)
     delete this.payload.reply_to_message
     this.asset = null

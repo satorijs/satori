@@ -1,10 +1,10 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { h, Messenger, Quester } from '@satorijs/satori'
+import { h, MessageEncoder, Quester } from '@satorijs/satori'
 import FormData from 'form-data'
 
-import { FeishuBot } from './bot'
+import { LarkBot } from './bot'
 import { BaseResponse, Message, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
 
@@ -13,7 +13,7 @@ export interface Addition {
   type: MessageType
 }
 
-export class LarkMessenger extends Messenger<FeishuBot> {
+export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
   private quote: string | undefined
   private content = ''
   private addition: Addition
@@ -39,7 +39,7 @@ export class LarkMessenger extends Messenger<FeishuBot> {
       // try to extract error message from Lark API
       if (Quester.isAxiosError(e)) {
         if (e.response?.data?.code) {
-          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/ukTMukTMukTM/ugjM14COyUjL4ITN`
+          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
           e.message += ` (Lark error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
         }
       }
@@ -75,7 +75,7 @@ export class LarkMessenger extends Messenger<FeishuBot> {
     this.richText = undefined
   }
 
-  async sendFile(type: 'image' | 'video' | 'audio' |'file', url: string): Promise<Addition> {
+  async sendFile(type: 'image' | 'video' | 'audio' | 'file', url: string): Promise<Addition> {
     const payload = new FormData()
 
     const assetKey = type === 'image' ? 'image' : 'file'
@@ -174,4 +174,4 @@ export class LarkMessenger extends Messenger<FeishuBot> {
   }
 }
 
-export { LarkMessenger as FeishuMessenger }
+export { LarkMessageEncoder as FeishuMessageEncoder }

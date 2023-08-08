@@ -1,14 +1,17 @@
 import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, Fragment, h, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, h, Schema } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
-import { QQGuildMessenger } from './message'
+import { QQGuildMessageEncoder } from './message'
 import { WsClient } from './ws'
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
+  static MessageEncoder = QQGuildMessageEncoder
+
   internal: QQGuild.Bot
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
+    this.platform = 'qqguild'
     this.internal = new QQGuild.Bot(config as QQGuild.Bot.Options)
     ctx.plugin(WsClient, this)
   }
@@ -18,24 +21,6 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     user['selfId'] = user.userId
     delete user.userId
     return user
-  }
-
-  async sendMessage(channelId: string, fragment: Fragment, guildId?: string, opts?: SendOptions) {
-    const messenger = new QQGuildMessenger(this, channelId, guildId, opts)
-    try {
-      return await messenger.send(fragment)
-    } catch (e) {
-      // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031,拉私信错误
-      if ([304031, 304032, 304033].includes(e.code)) {
-        await this.internal.createDMS(channelId, guildId)
-        return await messenger.send(fragment)
-      }
-      throw e
-    }
-  }
-
-  async sendPrivateMessage(userId: string, content: h.Fragment, options?: SendOptions): Promise<string[]> {
-    return this.sendMessage(userId, content, options.session.guildId, options)
   }
 
   async getGuildList() {
@@ -65,17 +50,11 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     }
     // it's useless, but I need it
     session.subtype = msg.isPrivate ? 'private' : 'group'
+    session.isDirect = msg.isPrivate
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
     const { attachments = [] } = msg as { attachments?: any[] }
-    if (attachments.length > 0) {
-      session.content += attachments.map((attachment) => {
-        if (attachment.contentType.startsWith('image')) {
-          return h.image(attachment.url)
-        }
-      }).join('')
-    }
     session.content = attachments
       .filter(({ contentType }) => contentType.startsWith('image'))
       .reduce((content, attachment) => content + h.image(attachment.url), session.content)
@@ -97,7 +76,7 @@ export namespace QQGuildBot {
         id: Schema.string().description('机器人 id。').required(),
         key: Schema.string().description('机器人 key。').role('secret').required(),
         token: Schema.string().description('机器人令牌。').role('secret').required(),
-      }),
+      }) as any,
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
@@ -106,5 +85,3 @@ export namespace QQGuildBot {
     WsClient.Config,
   ] as const)
 }
-
-QQGuildBot.prototype.platform = 'qqguild'

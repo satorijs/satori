@@ -15,7 +15,7 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
-    this.selfId = config.selfId
+    this.platform = 'onebot'
     this.internal = new OneBot.Internal()
     this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
 
@@ -97,13 +97,11 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
   }
 }
 
-OneBotBot.prototype.platform = 'onebot'
-
 export namespace OneBotBot {
   export interface QQGuildConfig extends Bot.Config {}
 
   export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
-    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称'),
+    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称。'),
   })
 
   export interface BaseConfig extends BaseBot.Config {

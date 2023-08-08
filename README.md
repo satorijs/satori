@@ -16,8 +16,11 @@
   - [x] Telegram
   - [x] OneBot (v11)
   - [x] QQ Guild
-  - [x] KOOK (Kaiheila)
-  - [x] Lark (Feishu)
+  - [x] KOOK (开黑啦)
+  - [x] Lark (飞书)
+  - [x] Line
+  - [ ] Whatsapp
+  - [ ] Slack
   - [ ] Dingding
   - [ ] Wecom
 

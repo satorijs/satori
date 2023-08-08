@@ -1,4 +1,4 @@
-import { h, Messenger, Schema, SendOptions } from '@satorijs/satori'
+import { h, MessageEncoder, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import { adaptMessage } from './utils'
@@ -7,19 +7,22 @@ import internal from 'stream'
 
 const attachmentTypes = ['image', 'video', 'audio', 'file']
 
-export class KookMessenger extends Messenger<KookBot> {
+export function isDirectChannel(channelId: string) {
+  return channelId.length > 30
+}
+
+export class KookMessageEncoder extends MessageEncoder<KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
   private buffer: string = ''
 
-  constructor(bot: KookBot, channelId: string, guildId?: string, options?: SendOptions) {
-    super(bot, channelId, guildId, options)
-    if (channelId.length > 30) {
-      this.params.chat_code = channelId
+  async prepare() {
+    if (isDirectChannel(this.session.channelId)) {
+      this.params.chat_code = this.session.channelId
       this.path = '/user-chat/create-msg'
     } else {
-      this.params.target_id = channelId
+      this.params.target_id = this.session.channelId
       this.path = '/message/create'
     }
   }
@@ -196,18 +199,18 @@ export class KookMessenger extends Messenger<KookBot> {
   }
 }
 
-export namespace KookMessenger {
+export namespace KookMessageEncoder {
   export type HandleMixedContent = 'card' | 'separate' | 'mixed'
 
   export interface Config {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<KookMessenger.Config> = Schema.object({
+  export const Config: Schema<KookMessageEncoder.Config> = Schema.object({
     handleMixedContent: Schema.union([
-      Schema.const('separate' as const).description('将每个不同形式的内容分开发送'),
-      Schema.const('card' as const).description('使用卡片发送内容'),
-      Schema.const('mixed' as const).description('使用混合模式发送内容'),
+      Schema.const('separate').description('将每个不同形式的内容分开发送'),
+      Schema.const('card').description('使用卡片发送内容'),
+      Schema.const('mixed').description('使用混合模式发送内容'),
     ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
   }).description('发送设置')
 }

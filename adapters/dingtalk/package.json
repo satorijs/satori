@@ -1,0 +1,31 @@
+{
+  "name": "@satorijs/adapter-dingtalk",
+  "description": "Dingtalk Adapter for Satorijs",
+  "version": "1.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "LittleC <i@ltlec.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/dingtalk"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://koishi.chat/plugins/adapter/dingtalk.html",
+  "keywords": [
+    "bot",
+    "dingtalk",
+    "adapter",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^2.6.1"
+  }
+}

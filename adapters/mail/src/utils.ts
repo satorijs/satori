@@ -9,6 +9,7 @@ export async function adaptMessage(
   message: Universal.Message = {},
 ): Promise<Universal.Message> {
   message.subtype = 'private'
+  message.isDirect = true
   message.messageId = mail.messageId
   message.userId = mail.from.value[0].address
   message.channelId = `private:${message.userId}`
