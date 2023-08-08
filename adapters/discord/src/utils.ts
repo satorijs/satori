@@ -163,7 +163,8 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
 export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
   const session = bot.session({}, input)
   if (input.t === 'MESSAGE_CREATE') {
-    if (input.d.webhook_id) {
+    setupMessageGuildId(session, input.d.guild_id)
+    if (input.d.webhook_id && !session.isDirect) {
       const webhook = await bot.ensureWebhook(input.d.channel_id)
       if (webhook.id === input.d.webhook_id) {
         // koishi's webhook
@@ -172,7 +173,6 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     }
     session.type = 'message'
     await decodeMessage(bot, input.d, session)
-    setupMessageGuildId(session, input.d.guild_id)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
@@ -230,7 +230,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
-    session.userId = input.d.member.user.id
+    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
     session.messageId = input.d.id
     session.content = ''
     session.data.argv = decodeArgv(data, command)
@@ -297,7 +297,8 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         description: arg.description[''] || arg.name,
         description_localizations: pick(arg.description, Discord.Locale),
         type: types[arg.type] ?? types.text,
-        required: arg.required ?? false,
+        // required: arg.required ?? false,
+        required: false,
       })
     }
     for (const option of cmd.options) {
@@ -306,7 +307,8 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         description: option.description[''] || option.name,
         description_localizations: pick(option.description, Discord.Locale),
         type: types[option.type] ?? types.text,
-        required: option.required ?? false,
+        // required: option.required ?? false,
+        required: false,
         min_value: option.type === 'posint' ? 1 : undefined,
       })
     }
