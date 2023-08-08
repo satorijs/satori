@@ -200,7 +200,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async updateCommands(commands: Universal.Command[]) {
     this.commands = commands
     const local = Object.fromEntries(commands.map(cmd => [cmd.name, cmd] as const))
-    const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId))
+    const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId, { with_localizations: true }))
       .filter(cmd => cmd.type === Discord.ApplicationCommand.Type.CHAT_INPUT)
       .map(cmd => [cmd.name, cmd] as const))
 
@@ -216,7 +216,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
       if (!remote[key]) {
         logger.debug('create command: %s', local[key].name)
         await this.internal.createGlobalApplicationCommand(this.selfId, data)
-      } else if (shapeEqual(data, remote[key])) {
+      } else if (!shapeEqual(data, remote[key])) {
         logger.debug('edit command: %s', local[key].name)
         await this.internal.editGlobalApplicationCommand(this.selfId, remote[key].id, data)
       }
@@ -226,9 +226,16 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
 function shapeEqual(a: any, b: any, strict = false) {
   if (a === b) return true
-  if (!strict && isNullable(a) && isNullable(b)) return true
+  if (strict && isNullable(a) && isNullable(b)) return true
+  if (!strict && !a && !b) return true
+  // ^ a.required = false, b.required = undefined
+
   if (typeof a !== typeof b) return false
   if (typeof a !== 'object') return false
+  if ((typeof a === 'object' && Object.values(a).every(v => !v) && !b)
+    || (typeof b === 'object' && Object.values(b).every(v => !v) && !a)) return true
+  // ^ one is object with undefined values, other is undefined (*_localizations)
+  // a = { foo: undefined }, b = undefined
   if (!a || !b) return false
 
   // check array

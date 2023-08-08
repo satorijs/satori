@@ -140,6 +140,11 @@ export namespace ApplicationCommand {
   }
 
   export namespace Params {
+    /** https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands-query-string-params */
+    export interface Get {
+      /** Whether to include full localization dictionaries (name_localizations and description_localizations) in the returned objects, instead of the name_localized and description_localized fields. Default false. */
+      with_localizations: boolean
+    }
     /** https://discord.com/developers/docs/interactions/application-commands#create-global-application-command-json-params */
     export interface Create {
       /** 1-32 character name */
@@ -210,7 +215,7 @@ declare module './internal' {
      * Fetch all of the global commands for your application. Returns an array of application command objects.
      * @see https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
      */
-    getGlobalApplicationCommands(application_id: snowflake): Promise<ApplicationCommand[]>
+    getGlobalApplicationCommands(application_id: snowflake, param?: ApplicationCommand.Params.Get): Promise<ApplicationCommand[]>
     /**
      * Creating a command with the same name as an existing command for your application will overwrite the old command.
      * @see https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
