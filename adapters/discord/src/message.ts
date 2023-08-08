@@ -113,10 +113,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
     }
 
     const sendDirect = async () => {
-      if (this.buffer.trim().length) {
-        await this.post({ ...addition, content: this.buffer.trim() })
-        this.buffer = ''
-      }
+      await this.flush()
       return this.post({ ...addition, content: encodeURI(attrs.url) })
     }
 
@@ -151,13 +148,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   }
 
   async flushAssets(content: string) {
-    const { handleExternalAsset } = this.bot.config as DiscordMessageEncoder.Config
-    const mode = handleExternalAsset
-    if (mode === 'download') {
-      return this.sendEmbed(this.resourceBuffer, { ...this.addition, content })
-    } else if (mode === 'direct') {
-      return this.post({ ...this.addition, content })
-    }
+    return this.sendEmbed(this.resourceBuffer, { ...this.addition, content })
   }
 
   async ensureWebhook() {
