@@ -1,50 +1,19 @@
-import { Bot, Context, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Quester } from '@satorijs/satori'
 import { WhatsAppMessageEncoder } from './message'
-import { WhatsAppBusiness } from '.'
+import { Internal } from './internal'
 
-export class WhatsAppBot extends Bot<WhatsAppBot.Config> {
+export class WhatsAppBot extends Bot {
   static MessageEncoder = WhatsAppMessageEncoder
+
+  public internal: Internal
   public http: Quester
 
-  constructor(ctx: Context, config: WhatsAppBot.Config) {
+  constructor(ctx: Context, config: Bot.Config) {
     super(ctx, config)
-    this.http = ctx.http.extend({
-      ...config,
-      headers: {
-        Authorization: `Bearer ${config.systemToken}`,
-      },
-    })
-  }
-
-  async initialize() {
-    this.selfId = this.config.phoneNumber
+    this.platform = 'whatsapp'
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
-    // https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-messages#reaction-messages
-    await this.http.post(`/${this.selfId}/messages`, {
-      messaging_product: 'whatsapp',
-      to: channelId,
-      recipient_type: 'individual',
-      type: 'reaction',
-      reaction: {
-        message_id: messageId,
-        emoji,
-      },
-    })
+    await this.internal.messageReaction(this.selfId, channelId, messageId, emoji)
   }
 }
-
-export namespace WhatsAppBot {
-  export interface Config extends WhatsAppBusiness.Config, Bot.Config {
-    phoneNumber: string
-  }
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      phoneNumber: Schema.string().description('手机号').required(),
-    }),
-    WhatsAppBusiness.Config,
-  ] as const)
-}
-
-WhatsAppBot.prototype.platform = 'whatsapp'
