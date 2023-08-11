@@ -16,11 +16,10 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
     super()
 
     const http = ctx.http.extend({
-      ...config,
       headers: {
         Authorization: `Bearer ${config.systemToken}`,
       },
-    })
+    }).extend(config)
     const internal = new Internal(http)
 
     ctx.on('ready', async () => {
@@ -101,11 +100,12 @@ export namespace WhatsAppAdapter {
     id: string
     secret: string
   }
+
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       secret: Schema.string().role('secret').description('App Secret').required(),
       systemToken: Schema.string().role('secret').description('System User Token').required(),
-      verifyToken: Schema.string().required(),
+      verifyToken: Schema.string().role('secret').description('Verify Token').required(),
       id: Schema.string().description('WhatsApp Business Account ID').required(),
     }),
     Quester.createConfig('https://graph.facebook.com'),

@@ -24,8 +24,8 @@
   - [x] Slack
   - [x] Telegram
   - [x] WhatsApp
-  - [ ] 企业微信
-  - [ ] 微信公众号
+  - [ ] WeCom (企业微信)
+  - [ ] Wechat Official (微信公众号)
 
 ## Examples
 
