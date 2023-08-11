@@ -131,6 +131,5 @@ declare module './internal' {
       ok: boolean
       usergroup: Definitions.Subteam
     }>
-
   }
 }

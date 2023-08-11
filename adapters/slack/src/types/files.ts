@@ -241,6 +241,5 @@ declare module './internal' {
       file: Definitions.File
       ok: boolean
     }>
-
   }
 }

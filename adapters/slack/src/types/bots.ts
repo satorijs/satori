@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/bots.info': {
     GET: { 'botsInfo': false },
@@ -16,7 +16,6 @@ export namespace Bots {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Gets information about a bot user.
      * @see https://api.slack.com/methods/bots.info
@@ -37,6 +36,5 @@ declare module './internal' {
       }
       ok: boolean
     }>
-
   }
 }

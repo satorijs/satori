@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/oauth.access': {
     GET: { 'oauthAccess': false },
@@ -39,7 +39,6 @@ export namespace Oauth {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Exchanges a temporary OAuth verifier code for an access token.
      * @see https://api.slack.com/methods/oauth.access
@@ -63,6 +62,5 @@ declare module './internal' {
     oauthV2Access(token: TokenInput, params: Oauth.Params.V2Access): Promise<{
       ok: boolean
     }>
-
   }
 }

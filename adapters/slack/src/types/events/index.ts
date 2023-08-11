@@ -1,6 +1,6 @@
 // https://github.com/slackapi/bolt-js/blob/main/src/types/events/index.ts
 
-import { BasicSlackEvent, UserProfileChangedEvent } from './base-events'
+import { BasicSlackEvent, SlackEvent, UserProfileChangedEvent } from './base-events'
 import { Block } from '@slack/types'
 
 export type StringIndexed = Record<string, any>
@@ -42,7 +42,7 @@ export interface UrlVerificationEvent {
  *
  * This describes the entire JSON-encoded body of a request from Slack's Events API.
  */
-export interface EnvelopedEvent<Event = BasicSlackEvent> extends StringIndexed {
+export interface EnvelopedEvent<Event extends BasicSlackEvent = SlackEvent> extends StringIndexed {
   token: string
   team_id: string
   enterprise_id?: string

@@ -118,6 +118,5 @@ declare module './internal' {
         fields: Definitions.TeamProfileField[]
       }
     }>
-
   }
 }

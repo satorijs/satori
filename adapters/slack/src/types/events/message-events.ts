@@ -3,7 +3,7 @@
 import { Block, KnownBlock, MessageAttachment } from '@slack/types'
 
 export type MessageEvent =
-  | GenericMessageEvent
+  // | GenericMessageEvent
   | BotMessageEvent
   | ChannelJoinMessageEvent
   | ChannelLeaveMessageEvent

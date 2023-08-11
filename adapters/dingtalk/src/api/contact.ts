@@ -18,7 +18,7 @@ export interface GetOrgAuthInfoResponse {
 }
 
 export interface BatchApproveUnionApplyParams {
-  /** 申请的合作伙伴组织CorpId，参考[基础概念-CorpId](https://open.dingtalk.com/document/org/basic-concepts)。 */
+  /** 申请的合作伙伴组织 CorpId，参考[基础概念-CorpId](https://open.dingtalk.com/document/org/basic-concepts)。 */
   branchCorpId?: string
   /** 合作伙伴组织在上下游组织内的名称。 */
   unionRootName?: string

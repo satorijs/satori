@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/views.open': {
     GET: { 'viewsOpen': true },
@@ -41,7 +41,6 @@ export namespace Views {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Open a view for a user.
      * @see https://api.slack.com/methods/views.open
@@ -73,6 +72,5 @@ declare module './internal' {
     viewsUpdate(token: TokenInput, params: Views.Params.Update): Promise<{
       ok: boolean
     }>
-
   }
 }

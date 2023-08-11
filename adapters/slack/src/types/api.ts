@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/api.test': {
     GET: { 'apiTest': true },
@@ -17,7 +17,6 @@ export namespace Api {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Checks API calling code.
      * @see https://api.slack.com/methods/api.test
@@ -25,6 +24,5 @@ declare module './internal' {
     apiTest(token: TokenInput, params: Api.Params.Test): Promise<{
       ok: boolean
     }>
-
   }
 }

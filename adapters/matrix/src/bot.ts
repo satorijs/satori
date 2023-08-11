@@ -17,8 +17,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     super(ctx, config)
     this.id = config.id
     this.platform = 'matrix'
-    this.selfId = `@${this.id}:${this.config.host}`
-    this.userId = this.selfId
+    this.userId = `@${this.id}:${this.config.host}`
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'
     this.internal = new Matrix.Internal(this)
     ctx.plugin(HttpAdapter, this)
@@ -189,13 +188,11 @@ export namespace MatrixBot {
   export const Config: Schema<Config> = Schema.object({
     name: Schema.string().description('机器人的名称，如果设置了将会在启动时为机器人更改。'),
     avatar: Schema.string().description('机器人的头像地址，如果设置了将会在启动时为机器人更改。'),
-    // eslint-disable-next-line
-    id: Schema.string().description('机器人的 ID。机器人最后的用户名将会是 @${id}:${host}。').required(),
-    host: Schema.string().description('Matrix homeserver 域名。').required(),
+    id: Schema.string().description('机器人的 ID。机器人最后的用户名将会是 `@{id}:{host}`。').required(),
+    host: Schema.string().description('Matrix Homeserver 域名。').required(),
     hsToken: Schema.string().description('hs_token').role('secret').required(),
     asToken: Schema.string().description('as_token').role('secret').required(),
-    // eslint-disable-next-line
-    endpoint: Schema.string().description('Matrix homeserver 地址。默认为 https://${host}。'),
+    endpoint: Schema.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
     ...omit(Quester.Config.dict, ['endpoint']),
   })
 }

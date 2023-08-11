@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/dialog.open': {
     GET: { 'dialogOpen': true },
@@ -17,7 +17,6 @@ export namespace Dialog {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Open a dialog with a user
      * @see https://api.slack.com/methods/dialog.open
@@ -25,6 +24,5 @@ declare module './internal' {
     dialogOpen(token: TokenInput, params: Dialog.Params.Open): Promise<{
       ok: boolean
     }>
-
   }
 }

@@ -68,6 +68,5 @@ declare module './internal' {
     starsRemove(token: TokenInput, params: Stars.Params.Remove): Promise<{
       ok: boolean
     }>
-
   }
 }

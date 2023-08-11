@@ -1,5 +1,6 @@
-import { Internal, TokenInput } from './internal'
+import { Internal } from './internal'
 import { Definitions } from './definition'
+
 Internal.define({
   '/chat.delete': {
     POST: { 'chatDelete': true },
@@ -250,6 +251,5 @@ declare module './internal' {
       text: string
       ts: string
     }>
-
   }
 }

@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/workflows.stepCompleted': {
     GET: { 'workflowsStepCompleted': true },
@@ -34,7 +34,6 @@ export namespace Workflows {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Indicate that an app's step in a workflow completed execution.
      * @see https://api.slack.com/methods/workflows.stepCompleted
@@ -58,6 +57,5 @@ declare module './internal' {
     workflowsUpdateStep(token: TokenInput, params: Workflows.Params.UpdateStep): Promise<{
       ok: boolean
     }>
-
   }
 }

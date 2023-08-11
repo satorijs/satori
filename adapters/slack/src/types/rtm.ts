@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/rtm.connect': {
     GET: { 'rtmConnect': false },
@@ -17,7 +17,6 @@ export namespace Rtm {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Starts a Real Time Messaging session.
      * @see https://api.slack.com/methods/rtm.connect
@@ -35,6 +34,5 @@ declare module './internal' {
       }
       url: string
     }>
-
   }
 }

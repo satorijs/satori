@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/search.messages': {
     GET: { 'searchMessages': false },
@@ -21,7 +21,6 @@ export namespace Search {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Searches for messages matching a query.
      * @see https://api.slack.com/methods/search.messages
@@ -29,6 +28,5 @@ declare module './internal' {
     searchMessages(token: TokenInput, params: Search.Params.Messages): Promise<{
       ok: boolean
     }>
-
   }
 }

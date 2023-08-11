@@ -91,6 +91,5 @@ declare module './internal' {
     reactionsRemove(token: TokenInput, params: Reactions.Params.Remove): Promise<{
       ok: boolean
     }>
-
   }
 }

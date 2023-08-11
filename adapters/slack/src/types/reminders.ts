@@ -84,6 +84,5 @@ declare module './internal' {
       ok: boolean
       reminders: Definitions.Reminder[]
     }>
-
   }
 }

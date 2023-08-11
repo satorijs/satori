@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/calls.add': {
     POST: { 'callsAdd': true },
@@ -59,7 +59,6 @@ export namespace Calls {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Registers a new Call.
      * @see https://api.slack.com/methods/calls.add
@@ -107,6 +106,5 @@ declare module './internal' {
     callsUpdate(token: TokenInput, params: Calls.Params.Update): Promise<{
       ok: boolean
     }>
-
   }
 }

@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/pins.add': {
     POST: { 'pinsAdd': true },
@@ -30,7 +30,6 @@ export namespace Pins {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Pins an item to a channel.
      * @see https://api.slack.com/methods/pins.add
@@ -52,6 +51,5 @@ declare module './internal' {
     pinsRemove(token: TokenInput, params: Pins.Params.Remove): Promise<{
       ok: boolean
     }>
-
   }
 }

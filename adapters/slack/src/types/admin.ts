@@ -1,5 +1,6 @@
-import { Internal, TokenInput } from './internal'
+import { Internal } from './internal'
 import { Definitions } from './definition'
+
 Internal.define({
   '/admin.apps.approve': {
     POST: { 'adminAppsApprove': true },
@@ -440,7 +441,6 @@ export namespace Admin {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Approve an app for installation on a workspace.
      * @see https://api.slack.com/methods/admin.apps.approve
@@ -523,7 +523,9 @@ declare module './internal' {
     }>
 
     /**
-     * List all disconnected channels—i.e., channels that were once connected to other workspaces and then disconnected—and the corresponding original channel IDs for key revocation with EKM.
+     * List all disconnected channels
+     * — i.e., channels that were once connected to other workspaces and then disconnected
+     * — and the corresponding original channel IDs for key revocation with EKM.
      * @see https://api.slack.com/methods/admin.conversations.ekm.listOriginalConnectedChannelInfo
      */
     adminConversationsEkmListOriginalConnectedChannelInfo(token: TokenInput, params: Admin.Params.ConversationsEkmListOriginalConnectedChannelInfo): Promise<{
@@ -904,6 +906,5 @@ declare module './internal' {
     adminUsersSetRegular(token: TokenInput, params: Admin.Params.UsersSetRegular): Promise<{
       ok: boolean
     }>
-
   }
 }

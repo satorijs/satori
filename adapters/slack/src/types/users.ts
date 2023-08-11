@@ -217,6 +217,5 @@ declare module './internal' {
     usersSetPresence(token: TokenInput, params: Users.Params.SetPresence): Promise<{
       ok: boolean
     }>
-
   }
 }

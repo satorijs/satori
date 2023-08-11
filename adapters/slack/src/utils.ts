@@ -1,8 +1,8 @@
 import { Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
-import { BasicSlackEvent, EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, MessageEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
+import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
-import { Definitions, File, SlackChannel, SlackTeam } from './types'
+import { File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
 
 type NewKnownBlock = KnownBlock | RichTextBlock
@@ -160,18 +160,18 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
   const session = bot.session()
   // https://api.slack.com/events
   if (payload.event.type === 'message') {
-    const input = payload.event as GenericMessageEvent
+    const input = payload.event
     // @ts-ignore
     if (input.user === bot.selfId) return
     if (!input.subtype) {
       session.type = 'message'
       session.isDirect = input.channel_type === 'im'
       session.channelId = input.channel
-      await adaptMessage(bot, input as unknown as GenericMessageEvent, session)
-    }
-    else if (input.subtype === 'message_deleted') adaptMessageDeleted(bot, input as unknown as MessageDeletedEvent, session)
-    else if (input.subtype === 'message_changed') {
-      const evt = input as unknown as MessageChangedEvent
+      await adaptMessage(bot, input as GenericMessageEvent, session)
+    } else if (input.subtype === 'message_deleted') {
+      adaptMessageDeleted(bot, input, session)
+    } else if (input.subtype === 'message_changed') {
+      const evt = input as MessageChangedEvent
       if (evt.message.subtype === 'thread_broadcast') return
       session.type = 'message-updated'
       // @ts-ignore
@@ -213,7 +213,12 @@ export interface AuthTestResponse {
 export function adaptUser(data: SlackUser): Universal.User {
   return {
     userId: data.id,
-    avatar: data.profile.image_512 ?? data.profile.image_192 ?? data.profile.image_72 ?? data.profile.image_48 ?? data.profile.image_32 ?? data.profile.image_24,
+    avatar: data.profile.image_512
+      ?? data.profile.image_192
+      ?? data.profile.image_72
+      ?? data.profile.image_48
+      ?? data.profile.image_32
+      ?? data.profile.image_24,
     username: data.real_name,
     isBot: data.is_bot,
   }

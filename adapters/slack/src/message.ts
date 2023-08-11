@@ -20,6 +20,7 @@ export const unescape = (val: string) =>
     .replace(/\u200b([\*_~`])/g, '$1')
     .replace(/@\u200Beveryone/g, () => '@everyone')
     .replace(/@\u200Bhere/g, () => '@here')
+
 export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   buffer = ''
   thread_ts = null
@@ -35,7 +36,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       text: this.buffer,
     })
     const session = this.bot.session()
-    await adaptMessage(this.bot, r.message, session)
+    await adaptMessage(this.bot, r.message as any, session)
     session.channelId = this.channelId
     session.app.emit(session, 'send', session)
     this.results.push(session)

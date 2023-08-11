@@ -338,6 +338,5 @@ declare module './internal' {
     conversationsUnarchive(token: TokenInput, params: Conversations.Params.Unarchive): Promise<{
       ok: boolean
     }>
-
   }
 }

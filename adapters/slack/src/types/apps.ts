@@ -1,5 +1,6 @@
-import { Internal, TokenInput } from './internal'
+import { Internal } from './internal'
 import { Definitions } from './definition'
+
 Internal.define({
   '/apps.event.authorizations.list': {
     GET: { 'appsEventAuthorizationsList': true },
@@ -170,6 +171,5 @@ declare module './internal' {
     appsUninstall(token: TokenInput, params: Apps.Params.Uninstall): Promise<{
       ok: boolean
     }>
-
   }
 }

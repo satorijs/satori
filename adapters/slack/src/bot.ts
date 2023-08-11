@@ -1,7 +1,7 @@
 import { Bot, Context, Fragment, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { adaptChannel, adaptGuild, adaptMessage, adaptUser, AuthTestResponse } from './utils'
+import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import FormData from 'form-data'
@@ -14,8 +14,8 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'slack'
     this.http = ctx.http.extend(config)
-
     this.internal = new Internal(this, this.http)
 
     if (config.protocol === 'ws') {
@@ -194,5 +194,3 @@ export namespace SlackBot {
     Quester.createConfig('https://slack.com/api/'),
   ] as const)
 }
-
-SlackBot.prototype.platform = 'slack'

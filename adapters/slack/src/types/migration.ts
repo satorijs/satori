@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/migration.exchange': {
     GET: { 'migrationExchange': false },
@@ -18,7 +18,6 @@ export namespace Migration {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * For Enterprise Grid workspaces, map local user IDs to global user IDs
      * @see https://api.slack.com/methods/migration.exchange
@@ -31,6 +30,5 @@ declare module './internal' {
       user_id_map?: {
       }
     }>
-
   }
 }

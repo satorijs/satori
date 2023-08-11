@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/dnd.endDnd': {
     POST: { 'dndEndDnd': true },
@@ -38,7 +38,6 @@ export namespace Dnd {
 
 declare module './internal' {
   interface Internal {
-
     /**
      * Ends the current user's Do Not Disturb session immediately.
      * @see https://api.slack.com/methods/dnd.endDnd
@@ -91,6 +90,5 @@ declare module './internal' {
     dndTeamInfo(token: TokenInput, params: Dnd.Params.TeamInfo): Promise<{
       ok: boolean
     }>
-
   }
 }

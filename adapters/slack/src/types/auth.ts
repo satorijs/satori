@@ -1,5 +1,5 @@
-import { Internal, TokenInput } from './internal'
-import { Definitions } from './definition'
+import { Internal } from './internal'
+
 Internal.define({
   '/auth.revoke': {
     GET: { 'authRevoke': false },
@@ -45,6 +45,5 @@ declare module './internal' {
       user: string
       user_id: string
     }>
-
   }
 }
