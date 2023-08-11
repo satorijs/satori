@@ -12,17 +12,20 @@
   - [ ] @satorijs/database
   - [ ] @satorijs/server
 - Ecosystem
+  - [x] DingTalk
   - [x] Discord
-  - [x] Telegram
-  - [x] OneBot (v11)
-  - [x] QQ Guild
   - [x] KOOK (开黑啦)
   - [x] Lark (飞书)
   - [x] Line
-  - [ ] Whatsapp
-  - [ ] Slack
-  - [ ] Dingding
-  - [ ] Wecom
+  - [x] Mail
+  - [x] Matrix
+  - [x] OneBot (v11，可用于 QQ)
+  - [x] QQ Guild
+  - [x] Slack
+  - [x] Telegram
+  - [x] WhatsApp
+  - [ ] 企业微信
+  - [ ] 微信公众号
 
 ## Examples
 
