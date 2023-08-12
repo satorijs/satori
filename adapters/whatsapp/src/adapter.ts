@@ -40,7 +40,7 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
     ctx.router.post('/whatsapp', async (ctx) => {
       const receivedSignature = ctx.get('X-Hub-Signature-256').split('sha256=')[1]
 
-      const payload = JSON.stringify(ctx.request.body)
+      const payload = ctx.request.rawBody
 
       const generatedSignature = crypto
         .createHmac('sha256', this.config.secret)
