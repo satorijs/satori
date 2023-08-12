@@ -183,6 +183,7 @@ export namespace MatrixBot {
     hsToken?: string
     asToken?: string
     host?: string
+    path?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
@@ -193,6 +194,7 @@ export namespace MatrixBot {
     hsToken: Schema.string().description('hs_token').role('secret').required(),
     asToken: Schema.string().description('as_token').role('secret').required(),
     endpoint: Schema.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
+    path: Schema.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
     ...omit(Quester.Config.dict, ['endpoint']),
   })
 }
