@@ -42,9 +42,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
     if (type === 'text' && !this.buffer.length) return
     if (type !== 'text' && this.buffer.length) await this.flushTextMessage()
     // https://developers.facebook.com/docs/whatsapp/api/messages/text
-    const { messages } = await this.bot.http.post<{
-      messages: { id: string }[]
-    }>(`/${this.bot.selfId}/messages`, {
+    const { messages } = await this.bot.internal.sendMessage(this.bot.selfId, {
       messaging_product: 'whatsapp',
       to: this.channelId,
       recipient_type: 'individual',
@@ -55,8 +53,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
           message_id: this.quoteId,
         },
       } : {}),
-    })
-
+    } as SendMessage)
     for (const msg of messages) {
       const session = this.bot.session()
       session.type = 'message'
@@ -92,11 +89,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
     form.append('type', mime)
     form.append('messaging_product', 'whatsapp')
 
-    const r = await this.bot.http.post<{
-      id: string
-    }>(`/${this.bot.selfId}/media`, form, {
-      headers: form.getHeaders(),
-    })
+    const r = await this.bot.internal.uploadMedia(this.bot.selfId, form)
     return r.id
   }
 

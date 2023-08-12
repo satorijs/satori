@@ -78,7 +78,7 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
       const bot = this.bots.find((bot) => bot.selfId === selfId)
       if (!bot) return ctx.status = 404
 
-      const fetched = await bot.http.get<{ url: string }>('/' + mediaId)
+      const fetched = await bot.internal.getMedia(mediaId)
       this.logger.debug(fetched.url)
       const resp = await bot.ctx.http.axios<internal.Readable>({
         url: fetched.url,
