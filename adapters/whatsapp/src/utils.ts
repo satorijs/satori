@@ -46,6 +46,11 @@ export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
         }, [
           h.image(`${bot.ctx.root.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
         ])]
+      } else if (message.type === 'location') {
+        session.elements = [h('whatsapp:location', {
+          latitude: message.location.latitude,
+          longitude: message.location.longitude,
+        })]
       } else {
         continue
       }

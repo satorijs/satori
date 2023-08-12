@@ -69,7 +69,15 @@ export interface MessageBodySticker extends MessageBodyBase {
   sticker?: ReceivedMedia
 }
 
-export type MessageBody = MessageBodyText | MessageBodyMedia | MessageBodySticker
+export interface MessageBodyLocation extends MessageBodyBase {
+  type: 'location'
+  location: {
+    latitude: number
+    longitude: number
+  }
+}
+
+export type MessageBody = MessageBodyText | MessageBodyMedia | MessageBodySticker | MessageBodyLocation
 
 export interface SendMessageBase {
   messaging_product: 'whatsapp'
