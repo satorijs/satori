@@ -289,6 +289,16 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       user.avatar = `${endpoint}/${file.file_path}`
     }
   }
+
+  async getUser(userId: string, guildId?: string) {
+    const data = await this.internal.getChat({ chat_id: userId })
+    if (!data.photo?.big_file_id && !data.photo?.small_file_id) return adaptUser(data)
+    const { url } = await this.$getFileFromId(data.photo?.big_file_id || data.photo?.small_file_id)
+    return {
+      ...adaptUser(data),
+      avatar: url,
+    }
+  }
 }
 
 export namespace TelegramBot {
