@@ -1,9 +1,10 @@
 import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpPolling } from './polling'
-import { Internal } from './internal'
+import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
 // @ts-ignore
 import { version } from '../package.json'
+import { decodeGuild } from './utils'
 
 export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
@@ -32,6 +33,29 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
     this.selfId = user_id.toString()
     this.username = full_name
     this.avatar = avatar_url
+  }
+
+  async getUser(userId: string, guildId?: string) {
+    const { user } = await this.internal.getUser(userId)
+    return {
+      userId,
+      username: user?.full_name,
+    }
+  }
+
+  async getGuildList() {
+    const { streams } = await this.internal.getStreams()
+    return streams.map(decodeGuild)
+  }
+
+  async getGuild(guildId: string) {
+    const { stream } = await this.internal.getStreamById(guildId)
+    return decodeGuild(stream)
+  }
+
+  async getChannelList(guildId: string) {
+    const { topics } = await this.internal.getStreamTopics(guildId)
+    return topics.map(({ name }) => ({ channelId: name }))
   }
 }
 

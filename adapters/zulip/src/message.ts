@@ -24,7 +24,7 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     form.append('content', this.buffer)
     if (!this.session.isDirect) form.append('topic', this.session.channelId)
 
-    await this.bot.http.post('/api/v1/messages', form, {
+    await this.bot.http.post('/messages', form, {
       headers: form.getHeaders(),
     })
   }

@@ -1,7 +1,7 @@
-import { Dict, h } from '@satorijs/satori'
+import { Dict, Universal, h } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import marked from 'marked'
-import { unescape } from './message'
+import { BasicStream } from './types'
 
 const tagRegExp = /^<(\/?)([^!\s>/]+)([^>]*?)\s*(\/?)>$/
 
@@ -17,7 +17,7 @@ export function encodeHashComponent(str: string): string {
 }
 export function by_stream_topic_url(
   stream_id: number,
-  topic: string
+  topic: string,
 ): string {
   return `#narrow/stream/${encodeHashComponent(`${stream_id}-unknown`)}/topic/${encodeHashComponent(topic)}`
 }
@@ -155,4 +155,11 @@ export async function decodeMessage(bot: ZulipBot, message: Dict) {
   })
 
   return session
+}
+
+export const decodeGuild = (stream: BasicStream): Universal.Guild => {
+  return {
+    guildId: stream.stream_id.toString(),
+    guildName: stream.name,
+  }
 }
