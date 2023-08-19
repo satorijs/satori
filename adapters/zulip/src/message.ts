@@ -46,6 +46,11 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     return [response.uri, filename]
   }
 
+  async getUser(id: string) {
+    const { user } = await this.bot.internal.getUser(id)
+    return user?.full_name
+  }
+
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
@@ -76,6 +81,12 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
 
       this.buffer = `@_**${quoteMsg.message.sender_full_name}|${quoteMsg.message.sender_id}** [Said](${path}):\n`
         + '```quote\n' + quoteMsg.raw_content + '\n```\n\n' + this.buffer
+    } else if (type === 'sharp') {
+      // @TODO
+      // this.buffer += `#**${attrs.name}** `
+    } else if (type === 'at') {
+      const u = await this.getUser(attrs.id)
+      if (u) this.buffer += `@**${u}|${attrs.id}** `
     } else if (type === 'message') {
       await this.render(children)
     }
