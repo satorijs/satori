@@ -40,7 +40,7 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     form.append('file', value, attrs.file || filename)
     const response = await this.bot.http.post<{
       uri: string
-    }>('/api/v1/user_uploads', form, {
+    }>('/user_uploads', form, {
       headers: form.getHeaders(),
     })
     return [response.uri, filename]
@@ -84,9 +84,16 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     } else if (type === 'sharp') {
       // @TODO
       // this.buffer += `#**${attrs.name}** `
-    } else if (type === 'at') {
-      const u = await this.getUser(attrs.id)
-      if (u) this.buffer += `@**${u}|${attrs.id}** `
+    } else if (type === 'at' && attrs.id) {
+      try {
+        const u = await this.getUser(attrs.id)
+        if (u) this.buffer += ` @**${u}|${attrs.id}** `
+      } catch (e) {
+        this.bot.logger.error(e)
+        this.buffer += ` @**${attrs.id}** `
+      }
+    } else if (type === 'at' && ['all', 'here'].includes(attrs.type)) {
+      this.buffer += ` @**all** `
     } else if (type === 'message') {
       await this.render(children)
     }

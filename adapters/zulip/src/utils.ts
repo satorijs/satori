@@ -1,9 +1,7 @@
-import { Dict, Universal, h } from '@satorijs/satori'
+import { Dict, h, Universal } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import marked from 'marked'
-import { BasicStream } from './types'
-
-const tagRegExp = /^<(\/?)([^!\s>/]+)([^>]*?)\s*(\/?)>$/
+import * as Zulip from './types'
 
 // internal_url.ts
 const hashReplacements = new Map([
@@ -107,7 +105,7 @@ function render(tokens: marked.Token[]): h[] {
   return tokens.map(renderToken).filter(Boolean)
 }
 
-export async function decodeMessage(bot: ZulipBot, message: Dict) {
+export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase) {
   const session = bot.session()
   session.isDirect = message.type === 'private'
   session.messageId = message.id.toString()
@@ -157,9 +155,17 @@ export async function decodeMessage(bot: ZulipBot, message: Dict) {
   return session
 }
 
-export const decodeGuild = (stream: BasicStream): Universal.Guild => {
+export const decodeGuild = (stream: Zulip.BasicStream): Universal.Guild => {
   return {
     guildId: stream.stream_id.toString(),
     guildName: stream.name,
+  }
+}
+
+export const decodeMember = (user: Zulip.User): Universal.GuildMember => {
+  return {
+    userId: user.user_id.toString(),
+    username: user.full_name,
+    avatar: user.avatar_url,
   }
 }

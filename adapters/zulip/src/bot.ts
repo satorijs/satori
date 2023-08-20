@@ -4,7 +4,7 @@ import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
 // @ts-ignore
 import { version } from '../package.json'
-import { decodeGuild } from './utils'
+import { decodeGuild, decodeMember, decodeMessage } from './utils'
 
 export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
@@ -29,18 +29,10 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
   }
 
   async initliaze() {
-    const { avatar_url, user_id, full_name } = await this.internal.getOwnUser()
-    this.selfId = user_id.toString()
-    this.username = full_name
-    this.avatar = avatar_url
-  }
-
-  async getUser(userId: string, guildId?: string) {
-    const { user } = await this.internal.getUser(userId)
-    return {
-      userId,
-      username: user?.full_name,
-    }
+    const { avatar, userId, username } = await this.getSelf()
+    this.selfId = userId
+    this.username = username
+    this.avatar = avatar
   }
 
   async getGuildList() {
@@ -56,6 +48,44 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
   async getChannelList(guildId: string) {
     const { topics } = await this.internal.getStreamTopics(guildId)
     return topics.map(({ name }) => ({ channelId: name }))
+  }
+
+  async getGuildMember(guildId: string, userId: string) {
+    const { user } = await this.internal.getUser(userId)
+    return decodeMember(user)
+  }
+
+  getUser(userId: string, guildId?: string) {
+    return this.getGuildMember(guildId, userId)
+  }
+
+  async getGuildMemberList(guildId: string) {
+    const { members } = await this.internal.getUsers()
+    return members.map(decodeMember)
+  }
+
+  async getMessage(channelId: string, messageId: string) {
+    const { message } = await this.internal.getMessage(messageId)
+    const msg = await decodeMessage(this, message)
+    return msg
+  }
+
+  async getSelf() {
+    const self = await this.internal.getOwnUser()
+    return decodeMember(self)
+  }
+
+  async getMessageList(channelId: string, before?: string) {
+    const { messages } = await this.internal.getMessages({
+      num_before: 50,
+      num_after: 0,
+      narrow: JSON.stringify([
+        { operator: 'topic', operand: channelId },
+      ]),
+      anchor: before ?? 'newest',
+      apply_markdown: false,
+    })
+    return await Promise.all(messages.map(data => decodeMessage(this, data)))
   }
 }
 
