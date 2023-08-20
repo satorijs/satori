@@ -225,7 +225,7 @@ declare module './internal' {
      * Takes a list of application commands, overwriting the existing global command list for this application. Updates will be available in all guilds after 1 hour. Returns 200 and a list of application command objects. Commands that do not already exist will count toward daily application command create limits.
      * @see https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
      */
-    bulkOverwriteGlobalApplicationCommands(application_id: snowflake): Promise<ApplicationCommand[]>
+    bulkOverwriteGlobalApplicationCommands(application_id: snowflake, data: ApplicationCommand.Params.Create[]): Promise<ApplicationCommand[]>
     /**
      * Fetch a global command for your application. Returns an application command object.
      * @see https://discord.com/developers/docs/interactions/application-commands#get-global-application-command

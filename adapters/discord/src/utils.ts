@@ -165,11 +165,12 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
   if (input.t === 'MESSAGE_CREATE') {
     setupMessageGuildId(session, input.d.guild_id)
     if (input.d.webhook_id && !session.isDirect) {
-      const webhook = await bot.ensureWebhook(input.d.channel_id)
-      if (webhook.id === input.d.webhook_id) {
+      try {
+        // 403 Missing Permissions
+        const webhook = await bot.ensureWebhook(input.d.channel_id)
         // koishi's webhook
-        return
-      }
+        if (webhook.id === input.d.webhook_id) return
+      } catch (e) {}
     }
     session.type = 'message'
     await decodeMessage(bot, input.d, session)
@@ -291,6 +292,7 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       description_localizations: pick(cmd.description, Discord.Locale),
     })))
   } else {
+    // `getGlobalApplicationCommands()` does not return `required` property.
     for (const arg of cmd.arguments) {
       result.push({
         name: arg.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
@@ -298,7 +300,6 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         description_localizations: pick(arg.description, Discord.Locale),
         type: types[arg.type] ?? types.text,
         // required: arg.required ?? false,
-        required: false,
       })
     }
     for (const option of cmd.options) {
@@ -308,7 +309,6 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         description_localizations: pick(option.description, Discord.Locale),
         type: types[option.type] ?? types.text,
         // required: option.required ?? false,
-        required: false,
         min_value: option.type === 'posint' ? 1 : undefined,
       })
     }
