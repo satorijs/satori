@@ -46,7 +46,12 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   Object.assign(session.telegram, update)
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
-  if (message) {
+  const isBotCommand = update.message && update.message.entities?.[0].type === 'bot_command'
+  if (isBotCommand) {
+    session.type = 'interaction/command'
+    await bot.adaptMessage(message, session)
+    session.content = session.content.slice(1)
+  } else if (message) {
     session.type = update.message || update.channel_post ? 'message' : 'message-updated'
     await bot.adaptMessage(message, session)
   } else if (update.chat_join_request) {
