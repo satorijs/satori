@@ -21,6 +21,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config)
+    this.platform = 'discord'
     this.http = ctx.http.extend({
       ...config,
       headers: {
@@ -264,5 +265,3 @@ export namespace DiscordBot {
     Quester.createConfig('https://discord.com/api/v10'),
   ])
 }
-
-DiscordBot.prototype.platform = 'discord'

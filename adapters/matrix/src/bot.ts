@@ -6,16 +6,18 @@ import { adaptMessage, dispatchSession } from './utils'
 
 export class MatrixBot extends Bot<MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
+
   http: Quester
   id: string
   endpoint: string
   rooms: string[] = []
-  declare internal: Matrix.Internal
+  internal: Matrix.Internal
+
   constructor(ctx: Context, config: MatrixBot.Config) {
     super(ctx, config)
     this.id = config.id
-    this.selfId = `@${this.id}:${this.config.host}`
-    this.userId = this.selfId
+    this.platform = 'matrix'
+    this.userId = `@${this.id}:${this.config.host}`
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'
     this.internal = new Matrix.Internal(this)
     ctx.plugin(HttpAdapter, this)
@@ -87,9 +89,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   async deleteFriend(): Promise<void> { }
 
   async getGuild(guildId: string): Promise<Universal.Guild> {
-    const events = await this.internal.getState(guildId)
-    const guildName = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
-    return { guildId, guildName }
+    const { channelName } = await this.getChannel(guildId)
+    return { guildId, guildName: channelName }
   }
 
   async getChannel(channelId: string): Promise<Universal.Channel> {
@@ -99,31 +100,11 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   }
 
   async getGuildList(): Promise<Universal.Guild[]> {
-    const sync = await this.syncRooms()
-    const joined = sync?.rooms?.join
-    if (!joined) return []
-    const result: Universal.Guild[] = []
-    for (const roomId of Object.keys(joined)) {
-      const state = await this.internal.getState(roomId)
-      const create = state.find(state => state.type === 'm.room.create')
-      const name = state.find(state => state.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME
-      if (!create) continue
-      if (create.content['type'] !== 'm.space') continue
-      result.push({
-        guildId: roomId,
-        guildName: name?.name,
-      })
-    }
-    return result
+    return await Promise.all(this.rooms.map(roomId => this.getGuild(roomId)))
   }
 
   async getChannelList(guildId: string): Promise<Universal.Channel[]> {
-    const state = await this.internal.getState(guildId)
-    const children = state
-      .filter(event => event.type === 'm.space.child')
-      .map(event => event.state_key)
-      .filter(roomId => this.rooms.includes(roomId))
-    return await Promise.all(children.map(this.getChannel.bind(this)))
+    return await Promise.all(this.rooms.map(roomId => this.getChannel(roomId)))
   }
 
   async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
@@ -186,15 +167,11 @@ export namespace MatrixBot {
   export const Config: Schema<Config> = Schema.object({
     name: Schema.string().description('机器人的名称，如果设置了将会在启动时为机器人更改。'),
     avatar: Schema.string().description('机器人的头像地址，如果设置了将会在启动时为机器人更改。'),
-    // eslint-disable-next-line
-    id: Schema.string().description('机器人的 ID。机器人最后的用户名将会是 @${id}:${host}。').required(),
-    host: Schema.string().description('Matrix homeserver 域名。').required(),
+    id: Schema.string().description('机器人的 ID。机器人最后的用户名将会是 `@{id}:{host}`。').required(),
+    host: Schema.string().description('Matrix Homeserver 域名。').required(),
     hsToken: Schema.string().description('hs_token').role('secret').required(),
     asToken: Schema.string().description('as_token').role('secret').required(),
-    // eslint-disable-next-line
-    endpoint: Schema.string().description('Matrix homeserver 地址。默认为 https://${host}。'),
+    endpoint: Schema.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
     ...omit(Quester.Config.dict, ['endpoint']),
   })
 }
-
-MatrixBot.prototype.platform = 'matrix'

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-dingtalk",
   "description": "Dingtalk Adapter for Satorijs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -26,6 +26,6 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.5.3"
+    "@satorijs/satori": "^2.6.1"
   }
 }

@@ -34,6 +34,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
       this.selfId = config.selfId
     }
 
+    this.internal = null
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)

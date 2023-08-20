@@ -15,9 +15,11 @@ export async function adaptMessage(bot: MatrixBot, event: Matrix.ClientEvent, re
   result.subtype = 'group'
   result.messageId = event.event_id
   result.channelId = event.room_id
+  result.guildId = event.room_id
   result.userId = event.sender
   result.timestamp = event.origin_server_ts
   result.author = adaptAuthor(bot, event)
+  result.isDirect = false
   const content = event.content as Matrix.M_ROOM_MESSAGE
   const reply = content['m.relates_to']?.['m.in_reply_to']
   if (reply) {
@@ -68,6 +70,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
   session.messageId = event.event_id
   session.timestamp = event.origin_server_ts
   session.author = adaptAuthor(bot, event)
+  session.isDirect = false
   switch (event.type) {
     case 'm.room.redaction': {
       session.type = 'message-deleted'

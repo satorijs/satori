@@ -7,6 +7,7 @@ import internal from 'stream'
 
 export class HttpServer extends Adapter.Server<LineBot> {
   logger = new Logger('line')
+
   constructor(ctx: Context, bot: LineBot) {
     super()
   }
@@ -16,16 +17,16 @@ export class HttpServer extends Adapter.Server<LineBot> {
       const sign = ctx.headers['x-line-signature']?.toString()
       const parsed = ctx.request.body as WebhookRequestBody
       const { destination } = parsed
-      const localBot = this.bots.find(bot => bot.selfId === destination)
-      if (!localBot) return ctx.status = 403
-      const hash = crypto.createHmac('SHA256', localBot?.config?.secret).update(ctx.request.rawBody || '').digest('base64')
+      const bot = this.bots.find(bot => bot.selfId === destination)
+      if (!bot) return ctx.status = 403
+      const hash = crypto.createHmac('SHA256', bot?.config?.secret).update(ctx.request.rawBody || '').digest('base64')
       if (hash !== sign) {
         return ctx.status = 403
       }
       this.logger.debug(require('util').inspect(parsed, false, null, true))
       for (const event of parsed.events) {
-        const sessions = await adaptSessions(localBot, event)
-        if (sessions.length) sessions.forEach(localBot.dispatch.bind(localBot))
+        const sessions = await adaptSessions(bot, event)
+        if (sessions.length) sessions.forEach(bot.dispatch.bind(bot))
         this.logger.debug(require('util').inspect(sessions, false, null, true))
       }
       ctx.status = 200
@@ -34,9 +35,9 @@ export class HttpServer extends Adapter.Server<LineBot> {
     bot.ctx.router.get('/line/assets/:self_id/:message_id', async (ctx) => {
       const messageId = ctx.params.message_id
       const selfId = ctx.params.self_id
-      const localBot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!localBot) return ctx.status = 404
-      const resp = await localBot.contentHttp.axios<internal.Readable>(`/v2/bot/message/${messageId}/content`, {
+      const bot = this.bots.find((bot) => bot.selfId === selfId)
+      if (!bot) return ctx.status = 404
+      const resp = await bot.contentHttp.axios<internal.Readable>(`/v2/bot/message/${messageId}/content`, {
         method: 'GET',
         responseType: 'stream',
       })

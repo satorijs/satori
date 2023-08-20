@@ -6,7 +6,7 @@ import { createHmac } from 'crypto'
 const logger = new Logger('onebot')
 
 export class HttpServer extends Adapter.Server<OneBotBot> {
-  public bots: OneBotBot[]
+  declare bots: OneBotBot[]
 
   async fork(ctx: Context, bot: OneBotBot<OneBotBot.Config & HttpServer.Config>) {
     const config = bot.config

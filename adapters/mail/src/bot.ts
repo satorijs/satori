@@ -1,4 +1,4 @@
-import { Bot, Logger, Schema } from '@satorijs/satori'
+import { Bot, Context, Logger, Schema } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
@@ -11,6 +11,11 @@ export class MailBot extends Bot<MailBot.Config> {
 
   imap: IMAP
   smtp: SMTP
+
+  constructor(ctx: Context, config: MailBot.Config) {
+    super(ctx, config)
+    this.platform = 'mail'
+  }
 
   async start() {
     this.username = this.config.username
@@ -113,5 +118,3 @@ export namespace MailBot {
     ]),
   })
 }
-
-MailBot.prototype.platform = 'mail'

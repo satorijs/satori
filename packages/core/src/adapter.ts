@@ -8,14 +8,13 @@ import WebSocket from 'ws'
 const logger = new Logger('adapter')
 
 export abstract class Adapter<T extends Bot = Bot> {
-  static schema = false
-
   async start(bot: T) {}
   async stop(bot: T) {}
 }
 
 export namespace Adapter {
   export abstract class Client<T extends Bot = Bot> extends Adapter<T> {
+    static schema = false
     static reusable = true
 
     constructor(protected ctx: Context, protected bot: T) {
@@ -25,6 +24,7 @@ export namespace Adapter {
   }
 
   export abstract class Server<T extends Bot = Bot> extends Adapter<T> {
+    static schema = false
     public bots: T[] = []
 
     fork(ctx: Context, bot: T) {

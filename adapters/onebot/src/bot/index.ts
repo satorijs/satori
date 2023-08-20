@@ -15,6 +15,7 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.platform = 'onebot'
     this.internal = new OneBot.Internal()
     this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
 
@@ -95,8 +96,6 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
     return this.internal.setGroupWholeBan(channelId, enable)
   }
 }
-
-OneBotBot.prototype.platform = 'onebot'
 
 export namespace OneBotBot {
   export interface QQGuildConfig extends Bot.Config {}
