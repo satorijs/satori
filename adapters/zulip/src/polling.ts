@@ -1,12 +1,12 @@
 import { Adapter, Quester } from '@satorijs/satori'
 import { ZulipBot } from './bot'
-import { decodeMessage } from './utils'
+import { adaptSession } from './utils'
 
 export class HttpPolling extends Adapter.Client<ZulipBot> {
   async start(bot: ZulipBot) {
     await bot.initliaze()
     const r = await bot.internal.registerQueue({
-      event_types: `["message"]`,
+      // event_types: `["message"]`,
     })
     let last = -1
     const polling = async () => {
@@ -22,12 +22,10 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
           bot.logger.debug(require('util').inspect(e, false, null, true))
 
           last = Math.max(last, e.id)
-          if (e.type === 'message') {
-            const session = await decodeMessage(bot, e.message)
-            if (session.selfId === session.userId) continue
-            if (session) bot.dispatch(session)
-            bot.logger.debug(require('util').inspect(session, false, null, true))
-          }
+          const session = await adaptSession(bot, e)
+
+          if (session) bot.dispatch(session)
+          bot.logger.debug(require('util').inspect(session, false, null, true))
         }
         setTimeout(polling, 0)
       } catch (e) {

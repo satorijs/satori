@@ -1,4 +1,4 @@
-import { Dict, h, Universal } from '@satorijs/satori'
+import { Dict, h, Session, Universal } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import marked from 'marked'
 import * as Zulip from './types'
@@ -105,24 +105,60 @@ function render(tokens: marked.Token[]): h[] {
   return tokens.map(renderToken).filter(Boolean)
 }
 
-export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase) {
-  const session = bot.session()
-  session.isDirect = message.type === 'private'
-  session.messageId = message.id.toString()
-  session.timestamp = message.timestamp * 1000
-  if (!session.isDirect) {
-    session.guildId = message.stream_id.toString()
-    session.channelId = message.subject
+type Event = Zulip.GetEventsResponse['events'][0]
+
+type ReactionEvent = Extract<Event, { type?: 'reaction' }>
+
+async function setupReaction(session: Partial<Session>, data: ReactionEvent) {
+  session.type = data.op === 'add' ? 'reaction-added' : 'reaction-removed'
+  session.userId = data.user_id.toString()
+  session.messageId = data.message_id.toString()
+  session.timestamp = Date.now()
+  session.content = data.emoji_name
+}
+
+export async function adaptSession(bot: ZulipBot, input: Event) {
+  const session = bot.session({})
+  if (input.type === 'message') {
+    await decodeMessage(bot, input.message, session)
+  } else if (input.type === 'reaction') {
+    session.type = input.op === 'add' ? 'reaction-added' : 'reaction-removed'
+    const msg = await bot.internal.getMessage(input.message_id.toString())
+    setupMessage(session, msg.message)
+    await setupReaction(session, input)
+  } else {
+    return
   }
+  return session
+}
+
+export function setupMessage(session: Partial<Session>, data: Zulip.MessagesBase) {
+  session.isDirect = data.type === 'private'
+  session.messageId = data.id.toString()
+  session.timestamp = data.timestamp * 1000
+  if (!session.isDirect) {
+    session.guildId = data.stream_id.toString()
+    session.channelId = data.subject
+  }
+  session.userId = data.sender_id.toString()
+}
+
+export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase, session: Partial<Session> = {}) {
+  setupMessage(session, message)
   session.userId = message.sender_id.toString()
   session.type = 'message'
 
   const quoteMatch = message.content.match(/^@_\*\*\w+\|(\d+)\*\* \[.*\]\(.*\/near\/(\d+)\)/)
   if (quoteMatch) {
+    const splited = message.content.split('\n')
+    const quoteLength = splited[1].indexOf('quote')
+    const quotes = splited[1].slice(0, quoteLength)
+    const quoteEndIndex = splited.indexOf(quotes, 2)
+    const trueContent = splited.slice(quoteEndIndex + 1).join('\n').trim()
     const quoteMsg = await bot.internal.getMessage(quoteMatch[2])
     quoteMsg.message.content = quoteMsg.raw_content
     session.quote = await decodeMessage(bot, quoteMsg.message)
-    message.content = message.content.slice(message.content.indexOf('\n') + 1)
+    message.content = trueContent
   }
   const content: string = message.content
   marked.use({ extensions: [atBlock, atRoleBlock, sharp] })
@@ -151,8 +187,9 @@ export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase) 
       return h('sharp', { guild: raw })
     },
   })
+  session.content = session.elements.join('')
 
-  return session
+  return session as Universal.Message
 }
 
 export const decodeGuild = (stream: Zulip.BasicStream): Universal.Guild => {

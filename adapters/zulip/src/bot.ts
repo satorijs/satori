@@ -87,6 +87,26 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
     })
     return await Promise.all(messages.map(data => decodeMessage(this, data)))
   }
+
+  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+    const { message } = await this.internal.getMessage(messageId)
+    return message.reactions.map(v => ({
+      userId: v.user_id.toString(),
+      username: v.user.full_name,
+    }))
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string) {
+    await this.internal.addReaction(messageId, {
+      emoji_name: emoji,
+    })
+  }
+
+  async deleteReaction(channelId: string, messageId: string, emoji: string) {
+    await this.internal.removeReaction(messageId, {
+      emoji_name: emoji,
+    })
+  }
 }
 
 export namespace ZulipBot {
