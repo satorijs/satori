@@ -24,9 +24,18 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     form.append('content', this.buffer)
     if (!this.session.isDirect) form.append('topic', this.session.channelId)
 
-    await this.bot.http.post('/messages', form, {
+    const { id } = await this.bot.http.post('/messages', form, {
       headers: form.getHeaders(),
     })
+    const session = this.bot.session()
+    session.messageId = id.toString()
+    session.userId = this.bot.selfId
+    session.channelId = this.session.channelId
+    session.guildId = this.session.guildId
+    session.isDirect = this.session.isDirect
+    session.author = this.bot
+    session.app.emit(session, 'send', session)
+    this.results.push(session)
   }
 
   async uploadMedia(element: h) {
@@ -81,9 +90,13 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
 
       this.buffer = `@_**${quoteMsg.message.sender_full_name}|${quoteMsg.message.sender_id}** [Said](${path}):\n`
         + '```quote\n' + quoteMsg.raw_content + '\n```\n\n' + this.buffer
-    } else if (type === 'sharp') {
-      // @TODO
-      // this.buffer += `#**${attrs.name}** `
+    } else if (type === 'sharp' && attrs.guild) {
+      const { stream } = await this.bot.internal.getStreamById(attrs.guild)
+      if (!attrs.id) {
+        this.buffer += ` #**${stream.name}** `
+      } else {
+        this.buffer += ` #**${stream.name}>${attrs.id}** `
+      }
     } else if (type === 'at' && attrs.id) {
       try {
         const u = await this.getUser(attrs.id)

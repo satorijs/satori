@@ -141,6 +141,10 @@ export function setupMessage(session: Partial<Session>, data: Zulip.MessagesBase
     session.channelId = data.subject
   }
   session.userId = data.sender_id.toString()
+  session.author = {
+    userId: session.userId,
+    username: data.sender_full_name,
+  }
 }
 
 export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase, session: Partial<Session> = {}) {
@@ -181,8 +185,12 @@ export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase, 
     async sharp(attrs: Dict) {
       const raw = attrs.raw as string
       if (raw.includes('>')) {
+        const guildName = raw.slice(0, raw.indexOf('>'))
+        const { stream_id } = await bot.internal.getStreamId({
+          stream: guildName,
+        })
         const channel = raw.slice(raw.indexOf('>') + 1)
-        return h('sharp', { id: channel, guild: raw.slice(0, raw.indexOf('>')) })
+        return h('sharp', { id: channel, guild: stream_id.toString() })
       }
       return h('sharp', { guild: raw })
     },
