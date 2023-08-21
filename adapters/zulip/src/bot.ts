@@ -21,7 +21,10 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
         'content-type': 'application/x-www-form-urlencoded',
         'user-agent': `Koishi/${version}`,
       },
-    }).extend(config)
+    }).extend({
+      ...config,
+      endpoint: config.endpoint + '/api/v1',
+    })
     this.internal = new Internal(this.http)
     this.logger = ctx.logger('zulip')
 
@@ -110,16 +113,19 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 }
 
 export namespace ZulipBot {
-  export interface Config extends Bot.Config, Quester.Config {
+  export interface Config extends Bot.Config, Quester.Config, HttpPolling.Config {
     email: string
     key: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      email: Schema.string(),
-      key: Schema.string(),
+      email: Schema.string().required().description('Bot Email'),
+      key: Schema.string().required().role('secret').description('API Key'),
     }),
+    Schema.union([
+      HttpPolling.Config,
+    ]).description('推送设置'),
     Quester.createConfig(),
   ])
 }
