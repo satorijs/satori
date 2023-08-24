@@ -11,9 +11,6 @@ export class HttpServer extends Adapter.Server<WecomBot> {
   }
 
   async start(bot: WecomBot) {
-    bot.selfId = bot.config.agentId
-    bot.platform = 'wecom'
-
     await bot.refreshToken()
     const self = await bot.getSelf()
     bot.avatar = self.avatar
@@ -48,7 +45,7 @@ export class HttpServer extends Adapter.Server<WecomBot> {
       if (data.Encrypt) {
         const localSign = getSignature(localBot.config.token, timestamp?.toString(), nonce?.toString(), data.Encrypt)
         if (localSign !== msg_signature) return ctx.status = 403
-        const { message, id } = decrypt(bot.config.aesKey, data.Encrypt)
+        const { message } = decrypt(bot.config.aesKey, data.Encrypt)
         // if (id !== localBot.config.appid) return ctx.status = 403
         const { xml: data2 } = await xml2js.parseStringPromise(message, {
           explicitArray: false,

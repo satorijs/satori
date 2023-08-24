@@ -1,6 +1,7 @@
 import { Message } from './types'
 import { WecomBot } from './bot'
 import { h } from '@satorijs/satori'
+
 export async function decodeMessage(bot: WecomBot, message: Message) {
   const session = bot.session()
   session.timestamp = message.CreateTime * 1000

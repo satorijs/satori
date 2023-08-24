@@ -8,16 +8,18 @@ export class WecomBot extends Bot<WecomBot.Config> {
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
   logger = new Logger('wecom')
+
   constructor(ctx: Context, config: WecomBot.Config) {
     super(ctx, config)
+    this.selfId = config.agentId
+    this.platform = 'wecom'
     this.http = ctx.http.extend(config)
     // this.internal = new Internal(this.http, this)
 
     ctx.plugin(HttpServer, this)
   }
 
-  // @ts-ignore
-  stop(): Promise<void> {
+  async stop() {
     clearTimeout(this.refreshTokenTimer)
   }
 
@@ -129,5 +131,3 @@ export namespace WecomBot {
     Quester.createConfig('https://qyapi.weixin.qq.com/'),
   ])
 }
-
-WecomBot.prototype.platform = 'wecom'
