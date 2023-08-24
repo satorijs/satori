@@ -1,0 +1,38 @@
+{
+  "name": "@satorijs/adapter-wecom",
+  "description": "Wecom Adapter for Satorijs",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "LittleC <i@ltlec.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/wecom"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://koishi.chat/plugins/adapter/wecom.html",
+  "keywords": [
+    "bot",
+    "wecom",
+    "chatbot",
+    "satori"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^2.6.0"
+  },
+  "dependencies": {
+    "@wecom/crypto": "^1.0.1",
+    "form-data": "^4.0.0",
+    "xml2js": "^0.6.2"
+  },
+  "devDependencies": {
+    "@types/xml2js": "^0.4.11"
+  }
+}
