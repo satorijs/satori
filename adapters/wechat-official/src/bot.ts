@@ -11,9 +11,10 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   logger = new Logger('wo')
   constructor(ctx: Context, config: WechatOfficialBot.Config) {
     super(ctx, config)
+    this.platform = 'wechat-official'
+    this.selfId = config.account
     this.http = ctx.http.extend(config)
     // this.internal = new Internal(this.http, this)
-
     ctx.plugin(HttpServer, this)
   }
 
@@ -101,5 +102,3 @@ export namespace WechatOfficialBot {
     Quester.createConfig('https://api.weixin.qq.com/'),
   ])
 }
-
-WechatOfficialBot.prototype.platform = 'wechatofficial'

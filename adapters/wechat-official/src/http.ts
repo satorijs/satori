@@ -10,17 +10,15 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
   }
 
   async start(bot: WechatOfficialBot) {
-    bot.selfId = bot.config.account
-    bot.platform = 'wechatofficial'
     await bot.refreshToken()
     await bot.ensureCustom()
     // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
-    bot.ctx.router.get('/wechatofficial', async (ctx) => {
+    bot.ctx.router.get('/wechat-official', async (ctx) => {
       let success = false
       const { signature, timestamp, nonce, echostr } = ctx.request.query
 
-      for (const localBot of this.bots.filter(v => v.platform === 'wechatofficial')) {
-        const localSign = getSignature(localBot.config.token, timestamp?.toString(), nonce?.toString(), '')
+      for (const bot of this.bots) {
+        const localSign = getSignature(bot.config.token, timestamp?.toString(), nonce?.toString(), '')
         if (localSign === signature) {
           success = true
           break
@@ -31,7 +29,7 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
       ctx.body = echostr
     })
 
-    bot.ctx.router.post('/wechatofficial', async (ctx) => {
+    bot.ctx.router.post('/wechat-official', async (ctx) => {
       const { timestamp, nonce, msg_signature } = ctx.request.query
       let { xml: data }: {
         xml: Message
@@ -63,7 +61,7 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
         const timeout = setTimeout(() => {
           ctx.status = 200
           ctx.body = 'success'
-          reject('timeout')
+          reject(new Error('timeout'))
         }, 4500)
         resolveFunction = (text: string) => {
           resolve(text)
@@ -103,7 +101,7 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
         ctx.body = 'success'
       }
     })
-    bot.ctx.router.get('/wechatofficial/assets/:self_id/:media_id', async (ctx) => {
+    bot.ctx.router.get('/wechat-official/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
       const selfId = ctx.params.self_id
       const localBot = this.bots.find((bot) => bot.selfId === selfId)

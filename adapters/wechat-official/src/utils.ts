@@ -1,6 +1,7 @@
 import { Message } from './types'
 import { WechatOfficialBot } from './bot'
 import { h } from '@satorijs/satori'
+
 export async function decodeMessage(bot: WechatOfficialBot, message: Message) {
   const session = bot.session()
   // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_standard_messages.html
@@ -26,20 +27,20 @@ export async function decodeMessage(bot: WechatOfficialBot, message: Message) {
   } else if (message.MsgType === 'voice') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.audio(`${bot.ctx.root.config.selfUrl}/wechatofficial/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.audio(`${bot.ctx.root.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
     // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/Get_temporary_materials.html
     return session
   } else if (message.MsgType === 'video') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.video(`${bot.ctx.root.config.selfUrl}/wechatofficial/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.video(`${bot.ctx.root.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
     // const { video_url } = await bot.getMedia(message.MediaId)
     // session.elements = [h.video(video_url)]
     return session
   } else if (message.MsgType === 'location') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h('wechatofficial:location', {
+    session.elements = [h('wechat-official:location', {
       latitude: message.Location_X,
       longitude: message.Location_Y,
       label: message.Label,
