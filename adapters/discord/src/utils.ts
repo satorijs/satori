@@ -1,4 +1,4 @@
-import { h, pick, Session, Universal } from '@satorijs/satori'
+import { Dict, h, pick, Session, Universal, valueMap } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -258,11 +258,25 @@ const types = {
   guild: Discord.ApplicationCommand.OptionType.STRING,
 }
 
+interface Description {
+  name: string
+  description: Dict<string>
+}
+
+const trimDescription = (source: string) => {
+  if (!source || source.length < 96) return source
+  return source.slice(0, 93) + '...'
+}
+
+const encodeDescription = (object: Description) => ({
+  description: trimDescription(object.description[''] || object.name),
+  description_localizations: valueMap(pick(object.description, Discord.Locale), trimDescription),
+})
+
 export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationCommand.Params.Create => ({
+  ...encodeDescription(cmd),
   name: cmd.name,
   type: Discord.ApplicationCommand.Type.CHAT_INPUT,
-  description: cmd.description[''] || cmd.name,
-  description_localizations: pick(cmd.description, Discord.Locale),
   options: encodeCommandOptions(cmd),
 })
 
@@ -295,18 +309,16 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
     // `getGlobalApplicationCommands()` does not return `required` property.
     for (const arg of cmd.arguments) {
       result.push({
+        ...encodeDescription(arg),
         name: arg.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
-        description: arg.description[''] || arg.name,
-        description_localizations: pick(arg.description, Discord.Locale),
         type: types[arg.type] ?? types.text,
         // required: arg.required ?? false,
       })
     }
     for (const option of cmd.options) {
       result.push({
+        ...encodeDescription(option),
         name: option.name.toLowerCase(),
-        description: option.description[''] || option.name,
-        description_localizations: pick(option.description, Discord.Locale),
         type: types[option.type] ?? types.text,
         // required: option.required ?? false,
         min_value: option.type === 'posint' ? 1 : undefined,
