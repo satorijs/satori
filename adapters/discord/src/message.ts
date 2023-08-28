@@ -110,30 +110,34 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       return this.post({ ...addition, content: attrs.url })
     }
 
-    const sendDownload = () => this.sendEmbed(attrs, addition)
-
-    if (['file:', 'data:', 'base64:'].some((prefix) => attrs.url.startsWith(prefix))) {
-      return await sendDownload()
+    if (this.bot.http.isPrivate(attrs.url)) {
+      return await this.sendEmbed(attrs, addition)
     }
 
     const mode = attrs.mode as DiscordMessageEncoder.HandleExternalAsset || handleExternalAsset
     if (mode === 'download' || handleMixedContent === 'attach' && addition.content || type === 'file') {
-      return sendDownload()
+      return this.sendEmbed(attrs, addition)
     } else if (mode === 'direct') {
       return sendDirect()
     }
 
     // auto mode
-    return await this.bot.ctx.http.head(attrs.url, {
+    if (await this.checkMediaType(attrs.url, type)) {
+      return sendDirect()
+    } else {
+      return this.sendEmbed(attrs, addition)
+    }
+  }
+
+  checkMediaType(url: string, type: string) {
+    if (url.startsWith('https://cdn.discordapp.com/')) return true
+    return this.bot.ctx.http.head(url, {
       headers: { accept: type + '/*' },
-      timeout: +attrs.timeout || undefined,
-    }).then((headers) => {
-      if (headers['content-type'].startsWith(type)) {
-        return sendDirect()
-      } else {
-        return sendDownload()
-      }
-    }, sendDownload)
+      timeout: 1000,
+    }).then(
+      (headers) => headers['content-type'].startsWith(type),
+      () => false,
+    )
   }
 
   async ensureWebhook() {

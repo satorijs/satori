@@ -42,7 +42,7 @@ function addressToNumber(address: string) {
 }
 
 function isPrivate(hostname: string) {
-  if (/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.test(hostname)) return false
+  if (!/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/.test(hostname)) return false
   for (const cidr of ranges) {
     const [address, length] = cidr.split('/')
     const mask = -1n << BigInt(32 - +length)
@@ -147,9 +147,14 @@ export class Quester {
     return { mime, filename: name, data }
   }
 
-  async url(url: string) {
-    const { hostname } = new URL(url)
-    if (!isPrivate(hostname)) return url
+  isPrivate(url: string) {
+    const { hostname, protocol } = new URL(url)
+    if (protocol !== 'http:' && protocol !== 'https:') return true
+    return isPrivate(hostname)
+  }
+
+  async toPublic(url: string) {
+    if (!this.isPrivate(url)) return url
     const { headers, data } = await this.axios(url, {
       method: 'GET',
       responseType: 'arraybuffer',
