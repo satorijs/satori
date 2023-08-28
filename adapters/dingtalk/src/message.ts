@@ -65,7 +65,7 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     const value = process.env.KOISHI_ENV === 'browser'
       ? new Blob([data], { type: mime })
       : Buffer.from(data)
-    let type
+    let type: string
     if (mime.startsWith('image/') || mime.startsWith('video/')) {
       type = mime.split('/')[0]
     } else if (mime.startsWith('audio/')) {
