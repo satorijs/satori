@@ -133,6 +133,12 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   async supports(name: string, session: Partial<Session> = {}) {
     return !!this[Universal.Methods[name]]
   }
+
+  async checkPermission(name: string, session: Partial<Session>) {
+    if (name.startsWith('bot.')) {
+      return this.supports(name.slice(4), session)
+    }
+  }
 }
 
 export namespace Bot {
