@@ -21,11 +21,11 @@ export function by_stream_topic_url(
 }
 
 const atBlock: marked.TokenizerAndRendererExtension = {
-  name: 'at',
+  name: 'koishi.at',
   level: 'inline',
-  start(src) { return src.match(/@\*\*/)?.index },
+  start(src) { return src.match(/@_?\*\*/)?.index },
   tokenizer(src) {
-    const rule = /@_?\*\*(.*)\*\*/
+    const rule = /^@_?\*\*(.*\|\d+)\*\*/
     const match = rule.exec(src)
     if (match) {
       return {
@@ -38,11 +38,11 @@ const atBlock: marked.TokenizerAndRendererExtension = {
 }
 
 const atRoleBlock: marked.TokenizerAndRendererExtension = {
-  name: 'atRole',
+  name: 'koishi.at.role',
   level: 'inline',
   start(src) { return src.match(/@\*/)?.index },
   tokenizer(src) {
-    const rule = /@\*(?!\*)(.*)\*/
+    const rule = /^@\*(?!\*)(.*)\*/
     const match = rule.exec(src)
     if (match) {
       return {
@@ -55,11 +55,11 @@ const atRoleBlock: marked.TokenizerAndRendererExtension = {
 }
 
 const sharp: marked.TokenizerAndRendererExtension = {
-  name: 'sharp',
+  name: 'koishi.sharp',
   level: 'inline',
-  start(src) { return src.match(/#\*/)?.index },
+  start(src) { return src.match(/#\*\*/)?.index },
   tokenizer(src) {
-    const rule = /#\*\*(.*)\*\*/
+    const rule = /^#\*\*(.+>(?:(?!\*\*).)+)\*\*/
     const match = rule.exec(src)
     if (match) {
       return {
@@ -165,7 +165,7 @@ export async function decodeMessage(bot: ZulipBot, message: Zulip.MessagesBase, 
     message.content = trueContent
   }
   const content: string = message.content
-  marked.use({ extensions: [atBlock, atRoleBlock, sharp] })
+  marked.use({ extensions: [sharp, atBlock, atRoleBlock] })
   session.elements = render(marked.lexer(content))
   if (session.elements?.[0]?.type === 'p') {
     session.elements = session.elements[0].children
