@@ -4,7 +4,7 @@ import { arrayBufferToBase64, base64ToArrayBuffer, Dict, pick, trimSlash } from 
 import { ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
-import * as types from 'axios'
+import * as Axios from 'axios'
 
 declare module 'cordis' {
   interface Context {
@@ -133,11 +133,11 @@ export class Quester {
       const name = 'file' + (ext ? '.' + ext : '')
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
-    let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)
+    let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)!
     const { headers, data } = await this.axios(url, {
       method: 'GET',
       responseType: 'arraybuffer',
-      timeout: +options.timeout || undefined,
+      timeout: +options.timeout! || undefined,
     })
     const mime = headers['content-type']
     if (!name.includes('.')) {
@@ -165,9 +165,9 @@ export class Quester {
 }
 
 export namespace Quester {
-  export type Method = types.Method
-  export type AxiosResponse = types.AxiosResponse
-  export type AxiosRequestConfig = types.AxiosRequestConfig
+  export type Method = Axios.Method
+  export type AxiosResponse = Axios.AxiosResponse
+  export type AxiosRequestConfig = Axios.AxiosRequestConfig
   export type CreateAgent = (opts: string) => Agent
 
   export const agents: Dict<Agent> = Object.create(null)
@@ -201,14 +201,21 @@ export namespace Quester {
   export function create(this: typeof Quester, config: Quester.Config = {}) {
     const request = async (config: AxiosRequestConfig = {}) => {
       const options = http.prepare()
+      const error = new Error() as Axios.AxiosError
       return axios({
         ...options,
         ...config,
-        url: http.resolve(config.url),
+        url: http.resolve(config.url!),
         headers: {
           ...options.headers,
           ...config.headers,
         },
+      }).catch((cause) => {
+        if (!axios.isAxiosError(cause)) throw cause
+        Object.assign(error, cause)
+        error.isAxiosError = true
+        error.cause = cause
+        throw error
       })
     }
 
