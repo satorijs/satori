@@ -289,6 +289,45 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       user.avatar = `${endpoint}/${file.file_path}`
     }
   }
+
+  async getUser(userId: string, guildId?: string) {
+    const data = await this.internal.getChat({ chat_id: userId })
+    if (!data.photo?.big_file_id && !data.photo?.small_file_id) return adaptUser(data)
+    const { url } = await this.$getFileFromId(data.photo?.big_file_id || data.photo?.small_file_id)
+    return {
+      ...adaptUser(data),
+      avatar: url,
+    }
+  }
+
+  async updateCommands(commands: Universal.Command[]) {
+    const result = {} as Record<string, Telegram.BotCommand[]>
+    for (const cmd of commands) {
+      const { name, description } = cmd
+      const languages = {} as Record<string, string>
+      for (const locale in description) {
+        if (!locale || !description[locale]) continue
+        const lang = locale.slice(0, 2)
+        languages[lang] ||= description[locale]
+      }
+      for (const lang in languages) {
+        result[lang] ??= []
+        result[lang].push({ command: name, description: languages[lang] })
+      }
+    }
+    for (const lang in result) {
+      await this.internal.setMyCommands({
+        commands: result[lang],
+        language_code: lang,
+      })
+    }
+    await this.internal.setMyCommands({
+      commands: commands.map(({ name, description }) => ({
+        command: name,
+        description: description[''] || name,
+      })),
+    })
+  }
 }
 
 export namespace TelegramBot {

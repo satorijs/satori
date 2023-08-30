@@ -1,4 +1,4 @@
-import { Bot, Context, noop, Schema } from '@satorijs/satori'
+import { Bot, Context, noop, Schema, Session } from '@satorijs/satori'
 import { HttpServer } from '../http'
 import { WsClient, WsServer } from '../ws'
 import { QQGuildBot } from './qqguild'
@@ -94,6 +94,15 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   async muteChannel(channelId: string, guildId?: string, enable?: boolean) {
     return this.internal.setGroupWholeBan(channelId, enable)
+  }
+
+  async checkPermission(name: string, session: Partial<Session>) {
+    if (name === 'onebot.group.admin') {
+      return session.author?.roles?.[0] === 'admin'
+    } else if (name === 'onebot.group.owner') {
+      return session.author?.roles?.[0] === 'owner'
+    }
+    return super.checkPermission(name, session)
   }
 }
 

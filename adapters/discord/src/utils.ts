@@ -1,4 +1,4 @@
-import { h, pick, Session, Universal } from '@satorijs/satori'
+import { Dict, h, pick, Session, Universal, valueMap } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -163,16 +163,17 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
 export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
   const session = bot.session({}, input)
   if (input.t === 'MESSAGE_CREATE') {
-    if (input.d.webhook_id) {
-      const webhook = await bot.ensureWebhook(input.d.channel_id)
-      if (webhook.id === input.d.webhook_id) {
+    setupMessageGuildId(session, input.d.guild_id)
+    if (input.d.webhook_id && !session.isDirect) {
+      try {
+        // 403 Missing Permissions
+        const webhook = await bot.ensureWebhook(input.d.channel_id)
         // koishi's webhook
-        return
-      }
+        if (webhook.id === input.d.webhook_id) return
+      } catch (e) {}
     }
     session.type = 'message'
     await decodeMessage(bot, input.d, session)
-    setupMessageGuildId(session, input.d.guild_id)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
@@ -230,7 +231,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
-    session.userId = input.d.member.user.id
+    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
     session.messageId = input.d.id
     session.content = ''
     session.data.argv = decodeArgv(data, command)
@@ -257,11 +258,25 @@ const types = {
   guild: Discord.ApplicationCommand.OptionType.STRING,
 }
 
+interface Description {
+  name: string
+  description: Dict<string>
+}
+
+const trimDescription = (source: string) => {
+  if (!source || source.length < 96) return source
+  return source.slice(0, 93) + '...'
+}
+
+const encodeDescription = (object: Description) => ({
+  description: trimDescription(object.description[''] || object.name),
+  description_localizations: valueMap(pick(object.description, Discord.Locale), trimDescription),
+})
+
 export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationCommand.Params.Create => ({
+  ...encodeDescription(cmd),
   name: cmd.name,
   type: Discord.ApplicationCommand.Type.CHAT_INPUT,
-  description: cmd.description[''] || cmd.name,
-  description_localizations: pick(cmd.description, Discord.Locale),
   options: encodeCommandOptions(cmd),
 })
 
@@ -291,22 +306,21 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       description_localizations: pick(cmd.description, Discord.Locale),
     })))
   } else {
+    // `getGlobalApplicationCommands()` does not return `required` property.
     for (const arg of cmd.arguments) {
       result.push({
+        ...encodeDescription(arg),
         name: arg.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
-        description: arg.description[''] || arg.name,
-        description_localizations: pick(arg.description, Discord.Locale),
         type: types[arg.type] ?? types.text,
-        required: arg.required ?? false,
+        // required: arg.required ?? false,
       })
     }
     for (const option of cmd.options) {
       result.push({
+        ...encodeDescription(option),
         name: option.name.toLowerCase(),
-        description: option.description[''] || option.name,
-        description_localizations: pick(option.description, Discord.Locale),
         type: types[option.type] ?? types.text,
-        required: option.required ?? false,
+        // required: option.required ?? false,
         min_value: option.type === 'posint' ? 1 : undefined,
       })
     }

@@ -4,22 +4,22 @@
   "version": "2.4.2",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
-  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
   "exports": {
     ".": {
       "import": "./lib/index.mjs",
       "require": "./lib/index.cjs",
-      "typings": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts"
     },
     "./jsx-runtime": {
       "import": "./lib/index.mjs",
       "require": "./lib/index.cjs",
-      "typings": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts"
     },
     "./jsx-dev-runtime": {
       "import": "./lib/index.mjs",
       "require": "./lib/index.cjs",
-      "typings": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts"
     },
     "./package.json": "./package.json"
   },
@@ -51,6 +51,6 @@
     "chai-shape": "^1.0.0"
   },
   "dependencies": {
-    "cosmokit": "^1.4.4"
+    "cosmokit": "^1.4.5"
   }
 }

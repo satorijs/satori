@@ -201,35 +201,40 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async updateCommands(commands: Universal.Command[]) {
     this.commands = commands
     const local = Object.fromEntries(commands.map(cmd => [cmd.name, cmd] as const))
-    const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId))
+    const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId, { with_localizations: true }))
       .filter(cmd => cmd.type === Discord.ApplicationCommand.Type.CHAT_INPUT)
       .map(cmd => [cmd.name, cmd] as const))
-
+    const updates: any[] = []
     for (const key in { ...local, ...remote }) {
       if (!local[key]) {
         logger.debug('delete command %s', key)
         await this.internal.deleteGlobalApplicationCommand(this.selfId, remote[key].id)
         continue
       }
-
       const data = Discord.encodeCommand(local[key])
       logger.debug(data, remote[key])
       if (!remote[key]) {
         logger.debug('create command: %s', local[key].name)
-        await this.internal.createGlobalApplicationCommand(this.selfId, data)
-      } else if (shapeEqual(data, remote[key])) {
+        updates.push(data)
+      } else if (!shapeEqual(data, remote[key])) {
         logger.debug('edit command: %s', local[key].name)
-        await this.internal.editGlobalApplicationCommand(this.selfId, remote[key].id, data)
+        updates.push(data)
       }
+    }
+    if (updates.length) {
+      await this.internal.bulkOverwriteGlobalApplicationCommands(this.selfId, updates)
     }
   }
 }
 
-function shapeEqual(a: any, b: any, strict = false) {
+function shapeEqual(a: any, b: any) {
   if (a === b) return true
-  if (!strict && isNullable(a) && isNullable(b)) return true
+  if (isNullable(a) && isNullable(b)) return true
+
   if (typeof a !== typeof b) return false
   if (typeof a !== 'object') return false
+  if (Object.values(a).every(isNullable) && isNullable(b)) return true
+  // ^ a = { foo: undefined }, b = null
   if (!a || !b) return false
 
   // check array
@@ -241,7 +246,7 @@ function shapeEqual(a: any, b: any, strict = false) {
   }
 
   // check object
-  return Object.keys(a).every(key => shapeEqual(a[key], b[key], strict))
+  return Object.keys(a).every(key => shapeEqual(a[key], b[key]))
 }
 
 export namespace DiscordBot {

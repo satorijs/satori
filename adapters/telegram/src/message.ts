@@ -56,7 +56,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     const method = await appendAsset(this.bot, form, this.asset)
     const result = await this.bot.internal[method](form as any)
     await this.addResult(result)
-    delete this.payload.reply_to_message
+    delete this.payload.reply_to_message_id
     this.asset = null
     this.payload.caption = ''
   }
@@ -75,7 +75,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
         disable_web_page_preview: !this.options.linkPreview,
       })
       await this.addResult(result)
-      delete this.payload.reply_to_message
+      delete this.payload.reply_to_message_id
       this.payload.caption = ''
     }
   }
