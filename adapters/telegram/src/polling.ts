@@ -65,7 +65,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           }
           _retryCount++
           bot.status = 'reconnect'
-          this.timeout = setTimeout(() => polling(), retryInterval)
+          this.timeout = setTimeout(polling, retryInterval)
         }
       }
       polling()
