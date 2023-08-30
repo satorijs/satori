@@ -45,6 +45,10 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
 
+    if (attrs.url && ['image', 'video', 'audio'].includes(type)) {
+      throw new Error(`Send ${type} failed, please use public url.`)
+    }
+
     if (type === 'text') {
       this.buffer += attrs.content
     } else if (type === 'image' && attrs.url) {

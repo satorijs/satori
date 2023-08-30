@@ -92,6 +92,10 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       // await this.sendMessage('sampleImageMsg', {
       //   photoURL: attrs.url
       // })
+      if (this.bot.ctx.http.isPrivate(attrs.url)) {
+        throw new Error(`Send ${type} failed, please use public url.`)
+        // this.buffer += `![${attrs.alt}](https://static.dingtalk.com/media/${media_id}_${width}_${height}.jpg)`
+      }
       this.buffer += `![${attrs.alt}](${attrs.url})`
     } else if (type === 'message') {
       await this.flush()
