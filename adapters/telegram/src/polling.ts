@@ -34,8 +34,8 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             offset: this.offset + 1,
             timeout: Math.ceil(bot.config.pollingTimeout / 1000), // in seconds
           })
-          if (bot.status === 'disconnect') {
-            return bot.offline()
+          if (bot.status === 'offline' || bot.status === 'disconnect') {
+            return
           }
           bot.online()
           _retryCount = 0
@@ -45,7 +45,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             this.offset = Math.max(this.offset, e.update_id)
             handleUpdate(e, bot)
           }
-          setTimeout(polling, 0)
+          this.timeout = setTimeout(polling, 0)
         } catch (e) {
           if (!Quester.isAxiosError(e) || !e.response?.data) {
             // Other error
@@ -59,6 +59,9 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           if (_initial && _retryCount > retryTimes) {
             bot.error = e
             return bot.status = 'offline'
+          }
+          if (bot.status === 'offline' || bot.status === 'disconnect') {
+            return
           }
           _retryCount++
           bot.status = 'reconnect'

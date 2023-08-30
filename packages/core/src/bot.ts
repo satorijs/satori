@@ -94,6 +94,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
       await this.adapter?.stop(this)
     } catch (error) {
       this.context.emit('internal/warning', error)
+    } finally {
       this.offline()
     }
   }
