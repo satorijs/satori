@@ -126,6 +126,35 @@ export async function adaptSession(bot: ZulipBot, input: Event) {
     const msg = await bot.internal.getMessage(input.message_id.toString())
     setupMessage(session, msg.message)
     await setupReaction(session, input)
+  } else if (input.type === 'delete_message' && input.message_type === 'stream') {
+    session.type = 'channel-deleted'
+    session.channelId = input.topic
+    session.messageId = input.message_id.toString()
+    session.guildId = input.stream_id.toString()
+  } else if (input.type === 'subscription' && input.op === 'peer_add') {
+    session.type = 'guild-added'
+    // @ts-ignore
+    session.guildId = input.stream_ids[0].toString()
+    // create new guild
+  } else if (input.type === 'subscription' && input.op === 'add') {
+    session.type = 'guild-added'
+    // @ts-ignore
+    session.guildId = input.subscriptions[0].stream_id.toString()
+    // add bot to private guild
+  } else if (input.type === 'subscription' && input.op === 'remove') {
+    session.type = 'guild-removed'
+    // @ts-ignore
+    session.guildId = input.subscriptions[0].stream_id.toString()
+  } else if (input.type === 'stream' && input.op === 'delete') {
+    session.type = 'guild-deleted'
+    // @ts-ignore
+    session.guildId = input.streams[0].stream_id.toString()
+  } else if (input.type === 'realm_user' && input.op === 'delete') {
+    session.type = 'guild-member-deleted'
+    session.userId = input.person.user_id.toString()
+  } else if (input.type === 'realm_user' && input.op === 'add') {
+    session.type = 'guild-member-added'
+    session.userId = input.person.user_id.toString()
   } else {
     return
   }
