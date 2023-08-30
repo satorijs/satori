@@ -3,6 +3,7 @@ import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 
 export class HttpPolling extends Adapter.Client<ZulipBot> {
+  private timeout: NodeJS.Timeout
   async start(bot: ZulipBot) {
     await bot.initliaze()
     const r = await bot.internal.registerQueue({
@@ -13,14 +14,14 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
     bot.online()
     const { retryTimes, retryInterval } = bot.config
     const polling = async () => {
-      if (bot.status === 'disconnect') {
-        return bot.offline()
-      }
       try {
         const updates = await bot.internal.getEvents({
           queue_id: r.queue_id,
           last_event_id: last,
         })
+        if (bot.status === 'disconnect') {
+          return bot.offline()
+        }
         bot.online()
         _retryCount = 0
         for (const e of updates.events) {
@@ -45,11 +46,15 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
         }
         _retryCount++
         bot.status = 'reconnect'
-        setTimeout(() => polling(), retryInterval)
+        this.timeout = setTimeout(() => polling(), retryInterval)
       }
     }
     polling()
     bot.logger.debug('listening updates %c', bot.sid)
+  }
+
+  async stop(bot: ZulipBot) {
+    clearTimeout(this.timeout)
   }
 }
 
