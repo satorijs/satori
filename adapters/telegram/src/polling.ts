@@ -6,6 +6,7 @@ const logger = new Logger('telegram')
 
 export class HttpPolling extends Adapter.Client<TelegramBot> {
   private offset = 0
+  private timeout: NodeJS.Timeout
 
   async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Config>) {
     bot.initialize(async () => {
@@ -28,15 +29,14 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
       })
 
       const polling = async () => {
-        if (bot.status === 'disconnect') {
-          return bot.offline()
-        }
-
         try {
           const updates = await bot.internal.getUpdates({
             offset: this.offset + 1,
             timeout: Math.ceil(bot.config.pollingTimeout / 1000), // in seconds
           })
+          if (bot.status === 'disconnect') {
+            return bot.offline()
+          }
           bot.online()
           _retryCount = 0
           _initial = false
@@ -62,7 +62,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
           }
           _retryCount++
           bot.status = 'reconnect'
-          setTimeout(() => polling(), retryInterval)
+          this.timeout = setTimeout(() => polling(), retryInterval)
         }
       }
       polling()
@@ -70,7 +70,9 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
     })
   }
 
-  async stop() {}
+  async stop() {
+    clearTimeout(this.timeout)
+  }
 }
 
 export namespace HttpPolling {
