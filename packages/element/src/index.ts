@@ -27,13 +27,17 @@ function toElementArray(content: Element.Fragment) {
 
 interface Element {
   [kElement]: true
-  type: string
+  type: string | RenderFunction
   attrs: Dict
   /** @deprecated use `attrs` instead */
   data: Dict
   children: Element[]
   source?: string
   toString(strip?: boolean): string
+}
+
+function toTagName(type: string | RenderFunction) {
+  return typeof type === 'string' ? type : type?.name
 }
 
 interface ElementConstructor extends Element {}
@@ -56,17 +60,20 @@ class ElementConstructor {
       if (value === false) return ` no-${key}`
       return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
-    if (!this.children.length) return `<${this.type}${attrs}/>`
-    return `<${this.type}${attrs}>${inner}</${this.type}>`
+    const tag = toTagName(this.type)
+    if (!this.children.length) return `<${tag}${attrs}/>`
+    return `<${tag}${attrs}>${inner}</${tag}>`
   }
 }
 
 defineProperty(ElementConstructor, 'name', 'Element')
 defineProperty(ElementConstructor.prototype, kElement, true)
 
-function Element(type: string, ...children: Element.Fragment[]): Element
-function Element(type: string, attrs: Dict, ...children: Element.Fragment[]): Element
-function Element(type: string, ...args: any[]) {
+type RenderFunction = Element.Render<Element.Fragment, any>
+
+function Element(type: string | RenderFunction, ...children: Element.Fragment[]): Element
+function Element(type: string | RenderFunction, attrs: Dict, ...children: Element.Fragment[]): Element
+function Element(type: string | RenderFunction, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   const attrs: Dict = {}, children: Element[] = []
   if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
@@ -326,7 +333,7 @@ namespace Element {
     if (typeof rules === 'function') {
       return rules(element, session)
     } else {
-      let result: any = rules[type] ?? rules.default ?? true
+      let result: any = rules[typeof type === 'string' ? type : ''] ?? rules.default ?? true
       if (typeof result === 'function') {
         result = result(attrs, children, session)
       }
