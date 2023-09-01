@@ -153,6 +153,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
         break
       case 'br':
         this.content += '\n'
+        break
       case 'sharp':
         // platform does not support sharp
         break
