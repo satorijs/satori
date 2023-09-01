@@ -37,6 +37,15 @@ export function adaptAuthorMeta(session: Session, from: Telegram.User) {
   if (!from) return
   session.userId = from.id.toString()
   session.author = adaptUser(from)
+  if (from.language_code) {
+    if (from.language_code === 'zh-hans') {
+      session.locales = ['zh-CN']
+    } else if (from.language_code === 'zh-hant') {
+      session.locales = ['zh-TW']
+    } else {
+      session.locales = [from.language_code.slice(0, 2)]
+    }
+  }
 }
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
