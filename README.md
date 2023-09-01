@@ -12,7 +12,7 @@
   - [ ] @satorijs/database
   - [ ] @satorijs/server
 - Ecosystem
-  - [x] DingTalk
+  - [x] DingTalk (钉钉)
   - [x] Discord
   - [x] KOOK (开黑啦)
   - [x] Lark (飞书)
@@ -24,8 +24,8 @@
   - [x] Slack
   - [x] Telegram
   - [x] WhatsApp
-  - [ ] WeCom (企业微信)
-  - [ ] Wechat Official (微信公众号)
+  - [x] WeCom (企业微信)
+  - [x] Wechat Official (微信公众号)
 
 ## Examples
 

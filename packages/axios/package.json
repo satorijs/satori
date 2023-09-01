@@ -34,7 +34,7 @@
     "service"
   ],
   "peerDependencies": {
-    "cordis": "^2.8.7"
+    "cordis": "^2.8.8"
   },
   "devDependencies": {
     "@types/mime-db": "^1.43.1",

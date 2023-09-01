@@ -30,7 +30,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.6.3"
+    "@satorijs/satori": "^2.7.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"
