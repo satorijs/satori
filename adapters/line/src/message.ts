@@ -47,6 +47,11 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
 
     if (type === 'text') {
       this.buffer += attrs.content
+    } else if (type === 'br') {
+      this.buffer += '\n'
+    } else if (type === 'p') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      await this.render(children)
     } else if (type === 'image' && attrs.url) {
       await this.insertBlock()
       this.blocks.push({
