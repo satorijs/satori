@@ -1,5 +1,5 @@
 import { defineProperty } from 'cosmokit'
-import segment from '@satorijs/element'
+import Element from '@satorijs/element'
 import { Bot } from './bot'
 import { SendOptions, Session } from './session'
 
@@ -19,9 +19,9 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
   async prepare() {}
 
   abstract flush(): Promise<void>
-  abstract visit(element: segment): Promise<void>
+  abstract visit(element: Element): Promise<void>
 
-  async render(elements: segment[], flush?: boolean) {
+  async render(elements: Element[], flush?: boolean) {
     for (const element of elements) {
       await this.visit(element)
     }
@@ -30,7 +30,7 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
     }
   }
 
-  async send(content: segment.Fragment) {
+  async send(content: Element.Fragment) {
     this.session = this.bot.session({
       type: 'send',
       author: this.bot,
@@ -41,7 +41,7 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
     })
     defineProperty(this.session, this.bot.platform, Object.create(this.bot.internal))
     await this.prepare()
-    this.session.elements = segment.normalize(content)
+    this.session.elements = Element.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
     const session = this.options.session ?? this.session
     await this.render(await session.transform(this.session.elements))

@@ -27,7 +27,7 @@ function toElementArray(content: Element.Fragment) {
 
 interface Element {
   [kElement]: true
-  type: string | RenderFunction
+  type: string
   attrs: Dict
   /** @deprecated use `attrs` instead */
   data: Dict
@@ -36,15 +36,19 @@ interface Element {
   toString(strip?: boolean): string
 }
 
-function toTagName(type: string | RenderFunction) {
-  return typeof type === 'string' ? type : type?.name
-}
-
 interface ElementConstructor extends Element {}
 
 class ElementConstructor {
   get data() {
     return this.attrs
+  }
+
+  getTagName() {
+    if (this.type === 'component') {
+      return this.attrs.is?.name ?? 'component'
+    } else {
+      return this.type
+    }
   }
 
   toString(strip = false) {
@@ -60,7 +64,7 @@ class ElementConstructor {
       if (value === false) return ` no-${key}`
       return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
-    const tag = toTagName(this.type)
+    const tag = this.getTagName()
     if (!this.children.length) return `<${tag}${attrs}/>`
     return `<${tag}${attrs}>${inner}</${tag}>`
   }
@@ -90,6 +94,10 @@ function Element(type: string | RenderFunction, ...args: any[]) {
   }
   for (const child of args) {
     children.push(...toElementArray(child))
+  }
+  if (typeof type === 'function') {
+    attrs.is = type
+    type = 'component'
   }
   return Object.assign(el, { type, attrs, children })
 }
@@ -352,7 +360,7 @@ namespace Element {
       if (result === true) {
         output.push(Element(type, attrs, transform(children, rules, session)))
       } else if (result !== false) {
-        output.push(...normalize(result))
+        output.push(...toElementArray(result))
       }
     })
     return typeof source === 'string' ? output.join('') : output
@@ -368,7 +376,7 @@ namespace Element {
       if (result === true) {
         return [Element(type, attrs, await transformAsync(children, rules, session))]
       } else if (result !== false) {
-        return normalize(result)
+        return toElementArray(result)
       } else {
         return []
       }

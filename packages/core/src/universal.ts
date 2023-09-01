@@ -1,4 +1,4 @@
-import segment from '@satorijs/element'
+import Element from '@satorijs/element'
 import { SendOptions } from './session'
 import { Dict } from 'cosmokit'
 
@@ -30,13 +30,13 @@ export namespace Universal {
 
   export interface Methods {
     // message
-    sendMessage(channelId: string, content: segment.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+    sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
     // sendMessage(session: Session.Payload, content: segment.Fragment, options?: SendOptions): Promise<string[]>
-    sendPrivateMessage(userId: string, content: segment.Fragment, options?: SendOptions): Promise<string[]>
+    sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<string[]>
     // sendPrivateMessage(session: Session.Payload, content: segment.Fragment, options?: SendOptions): Promise<string[]>
     getMessage(channelId: string, messageId: string): Promise<Message>
     getMessageList(channelId: string, before?: string): Promise<Message[]>
-    editMessage(channelId: string, messageId: string, content: segment.Fragment): Promise<void>
+    editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
     deleteMessage(channelId: string, messageId: string): Promise<void>
 
     // reaction
@@ -133,7 +133,7 @@ export namespace Universal {
     guildId?: string
     userId?: string
     content?: string
-    elements?: segment[]
+    elements?: Element[]
     timestamp?: number
     author?: Author
     quote?: Message

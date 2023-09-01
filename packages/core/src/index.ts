@@ -5,16 +5,16 @@ import { SendOptions, Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
-import segment from '@satorijs/element'
+import Element from '@satorijs/element'
 import { Internal } from './internal'
 
-segment.warn = new Logger('element').warn
+Element.warn = new Logger('element').warn
 
 // do not remove the `type` modifier
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
 
-export { Schema, Schema as z, Logger, segment, segment as Element, segment as h, Quester }
+export { Schema, Schema as z, Logger, Element as segment, Element, Element as h, Quester }
 
 export * from './bot'
 export * from './adapter'

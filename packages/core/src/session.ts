@@ -2,7 +2,7 @@ import { defineProperty, isNullable } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
 import { Universal } from './universal'
-import segment from '@satorijs/element'
+import Element from '@satorijs/element'
 
 export interface SendOptions {
   session?: Session
@@ -26,7 +26,7 @@ export namespace Session {
     guildId?: string
     userId?: string
     content?: string
-    elements?: segment[]
+    elements?: Element[]
     timestamp?: number
     author?: Universal.Author
     quote?: Universal.Message
@@ -37,6 +37,7 @@ export namespace Session {
     duration?: number
     roleId?: string
     data?: Universal.EventData
+    locales?: string[]
   }
 }
 
@@ -83,12 +84,12 @@ export class Session {
   }
 
   set content(value: string) {
-    this.elements = isNullable(value) ? value : segment.parse(value)
+    this.elements = isNullable(value) ? value : Element.parse(value)
   }
 
-  async transform(elements: segment[]): Promise<segment[]> {
-    return await segment.transformAsync(elements, ({ type, attrs, children }, session) => {
-      const render = typeof type === 'function' ? type : this.app['component:' + type]
+  async transform(elements: Element[]): Promise<Element[]> {
+    return await Element.transformAsync(elements, ({ type, attrs, children }, session) => {
+      const render = type === 'component' ? attrs.is : this.app['component:' + type]
       return render?.(attrs, children, session) ?? true
     }, this)
   }
