@@ -114,9 +114,11 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       } else {
         await this.sendMessage('sticker', { id: attrs.id })
       }
-    } else if (type === 'p') {
-      await this.render(children)
+    } else if (type === 'br') {
       this.buffer += '\n'
+    } else if (type === 'p') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      await this.render(children)
     } else if (type === 'a') {
       await this.render(children)
       this.buffer += ` (${attrs.href}) `

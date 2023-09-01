@@ -84,9 +84,11 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.payload.caption += h.escape(attrs.content)
-    } else if (type === 'p') {
-      await this.render(children)
+    } else if (type === 'br') {
       this.payload.caption += '\n'
+    } else if (type === 'p') {
+      if (!this.payload.caption.endsWith('\n')) this.payload.caption += '\n'
+      await this.render(children)
     } else if (supportedElements.includes(type)) {
       this.payload.caption += element.toString()
     } else if (type === 'spl') {
