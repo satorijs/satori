@@ -187,6 +187,8 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       } else {
         this.buffer += ` (<${attrs.href}>) `
       }
+    } else if (type === 'br') {
+      this.buffer += '\n'
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)

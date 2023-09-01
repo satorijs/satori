@@ -89,6 +89,8 @@ export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
     let { type, attrs, children } = element
     if (type === 'text') {
       this.text(attrs.content)
+    } else if (type === 'br') {
+      this.text('\n')
     } else if (type === 'p') {
       const prev = this.children[this.children.length - 1]
       if (prev?.type === 'text') {
