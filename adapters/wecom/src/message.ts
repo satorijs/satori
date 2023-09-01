@@ -97,6 +97,7 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'image' || type === 'audio' || type === 'video' || type === 'file') {
       await this.flushMedia(element)
     } else if (type === 'a' && attrs.href) {

@@ -119,6 +119,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'a') {
       await this.render(children)
       this.buffer += ` (${attrs.href}) `

@@ -103,6 +103,7 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       this.buffer += '\n'
     } else if (type === 'b' || type === 'strong') {
       this.buffer += ` **`

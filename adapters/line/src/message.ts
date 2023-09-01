@@ -52,6 +52,7 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'image' && attrs.url) {
       await this.insertBlock()
       this.blocks.push({

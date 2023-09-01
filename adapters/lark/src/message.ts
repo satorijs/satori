@@ -150,6 +150,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       case 'p':
         if (!this.content.endsWith('\n')) this.content += '\n'
         await this.render(children)
+        if (!this.content.endsWith('\n')) this.content += '\n'
         break
       case 'br':
         this.content += '\n'

@@ -89,6 +89,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     } else if (type === 'p') {
       if (!this.payload.caption.endsWith('\n')) this.payload.caption += '\n'
       await this.render(children)
+      if (!this.payload.caption.endsWith('\n')) this.payload.caption += '\n'
     } else if (supportedElements.includes(type)) {
       this.payload.caption += element.toString()
     } else if (type === 'spl') {

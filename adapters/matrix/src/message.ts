@@ -72,6 +72,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'at') {
       if (attrs.id) {
         this.buffer += ` @${attrs.id} `

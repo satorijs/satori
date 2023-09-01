@@ -192,6 +192,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       this.buffer += '\n'
     } else if (type === 'blockquote') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'

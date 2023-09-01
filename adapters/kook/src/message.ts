@@ -170,6 +170,7 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'at') {
       if (attrs.id) {
         this.buffer += `(met)${attrs.id}(met)`

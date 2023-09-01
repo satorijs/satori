@@ -106,6 +106,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += `\n`
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += `\n`
     } else if (type === 'face') {
       this.buffer += `:${attrs.id}:`
     } else if (type === 'author') {

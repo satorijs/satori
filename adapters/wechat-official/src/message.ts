@@ -142,6 +142,7 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     } else if (type === 'p') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'image' || type === 'audio' || type === 'video') {
       await this.flushMedia(element)
     } else if (type === 'message') {
