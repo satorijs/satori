@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.7.0"
+    "@satorijs/satori": "^2.7.1"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.0",
