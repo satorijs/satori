@@ -43,7 +43,7 @@ export const encodeRole = (role: Partial<Universal.Role>): Partial<Discord.Role>
   permissions: role.permissions && '' + role.permissions,
 })
 
-export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}) {
+export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}, reference = true) {
   const { platform } = bot
 
   session.messageId = meta.id
@@ -129,7 +129,7 @@ export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, sess
   }
   session.elements = h.parse(session.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
-  if (meta.message_reference) {
+  if (reference && meta.message_reference) {
     const { message_id, channel_id } = meta.message_reference
     session.quote = await bot.getMessage(channel_id, message_id)
   }

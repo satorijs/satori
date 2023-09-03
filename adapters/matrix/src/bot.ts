@@ -1,4 +1,4 @@
-import { Bot, Context, omit, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, omit, Quester, Schema } from '@satorijs/satori'
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
@@ -57,7 +57,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     }))
   }
 
-  async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
+  async getMessage(channelId: string, messageId: string) {
     const event = await this.internal.getEvent(channelId, messageId)
     return await adaptMessage(this, event)
   }
@@ -70,7 +70,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     return await this.getUser(this.userId)
   }
 
-  async getUser(userId: string): Promise<Universal.User> {
+  async getUser(userId: string) {
     const profile = await this.internal.getProfile(userId)
     let avatar: string
     if (profile.avatar_url) avatar = this.internal.getAssetUrl(profile.avatar_url)
@@ -82,35 +82,35 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     }
   }
 
-  async getFriendList(): Promise<Universal.User[]> {
+  async getFriendList() {
     return []
   }
 
-  async deleteFriend(): Promise<void> { }
+  async deleteFriend() { }
 
-  async getGuild(guildId: string): Promise<Universal.Guild> {
+  async getGuild(guildId: string) {
     const { channelName } = await this.getChannel(guildId)
     return { guildId, guildName: channelName }
   }
 
-  async getChannel(channelId: string): Promise<Universal.Channel> {
+  async getChannel(channelId: string) {
     const events = await this.internal.getState(channelId)
     const channelName = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
     return { channelId, channelName }
   }
 
-  async getGuildList(): Promise<Universal.Guild[]> {
+  async getGuildList() {
     return await Promise.all(this.rooms.map(roomId => this.getGuild(roomId)))
   }
 
-  async getChannelList(guildId: string): Promise<Universal.Channel[]> {
+  async getChannelList(guildId: string) {
     return await Promise.all(this.rooms.map(roomId => this.getChannel(roomId)))
   }
 
-  async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
+  async getGuildMemberList(guildId: string) {
     const state = await this.internal.getState(guildId)
     const levels = state.find(event => event.type === 'm.room.power_levels').content as Matrix.M_ROOM_POWER_LEVELS
-    return state
+    const data = state
       .filter(event => event.type === 'm.room.member')
       .map(event => {
         const content = event.content as Matrix.M_ROOM_MEMBER
@@ -123,17 +123,18 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
           roles: [levels.users[event.state_key].toString()],
         }
       })
+    return { data }
   }
 
-  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
-    return (await this.getGuildMemberList(guildId)).find(user => user.userId === userId)
+  async getGuildMember(guildId: string, userId: string) {
+    return (await this.getGuildMemberList(guildId)).data.find(user => user.userId === userId)
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+  async createReaction(channelId: string, messageId: string, emoji: string) {
     await this.internal.sendReaction(channelId, messageId, emoji)
   }
 
-  async handleFriendRequest(): Promise<void> { }
+  async handleFriendRequest() { }
 
   // as utils.ts commented, messageId is roomId
   async handleGuildRequest(messageId: string, approve: boolean, commit: string) {

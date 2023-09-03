@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
@@ -49,14 +49,14 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }
   }
 
-  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+  async deleteMessage(channelId: string, messageId: string) {
     await this.internal.chatDelete(Token.BOT, {
       channel: channelId,
       ts: Number(messageId),
     })
   }
 
-  async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
+  async getMessage(channelId: string, messageId: string) {
     const msg = await this.internal.conversationsHistory(Token.BOT, {
       channel: channelId,
       oldest: Number(messageId),
@@ -67,17 +67,17 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return adaptMessage(this, msg.messages[0])
   }
 
-  async getMessageList(channelId: string, before?: string): Promise<Universal.Message[]> {
+  async getMessageList(channelId: string, before?: string) {
     const msg = await this.request<{
       messages: GenericMessageEvent[]
     }>('POST', '/conversations.history', {
       channel: channelId,
       latest: before,
     })
-    return Promise.all(msg.messages.map(v => adaptMessage(this, v)))
+    return { data: await Promise.all(msg.messages.map(v => adaptMessage(this, v))) }
   }
 
-  async getUser(userId: string, guildId?: string): Promise<Universal.User> {
+  async getUser(userId: string, guildId?: string) {
     // users:read
     // @TODO guildId
     const { user } = await this.request<{ user: SlackUser }>('POST', '/users.info', {
@@ -86,13 +86,13 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return adaptUser(user)
   }
 
-  async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
+  async getGuildMemberList(guildId: string) {
     // users:read
     const { members } = await this.request<{ members: SlackUser[] }>('POST', '/users.list')
-    return members.map(adaptUser)
+    return { data: members.map(adaptUser) }
   }
 
-  async getChannel(channelId: string, guildId?: string): Promise<Universal.Channel> {
+  async getChannel(channelId: string, guildId?: string) {
     const { channel } = await this.request<{
       channel: SlackChannel
     }>('POST', '/conversations.info', {
@@ -101,7 +101,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return adaptChannel(channel)
   }
 
-  async getChannelList(guildId: string): Promise<Universal.Channel[]> {
+  async getChannelList(guildId: string) {
     const { channels } = await this.request<{
       channels: SlackChannel[]
     }>('POST', '/conversations.list', {
@@ -110,14 +110,14 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return channels.map(adaptChannel)
   }
 
-  async getGuild(guildId: string): Promise<Universal.Guild> {
+  async getGuild(guildId: string) {
     const { team } = await this.request<{ team: SlackTeam }>('POST', '/team.info', {
       team_id: guildId,
     })
     return adaptGuild(team)
   }
 
-  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+  async getGuildMember(guildId: string, userId: string) {
     const { user } = await this.request<{ user: SlackUser }>('POST', '/users.info', {
       user: userId,
     })
@@ -127,7 +127,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }
   }
 
-  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions): Promise<string[]> {
+  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions) {
     // "channels:write,groups:write,mpim:write,im:write",
     const { channel } = await this.internal.conversationsOpen(Token.BOT, {
       users: channelId,
@@ -136,7 +136,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return this.sendMessage(channel.id, content, undefined, options)
   }
 
-  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+  async getReactions(channelId: string, messageId: string, emoji: string) {
     const { message } = await this.internal.reactionsGet(Token.BOT, {
       channel: channelId,
       timestamp: messageId,
@@ -147,7 +147,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     })) ?? []
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
+  async createReaction(channelId: string, messageId: string, emoji: string) {
     // reactions.write
     await this.internal.reactionsAdd(Token.BOT, {
       channel: channelId,
@@ -156,7 +156,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     })
   }
 
-  async clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void> {
+  async clearReaction(channelId: string, messageId: string, emoji?: string) {
     const { message } = await this.internal.reactionsGet(Token.BOT, {
       channel: channelId,
       timestamp: messageId,

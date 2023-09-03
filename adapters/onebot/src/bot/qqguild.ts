@@ -79,6 +79,6 @@ export class QQGuildBot extends BaseBot {
       if (data.finished) break
       nextToken = data.next_token
     }
-    return list
+    return { data: list }
   }
 }

@@ -28,6 +28,10 @@ export namespace Universal {
     'channel.mute': 'muteChannel',
   }
 
+  export interface List<T> {
+    data: T[]
+  }
+
   export interface Methods {
     // message
     sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
@@ -35,7 +39,7 @@ export namespace Universal {
     sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<string[]>
     // sendPrivateMessage(session: Session.Payload, content: segment.Fragment, options?: SendOptions): Promise<string[]>
     getMessage(channelId: string, messageId: string): Promise<Message>
-    getMessageList(channelId: string, before?: string): Promise<Message[]>
+    getMessageList(channelId: string, before?: string, limit?: number): Promise<List<Message>>
     editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
     deleteMessage(channelId: string, messageId: string): Promise<void>
 
@@ -57,7 +61,7 @@ export namespace Universal {
 
     // guild member
     getGuildMember(guildId: string, userId: string): Promise<GuildMember>
-    getGuildMemberList(guildId: string): Promise<GuildMember[]>
+    getGuildMemberList(guildId: string): Promise<List<GuildMember>>
     kickGuildMember(guildId: string, userId: string, permanent?: boolean): Promise<void>
     muteGuildMember(guildId: string, userId: string, duration: number, reason?: string): Promise<void>
 

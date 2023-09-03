@@ -92,10 +92,8 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async getMessageList(channelId: string, before?: string) {
-    // doesn't include `before` message
-    // 从旧到新
-    const data = (await this.internal.getChannelMessages(channelId, { before, limit: 50 })).reverse()
-    return await Promise.all(data.map(data => decodeMessage(this, data)))
+    const data = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
+    return { data: await Promise.all(data.reverse().map(data => decodeMessage(this, data, {}, false))) }
   }
 
   async getUser(userId: string) {
@@ -105,7 +103,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getGuildMemberList(guildId: string) {
     const data = await this.internal.listGuildMembers(guildId)
-    return data.map(v => decodeUser(v.user))
+    return { data: data.map(v => decodeUser(v.user)) }
   }
 
   async getChannel(channelId: string) {

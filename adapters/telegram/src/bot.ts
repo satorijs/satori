@@ -217,7 +217,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     const data = await this.internal.getChatAdministrators({ chat_id })
     const users = data.map(adaptGuildMember)
     await Promise.all(users.map(this.setAvatarUrl.bind(this)))
-    return users
+    return { data: users }
   }
 
   async kickGuildMember(chat_id: string, user_id: string | number, permanent?: boolean) {

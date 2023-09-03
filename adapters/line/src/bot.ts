@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
@@ -43,7 +43,7 @@ export class LineBot extends Bot<LineBot.Config> {
   }
 
   // https://developers.line.biz/en/reference/messaging-api/#get-profile
-  async getSelf(): Promise<Universal.User> {
+  async getSelf() {
     const { userId, displayName, pictureUrl } = await this.internal.getBotInfo()
     return {
       userId,
@@ -52,7 +52,7 @@ export class LineBot extends Bot<LineBot.Config> {
     }
   }
 
-  async getFriendList(): Promise<Universal.User[]> {
+  async getFriendList() {
     let userIds: string[] = []
     let start: string
     do {
@@ -67,7 +67,7 @@ export class LineBot extends Bot<LineBot.Config> {
     return userIds.map(v => ({ userId: v }))
   }
 
-  async getGuild(guildId: string): Promise<Universal.Guild> {
+  async getGuild(guildId: string) {
     const res = await this.internal.getGroupSummary(guildId)
     return {
       guildId: res.groupId,
@@ -75,7 +75,7 @@ export class LineBot extends Bot<LineBot.Config> {
     }
   }
 
-  async getGuildMemberList(guildId: string): Promise<Universal.GuildMember[]> {
+  async getGuildMemberList(guildId: string) {
     let userIds: string[] = []
     let start: string
     do {
@@ -84,10 +84,10 @@ export class LineBot extends Bot<LineBot.Config> {
       start = res.next
     } while (start)
 
-    return userIds.map(v => ({ userId: v }))
+    return { data: userIds.map(v => ({ userId: v })) }
   }
 
-  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+  async getGuildMember(guildId: string, userId: string) {
     const res = await this.internal.getGroupMemberProfile(guildId, userId)
     return ({
       userId: res.userId,

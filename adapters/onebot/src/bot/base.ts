@@ -70,7 +70,7 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
     }
 
     // 从旧到新
-    return await Promise.all(list.map(item => OneBot.adaptMessage(this, item)))
+    return { data: await Promise.all(list.map(item => OneBot.adaptMessage(this, item))) }
   }
 }
 
