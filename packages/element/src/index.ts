@@ -51,19 +51,23 @@ class ElementConstructor {
     }
   }
 
-  toString(strip = false) {
-    if (this.type === 'text' && 'content' in this.attrs) {
-      return strip ? this.attrs.content : Element.escape(this.attrs.content)
-    }
-    const inner = this.children.map(child => child.toString(strip)).join('')
-    if (strip) return inner
-    const attrs = Object.entries(this.attrs).map(([key, value]) => {
+  toAttrString() {
+    return Object.entries(this.attrs).map(([key, value]) => {
       if (isNullable(value)) return ''
       key = hyphenate(key)
       if (value === true) return ` ${key}`
       if (value === false) return ` no-${key}`
       return ` ${key}="${Element.escape('' + value, true)}"`
     }).join('')
+  }
+
+  toString(strip = false) {
+    if (this.type === 'text' && 'content' in this.attrs) {
+      return strip ? this.attrs.content : Element.escape(this.attrs.content)
+    }
+    const inner = this.children.map(child => child.toString(strip)).join('')
+    if (strip) return inner
+    const attrs = this.toAttrString()
     const tag = this.getTagName()
     if (!this.children.length) return `<${tag}${attrs}/>`
     return `<${tag}${attrs}>${inner}</${tag}>`
