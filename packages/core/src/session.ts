@@ -46,9 +46,11 @@ export class Session {
   public bot: Bot
   public app: Context['root']
 
-  constructor(bot: Bot, payload?: Partial<Session.Payload>) {
+  constructor(bot: Bot, payload: Partial<Session.Payload> = {}) {
     this.data = {}
-    Object.assign(this, payload)
+    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
+      Object.defineProperty(this, key, descriptor)
+    }
     this.selfId = bot.selfId
     this.platform = bot.platform
     defineProperty(this, 'bot', bot)
