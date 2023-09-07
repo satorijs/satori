@@ -44,17 +44,11 @@ export class MailBot extends Bot<MailBot.Config> {
   }
 
   onClose() {
-    if (this.status === 'disconnect') {
-      this.offline()
-      return
-    }
+    if (!this.isActive) return
     logger.info('IMAP disconnected, will reconnect in 3s...')
     this.status = 'reconnect'
     setTimeout(() => {
-      if (this.status !== 'reconnect') {
-        this.offline()
-        return
-      }
+      if (!this.isActive) return
       this.imap.connect()
     }, 3000)
   }

@@ -73,9 +73,7 @@ export namespace Adapter {
         socket.addEventListener('close', ({ code, reason }) => {
           bot.socket = null
           logger.debug(`websocket closed with ${code}`)
-          if (bot.status === 'disconnect') {
-            return bot.status = 'offline'
-          }
+          if (!bot.isActive) return
 
           const message = reason.toString() || `failed to connect to ${url}, code: ${code}`
           let timeout = retryInterval

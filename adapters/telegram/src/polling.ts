@@ -34,9 +34,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             offset: this.offset + 1,
             timeout: Math.ceil(bot.config.pollingTimeout / 1000), // in seconds
           })
-          if (bot.status === 'offline' || bot.status === 'disconnect') {
-            return
-          }
+          if (!bot.isActive) return
           bot.online()
           _retryCount = 0
           _initial = false
@@ -60,9 +58,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
             bot.error = e
             return bot.status = 'offline'
           }
-          if (bot.status === 'offline' || bot.status === 'disconnect') {
-            return
-          }
+          if (!bot.isActive) return
           _retryCount++
           bot.status = 'reconnect'
           this.timeout = setTimeout(polling, retryInterval)

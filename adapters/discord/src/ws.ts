@@ -70,7 +70,6 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         if (parsed.d) return
         this._sessionId = ''
         logger.warn('offline: invalid session')
-        this.bot.offline()
         this.bot.socket?.close()
       }
 
@@ -92,7 +91,6 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       }
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
-        this.bot.offline()
         logger.warn('offline: discord request reconnect')
         this.bot.socket?.close()
       }

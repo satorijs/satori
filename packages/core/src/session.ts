@@ -53,6 +53,7 @@ export class Session {
     }
     this.selfId = bot.selfId
     this.platform = bot.platform
+    this.locales = []
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
     defineProperty(this, 'id', ++bot.ctx.internal.counter)

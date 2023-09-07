@@ -65,6 +65,10 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     }
   }
 
+  get isActive() {
+    return this._status !== 'offline' && this._status !== 'disconnect'
+  }
+
   online() {
     this.status = 'online'
     this.error = null
@@ -76,7 +80,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   async start() {
-    if (['connect', 'reconnect', 'online'].includes(this.status)) return
+    if (this.isActive) return
     this.status = 'connect'
     try {
       await this.context.parallel('bot-connect', this)
@@ -87,7 +91,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   async stop() {
-    if (['disconnect', 'offline'].includes(this.status)) return
+    if (!this.isActive) return
     this.status = 'disconnect'
     try {
       await this.context.parallel('bot-disconnect', this)
