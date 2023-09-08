@@ -138,6 +138,12 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
         default:
           this.content += `<@${attrs.id}>`
       }
+    } else if (type === 'br') {
+      this.content += '\n'
+    } else if (type === 'p') {
+      if (!this.content.endsWith('\n')) this.content += '\n'
+      await this.render(children)
+      if (!this.content.endsWith('\n')) this.content += '\n'
     } else if (type === 'sharp') {
       this.content += `<#${attrs.id}>`
     } else if (type === 'quote') {

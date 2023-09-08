@@ -101,9 +101,12 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       this.buffer += `>`
     } else if (type === 'quote') {
       this.thread_ts = attrs.id
+    } else if (type === 'br') {
+      this.buffer += '\n'
     } else if (type === 'p') {
-      this.buffer += `\n`
+      if (!this.buffer.endsWith('\n')) this.buffer += `\n`
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += `\n`
     } else if (type === 'face') {
       this.buffer += `:${attrs.id}:`
     } else if (type === 'author') {

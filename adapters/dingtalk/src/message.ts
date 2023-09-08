@@ -98,9 +98,12 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       await this.render(children)
     } else if (type === 'at') {
       this.buffer += `@${attrs.id}`
-    } else if (type === 'p') {
+    } else if (type === 'br') {
       this.buffer += '\n'
+    } else if (type === 'p') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       this.buffer += '\n'
     } else if (type === 'b' || type === 'strong') {
       this.buffer += ` **`

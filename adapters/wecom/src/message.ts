@@ -92,9 +92,12 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content
-    } else if (type === 'p') {
-      await this.render(children)
+    } else if (type === 'br') {
       this.buffer += '\n'
+    } else if (type === 'p') {
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      await this.render(children)
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'image' || type === 'audio' || type === 'video' || type === 'file') {
       await this.flushMedia(element)
     } else if (type === 'a' && attrs.href) {

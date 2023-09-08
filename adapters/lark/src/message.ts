@@ -147,6 +147,14 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
         await this.render(children)
         if (attrs.href) this.content += ` (${attrs.href})`
         break
+      case 'p':
+        if (!this.content.endsWith('\n')) this.content += '\n'
+        await this.render(children)
+        if (!this.content.endsWith('\n')) this.content += '\n'
+        break
+      case 'br':
+        this.content += '\n'
+        break
       case 'sharp':
         // platform does not support sharp
         break

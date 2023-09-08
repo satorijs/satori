@@ -39,6 +39,8 @@ export class MailMessageEncoder extends MessageEncoder<MailBot> {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content
+    } else if (type === 'br') {
+      this.buffer += '<br>'
     } else if (['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'p', 'code', 'li', 'ul', 'ol', 'blockquote'].includes(type)) {
       this.buffer += `<${type}>`
       await this.render(children)
