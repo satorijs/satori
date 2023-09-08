@@ -197,6 +197,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async updateCommands(commands: Universal.Command[]) {
+    if (!this.config.slash) return
     this.commands = commands
     const local = Object.fromEntries(commands.map(cmd => [cmd.name, cmd] as const))
     const remote = Object.fromEntries((await this.internal.getGlobalApplicationCommands(this.selfId, { with_localizations: true }))
@@ -250,12 +251,16 @@ function shapeEqual(a: any, b: any) {
 export namespace DiscordBot {
   export interface Config extends Bot.Config, Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
     token: string
+    slash?: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
     }),
+    Schema.object({
+      slash: Schema.boolean().description('是否启用斜线指令。').default(true),
+    }).description('功能设置'),
     WsClient.Config,
     DiscordMessageEncoder.Config,
     Quester.createConfig('https://discord.com/api/v10'),

@@ -301,6 +301,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async updateCommands(commands: Universal.Command[]) {
+    if (!this.config.slash) return
     const result = {} as Record<string, Telegram.BotCommand[]>
     for (const cmd of commands) {
       const { name, description } = cmd
@@ -335,6 +336,7 @@ export namespace TelegramBot {
     protocol: 'server' | 'polling'
     token: string
     files?: Config.Files
+    slash?: boolean
   }
 
   export type Config = BaseConfig & (HttpServer.Config | HttpPolling.Config)
@@ -358,6 +360,9 @@ export namespace TelegramBot {
       HttpServer.Config,
       HttpPolling.Config,
     ]).description('推送设置'),
+    Schema.object({
+      slash: Schema.boolean().description('是否启用斜线指令。').default(true),
+    }).description('功能设置'),
     Quester.createConfig('https://api.telegram.org'),
     Schema.object({
       files: Schema.object({
