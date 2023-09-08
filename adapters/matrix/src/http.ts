@@ -14,7 +14,10 @@ export class HttpAdapter extends Adapter.Server<MatrixBot> {
     ctx.router.all('/(.*)', (koaCtx, next) => {
       const match = this.bots.filter(bot => koaCtx.path.startsWith(bot.config.path + '/'))
       if (match.length === 0) return next()
-      const bots = match.filter(bot => bot.config.hsToken === koaCtx.query.access_token)
+      //                                            Bearer
+      const asToken = koaCtx.headers.authorization?.substring(7) || koaCtx.query.access_token
+      if (!asToken) return next()
+      const bots = match.filter(bot => bot.config.hsToken === asToken)
       if (!bots.length) {
         koaCtx.status = 403
         koaCtx.body = { errcode: 'M_FORBIDDEN' }
