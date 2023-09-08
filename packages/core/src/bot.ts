@@ -59,6 +59,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   set status(value) {
+    if (value === this._status) return
     this._status = value
     if (this.ctx.bots.includes(this)) {
       this.context.emit('bot-status-updated', this)
