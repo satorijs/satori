@@ -30,6 +30,7 @@ export namespace Universal {
 
   export interface List<T> {
     data: T[]
+    next?: string
   }
 
   export interface Methods {
@@ -39,7 +40,7 @@ export namespace Universal {
     sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<string[]>
     // sendPrivateMessage(session: Session.Payload, content: segment.Fragment, options?: SendOptions): Promise<string[]>
     getMessage(channelId: string, messageId: string): Promise<Message>
-    getMessageList(channelId: string, before?: string, limit?: number): Promise<List<Message>>
+    getMessageList(channelId: string, next?: string): Promise<List<Message>>
     editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
     deleteMessage(channelId: string, messageId: string): Promise<void>
 
@@ -47,35 +48,41 @@ export namespace Universal {
     createReaction(channelId: string, messageId: string, emoji: string): Promise<void>
     deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string): Promise<void>
     clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void>
-    getReactions(channelId: string, messageId: string, emoji: string): Promise<User[]>
+    getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<List<User>>
+    getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
     // user
     getSelf(): Promise<User>
     getUser(userId: string, guildId?: string): Promise<User>
-    getFriendList(): Promise<User[]>
+    getFriendList(next?: string): Promise<List<User>>
+    getFriendIter(): AsyncIterable<User>
     deleteFriend(userId: string): Promise<void>
 
     // guild
     getGuild(guildId: string): Promise<Guild>
-    getGuildList(): Promise<Guild[]>
+    getGuildList(next?: string): Promise<List<Guild>>
+    getGuildIter(): AsyncIterable<Guild>
 
     // guild member
     getGuildMember(guildId: string, userId: string): Promise<GuildMember>
-    getGuildMemberList(guildId: string): Promise<List<GuildMember>>
+    getGuildMemberList(guildId: string, next?: string): Promise<List<GuildMember>>
+    getGuildMemberIter(guildId: string): AsyncIterable<GuildMember>
     kickGuildMember(guildId: string, userId: string, permanent?: boolean): Promise<void>
     muteGuildMember(guildId: string, userId: string, duration: number, reason?: string): Promise<void>
 
     // role
     setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
     unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
-    getGuildRoles(guildId: string): Promise<Role[]>
+    getGuildRoleList(guildId: string, next?: string): Promise<List<Role>>
+    getGuildRoleIter(guildId: string): AsyncIterable<Role>
     createGuildRole(guildId: string, data: Partial<Role>): Promise<string>
     modifyGuildRole(guildId: string, roleId: string, data: Partial<Role>): Promise<void>
     deleteGuildRole(guildId: string, roleId: string): Promise<void>
 
     // channel
     getChannel(channelId: string, guildId?: string): Promise<Channel>
-    getChannelList(guildId: string): Promise<Channel[]>
+    getChannelList(guildId: string, next?: string): Promise<List<Channel>>
+    getChannelIter(guildId: string): AsyncIterable<Channel>
     muteChannel(channelId: string, guildId?: string, enable?: boolean): Promise<void>
 
     // request
@@ -88,12 +95,21 @@ export namespace Universal {
   }
 
   export interface Channel {
+    id: string
+    name?: string
+    parentId?: string
+    /** @deprecated */
     channelId: string
+    /** @deprecated */
     channelName?: string
   }
 
   export interface Guild {
+    id: string
+    name: string
+    /** @deprecated */
     guildId: string
+    /** @deprecated */
     guildName?: string
   }
 

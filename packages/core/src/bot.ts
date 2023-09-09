@@ -147,6 +147,34 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 }
 
+const iterableMethods = [
+  'getMessage',
+  'getReaction',
+  'getFriend',
+  'getGuild',
+  'getGuildMember',
+  'getGuildRole',
+  'getChannel',
+]
+
+for (const name of iterableMethods) {
+  Bot.prototype[name + 'Iter'] = function (this: Bot, ...args: any[]) {
+    let list: Universal.List<any>
+    const getList = () => list = this[name + 'List'](...args, list?.next)
+    return {
+      async next() {
+        if (list?.data.length) return { done: false, value: list.data.shift() }
+        if (list && !list?.next) return { done: true, value: undefined }
+        await getList()
+        return this.next()
+      },
+      [Symbol.asyncIterator]() {
+        return this
+      },
+    }
+  }
+}
+
 export namespace Bot {
   export interface Config {
     platform?: string
