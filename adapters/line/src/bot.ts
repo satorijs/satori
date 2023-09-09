@@ -52,48 +52,36 @@ export class LineBot extends Bot<LineBot.Config> {
     }
   }
 
-  async getFriendList() {
-    let userIds: string[] = []
-    let start: string
-    do {
-      const res = await this.internal.getFollowers({
-        start,
-        limit: 1000,
-      })
-      userIds = userIds.concat(res.userIds)
-      start = res.next
-    } while (start)
-
-    return userIds.map(v => ({ userId: v }))
+  async getFriendList(start?: string) {
+    const { userIds, next } = await this.internal.getFollowers({
+      start,
+      limit: 1000,
+    })
+    return { data: userIds.map(v => ({ userId: v })), next }
   }
 
   async getGuild(guildId: string) {
     const res = await this.internal.getGroupSummary(guildId)
     return {
+      id: res.groupId,
+      name: res.groupName,
       guildId: res.groupId,
       guildName: res.groupName,
     }
   }
 
-  async getGuildMemberList(guildId: string) {
-    let userIds: string[] = []
-    let start: string
-    do {
-      const res = await this.internal.getGroupMembersIds(guildId, { start })
-      userIds = userIds.concat(res.memberIds)
-      start = res.next
-    } while (start)
-
-    return { data: userIds.map(v => ({ userId: v })) }
+  async getGuildMemberList(guildId: string, start?: string) {
+    const { memberIds, next } = await this.internal.getGroupMembersIds(guildId, { start })
+    return { data: memberIds.map(v => ({ userId: v })), next }
   }
 
   async getGuildMember(guildId: string, userId: string) {
     const res = await this.internal.getGroupMemberProfile(guildId, userId)
-    return ({
+    return {
       userId: res.userId,
       nickname: res.displayName,
       avatar: res.pictureUrl,
-    })
+    }
   }
 }
 

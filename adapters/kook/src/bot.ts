@@ -89,7 +89,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async getGuildList() {
     const { items } = await this.request<Kook.GuildList>('GET', '/guild/list')
-    return items.map(adaptGroup)
+    return { data: items.map(adaptGroup) }
   }
 
   async getGuildMemberList(guild_id: string) {
@@ -130,14 +130,14 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+  async getReactionList(channelId: string, messageId: string, emoji: string) {
     let users: Kook.User[]
     if (isDirectChannel(channelId)) {
       users = await this.internal.getDirectMessageReactionList({ msg_id: messageId, emoji })
     } else {
       users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji })
     }
-    return users.map(adaptUser)
+    return { data: users.map(adaptUser) }
   }
 
   async setGuildMemberRole(guildId: string, userId: string, roleId: string) {
@@ -148,9 +148,9 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     await this.internal.revokeGuildRole({ guild_id: guildId, user_id: userId, role_id: +roleId })
   }
 
-  async getGuildRoles(guildId: string): Promise<Universal.Role[]> {
+  async getGuildRoles(guildId: string) {
     const { items } = await this.internal.getGuildRoleList({ guild_id: guildId })
-    return items.map(decodeRole)
+    return { data: items.map(decodeRole) }
   }
 
   async createGuildRole(guildId: string, data: Partial<Universal.Role>) {

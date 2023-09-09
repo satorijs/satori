@@ -104,12 +104,16 @@ export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Unive
   if ((info as OneBot.GuildBaseInfo).guild_id) {
     const guild = info as OneBot.GuildBaseInfo
     return {
+      id: guild.guild_id,
+      name: guild.guild_name,
       guildId: guild.guild_id,
       guildName: guild.guild_name,
     }
   } else {
     const group = info as OneBot.GroupInfo
     return {
+      id: group.group_id.toString(),
+      name: group.group_name,
       guildId: group.group_id.toString(),
       guildName: group.group_name,
     }
@@ -120,12 +124,16 @@ export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Unive
   if ((info as OneBot.ChannelInfo).channel_id) {
     const channel = info as OneBot.ChannelInfo
     return {
+      id: channel.channel_id,
+      name: channel.channel_name,
       channelId: channel.channel_id.toString(),
       channelName: channel.channel_name,
     }
   } else {
     const group = info as OneBot.GroupInfo
     return {
+      id: group.group_id.toString(),
+      name: group.group_name,
       channelId: group.group_id.toString(),
       channelName: group.group_name,
     }

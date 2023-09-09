@@ -92,8 +92,9 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async getMessageList(channelId: string, before?: string) {
-    const data = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
-    return { data: await Promise.all(data.reverse().map(data => decodeMessage(this, data, {}, false))) }
+    const messages = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
+    const data = await Promise.all(messages.reverse().map(data => decodeMessage(this, data, {}, false)))
+    return { data, next: data[0]?.messageId }
   }
 
   async getUser(userId: string) {
@@ -101,9 +102,10 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return decodeUser(data)
   }
 
-  async getGuildMemberList(guildId: string) {
-    const data = await this.internal.listGuildMembers(guildId)
-    return { data: data.map(v => decodeUser(v.user)) }
+  async getGuildMemberList(guildId: string, after?: string) {
+    const users = await this.internal.listGuildMembers(guildId, { after, limit: 1000 })
+    const data = users.map(v => decodeUser(v.user))
+    return { data, next: data[data.length - 1]?.userId }
   }
 
   async getChannel(channelId: string) {
@@ -128,14 +130,15 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return decodeGuild(data)
   }
 
-  async getGuildList() {
-    const data = await this.internal.getCurrentUserGuilds()
-    return data.map(decodeGuild)
+  async getGuildList(after?: string) {
+    const guilds = await this.internal.getCurrentUserGuilds({ after, limit: 200 })
+    const data = guilds.map(decodeGuild)
+    return { data, next: data[data.length - 1]?.id }
   }
 
   async getChannelList(guildId: string) {
-    const data = await this.internal.getGuildChannels(guildId)
-    return data.map(decodeChannel)
+    const channels = await this.internal.getGuildChannels(guildId)
+    return { data: channels.map(decodeChannel) }
   }
 
   createReaction(channelId: string, messageId: string, emoji: string) {
@@ -158,9 +161,9 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     }
   }
 
-  async getReactions(channelId: string, messageId: string, emoji: string) {
-    const data = await this.internal.getReactions(channelId, messageId, emoji)
-    return data.map(decodeUser)
+  async getReactionList(channelId: string, messageId: string, emoji: string, after?: string) {
+    const data = await this.internal.getReactions(channelId, messageId, emoji, { after, limit: 100 })
+    return { data: data.map(decodeUser), next: data[data.length - 1]?.id }
   }
 
   setGuildMemberRole(guildId: string, userId: string, roleId: string) {
@@ -171,9 +174,9 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return this.internal.removeGuildMemberRole(guildId, userId, roleId)
   }
 
-  async getGuildRoles(guildId: string) {
+  async getGuildRoleList(guildId: string) {
     const data = await this.internal.getGuildRoles(guildId)
-    return data.map(decodeRole)
+    return { data: data.map(decodeRole) }
   }
 
   async createGuildRole(guildId: string, data: Partial<Universal.Role>) {

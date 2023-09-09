@@ -24,7 +24,8 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async getGuildList() {
-    return this.internal.guilds.then(guilds => guilds.map(adaptGuild))
+    const guilds = await this.internal.guilds
+    return { data: guilds.map(adaptGuild) }
   }
 
   adaptMessage(msg: QQGuild.Message) {

@@ -82,29 +82,25 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     }
   }
 
-  async getFriendList() {
-    return []
-  }
-
-  async deleteFriend() { }
-
   async getGuild(guildId: string) {
-    const { channelName } = await this.getChannel(guildId)
-    return { guildId, guildName: channelName }
+    const { id, name } = await this.getChannel(guildId)
+    return { id, name, guildId, guildName: name }
   }
 
   async getChannel(channelId: string) {
     const events = await this.internal.getState(channelId)
-    const channelName = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
-    return { channelId, channelName }
+    const name = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
+    return { id: channelId, name, channelId, channelName: name }
   }
 
   async getGuildList() {
-    return await Promise.all(this.rooms.map(roomId => this.getGuild(roomId)))
+    const data = await Promise.all(this.rooms.map(roomId => this.getGuild(roomId)))
+    return { data }
   }
 
   async getChannelList(guildId: string) {
-    return await Promise.all(this.rooms.map(roomId => this.getChannel(roomId)))
+    const data = await Promise.all(this.rooms.map(roomId => this.getChannel(roomId)))
+    return { data }
   }
 
   async getGuildMemberList(guildId: string) {

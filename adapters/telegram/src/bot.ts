@@ -167,10 +167,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     adaptAuthorMeta(session, message.from)
   }
 
-  async getMessage() {
-    return null
-  }
-
   async deleteMessage(chat_id: string, message_id: string | number) {
     message_id = +message_id
     await this.internal.deleteMessage({ chat_id, message_id })
@@ -190,18 +186,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   static adaptGroup(data: Telegram.Chat): Universal.Guild {
     data['guildId'] = data.id + ''
     data['guildName'] = data.title
-    delete data.id
-    delete data.title
     return data as any
   }
 
   async getGuild(chat_id: string): Promise<Universal.Guild> {
     const data = await this.internal.getChat({ chat_id })
     return TelegramBot.adaptGroup(data)
-  }
-
-  async getGuildList() {
-    return []
   }
 
   async getGuildMember(chat_id: string, user_id: string | number) {

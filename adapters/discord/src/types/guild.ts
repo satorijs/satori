@@ -99,11 +99,13 @@ export namespace Guild {
     /** https://discord.com/developers/docs/resources/user#get-current-user-guilds-query-string-params */
     export interface List {
       /** get guilds before this guild ID */
-      before: snowflake
+      before?: snowflake
       /** get guilds after this guild ID */
-      after: snowflake
+      after?: snowflake
       /** max number of guilds to return (1-200) */
-      limit: integer
+      limit?: integer
+      /** include approximate member and presence counts in response */
+      with_counts?: boolean
     }
 
     /** https://discord.com/developers/docs/resources/guild#create-guild-json-params */

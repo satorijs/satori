@@ -1,5 +1,6 @@
 import { Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
+// eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
 import { File, SlackChannel, SlackTeam } from './types'
@@ -224,14 +225,16 @@ export function adaptUser(data: SlackUser): Universal.User {
   }
 }
 
-export function adaptChannel(data: SlackChannel): Universal.Channel {
-  return {
-    channelId: data.id,
-    channelName: data.name,
-  }
-}
+export const adaptChannel = (data: SlackChannel): Universal.Channel => ({
+  id: data.id,
+  name: data.name,
+  channelId: data.id,
+  channelName: data.name,
+})
 
 export const adaptGuild = (data: SlackTeam): Universal.Guild => ({
+  id: data.id,
+  name: data.name,
   guildId: data.id,
   guildName: data.name,
 })

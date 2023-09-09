@@ -45,13 +45,13 @@ export class QQGuildBot extends BaseBot {
   }
 
   async getChannel(channelId: string, guildId?: string) {
-    const channels = await this.getChannelList(guildId)
-    return channels.find((channel) => channel.channelId === channelId)
+    const { data } = await this.getChannelList(guildId)
+    return data.find((channel) => channel.id === channelId)
   }
 
   async getChannelList(guildId: string) {
     const data = await this.internal.getGuildChannelList(guildId, false)
-    return (data || []).map(OneBot.adaptChannel)
+    return { data: (data || []).map(OneBot.adaptChannel) }
   }
 
   async getGuild(guildId: string) {
@@ -61,7 +61,7 @@ export class QQGuildBot extends BaseBot {
 
   async getGuildList() {
     const data = await this.internal.getGuildList()
-    return data.map(OneBot.adaptGuild)
+    return { data: data.map(OneBot.adaptGuild) }
   }
 
   async getGuildMember(guildId: string, userId: string) {

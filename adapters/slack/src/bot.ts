@@ -107,7 +107,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }>('POST', '/conversations.list', {
       team_id: guildId,
     })
-    return channels.map(adaptChannel)
+    return { data: channels.map(adaptChannel) }
   }
 
   async getGuild(guildId: string) {

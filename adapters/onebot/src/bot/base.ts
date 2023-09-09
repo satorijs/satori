@@ -38,7 +38,7 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
 
   async getFriendList() {
     const data = await this.internal.getFriendList()
-    return data.map(OneBot.adaptUser)
+    return { data: data.map(OneBot.adaptUser) }
   }
 
   async handleFriendRequest(messageId: string, approve: boolean, comment?: string) {

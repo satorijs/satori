@@ -31,9 +31,9 @@ export namespace GuildMember {
     /** https://discord.com/developers/docs/resources/guild#list-guild-members-query-string-params */
     export interface List {
       /** max number of members to return (1-1000) */
-      limit: integer
+      limit?: integer
       /** the highest user id in the previous page */
-      after: snowflake
+      after?: snowflake
     }
 
     /** https://discord.com/developers/docs/resources/guild#search-guild-members-query-string-params */
@@ -41,7 +41,7 @@ export namespace GuildMember {
       /** Query string to match username(s) and nickname(s) against. */
       query: string
       /** max number of members to return (1-1000) */
-      limit: integer
+      limit?: integer
     }
 
     /** https://discord.com/developers/docs/resources/guild#add-guild-member-json-params */
