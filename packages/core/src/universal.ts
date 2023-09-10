@@ -41,6 +41,7 @@ export namespace Universal {
     // sendPrivateMessage(session: Session.Payload, content: segment.Fragment, options?: SendOptions): Promise<string[]>
     getMessage(channelId: string, messageId: string): Promise<Message>
     getMessageList(channelId: string, next?: string): Promise<List<Message>>
+    getMessageIter(channelId: string): AsyncIterable<Message>
     editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
     deleteMessage(channelId: string, messageId: string): Promise<void>
 

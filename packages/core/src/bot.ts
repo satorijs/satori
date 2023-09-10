@@ -160,7 +160,9 @@ const iterableMethods = [
 for (const name of iterableMethods) {
   Bot.prototype[name + 'Iter'] = function (this: Bot, ...args: any[]) {
     let list: Universal.List<any>
-    const getList = () => list = this[name + 'List'](...args, list?.next)
+    const getList = async () => {
+      list = await this[name + 'List'](...args, list?.next)
+    }
     return {
       async next() {
         if (list?.data.length) return { done: false, value: list.data.shift() }
