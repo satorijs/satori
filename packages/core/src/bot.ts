@@ -137,7 +137,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   async supports(name: string, session: Partial<Session> = {}) {
-    return !!this[Universal.Methods[name]]
+    return !!this[Universal.Methods[name]?.name]
   }
 
   async checkPermission(name: string, session: Partial<Session>) {

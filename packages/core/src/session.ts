@@ -48,7 +48,9 @@ export class Session {
 
   constructor(bot: Bot, payload: Partial<Session.Payload> = {}) {
     this.data = {}
+    Object.assign(this, payload)
     for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
+      if (descriptor.enumerable) continue
       Object.defineProperty(this, key, descriptor)
     }
     this.selfId = bot.selfId

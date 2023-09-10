@@ -3,29 +3,39 @@ import { SendOptions } from './session'
 import { Dict } from 'cosmokit'
 
 export namespace Universal {
-  export const Methods = {
-    'message.get': 'getMessage',
-    'message.list': 'getMessageList',
-    'message.update': 'editMessage',
-    'message.delete': 'deleteMessage',
-    'reaction.create': 'createReaction',
-    'reaction.delete': 'deleteReaction',
-    'reaction.clear': 'clearReaction',
-    'reaction.list': 'getReactions',
-    'guild.get': 'getGuild',
-    'guild.list': 'getGuildList',
-    'guild.member.get': 'getGuildMember',
-    'guild.member.list': 'getGuildMemberList',
-    'guild.member.kick': 'kickGuildMember',
-    'guild.member.mute': 'muteGuildMember',
-    'guild.member.role': 'setGuildMemberRole',
-    'guild.role.list': 'getGuildRoles',
-    'guild.role.create': 'createGuildRole',
-    'guild.role.update': 'modifyGuildRole',
-    'guild.role.delete': 'deleteGuildRole',
-    'channel.get': 'getChannel',
-    'channel.list': 'getChannelList',
-    'channel.mute': 'muteChannel',
+  export interface Method {
+    name: string
+    fields: string[]
+  }
+
+  function Method(name: string, fields: string[]): Method {
+    return { name, fields }
+  }
+
+  export const Methods: Dict<Method> = {
+    'message.send': Method('sendMessage', ['channelId', 'content', 'guildId', 'options']),
+    'message.get': Method('getMessage', ['channelId', 'messageId']),
+    'message.list': Method('getMessageList', ['channelId', 'next']),
+    'message.update': Method('editMessage', ['channelId', 'messageId']),
+    'message.delete': Method('deleteMessage', ['channelId', 'messageId']),
+    'reaction.create': Method('createReaction', ['channelId', 'messageId', 'emoji']),
+    'reaction.delete': Method('deleteReaction', ['channelId', 'messageId', 'emoji', 'userId']),
+    'reaction.clear': Method('clearReaction', ['channelId', 'messageId', 'emoji']),
+    'reaction.list': Method('getReactionList', ['channelId', 'messageId', 'emoji', 'next']),
+    'guild.get': Method('getGuild', ['guildId']),
+    'guild.list': Method('getGuildList', ['next']),
+    'guild.member.get': Method('getGuildMember', ['guildId', 'userId']),
+    'guild.member.list': Method('getGuildMemberList', ['guildId', 'next']),
+    'guild.member.kick': Method('kickGuildMember', ['guildId', 'userId', 'permanent']),
+    'guild.member.mute': Method('muteGuildMember', ['guildId', 'userId', 'duration', 'reason']),
+    'guild.member.role': Method('setGuildMemberRole', ['guildId', 'userId', 'roleId']),
+    'guild.role.list': Method('getGuildRoleList', ['guildId', 'next']),
+    'guild.role.create': Method('createGuildRole', ['guildId', 'data']),
+    'guild.role.update': Method('modifyGuildRole', ['guildId', 'roleId', 'data']),
+    'guild.role.delete': Method('deleteGuildRole', ['guildId', 'roleId']),
+    'channel.get': Method('getChannel', ['channelId', 'guildId']),
+    'channel.list': Method('getChannelList', ['guildId', 'next']),
+    'channel.mute': Method('muteChannel', ['channelId', 'guildId', 'enable']),
   }
 
   export interface List<T> {
