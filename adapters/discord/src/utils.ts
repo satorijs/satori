@@ -11,11 +11,21 @@ export const sanitize = (val: string) =>
     .replace(/@here/g, () => '\\@here')
 
 export const decodeUser = (user: Discord.User): Universal.User => ({
+  id: user.id,
+  name: user.username,
   userId: user.id,
   avatar: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
   discriminator: user.discriminator,
   isBot: user.bot || false,
+})
+
+export const decodeGuildMember = (member: Discord.GuildMember): Universal.GuildMember => ({
+  ...decodeUser(member.user),
+  user: decodeUser(member.user),
+  nickname: member.nick,
+  roles: member.roles,
+  avatar: member.user.avatar,
 })
 
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
@@ -37,12 +47,12 @@ export const decodeAuthor = (author: Discord.User): Universal.Author => ({
   nickname: author.username,
 })
 
-export const decodeRole = (role: Discord.Role): Universal.Role => ({
+export const decodeRole = (role: Discord.Role): Universal.GuildRole => ({
   ...role,
   permissions: BigInt(role.permissions),
 })
 
-export const encodeRole = (role: Partial<Universal.Role>): Partial<Discord.Role> => ({
+export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Discord.Role> => ({
   ...role,
   permissions: role.permissions && '' + role.permissions,
 })

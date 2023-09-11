@@ -213,6 +213,8 @@ export interface AuthTestResponse {
 
 export function adaptUser(data: SlackUser): Universal.User {
   return {
+    id: data.id,
+    name: data.real_name,
     userId: data.id,
     avatar: data.profile.image_512
       ?? data.profile.image_192
@@ -224,6 +226,11 @@ export function adaptUser(data: SlackUser): Universal.User {
     isBot: data.is_bot,
   }
 }
+
+export const adapteGuildMember = (data: SlackUser): Universal.GuildMember => ({
+  user: adaptUser(data),
+  ...adaptUser(data),
+})
 
 export const adaptChannel = (data: SlackChannel): Universal.Channel => ({
   id: data.id,

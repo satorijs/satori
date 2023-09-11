@@ -75,6 +75,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     let avatar: string
     if (profile.avatar_url) avatar = this.internal.getAssetUrl(profile.avatar_url)
     return {
+      id: userId,
+      name: profile.displayname,
       userId,
       avatar,
       username: userId,
@@ -111,6 +113,10 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
       .map(event => {
         const content = event.content as Matrix.M_ROOM_MEMBER
         return {
+          user: {
+            id: event.state_key,
+            name: event.state_key,
+          },
           userId: event.state_key,
           username: event.state_key,
           nickname: content.displayname,

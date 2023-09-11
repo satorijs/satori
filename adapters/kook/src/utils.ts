@@ -11,10 +11,18 @@ export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
 })
 
 export const adaptUser = (user: Kook.User): Universal.User => ({
+  id: user.id,
+  name: user.username,
   userId: user.id,
   avatar: user.avatar,
   username: user.username,
   discriminator: user.identify_num,
+})
+
+export const decodeGuildMember = (member: Kook.Author): Universal.GuildMember => ({
+  ...adaptUser(member),
+  user: adaptUser(member),
+  nickname: member.nickname,
 })
 
 export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
@@ -22,7 +30,7 @@ export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   nickname: author.nickname,
 })
 
-export const decodeRole = (role: Kook.GuildRole): Universal.Role => ({
+export const decodeRole = (role: Kook.GuildRole): Universal.GuildRole => ({
   ...role,
   id: '' + role.role_id,
   permissions: BigInt(role.permissions),
@@ -34,7 +42,7 @@ function encodeBit(value: boolean) {
   return isNullable(value) ? value : value ? 1 : 0
 }
 
-export const encodeRole = (role: Partial<Universal.Role>): Partial<Kook.GuildRole> => ({
+export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Kook.GuildRole> => ({
   ...role,
   role_id: +role.id,
   permissions: role.permissions && Number(role.permissions),

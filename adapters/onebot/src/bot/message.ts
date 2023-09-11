@@ -58,7 +58,7 @@ export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
         this.stack[1].children.push({
           type: 'node',
           data: {
-            name: author.nickname || author.username || this.bot.nickname || this.bot.username,
+            name: author.nickname || author.username || this.bot.username,
             uin: author.userId || this.bot.userId,
             content: this.children as any,
             time: `${Math.floor((+author.time || Date.now()) / 1000)}`,

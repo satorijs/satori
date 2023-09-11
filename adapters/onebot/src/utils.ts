@@ -8,6 +8,8 @@ export * from './types'
 const logger = new Logger('onebot')
 
 export const adaptUser = (user: OneBot.AccountInfo): Universal.User => ({
+  id: user.tiny_id || user.user_id.toString(),
+  name: user.nickname,
   userId: user.tiny_id || user.user_id.toString(),
   avatar: user.user_id ? `http://q.qlogo.cn/headimg_dl?dst_uin=${user.user_id}&spec=640` : undefined,
   username: user.nickname,
@@ -15,24 +17,29 @@ export const adaptUser = (user: OneBot.AccountInfo): Universal.User => ({
 
 export const adaptGuildMember = (user: OneBot.SenderInfo): Universal.GuildMember => ({
   ...adaptUser(user),
+  user: adaptUser(user),
   nickname: user.card,
   roles: [user.role],
 })
 
 export const adaptQQGuildMemberInfo = (user: OneBot.GuildMemberInfo): Universal.GuildMember => ({
-  userId: user.tiny_id,
-  username: user.nickname,
+  user: {
+    id: user.tiny_id,
+    name: user.nickname,
+    isBot: user.role_name === '机器人',
+  },
   nickname: user.nickname,
   roles: user.role_name ? [user.role_name] : [],
-  isBot: user.role_name === '机器人',
 })
 
 export const adaptQQGuildMemberProfile = (user: OneBot.GuildMemberProfile): Universal.GuildMember => ({
-  userId: user.tiny_id,
-  username: user.nickname,
+  user: {
+    id: user.tiny_id,
+    name: user.nickname,
+    isBot: user.roles?.some(r => r.role_name === '机器人'),
+  },
   nickname: user.nickname,
   roles: user.roles?.map(r => r.role_name) || [],
-  isBot: user.roles?.some(r => r.role_name === '机器人'),
 })
 
 export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.AnonymousInfo): Universal.Author => ({

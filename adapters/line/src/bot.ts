@@ -46,6 +46,8 @@ export class LineBot extends Bot<LineBot.Config> {
   async getSelf() {
     const { userId, displayName, pictureUrl } = await this.internal.getBotInfo()
     return {
+      id: userId,
+      name: displayName,
       userId,
       nickname: displayName,
       avatar: pictureUrl,
@@ -57,7 +59,7 @@ export class LineBot extends Bot<LineBot.Config> {
       start,
       limit: 1000,
     })
-    return { data: userIds.map(v => ({ userId: v })), next }
+    return { data: userIds.map(v => ({ id: v, userId: v })), next }
   }
 
   async getGuild(guildId: string) {
@@ -72,12 +74,17 @@ export class LineBot extends Bot<LineBot.Config> {
 
   async getGuildMemberList(guildId: string, start?: string) {
     const { memberIds, next } = await this.internal.getGroupMembersIds(guildId, { start })
-    return { data: memberIds.map(v => ({ userId: v })), next }
+    return { data: memberIds.map(id => ({ user: { id }, userId: id })), next }
   }
 
   async getGuildMember(guildId: string, userId: string) {
     const res = await this.internal.getGroupMemberProfile(guildId, userId)
     return {
+      user: {
+        id: res.userId,
+        name: res.displayName,
+        avatar: res.pictureUrl,
+      },
       userId: res.userId,
       nickname: res.displayName,
       avatar: res.pictureUrl,

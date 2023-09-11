@@ -9,9 +9,10 @@ export const adaptGuild = (guild: QQGuild.Guild): Universal.Guild => ({
 })
 
 export const adaptUser = (user: QQGuild.User): Universal.User => ({
+  id: user.id,
+  name: user.username,
   isBot: user.bot,
   avatar: user.avatar,
   userId: user.id,
   username: user.username,
-  nickname: user.username,
 })

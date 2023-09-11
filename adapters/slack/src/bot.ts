@@ -1,7 +1,7 @@
 import { Bot, Context, Fragment, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
-import { adaptChannel, adaptGuild, adaptMessage, adaptUser } from './utils'
+import { adaptChannel, adapteGuildMember, adaptGuild, adaptMessage, adaptUser } from './utils'
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import FormData from 'form-data'
@@ -42,6 +42,8 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
   async getSelf() {
     const data = await this.internal.authTest(Token.BOT)
     return {
+      id: data.user_id,
+      name: data.user,
       userId: data.user_id,
       avatar: null,
       username: data.user,
@@ -89,7 +91,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
   async getGuildMemberList(guildId: string) {
     // users:read
     const { members } = await this.request<{ members: SlackUser[] }>('POST', '/users.list')
-    return { data: members.map(adaptUser) }
+    return { data: members.map(adapteGuildMember) }
   }
 
   async getChannel(channelId: string, guildId?: string) {
@@ -122,7 +124,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       user: userId,
     })
     return {
-      ...adaptUser(user),
+      ...adapteGuildMember(user),
       nickname: user.profile.display_name,
     }
   }

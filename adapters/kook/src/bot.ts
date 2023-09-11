@@ -1,5 +1,5 @@
 import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
-import { adaptAuthor, adaptGroup, adaptMessage, adaptUser, decodeRole, encodeRole } from './utils'
+import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
 import { WsClient } from './ws'
@@ -94,7 +94,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async getGuildMemberList(guild_id: string) {
     const { items } = await this.request<Kook.GuildUserList>('GET', '/guild/user-list', { guild_id })
-    return { data: items.map(adaptAuthor) }
+    return { data: items.map(decodeGuildMember) }
   }
 
   async setGroupNickname(guild_id: string, user_id: string, nickname: string) {
@@ -153,7 +153,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     return { data: items.map(decodeRole) }
   }
 
-  async createGuildRole(guildId: string, data: Partial<Universal.Role>) {
+  async createGuildRole(guildId: string, data: Partial<Universal.GuildRole>) {
     const role = await this.internal.createGuildRole({
       guild_id: guildId,
       ...data,
@@ -161,7 +161,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     return role.role_id.toString()
   }
 
-  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.Role>) {
+  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
     await this.internal.updateGuildRole({
       guild_id: guildId,
       ...encodeRole(data),

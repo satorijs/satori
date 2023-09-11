@@ -138,9 +138,9 @@ export namespace Universal {
 
   export interface User {
     id: string
-    name: string
+    name?: string
     /** @deprecated */
-    userId: string
+    userId?: string
     /** @deprecated */
     username?: string
     avatar?: string
@@ -167,7 +167,7 @@ export namespace Universal {
     content?: string
     elements?: Element[]
     timestamp?: number
-    author?: User
+    author?: Author
     member?: Partial<GuildMember>
     quote?: Message
     isDirect?: boolean
