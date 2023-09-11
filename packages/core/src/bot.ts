@@ -3,7 +3,7 @@ import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { SendOptions, Session } from './session'
-import { Universal } from './universal'
+import { Universal } from './protocol'
 import WebSocket from 'ws'
 
 export interface Bot extends Universal.Methods, Universal.User {

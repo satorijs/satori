@@ -2,6 +2,8 @@ import Element from '@satorijs/element'
 import { SendOptions } from './session'
 import { Dict } from 'cosmokit'
 
+export { Universal as Satori }
+
 export namespace Universal {
   export interface Method {
     name: string
@@ -84,10 +86,10 @@ export namespace Universal {
     // role
     setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
     unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
-    getGuildRoleList(guildId: string, next?: string): Promise<List<Role>>
-    getGuildRoleIter(guildId: string): AsyncIterable<Role>
-    createGuildRole(guildId: string, data: Partial<Role>): Promise<string>
-    modifyGuildRole(guildId: string, roleId: string, data: Partial<Role>): Promise<void>
+    getGuildRoleList(guildId: string, next?: string): Promise<List<GuildRole>>
+    getGuildRoleIter(guildId: string): AsyncIterable<GuildRole>
+    createGuildRole(guildId: string, data: Partial<GuildRole>): Promise<string>
+    modifyGuildRole(guildId: string, roleId: string, data: Partial<GuildRole>): Promise<void>
     deleteGuildRole(guildId: string, roleId: string): Promise<void>
 
     // channel
@@ -124,7 +126,7 @@ export namespace Universal {
     guildName?: string
   }
 
-  export interface Role {
+  export interface GuildRole {
     id: string
     name: string
     color: number
@@ -134,29 +136,28 @@ export namespace Universal {
     mentionable: boolean
   }
 
-  export interface UserBase {
+  export interface User {
+    id: string
+    name: string
+    /** @deprecated */
+    userId: string
+    /** @deprecated */
     username?: string
-    nickname?: string
     avatar?: string
     discriminator?: string
     isBot?: boolean
   }
 
-  export interface User extends UserBase {
-    userId: string
-  }
-
-  export interface GuildMember extends User {
+  export interface GuildMember {
+    user: User
+    nickname?: string
+    avatar?: string
     roles?: string[]
-  }
-
-  export interface Author extends GuildMember {
     anonymous?: string
   }
 
-  export interface Role {
-    id: string
-  }
+  /** @deprecated */
+  export type Author = Partial<Omit<GuildMember, 'user'> & User>
 
   export interface Message {
     messageId?: string
@@ -166,7 +167,8 @@ export namespace Universal {
     content?: string
     elements?: Element[]
     timestamp?: number
-    author?: Author
+    author?: User
+    member?: Partial<GuildMember>
     quote?: Message
     isDirect?: boolean
     /** @deprecated please use `isDirect` instead */
@@ -205,7 +207,11 @@ export namespace Universal {
   }
 
   export interface EventData {
-    role?: Role
+    role?: GuildRole
     argv?: Argv
+    channel?: Channel
+    guild?: Guild
+    member?: GuildMember
+    user?: User
   }
 }

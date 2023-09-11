@@ -1,7 +1,7 @@
 import { defineProperty, isNullable } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
-import { Universal } from './universal'
+import { Universal } from './protocol'
 import Element from '@satorijs/element'
 
 export interface SendOptions {
@@ -29,6 +29,7 @@ export namespace Session {
     elements?: Element[]
     timestamp?: number
     author?: Universal.Author
+    member?: Universal.GuildMember
     quote?: Universal.Message
     channelName?: string
     guildName?: string

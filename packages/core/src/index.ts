@@ -21,7 +21,7 @@ export * from './adapter'
 export * from './internal'
 export * from './message'
 export * from './session'
-export * from './universal'
+export * from './protocol'
 
 declare global {
   namespace Satori {
