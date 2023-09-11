@@ -82,7 +82,9 @@ export class Router extends KoaRouter {
   }
 
   get selfUrl() {
-    return `http://${this.host}:${this.port}`
+    const wildcard = ['0.0.0.0', '::']
+    const host = wildcard.includes(this.host) ? '127.0.0.1' : this.host
+    return `http://${host}:${this.port}`
   }
 
   /**
