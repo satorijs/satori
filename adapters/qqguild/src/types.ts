@@ -90,7 +90,7 @@ export enum Opcode {
   HEARTBEAT_ACK = 11
 }
 
-type DispatchPayload = {
+export type DispatchPayload = {
   op: Opcode.DISPATCH
   s: number
   t: 'READY'
@@ -171,6 +171,16 @@ export type Payload = DispatchPayload | {
   }
 }
 
+export interface Attachment {
+  content_type: string
+  filename: string
+  height: number
+  id: string
+  size: number
+  url: string
+  width: number
+}
+
 export interface Message {
   /** 消息 id */
   id: string
@@ -188,8 +198,8 @@ export interface Message {
   edited_timestamp: string
   /** 是否是@全员消息 */
   mention_everyone: boolean
-  // /** 附件 */
-  // attachments: Attachment
+  /** 附件 */
+  attachments: Attachment[]
   /** embed */
   embeds: Message.Embed[]
   /** 消息中@的人 */
@@ -240,11 +250,11 @@ export namespace Message {
     /** 描述 */
     description: string
     /** 消息弹窗内容 */
-    prompt:	string
+    prompt: string
     /** 消息创建时间 */
     timestamp: Date
-    /** 对象数组	消息创建时间 */
-    fields:	EmbedField
+    /** 对象数组 消息创建时间 */
+    fields: EmbedField
   }
   export interface Markdown {
     /** markdown 模板 id */
@@ -262,7 +272,7 @@ export namespace Message {
   }
   export interface Reference {
     /** 需要引用回复的消息 id */
-    messageId: string
+    message_id: string
     /** 是否忽略获取引用消息详情错误，默认否 */
     ignoreGetMessageError?: boolean
   }
@@ -389,9 +399,9 @@ export enum ChannelSubType {
 
 export interface ChannelPermissions {
   /** 子频道 id */
-  channelId: string
+  channel_id: string
   /** 用户 id */
-  userId: string
+  user_id: string
   /** 用户拥有的子频道权限 */
   permissions: string
 }
@@ -418,7 +428,7 @@ export interface Channel {
   /** 子频道 id */
   id: string
   /** 频道 id */
-  guildId: string
+  guild_id: string
   /** 子频道名 */
   name: string
   /** 子频道类型 */
@@ -443,7 +453,7 @@ export interface Channel {
 
 export interface MemberWithGuild {
   /** 频道 id */
-  guildId: string
+  guild_id: string
   /** 用户基础信息 */
   user: User
   /** 用户在频道内的昵称 */
@@ -459,9 +469,9 @@ export interface MemberWithGuild {
  */
 export interface Announce {
   /** 频道 id */
-  guildId: string
+  guild_id: string
   /** 子频道 id */
-  channelId: string
+  channel_id: string
   /** 消息 id */
   messageId: string
 }
@@ -471,11 +481,11 @@ export interface Announce {
  */
 export interface MessageReaction {
   /** 用户 ID */
-  userId: string
+  user_id: string
   /** 频道 ID */
-  guildId: string
+  guild_id: string
   /** 子频道 ID */
-  channelId: string
+  channel_id: string
   /** 表态对象 */
   target: ReactionTarget
   /** 表态所用表情 */
@@ -497,13 +507,13 @@ export interface ReactionTarget {
  */
 export enum ReactionTargetType {
   /** 消息 */
-  MESSAGE = 0,
+  MESSAGE = 'ReactionTargetType_MSG',
   /** 帖子 */
-  POST = 1,
+  POST = 'ReactionTargetType_FEED',
   /** 评论 */
-  COMMENT = 2,
+  COMMENT = 'ReactionTargetType_COMMNENT',
   /** 回复 */
-  REPLY = 3
+  REPLY = 'ReactionTargetType_REPLY'
 }
 
 /**
@@ -547,7 +557,7 @@ export interface Schedule {
   /** 创建者 */
   creator: Member
   /** 日程开始时跳转到的子频道 id */
-  jumpChannelId: string
+  jumpchannel_id: string
   /** 日程提醒类型，取值参考 RemindType */
   remindType: RemindType
 }
@@ -576,7 +586,7 @@ export interface Mute {
   /** 禁言多少秒（两个字段二选一，默认以 muteEndTimestamp 为准） */
   muteSeconds?: number
   /** 禁言成员的user_id列表，即 User 的id */
-  userIds?: string[]
+  user_ids?: string[]
 }
 
 export enum DeleteHistoryMsgDays {
@@ -594,7 +604,7 @@ export interface MessageSetting {
   /** 是否允许发主动消息 */
   disablePushMsg: string
   /** 子频道 id 数组 */
-  channelIds: string
+  channel_ids: string
   /** 每个子频道允许主动推送消息最大消息条数 */
   channelPushMaxNum: string
 }
@@ -616,9 +626,9 @@ export interface DMS {
  */
 export interface PinsMessage {
   /** 频道 id */
-  guildId: string
+  guild_id: string
   /** 子频道 id */
-  channelId: string
+  channel_id: string
   /** 子频道内精华消息 id 数组 */
   messageIds: string[]
 }
@@ -649,9 +659,9 @@ export interface APIPermissionDemandIdentify {
  */
 export interface APIPermissionDemand {
   /** 申请接口权限的频道 id */
-  guildId: string
+  guild_id: string
   /** 接口权限需求授权链接发送的子频道 id */
-  channelId: string
+  channel_id: string
   /** 权限接口唯一标识 */
   apiIdentify: APIPermissionDemandIdentify
   /** 接口权限链接中的接口权限描述信息 */
@@ -664,6 +674,7 @@ export interface AppConfig {
   id: string
   key: string
   token: string
+  type: 'public' | 'private'
 }
 
 export interface Options {

@@ -1,8 +1,8 @@
 import { Quester } from '@satorijs/satori'
-import { DMS, User } from './types'
+import { DMS, Message, User } from './types'
 
 export class Internal {
-  constructor(private http: Quester) {}
+  constructor(private http: Quester) { }
 
   async getMe() {
     return this.http.get<User>('/users/@me')
@@ -13,5 +13,12 @@ export class Internal {
     return this.http.post<DMS>('/users/@me/dms', {
       recipient_id, source_guild_id,
     })
+  }
+
+  async getMessage(channelId: string, messageId: string) {
+    const { message } = await this.http.get<{
+      message: Message
+    }>(`/channels/${channelId}/messages/${messageId}`)
+    return message
   }
 }

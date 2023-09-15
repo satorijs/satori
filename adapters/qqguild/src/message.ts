@@ -1,13 +1,11 @@
-import { fileURLToPath } from 'url'
 import * as QQGuild from './types'
-import { Dict, h, Logger, MessageEncoder, Quester } from '@satorijs/satori'
+import { Dict, h, MessageEncoder } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 import FormData from 'form-data'
-
-const logger = new Logger('satori')
+import { decodeMessage } from './utils'
 
 export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
-  private mode: 'figure' | 'default' = 'default'
+  // private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private file: Buffer
   private filename: string
@@ -51,7 +49,8 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     const r = await this.bot.http.post(endpoint, form, {
       headers: form.getHeaders(),
     })
-    const session = this.bot.adaptMessage(r)
+    const session = this.bot.session()
+    await decodeMessage(this.bot, r, session)
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
     // session.guildId = this.session.guildId

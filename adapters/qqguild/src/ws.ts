@@ -1,6 +1,7 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 import { Opcode, Payload } from './types'
+import { adaptSession } from './utils'
 
 const logger = new Logger('qqguild')
 export class WsClient extends Adapter.WsClient<QQGuildBot> {
@@ -41,14 +42,12 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
       } else if (parsed.op === Opcode.DISPATCH) {
         this._s = parsed.s
         if (parsed.t === 'READY') {
-          bot.online()
           this._sessionId = parsed.d.sessionId
-        } else if (parsed.t === 'MESSAGE_CREATE' || parsed.t === 'AT_MESSAGE_CREATE' || parsed.t === 'DIRECT_MESSAGE_CREATE') {
-          const session = bot.adaptMessage(parsed.d
-            , parsed,
-          )
-          if (session) bot.dispatch(session)
+          return bot.online()
         }
+        const session = await adaptSession(bot, parsed)
+        if (session) bot.dispatch(session)
+        logger.debug(require('util').inspect(session, false, null, true))
       }
     })
 
