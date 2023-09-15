@@ -1,57 +1,73 @@
-import * as QQGuild from '@qq-guild-sdk/core'
-import { Bot, Context, h, Schema } from '@satorijs/satori'
+import { Bot, Context, defineProperty, Fragment, h, Quester, Schema, SendOptions } from '@satorijs/satori'
 import { adaptGuild, adaptUser } from './utils'
 import { QQGuildMessageEncoder } from './message'
 import { WsClient } from './ws'
+import { Internal } from './internal'
+import * as QQGuild from './types'
 
 export class QQGuildBot extends Bot<QQGuildBot.Config> {
   static MessageEncoder = QQGuildMessageEncoder
 
-  internal: QQGuild.Bot
+  internal: Internal
+  http: Quester
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
     this.platform = 'qqguild'
-    this.internal = new QQGuild.Bot(config as QQGuild.Bot.Options)
+    this.http = ctx.http.extend({
+      endpoint: config.endpoint,
+      headers: {
+        Authorization: `Bot ${this.config.app.id}.${this.config.app.token}`,
+      },
+    })
+    this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
   }
 
+  session(payload?: any, input?: any) {
+    return defineProperty(super.session(payload), 'qqguild', Object.assign(Object.create(this.internal), input))
+  }
+
+  async initialize() {
+    const self = await this.getSelf()
+    this.name = self.name
+    this.username = self.name
+    this.selfId = self.id
+    this.avatar = self.avatar
+  }
+
   async getSelf() {
-    const user = adaptUser(await this.internal.me)
-    user['selfId'] = user.userId
-    delete user.userId
+    const user = adaptUser(await this.internal.getMe())
     return user
   }
 
-  async getGuildList() {
-    const guilds = await this.internal.guilds
-    return { data: guilds.map(adaptGuild) }
-  }
+  // async getGuildList() {
+  //   const guilds = await this.internal.guilds
+  //   return { data: guilds.map(adaptGuild) }
+  // }
 
-  adaptMessage(msg: QQGuild.Message) {
-    const { id: messageId, author, guildId, channelId, timestamp } = msg
+  adaptMessage(msg: QQGuild.Message
+    , input?: QQGuild.Payload,
+  ) {
+    const { id: messageId, author, guild_id, channel_id, timestamp } = msg
     const session = this.session({
       type: 'message',
-      guildId,
+      guildId: guild_id,
       messageId,
-      channelId,
-      timestamp: +timestamp,
-    })
+      channelId: channel_id,
+      timestamp: new Date(timestamp).valueOf(),
+    }
+    , input,
+    )
     session.author = adaptUser(msg.author)
     session.userId = author.id
-    // TODO https://github.com/satorijs/satori/blob/fbcf4665c77381ff80c8718106d2282a931d5736/packages/core/src/message.ts#L23
-    //      satori core need set guildId is undefined when isPrivate
-    //      this is a temporary solution
-    if (msg.isPrivate) {
-      session.guildId = undefined
-      session.channelId = msg.guildId
+    if (msg.direct_message) {
+      session.guildId = msg.src_guild_id
     } else {
-      session.guildId = msg.guildId
-      session.channelId = msg.channelId
+      session.guildId = guild_id
+      session.channelId = channel_id
     }
-    // it's useless, but I need it
-    session.subtype = msg.isPrivate ? 'private' : 'group'
-    session.isDirect = msg.isPrivate
+    session.isDirect = !!msg.direct_message
     session.content = (msg.content ?? '')
       .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
       .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
@@ -65,7 +81,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 }
 
 export namespace QQGuildBot {
-  type BotOptions = QQGuild.Bot.Options
+  type BotOptions = QQGuild.Options
   type CustomBotOptions = Omit<BotOptions, 'sandbox'> & Partial<Pick<BotOptions, 'sandbox'>>
   export interface Config extends Bot.Config, CustomBotOptions, WsClient.Config {
     intents?: number
@@ -81,7 +97,7 @@ export namespace QQGuildBot {
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
-      intents: Schema.bitset(QQGuild.Bot.Intents).description('需要订阅的机器人事件。').default(QQGuild.Bot.Intents.PUBLIC_GUILD_MESSAGES),
+      intents: Schema.bitset(QQGuild.Intents).description('需要订阅的机器人事件。').default(QQGuild.Intents.PUBLIC_GUILD_MESSAGES),
     }),
     WsClient.Config,
   ] as const)

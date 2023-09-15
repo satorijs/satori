@@ -1,4 +1,4 @@
-import * as QQGuild from '@qq-guild-sdk/core'
+import * as QQGuild from './types'
 import { QQGuildBot } from './bot'
 
 export { QQGuild }
@@ -12,6 +12,6 @@ export default QQGuildBot
 
 declare module '@satorijs/core' {
   interface Session {
-    qqguild?: QQGuild.Bot
+    qqguild?: QQGuild.Payload
   }
 }

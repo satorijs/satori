@@ -1,5 +1,5 @@
 import { Universal } from '@satorijs/satori'
-import * as QQGuild from '@qq-guild-sdk/core'
+import * as QQGuild from './types'
 
 export const adaptGuild = (guild: QQGuild.Guild): Universal.Guild => ({
   id: guild.id,
@@ -13,6 +13,4 @@ export const adaptUser = (user: QQGuild.User): Universal.User => ({
   name: user.username,
   isBot: user.bot,
   avatar: user.avatar,
-  userId: user.id,
-  username: user.username,
 })
