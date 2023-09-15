@@ -114,6 +114,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
 
   dispatch(session: Session) {
     if (!this.ctx.lifecycle.isActive) return
+    this.context.emit('internal/session', session)
     const events: string[] = [session.type]
     if (session.subtype) {
       events.unshift(events[0] + '/' + session.subtype)

@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/server-basic",
+  "name": "@satorijs/server",
   "description": "Basic API server for Satori protocol",
   "version": "0.0.1",
   "main": "lib/index.js",
