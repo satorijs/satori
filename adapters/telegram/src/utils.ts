@@ -7,13 +7,19 @@ export * from './types'
 const logger = new Logger('telegram')
 
 export const adaptUser = (data: Telegram.User): Universal.User => ({
+  id: data.id.toString(),
+  name: data.username,
+  nick: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
+  isBot: data.is_bot,
   userId: data.id.toString(),
   username: data.username,
-  nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
-  isBot: data.is_bot,
 })
 
-export const adaptGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => adaptUser(data.user)
+export const adaptGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => ({
+  user: adaptUser(data.user),
+  title: data['custom_title'],
+  ...adaptUser(data.user),
+})
 
 export function adaptMessageMeta(session: Session, message: Telegram.Message) {
   if (!message) return

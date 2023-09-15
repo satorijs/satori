@@ -113,16 +113,12 @@ export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Unive
     return {
       id: guild.guild_id,
       name: guild.guild_name,
-      guildId: guild.guild_id,
-      guildName: guild.guild_name,
     }
   } else {
     const group = info as OneBot.GroupInfo
     return {
       id: group.group_id.toString(),
       name: group.group_name,
-      guildId: group.group_id.toString(),
-      guildName: group.group_name,
     }
   }
 }

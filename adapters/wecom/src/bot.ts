@@ -66,8 +66,8 @@ export class WecomBot extends Bot<WecomBot.Config> {
     })
     const { name, avatar } = data
     return {
-      userId,
-      username: name,
+      id: userId,
+      name,
       avatar,
     }
   }
@@ -95,6 +95,8 @@ export class WecomBot extends Bot<WecomBot.Config> {
       },
     })
     return {
+      id: this.config.agentId,
+      name,
       userId: this.config.agentId,
       username: name,
       avatar: square_logo_url,

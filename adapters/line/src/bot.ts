@@ -67,8 +67,6 @@ export class LineBot extends Bot<LineBot.Config> {
     return {
       id: res.groupId,
       name: res.groupName,
-      guildId: res.groupId,
-      guildName: res.groupName,
     }
   }
 

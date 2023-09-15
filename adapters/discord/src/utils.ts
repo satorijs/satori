@@ -31,15 +31,11 @@ export const decodeGuildMember = (member: Discord.GuildMember): Universal.GuildM
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
   id: data.id,
   name: data.name,
-  guildId: data.id,
-  guildName: data.name,
 })
 
 export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
   id: data.id,
   name: data.name,
-  channelId: data.id,
-  channelName: data.name,
 })
 
 export const decodeAuthor = (author: Discord.User): Universal.Author => ({

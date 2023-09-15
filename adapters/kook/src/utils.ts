@@ -6,8 +6,6 @@ export * from './types'
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   id: data.id,
   name: data.name,
-  guildId: data.id,
-  guildName: data.name,
 })
 
 export const adaptUser = (user: Kook.User): Universal.User => ({

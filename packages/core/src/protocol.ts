@@ -112,7 +112,7 @@ export namespace Universal {
     name?: string
     parentId?: string
     /** @deprecated */
-    channelId: string
+    channelId?: string
     /** @deprecated */
     channelName?: string
   }
@@ -121,7 +121,7 @@ export namespace Universal {
     id: string
     name: string
     /** @deprecated */
-    guildId: string
+    guildId?: string
     /** @deprecated */
     guildName?: string
   }
@@ -139,6 +139,7 @@ export namespace Universal {
   export interface User {
     id: string
     name?: string
+    nick?: string
     /** @deprecated */
     userId?: string
     /** @deprecated */
@@ -150,6 +151,7 @@ export namespace Universal {
 
   export interface GuildMember {
     user: User
+    title?: string
     nickname?: string
     avatar?: string
     roles?: string[]

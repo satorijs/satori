@@ -198,16 +198,15 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     user_id = +user_id
     if (Number.isNaN(user_id)) return null
     const data = await this.internal.getChatMember({ chat_id, user_id })
-    const user = adaptGuildMember(data)
-    await this.setAvatarUrl(user)
-    return user
+    const member = adaptGuildMember(data)
+    await this.setAvatarUrl(member.user)
+    return member
   }
 
   async getGuildMemberList(chat_id: string) {
     const data = await this.internal.getChatAdministrators({ chat_id })
-    const users = data.map(adaptGuildMember)
-    await Promise.all(users.map(this.setAvatarUrl.bind(this)))
-    return { data: users }
+    const members = data.map(adaptGuildMember)
+    return { data: members }
   }
 
   async kickGuildMember(chat_id: string, user_id: string | number, permanent?: boolean) {
@@ -268,7 +267,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   private async setAvatarUrl(user: Universal.User) {
-    const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.userId })
+    const { photos: [avatar] } = await this.internal.getUserProfilePhotos({ user_id: +user.id })
     if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]
     const file = await this.internal.getFile({ file_id })

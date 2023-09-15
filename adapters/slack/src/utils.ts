@@ -235,13 +235,9 @@ export const adapteGuildMember = (data: SlackUser): Universal.GuildMember => ({
 export const adaptChannel = (data: SlackChannel): Universal.Channel => ({
   id: data.id,
   name: data.name,
-  channelId: data.id,
-  channelName: data.name,
 })
 
 export const adaptGuild = (data: SlackTeam): Universal.Guild => ({
   id: data.id,
   name: data.name,
-  guildId: data.id,
-  guildName: data.name,
 })
