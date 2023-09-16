@@ -86,4 +86,13 @@ export class Internal {
   async deleteReaction(channel_id: string, message_id: string, type: string, id: string) {
     return this.http.delete(`/channels/${channel_id}/messages/${message_id}/reactions/${type}/${id}`)
   }
+
+  async deleteMessage(channel_id: string, message_id: string) {
+    return this.http.delete(`/channels/${channel_id}/messages/${message_id}`)
+  }
+
+  async deleteDM(guild_id: string, message_id: string) {
+    // guild_id 是 createDMS 之后的 id
+    return this.http.delete(`/dms/${guild_id}/messages/${message_id}`)
+  }
 }

@@ -40,7 +40,9 @@ export async function decodeMessage(bot: QQGuildBot, msg: QQGuild.Message, sessi
   session.author = adaptUser(msg.author)
   session.userId = author.id
   if (msg.direct_message) {
-    session.guildId = msg.src_guild_id
+    // real guild id, dm's fake guild id
+    session.guildId = `${msg.src_guild_id}_${msg.guild_id}`
+    session.channelId = `${msg.guild_id}_${msg.channel_id}`
   } else {
     session.guildId = guild_id
     session.channelId = channel_id

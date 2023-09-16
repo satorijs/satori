@@ -9,10 +9,12 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private content: string = ''
   private file: Buffer
   private filename: string
+  reference: string
   dms: QQGuild.DMS
 
   async initDms() {
     const dms = await this.bot.internal.createDMS(this.options.session.userId, this.session.guildId || this.options.session.guildId)
+    this.bot.ctx.logger('qqguild').debug(require('util').inspect(dms, false, null, true))
     this.dms = dms
   }
 
@@ -29,13 +31,16 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       return
     }
     let endpoint = `/channels/${this.session.channelId}/messages`
+    let srcGuildId // directMsg
     if (this.session.isDirect && !this.options?.session) {
       // initiative send
       endpoint = `/dms/${this.dms.guild_id}/messages`
+      srcGuildId = this.session.guildId
     } else if (this.session.isDirect && this.options?.session) {
       // @ts-ignore
       const payload = this.options.session.qqguild.d as QQGuild.Message
       endpoint = `/dms/${payload.guild_id}/messages`
+      srcGuildId = payload.src_guild_id
     }
     const form = new FormData()
     form.append('content', this.content)
@@ -49,8 +54,14 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     const r = await this.bot.http.post(endpoint, form, {
       headers: form.getHeaders(),
     })
+    this.bot.ctx.logger('qqguild').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     await decodeMessage(this.bot, r, session)
+    if (this.session.isDirect) {
+      session.guildId = this.session.guildId
+      session.channelId = this.session.channelId
+      session.isDirect = true
+    }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
     // session.guildId = this.session.guildId
@@ -88,8 +99,8 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     } else if (type === 'sharp') {
       this.content += `<#${attrs.id}>`
     } else if (type === 'quote') {
+      this.reference = attrs.id
       await this.flush()
-      // this.addition.reference = attrs.id
     } else if (type === 'image' && attrs.url) {
       await this.resolveFile(attrs)
       await this.flush()

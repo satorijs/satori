@@ -99,6 +99,16 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     const r = await this.internal.getMessage(channelId, messageId)
     return decodeMessage(this, r)
   }
+
+  async deleteMessage(channelId: string, messageId: string) {
+    if (channelId.includes('_')) {
+      // direct message
+      const [guildId, _] = channelId.split('_')
+      await this.internal.deleteDM(guildId, messageId)
+    } else {
+      await this.internal.deleteMessage(channelId, messageId)
+    }
+  }
 }
 
 export namespace QQGuildBot {
