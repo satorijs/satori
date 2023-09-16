@@ -27,22 +27,40 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
       const parsed: Payload = JSON.parse(data.toString())
       logger.debug(require('util').inspect(parsed, false, null, true))
       if (parsed.op === Opcode.HELLO) {
-        bot.socket.send(JSON.stringify({
-          op: Opcode.IDENTIFY,
-          d: {
-            token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
-            intents: 0 | bot.config.intents,
-          },
-        }))
+        if (this._sessionId) {
+          bot.socket.send(JSON.stringify({
+            op: Opcode.RESUME,
+            d: {
+              token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
+              session_id: this._sessionId,
+              seq: this._s,
+            },
+          }))
+        } else {
+          bot.socket.send(JSON.stringify({
+            op: Opcode.IDENTIFY,
+            d: {
+              token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
+              intents: 0 | bot.config.intents,
+            },
+          }))
+        }
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
-
-        // @TODO resume
+      } else if (parsed.op === Opcode.INVALID_SESSION) {
+        this._sessionId = ''
+        this._s = null
+        logger.warn('offline: invalid session')
+        bot.socket?.close()
       } else if (parsed.op === Opcode.RECONNECT) {
-
+        logger.warn('offline: server request reconnect')
+        this.bot.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
         this._s = parsed.s
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.sessionId
+          return bot.online()
+        }
+        if (parsed.t === 'RESUMED') {
           return bot.online()
         }
         const session = await adaptSession(bot, parsed)
@@ -54,18 +72,11 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
     bot.socket.addEventListener('close', (e) => {
       clearInterval(this._ping)
     })
-    // Object.assign(bot, await bot.getSelf())
-    // await bot.internal.startClient(bot.config.intents)
-    // bot.internal.on('ready', bot.online.bind(bot))
-    // bot.internal.on('message', msg => {
-    //   const session = bot.adaptMessage(msg)
-    //   if (session) bot.dispatch(session)
-    // })
   }
 
-  async stop(bot: QQGuildBot) {
-    // bot.internal.stopClient()
-    // bot.offline()
+  async stop(bot: QQGuildBot): Promise<void> {
+    bot.offline()
+    bot.socket?.close()
   }
 }
 

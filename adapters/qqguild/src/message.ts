@@ -5,10 +5,10 @@ import FormData from 'form-data'
 import { decodeMessage } from './utils'
 
 export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
-  // private mode: 'figure' | 'default' = 'default'
   private content: string = ''
   private file: Buffer
   private filename: string
+  fileUrl: string
   reference: string
   dms: QQGuild.DMS
 
@@ -27,7 +27,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
 
   // 先文后图
   async flush() {
-    if (!this.content.trim().length && !this.file) {
+    if (!this.content.trim().length && !this.file && !this.fileUrl) {
       return
     }
     let endpoint = `/channels/${this.session.channelId}/messages`
@@ -50,6 +50,9 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     if (this.file) {
       form.append('file_image', this.file, this.filename)
     }
+    if (this.fileUrl) {
+      form.append('image', this.fileUrl)
+    }
 
     const r = await this.bot.http.post(endpoint, form, {
       headers: form.getHeaders(),
@@ -64,15 +67,18 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
-    // session.guildId = this.session.guildId
     this.results.push(session)
     session.app.emit(session, 'send', session)
     this.content = ''
     this.file = null
     this.filename = null
+    this.fileUrl = null
   }
 
   async resolveFile(attrs: Dict) {
+    if (attrs.url.startsWith('http')) {
+      return this.fileUrl = attrs.url
+    }
     const { data, filename } = await this.bot.ctx.http.file(attrs.url, attrs)
     this.file = Buffer.from(data)
     this.filename = filename
@@ -102,42 +108,15 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       this.reference = attrs.id
       await this.flush()
     } else if (type === 'image' && attrs.url) {
+      await this.flush()
       await this.resolveFile(attrs)
       await this.flush()
-    }
-    //  else if (type === 'figure') {
-    //   await this.flush()
-    //   this.mode = 'figure'
-    //   await this.render(children)
-    //   await this.flush()
-    //   this.mode = 'default'
-    // }
-    else if (type === 'message') {
-      // if (this.mode === 'figure') {
-      // await this.render(children)
-      // this.content += '\n'
-      // } else {
+    } else if (type === 'message') {
       await this.flush()
       await this.render(children)
       await this.flush()
-      // }
     } else {
       await this.render(children)
     }
   }
-
-  // async send(content: h.Fragment) {
-  //   try {
-  //     return await super.send(content)
-  //   } catch (e) {
-  //     // https://bot.q.qq.com/wiki/develop/api/openapi/error/error.html#错误码处理:~:text=304031
-  //     if ([304031, 304032, 304033].includes(e.code)) {
-  //       const { channel_id, guild_id } = await this.bot.internal.createDMS(this.session.channelId, this.session.guildId || this.options.session.guildId)
-  //       this.session.channelId = channel_id
-  //       this.session.guildId = guild_id
-  //       return await super.send(content)
-  //     }
-  //     throw e
-  //   }
-  // }
 }

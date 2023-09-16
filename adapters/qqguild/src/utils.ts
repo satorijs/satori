@@ -104,6 +104,20 @@ export async function adaptSession(bot: QQGuildBot, input: QQGuild.DispatchPaylo
     }[input.t]
     session.guildId = input.d.id
     session.guildName = input.d.name
+  } else if (input.t === 'DIRECT_MESSAGE_DELETE' || input.t === 'MESSAGE_DELETE' || input.t === 'PUBLIC_MESSAGE_DELETE') {
+    if (bot.config.app.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
+    session.type = 'message-deleted'
+    session.userId = input.d.message.author.id
+    session.operatorId = input.d.op_user.id
+    session.messageId = input.d.message.id
+    session.isDirect = input.d.message.direct_message
+    if (session.isDirect) {
+      session.guildId = `${input.d.message.src_guild_id}_${input.d.message.guild_id}`
+      session.channelId = `${input.d.message.guild_id}_${input.d.message.channel_id}`
+    } else {
+      session.guildId = input.d.message.guild_id
+      session.channelId = input.d.message.channel_id
+    }
   } else {
     return
   }

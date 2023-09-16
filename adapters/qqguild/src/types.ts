@@ -103,7 +103,7 @@ export type DispatchPayload = {
 } | {
   op: Opcode.DISPATCH
   s: number
-  t: 'RESUME'
+  t: 'RESUMED'
   d: string
 } | {
   op: Opcode.DISPATCH
@@ -130,6 +130,11 @@ export type DispatchPayload = {
   s: number
   t: 'GUILD_MEMBER_ADD' | 'GUILD_MEMBER_UPDATE' | 'GUILD_MEMBER_DELETE'
   d: MemberWithGuild
+} | {
+  op: Opcode.DISPATCH
+  s: number
+  t: 'MESSAGE_DELETE' | 'PUBLIC_MESSAGE_DELETE' | 'DIRECT_MESSAGE_DELETE'
+  d: Message.DeletionPayload
 }
 
 export type Payload = DispatchPayload | {
@@ -169,6 +174,8 @@ export type Payload = DispatchPayload | {
     sessionId: string
     seq: number
   }
+} | {
+  op: Opcode.INVALID_SESSION
 }
 
 export interface Attachment {
@@ -312,6 +319,11 @@ export namespace Message {
     pinned: boolean
     embeds: Embed[]
     mentionEveryone: boolean
+  }
+
+  export interface DeletionPayload {
+    message: Partial<Message>
+    op_user: Pick<User, 'id'>
   }
 }
 
