@@ -1,5 +1,5 @@
 import { Bot, Context, defineProperty, Quester, Schema, Universal } from '@satorijs/satori'
-import { adaptUser, decodeMessage } from './utils'
+import { adaptChannel, adaptGuild, adaptUser, decodeGuildMember, decodeMessage } from './utils'
 import { QQGuildMessageEncoder } from './message'
 import { WsClient } from './ws'
 import { Internal } from './internal'
@@ -41,10 +41,60 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     return user
   }
 
-  // async getGuildList() {
-  //   const guilds = await this.internal.guilds
-  //   return { data: guilds.map(adaptGuild) }
-  // }
+  async getGuildList(next?: string) {
+    const guilds = await this.internal.getGuilds()
+    return { data: guilds.map(adaptGuild) }
+  }
+
+  async getGuild(guildId: string) {
+    const guild = await this.internal.getGuild(guildId)
+    return adaptGuild(guild)
+  }
+
+  async getChannelList(guildId: string, next?: string): Promise<Universal.List<Universal.Channel>> {
+    const channels = await this.internal.getChannels(guildId)
+    return { data: channels.map(adaptChannel) }
+  }
+
+  async getChannel(channelId: string): Promise<Universal.Channel> {
+    const channel = await this.internal.getChannel(channelId)
+    return adaptChannel(channel)
+  }
+
+  async getGuildMemberList(guildId: string, next?: string): Promise<Universal.List<Universal.GuildMember>> {
+    const members = await this.internal.getGuildMembers(guildId)
+    return { data: members.map(decodeGuildMember) }
+  }
+
+  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+    const member = await this.internal.getGuildMember(guildId, userId)
+    return decodeGuildMember(member)
+  }
+
+  async kickGuildMember(guildId: string, userId: string) {
+    await this.internal.deleteGuildMember(guildId, userId)
+  }
+
+  async muteGuildMember(guildId: string, userId: string, duration: number) {
+    await this.internal.muteGuildMember(guildId, userId, duration)
+  }
+
+  async getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<Universal.List<Universal.User>> {
+    const [type, id] = emoji.split(':')
+    const { users } = await this.internal.getReactions(channelId, messageId, type, id)
+    return { data: users.map(adaptUser) }
+  }
+
+  async createReaction(channelId: string, messageId: string, emoji: string) {
+    const [type, id] = emoji.split(':')
+    await this.internal.createReaction(channelId, messageId, type, id)
+  }
+
+  async deleteReaction(channelId: string, messageId: string, emoji: string) {
+    const [type, id] = emoji.split(':')
+    await this.internal.deleteReaction(channelId, messageId, type, id)
+  }
+
   async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
     const r = await this.internal.getMessage(channelId, messageId)
     return decodeMessage(this, r)

@@ -9,11 +9,24 @@ export const adaptGuild = (guild: QQGuild.Guild): Universal.Guild => ({
   guildName: guild.name,
 })
 
+export const adaptChannel = (channel: QQGuild.Channel): Universal.Channel => ({
+  id: channel.id,
+  name: channel.name,
+  channelId: channel.id,
+  channelName: channel.name,
+})
+
 export const adaptUser = (user: QQGuild.User): Universal.User => ({
   id: user.id,
   name: user.username,
   isBot: user.bot,
   avatar: user.avatar,
+})
+
+export const decodeGuildMember = (member: QQGuild.Member): Universal.GuildMember => ({
+  user: adaptUser(member.user),
+  nickname: member.nick,
+  roles: member.roles,
 })
 
 export async function decodeMessage(bot: QQGuildBot, msg: QQGuild.Message, session: Partial<Session> = {}): Promise<Universal.Message> {
