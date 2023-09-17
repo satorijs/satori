@@ -1,10 +1,10 @@
-import { Bot, camelize, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, snakeCase, Universal } from '@satorijs/satori'
 import { WsClient } from './ws'
 
-export function camelizeKeys<T>(source: T): T {
+export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
-  if (Array.isArray(source)) return source.map(camelizeKeys) as any
-  return Object.fromEntries(Object.entries(source).map(([k, v]) => [camelize(k), camelizeKeys(v)])) as any
+  if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => [callback(key), transformKey(value, callback)]))
 }
 
 export class SatoriBot extends Bot<SatoriBot.Config> {
@@ -23,8 +23,8 @@ export class SatoriBot extends Bot<SatoriBot.Config> {
 for (const [key, method] of Object.entries(Universal.Methods)) {
   SatoriBot.prototype[key] = function (this: SatoriBot, ...args: any[]) {
     const payload = {}
-    for (const key of method.fields) {
-      payload[key] = args.shift()
+    for (const { name } of method.fields) {
+      payload[name] = transformKey(args.shift(), snakeCase)
     }
     this.http.post('/' + key, payload)
   }

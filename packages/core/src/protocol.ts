@@ -5,39 +5,47 @@ import { Dict } from 'cosmokit'
 export { Universal as Satori }
 
 export namespace Universal {
+  export interface Field {
+    name: string
+  }
+
+  function Field(name: string): Field {
+    return { name }
+  }
+
   export interface Method {
     name: string
-    fields: string[]
+    fields: Field[]
   }
 
   function Method(name: string, fields: string[]): Method {
-    return { name, fields }
+    return { name, fields: fields.map(Field) }
   }
 
   export const Methods: Dict<Method> = {
-    'message.send': Method('sendMessage', ['channelId', 'content', 'guildId', 'options']),
-    'message.get': Method('getMessage', ['channelId', 'messageId']),
-    'message.list': Method('getMessageList', ['channelId', 'next']),
-    'message.update': Method('editMessage', ['channelId', 'messageId']),
-    'message.delete': Method('deleteMessage', ['channelId', 'messageId']),
-    'reaction.create': Method('createReaction', ['channelId', 'messageId', 'emoji']),
-    'reaction.delete': Method('deleteReaction', ['channelId', 'messageId', 'emoji', 'userId']),
-    'reaction.clear': Method('clearReaction', ['channelId', 'messageId', 'emoji']),
-    'reaction.list': Method('getReactionList', ['channelId', 'messageId', 'emoji', 'next']),
-    'guild.get': Method('getGuild', ['guildId']),
+    'message.send': Method('sendMessage', ['channel_id', 'content', 'guild_id', 'options']),
+    'message.get': Method('getMessage', ['channel_id', 'message_id']),
+    'message.list': Method('getMessageList', ['channel_id', 'next']),
+    'message.update': Method('editMessage', ['channel_id', 'message_id']),
+    'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
+    'reaction.create': Method('createReaction', ['channel_id', 'message_id', 'emoji']),
+    'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji', 'user_id']),
+    'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji']),
+    'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji', 'next']),
+    'guild.get': Method('getGuild', ['guild_id']),
     'guild.list': Method('getGuildList', ['next']),
-    'guild.member.get': Method('getGuildMember', ['guildId', 'userId']),
-    'guild.member.list': Method('getGuildMemberList', ['guildId', 'next']),
-    'guild.member.kick': Method('kickGuildMember', ['guildId', 'userId', 'permanent']),
-    'guild.member.mute': Method('muteGuildMember', ['guildId', 'userId', 'duration', 'reason']),
-    'guild.member.role': Method('setGuildMemberRole', ['guildId', 'userId', 'roleId']),
-    'guild.role.list': Method('getGuildRoleList', ['guildId', 'next']),
-    'guild.role.create': Method('createGuildRole', ['guildId', 'data']),
-    'guild.role.update': Method('modifyGuildRole', ['guildId', 'roleId', 'data']),
-    'guild.role.delete': Method('deleteGuildRole', ['guildId', 'roleId']),
-    'channel.get': Method('getChannel', ['channelId', 'guildId']),
-    'channel.list': Method('getChannelList', ['guildId', 'next']),
-    'channel.mute': Method('muteChannel', ['channelId', 'guildId', 'enable']),
+    'guild.member.get': Method('getGuildMember', ['guild_id', 'user_id']),
+    'guild.member.list': Method('getGuildMemberList', ['guild_id', 'next']),
+    'guild.member.kick': Method('kickGuildMember', ['guild_id', 'user_id', 'permanent']),
+    'guild.member.mute': Method('muteGuildMember', ['guild_id', 'user_id', 'duration', 'reason']),
+    'guild.member.role': Method('setGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
+    'guild.role.list': Method('getGuildRoleList', ['guild_id', 'next']),
+    'guild.role.create': Method('createGuildRole', ['guild_id', 'data']),
+    'guild.role.update': Method('modifyGuildRole', ['guild_id', 'role_id', 'data']),
+    'guild.role.delete': Method('deleteGuildRole', ['guild_id', 'role_id']),
+    'channel.get': Method('getChannel', ['channel_id', 'guild_id']),
+    'channel.list': Method('getChannelList', ['guild_id', 'next']),
+    'channel.mute': Method('muteChannel', ['channel_id', 'guild_id', 'enable']),
   }
 
   export interface List<T> {

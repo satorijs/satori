@@ -1,5 +1,5 @@
-import { Adapter, Logger, Schema, Time, Universal } from '@satorijs/satori'
-import { camelizeKeys, SatoriBot } from './bot'
+import { Adapter, camelCase, Logger, Schema, Time, Universal } from '@satorijs/satori'
+import { SatoriBot, transformKey } from './bot'
 
 const logger = new Logger('discord')
 
@@ -65,12 +65,12 @@ export class WsClient extends Adapter.WsClient<SatoriBot> {
 
       if (parsed.op === 'ready') {
         logger.debug('ready')
-        Object.assign(this.bot, camelizeKeys(parsed.data.user))
+        Object.assign(this.bot, transformKey(parsed.data.user, camelCase))
         return this.bot.online()
       }
 
       if (parsed.op === 'dispatch') {
-        const session = this.bot.session(camelizeKeys(parsed.data))
+        const session = this.bot.session(transformKey(parsed.data, camelCase))
         this.bot.dispatch(session)
       }
     })

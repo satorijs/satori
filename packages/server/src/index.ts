@@ -1,4 +1,4 @@
-import { Context, Schema, snakeCase, Universal } from '@satorijs/satori'
+import { camelCase, Context, Schema, snakeCase, Universal } from '@satorijs/satori'
 
 const kClient = Symbol('state')
 
@@ -30,10 +30,10 @@ export const Config: Schema<Config> = Schema.object({
   path: Schema.string().default('/v1'),
 })
 
-function snakeCaseKeys(source: any) {
+function recursive(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
-  if (Array.isArray(source)) return source.map(snakeCaseKeys)
-  return Object.fromEntries(Object.entries(source).map(([key, value]) => [snakeCase(key), snakeCaseKeys(value)]))
+  if (Array.isArray(source)) return source.map(value => recursive(value, callback))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => [callback(key), recursive(value, callback)]))
 }
 
 export function apply(ctx: Context, config: Config) {
@@ -53,9 +53,11 @@ export function apply(ctx: Context, config: Config) {
       return koa.status = 403
     }
 
-    const args = method.fields.map(field => json[field])
+    const args = method.fields.map(({ name }) => {
+      return recursive(json[name], camelCase)
+    })
     const result = await bot[method.name](...args)
-    koa.body = snakeCaseKeys(result)
+    koa.body = recursive(result, snakeCase)
     koa.status = 200
   })
 
@@ -84,8 +86,8 @@ export function apply(ctx: Context, config: Config) {
     for (const socket of layer.clients) {
       if (!socket[kClient]?.authorized) continue
       socket.send(JSON.stringify({
-        type: 'dispatch',
-        body: snakeCaseKeys(session),
+        type: 'event',
+        body: recursive(session, snakeCase),
       }))
     }
   })
