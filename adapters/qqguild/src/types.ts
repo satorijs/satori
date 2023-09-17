@@ -96,7 +96,7 @@ export type DispatchPayload = {
   t: 'READY'
   d: {
     version: number
-    sessionId: string
+    session_id: string
     user: User
     shard: [number, number]
   }
@@ -171,7 +171,7 @@ export type Payload = DispatchPayload | {
   op: Opcode.RESUME
   d: {
     token: string
-    sessionId: string
+    session_id: string
     seq: number
   }
 } | {
@@ -227,7 +227,7 @@ export interface Message {
 export namespace Message {
   export interface Ark {
     /** ark 模板 id（需要先申请） */
-    templateId: number
+    template_id: number
     /** kv 值列表 */
     kv: ArkKv[]
   }
@@ -265,7 +265,7 @@ export namespace Message {
   }
   export interface Markdown {
     /** markdown 模板 id */
-    templateId?: number
+    template_id?: number
     /** markdown 模板模板参数 */
     params?: MarkdownParams
     /** 原生 markdown 内容，与 template_id 和 params 参数互斥，参数都传值将报错。 */
@@ -281,7 +281,7 @@ export namespace Message {
     /** 需要引用回复的消息 id */
     message_id: string
     /** 是否忽略获取引用消息详情错误，默认否 */
-    ignoreGetMessageError?: boolean
+    ignore_get_message_error?: boolean
   }
   export interface Request {
     /** 选填，消息内容，文本内容，支持内嵌格式 */
@@ -346,7 +346,7 @@ export interface Role {
   /** 人数 */
   number: number
   /** 成员上限 */
-  memberLimit: number
+  member_limit: number
 }
 
 export enum DefaultRoles {
@@ -368,7 +368,7 @@ export interface Member {
   /** 用户在频道内的身份组ID, 默认值可参考DefaultRoles */
   roles: string[]
   /** 用户加入频道的时间 */
-  joinedAt: Date
+  joined_at: string
 }
 
 export interface Guild {
@@ -376,11 +376,11 @@ export interface Guild {
   name: string
   icon: string
   owner: boolean
-  ownerId?: string
-  memberCount?: number
-  maxMembers?: number
+  owner_id?: string
+  member_count?: number
+  max_members?: number
   description?: number
-  joinedAt?: Date
+  joined_at?: string
 }
 
 export enum ChannelType {
@@ -446,19 +446,19 @@ export interface Channel {
   /** 子频道类型 */
   type: ChannelType
   /** 子频道子类型 */
-  subType: ChannelSubType
+  sub_type: ChannelSubType
   /** 排序，必填，而且不能够和其他子频道的值重复 */
   position: number
   /** 分组 id */
-  parentId: string
+  parent_id: string
   /** 创建人 id */
-  ownerId: string
+  owner_id: string
   /** 子频道私密类型 */
-  privateType: ChannelPrivateType
+  private_type: ChannelPrivateType
   /** 子频道发言权限 */
-  speakPermission: ChannelSpeakPermission
+  speak_permission: ChannelSpeakPermission
   /** 用于标识应用子频道应用类型，仅应用子频道时会使用该字段 */
-  applicationId?: string
+  application_id?: string
   /** 子频道私密类型 */
   permissions: string
 }
@@ -473,7 +473,7 @@ export interface MemberWithGuild {
   /** 用户在频道内的身份 */
   roles: string[]
   /** 用户加入频道的时间 */
-  joinedAt: Date
+  joined_at: string
 }
 
 /**
@@ -485,7 +485,7 @@ export interface Announce {
   /** 子频道 id */
   channel_id: string
   /** 消息 id */
-  messageId: string
+  message_id: string
 }
 
 /**
@@ -563,9 +563,9 @@ export interface Schedule {
   /** 日程描述 */
   description: string
   /** 日程开始时间戳(ms) */
-  startTimestamp: Date
+  start_timestamp: string
   /** 日程结束时间戳(ms) */
-  endTimestamp: Date
+  endTimestamp: string
   /** 创建者 */
   creator: Member
   /** 日程开始时跳转到的子频道 id */
@@ -593,10 +593,10 @@ export enum RemindType {
 }
 
 export interface Mute {
-  /** 禁言到期时间戳，绝对时间戳，单位：秒（与 muteSeconds 字段同时赋值的话，以该字段为准） */
-  muteEndTimestamp?: string
-  /** 禁言多少秒（两个字段二选一，默认以 muteEndTimestamp 为准） */
-  muteSeconds?: number
+  /** 禁言到期时间戳，绝对时间戳，单位：秒（与 mute_seconds 字段同时赋值的话，以该字段为准） */
+  mute_end_timestamp?: string
+  /** 禁言多少秒（两个字段二选一，默认以 mute_end_timestamp 为准） */
+  mute_seconds?: number
   /** 禁言成员的user_id列表，即 User 的id */
   user_ids?: string[]
 }
@@ -612,13 +612,13 @@ export enum DeleteHistoryMsgDays {
 
 export interface MessageSetting {
   /** 是否允许创建私信 */
-  disableCreateDm: string
+  disable_create_dm: string
   /** 是否允许发主动消息 */
-  disablePushMsg: string
+  disable_push_msg: string
   /** 子频道 id 数组 */
   channel_ids: string
   /** 每个子频道允许主动推送消息最大消息条数 */
-  channelPushMaxNum: string
+  channel_push_max_num: string
 }
 
 /**
@@ -642,7 +642,7 @@ export interface PinsMessage {
   /** 子频道 id */
   channel_id: string
   /** 子频道内精华消息 id 数组 */
-  messageIds: string[]
+  message_ids: string[]
 }
 
 /**
@@ -656,7 +656,7 @@ export interface APIPermission {
   /** API 接口名称，例如 获取频道信息 */
   desc: string
   /** 授权状态，auth_stats 为 1 时已授权 */
-  authStatus: number
+  auth_status: number
 }
 
 export interface APIPermissionDemandIdentify {
@@ -675,7 +675,7 @@ export interface APIPermissionDemand {
   /** 接口权限需求授权链接发送的子频道 id */
   channel_id: string
   /** 权限接口唯一标识 */
-  apiIdentify: APIPermissionDemandIdentify
+  api_identify: APIPermissionDemandIdentify
   /** 接口权限链接中的接口权限描述信息 */
   title: string
   /** 接口权限链接中的机器人可使用功能的描述信息 */

@@ -57,7 +57,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
       } else if (parsed.op === Opcode.DISPATCH) {
         this._s = parsed.s
         if (parsed.t === 'READY') {
-          this._sessionId = parsed.d.sessionId
+          this._sessionId = parsed.d.session_id
           return bot.online()
         }
         if (parsed.t === 'RESUMED') {
