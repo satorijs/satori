@@ -82,9 +82,11 @@ export async function adaptSession(bot: QQGuildBot, input: QQGuild.DispatchPaylo
     if (bot.config.app.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
     await decodeMessage(bot, input.d, session)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
+    if (input.d.target.type !== 'ReactionTargetType_MSG') return
     setupReaction(session, input.d)
     session.type = 'reaction-added'
   } else if (input.t === 'MESSAGE_REACTION_REMOVE') {
+    if (input.d.target.type !== 'ReactionTargetType_MSG') return
     setupReaction(session, input.d)
     session.type = 'reaction-removed'
   } else if (input.t === 'CHANNEL_CREATE' || input.t === 'CHANNEL_UPDATE' || input.t === 'CHANNEL_DELETE') {

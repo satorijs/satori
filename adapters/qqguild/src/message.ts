@@ -42,21 +42,40 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       endpoint = `/dms/${payload.guild_id}/messages`
       srcGuildId = payload.src_guild_id
     }
-    const form = new FormData()
-    form.append('content', this.content)
-    if (this.options?.session) {
-      form.append('msg_id', this.options?.session?.messageId)
-    }
-    if (this.file) {
-      form.append('file_image', this.file, this.filename)
-    }
-    if (this.fileUrl) {
-      form.append('image', this.fileUrl)
+
+    const useFormData = Boolean(this.file)
+    let r: QQGuild.Message
+    this.bot.ctx.logger('qqguild').debug('use form data %s', useFormData)
+    if (useFormData) {
+      const form = new FormData()
+      form.append('content', this.content)
+      if (this.options?.session) {
+        form.append('msg_id', this.options?.session?.messageId)
+      }
+      if (this.file) {
+        form.append('file_image', this.file, this.filename)
+      }
+      // if (this.fileUrl) {
+      //   form.append('image', this.fileUrl)
+      // }
+      r = await this.bot.http.post<QQGuild.Message>(endpoint, form, {
+        headers: form.getHeaders(),
+      })
+    } else {
+      r = await this.bot.http.post<QQGuild.Message>(endpoint, {
+        ...{
+          content: this.content,
+          msg_id: this.options.session.messageId,
+          image: this.fileUrl,
+        },
+        ...(this.reference ? {
+          messageReference: {
+            message_id: this.reference,
+          },
+        } : {}),
+      })
     }
 
-    const r = await this.bot.http.post(endpoint, form, {
-      headers: form.getHeaders(),
-    })
     this.bot.ctx.logger('qqguild').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     await decodeMessage(this.bot, r, session)

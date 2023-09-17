@@ -14,6 +14,10 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
     this.platform = 'qqguild'
+    let endpoint = config.endpoint
+    if (config.sandbox) {
+      endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
+    }
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
       headers: {
