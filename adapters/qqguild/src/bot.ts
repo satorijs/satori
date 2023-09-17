@@ -62,8 +62,11 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async getGuildMemberList(guildId: string, next?: string): Promise<Universal.List<Universal.GuildMember>> {
-    const members = await this.internal.getGuildMembers(guildId)
-    return { data: members.map(decodeGuildMember) }
+    const members = await this.internal.getGuildMembers(guildId, {
+      limit: 400,
+      after: next,
+    })
+    return { data: members.map(decodeGuildMember), next: members[members.length - 1].user.id }
   }
 
   async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
@@ -81,8 +84,11 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 
   async getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<Universal.List<Universal.User>> {
     const [type, id] = emoji.split(':')
-    const { users } = await this.internal.getReactions(channelId, messageId, type, id)
-    return { data: users.map(adaptUser) }
+    const { users, cookie } = await this.internal.getReactions(channelId, messageId, type, id, {
+      limit: 50,
+      cookie: next,
+    })
+    return { next: cookie, data: users.map(adaptUser) }
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string) {

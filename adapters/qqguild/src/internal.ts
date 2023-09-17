@@ -44,8 +44,11 @@ export class Internal {
     return this.http.get<QQGuild.Channel>(`/channels/${channel_id}`)
   }
 
-  async getGuildMembers(guild_id: string) {
-    return this.http.get<QQGuild.Member[]>(`/guilds/${guild_id}/members`)
+  async getGuildMembers(guild_id: string, params?: Partial<{
+    after: string
+    limit: number
+  }>) {
+    return this.http.get<QQGuild.Member[]>(`/guilds/${guild_id}/members`, { params })
   }
 
   async getGuildMember(guild_id: string, user_id: string) {
