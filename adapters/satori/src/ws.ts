@@ -8,7 +8,7 @@ type Message = Message.Heartbeat | Message.Dispatch | Message.Ready
 namespace Message {
   export interface Base {
     op: string
-    seq?: number
+    data?: any
   }
 
   export interface Heartbeat extends Base {
@@ -23,15 +23,14 @@ namespace Message {
   }
 
   export interface Dispatch extends Base {
-    op: 'dispatch'
+    op: 'event'
     data: any
   }
 }
 
 export class WsClient extends Adapter.WsClient<SatoriBot> {
-  _seq = 0
-  _ses?: string
-  _ping: NodeJS.Timeout
+  sequence?: number
+  timeout?: NodeJS.Timeout
 
   async prepare() {
     const { url } = await this.bot.internal.getGatewayBot()
@@ -42,11 +41,11 @@ export class WsClient extends Adapter.WsClient<SatoriBot> {
     this.bot.socket.send(JSON.stringify({
       op: 'identify',
       d: {
-        seq: this._ses,
+        sequence: this.sequence,
       },
     }))
 
-    this._ping = setInterval(() => {
+    this.timeout = setInterval(() => {
       this.bot.socket.send(JSON.stringify({
         op: 'heartbeat',
       }))
@@ -59,9 +58,6 @@ export class WsClient extends Adapter.WsClient<SatoriBot> {
       } catch (error) {
         return logger.warn('cannot parse message', data)
       }
-      if (parsed.seq) {
-        this._seq = parsed.seq
-      }
 
       if (parsed.op === 'ready') {
         logger.debug('ready')
@@ -69,14 +65,15 @@ export class WsClient extends Adapter.WsClient<SatoriBot> {
         return this.bot.online()
       }
 
-      if (parsed.op === 'dispatch') {
+      if (parsed.op === 'event') {
         const session = this.bot.session(transformKey(parsed.data, camelCase))
+        this.sequence = session.id
         this.bot.dispatch(session)
       }
     })
 
     this.bot.socket.addEventListener('close', () => {
-      clearInterval(this._ping)
+      clearInterval(this.timeout)
     })
   }
 }

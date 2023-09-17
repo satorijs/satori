@@ -1,4 +1,5 @@
-import { camelCase, Context, Schema, snakeCase, Universal } from '@satorijs/satori'
+import { camelCase, Context, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import WebSocket from 'ws'
 
 const kClient = Symbol('state')
 
@@ -6,28 +7,58 @@ class Client {
   authorized = false
 }
 
-export interface Config {
-  path: string
-}
-
 type Message = Message.Identify | Message.Heartbeat
 
 namespace Message {
   export interface Base {
-    type: string
+    op: string
+    data?: any
   }
 
   export interface Identify extends Base {
-    type: 'identify'
+    op: 'identify'
+    data: {
+      sequence?: number
+    }
   }
 
   export interface Heartbeat extends Base {
-    type: 'heartbeat'
+    op: 'heartbeat'
   }
 }
 
+export interface ApiConfig {
+  enabled?: boolean
+}
+
+export interface WebSocketConfig {
+  enabled?: boolean
+  resumeTimeout?: number
+}
+
+export interface WebhookConfig {
+  enabled?: boolean
+}
+
+export interface Config {
+  path?: string
+  api?: ApiConfig
+  websocket?: WebSocketConfig
+  webhook?: WebhookConfig
+}
+
 export const Config: Schema<Config> = Schema.object({
-  path: Schema.string().default('/v1'),
+  path: Schema.string().default(''),
+  api: Schema.object({
+    // enabled: Schema.boolean().default(true),
+  }),
+  websocket: Schema.object({
+    // enabled: Schema.boolean().default(true),
+    resumeTimeout: Schema.number().default(Time.minute * 5),
+  }),
+  webhook: Schema.object({
+    // enabled: Schema.boolean().default(true),
+  }),
 })
 
 function recursive(source: any, callback: (key: string) => string) {
@@ -37,7 +68,7 @@ function recursive(source: any, callback: (key: string) => string) {
 }
 
 export function apply(ctx: Context, config: Config) {
-  ctx.router.post(config.path + '/:name', async (koa) => {
+  ctx.router.post(config.path + '/v1/:name', async (koa) => {
     const method = Universal.Methods[koa.params.name]
     if (!method) {
       koa.body = 'method not found'
@@ -61,7 +92,17 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
-  const layer = ctx.router.ws(config.path, (socket) => {
+  const buffer: Session[] = []
+
+  const timeout = setInterval(() => {
+    while (buffer[0]?.timestamp! + config.websocket?.resumeTimeout! < Date.now()) {
+      buffer.shift()
+    }
+  }, Time.second * 10)
+
+  ctx.on('dispose', () => clearInterval(timeout))
+
+  const layer = ctx.router.ws(config.path + '/v1', (socket) => {
     const client = socket[kClient] = new Client()
 
     socket.addEventListener('message', (event) => {
@@ -72,23 +113,35 @@ export function apply(ctx: Context, config: Config) {
         return socket.close(4000, 'invalid message')
       }
 
-      if (payload.type === 'identify') {
+      if (payload.op === 'identify') {
         client.authorized = true
-      } else if (payload.type === 'heartbeat') {
-        socket.send(JSON.stringify({ type: 'heartbeat' }))
+        socket.send(JSON.stringify({
+          op: 'ready',
+        }))
+        if (!payload.data.sequence) return
+        for (const session of buffer) {
+          if (session.id <= payload.data.sequence) continue
+          dispatch(socket, session)
+        }
+      } else if (payload.op === 'heartbeat') {
+        socket.send(JSON.stringify({ op: 'heartbeat' }))
       } else {
         return socket.close(4000, 'invalid message')
       }
     })
   })
 
+  function dispatch(socket: WebSocket, session: Session) {
+    socket.send(JSON.stringify({
+      op: 'event',
+      data: recursive(session, snakeCase),
+    }))
+  }
+
   ctx.on('internal/session', (session) => {
     for (const socket of layer.clients) {
       if (!socket[kClient]?.authorized) continue
-      socket.send(JSON.stringify({
-        type: 'event',
-        body: recursive(session, snakeCase),
-      }))
+      dispatch(socket, session)
     }
   })
 }
