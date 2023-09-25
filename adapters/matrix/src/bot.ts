@@ -1,4 +1,4 @@
-import { Bot, Context, omit, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, omit, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
@@ -45,7 +45,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
       const { data, mime } = await this.http.file(this.config.avatar)
       await this.internal.setAvatar(this.userId, Buffer.from(data), mime)
     }
-    Object.assign(this, await this.getSelf())
+    await this.getLogin()
     const sync = await this.syncRooms()
     // dispatch invitiations
     if (!sync?.rooms?.invite) return
@@ -66,8 +66,9 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     await this.internal.redactEvent(channelId, messageId)
   }
 
-  async getSelf() {
-    return await this.getUser(this.userId)
+  async getLogin() {
+    this.user = await this.getUser(this.userId)
+    return this.toJSON()
   }
 
   async getUser(userId: string) {
@@ -89,10 +90,10 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     return { id, name, guildId, guildName: name }
   }
 
-  async getChannel(channelId: string) {
-    const events = await this.internal.getState(channelId)
+  async getChannel(id: string) {
+    const events = await this.internal.getState(id)
     const name = (events.find(event => event.type === 'm.room.name')?.content as Matrix.M_ROOM_NAME)?.name
-    return { id: channelId, name, channelId, channelName: name }
+    return { id, name, type: Universal.Channel.Type.TEXT }
   }
 
   async getGuildList() {

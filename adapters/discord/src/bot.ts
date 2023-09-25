@@ -64,9 +64,10 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return this.webhookLock[channelId] ||= this._ensureWebhook(channelId)
   }
 
-  async getSelf() {
+  async getLogin() {
     const data = await this.internal.getCurrentUser()
-    return Discord.decodeUser(data)
+    this.user = Discord.decodeUser(data)
+    return this.toJSON()
   }
 
   async deleteMessage(channelId: string, messageId: string) {

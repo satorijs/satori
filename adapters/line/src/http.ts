@@ -46,11 +46,11 @@ export class HttpServer extends Adapter.Server<LineBot> {
       ctx.response.body = resp.data
       ctx.status = 200
     })
-    bot.initialize(async (bot) => {
-      await bot.internal.setWebhookEndpoint({
-        endpoint: bot.ctx.root.config.selfUrl + '/line',
-      })
-      this.logger.debug('listening updates %c', 'line:' + bot.selfId)
+    await bot.getLogin()
+    await bot.internal.setWebhookEndpoint({
+      endpoint: bot.ctx.root.config.selfUrl + '/line',
     })
+    this.logger.debug('listening updates %c', 'line:' + bot.selfId)
+    bot.online()
   }
 }

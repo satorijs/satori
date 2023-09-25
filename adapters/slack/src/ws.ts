@@ -7,8 +7,7 @@ const logger = new Logger('slack')
 
 export class WsClient extends Adapter.WsClient<SlackBot> {
   async prepare(bot: SlackBot) {
-    const user = await bot.getSelf()
-    Object.assign(bot, user)
+    await bot.getLogin()
     const data = await bot.request('POST', '/apps.connections.open', {}, {}, true)
     const { url } = data
     logger.debug('ws url: %s', url)

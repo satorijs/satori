@@ -38,7 +38,7 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   async initialize() {
     await Promise.all([
-      this.getSelf().then(data => Object.assign(this, data)),
+      this.getLogin(),
       this.setupGuildService().catch(noop),
     ]).then(() => this.online(), error => this.offline(error))
   }

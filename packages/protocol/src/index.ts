@@ -1,6 +1,10 @@
 import Element from '@satorijs/element'
 import { Dict } from 'cosmokit'
 
+// do not remove the `type` modifier
+// because `esModuleInterop` is not respected by esbuild
+export type { Fragment, Render } from '@satorijs/element'
+
 export { Element, Element as h }
 
 export interface SendOptions {
@@ -171,6 +175,8 @@ export interface GuildMember {
 
 export interface Login {
   user?: User
+  platform?: string
+  selfId?: string
   status: Login.Status
 }
 
@@ -183,6 +189,8 @@ export type Author = Partial<Omit<GuildMember, 'user'> & User>
 
 export interface Message {
   id?: string
+  /** @deprecated */
+  messageId?: string
   channel?: Channel
   guild?: Guild
   user?: User
@@ -191,6 +199,8 @@ export interface Message {
   elements?: Element[]
   timestamp?: number
   quote?: Message
+  createdAt?: number
+  updatedAt?: number
 }
 
 export interface Command {
@@ -263,5 +273,4 @@ export interface EventData {
   subtype?: string
   /** @deprecated */
   subsubtype?: string
-  locales?: string[]
 }

@@ -34,7 +34,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     const self = appList.find(v => v.agentId === this.config.agentId)
     this.user.name = self.name
     this.user.avatar = self.appIcon
-    return { status: this.status, user: this.user }
+    return this.toJSON()
   }
 
   async stop() {

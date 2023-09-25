@@ -35,23 +35,13 @@ export class LineBot extends Bot<LineBot.Config> {
     ctx.plugin(HttpServer, this)
   }
 
-  async initialize(callback: (bot: this) => Promise<void>) {
-    const user = await this.getSelf()
-    Object.assign(this, user)
-    await callback(this)
-    this.online()
-  }
-
   // https://developers.line.biz/en/reference/messaging-api/#get-profile
-  async getSelf() {
+  async getLogin() {
     const { userId, displayName, pictureUrl } = await this.internal.getBotInfo()
-    return {
-      id: userId,
-      name: displayName,
-      userId,
-      nickname: displayName,
-      avatar: pictureUrl,
-    }
+    this.user.id = userId
+    this.user.name = displayName
+    this.user.avatar = pictureUrl
+    return this.toJSON()
   }
 
   async getFriendList(start?: string) {

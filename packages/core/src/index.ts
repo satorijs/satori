@@ -10,12 +10,10 @@ import { Internal } from './internal'
 
 h.warn = new Logger('element').warn
 
-// do not remove the `type` modifier
-// because `esModuleInterop` is not respected by esbuild
-export type { Fragment, Render } from '@satorijs/element'
-export { h, Element, h as segment } from '@satorijs/protocol'
-
+export { h, Element, h as segment, Fragment, Render } from '@satorijs/protocol'
 export { Schema, Schema as z, Logger, Quester }
+
+export * as Satori from '@satorijs/protocol'
 export * as Universal from '@satorijs/protocol'
 
 export * from './bot'

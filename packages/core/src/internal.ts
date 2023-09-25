@@ -1,6 +1,6 @@
 import { Awaitable, defineProperty } from 'cosmokit'
 import { Context, Session } from '.'
-import Element from '@satorijs/element'
+import { Fragment, h, Render } from '@satorijs/protocol'
 
 declare module '.' {
   interface Context {
@@ -9,7 +9,7 @@ declare module '.' {
   }
 }
 
-export type Component = Element.Render<Awaitable<Element.Fragment>, Session>
+export type Component = Render<Awaitable<Fragment>, Session>
 
 export namespace Component {
   export interface Options {
@@ -36,7 +36,7 @@ export class Internal {
         throw new Error('interactive components is not available outside sessions')
       }
       const result = await component(attrs, children, session)
-      return session.transform(Element.normalize(result))
+      return session.transform(h.normalize(result))
     }
     const ctx = this.caller
     const service = 'component:' + name

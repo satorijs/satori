@@ -82,7 +82,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   async getLogin() {
     this.user = adaptUser(await this.request<Kook.Self>('GET', '/user/me'))
-    return { status: this.status, user: this.user }
+    return this.toJSON()
   }
 
   async getGuildList() {

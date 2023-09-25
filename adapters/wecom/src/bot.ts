@@ -73,7 +73,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
   }
 
   /** https://developer.work.weixin.qq.com/document/path/90227 */
-  async getSelf(): Promise<Universal.User> {
+  async getLogin() {
     const { square_logo_url, name } = await this.http.get<{
       errcode: number
       errmsg: string
@@ -94,13 +94,14 @@ export class WecomBot extends Bot<WecomBot.Config> {
         agentid: this.config.agentId,
       },
     })
-    return {
+    this.user = {
       id: this.config.agentId,
       name,
       userId: this.config.agentId,
       username: name,
       avatar: square_logo_url,
     }
+    return this.toJSON()
   }
 
   /** https://developer.work.weixin.qq.com/document/path/94867 */

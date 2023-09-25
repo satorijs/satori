@@ -1,9 +1,9 @@
-import { remove } from 'cosmokit'
+import { pick, remove } from 'cosmokit'
 import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { Session } from './session'
-import { EventData, List, Methods, SendOptions, User } from '@satorijs/protocol'
+import { EventData, List, Login, Methods, SendOptions, User } from '@satorijs/protocol'
 import WebSocket from 'ws'
 
 export interface Bot extends Methods, User {
@@ -146,6 +146,20 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
     if (name.startsWith('bot.')) {
       return this.supports(name.slice(4), session)
     }
+  }
+
+  toJSON(): Login {
+    return pick(this, ['platform', 'selfId', 'status', 'user'])
+  }
+
+  async getLogin() {
+    return this.toJSON()
+  }
+
+  /** @deprecated use `bot.getLogin()` instead */
+  async getSelf() {
+    const { user } = await this.getLogin()
+    return user
   }
 }
 

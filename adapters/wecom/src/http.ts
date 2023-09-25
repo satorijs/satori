@@ -12,9 +12,7 @@ export class HttpServer extends Adapter.Server<WecomBot> {
 
   async start(bot: WecomBot) {
     await bot.refreshToken()
-    const self = await bot.getSelf()
-    bot.avatar = self.avatar
-    bot.username = self.username
+    await bot.getLogin()
     // https://developer.work.weixin.qq.com/document/10514
     bot.ctx.router.get('/wecom', async (ctx) => {
       let success = false

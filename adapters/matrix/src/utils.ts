@@ -12,7 +12,6 @@ export function adaptAuthor(bot: MatrixBot, event: Matrix.ClientEvent): Universa
 }
 
 export async function adaptMessage(bot: MatrixBot, event: Matrix.ClientEvent, result: Universal.Message = {}): Promise<Universal.Message> {
-  result.subtype = 'group'
   result.messageId = event.event_id
   result.channelId = event.room_id
   result.guildId = event.room_id

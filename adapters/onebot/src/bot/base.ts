@@ -1,4 +1,4 @@
-import { Bot, Fragment, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Fragment, Schema, Universal } from '@satorijs/satori'
 import * as OneBot from '../utils'
 import { OneBotMessageEncoder } from './message'
 
@@ -6,14 +6,14 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
   public parent?: BaseBot
   public internal: OneBot.Internal
 
-  sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: SendOptions) {
+  sendMessage(channelId: string, fragment: Fragment, guildId?: string, options?: Universal.SendOptions) {
     if (!this.parent && !channelId.startsWith('private:')) {
       guildId = channelId
     }
     return new OneBotMessageEncoder(this, channelId, guildId, options).send(fragment)
   }
 
-  sendPrivateMessage(userId: string, fragment: Fragment, options?: SendOptions) {
+  sendPrivateMessage(userId: string, fragment: Fragment, options?: Universal.SendOptions) {
     return this.sendMessage('private:' + userId, fragment, null, options)
   }
 
@@ -26,9 +26,10 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
     await this.internal.deleteMsg(messageId)
   }
 
-  async getSelf() {
+  async getLogin() {
     const data = await this.internal.getLoginInfo()
-    return OneBot.adaptUser(data)
+    this.user = OneBot.adaptUser(data)
+    return this.toJSON()
   }
 
   async getUser(userId: string) {

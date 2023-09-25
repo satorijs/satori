@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, SendOptions } from '@satorijs/satori'
+import { Bot, Context, Fragment, Quester, Schema, Universal } from '@satorijs/satori'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptChannel, adapteGuildMember, adaptGuild, adaptMessage, adaptUser } from './utils'
@@ -39,9 +39,9 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }
   }
 
-  async getSelf() {
+  async getLogin() {
     const data = await this.internal.authTest(Token.BOT)
-    return {
+    this.user = {
       id: data.user_id,
       name: data.user,
       userId: data.user_id,
@@ -49,6 +49,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       username: data.user,
       isBot: !!data.bot_id,
     }
+    return this.toJSON()
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -129,7 +130,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }
   }
 
-  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions) {
+  async sendPrivateMessage(channelId: string, content: Fragment, options?: Universal.SendOptions) {
     // "channels:write,groups:write,mpim:write,im:write",
     const { channel } = await this.internal.conversationsOpen(Token.BOT, {
       users: channelId,

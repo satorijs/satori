@@ -29,6 +29,7 @@ export class Session {
   public bot: Bot
   public app: Context['root']
   public data: Omit<EventData, 'id'>
+  public locales: string[] = []
 
   constructor(bot: Bot, payload: Partial<EventData>) {
     payload.selfId ??= bot.selfId
@@ -43,7 +44,6 @@ export class Session {
     }
     // this.selfId = bot.selfId
     // this.platform = bot.platform
-    this.data.locales = []
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
     this.initialize()

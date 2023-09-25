@@ -8,9 +8,6 @@ export async function decodeMessage(bot: WechatOfficialBot, message: Message) {
   session.timestamp = message.CreateTime * 1000
   session.wechatOfficial = message
   session.userId = message.FromUserName
-  session.author = {
-    userId: message.FromUserName,
-  }
   // session.channelId = session.userId
   // session.guildId = session.userId
   session.messageId = message.MsgId

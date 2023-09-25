@@ -8,9 +8,6 @@ export async function decodeMessage(bot: WecomBot, message: Message) {
   // session.wechatOfficial = message
   session.guildId = bot.config.corpId
   session.userId = message.FromUserName
-  session.author = {
-    userId: message.FromUserName,
-  }
   // session.channelId = session.userId
   // session.guildId = session.userId
   session.messageId = message.MsgId

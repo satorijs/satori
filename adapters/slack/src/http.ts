@@ -9,8 +9,7 @@ export class HttpServer extends Adapter.Server<SlackBot> {
   async start(bot: SlackBot) {
     // @ts-ignore
     const { signing } = bot.config
-    const { userId } = await bot.getSelf()
-    bot.selfId = userId
+    await bot.getLogin()
     bot.ctx.router.post('/slack', async (ctx) => {
       const timestamp = ctx.request.header['x-slack-request-timestamp'].toString()
       const signature = ctx.request.header['x-slack-signature'].toString()

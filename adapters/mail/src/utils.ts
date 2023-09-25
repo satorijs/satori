@@ -8,7 +8,6 @@ export async function adaptMessage(
   mail: ParsedMail,
   message: Universal.Message = {},
 ): Promise<Universal.Message> {
-  message.subtype = 'private'
   message.isDirect = true
   message.messageId = mail.messageId
   message.userId = mail.from.value[0].address

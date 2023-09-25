@@ -1,4 +1,4 @@
-import { h, Session } from '@satorijs/satori'
+import { h, Session, Universal } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
 import { Entry } from './types'
 
@@ -13,18 +13,17 @@ export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
       session.channelId = message.from
       session.guildId = message.from
       session.messageId = message.id
-      session.author = {
-        userId: message.from,
-        username: change.value.contacts[0].profile.name,
+      session.data.user = {
+        id: message.from,
+        name: change.value.contacts[0].profile.name,
       }
-      session.userId = message.from
       session.timestamp = parseInt(message.timestamp) * 1000
 
       if (message.context) {
         session.quote = {
-          messageId: message.context.id,
-          channelId: message.context.from,
-          userId: message.context.from,
+          id: message.context.id,
+          channel: { id: message.context.from, type: Universal.Channel.Type.DIRECT },
+          user: { id: message.context.from },
           content: '',
         }
       }
