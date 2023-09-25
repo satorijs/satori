@@ -2,11 +2,11 @@ import { remove } from 'cosmokit'
 import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
-import { SendOptions, Session } from './session'
-import { Universal } from './protocol'
+import { Session } from './session'
+import { List, Methods, SendOptions, User } from '@satorijs/protocol'
 import WebSocket from 'ws'
 
-export interface Bot extends Universal.Methods, Universal.User {
+export interface Bot extends Methods, User {
   socket?: WebSocket
   internal: any
 }
@@ -138,7 +138,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   async supports(name: string, session: Partial<Session> = {}) {
-    return !!this[Universal.Methods[name]?.name]
+    return !!this[Methods[name]?.name]
   }
 
   async checkPermission(name: string, session: Partial<Session>) {
@@ -160,7 +160,7 @@ const iterableMethods = [
 
 for (const name of iterableMethods) {
   Bot.prototype[name + 'Iter'] = function (this: Bot, ...args: any[]) {
-    let list: Universal.List<any>
+    let list: List<any>
     const getList = async () => {
       list = await this[name + 'List'](...args, list?.next)
     }

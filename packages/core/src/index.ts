@@ -1,11 +1,12 @@
 import * as cordis from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
-import { SendOptions, Session } from './session'
+import { Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import Element from '@satorijs/element'
+import { SendOptions } from '@satorijs/protocol'
 import { Internal } from './internal'
 
 Element.warn = new Logger('element').warn
@@ -13,15 +14,16 @@ Element.warn = new Logger('element').warn
 // do not remove the `type` modifier
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
+export { h, Element, h as segment } from '@satorijs/protocol'
 
-export { Schema, Schema as z, Logger, Element as segment, Element, Element as h, Quester }
+export { Schema, Schema as z, Logger, Quester }
+export * as Universal from '@satorijs/protocol'
 
 export * from './bot'
 export * from './adapter'
 export * from './internal'
 export * from './message'
 export * from './session'
-export * from './protocol'
 
 declare global {
   namespace Satori {

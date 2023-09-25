@@ -1,7 +1,8 @@
 import { defineProperty } from 'cosmokit'
 import Element from '@satorijs/element'
 import { Bot } from './bot'
-import { SendOptions, Session } from './session'
+import { SendOptions } from '@satorijs/protocol'
+import { Session } from './session'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
