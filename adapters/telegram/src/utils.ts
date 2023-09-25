@@ -1,12 +1,13 @@
-import { defineProperty, hyphenate, Logger, Session, Universal } from '@satorijs/satori'
+import { defineProperty, Dict, h, Logger, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
+import { EventData } from '@satorijs/protocol'
 
 export * from './types'
 
 const logger = new Logger('telegram')
 
-export const adaptUser = (data: Telegram.User): Universal.User => ({
+export const decodeUser = (data: Telegram.User): Universal.User => ({
   id: data.id.toString(),
   name: data.username,
   nick: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
@@ -15,44 +16,10 @@ export const adaptUser = (data: Telegram.User): Universal.User => ({
   username: data.username,
 })
 
-export const adaptGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => ({
-  user: adaptUser(data.user),
+export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => ({
+  user: decodeUser(data.user),
   title: data['custom_title'],
-  ...adaptUser(data.user),
 })
-
-export function adaptMessageMeta(session: Session, message: Telegram.Message) {
-  if (!message) return
-  session.messageId = message.message_id.toString()
-  if (message.chat.type === 'private') {
-    session.subtype ||= 'private'
-    session.isDirect = true
-    session.channelId = message.chat.id.toString()
-  } else {
-    session.subtype ||= 'group'
-    session.guildId = message.chat.id.toString()
-    if (message.is_topic_message) {
-      session.channelId = message.message_thread_id.toString()
-    } else {
-      session.channelId = session.guildId
-    }
-  }
-}
-
-export function adaptAuthorMeta(session: Session, from: Telegram.User) {
-  if (!from) return
-  session.userId = from.id.toString()
-  session.author = adaptUser(from)
-  if (from.language_code) {
-    if (from.language_code === 'zh-hans') {
-      session.locales = ['zh-CN']
-    } else if (from.language_code === 'zh-hant') {
-      session.locales = ['zh-TW']
-    } else {
-      session.locales = [from.language_code.slice(0, 2)]
-    }
-  }
-}
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   logger.debug('receive %s', JSON.stringify(update))
@@ -62,13 +29,24 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
   const isBotCommand = update.message && update.message.entities?.[0].type === 'bot_command'
+  const code = message?.from?.language_code
+  if (code) {
+    if (code === 'zh-hans') {
+      session.locales = ['zh-CN']
+    } else if (code === 'zh-hant') {
+      session.locales = ['zh-TW']
+    } else {
+      session.locales = [code.slice(0, 2)]
+    }
+  }
+
   if (isBotCommand) {
     session.type = 'interaction/command'
-    await bot.adaptMessage(message, session)
+    await decodeMessage(bot, message, session.data.message = {}, session.data)
     session.content = session.content.slice(1)
   } else if (message) {
     session.type = update.message || update.channel_post ? 'message' : 'message-updated'
-    await bot.adaptMessage(message, session)
+    await decodeMessage(bot, message, session.data.message = {}, session.data)
   } else if (update.chat_join_request) {
     session.timestamp = update.chat_join_request.date * 1000
     session.type = 'guild-member-request'
@@ -90,16 +68,125 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
         session.type = 'group-added'
       }
     }
-  } else {
-    // Get update type from field name.
-    const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
-    if (subtype) {
-      session.type = 'telegram'
-      session.subtype = hyphenate(subtype)
-      adaptMessageMeta(session, update[subtype].message)
-      adaptAuthorMeta(session, update[subtype].from)
-    }
+  }
+
+  // Internal event: get update type from field name.
+  const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
+  if (subtype) {
+    bot.ctx.emit(`telegram/${subtype.replace(/_/g, '-')}`, update[subtype])
   }
 
   bot.dispatch(session)
+}
+
+export async function decodeMessage(bot: TelegramBot, data: Telegram.Message, message: Universal.Message, payload: Universal.Message | EventData = message) {
+  const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
+    let curr = 0
+    const segs: h[] = []
+    for (const e of entities) {
+      const eText = text.substr(e.offset, e.length)
+      if (e.type === 'mention') {
+        if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
+        const atName = eText.slice(1)
+        if (eText === '@' + bot.user.name) {
+          segs.push(h('at', { id: bot.user.id, name: atName }))
+        } else {
+          // TODO handle @others
+          segs.push(h('text', { content: eText }))
+        }
+      } else if (e.type === 'text_mention') {
+        segs.push(h('at', { id: e.user.id }))
+      } else {
+        // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
+        //       text_link, custom_emoji
+        segs.push(h('text', { content: eText }))
+      }
+      if (e.offset > curr) {
+        segs.splice(-1, 0, h('text', { content: text.slice(curr, e.offset) }))
+      }
+      curr = e.offset + e.length
+    }
+    if (curr < text?.length || 0) {
+      segs.push(h('text', { content: text.slice(curr) }))
+    }
+    return segs
+  }
+
+  const segments: h[] = []
+  // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
+  if (data.reply_to_message && !(data.is_topic_message && data.reply_to_message.forum_topic_created)) {
+    await decodeMessage(bot, data.reply_to_message, message.quote = {}, null)
+  }
+
+  // make sure text comes first so that commands can be triggered
+  const msgText = data.text || data.caption
+  segments.push(...parseText(msgText, data.entities || []))
+
+  if (data.caption) {
+    // add a space to separate caption from media
+    segments.push(h('text', { content: ' ' }))
+  }
+
+  const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document | Telegram.Voice) => {
+    const attrs: Dict<string> = await bot.$getFileFromId(data.file_id)
+    if (data['file_name']) {
+      attrs.filename = data['file_name']
+    }
+    segments.push(h(type, attrs))
+  }
+
+  if (data.location) {
+    segments.push(h('location', { lat: data.location.latitude, lon: data.location.longitude }))
+  } else if (data.photo) {
+    const photo = data.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
+    segments.push(h('image', await bot.$getFileFromId(photo.file_id)))
+  } else if (data.sticker) {
+    // TODO: Convert tgs to gif
+    // https://github.com/ed-asriyan/tgs-to-gif
+    // Currently use thumb only
+    try {
+      const file = await bot.internal.getFile({ file_id: data.sticker.file_id })
+      if (file.file_path.endsWith('.tgs')) {
+        throw new Error('tgs is not supported now')
+      }
+      segments.push(h('image', await bot.$getFileFromPath(file.file_path)))
+    } catch (e) {
+      logger.warn('get file error', e)
+      segments.push(h('text', { content: `[${data.sticker.set_name || 'sticker'} ${data.sticker.emoji || ''}]` }))
+    }
+  } else if (data.voice) {
+    await addResource('audio', data.voice)
+  } else if (data.animation) {
+    await addResource('image', data.animation)
+  } else if (data.video) {
+    await addResource('video', data.video)
+  } else if (data.document) {
+    await addResource('file', data.document)
+  }
+
+  message.elements = segments
+  message.content = segments.join('')
+  message.id = data.message_id.toString()
+
+  if (!payload) return
+  payload.timestamp = data.date * 1000
+  payload.user = decodeUser(data.from)
+  if (data.chat.type === 'private') {
+    payload.channel = {
+      id: data.chat.id.toString(),
+      type: Universal.Channel.Type.DIRECT,
+    }
+  } else {
+    payload.guild = {
+      id: data.chat.id.toString(),
+      name: data.chat.title,
+    }
+    payload.member = {}
+    payload.channel = {
+      id: data.is_topic_message
+        ? data.message_thread_id.toString()
+        : data.chat.id.toString(),
+      type: Universal.Channel.Type.TEXT,
+    }
+  }
 }

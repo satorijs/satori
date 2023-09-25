@@ -1,6 +1,6 @@
-import { arrayBufferToBase64, Bot, Context, Dict, h, Logger, Quester, Schema, Session, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, h, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
-import { adaptAuthorMeta, adaptGuildMember, adaptMessageMeta, adaptUser } from './utils'
+import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
@@ -74,99 +74,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     this.online()
   }
 
-  async adaptMessage(message: Telegram.Message, session: Session) {
-    const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
-      let curr = 0
-      const segs: h[] = []
-      for (const e of entities) {
-        const eText = text.substr(e.offset, e.length)
-        if (e.type === 'mention') {
-          if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
-          const atName = eText.slice(1)
-          if (eText === '@' + this.username) {
-            segs.push(h('at', { id: this.selfId, name: atName }))
-          } else {
-            // TODO handle @others
-            segs.push(h('text', { content: eText }))
-          }
-        } else if (e.type === 'text_mention') {
-          segs.push(h('at', { id: e.user.id }))
-        } else {
-          // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
-          //       text_link, custom_emoji
-          segs.push(h('text', { content: eText }))
-        }
-        if (e.offset > curr) {
-          segs.splice(-1, 0, h('text', { content: text.slice(curr, e.offset) }))
-        }
-        curr = e.offset + e.length
-      }
-      if (curr < text?.length || 0) {
-        segs.push(h('text', { content: text.slice(curr) }))
-      }
-      return segs
-    }
-
-    session.timestamp = message.date * 1000
-    const segments: h[] = []
-    // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
-    if (message.reply_to_message && !(message.is_topic_message && message.reply_to_message.forum_topic_created)) {
-      session.quote = {}
-      await this.adaptMessage(message.reply_to_message, session.quote as Session)
-    }
-
-    // make sure text comes first so that commands can be triggered
-    const msgText = message.text || message.caption
-    segments.push(...parseText(msgText, message.entities || []))
-
-    if (message.caption) {
-      // add a space to separate caption from media
-      segments.push(h('text', { content: ' ' }))
-    }
-
-    const addResource = async (type: string, data: Telegram.Animation | Telegram.Video | Telegram.Document | Telegram.Voice) => {
-      const attrs: Dict<string> = await this.$getFileFromId(data.file_id)
-      if (data['file_name']) {
-        attrs.filename = data['file_name']
-      }
-      segments.push(h(type, attrs))
-    }
-
-    if (message.location) {
-      segments.push(h('location', { lat: message.location.latitude, lon: message.location.longitude }))
-    } else if (message.photo) {
-      const photo = message.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
-      segments.push(h('image', await this.$getFileFromId(photo.file_id)))
-    } else if (message.sticker) {
-      // TODO: Convert tgs to gif
-      // https://github.com/ed-asriyan/tgs-to-gif
-      // Currently use thumb only
-      try {
-        const file = await this.internal.getFile({ file_id: message.sticker.file_id })
-        if (file.file_path.endsWith('.tgs')) {
-          throw new Error('tgs is not supported now')
-        }
-        segments.push(h('image', await this.$getFileFromPath(file.file_path)))
-      } catch (e) {
-        logger.warn('get file error', e)
-        segments.push(h('text', { content: `[${message.sticker.set_name || 'sticker'} ${message.sticker.emoji || ''}]` }))
-      }
-    } else if (message.voice) {
-      await addResource('audio', message.voice)
-    } else if (message.animation) {
-      await addResource('image', message.animation)
-    } else if (message.video) {
-      await addResource('video', message.video)
-    } else if (message.document) {
-      await addResource('file', message.document)
-    }
-
-    session.elements = segments
-    session.content = segments.join('')
-    adaptMessageMeta(session, message)
-    adaptAuthorMeta(session, message.from)
-  }
-
   async deleteMessage(chat_id: string, message_id: string | number) {
     message_id = +message_id
     await this.internal.deleteMessage({ chat_id, message_id })
@@ -198,14 +105,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     user_id = +user_id
     if (Number.isNaN(user_id)) return null
     const data = await this.internal.getChatMember({ chat_id, user_id })
-    const member = adaptGuildMember(data)
+    const member = decodeGuildMember(data)
     await this.setAvatarUrl(member.user)
     return member
   }
 
   async getGuildMemberList(chat_id: string) {
     const data = await this.internal.getChatAdministrators({ chat_id })
-    const members = data.map(adaptGuildMember)
+    const members = data.map(decodeGuildMember)
     return { data: members }
   }
 
@@ -232,7 +139,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   async getLoginInfo() {
     const data = await this.internal.getMe()
-    const user = adaptUser(data)
+    const user = decodeUser(data)
     await this.setAvatarUrl(user)
     return user
   }
@@ -281,10 +188,10 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   async getUser(userId: string, guildId?: string) {
     const data = await this.internal.getChat({ chat_id: userId })
-    if (!data.photo?.big_file_id && !data.photo?.small_file_id) return adaptUser(data)
+    if (!data.photo?.big_file_id && !data.photo?.small_file_id) return decodeUser(data)
     const { url } = await this.$getFileFromId(data.photo?.big_file_id || data.photo?.small_file_id)
     return {
-      ...adaptUser(data),
+      ...decodeUser(data),
       avatar: url,
     }
   }

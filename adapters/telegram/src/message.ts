@@ -1,4 +1,4 @@
-import { Dict, h, MessageEncoder, SendOptions } from '@satorijs/satori'
+import { Dict, h, MessageEncoder, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
@@ -34,7 +34,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private payload: Dict
   private mode: RenderMode = 'default'
 
-  constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: SendOptions) {
+  constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: Universal.SendOptions) {
     super(bot, channelId, guildId, options)
     const chat_id = guildId || channelId
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
@@ -43,7 +43,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
 
   async addResult(result: Telegram.Message) {
     const session = this.bot.session()
-    await this.bot.adaptMessage(result, session)
+    await Telegram.decodeMessage(this.bot, result, session.data.message = {}, session.data)
     this.results.push(session)
     session.app.emit(session, 'send', session)
   }
