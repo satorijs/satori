@@ -12,12 +12,12 @@ type Message = Message.Identify | Message.Heartbeat
 namespace Message {
   export interface Base {
     op: string
-    data?: any
+    body?: any
   }
 
   export interface Identify extends Base {
     op: 'identify'
-    data: {
+    body: {
       sequence?: number
     }
   }
@@ -117,10 +117,13 @@ export function apply(ctx: Context, config: Config) {
         client.authorized = true
         socket.send(JSON.stringify({
           op: 'ready',
+          body: {
+            logins: [],
+          },
         }))
-        if (!payload.data.sequence) return
+        if (!payload.body.sequence) return
         for (const session of buffer) {
-          if (session.id <= payload.data.sequence) continue
+          if (session.id <= payload.body.sequence) continue
           dispatch(socket, session)
         }
       } else if (payload.op === 'heartbeat') {
@@ -134,7 +137,7 @@ export function apply(ctx: Context, config: Config) {
   function dispatch(socket: WebSocket, session: Session) {
     socket.send(JSON.stringify({
       op: 'event',
-      data: recursive(session, snakeCase),
+      body: recursive(session, snakeCase),
     }))
   }
 

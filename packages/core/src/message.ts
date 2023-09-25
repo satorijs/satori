@@ -1,7 +1,6 @@
 import { defineProperty } from 'cosmokit'
-import Element from '@satorijs/element'
 import { Bot } from './bot'
-import { SendOptions } from '@satorijs/protocol'
+import { Channel, h, SendOptions } from '@satorijs/protocol'
 import { Session } from './session'
 
 class AggregateError extends Error {
@@ -20,9 +19,9 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
   async prepare() {}
 
   abstract flush(): Promise<void>
-  abstract visit(element: Element): Promise<void>
+  abstract visit(element: h): Promise<void>
 
-  async render(elements: Element[], flush?: boolean) {
+  async render(elements: h[], flush?: boolean) {
     for (const element of elements) {
       await this.visit(element)
     }
@@ -31,18 +30,17 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
     }
   }
 
-  async send(content: Element.Fragment) {
+  async send(content: h.Fragment) {
+    const isDirect = this.options.session?.isDirect ?? !this.guildId
     this.session = this.bot.session({
       type: 'send',
-      author: this.bot,
-      channelId: this.channelId,
-      guildId: this.guildId,
-      isDirect: this.options.session?.isDirect ?? !this.guildId,
-      subtype: this.options.session?.subtype ?? (this.guildId ? 'group' : 'private'),
+      channel: { id: this.channelId, type: isDirect ? Channel.Type.DIRECT : Channel.Type.TEXT },
+      guild: { id: this.guildId },
+      subtype: isDirect ? 'private' : 'group',
     })
     defineProperty(this.session, this.bot.platform, Object.create(this.bot.internal))
     await this.prepare()
-    this.session.elements = Element.normalize(content)
+    this.session.elements = h.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
     const session = this.options.session ?? this.session
     await this.render(await session.transform(this.session.elements))

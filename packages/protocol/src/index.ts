@@ -1,10 +1,9 @@
 import Element from '@satorijs/element'
-import { Dict, isNullable } from 'cosmokit'
+import { Dict } from 'cosmokit'
 
 export { Element, Element as h }
 
 export interface SendOptions {
-  session?: Session
   linkPreview?: boolean
 }
 
@@ -120,21 +119,23 @@ export interface Methods {
 
 export interface Channel {
   id: string
+  type: Channel.Type
   name?: string
   parentId?: string
-  /** @deprecated */
-  channelId?: string
-  /** @deprecated */
-  channelName?: string
+}
+
+export namespace Channel {
+  export const enum Type {
+    TEXT = 0,
+    DIRECT = 1,
+    VOICE = 2,
+    CATEGORY = 3,
+  }
 }
 
 export interface Guild {
   id: string
-  name: string
-  /** @deprecated */
-  guildId?: string
-  /** @deprecated */
-  guildName?: string
+  name?: string
 }
 
 export interface GuildRole {
@@ -161,29 +162,35 @@ export interface User {
 }
 
 export interface GuildMember {
-  user: User
-  title?: string
-  nickname?: string
+  user?: User
+  name?: string
   avatar?: string
+  title?: string
   roles?: string[]
-  anonymous?: string
+}
+
+export interface Login {
+  user?: User
+  status: Login.Status
+}
+
+export namespace Login {
+  export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
 }
 
 /** @deprecated */
 export type Author = Partial<Omit<GuildMember, 'user'> & User>
 
 export interface Message {
-  messageId?: string
-  channelId?: string
-  guildId?: string
-  userId?: string
+  id?: string
+  channel?: Channel
+  guild?: Guild
+  user?: User
+  member?: GuildMember
   content?: string
   elements?: Element[]
   timestamp?: number
-  author?: Author
-  member?: GuildMember
   quote?: Message
-  isDirect?: boolean
 }
 
 export interface Command {
@@ -217,15 +224,6 @@ export interface Argv {
   options: Dict
 }
 
-export interface EventData {
-  role?: GuildRole
-  argv?: Argv
-  channel?: Channel
-  guild?: Guild
-  member?: GuildMember
-  user?: User
-}
-
 type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
 type Actions = 'added' | 'deleted' | 'updated'
 
@@ -247,85 +245,23 @@ export type EventName =
   | 'guild-request'
   | 'guild-member-request'
 
-export interface Session extends Session.Payload {}
-
-export namespace Session {
-  export interface Payload {
-    isDirect?: boolean
-    platform?: string
-    selfId?: string
-    type?: string
-    /** @deprecated */
-    subtype?: string
-    /** @deprecated */
-    subsubtype?: string
-    messageId?: string
-    channelId?: string
-    guildId?: string
-    userId?: string
-    content?: string
-    elements?: Element[]
-    timestamp?: number
-    author?: Author
-    member?: GuildMember
-    quote?: Message
-    channelName?: string
-    guildName?: string
-    operatorId?: string
-    targetId?: string
-    duration?: number
-    roleId?: string
-    data?: EventData
-    locales?: string[]
-  }
-}
-
-export class Session {
-  static counter = 0
-
-  public id: number
-
-  constructor(payload: Partial<Session.Payload> = {}) {
-    this.data = {}
-    this.id = ++Session.counter
-    Object.assign(this, payload)
-    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
-      if (descriptor.enumerable) continue
-      Object.defineProperty(this, key, descriptor)
-    }
-  }
-
-  get uid() {
-    return `${this.platform}:${this.userId}`
-  }
-
-  get gid() {
-    return `${this.platform}:${this.guildId}`
-  }
-
-  get cid() {
-    return `${this.platform}:${this.channelId}`
-  }
-
-  get fid() {
-    return `${this.platform}:${this.channelId}:${this.userId}`
-  }
-
-  get sid() {
-    return `${this.platform}:${this.selfId}`
-  }
-
-  get content(): string | undefined {
-    return this.elements?.join('')
-  }
-
-  set content(value: string | undefined) {
-    this.elements = isNullable(value) ? value : Element.parse(value)
-  }
-
-  toJSON(): Session.Payload {
-    return Object.fromEntries(Object.entries(this).filter(([key]) => {
-      return !key.startsWith('_') && !key.startsWith('$')
-    })) as any
-  }
+export interface EventData {
+  id: number
+  type: string
+  selfId: string
+  platform: string
+  timestamp: number
+  argv?: Argv
+  channel?: Channel
+  guild?: Guild
+  member?: GuildMember
+  message?: Message
+  operator?: User
+  role?: GuildRole
+  user?: User
+  /** @deprecated */
+  subtype?: string
+  /** @deprecated */
+  subsubtype?: string
+  locales?: string[]
 }

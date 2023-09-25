@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/server",
   "description": "Basic API server for Satori protocol",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
@@ -20,12 +20,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "packages/server-basic"
+    "directory": "packages/server"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://github.com/satorijs/satori/tree/master/packages/server-basic",
+  "homepage": "https://github.com/satorijs/satori/tree/master/packages/server",
   "keywords": [
     "satori",
     "protocol",
@@ -34,6 +34,6 @@
     "api"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-alpha.1"
+    "@satorijs/satori": "^3.0.0-alpha.2"
   }
 }

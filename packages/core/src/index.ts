@@ -5,11 +5,10 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
-import Element from '@satorijs/element'
-import { SendOptions } from '@satorijs/protocol'
+import { h, SendOptions } from '@satorijs/protocol'
 import { Internal } from './internal'
 
-Element.warn = new Logger('element').warn
+h.warn = new Logger('element').warn
 
 // do not remove the `type` modifier
 // because `esModuleInterop` is not respected by esbuild
