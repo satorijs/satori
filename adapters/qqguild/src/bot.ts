@@ -45,6 +45,11 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     return user
   }
 
+  async getUser(userId: string, guildId?: string): Promise<Universal.User> {
+    const { user } = await this.getGuildMember(guildId, userId)
+    return user
+  }
+
   async getGuildList(next?: string) {
     const guilds = await this.internal.getGuilds()
     return { data: guilds.map(adaptGuild) }

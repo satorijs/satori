@@ -1,6 +1,7 @@
 import { h, Session, Universal } from '@satorijs/satori'
 import * as QQGuild from './types'
 import { QQGuildBot } from './bot'
+import { unescape } from '@satorijs/element'
 
 export const adaptGuild = (guild: QQGuild.Guild): Universal.Guild => ({
   id: guild.id,
@@ -49,13 +50,16 @@ export async function decodeMessage(bot: QQGuildBot, msg: QQGuild.Message, sessi
   }
   session.isDirect = !!msg.direct_message
   session.content = (msg.content ?? '')
-    .replace(/<@!(.+)>/, (_, $1) => h.at($1).toString())
-    .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString())
+    .replace(/<@!(\d+)>/g, (_, $1) => h.at($1).toString())
+  // .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString()) // not used?
   const { attachments = [] } = msg
   session.content = attachments
     .filter(({ content_type }) => content_type.startsWith('image'))
     .reduce((content, attachment) => content + h.image('https://' + attachment.url), session.content)
   session.elements = h.parse(session.content)
+  session.elements = h.transform(session.elements, {
+    text: (attrs) => unescape(attrs.content),
+  })
 
   if (msg.message_reference) {
     session.quote = await bot.getMessage(msg.channel_id, msg.message_reference.message_id)

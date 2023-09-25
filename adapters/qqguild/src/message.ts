@@ -3,6 +3,7 @@ import { Dict, h, MessageEncoder } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
 import FormData from 'form-data'
 import { decodeMessage } from './utils'
+import { escape } from '@satorijs/element'
 
 export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private content: string = ''
@@ -106,7 +107,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.content += attrs.content
+      this.content += escape(attrs.content)
     } else if (type === 'at') {
       switch (attrs.type) {
         case 'all':
