@@ -16,6 +16,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   static filter = false
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
 
+  public user = {} as User
   public isBot = true
   public hidden = false
   public platform: string

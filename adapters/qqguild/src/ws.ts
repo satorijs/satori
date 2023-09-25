@@ -3,7 +3,7 @@ import { QQGuildBot } from './bot'
 
 export class WsClient extends Adapter.Client<QQGuildBot> {
   async start(bot: QQGuildBot) {
-    Object.assign(bot, await bot.getSelf())
+    await bot.getLogin()
     await bot.internal.startClient(bot.config.intents)
     bot.internal.on('ready', bot.online.bind(bot))
     bot.internal.on('message', msg => {

@@ -75,7 +75,7 @@ export interface Methods {
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
   // user
-  getSelf(): Promise<User>
+  getLogin(): Promise<Login>
   getUser(userId: string, guildId?: string): Promise<User>
   getFriendList(next?: string): Promise<List<User>>
   getFriendIter(): AsyncIterable<User>

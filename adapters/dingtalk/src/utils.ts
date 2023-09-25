@@ -6,17 +6,27 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
   const session = bot.session()
   session.type = 'message'
   session.messageId = body.msgId
-  session.isDirect = body.conversationType === '1'
   session.guildId = body.chatbotCorpId
 
-  if (body.conversationTitle) session.channelName = body.conversationTitle
-  session.userId = body.senderStaffId
-  session.author = {
-    userId: body.senderStaffId,
-    username: body.senderNick,
+  if (body.conversationType === '1') {
+    session.channelId = session.userId
+  } else {
+    const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => h.at(v.staffId))
+    session.elements = [h.at(body.robotCode), ...atUsers, ...session.elements]
+    session.channelId = body.conversationId
+  }
+  if (body.conversationTitle) {
+    session.data.channel.name = body.conversationTitle
+  }
+
+  session.data.user = {
+    id: body.senderStaffId,
+    name: body.senderNick,
+  }
+  session.data.member = {
     roles: body.isAdmin ? ['admin'] : [],
   }
-  session.timestamp = Number(body.createAt)
+  session.timestamp = +body.createAt
   if (body.msgtype === 'text') {
     session.elements = [h.text(body.text.content)]
   } else if (body.msgtype === 'richText') {
@@ -35,14 +45,6 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
     session.elements = [h.file(await bot.downloadFile(body.content.downloadCode))]
   } else {
     return
-  }
-  if (!session.isDirect) {
-    // group message
-    const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => h.at(v.staffId))
-    session.elements = [h.at(body.robotCode), ...atUsers, ...session.elements]
-    session.channelId = body.conversationId
-  } else {
-    session.channelId = session.userId
   }
   session.content = session.elements.join('')
   return session

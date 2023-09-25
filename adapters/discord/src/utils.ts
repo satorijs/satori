@@ -23,7 +23,7 @@ export const decodeUser = (user: Discord.User): Universal.User => ({
 export const decodeGuildMember = (member: Discord.GuildMember): Universal.GuildMember => ({
   ...decodeUser(member.user),
   user: decodeUser(member.user),
-  nickname: member.nick,
+  name: member.nick,
   roles: member.roles,
   avatar: member.user.avatar,
 })
@@ -36,6 +36,7 @@ export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
 export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
   id: data.id,
   name: data.name,
+  type: data.type === Discord.Channel.Type.DM ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
 })
 
 export const decodeAuthor = (author: Discord.User): Universal.Author => ({

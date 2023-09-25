@@ -16,11 +16,9 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     ctx.plugin(WsClient, this)
   }
 
-  async getSelf() {
-    const user = adaptUser(await this.internal.me)
-    user['selfId'] = user.userId
-    delete user.userId
-    return user
+  async getLogin() {
+    this.user = adaptUser(await this.internal.me)
+    return { status: this.status, user: this.user }
   }
 
   async getGuildList() {

@@ -52,7 +52,6 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     session.messageId = processQueryKey
     session.channelId = this.session.channelId
     session.guildId = this.session.guildId
-    console.log(session, processQueryKey)
     session.app.emit(session, 'send', session)
     this.results.push(session)
   }

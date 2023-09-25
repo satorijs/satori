@@ -12,11 +12,12 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public oldHttp: Quester
   public http: Quester
   public internal: Internal
-  refreshTokenTimer: NodeJS.Timeout
+  private refreshTokenTimer: NodeJS.Timeout
 
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config)
     this.platform = 'dingtalk'
+    this.selfId = config.appkey
     this.http = ctx.http.extend(config.api)
     this.oldHttp = ctx.http.extend(config.oldApi)
     this.internal = new Internal(this)
@@ -28,15 +29,15 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     }
   }
 
-  async initialize() {
+  async getLogin() {
     const { appList } = await this.internal.OapiMicroappList()
     const self = appList.find(v => v.agentId === this.config.agentId)
-    this.username = self.name
-    this.avatar = self.appIcon
+    this.user.name = self.name
+    this.user.avatar = self.appIcon
+    return { status: this.status, user: this.user }
   }
 
-  // @ts-ignore
-  stop(): Promise<void> {
+  async stop() {
     clearTimeout(this.refreshTokenTimer)
   }
 
@@ -61,7 +62,8 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   // https://open.dingtalk.com/document/orgapp/download-the-file-content-of-the-robot-receiving-message
   async downloadFile(downloadCode: string): Promise<string> {
     const { downloadUrl } = await this.internal.robotMessageFileDownload({
-      downloadCode, robotCode: this.selfId,
+      downloadCode,
+      robotCode: this.selfId,
     })
     return downloadUrl
   }

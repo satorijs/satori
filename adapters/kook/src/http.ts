@@ -30,7 +30,7 @@ export class HttpServer extends Adapter.Server<KookBot<KookBot.BaseConfig & Http
   }
 
   async start(bot: KookBot) {
-    Object.assign(bot, await bot.getSelf())
+    await bot.getLogin()
     bot.online()
   }
 }

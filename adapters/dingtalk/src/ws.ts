@@ -5,8 +5,7 @@ import { decodeMessage } from './utils'
 export class WsClient extends Adapter.WsClient<DingtalkBot> {
   async prepare() {
     await this.bot.refreshToken()
-    this.bot.selfId = this.bot.config.appkey
-    await this.bot.initialize()
+    await this.bot.getLogin()
     const { endpoint, ticket } = await this.bot.http.post<{
       endpoint: string
       ticket: string

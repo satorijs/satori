@@ -53,7 +53,7 @@ export class WsClient extends Adapter.WsClient<KookBot> {
         if (session) bot.dispatch(session)
       } else if (parsed.s === Signal.hello) {
         this._heartbeat = setInterval(() => this.heartbeat(bot), Time.minute * 0.5)
-        Object.assign(bot, await bot.getSelf())
+        await bot.getLogin()
         bot.online()
       } else if (parsed.s === Signal.pong) {
         clearTimeout(this._ping)

@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Fragment, h, isNullable, Logger, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { Bot, Context, defineProperty, Fragment, h, isNullable, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -93,7 +93,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async getMessageList(channelId: string, before?: string) {
     const messages = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
     const data = await Promise.all(messages.reverse().map(data => Discord.decodeMessage(this, data, {}, false)))
-    return { data, next: data[0]?.messageId }
+    return { data, next: data[0]?.id }
   }
 
   async getUser(userId: string) {
@@ -188,7 +188,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return this.internal.deleteGuildRole(guildId, roleId)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+  async sendPrivateMessage(userId: string, content: Fragment, options?: Universal.SendOptions) {
     const channel = await this.internal.createDM({
       recipient_id: userId,
     })

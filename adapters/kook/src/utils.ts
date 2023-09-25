@@ -20,12 +20,12 @@ export const adaptUser = (user: Kook.User): Universal.User => ({
 export const decodeGuildMember = (member: Kook.Author): Universal.GuildMember => ({
   ...adaptUser(member),
   user: adaptUser(member),
-  nickname: member.nickname,
+  name: member.nickname,
 })
 
 export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
   ...adaptUser(author),
-  nickname: author.nickname,
+  name: author.nickname,
 })
 
 export const decodeRole = (role: Kook.GuildRole): Universal.GuildRole => ({

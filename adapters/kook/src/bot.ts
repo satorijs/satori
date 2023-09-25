@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Quester, Schema, SendOptions, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
 import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import FormData from 'form-data'
@@ -80,11 +80,9 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async getSelf() {
-    const data = adaptUser(await this.request<Kook.Self>('GET', '/user/me'))
-    data['selfId'] = data.userId
-    delete data.userId
-    return data
+  async getLogin() {
+    this.user = adaptUser(await this.request<Kook.Self>('GET', '/user/me'))
+    return { status: this.status, user: this.user }
   }
 
   async getGuildList() {
@@ -109,7 +107,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+  async sendPrivateMessage(userId: string, content: Fragment, options?: Universal.SendOptions) {
     const { code } = await this.request('POST', '/user-chat/create', { target_id: userId })
     return this.sendMessage(code, content, null, options)
   }
