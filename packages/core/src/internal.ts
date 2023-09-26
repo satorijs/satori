@@ -1,6 +1,6 @@
 import { Awaitable, defineProperty } from 'cosmokit'
 import { Context, Session } from '.'
-import { Fragment, h, Render } from '@satorijs/protocol'
+import h from '@satorijs/element'
 
 declare module '.' {
   interface Context {
@@ -9,7 +9,7 @@ declare module '.' {
   }
 }
 
-export type Component = Render<Awaitable<Fragment>, Session>
+export type Component = h.Render<Awaitable<h.Fragment>, Session>
 
 export namespace Component {
   export interface Options {

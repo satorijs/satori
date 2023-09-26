@@ -31,6 +31,7 @@ export class WsClient extends Adapter.WsClient<SlackBot> {
         const session = await adaptSession(bot, payload)
 
         if (session) {
+          console.log(session)
           bot.dispatch(session)
           logger.debug(require('util').inspect(session, false, null, true))
         }

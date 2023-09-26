@@ -3,7 +3,7 @@ import { SlackBot } from './bot'
 // eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
 import { KnownBlock } from '@slack/types'
-import { File, SlackChannel, SlackTeam } from './types'
+import { Definitions, File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
 
 type NewKnownBlock = KnownBlock | RichTextBlock
@@ -70,36 +70,22 @@ function adaptMessageBlocks(blocks: NewKnownBlock[]) {
   return result
 }
 
-const adaptAuthor = (evt: Partial<GenericMessageEvent>): Universal.Author => ({
-  userId: evt.user || evt.bot_id as string,
-  // username: evt.username
-})
-
-const adaptBotProfile = (evt: Partial<GenericMessageEvent>): Universal.Author => ({
-  userId: evt.bot_profile.app_id,
-  username: evt.bot_profile.name,
+const decodeBotProfile = (data: Definitions.BotProfile): Universal.User => ({
+  id: data.app_id,
+  name: data.name,
   isBot: true,
-  avatar: evt.bot_profile.icons.image_72,
+  avatar: data.icons.image_72,
 })
 
-export async function adaptMessage(bot: SlackBot, evt: Partial<GenericMessageEvent>, session: Partial<Session> = {}) {
-  session.messageId = evt.ts
-  session.timestamp = Math.floor(Number(evt.ts) * 1000)
-  session.author = evt.bot_profile ? adaptBotProfile(evt) : adaptAuthor(evt)
-  session.userId = session.author.userId
-  if (evt.team) session.guildId = evt.team
-
-  let elements = []
-  // if a message(parent message) was a thread, it has thread_ts property too
-  if (evt.thread_ts && evt.thread_ts !== evt.ts) {
-    const quoted = await bot.getMessage(session.channelId, evt.thread_ts)
-    session.quote = quoted
-    session.quote.channelId = session.channelId
-  }
-
-  // if (evt.thread_ts) elements.push(h.quote(evt.thread_ts))
-  elements = [...elements, ...adaptMessageBlocks(evt.blocks as unknown as NewKnownBlock[])]
-  for (const file of evt.files ?? []) {
+export async function adaptMessage(
+  bot: SlackBot,
+  data: Partial<GenericMessageEvent> | Definitions.Message,
+  message: Universal.Message,
+  payload: Universal.Message | Universal.EventData = message,
+) {
+  const elements = adaptMessageBlocks(data.blocks as unknown as NewKnownBlock[])
+  // if (evt.thread_ts) elements.unshift(h.quote(evt.thread_ts))
+  for (const file of data.files ?? []) {
     if (file.mimetype.startsWith('video/')) {
       elements.push(h.video(file.url_private, { id: file.id }))
     } else if (file.mimetype.startsWith('audio/')) {
@@ -111,29 +97,51 @@ export async function adaptMessage(bot: SlackBot, evt: Partial<GenericMessageEve
     }
   }
   let forward = null
-  for (const attachment of evt.attachments ?? []) {
-    // @ts-ignore
-    if (attachment.is_msg_unfurl) {
-      forward = attachment.ts
+  for (const attachment of data.attachments ?? []) {
+    // FIXME add typings
+    if (attachment['is_msg_unfurl']) {
+      forward = attachment['ts']
     }
   }
-  session.elements = forward ? [h('message', { forward: true, id: forward }, elements)] : elements
-  session.content = session.elements.join('')
-  return session as Universal.Message
+  message.id = data.ts
+  message.elements = forward ? [h('message', { forward: true, id: forward }, elements)] : elements
+  message.content = message.elements.join('')
+
+  if (!payload) return
+  payload.timestamp = Math.floor(Number(data.ts) * 1000)
+  if ('channel' in data) {
+    payload.channel = {
+      id: data.channel,
+      type: data.channel_type === 'im' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
+    }
+  }
+  console.log(data)
+  if ('bot_profile' in data) {
+    payload.user = decodeBotProfile(data.bot_profile as Definitions.BotProfile)
+  } else {
+    payload.user = { id: data.user }
+  }
+  // if a message(parent message) was a thread, it has thread_ts property too
+  if (data.thread_ts && data.thread_ts !== data.ts) {
+    message.quote = await bot.getMessage(payload.channel.id, data.thread_ts)
+  }
+  if (data.team) {
+    payload.guild = { id: data.team }
+  }
 }
 
-export function adaptMessageDeleted(bot: SlackBot, evt: MessageDeletedEvent, session: Partial<Session> = {}) {
-  session.isDirect = evt.channel_type === 'im'
-  session.channelId = evt.channel
-  session.guildId = evt.previous_message.team
+export function adaptMessageDeleted(bot: SlackBot, event: MessageDeletedEvent, session: Partial<Session> = {}) {
+  session.isDirect = event.channel_type === 'im'
+  session.channelId = event.channel
+  session.guildId = event.previous_message.team
   session.type = 'message-deleted'
-  session.messageId = evt.previous_message.ts
-  session.timestamp = Math.floor(Number(evt.previous_message.ts) * 1000)
+  session.messageId = event.previous_message.ts
+  session.timestamp = Math.floor(Number(event.previous_message.ts) * 1000)
 
-  adaptMessage(bot, evt.previous_message, session)
+  adaptMessage(bot, event.previous_message, session.data.message = {}, session.data)
 }
 
-export function adaptSentAsset(file: File, session: Partial<Session> = {}) {
+export function adaptSentAsset(file: File, session: Session) {
   session.messageId = file.shares.public[Object.keys(file.shares.public)[0]][0].ts
   session.timestamp = file.created * 1000
   session.elements = [h.image(file.url_private, { id: file.id })]
@@ -141,11 +149,7 @@ export function adaptSentAsset(file: File, session: Partial<Session> = {}) {
   session.channelId = file.channels[0]
   // session.guildId = file.shares.public[Object.keys(file.shares.public)[0]][0].ts
   session.type = 'message'
-  session.author = {
-    userId: file.user,
-  }
-  session.userId = session.author.userId
-  return session as Universal.Message
+  session.userId = file.user
 }
 
 function setupReaction(session: Partial<Session>, data: EnvelopedEvent<ReactionAddedEvent> | EnvelopedEvent<ReactionRemovedEvent>) {
@@ -166,9 +170,7 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
     if (input.user === bot.selfId) return
     if (!input.subtype) {
       session.type = 'message'
-      session.isDirect = input.channel_type === 'im'
-      session.channelId = input.channel
-      await adaptMessage(bot, input as GenericMessageEvent, session)
+      await adaptMessage(bot, input as GenericMessageEvent, session.data.message = {}, session.data)
     } else if (input.subtype === 'message_deleted') {
       adaptMessageDeleted(bot, input, session)
     } else if (input.subtype === 'message_changed') {
@@ -177,9 +179,7 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
       session.type = 'message-updated'
       // @ts-ignore
       session.guildId = payload.team_id
-      session.isDirect = input.channel_type === 'im'
-      session.channelId = input.channel
-      await adaptMessage(bot, evt.message, session)
+      await adaptMessage(bot, evt.message, session.data.message = {}, session.data)
     } else {
       return
     }
@@ -211,33 +211,32 @@ export interface AuthTestResponse {
   is_enterprise_install: boolean
 }
 
-export function adaptUser(data: SlackUser): Universal.User {
-  return {
-    id: data.id,
-    name: data.real_name,
-    userId: data.id,
-    avatar: data.profile.image_512
-      ?? data.profile.image_192
-      ?? data.profile.image_72
-      ?? data.profile.image_48
-      ?? data.profile.image_32
-      ?? data.profile.image_24,
-    username: data.real_name,
-    isBot: data.is_bot,
-  }
-}
-
-export const adapteGuildMember = (data: SlackUser): Universal.GuildMember => ({
-  user: adaptUser(data),
-  ...adaptUser(data),
+export const decodeUser = (data: SlackUser): Universal.User => ({
+  id: data.id,
+  name: data.real_name,
+  nick: data.profile.display_name,
+  userId: data.id,
+  avatar: data.profile.image_512
+    ?? data.profile.image_192
+    ?? data.profile.image_72
+    ?? data.profile.image_48
+    ?? data.profile.image_32
+    ?? data.profile.image_24,
+  username: data.real_name,
+  isBot: data.is_bot,
 })
 
-export const adaptChannel = (data: SlackChannel): Universal.Channel => ({
+export const decodeGuildMember = (data: SlackUser): Universal.GuildMember => ({
+  user: decodeUser(data),
+})
+
+export const decodeChannel = (data: SlackChannel): Universal.Channel => ({
   id: data.id,
   name: data.name,
+  type: data.is_private ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
 })
 
-export const adaptGuild = (data: SlackTeam): Universal.Guild => ({
+export const decodeGuild = (data: SlackTeam): Universal.Guild => ({
   id: data.id,
   name: data.name,
 })

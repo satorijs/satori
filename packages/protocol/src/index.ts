@@ -1,12 +1,6 @@
 import Element from '@satorijs/element'
 import { Dict } from 'cosmokit'
 
-// do not remove the `type` modifier
-// because `esModuleInterop` is not respected by esbuild
-export type { Fragment, Render } from '@satorijs/element'
-
-export { Element, Element as h }
-
 export interface SendOptions {
   linkPreview?: boolean
 }
@@ -183,9 +177,6 @@ export interface Login {
 export namespace Login {
   export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
 }
-
-/** @deprecated */
-export type Author = Partial<Omit<GuildMember, 'user'> & User>
 
 export interface Message {
   id?: string

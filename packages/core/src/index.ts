@@ -5,12 +5,17 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
-import { h, SendOptions } from '@satorijs/protocol'
+import { SendOptions } from '@satorijs/protocol'
 import { Internal } from './internal'
+import h from '@satorijs/element'
 
 h.warn = new Logger('element').warn
 
-export { h, Element, h as segment, Fragment, Render } from '@satorijs/protocol'
+// do not remove the `type` modifier
+// because `esModuleInterop` is not respected by esbuild
+export type { Fragment, Render } from '@satorijs/element'
+
+export { h, h as Element, h as segment }
 export { Schema, Schema as z, Logger, Quester }
 
 export * as Satori from '@satorijs/protocol'

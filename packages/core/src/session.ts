@@ -1,7 +1,8 @@
 import { defineProperty, isNullable } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
-import { Channel, EventData, h, Message } from '@satorijs/protocol'
+import { Channel, EventData, GuildMember, Message, User } from '@satorijs/protocol'
+import h from '@satorijs/element'
 
 declare module '@satorijs/protocol' {
   interface SendOptions {
@@ -9,15 +10,19 @@ declare module '@satorijs/protocol' {
   }
 }
 
+// Accessors
 export interface Session {
   type: string
   subtype: string
   subsubtype: string
+  selfId: string
+  platform: string
   timestamp: number
   userId: string
   channelId: string
   guildId: string
   messageId: string
+  operatorId: string
   roleId: string
   quote: Message
 }
@@ -59,7 +64,8 @@ export class Session {
     (this.data.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
   }
 
-  get author() {
+  /** @deprecated use `session.member` and `session.user` instead */
+  get author(): GuildMember & User {
     return { user: this.data.user, ...this.data.user, ...this.data.member }
   }
 
@@ -117,8 +123,9 @@ export class Session {
         return keys.reduce((data, key) => data?.[key], this.data)
       },
       set(value) {
-        const last = keys.pop()
-        const data = keys.reduce((data, key) => data[key] ??= {}, this.data)
+        const _keys = keys.slice()
+        const last = _keys.pop()
+        const data = _keys.reduce((data, key) => data[key] ??= {}, this.data)
         data[last] = value
       },
     })
@@ -128,10 +135,13 @@ export class Session {
 Session.accessor('type', ['type'])
 Session.accessor('subtype', ['subtype'])
 Session.accessor('subsubtype', ['subsubtype'])
+Session.accessor('selfId', ['selfId'])
+Session.accessor('platform', ['platform'])
 Session.accessor('timestamp', ['timestamp'])
 Session.accessor('userId', ['user', 'id'])
 Session.accessor('channelId', ['channel', 'id'])
 Session.accessor('guildId', ['guild', 'id'])
 Session.accessor('messageId', ['message', 'id'])
+Session.accessor('operatorId', ['operator', 'id'])
 Session.accessor('roleId', ['role', 'id'])
 Session.accessor('quote', ['message', 'quote'])

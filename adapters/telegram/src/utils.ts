@@ -1,7 +1,6 @@
 import { defineProperty, Dict, h, Logger, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
-import { EventData } from '@satorijs/protocol'
 
 export * from './types'
 
@@ -79,7 +78,12 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   bot.dispatch(session)
 }
 
-export async function decodeMessage(bot: TelegramBot, data: Telegram.Message, message: Universal.Message, payload: Universal.Message | EventData = message) {
+export async function decodeMessage(
+  bot: TelegramBot,
+  data: Telegram.Message,
+  message: Universal.Message,
+  payload: Universal.Message | Universal.EventData = message,
+) {
   const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
     let curr = 0
     const segs: h[] = []

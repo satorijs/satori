@@ -11,7 +11,7 @@ export interface Bot extends Methods, User {
   internal: any
 }
 
-export abstract class Bot<T extends Bot.Config = Bot.Config> {
+export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
   static reusable = true
   static filter = false
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
@@ -20,12 +20,11 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   public isBot = true
   public hidden = false
   public platform: string
-  public selfId: string
   public adapter?: Adapter<this>
   public error?: Error
 
   protected context: Context
-  protected _status: Bot.Status = 'offline'
+  protected _status: Login.Status = 'offline'
 
   constructor(public ctx: Context, public config: T) {
     if (config.platform) {
@@ -48,11 +47,19 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> {
   }
 
   get userId() {
-    return this.selfId
+    return this.user.id
   }
 
   set userId(value) {
-    this.selfId = value
+    this.user.id = value
+  }
+
+  get selfId() {
+    return this.user.id
+  }
+
+  set selfId(value) {
+    this.user.id = value
   }
 
   get status() {
