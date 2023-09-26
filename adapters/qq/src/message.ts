@@ -1,21 +1,21 @@
-import * as QQGuild from './types'
+import * as QQ from './types'
 import { Dict, h, MessageEncoder } from '@satorijs/satori'
-import { QQGuildBot } from './bot'
+import { QQBot } from './bot'
 import FormData from 'form-data'
 import { decodeMessage } from './utils'
 import { escape } from '@satorijs/element'
 
-export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
+export class QQMessageEncoder extends MessageEncoder<QQBot> {
   private content: string = ''
   private file: Buffer
   private filename: string
   fileUrl: string
   reference: string
-  dms: QQGuild.DMS
+  dms: QQ.DMS
 
   async initDms() {
     const dms = await this.bot.internal.createDMS(this.options.session.userId, this.session.guildId || this.options.session.guildId)
-    this.bot.ctx.logger('qqguild').debug(require('util').inspect(dms, false, null, true))
+    this.bot.ctx.logger('qq').debug(require('util').inspect(dms, false, null, true))
     this.dms = dms
   }
 
@@ -39,14 +39,14 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       // srcGuildId = this.session.guildId
     } else if (this.session.isDirect && this.options?.session) {
       // @ts-ignore
-      const payload = this.options.session.qqguild.d as QQGuild.Message
+      const payload = this.options.session.qq.d as QQ.Message
       endpoint = `/dms/${payload.guild_id}/messages`
       // srcGuildId = payload.src_guild_id
     }
 
     const useFormData = Boolean(this.file)
-    let r: QQGuild.Message
-    this.bot.ctx.logger('qqguild').debug('use form data %s', useFormData)
+    let r: QQ.Message
+    this.bot.ctx.logger('qq').debug('use form data %s', useFormData)
     if (useFormData) {
       const form = new FormData()
       form.append('content', this.content)
@@ -59,11 +59,11 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       // if (this.fileUrl) {
       //   form.append('image', this.fileUrl)
       // }
-      r = await this.bot.http.post<QQGuild.Message>(endpoint, form, {
+      r = await this.bot.http.post<QQ.Message>(endpoint, form, {
         headers: form.getHeaders(),
       })
     } else {
-      r = await this.bot.http.post<QQGuild.Message>(endpoint, {
+      r = await this.bot.http.post<QQ.Message>(endpoint, {
         ...{
           content: this.content,
           msg_id: this.options.session.messageId,
@@ -77,7 +77,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       })
     }
 
-    this.bot.ctx.logger('qqguild').debug(require('util').inspect(r, false, null, true))
+    this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     session.type = 'send'
     await decodeMessage(this.bot, r, session.data.message = {}, session.data)

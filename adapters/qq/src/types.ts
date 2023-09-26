@@ -677,17 +677,13 @@ export interface APIPermissionDemand {
   desc: string
 }
 
-export interface AppConfig {
+export interface Options {
   id: string
   key: string
   token: string
   type: 'public' | 'private'
-}
-
-export interface Options {
-  app: AppConfig
   /** 是否开启沙箱模式 */
-  sandbox: boolean
+  sandbox?: boolean
   endpoint?: string
   /** 目前还不支持 bearer 验证方式。 */
   authType?: 'bot' | 'bearer'

@@ -1,36 +1,36 @@
 import { h, Session, Universal } from '@satorijs/satori'
-import * as QQGuild from './types'
-import { QQGuildBot } from './bot'
+import * as QQ from './types'
+import { QQBot } from './bot'
 import { unescape } from '@satorijs/element'
 
-export const decodeGuild = (guild: QQGuild.Guild): Universal.Guild => ({
+export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
   name: guild.name,
 })
 
-export const decodeChannel = (channel: QQGuild.Channel): Universal.Channel => ({
+export const decodeChannel = (channel: QQ.Channel): Universal.Channel => ({
   id: channel.id,
   name: channel.name,
   // TODO support more channel types
   type: Universal.Channel.Type.TEXT,
 })
 
-export const decodeUser = (user: QQGuild.User): Universal.User => ({
+export const decodeUser = (user: QQ.User): Universal.User => ({
   id: user.id,
   name: user.username,
   isBot: user.bot,
   avatar: user.avatar,
 })
 
-export const decodeGuildMember = (member: QQGuild.Member): Universal.GuildMember => ({
+export const decodeGuildMember = (member: QQ.Member): Universal.GuildMember => ({
   user: decodeUser(member.user),
   name: member.nick,
   roles: member.roles,
 })
 
 export async function decodeMessage(
-  bot: QQGuildBot,
-  data: QQGuild.Message,
+  bot: QQBot,
+  data: QQ.Message,
   message: Universal.Message = {},
   payload: Universal.Message | Universal.EventData = message,
 ): Promise<Universal.Message> {
@@ -65,7 +65,7 @@ export async function decodeMessage(
   return message
 }
 
-export function setupReaction(session: Partial<Session>, data: QQGuild.MessageReaction) {
+export function setupReaction(session: Partial<Session>, data: QQ.MessageReaction) {
   session.userId = data.user_id
   session.guildId = data.guild_id
   session.channelId = data.channel_id
@@ -77,10 +77,10 @@ export function setupReaction(session: Partial<Session>, data: QQGuild.MessageRe
   return session
 }
 
-export async function adaptSession(bot: QQGuildBot, input: QQGuild.DispatchPayload) {
+export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   const session = bot.session({}, input)
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
-    if (bot.config.app.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
+    if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
     session.type = 'message'
     await decodeMessage(bot, input.d, session.data.message = {}, session.data)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
@@ -107,7 +107,7 @@ export async function adaptSession(bot: QQGuildBot, input: QQGuild.DispatchPaylo
     }[input.t]
     session.data.guild = decodeGuild(input.d)
   } else if (input.t === 'DIRECT_MESSAGE_DELETE' || input.t === 'MESSAGE_DELETE' || input.t === 'PUBLIC_MESSAGE_DELETE') {
-    if (bot.config.app.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
+    if (bot.config.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
     session.type = 'message-deleted'
     session.userId = input.d.message.author.id
     session.operatorId = input.d.op_user.id

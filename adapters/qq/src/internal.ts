@@ -1,23 +1,23 @@
 import { Quester } from '@satorijs/satori'
-import * as QQGuild from './types'
+import * as QQ from './types'
 
 export class Internal {
   constructor(private http: Quester) { }
 
   async getMe() {
-    return this.http.get<QQGuild.User>('/users/@me')
+    return this.http.get<QQ.User>('/users/@me')
   }
 
   /** https://bot.q.qq.com/wiki/develop/api/openapi/dms/post_dms.html */
   async createDMS(recipient_id: string, source_guild_id: string) {
-    return this.http.post<QQGuild.DMS>('/users/@me/dms', {
+    return this.http.post<QQ.DMS>('/users/@me/dms', {
       recipient_id, source_guild_id,
     })
   }
 
   async getMessage(channelId: string, messageId: string) {
     const { message } = await this.http.get<{
-      message: QQGuild.Message
+      message: QQ.Message
     }>(`/channels/${channelId}/messages/${messageId}`)
     return message
   }
@@ -27,32 +27,32 @@ export class Internal {
     after: string
     limit: number
   }>) {
-    return this.http.get<QQGuild.Guild[]>('/users/@me/guilds', {
+    return this.http.get<QQ.Guild[]>('/users/@me/guilds', {
       params,
     })
   }
 
   async getGuild(guild_id: string) {
-    return this.http.get<QQGuild.Guild>(`/guilds/${guild_id}`)
+    return this.http.get<QQ.Guild>(`/guilds/${guild_id}`)
   }
 
   async getChannels(guild_id: string) {
-    return this.http.get<QQGuild.Channel[]>(`/guilds/${guild_id}/channels`)
+    return this.http.get<QQ.Channel[]>(`/guilds/${guild_id}/channels`)
   }
 
   async getChannel(channel_id: string) {
-    return this.http.get<QQGuild.Channel>(`/channels/${channel_id}`)
+    return this.http.get<QQ.Channel>(`/channels/${channel_id}`)
   }
 
   async getGuildMembers(guild_id: string, params?: Partial<{
     after: string
     limit: number
   }>) {
-    return this.http.get<QQGuild.Member[]>(`/guilds/${guild_id}/members`, { params })
+    return this.http.get<QQ.Member[]>(`/guilds/${guild_id}/members`, { params })
   }
 
   async getGuildMember(guild_id: string, user_id: string) {
-    return this.http.get<QQGuild.Member>(`/guilds/${guild_id}/members/${user_id}`)
+    return this.http.get<QQ.Member>(`/guilds/${guild_id}/members/${user_id}`)
   }
 
   async deleteGuildMember(guild_id: string, user_id: string) {
@@ -60,7 +60,7 @@ export class Internal {
   }
 
   async getGuildRoles(guild_id: string) {
-    return this.http.get<QQGuild.Role[]>(`/guilds/${guild_id}/roles`)
+    return this.http.get<QQ.Role[]>(`/guilds/${guild_id}/roles`)
   }
 
   async muteGuildMember(guild_id: string, user_id: string, duration: number) {
@@ -76,7 +76,7 @@ export class Internal {
     return this.http.get<{
       cookie: string
       is_end: boolean
-      users: Pick<QQGuild.User, 'id' | 'username' | 'avatar'>[]
+      users: Pick<QQ.User, 'id' | 'username' | 'avatar'>[]
     }>(`/channels/${channel_id}/messages/${message_id}/reactions/${type}/${id}`, {
       params,
     })

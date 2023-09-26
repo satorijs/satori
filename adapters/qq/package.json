@@ -1,7 +1,7 @@
 {
-  "name": "@satorijs/adapter-qqguild",
+  "name": "@satorijs/adapter-qq",
   "description": "QQ Guild Adapter for Satorijs",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -12,21 +12,22 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "adapters/qqguild"
+    "directory": "adapters/qq"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://koishi.chat/plugins/adapter/qqguild.html",
+  "homepage": "https://koishi.chat/plugins/adapter/qq.html",
   "keywords": [
     "bot",
     "qq",
+    "qqbot",
     "qqguild",
     "chatbot",
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-alpha.1"
+    "@satorijs/satori": "^3.0.0-alpha.2"
   },
   "dependencies": {
     "qface": "^1.4.1"

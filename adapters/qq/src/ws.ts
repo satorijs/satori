@@ -1,11 +1,11 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
-import { QQGuildBot } from './bot'
+import { QQBot } from './bot'
 import { Intents, Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 
-const logger = new Logger('qqguild')
+const logger = new Logger('qq')
 
-export class WsClient extends Adapter.WsClient<QQGuildBot> {
+export class WsClient extends Adapter.WsClient<QQBot> {
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout
@@ -23,7 +23,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
     }))
   }
 
-  async accept(bot: QQGuildBot) {
+  async accept(bot: QQBot) {
     bot.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
       logger.debug(require('util').inspect(parsed, false, null, true))
@@ -32,7 +32,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
           bot.socket.send(JSON.stringify({
             op: Opcode.RESUME,
             d: {
-              token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
+              token: `Bot ${bot.config.id}.${bot.config.token}`,
               session_id: this._sessionId,
               seq: this._s,
             },
@@ -41,8 +41,8 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
           bot.socket.send(JSON.stringify({
             op: Opcode.IDENTIFY,
             d: {
-              token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
-              intents: bot.config.app.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
+              token: `Bot ${bot.config.id}.${bot.config.token}`,
+              intents: bot.config.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
             },
           }))
         }
@@ -56,7 +56,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
         logger.warn('offline: server request reconnect')
         this.bot.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
-        this.bot.ctx.emit('qqguild/' + parsed.t.toLowerCase().replace(/_/g, '-') as any, parsed)
+        this.bot.ctx.emit('qq/' + parsed.t.toLowerCase().replace(/_/g, '-') as any, parsed)
         this._s = parsed.s
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
@@ -77,7 +77,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
     })
   }
 
-  async stop(bot: QQGuildBot): Promise<void> {
+  async stop(bot: QQBot): Promise<void> {
     bot.offline()
     bot.socket?.close()
   }

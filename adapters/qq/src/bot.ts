@@ -1,19 +1,19 @@
 import { Bot, Context, defineProperty, Quester, Schema, Universal } from '@satorijs/satori'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from './utils'
-import { QQGuildMessageEncoder } from './message'
+import { QQMessageEncoder } from './message'
 import { WsClient } from './ws'
 import { Internal } from './internal'
-import * as QQGuild from './types'
+import * as QQ from './types'
 
-export class QQGuildBot extends Bot<QQGuildBot.Config> {
-  static MessageEncoder = QQGuildMessageEncoder
+export class QQBot extends Bot<QQBot.Config> {
+  static MessageEncoder = QQMessageEncoder
 
   internal: Internal
   http: Quester
 
-  constructor(ctx: Context, config: QQGuildBot.Config) {
+  constructor(ctx: Context, config: QQBot.Config) {
     super(ctx, config)
-    this.platform = 'qqguild'
+    this.platform = 'qq'
     let endpoint = config.endpoint
     if (config.sandbox) {
       endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
@@ -21,7 +21,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
     this.http = ctx.http.extend({
       endpoint,
       headers: {
-        Authorization: `Bot ${this.config.app.id}.${this.config.app.token}`,
+        Authorization: `Bot ${this.config.id}.${this.config.token}`,
       },
     })
     this.internal = new Internal(this.http)
@@ -29,7 +29,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   session(payload?: any, input?: any) {
-    return defineProperty(super.session(payload), 'qqguild', Object.assign(Object.create(this.internal), input))
+    return defineProperty(super.session(payload), 'qq', Object.assign(Object.create(this.internal), input))
   }
 
   async getLogin() {
@@ -118,25 +118,21 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 }
 
-export namespace QQGuildBot {
-  type BotOptions = QQGuild.Options
-  type CustomBotOptions = Omit<BotOptions, 'sandbox'> & Partial<Pick<BotOptions, 'sandbox'>>
-  export interface Config extends Bot.Config, CustomBotOptions, WsClient.Config {
+export namespace QQBot {
+  export interface Config extends Bot.Config, QQ.Options, WsClient.Config {
     intents?: number
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      app: Schema.object({
-        id: Schema.string().description('机器人 id。').required(),
-        key: Schema.string().description('机器人 key。').role('secret').required(),
-        token: Schema.string().description('机器人令牌。').role('secret').required(),
-        type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
-      }) as any,
-      sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
+      id: Schema.string().description('机器人 id。').required(),
+      key: Schema.string().description('机器人 key。').role('secret').required(),
+      token: Schema.string().description('机器人令牌。').role('secret').required(),
+      type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
+      sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
-      intents: Schema.bitset(QQGuild.Intents).description('需要订阅的机器人事件。'),
+      intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
     }),
     WsClient.Config,
   ] as const)
