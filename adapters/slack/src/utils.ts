@@ -103,7 +103,7 @@ export async function adaptMessage(
       forward = attachment['ts']
     }
   }
-  message.id = data.ts
+  message.id = message.messageId = data.ts
   message.elements = forward ? [h('message', { forward: true, id: forward }, elements)] : elements
   message.content = message.elements.join('')
 

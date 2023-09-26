@@ -32,16 +32,16 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       return
     }
     let endpoint = `/channels/${this.session.channelId}/messages`
-    let srcGuildId // directMsg
+    // let srcGuildId // directMsg
     if (this.session.isDirect && !this.options?.session) {
       // initiative send
       endpoint = `/dms/${this.dms.guild_id}/messages`
-      srcGuildId = this.session.guildId
+      // srcGuildId = this.session.guildId
     } else if (this.session.isDirect && this.options?.session) {
       // @ts-ignore
       const payload = this.options.session.qqguild.d as QQGuild.Message
       endpoint = `/dms/${payload.guild_id}/messages`
-      srcGuildId = payload.src_guild_id
+      // srcGuildId = payload.src_guild_id
     }
 
     const useFormData = Boolean(this.file)
@@ -79,7 +79,8 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
 
     this.bot.ctx.logger('qqguild').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
-    await decodeMessage(this.bot, r, session)
+    session.type = 'send'
+    await decodeMessage(this.bot, r, session.data.message = {}, session.data)
     if (this.session.isDirect) {
       session.guildId = this.session.guildId
       session.channelId = this.session.channelId

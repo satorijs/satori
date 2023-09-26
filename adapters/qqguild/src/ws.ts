@@ -1,9 +1,10 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { QQGuildBot } from './bot'
-import { Opcode, Payload } from './types'
-import { adaptSession } from './utils'
+import { Intents, Opcode, Payload } from './types'
+import { adaptSession, decodeUser } from './utils'
 
 const logger = new Logger('qqguild')
+
 export class WsClient extends Adapter.WsClient<QQGuildBot> {
   _sessionId = ''
   _s: number = null
@@ -41,7 +42,7 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
             op: Opcode.IDENTIFY,
             d: {
               token: `Bot ${bot.config.app.id}.${bot.config.app.token}`,
-              intents: 0 | bot.config.intents,
+              intents: bot.config.app.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
             },
           }))
         }
@@ -55,9 +56,11 @@ export class WsClient extends Adapter.WsClient<QQGuildBot> {
         logger.warn('offline: server request reconnect')
         this.bot.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
+        this.bot.ctx.emit('qqguild/' + parsed.t.toLowerCase().replace(/_/g, '-') as any, parsed)
         this._s = parsed.s
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
+          bot.user = decodeUser(parsed.d.user)
           return bot.online()
         }
         if (parsed.t === 'RESUMED') {

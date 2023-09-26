@@ -170,7 +170,7 @@ export async function decodeMessage(
 
   message.elements = segments
   message.content = segments.join('')
-  message.id = data.message_id.toString()
+  message.id = message.messageId = data.message_id.toString()
 
   if (!payload) return
   payload.timestamp = data.date * 1000

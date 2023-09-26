@@ -1,5 +1,5 @@
 import { Bot, Context, defineProperty, Quester, Schema, Universal } from '@satorijs/satori'
-import { adaptChannel, adaptGuild, adaptUser, decodeGuildMember, decodeMessage } from './utils'
+import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from './utils'
 import { QQGuildMessageEncoder } from './message'
 import { WsClient } from './ws'
 import { Internal } from './internal'
@@ -33,7 +33,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
   }
 
   async getLogin() {
-    this.user = adaptUser(await this.internal.getMe())
+    this.user = decodeUser(await this.internal.getMe())
     return this.toJSON()
   }
 
@@ -44,22 +44,22 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 
   async getGuildList(next?: string) {
     const guilds = await this.internal.getGuilds()
-    return { data: guilds.map(adaptGuild) }
+    return { data: guilds.map(decodeGuild) }
   }
 
   async getGuild(guildId: string) {
     const guild = await this.internal.getGuild(guildId)
-    return adaptGuild(guild)
+    return decodeGuild(guild)
   }
 
   async getChannelList(guildId: string, next?: string): Promise<Universal.List<Universal.Channel>> {
     const channels = await this.internal.getChannels(guildId)
-    return { data: channels.map(adaptChannel) }
+    return { data: channels.map(decodeChannel) }
   }
 
   async getChannel(channelId: string): Promise<Universal.Channel> {
     const channel = await this.internal.getChannel(channelId)
-    return adaptChannel(channel)
+    return decodeChannel(channel)
   }
 
   async getGuildMemberList(guildId: string, next?: string): Promise<Universal.List<Universal.GuildMember>> {
@@ -89,7 +89,7 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
       limit: 50,
       cookie: next,
     })
-    return { next: cookie, data: users.map(adaptUser) }
+    return { next: cookie, data: users.map(decodeUser) }
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string) {
@@ -136,7 +136,7 @@ export namespace QQGuildBot {
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(true),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
-      intents: Schema.bitset(QQGuild.Intents).description('需要订阅的机器人事件。').default(QQGuild.Intents.PUBLIC_GUILD_MESSAGES),
+      intents: Schema.bitset(QQGuild.Intents).description('需要订阅的机器人事件。'),
     }),
     WsClient.Config,
   ] as const)

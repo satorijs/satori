@@ -90,52 +90,47 @@ export enum Opcode {
   HEARTBEAT_ACK = 11
 }
 
-export type DispatchPayload = {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'READY'
-  d: {
+export interface GatewayEvents {
+  READY: {
     version: number
     session_id: string
     user: User
     shard: [number, number]
   }
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'RESUMED'
-  d: string
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'MESSAGE_CREATE' | 'AT_MESSAGE_CREATE' | 'DIRECT_MESSAGE_CREATE'
-  d: Message
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'MESSAGE_REACTION_ADD' | 'MESSAGE_REACTION_REMOVE'
-  d: MessageReaction
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'GUILD_CREATE' | 'GUILD_UPDATE' | 'GUILD_DELETE'
-  d: Guild
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'CHANNEL_CREATE' | 'CHANNEL_UPDATE' | 'CHANNEL_DELETE'
-  d: Channel
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'GUILD_MEMBER_ADD' | 'GUILD_MEMBER_UPDATE' | 'GUILD_MEMBER_DELETE'
-  d: MemberWithGuild
-} | {
-  op: Opcode.DISPATCH
-  s: number
-  t: 'MESSAGE_DELETE' | 'PUBLIC_MESSAGE_DELETE' | 'DIRECT_MESSAGE_DELETE'
-  d: Message.DeletionPayload
+  RESUMED: string
+  MESSAGE_CREATE: Message
+  AT_MESSAGE_CREATE: Message
+  DIRECT_MESSAGE_CREATE: Message
+  MESSAGE_REACTION_ADD: MessageReaction
+  MESSAGE_REACTION_REMOVE: MessageReaction
+  GUILD_CREATE: Guild
+  GUILD_UPDATE: Guild
+  GUILD_DELETE: Guild
+  CHANNEL_CREATE: Channel
+  CHANNEL_UPDATE: Channel
+  CHANNEL_DELETE: Channel
+  GUILD_MEMBER_ADD: MemberWithGuild
+  GUILD_MEMBER_UPDATE: MemberWithGuild
+  GUILD_MEMBER_DELETE: MemberWithGuild
+  MESSAGE_DELETE: Message.DeletionPayload
+  PUBLIC_MESSAGE_DELETE: Message.DeletionPayload
+  DIRECT_MESSAGE_DELETE: Message.DeletionPayload
 }
+
+export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
+  /** opcode for the payload */
+  op: O
+  /** event data */
+  d?: D
+  /** the event name for this payload */
+  t?: T
+  /** sequence number, used for resuming sessions and heartbeats */
+  s?: number
+}
+
+export type DispatchPayload = {
+  [T in keyof GatewayEvents]: PayloadStructure<Opcode.DISPATCH, T, GatewayEvents[T]>
+}[keyof GatewayEvents]
 
 export type Payload = DispatchPayload | {
   op: Opcode.HELLO
