@@ -29,7 +29,6 @@
     "@satorijs/satori": "^3.0.0-alpha.1"
   },
   "dependencies": {
-    "@qq-guild-sdk/core": "^2.2.2",
     "qface": "^1.4.1"
   }
 }
