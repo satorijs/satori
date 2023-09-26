@@ -120,11 +120,15 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return { data: channels.map(decodeChannel) }
   }
 
-  async getGuild(guildId: string) {
+  async getGuild(guildId?: string) {
     const { team } = await this.request<{ team: SlackTeam }>('POST', '/team.info', {
       team_id: guildId,
     })
     return decodeGuild(team)
+  }
+
+  async getGuildList() {
+    return { data: [await this.getGuild()] }
   }
 
   async getGuildMember(guildId: string, userId: string) {

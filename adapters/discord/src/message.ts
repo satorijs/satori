@@ -9,7 +9,7 @@ type RenderMode = 'default' | 'figure'
 const logger = new Logger('discord')
 
 class State {
-  author: Partial<Universal.Author> = {}
+  author: Partial<Universal.User> = {}
   quote: Partial<Universal.Message> = {}
   channel: Partial<Channel> = {}
   fakeMessageMap: Record<string, Session[]> = {} // [userInput] = discord messages
@@ -33,14 +33,14 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       return `/webhooks/${input.d.application_id}/${input.d.token}`
     } else if (this.stack[0].type === 'forward' && this.stack[0].channel?.id) {
       // 发送到子区
-      if (this.stack[1].author.nickname || this.stack[1].author.avatar) {
+      if (this.stack[1].author.name || this.stack[1].author.avatar) {
         const webhook = await this.ensureWebhook()
         return `/webhooks/${webhook.id}/${webhook.token}?wait=true&thread_id=${this.stack[0].channel?.id}`
       } else {
         return `/channels/${this.stack[0].channel.id}/messages`
       }
     } else {
-      if (this.stack[0].author.nickname || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
+      if (this.stack[0].author.name || this.stack[0].author.avatar || (this.stack[0].type === 'forward' && !this.stack[0].threadCreated)) {
         const webhook = await this.ensureWebhook()
         return `/webhooks/${webhook.id}/${webhook.token}?wait=true`
       } else {
@@ -54,7 +54,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
-      const message = await decodeMessage(this.bot, result, session)
+      const message = await decodeMessage(this.bot, result, session.data.message = {}, session.data)
       session.app.emit(session, 'send', session)
       this.results.push(session)
 
@@ -265,7 +265,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       const parse = (val: string) => val.replace(/\\([\\*_`~|()\[\]])/g, '$1')
 
       const message = this.stack[this.stack[0].type === 'forward' ? 1 : 0]
-      if (!message.author.avatar && !message.author.nickname && this.stack[0].type !== 'forward') {
+      if (!message.author.avatar && !message.author.name && this.stack[0].type !== 'forward') {
         // no quote and author, send by bot
         await this.flush()
         this.addition.message_reference = {
@@ -279,15 +279,15 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
           replyId = this.stack[0].fakeMessageMap[attrs.id][0].messageId
           channelId = this.stack[0].fakeMessageMap[attrs.id][0].channelId
         }
-        const quoted = await this.bot.getMessage(channelId, replyId)
+        const quote = await this.bot.getMessage(channelId, replyId)
         this.addition.embeds = [{
           description: [
-            sanitize(parse(quoted.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
-            `<t:${Math.ceil(quoted.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+            sanitize(parse(quote.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
+            `<t:${Math.ceil(quote.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
           ].join('\n\n'),
           author: {
-            name: quoted.author.nickname || quoted.author.username,
-            icon_url: quoted.author.avatar,
+            name: quote.user.name,
+            icon_url: quote.user.avatar,
           },
         }]
       }

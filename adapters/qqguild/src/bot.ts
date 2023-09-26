@@ -28,15 +28,13 @@ export class QQGuildBot extends Bot<QQGuildBot.Config> {
 
   adaptMessage(msg: QQGuild.Message) {
     const { id: messageId, author, guildId, channelId, timestamp } = msg
-    const session = this.session({
-      type: 'message',
-      guildId,
-      messageId,
-      channelId,
-      timestamp: +timestamp,
-    })
-    session.author = adaptUser(msg.author)
-    session.userId = author.id
+    const session = this.session()
+    session.type = 'message'
+    session.guildId = guildId
+    session.messageId = messageId
+    session.channelId = channelId
+    session.timestamp = +timestamp
+    session.data.user = adaptUser(author)
     // TODO https://github.com/satorijs/satori/blob/fbcf4665c77381ff80c8718106d2282a931d5736/packages/core/src/message.ts#L23
     //      satori core need set guildId is undefined when isPrivate
     //      this is a temporary solution

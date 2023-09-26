@@ -20,12 +20,10 @@ export const decodeUser = (user: Discord.User): Universal.User => ({
   isBot: user.bot || false,
 })
 
-export const decodeGuildMember = (member: Discord.GuildMember): Universal.GuildMember => ({
-  ...decodeUser(member.user),
-  user: decodeUser(member.user),
+export const decodeGuildMember = (member: Partial<Discord.GuildMember>): Universal.GuildMember => ({
+  user: member.user && decodeUser(member.user),
   name: member.nick,
   roles: member.roles,
-  avatar: member.user.avatar,
 })
 
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
@@ -39,11 +37,6 @@ export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
   type: data.type === Discord.Channel.Type.DM ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
 })
 
-export const decodeAuthor = (author: Discord.User): Universal.Author => ({
-  ...decodeUser(author),
-  nickname: author.username,
-})
-
 export const decodeRole = (role: Discord.Role): Universal.GuildRole => ({
   ...role,
   permissions: BigInt(role.permissions),
@@ -54,29 +47,25 @@ export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Discord.
   permissions: role.permissions && '' + role.permissions,
 })
 
-export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, session: Partial<Session> = {}, reference = true) {
+export async function decodeMessage(
+  bot: DiscordBot,
+  data: Discord.Message,
+  message: Universal.Message,
+  payload: Universal.Message | Universal.EventData = message,
+  details = true,
+) {
   const { platform } = bot
 
-  session.messageId = meta.id
-  session.channelId = meta.channel_id
-  session.timestamp = new Date(meta.timestamp).valueOf() || Date.now()
-  if (meta.author) {
-    session.author = decodeAuthor(meta.author)
-    session.userId = meta.author.id
-  }
-  if (meta.member?.nick) {
-    session.author.nickname = meta.member?.nick
-  }
-
+  message.id = message.messageId = data.id
   // https://discord.com/developers/docs/reference#message-formatting
-  session.content = ''
-  if (meta.content) {
-    session.content = meta.content
+  message.content = ''
+  if (data.content) {
+    message.content = data.content
       .replace(/<@[!&]?(.+?)>/g, (_, id) => {
-        if (meta.mention_roles.includes(id)) {
+        if (data.mention_roles.includes(id)) {
           return h('at', { role: id }).toString()
         } else {
-          const user = meta.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
+          const user = data.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
           return h.at(id, { name: user?.username }).toString()
         }
       })
@@ -89,15 +78,15 @@ export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, sess
       .replace(/@everyone/g, () => h('at', { type: 'all' }).toString())
       .replace(/@here/g, () => h('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
-        const channel = meta.mention_channels?.find(c => c.id === id)
+        const channel = data.mention_channels?.find(c => c.id === id)
         return h.sharp(id, { name: channel?.name }).toString()
       })
   }
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
-  if (meta.attachments?.length) {
-    if (session.content) session.content += ' '
-    session.content += meta.attachments.map(v => {
+  if (data.attachments?.length) {
+    if (message.content) message.content += ' '
+    message.content += data.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
         return h('image', {
           url: v.url,
@@ -125,26 +114,35 @@ export async function decodeMessage(bot: DiscordBot, meta: Discord.Message, sess
       }
     }).join('')
   }
-  for (const embed of meta.embeds) {
+  for (const embed of data.embeds) {
     // not using embed types
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-types
     if (embed.image) {
-      session.content += h('image', { url: embed.image.url, proxy_url: embed.image.proxy_url })
+      message.content += h('image', { url: embed.image.url, proxy_url: embed.image.proxy_url })
     }
     if (embed.thumbnail) {
-      session.content += h('image', { url: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
+      message.content += h('image', { url: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
     }
     if (embed.video) {
-      session.content += h('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
+      message.content += h('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
     }
   }
-  session.elements = h.parse(session.content)
+  message.elements = h.parse(message.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
-  if (reference && meta.message_reference) {
-    const { message_id, channel_id } = meta.message_reference
-    session.quote = await bot.getMessage(channel_id, message_id)
+  if (details && data.message_reference) {
+    const { message_id, channel_id } = data.message_reference
+    message.quote = await bot.getMessage(channel_id, message_id)
   }
-  return session as Universal.Message
+
+  if (!payload) return message
+  payload.channel = {
+    id: data.channel_id,
+    type: data.member ? Universal.Channel.Type.TEXT : Universal.Channel.Type.DIRECT,
+  }
+  payload.user = decodeUser(data.author)
+  payload.member = data.member && decodeGuildMember(data.member)
+  payload.timestamp = new Date(data.timestamp).valueOf() || Date.now()
+  return message
 }
 
 export function setupMessageGuildId(session: Partial<Session>, guildId: string) {
@@ -184,7 +182,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
       } catch (e) {}
     }
     session.type = 'message'
-    await decodeMessage(bot, input.d, session)
+    await decodeMessage(bot, input.d, session.data.message = {}, session.data)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
@@ -192,7 +190,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     const message = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
-    await decodeMessage(bot, message, session)
+    await decodeMessage(bot, message, session.data.message = {}, session.data)
     const channel = await bot.internal.getChannel(input.d.channel_id)
     setupMessageGuildId(session, channel.guild_id)
     // if (!session.content) return

@@ -115,7 +115,6 @@ export async function adaptMessage(
       type: data.channel_type === 'im' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
     }
   }
-  console.log(data)
   if ('bot_profile' in data) {
     payload.user = decodeBotProfile(data.bot_profile as Definitions.BotProfile)
   } else {
@@ -236,7 +235,7 @@ export const decodeChannel = (data: SlackChannel): Universal.Channel => ({
   type: data.is_private ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT,
 })
 
-export const decodeGuild = (data: SlackTeam): Universal.Guild => ({
+export const decodeGuild = (data: SlackTeam | Definitions.Team): Universal.Guild => ({
   id: data.id,
   name: data.name,
 })

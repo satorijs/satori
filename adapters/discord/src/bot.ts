@@ -88,12 +88,12 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async getMessage(channelId: string, messageId: string) {
     const data = await this.internal.getChannelMessage(channelId, messageId)
-    return await Discord.decodeMessage(this, data)
+    return await Discord.decodeMessage(this, data, {})
   }
 
   async getMessageList(channelId: string, before?: string) {
     const messages = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
-    const data = await Promise.all(messages.reverse().map(data => Discord.decodeMessage(this, data, {}, false)))
+    const data = await Promise.all(messages.reverse().map(data => Discord.decodeMessage(this, data, {}, undefined, false)))
     return { data, next: data[0]?.id }
   }
 

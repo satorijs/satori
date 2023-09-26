@@ -6,18 +6,10 @@ import { MailBot } from './bot'
 export async function adaptMessage(
   bot: MailBot,
   mail: ParsedMail,
-  message: Universal.Message = {},
+  message: Universal.Message,
+  payload: Universal.Message | Universal.EventData,
 ): Promise<Universal.Message> {
-  message.isDirect = true
-  message.messageId = mail.messageId
-  message.userId = mail.from.value[0].address
-  message.channelId = `private:${message.userId}`
-  message.guildId = message.userId
-  message.timestamp = +mail.date
-  message.author = {
-    userId: mail.from.value[0].address,
-    nickname: mail.from.value[0].name,
-  }
+  message.id = message.messageId = mail.messageId
   let content = ''
   if (!mail.html) {
     content = segment.escape(mail.text)
@@ -114,13 +106,26 @@ export async function adaptMessage(
   content = content.trim()
   message.content = content
   message.elements ||= segment.parse(content)
+  if (!payload) return message
+  payload.timestamp = +mail.date
+  payload.user = {
+    id: mail.from.value[0].address,
+    name: mail.from.value[0].name,
+  }
+  payload.guild = {
+    id: payload.user.id,
+  }
+  payload.channel = {
+    id: `private:${payload.user.id}`,
+    type: Universal.Channel.Type.DIRECT,
+  }
   return message
 }
 
 export async function dispatchSession(bot: MailBot, mail: ParsedMail) {
   const session = bot.session()
   session.type = 'message'
-  if (!await adaptMessage(bot, mail, session)) {
+  if (!await adaptMessage(bot, mail, session.data.message = {}, session.data)) {
     return null
   }
   defineProperty(session, 'mail', mail)

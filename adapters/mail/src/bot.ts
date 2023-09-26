@@ -18,7 +18,7 @@ export class MailBot extends Bot<MailBot.Config> {
   }
 
   async start() {
-    this.username = this.config.username
+    this.user.name = this.config.username
     await super.start()
     this.imap = new IMAP(
       this.config,

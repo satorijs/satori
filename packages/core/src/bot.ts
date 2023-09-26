@@ -183,6 +183,7 @@ const iterableMethods = [
 for (const name of iterableMethods) {
   Bot.prototype[name + 'Iter'] = function (this: Bot, ...args: any[]) {
     let list: List<any>
+    if (!this[name + 'List']) throw new Error(`not implemented: ${name}List`)
     const getList = async () => {
       list = await this[name + 'List'](...args, list?.next)
     }
