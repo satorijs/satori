@@ -1,7 +1,6 @@
 import { h, MessageEncoder, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
-import { adaptMessage } from './utils'
 import * as Kook from './types'
 import internal from 'stream'
 
@@ -32,7 +31,9 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
       const params = { ...this.params, ...this.additional, type, content }
       const result = await this.bot.request('POST', this.path, params)
       const session = this.bot.session()
-      adaptMessage(result, session)
+      session.type = 'send'
+      session.messageId = result.msg_id
+      session.timestamp = result.timestamp
       this.results.push(session)
       session.app.emit(session, 'send', session)
     } catch (e) {

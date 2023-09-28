@@ -77,9 +77,6 @@ export async function adaptSessions(bot: LineBot, body: WebhookEvent) {
     session.channelId = body.source.roomId
     session.userId = body.source.userId
   }
-  session.author = {
-    userId: session.userId,
-  }
   // https://developers.line.biz/en/reference/messaging-api/#webhook-event-objects
   if (body.type === 'message') {
     session.type = 'message'

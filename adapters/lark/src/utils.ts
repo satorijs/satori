@@ -20,10 +20,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
   } else {
     userId = sender.id
   }
-  session.author ??= { userId }
-  session.author.userId = userId
   session.userId = userId
-
   return session
 }
 

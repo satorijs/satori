@@ -18,14 +18,8 @@ export const adaptUser = (user: Kook.User): Universal.User => ({
 })
 
 export const decodeGuildMember = (member: Kook.Author): Universal.GuildMember => ({
-  ...adaptUser(member),
   user: adaptUser(member),
   name: member.nickname,
-})
-
-export const adaptAuthor = (author: Kook.Author): Universal.Author => ({
-  ...adaptUser(author),
-  name: author.nickname,
 })
 
 export const decodeRole = (role: Kook.GuildRole): Universal.GuildRole => ({
@@ -54,90 +48,96 @@ function transformCardElement(data: any) {
   return h(type, attrs, children.map(transformCardElement))
 }
 
-function adaptMessageMeta(base: Kook.MessageBase, meta: Kook.MessageMeta, session: Universal.Message = {}) {
-  if (meta.author) {
-    session.author = adaptAuthor(meta.author)
-    session.userId = meta.author.id
-  }
+function adaptMessageMeta(
+  base: Kook.MessageBase,
+  data: Kook.MessageMeta,
+  message: Universal.Message = {},
+  payload: Universal.Message | Universal.EventData = message,
+) {
   if (base.type === Kook.Type.text) {
-    session.content = base.content
+    message.content = base.content
       .replace(/@(.+?)#(\d+)/, (_, name, id) => h('at', { id, name }).toString())
       .replace(/@全体成员/, () => h('at', { type: 'all' }).toString())
       .replace(/@在线成员/, () => h('at', { type: 'here' }).toString())
       .replace(/@role:(\d+);/, (_, role) => h('at', { role }).toString())
       .replace(/#channel:(\d+);/, (_, id) => h.sharp(id).toString())
-    session.elements = h.parse(session.content)
+    message.elements = h.parse(message.content)
   } else if (base.type === Kook.Type.image) {
-    const element = h('image', { url: base.content, file: meta.attachments?.name })
-    session.elements = [element]
-    session.content = element.toString()
+    const element = h('image', { url: base.content, file: data.attachments?.name })
+    message.elements = [element]
+    message.content = element.toString()
   } else if (base.type === Kook.Type.card) {
     const data = JSON.parse(base.content)
-    session.elements = data.map(transformCardElement)
-    session.content = session.elements.join('')
+    message.elements = data.map(transformCardElement)
+    message.content = message.elements.join('')
   } else if (base.type === Kook.Type.kmarkdown) {
-    session.content = base.content
+    message.content = base.content
       .replace(/\(met\)all\(met\)/g, () => h('at', { type: 'all' }).toString())
       .replace(/\(met\)here\(met\)/g, () => h('at', { type: 'here' }).toString())
       .replace(/\(chn\)(\d+)\(chn\)/g, (_, id) => h.sharp(id).toString())
-    for (const mention of meta.kmarkdown.mention_part) {
-      session.content = session.content
+    for (const mention of data.kmarkdown.mention_part) {
+      message.content = message.content
         .replace(`(met)${mention.id}(met)`, h.at(mention.id, { name: mention.username }).toString())
     }
-    for (const mention of meta.kmarkdown.mention_role_part) {
+    for (const mention of data.kmarkdown.mention_role_part) {
       const element = h('at', { role: mention.role_id, name: mention.name })
-      session.content = session.content.replace(`(rol)${mention.role_id}(rol)`, element.toString())
+      message.content = message.content.replace(`(rol)${mention.role_id}(rol)`, element.toString())
     }
-    session.content = session.content
+    message.content = message.content
       .replace(/\\\*/g, () => '*')
       .replace(/\\\\/g, () => '\\')
       .replace(/\\\(/g, () => '(')
       .replace(/\\\)/g, () => ')')
-    session.elements = h.parse(session.content)
+    message.elements = h.parse(message.content)
   }
-  return session
+  if (data.author) {
+    payload.user = adaptUser(data.author)
+    payload.member = decodeGuildMember(data.author)
+  }
+  return message
 }
 
-export function adaptMessage(message: Kook.Message, session: Partial<Session> = {}) {
-  adaptMessageMeta(message, message, session)
-  session.messageId = message.id
-  return session
+export function adaptMessage(data: Kook.Message, message: Universal.Message = {}, payload: Universal.Message | Universal.EventData = message) {
+  adaptMessageMeta(data, data, message, payload)
+  message.id = message.messageId = data.id
+  return message
 }
 
-function adaptMessageSession(data: Kook.Data, meta: Kook.MessageMeta, session: Partial<Session> = {}) {
-  adaptMessageMeta(data, meta, session)
-  session.messageId = data.msg_id
-  session.timestamp = data.msg_timestamp
-  session.isDirect = data.channel_type === 'PERSON'
-  session.subtype = data.channel_type === 'GROUP' ? 'group' : 'private'
+function adaptMessageSession(
+  data: Kook.Data,
+  meta: Kook.MessageMeta,
+  message: Universal.Message = {},
+  payload: Universal.Message | Universal.EventData = message,
+) {
+  adaptMessageMeta(data, meta, message)
+  message.id = message.messageId = data.msg_id
+  message.timestamp = data.msg_timestamp
   if (meta.quote) {
-    session.quote = adaptMessageMeta(meta.quote, meta.quote)
-    session.quote.messageId = meta.quote.rong_id
-    session.quote.channelId = session.channelId
-    session.quote.subtype = session.subtype
-    session.quote.isDirect = session.isDirect
+    message.quote = adaptMessageMeta(meta.quote, meta.quote)
+    message.quote.messageId = message.quote.id = meta.quote.rong_id
   }
-  return session
+  return message
 }
 
 function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: Partial<Session>) {
-  adaptMessageSession(data, meta, session)
   session.guildId = meta.guild_id
-  session.channelName = meta.channel_name
   if (data.channel_type === 'GROUP') {
-    session.subtype = 'group'
+    session.isDirect = false
     session.channelId = data.target_id
   } else {
-    session.subtype = 'private'
     session.isDirect = true
     session.channelId = meta.code
   }
+  session.data.channel.name = meta.channel_name
+  // if (!meta.author) {
+  console.log(data, meta)
+  // }
+  adaptMessageSession(data, meta, session.data.message = {}, session.data)
 }
 
-function adaptMessageModify(data: Kook.Data, meta: Kook.NoticeBody, session: Partial<Session>) {
-  adaptMessageSession(data, meta, session)
-  session.messageId = meta.msg_id
+function adaptMessageModify(data: Kook.Data, meta: Kook.NoticeBody, session: Session) {
   session.channelId = meta.channel_id
+  adaptMessageSession(data, meta, session.data.message = {}, session.data)
 }
 
 function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
@@ -251,7 +251,7 @@ export function adaptSession(bot: Bot, input: any) {
         session.messageId = body.msg_id
         session.userId = body.user_id
         session.content = body.value
-        session.targetId = body.target_id
+        session['targetId'] = body.target_id
         break
       default: return
     }
