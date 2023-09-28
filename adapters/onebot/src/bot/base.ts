@@ -28,18 +28,18 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
 
   async getLogin() {
     const data = await this.internal.getLoginInfo()
-    this.user = OneBot.adaptUser(data)
+    this.user = OneBot.decodeUser(data)
     return this.toJSON()
   }
 
   async getUser(userId: string) {
     const data = await this.internal.getStrangerInfo(userId)
-    return OneBot.adaptUser(data)
+    return OneBot.decodeUser(data)
   }
 
   async getFriendList() {
     const data = await this.internal.getFriendList()
-    return { data: data.map(OneBot.adaptUser) }
+    return { data: data.map(OneBot.decodeUser) }
   }
 
   async handleFriendRequest(messageId: string, approve: boolean, comment?: string) {

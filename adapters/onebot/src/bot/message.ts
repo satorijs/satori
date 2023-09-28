@@ -1,7 +1,11 @@
-import { h, MessageEncoder, pick } from '@satorijs/satori'
+import { h, MessageEncoder, pick, Universal } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { CQCode } from './cqcode'
-import { Author } from '../types'
+
+export interface Author extends Universal.User {
+  time?: string | number
+  messageId?: string
+}
 
 class State {
   author: Partial<Author> = {}
@@ -58,8 +62,8 @@ export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
         this.stack[1].children.push({
           type: 'node',
           data: {
-            name: author.nickname || author.username || this.bot.username,
-            uin: author.userId || this.bot.userId,
+            name: author.nick || author.name || this.bot.user.name,
+            uin: author.id || this.bot.userId,
             content: this.children as any,
             time: `${Math.floor((+author.time || Date.now()) / 1000)}`,
           },

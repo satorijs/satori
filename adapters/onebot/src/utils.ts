@@ -7,7 +7,7 @@ export * from './types'
 
 const logger = new Logger('onebot')
 
-export const adaptUser = (user: OneBot.AccountInfo): Universal.User => ({
+export const decodeUser = (user: OneBot.AccountInfo): Universal.User => ({
   id: user.tiny_id || user.user_id.toString(),
   name: user.nickname,
   userId: user.tiny_id || user.user_id.toString(),
@@ -15,10 +15,9 @@ export const adaptUser = (user: OneBot.AccountInfo): Universal.User => ({
   username: user.nickname,
 })
 
-export const adaptGuildMember = (user: OneBot.SenderInfo): Universal.GuildMember => ({
-  ...adaptUser(user),
-  user: adaptUser(user),
-  nickname: user.card,
+export const decodeGuildMember = (user: OneBot.SenderInfo): Universal.GuildMember => ({
+  user: decodeUser(user),
+  name: user.card,
   roles: [user.role],
 })
 
@@ -28,7 +27,7 @@ export const adaptQQGuildMemberInfo = (user: OneBot.GuildMemberInfo): Universal.
     name: user.nickname,
     isBot: user.role_name === '机器人',
   },
-  nickname: user.nickname,
+  name: user.nickname,
   roles: user.role_name ? [user.role_name] : [],
 })
 
@@ -38,34 +37,20 @@ export const adaptQQGuildMemberProfile = (user: OneBot.GuildMemberProfile): Univ
     name: user.nickname,
     isBot: user.roles?.some(r => r.role_name === '机器人'),
   },
-  nickname: user.nickname,
+  name: user.nickname,
   roles: user.roles?.map(r => r.role_name) || [],
 })
 
-export const adaptAuthor = (user: OneBot.SenderInfo, anonymous?: OneBot.AnonymousInfo): Universal.Author => ({
-  ...adaptUser(user),
-  nickname: anonymous?.name || user.card,
-  anonymous: anonymous?.flag,
-  roles: [user.role],
-})
-
-export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result: Universal.Message = {}) {
-  // basic properties
-  result.author = adaptAuthor(message.sender, message.anonymous)
-  result.userId = result.author.userId
-  result.messageId = message.message_id.toString()
-  result.timestamp = message.time * 1000
-  if (message.guild_id) {
-    result.guildId = message.guild_id
-    result.channelId = message.channel_id
-  } else if (message.group_id) {
-    result.guildId = result.channelId = message.group_id.toString()
-  } else {
-    result.channelId = 'private:' + result.author.userId
-  }
+export async function adaptMessage(
+  bot: BaseBot,
+  data: OneBot.Message,
+  message: Universal.Message = {},
+  payload: Universal.Message | Universal.EventData = message,
+) {
+  message.id = message.messageId = data.message_id.toString()
 
   // message content
-  const chain = CQCode.parse(message.message)
+  const chain = CQCode.parse(data.message)
   if (bot.config.advanced.splitMixedContent) {
     chain.forEach((item, index) => {
       if (item.type !== 'image') return
@@ -80,7 +65,7 @@ export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result
     })
   }
 
-  result.elements = h.transform(chain, {
+  message.elements = h.transform(chain, {
     at({ qq }) {
       if (qq !== 'all') return h.at(qq)
       return h('at', { type: 'all' })
@@ -95,16 +80,32 @@ export async function adaptMessage(bot: BaseBot, message: OneBot.Message, result
       return h('audio', attrs)
     },
   })
-  if (result.elements[0]?.type === 'reply') {
-    const reply = result.elements.shift()
-    result.quote = await bot.getMessage(result.channelId, reply.attrs.id).catch((error) => {
+  const [guildId, channelId] = decodeGuildChannelId(data)
+  if (message.elements[0]?.type === 'reply') {
+    const reply = message.elements.shift()
+    message.quote = await bot.getMessage(channelId, reply.attrs.id).catch((error) => {
       logger.warn(error)
       return undefined
     })
   }
+  message.content = message.elements.join('')
 
-  result.content = result.elements.join('')
-  return result
+  if (!payload) return message
+  payload.user = decodeUser(data.sender)
+  payload.member = decodeGuildMember(data.sender)
+  payload.timestamp = data.time * 1000
+  payload.guild = guildId && { id: guildId }
+  payload.channel = channelId && { id: channelId, type: guildId ? Universal.Channel.Type.TEXT : Universal.Channel.Type.DIRECT }
+}
+
+const decodeGuildChannelId = (data: OneBot.Message) => {
+  if (data.guild_id) {
+    return [data.guild_id, data.channel_id]
+  } else if (data.group_id) {
+    return [data.group_id.toString(), data.group_id.toString()]
+  } else {
+    return [undefined, 'private:' + data.sender.user_id]
+  }
 }
 
 export const adaptGuild = (info: OneBot.GroupInfo | OneBot.GuildBaseInfo): Universal.Guild => {
@@ -129,16 +130,14 @@ export const adaptChannel = (info: OneBot.GroupInfo | OneBot.ChannelInfo): Unive
     return {
       id: channel.channel_id,
       name: channel.channel_name,
-      channelId: channel.channel_id.toString(),
-      channelName: channel.channel_name,
+      type: Universal.Channel.Type.TEXT,
     }
   } else {
     const group = info as OneBot.GroupInfo
     return {
       id: group.group_id.toString(),
       name: group.group_name,
-      channelId: group.group_id.toString(),
-      channelName: group.group_name,
+      type: Universal.Channel.Type.TEXT,
     }
   }
 }
@@ -163,7 +162,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
   session.type = data.post_type
 
   if (data.post_type === 'message' || data.post_type === 'message_sent') {
-    await adaptMessage(bot, data, session)
+    await adaptMessage(bot, data, session.data.message = {}, session.data)
     if (data.post_type === 'message_sent' && !session.guildId) {
       session.channelId = 'private:' + data.target_id
     }
@@ -179,7 +178,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
   if (data.group_id) session.guildId = session.channelId = '' + data.group_id
   if (data.guild_id) session.guildId = '' + data.guild_id
   if (data.channel_id) session.channelId = '' + data.channel_id
-  if (data.target_id) session.targetId = '' + data.target_id
+  if (data.target_id) session['targetId'] = '' + data.target_id
   if (data.operator_id) session.operatorId = '' + data.operator_id
   if (data.message_id) session.messageId = '' + data.message_id
 

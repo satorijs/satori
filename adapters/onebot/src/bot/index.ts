@@ -76,12 +76,12 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   async getGuildMember(guildId: string, userId: string) {
     const data = await this.internal.getGroupMemberInfo(guildId, userId)
-    return OneBot.adaptGuildMember(data)
+    return OneBot.decodeGuildMember(data)
   }
 
   async getGuildMemberList(guildId: string) {
     const data = await this.internal.getGroupMemberList(guildId)
-    return { data: data.map(OneBot.adaptGuildMember) }
+    return { data: data.map(OneBot.decodeGuildMember) }
   }
 
   async kickGuildMember(guildId: string, userId: string, permanent?: boolean) {

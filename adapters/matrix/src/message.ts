@@ -10,7 +10,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
       const session = this.bot.session(this.session)
       const { data, filename, mime } = await this.bot.ctx.http.file(url)
       const id = await this.bot.internal.sendMediaMessage(
-        this.channelId, type, Buffer.from(data), this.reply?.messageId, mime, filename,
+        this.channelId, type, Buffer.from(data), this.reply?.id, mime, filename,
       )
       session.messageId = id
       this.results.push(session)
@@ -25,10 +25,10 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
     try {
       const session = this.bot.session(this.session)
       if (this.reply) {
-        this.buffer = `> <${this.reply.userId}> ${this.reply.content}\n\n` + this.buffer
+        this.buffer = `> <${this.reply.user.id}> ${this.reply.content}\n\n` + this.buffer
       }
       const id = await this.bot.internal.sendTextMessage(
-        this.channelId, this.buffer, this.reply?.messageId,
+        this.channelId, this.buffer, this.reply?.id,
       )
       session.messageId = id
       this.results.push(session)

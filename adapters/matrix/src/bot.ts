@@ -2,7 +2,7 @@ import { Bot, Context, omit, Quester, Schema, Universal } from '@satorijs/satori
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
-import { adaptMessage, dispatchSession } from './utils'
+import { adaptMessage, decodeUser, dispatchSession } from './utils'
 
 export class MatrixBot extends Bot<MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
@@ -17,7 +17,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     super(ctx, config)
     this.id = config.id
     this.platform = 'matrix'
-    this.userId = `@${this.id}:${this.config.host}`
+    this.user.id = `@${this.id}:${this.config.host}`
+    this.user.name = config.name || this.id
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'
     this.internal = new Matrix.Internal(this)
     ctx.plugin(HttpAdapter, this)
@@ -73,21 +74,14 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
 
   async getUser(userId: string) {
     const profile = await this.internal.getProfile(userId)
-    let avatar: string
-    if (profile.avatar_url) avatar = this.internal.getAssetUrl(profile.avatar_url)
-    return {
-      id: userId,
-      name: profile.displayname,
-      userId,
-      avatar,
-      username: userId,
-      nickname: profile.displayname,
-    }
+    const user = decodeUser(profile, userId)
+    user.avatar = user.avatar && this.internal.getAssetUrl(user.avatar)
+    return user
   }
 
   async getGuild(guildId: string) {
     const { id, name } = await this.getChannel(guildId)
-    return { id, name, guildId, guildName: name }
+    return { id, name }
   }
 
   async getChannel(id: string) {
@@ -114,14 +108,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
       .map(event => {
         const content = event.content as Matrix.M_ROOM_MEMBER
         return {
-          user: {
-            id: event.state_key,
-            name: event.state_key,
-          },
-          userId: event.state_key,
-          username: event.state_key,
-          nickname: content.displayname,
-          avatar: this.internal.getAssetUrl(content.avatar_url),
+          user: decodeUser(content, event.state_key),
           isBot: !!this.ctx.bots.find(bot => bot.userId === event.state_key),
           roles: [levels.users[event.state_key].toString()],
         }
@@ -130,7 +117,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   }
 
   async getGuildMember(guildId: string, userId: string) {
-    return (await this.getGuildMemberList(guildId)).data.find(user => user.userId === userId)
+    const { data } = await this.getGuildMemberList(guildId)
+    return data.find(member => member.user.id === userId)
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string) {

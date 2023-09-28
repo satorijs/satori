@@ -1,4 +1,4 @@
-import { camelize, Dict, Logger, Universal } from '@satorijs/satori'
+import { camelize, Dict, Logger } from '@satorijs/satori'
 import { CQCode } from './bot'
 
 export interface Response {
@@ -87,11 +87,6 @@ export interface FriendInfo extends AccountInfo {
 
 export interface UnidirectionalFriendInfo extends AccountInfo {
   source: string
-}
-
-export interface Author extends Universal.Author {
-  time?: string | number
-  messageId?: string
 }
 
 export interface GroupBase {

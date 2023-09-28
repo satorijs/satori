@@ -9,17 +9,15 @@ export * from './ws'
 
 export default OneBotBot
 
-declare global {
-  namespace Satori {
-    interface Session {
-      onebot?: OneBot.Payload & OneBot.Internal
-    }
+declare module '@satorijs/core' {
+  interface Session {
+    onebot?: OneBot.Payload & OneBot.Internal
+  }
 
-    interface Events {
-      'onebot/message-reactions-updated': {}
-      'onebot/channel-updated': {}
-      'onebot/channel-created': {}
-      'onebot/channel-destroyed': {}
-    }
+  interface Events {
+    'onebot/message-reactions-updated'(session: Session): void
+    'onebot/channel-updated'(session: Session): void
+    'onebot/channel-created'(session: Session): void
+    'onebot/channel-destroyed'(session: Session): void
   }
 }

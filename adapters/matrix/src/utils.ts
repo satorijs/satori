@@ -3,32 +3,29 @@ import { MatrixBot } from './bot'
 import * as Matrix from './types'
 import { INode, ITag, parse, SyntaxKind } from 'html5parser'
 
-export function adaptAuthor(bot: MatrixBot, event: Matrix.ClientEvent): Universal.Author {
-  return {
-    userId: event.sender,
-    username: event.sender,
-    isBot: !!bot.ctx.bots.find(bot => bot.userId === event.sender),
-  }
-}
+export const decodeUser = (data: Matrix.Profile, id: string): Universal.User => ({
+  id,
+  name: data.displayname,
+  avatar: data.avatar_url,
+})
 
-export async function adaptMessage(bot: MatrixBot, event: Matrix.ClientEvent, result: Universal.Message = {}): Promise<Universal.Message> {
-  result.messageId = event.event_id
-  result.channelId = event.room_id
-  result.guildId = event.room_id
-  result.userId = event.sender
-  result.timestamp = event.origin_server_ts
-  result.author = adaptAuthor(bot, event)
-  result.isDirect = false
-  const content = event.content as Matrix.M_ROOM_MESSAGE
+export async function adaptMessage(
+  bot: MatrixBot,
+  data: Matrix.ClientEvent,
+  message: Universal.Message = {},
+  payload: Universal.Message | Universal.EventData = message,
+): Promise<Universal.Message> {
+  message.id = message.messageId = data.event_id
+  const content = data.content as Matrix.M_ROOM_MESSAGE
   const reply = content['m.relates_to']?.['m.in_reply_to']
   if (reply) {
-    result.quote = await bot.getMessage(event.room_id, reply.event_id)
+    message.quote = await bot.getMessage(data.room_id, reply.event_id)
   }
   switch (content.msgtype) {
     case 'm.text':
     case 'm.emote':
     case 'm.notice': {
-      result.content = parsseContent(bot, content)
+      message.content = parsseContent(bot, content)
       break
     }
     case 'm.image':
@@ -37,15 +34,29 @@ export async function adaptMessage(bot: MatrixBot, event: Matrix.ClientEvent, re
     case 'm.video': {
       const url = bot.internal.getAssetUrl((content as any).url)
       const type = content.msgtype.substring(2)
-      result.content = segment(type === 'audio' ? 'record' : type, { url }).toString()
+      message.content = segment(type === 'audio' ? 'record' : type, { url }).toString()
       break
     }
     default:
       return null
   }
   // result.content is not a setter if result is a Universal.Message
-  result.elements ??= segment.parse(result.content)
-  return result
+  message.elements ??= segment.parse(message.content)
+
+  if (!payload) return message
+  payload.timestamp = data.origin_server_ts
+  payload.channel = {
+    id: data.room_id,
+    type: Universal.Channel.Type.TEXT,
+  }
+  payload.guild = {
+    id: data.room_id,
+  }
+  payload.user = {
+    id: data.sender,
+  }
+  payload.member = {}
+  return message
 }
 
 export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): Promise<Session> {
@@ -60,7 +71,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
     } else {
       session.type = 'message'
     }
-    if (!await adaptMessage(bot, event, session)) return null
+    if (!await adaptMessage(bot, event, session.data.message = {}, session.data)) return null
     return session
   }
   session.userId = event.sender
@@ -68,7 +79,6 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
   session.channelId = event.room_id
   session.messageId = event.event_id
   session.timestamp = event.origin_server_ts
-  session.author = adaptAuthor(bot, event)
   session.isDirect = false
   switch (event.type) {
     case 'm.room.redaction': {
@@ -88,7 +98,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
     case 'm.room.member': {
       bot.syncRooms()
       const memberEvent = event.content as Matrix.M_ROOM_MEMBER
-      session.targetId = (memberEvent as any).state_key
+      session['targetId'] = (memberEvent as any).state_key
       session.operatorId = event.sender
       session.messageId = event.event_id
       if (memberEvent.reason) {
