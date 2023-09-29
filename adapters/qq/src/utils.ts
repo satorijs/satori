@@ -82,7 +82,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
     session.type = 'message'
-    await decodeMessage(bot, input.d, session.data.message = {}, session.data)
+    await decodeMessage(bot, input.d, session.body.message = {}, session.body)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     if (input.d.target.type !== 'ReactionTargetType_MSG') return
     setupReaction(session, input.d)
@@ -98,14 +98,14 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
       CHANNEL_DELETE: 'channel-deleted',
     }[input.t]
     session.guildId = input.d.guild_id
-    session.data.channel = decodeChannel(input.d)
+    session.body.channel = decodeChannel(input.d)
   } else if (input.t === 'GUILD_CREATE' || input.t === 'GUILD_UPDATE' || input.t === 'GUILD_DELETE') {
     session.type = {
       GUILD_CREATE: 'guild-added',
       GUILD_UPDATE: 'guild-updated',
       GUILD_DELETE: 'guild-deleted',
     }[input.t]
-    session.data.guild = decodeGuild(input.d)
+    session.body.guild = decodeGuild(input.d)
   } else if (input.t === 'DIRECT_MESSAGE_DELETE' || input.t === 'MESSAGE_DELETE' || input.t === 'PUBLIC_MESSAGE_DELETE') {
     if (bot.config.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
     session.type = 'message-deleted'

@@ -24,6 +24,9 @@ export class Internal {
 
   constructor(private root: Context) {
     defineProperty(this, Context.current, root)
+    root.on('satori/internal', (type, data) => {
+      root.emit(type, data)
+    })
   }
 
   protected get caller() {

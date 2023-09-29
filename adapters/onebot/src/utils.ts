@@ -151,8 +151,8 @@ export async function dispatchSession(bot: BaseBot, data: OneBot.Payload) {
 
   const session = await adaptSession(bot, data)
   if (!session) return
-  defineProperty(session, 'onebot', Object.create(bot.internal))
-  Object.assign(session.onebot, data)
+  const internal = Object.create(bot.internal)
+  defineProperty(session, 'onebot', Object.assign(internal, data))
   bot.dispatch(session)
 }
 
@@ -162,7 +162,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
   session.type = data.post_type
 
   if (data.post_type === 'message' || data.post_type === 'message_sent') {
-    await adaptMessage(bot, data, session.data.message = {}, session.data)
+    await adaptMessage(bot, data, session.body.message = {}, session.body)
     if (data.post_type === 'message_sent' && !session.guildId) {
       session.channelId = 'private:' + data.target_id
     }

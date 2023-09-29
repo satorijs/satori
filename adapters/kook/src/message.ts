@@ -50,7 +50,7 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
       })
       const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
       return url
-    } else if (!attrs.url.includes('kaiheila')) {
+    } else if (!attrs.url.includes('kookapp.cn')) {
       const res = await this.bot.ctx.http.get<internal.Readable>(attrs.url, {
         headers: { accept: type + '/*' },
         responseType: 'stream',

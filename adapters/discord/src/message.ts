@@ -54,7 +54,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
-      const message = await decodeMessage(this.bot, result, session.data.message = {}, session.data)
+      const message = await decodeMessage(this.bot, result, session.body.message = {}, session.body)
       session.app.emit(session, 'send', session)
       this.results.push(session)
 

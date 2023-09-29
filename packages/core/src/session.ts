@@ -33,14 +33,14 @@ export class Session {
   public id: number
   public bot: Bot
   public app: Context['root']
-  public data: Omit<EventData, 'id'>
+  public body: Omit<EventData, 'id'>
   public locales: string[] = []
 
   constructor(bot: Bot, payload: Partial<EventData>) {
     payload.selfId ??= bot.selfId
     payload.platform ??= bot.platform
     payload.timestamp ??= Date.now()
-    this.data = payload as EventData
+    this.body = payload as EventData
     this.id = ++Session.counter
     Object.assign(this, payload)
     for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
@@ -56,54 +56,64 @@ export class Session {
 
   initialize() {}
 
+  /** @deprecated */
+  get data() {
+    return this.body
+  }
+
   get isDirect() {
-    return this.data.channel.type === Channel.Type.DIRECT
+    return this.body.channel.type === Channel.Type.DIRECT
   }
 
   set isDirect(value) {
-    (this.data.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
+    (this.body.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
   }
 
-  /** @deprecated use `session.member` and `session.user` instead */
   get author(): GuildMember & User {
-    return { user: this.data.user, ...this.data.user, ...this.data.member }
+    return {
+      ...this.body.user,
+      ...this.body.member,
+      userId: this.body.user?.id,
+      username: this.body.user?.name,
+      nickname: this.body.member?.name,
+    }
   }
 
   get uid() {
-    return `${this.data.platform}:${this.userId}`
+    return `${this.body.platform}:${this.userId}`
   }
 
   get gid() {
-    return `${this.data.platform}:${this.guildId}`
+    return `${this.body.platform}:${this.guildId}`
   }
 
   get cid() {
-    return `${this.data.platform}:${this.channelId}`
+    return `${this.body.platform}:${this.channelId}`
   }
 
   get fid() {
-    return `${this.data.platform}:${this.channelId}:${this.userId}`
+    return `${this.body.platform}:${this.channelId}:${this.userId}`
   }
 
   get sid() {
-    return `${this.data.platform}:${this.data.selfId}`
+    return `${this.body.platform}:${this.body.selfId}`
   }
 
   get elements() {
-    return this.data.message?.elements
+    return this.body.message?.elements
   }
 
   set elements(value) {
-    this.data.message ??= {}
-    this.data.message.elements = value
+    this.body.message ??= {}
+    this.body.message.elements = value
   }
 
   get content(): string | undefined {
-    return this.data.message?.elements?.join('')
+    return this.body.message?.elements?.join('')
   }
 
   set content(value: string | undefined) {
-    (this.data.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
+    (this.body.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
   }
 
   async transform(elements: h[]): Promise<h[]> {
@@ -114,7 +124,7 @@ export class Session {
   }
 
   toJSON(): EventData {
-    return { ...this.data, id: this.id }
+    return { ...this.body, id: this.id }
   }
 
   static accessor(name: string, keys: string[]) {
@@ -140,7 +150,9 @@ Session.accessor('platform', ['platform'])
 Session.accessor('timestamp', ['timestamp'])
 Session.accessor('userId', ['user', 'id'])
 Session.accessor('channelId', ['channel', 'id'])
+Session.accessor('channelName', ['channel', 'name'])
 Session.accessor('guildId', ['guild', 'id'])
+Session.accessor('guildName', ['guild', 'name'])
 Session.accessor('messageId', ['message', 'id'])
 Session.accessor('operatorId', ['operator', 'id'])
 Session.accessor('roleId', ['role', 'id'])

@@ -38,7 +38,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     })
     if (!r.ok) throw new Error(r['error'])
     const session = this.bot.session()
-    await adaptMessage(this.bot, r.message, session.data.message = {}, session.data)
+    await adaptMessage(this.bot, r.message, session.body.message = {}, session.body)
     session.channelId = this.channelId
     session.app.emit(session, 'send', session)
     this.results.push(session)

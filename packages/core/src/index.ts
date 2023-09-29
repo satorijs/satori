@@ -87,7 +87,8 @@ Quester.createConfig = function createConfig(this, endpoint) {
 type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<keyof Satori.Events, EventCallback> {
-  'internal/session'(session: Session): void
+  'satori/session'(session: Session): void
+  'satori/internal'(type: string, data: any): void
   'before-send': EventCallback<Awaitable<void | boolean>, [SendOptions]>
   'bot-added'(client: Bot): void
   'bot-removed'(client: Bot): void

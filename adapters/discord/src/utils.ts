@@ -182,7 +182,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
       } catch (e) {}
     }
     session.type = 'message'
-    await decodeMessage(bot, input.d, session.data.message = {}, session.data)
+    await decodeMessage(bot, input.d, session.body.message = {}, session.body)
     // dc 情况特殊 可能有 embeds 但是没有消息主体
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
@@ -190,7 +190,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     const message = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
-    await decodeMessage(bot, message, session.data.message = {}, session.data)
+    await decodeMessage(bot, message, session.body.message = {}, session.body)
     const channel = await bot.internal.getChannel(input.d.channel_id)
     setupMessageGuildId(session, channel.guild_id)
     // if (!session.content) return
@@ -218,12 +218,12 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.type = 'guild-role-added'
     session.guildId = input.d.guild_id
     session.roleId = input.d.role.id
-    session.data.role = decodeRole(input.d.role)
+    session.body.role = decodeRole(input.d.role)
   } else if (input.t === 'GUILD_ROLE_UPDATE') {
     session.type = 'guild-role-updated'
     session.guildId = input.d.guild_id
     session.roleId = input.d.role.id
-    session.data.role = decodeRole(input.d.role)
+    session.body.role = decodeRole(input.d.role)
   } else if (input.t === 'GUILD_ROLE_DELETE') {
     session.type = 'guild-role-added'
     session.guildId = input.d.guild_id
@@ -243,7 +243,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
     session.messageId = input.d.id
     session.content = ''
-    session.data.argv = decodeArgv(data, command)
+    session.body.argv = decodeArgv(data, command)
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id

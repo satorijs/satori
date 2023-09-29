@@ -4,7 +4,10 @@ import { WsClient } from './ws'
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
   if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
-  return Object.fromEntries(Object.entries(source).map(([key, value]) => [callback(key), transformKey(value, callback)]))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => {
+    if (key.startsWith('_')) return [key, value]
+    return [callback(key), transformKey(value, callback)]
+  }))
 }
 
 export class SatoriBot extends Bot<SatoriBot.Config> {

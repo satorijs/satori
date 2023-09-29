@@ -80,7 +80,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
     this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     session.type = 'send'
-    await decodeMessage(this.bot, r, session.data.message = {}, session.data)
+    await decodeMessage(this.bot, r, session.body.message = {}, session.body)
     if (this.session.isDirect) {
       session.guildId = this.session.guildId
       session.channelId = this.session.channelId

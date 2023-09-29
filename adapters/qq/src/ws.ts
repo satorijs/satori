@@ -56,7 +56,7 @@ export class WsClient extends Adapter.WsClient<QQBot> {
         logger.warn('offline: server request reconnect')
         this.bot.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
-        this.bot.ctx.emit('qq/' + parsed.t.toLowerCase().replace(/_/g, '-') as any, parsed)
+        this.bot.ctx.emit('satori/internal', 'qq/' + parsed.t.toLowerCase().replace(/_/g, '-'), parsed)
         this._s = parsed.s
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id

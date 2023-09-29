@@ -13,7 +13,7 @@ export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
       session.channelId = message.from
       session.guildId = message.from
       session.messageId = message.id
-      session.data.user = {
+      session.body.user = {
         id: message.from,
         name: change.value.contacts[0].profile.name,
       }

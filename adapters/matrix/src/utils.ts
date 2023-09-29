@@ -71,7 +71,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
     } else {
       session.type = 'message'
     }
-    if (!await adaptMessage(bot, event, session.data.message = {}, session.data)) return null
+    if (!await adaptMessage(bot, event, session.body.message = {}, session.body)) return null
     return session
   }
   session.userId = event.sender
@@ -140,8 +140,8 @@ export async function dispatchSession(bot: MatrixBot, event: Matrix.ClientEvent)
   const session = await adaptSession(bot, event)
   if (!session) return
 
-  defineProperty(session, 'matrix', Object.create(bot.internal))
-  Object.assign(session.matrix, event)
+  const internal = Object.create(bot.internal)
+  defineProperty(session, 'matrix', Object.assign(internal, event))
   bot.dispatch(session)
 }
 

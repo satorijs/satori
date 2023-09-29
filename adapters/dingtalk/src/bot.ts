@@ -37,8 +37,9 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     return this.toJSON()
   }
 
-  async stop() {
+  stop() {
     clearTimeout(this.refreshTokenTimer)
+    return super.stop()
   }
 
   public token: string

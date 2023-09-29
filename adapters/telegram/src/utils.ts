@@ -9,7 +9,7 @@ const logger = new Logger('telegram')
 export const decodeUser = (data: Telegram.User): Universal.User => ({
   id: data.id.toString(),
   name: data.username,
-  nick: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
+  nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
   isBot: data.is_bot,
   userId: data.id.toString(),
   username: data.username,
@@ -22,9 +22,17 @@ export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMem
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   logger.debug('receive %s', JSON.stringify(update))
+  // Internal event: get update type from field name.
+  const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
+  if (subtype) {
+    bot.ctx.emit('satori/internal', `telegram/${subtype.replace(/_/g, '-')}`, update[subtype])
+  }
+
   const session = bot.session()
-  defineProperty(session, 'telegram', Object.create(bot.internal))
+  session.body._data = update
+  const internal = Object.create(bot.internal)
   Object.assign(session.telegram, update)
+  defineProperty(session, 'telegram', internal)
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
   const isBotCommand = update.message && update.message.entities?.[0].type === 'bot_command'
@@ -41,11 +49,11 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
 
   if (isBotCommand) {
     session.type = 'interaction/command'
-    await decodeMessage(bot, message, session.data.message = {}, session.data)
+    await decodeMessage(bot, message, session.body.message = {}, session.body)
     session.content = session.content.slice(1)
   } else if (message) {
     session.type = update.message || update.channel_post ? 'message' : 'message-updated'
-    await decodeMessage(bot, message, session.data.message = {}, session.data)
+    await decodeMessage(bot, message, session.body.message = {}, session.body)
   } else if (update.chat_join_request) {
     session.timestamp = update.chat_join_request.date * 1000
     session.type = 'guild-member-request'
@@ -67,12 +75,6 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
         session.type = 'group-added'
       }
     }
-  }
-
-  // Internal event: get update type from field name.
-  const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
-  if (subtype) {
-    bot.ctx.emit(`telegram/${subtype.replace(/_/g, '-')}`, update[subtype])
   }
 
   bot.dispatch(session)

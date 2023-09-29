@@ -137,7 +137,7 @@ export function adaptMessageDeleted(bot: SlackBot, event: MessageDeletedEvent, s
   session.messageId = event.previous_message.ts
   session.timestamp = Math.floor(Number(event.previous_message.ts) * 1000)
 
-  adaptMessage(bot, event.previous_message, session.data.message = {}, session.data)
+  adaptMessage(bot, event.previous_message, session.body.message = {}, session.body)
 }
 
 export function adaptSentAsset(file: File, session: Session) {
@@ -169,7 +169,7 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
     if (input.user === bot.selfId) return
     if (!input.subtype) {
       session.type = 'message'
-      await adaptMessage(bot, input as GenericMessageEvent, session.data.message = {}, session.data)
+      await adaptMessage(bot, input as GenericMessageEvent, session.body.message = {}, session.body)
     } else if (input.subtype === 'message_deleted') {
       adaptMessageDeleted(bot, input, session)
     } else if (input.subtype === 'message_changed') {
@@ -178,7 +178,7 @@ export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackE
       session.type = 'message-updated'
       // @ts-ignore
       session.guildId = payload.team_id
-      await adaptMessage(bot, evt.message, session.data.message = {}, session.data)
+      await adaptMessage(bot, evt.message, session.body.message = {}, session.body)
     } else {
       return
     }

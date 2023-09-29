@@ -6,6 +6,7 @@ import { decodeMessage } from './utils'
 
 export class HttpServer extends Adapter.Server<DingtalkBot> {
   logger = new Logger('dingtalk')
+
   constructor(ctx: Context, bot: DingtalkBot) {
     super()
   }
@@ -13,6 +14,7 @@ export class HttpServer extends Adapter.Server<DingtalkBot> {
   async start(bot: DingtalkBot) {
     await bot.refreshToken()
     await bot.getLogin()
+
     // https://open.dingtalk.com/document/orgapp/receive-message
     bot.ctx.router.post('/dingtalk', async (ctx) => {
       const timestamp = ctx.get('timestamp')

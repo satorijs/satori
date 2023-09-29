@@ -74,7 +74,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       }
 
       if (parsed.op === Gateway.Opcode.DISPATCH) {
-        this.bot.ctx.emit('discord/' + parsed.t.toLowerCase().replace(/_/g, '-') as any, parsed)
+        this.bot.ctx.emit('satori/internal', 'discord/' + parsed.t.toLowerCase().replace(/_/g, '-'), parsed)
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
           this._resumeUrl = parsed.d.resume_gateway_url

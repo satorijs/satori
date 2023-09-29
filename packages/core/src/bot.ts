@@ -116,18 +116,18 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
     return `${this.platform}:${this.selfId}`
   }
 
-  session(payload: Partial<EventData> = {}) {
-    return new Session(this, payload)
+  session(data: Partial<EventData> = {}) {
+    return new Session(this, data)
   }
 
   dispatch(session: Session) {
     if (!this.ctx.lifecycle.isActive) return
-    this.context.emit('internal/session', session)
+    this.context.emit('satori/session', session)
     const events: string[] = [session.type]
-    if (session.data.subtype) {
-      events.unshift(events[0] + '/' + session.data.subtype)
-      if (session.data.subsubtype) {
-        events.unshift(events[0] + '/' + session.data.subsubtype)
+    if (session.body.subtype) {
+      events.unshift(events[0] + '/' + session.body.subtype)
+      if (session.body.subsubtype) {
+        events.unshift(events[0] + '/' + session.body.subsubtype)
       }
     }
     for (const event of events) {

@@ -134,6 +134,7 @@ export namespace Channel {
 export interface Guild {
   id: string
   name?: string
+  avatar?: string
 }
 
 export interface GuildRole {
@@ -149,11 +150,12 @@ export interface GuildRole {
 export interface User {
   id: string
   name?: string
-  nick?: string
   /** @deprecated */
   userId?: string
   /** @deprecated */
   username?: string
+  /** @deprecated */
+  nickname?: string
   avatar?: string
   discriminator?: string
   isBot?: boolean
@@ -165,6 +167,7 @@ export interface GuildMember {
   avatar?: string
   title?: string
   roles?: string[]
+  joinedAt?: number
 }
 
 export interface Login {
@@ -260,6 +263,8 @@ export interface EventData {
   operator?: User
   role?: GuildRole
   user?: User
+  _type?: string
+  _data?: any
   /** @deprecated */
   subtype?: string
   /** @deprecated */
