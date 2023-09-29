@@ -679,7 +679,7 @@ export interface APIPermissionDemand {
 
 export interface Options {
   id: string
-  key: string
+  secret: string
   token: string
   type: 'public' | 'private'
   /** 是否开启沙箱模式 */

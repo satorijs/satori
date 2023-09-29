@@ -5,11 +5,20 @@ import { WsClient } from './ws'
 import { Internal } from './internal'
 import * as QQ from './types'
 
+interface GetAppAccessTokenResult {
+  access_token: string
+  expires_in: number
+}
+
 export class QQBot extends Bot<QQBot.Config> {
   static MessageEncoder = QQMessageEncoder
 
   internal: Internal
-  http: Quester
+  groupHttp: Quester
+  guildHttp: Quester
+
+  private _token: string
+  private _timer: NodeJS.Timeout
 
   constructor(ctx: Context, config: QQBot.Config) {
     super(ctx, config)
@@ -18,14 +27,47 @@ export class QQBot extends Bot<QQBot.Config> {
     if (config.sandbox) {
       endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
     }
-    this.http = ctx.http.extend({
+    this.guildHttp = ctx.http.extend({
       endpoint,
       headers: {
-        Authorization: `Bot ${this.config.id}.${this.config.token}`,
+        'Authorization': `Bot ${this.config.id}.${this.config.token}`,
       },
     })
-    this.internal = new Internal(this.http)
+    this.internal = new Internal(() => this.guildHttp)
+    // this.internal = new Internal(() => this.groupHttp)
     ctx.plugin(WsClient, this)
+  }
+
+  async _ensureAccessToken() {
+    const result = await this.ctx.http.post<GetAppAccessTokenResult>('https://bots.qq.com/app/getAppAccessToken', {
+      appId: this.config.id,
+      clientSecret: this.config.secret,
+    })
+    this._token = result.access_token
+    this.groupHttp = this.ctx.http.extend({
+      endpoint: this.config.endpoint,
+      headers: {
+        'Authorization': `QQBot ${this._token}`,
+        'X-Union-Appid': this.config.id,
+      },
+    })
+    // 在上一个 access_token 接近过期的 60 秒内
+    // 重新请求可以获取到一个新的 access_token
+    this._timer = setTimeout(() => {
+      this._ensureAccessToken()
+    }, (result.expires_in - 40) * 1000)
+  }
+
+  async getAccessToken() {
+    if (!this._token) {
+      await this._ensureAccessToken()
+    }
+    return this._token
+  }
+
+  stop() {
+    clearTimeout(this._timer)
+    return super.stop()
   }
 
   session(payload?: any, input?: any) {
@@ -126,7 +168,7 @@ export namespace QQBot {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       id: Schema.string().description('机器人 id。').required(),
-      key: Schema.string().description('机器人 key。').role('secret').required(),
+      secret: Schema.string().description('机器人密钥。').role('secret').required(),
       token: Schema.string().description('机器人令牌。').role('secret').required(),
       type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),

@@ -59,11 +59,11 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       // if (this.fileUrl) {
       //   form.append('image', this.fileUrl)
       // }
-      r = await this.bot.http.post<QQ.Message>(endpoint, form, {
+      r = await this.bot.guildHttp.post<QQ.Message>(endpoint, form, {
         headers: form.getHeaders(),
       })
     } else {
-      r = await this.bot.http.post<QQ.Message>(endpoint, {
+      r = await this.bot.guildHttp.post<QQ.Message>(endpoint, {
         ...{
           content: this.content,
           msg_id: this.options.session.messageId,

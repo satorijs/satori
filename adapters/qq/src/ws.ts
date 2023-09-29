@@ -11,9 +11,9 @@ export class WsClient extends Adapter.WsClient<QQBot> {
   _ping: NodeJS.Timeout
 
   async prepare() {
-    const { url } = await this.bot.http.get(`/gateway`)
+    const { url } = await this.bot.guildHttp.get(`/gateway`)
     logger.debug('url: %s', url)
-    return this.bot.http.ws(url)
+    return this.bot.guildHttp.ws(url)
   }
 
   heartbeat() {
