@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-rc.0",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",

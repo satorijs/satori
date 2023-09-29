@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-wecom",
   "description": "Wecom Adapter for Satorijs",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -25,7 +25,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-alpha.1"
+    "@satorijs/satori": "^3.0.0-rc.0"
   },
   "dependencies": {
     "@wecom/crypto": "^1.0.1",

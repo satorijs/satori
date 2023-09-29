@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-matrix",
   "description": "Matrix Adapter for Satorijs",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -24,7 +24,7 @@
     "satori"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-alpha.1"
+    "@satorijs/satori": "^3.0.0-rc.0"
   },
   "dependencies": {
     "image-size": "^1.0.2",

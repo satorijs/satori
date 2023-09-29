@@ -34,6 +34,6 @@
     "api"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-alpha.2"
+    "@satorijs/satori": "^3.0.0-rc.0"
   }
 }
