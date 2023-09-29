@@ -3,7 +3,7 @@ import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { Session } from './session'
-import { EventData, List, Login, Methods, SendOptions, User } from '@satorijs/protocol'
+import { Event, List, Login, Methods, SendOptions, User } from '@satorijs/protocol'
 import WebSocket from 'ws'
 
 export interface Bot extends Methods, User {
@@ -116,13 +116,14 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
     return `${this.platform}:${this.selfId}`
   }
 
-  session(data: Partial<EventData> = {}) {
-    return new Session(this, data)
+  session(body: Partial<Event> = {}) {
+    return new Session(this, body)
   }
 
   dispatch(session: Session) {
     if (!this.ctx.lifecycle.isActive) return
     this.context.emit('satori/session', session)
+    if (session.type === 'internal') return
     const events: string[] = [session.type]
     if (session.body.subtype) {
       events.unshift(events[0] + '/' + session.body.subtype)

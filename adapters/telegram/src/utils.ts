@@ -25,7 +25,11 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   // Internal event: get update type from field name.
   const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
   if (subtype) {
-    bot.ctx.emit('satori/internal', `telegram/${subtype.replace(/_/g, '-')}`, update[subtype])
+    this.bot.dispatch(this.bot.session({
+      type: 'internal',
+      _type: `telegram/${subtype.replace(/_/g, '-')}`,
+      _data: update[subtype],
+    }))
   }
 
   const session = bot.session()
@@ -84,7 +88,7 @@ export async function decodeMessage(
   bot: TelegramBot,
   data: Telegram.Message,
   message: Universal.Message,
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ) {
   const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
     let curr = 0

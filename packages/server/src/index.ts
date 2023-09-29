@@ -7,26 +7,6 @@ class Client {
   authorized = false
 }
 
-type Message = Message.Identify | Message.Heartbeat
-
-namespace Message {
-  export interface Base {
-    op: string
-    body?: any
-  }
-
-  export interface Identify extends Base {
-    op: 'identify'
-    body: {
-      sequence?: number
-    }
-  }
-
-  export interface Heartbeat extends Base {
-    op: 'heartbeat'
-  }
-}
-
 export interface ApiConfig {
   enabled?: boolean
 }
@@ -61,10 +41,13 @@ export const Config: Schema<Config> = Schema.object({
   }),
 })
 
-function recursive(source: any, callback: (key: string) => string) {
+function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
-  if (Array.isArray(source)) return source.map(value => recursive(value, callback))
-  return Object.fromEntries(Object.entries(source).map(([key, value]) => [callback(key), recursive(value, callback)]))
+  if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => {
+    if (key.startsWith('_')) return [key, value]
+    return [callback(key), transformKey(value, callback)]
+  }))
 }
 
 export function apply(ctx: Context, config: Config) {
@@ -76,8 +59,8 @@ export function apply(ctx: Context, config: Config) {
     }
 
     const json = koa.request.body
-    const selfId = json.self_id
-    const platform = json.platform
+    const selfId = koa.request.headers['X-Self-ID']
+    const platform = koa.request.headers['X-Platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (!bot) {
       koa.body = 'bot not found'
@@ -85,10 +68,10 @@ export function apply(ctx: Context, config: Config) {
     }
 
     const args = method.fields.map(({ name }) => {
-      return recursive(json[name], camelCase)
+      return transformKey(json[name], camelCase)
     })
     const result = await bot[method.name](...args)
-    koa.body = recursive(result, snakeCase)
+    koa.body = transformKey(result, snakeCase)
     koa.status = 200
   })
 
@@ -102,23 +85,23 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.on('dispose', () => clearInterval(timeout))
 
-  const layer = ctx.router.ws(config.path + '/v1', (socket) => {
+  const layer = ctx.router.ws(config.path + '/v1/events', (socket) => {
     const client = socket[kClient] = new Client()
 
     socket.addEventListener('message', (event) => {
-      let payload: Message
+      let payload: Universal.ClientPayload
       try {
         payload = JSON.parse(event.data.toString())
       } catch (error) {
         return socket.close(4000, 'invalid message')
       }
 
-      if (payload.op === 'identify') {
+      if (payload.op === Universal.Opcode.IDENTIFY) {
         client.authorized = true
         socket.send(JSON.stringify({
           op: 'ready',
           body: {
-            logins: [],
+            logins: ctx.bots.map(bot => bot.toJSON()),
           },
         }))
         if (!payload.body.sequence) return
@@ -126,8 +109,8 @@ export function apply(ctx: Context, config: Config) {
           if (session.id <= payload.body.sequence) continue
           dispatch(socket, session)
         }
-      } else if (payload.op === 'heartbeat') {
-        socket.send(JSON.stringify({ op: 'heartbeat' }))
+      } else if (payload.op === Universal.Opcode.PING) {
+        socket.send(JSON.stringify({ op: 'pong', body: {} }))
       } else {
         return socket.close(4000, 'invalid message')
       }
@@ -137,7 +120,7 @@ export function apply(ctx: Context, config: Config) {
   function dispatch(socket: WebSocket, session: Session) {
     socket.send(JSON.stringify({
       op: 'event',
-      body: recursive(session, snakeCase),
+      body: transformKey(session.body, snakeCase),
     }))
   }
 

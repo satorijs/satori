@@ -52,7 +52,7 @@ function adaptMessageMeta(
   base: Kook.MessageBase,
   data: Kook.MessageMeta,
   message: Universal.Message = {},
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ) {
   if (base.type === Kook.Type.text) {
     message.content = base.content
@@ -97,7 +97,7 @@ function adaptMessageMeta(
   return message
 }
 
-export function adaptMessage(data: Kook.Message, message: Universal.Message = {}, payload: Universal.Message | Universal.EventData = message) {
+export function adaptMessage(data: Kook.Message, message: Universal.Message = {}, payload: Universal.MessageLike = message) {
   adaptMessageMeta(data, data, message, payload)
   message.id = message.messageId = data.id
   return message
@@ -107,7 +107,7 @@ function adaptMessageSession(
   data: Kook.Data,
   meta: Kook.MessageMeta,
   message: Universal.Message = {},
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ) {
   adaptMessageMeta(data, meta, message)
   message.id = message.messageId = data.msg_id
@@ -152,7 +152,11 @@ export function adaptSession(bot: Bot, input: any) {
   defineProperty(session, 'kook', internal)
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
-    bot.ctx.emit('satori/internal', 'kook/' + type.replace(/_/g, '-'), input.body)
+    this.bot.dispatch(this.bot.session({
+      type: 'internal',
+      _type: 'kook/' + type.replace(/_/g, '-'),
+      _data: input.body,
+    }))
     switch (type) {
       case 'updated_message':
       case 'updated_private_message':

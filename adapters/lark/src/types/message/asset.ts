@@ -20,7 +20,6 @@ declare module '../internal' {
      * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create
      */
     uploadImage(data: FormData): Promise<Image>
-
     /**
      * Upload a file to obtain a `file_key` for use in sending messages.
      *

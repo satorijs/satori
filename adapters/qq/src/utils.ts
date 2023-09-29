@@ -32,7 +32,7 @@ export async function decodeMessage(
   bot: QQBot,
   data: QQ.Message,
   message: Universal.Message = {},
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ): Promise<Universal.Message> {
   message.id = message.messageId = data.id
   message.content = (data.content ?? '')

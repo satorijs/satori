@@ -7,7 +7,7 @@ export async function adaptMessage(
   bot: MailBot,
   mail: ParsedMail,
   message: Universal.Message,
-  payload: Universal.Message | Universal.EventData,
+  payload: Universal.MessageLike,
 ): Promise<Universal.Message> {
   message.id = message.messageId = mail.messageId
   let content = ''

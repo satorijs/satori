@@ -51,7 +51,7 @@ export async function decodeMessage(
   bot: DiscordBot,
   data: Discord.Message,
   message: Universal.Message,
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
   details = true,
 ) {
   const { platform } = bot

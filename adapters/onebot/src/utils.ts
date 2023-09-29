@@ -45,7 +45,7 @@ export async function adaptMessage(
   bot: BaseBot,
   data: OneBot.Message,
   message: Universal.Message = {},
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ) {
   message.id = message.messageId = data.message_id.toString()
 

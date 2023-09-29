@@ -1,7 +1,7 @@
 import { defineProperty, isNullable } from 'cosmokit'
 import { Context } from '.'
 import { Bot } from './bot'
-import { Channel, EventData, GuildMember, Message, User } from '@satorijs/protocol'
+import { Channel, Event, GuildMember, Message, User } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
 declare module '@satorijs/protocol' {
@@ -33,22 +33,20 @@ export class Session {
   public id: number
   public bot: Bot
   public app: Context['root']
-  public body: Omit<EventData, 'id'>
+  public body: Omit<Event, 'id'>
   public locales: string[] = []
 
-  constructor(bot: Bot, payload: Partial<EventData>) {
+  constructor(bot: Bot, payload: Partial<Event>) {
     payload.selfId ??= bot.selfId
     payload.platform ??= bot.platform
     payload.timestamp ??= Date.now()
-    this.body = payload as EventData
+    this.body = payload as Event
     this.id = ++Session.counter
     Object.assign(this, payload)
     for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
       if (descriptor.enumerable) continue
       Object.defineProperty(this, key, descriptor)
     }
-    // this.selfId = bot.selfId
-    // this.platform = bot.platform
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
     this.initialize()
@@ -123,7 +121,7 @@ export class Session {
     }, this)
   }
 
-  toJSON(): EventData {
+  toJSON(): Event {
     return { ...this.body, id: this.id }
   }
 

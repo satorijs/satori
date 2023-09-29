@@ -55,15 +55,30 @@ declare module './gateway' {
 
 declare module './internal' {
   interface Internal {
-    /** https://discord.com/developers/docs/resources/emoji#list-guild-emojis */
+    /**
+     * Returns a list of emoji objects for the given guild.
+     * @see https://discord.com/developers/docs/resources/emoji#list-guild-emojis
+     */
     listGuildEmojis(guild_id: snowflake): Promise<Emoji[]>
-    /** https://discord.com/developers/docs/resources/emoji#get-guild-emoji */
+    /**
+     * Returns an emoji object for the given guild and emoji IDs.
+     * @see https://discord.com/developers/docs/resources/emoji#get-guild-emoji
+     */
     getGuildEmoji(guild_id: snowflake, emoji_id: snowflake): Promise<Emoji>
-    /** https://discord.com/developers/docs/resources/emoji#create-guild-emoji */
+    /**
+     * Create a new emoji for the guild. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the new emoji object on success. Fires a Guild Emojis Update Gateway event.
+     * @see https://discord.com/developers/docs/resources/emoji#create-guild-emoji
+     */
     createGuildEmoji(guild_id: snowflake, options: Emoji.CreateParams): Promise<Emoji>
-    /** https://discord.com/developers/docs/resources/emoji#modify-guild-emoji */
+    /**
+     * Modify the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated emoji object on success. Fires a Guild Emojis Update Gateway event.
+     * @see https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
+     */
     modifyGuildEmoji(guild_id: snowflake, emoji_id: snowflake, options: Emoji.ModifyParams): Promise<Emoji>
-    /** https://discord.com/developers/docs/resources/emoji#delete-guild-emoji */
+    /**
+     * Delete the given emoji. Requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns 204 No Content on success. Fires a Guild Emojis Update Gateway event.
+     * @see https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
+     */
     deleteGuildEmoji(guild_id: snowflake, emoji_id: snowflake): Promise<void>
   }
 }

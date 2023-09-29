@@ -3,31 +3,6 @@ import { SatoriBot, transformKey } from './bot'
 
 const logger = new Logger('discord')
 
-type Message = Message.Heartbeat | Message.Dispatch | Message.Ready
-
-namespace Message {
-  export interface Base {
-    op: string
-    data?: any
-  }
-
-  export interface Heartbeat extends Base {
-    op: 'heartbeat'
-  }
-
-  export interface Ready extends Base {
-    op: 'ready'
-    data: {
-      user: Universal.User
-    }
-  }
-
-  export interface Dispatch extends Base {
-    op: 'event'
-    data: any
-  }
-}
-
 export class WsClient extends Adapter.WsClient<SatoriBot> {
   sequence?: number
   timeout?: NodeJS.Timeout
@@ -52,21 +27,21 @@ export class WsClient extends Adapter.WsClient<SatoriBot> {
     }, Time.second * 10)
 
     this.bot.socket.addEventListener('message', async ({ data }) => {
-      let parsed: Message
+      let parsed: Universal.ServerPayload
       try {
         parsed = JSON.parse(data.toString())
       } catch (error) {
         return logger.warn('cannot parse message', data)
       }
 
-      if (parsed.op === 'ready') {
+      if (parsed.op === Universal.Opcode.READY) {
         logger.debug('ready')
-        Object.assign(this.bot, transformKey(parsed.data.user, camelCase))
+        Object.assign(this.bot, transformKey(parsed.body.user, camelCase))
         return this.bot.online()
       }
 
-      if (parsed.op === 'event') {
-        const session = this.bot.session(transformKey(parsed.data, camelCase))
+      if (parsed.op === Universal.Opcode.EVENT) {
+        const session = this.bot.session(transformKey(parsed.body, camelCase))
         this.sequence = session.id
         this.bot.dispatch(session)
       }

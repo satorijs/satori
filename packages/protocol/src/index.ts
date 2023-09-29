@@ -249,7 +249,7 @@ export type EventName =
   | 'guild-request'
   | 'guild-member-request'
 
-export interface EventData {
+export interface Event {
   id: number
   type: string
   selfId: string
@@ -269,4 +269,40 @@ export interface EventData {
   subtype?: string
   /** @deprecated */
   subsubtype?: string
+}
+
+export type MessageLike = Message | Event
+
+export const enum Opcode {
+  EVENT = 0,
+  PING = 1,
+  PONG = 2,
+  IDENTIFY = 3,
+  READY = 4,
+}
+
+export interface GatewayPayloadStructure<O extends Opcode> {
+  op: O
+  body: GatewayBody[O]
+}
+
+export type ServerPayload = {
+  [O in Opcode]: GatewayPayloadStructure<O>
+}[Opcode.EVENT | Opcode.PONG | Opcode.READY]
+
+export type ClientPayload = {
+  [O in Opcode]: GatewayPayloadStructure<O>
+}[Opcode.PING | Opcode.IDENTIFY]
+
+export interface GatewayBody {
+  [Opcode.EVENT]: Event
+  [Opcode.PING]: {}
+  [Opcode.PONG]: {}
+  [Opcode.IDENTIFY]: {
+    token?: string
+    sequence?: number
+  }
+  [Opcode.READY]: {
+    logins: Login[]
+  }
 }

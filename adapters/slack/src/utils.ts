@@ -81,7 +81,7 @@ export async function adaptMessage(
   bot: SlackBot,
   data: Partial<GenericMessageEvent> | Definitions.Message,
   message: Universal.Message,
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ) {
   const elements = adaptMessageBlocks(data.blocks as unknown as NewKnownBlock[])
   // if (evt.thread_ts) elements.unshift(h.quote(evt.thread_ts))
@@ -213,7 +213,7 @@ export interface AuthTestResponse {
 export const decodeUser = (data: SlackUser): Universal.User => ({
   id: data.id,
   name: data.real_name,
-  nick: data.profile.display_name,
+  nickname: data.profile.display_name,
   userId: data.id,
   avatar: data.profile.image_512
     ?? data.profile.image_192

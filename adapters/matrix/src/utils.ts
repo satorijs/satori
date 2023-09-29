@@ -13,7 +13,7 @@ export async function adaptMessage(
   bot: MatrixBot,
   data: Matrix.ClientEvent,
   message: Universal.Message = {},
-  payload: Universal.Message | Universal.EventData = message,
+  payload: Universal.MessageLike = message,
 ): Promise<Universal.Message> {
   message.id = message.messageId = data.event_id
   const content = data.content as Matrix.M_ROOM_MESSAGE
