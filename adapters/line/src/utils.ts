@@ -1,4 +1,4 @@
-import { h, Session } from '@satorijs/satori'
+import { defineProperty, h, hyphenate, Session } from '@satorijs/satori'
 import { LineBot } from './bot'
 import { EventMessage, WebhookEvent } from './types'
 // import jose from 'jose'
@@ -62,8 +62,14 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
 }
 
 export async function adaptSessions(bot: LineBot, body: WebhookEvent) {
-  const result: Partial<Session>[] = []
+  const result: Partial<Session>[] = [bot.session({
+    type: 'internal',
+    _type: `line/${hyphenate(body.type)}`,
+    _data: body,
+  })]
   const session = bot.session()
+  const internal = Object.create(bot.internal)
+  defineProperty(session, 'line', Object.assign(internal, body))
   session.timestamp = +body.timestamp
   if (body.source.type === 'user') {
     session.userId = body.source.userId
