@@ -729,6 +729,7 @@ Internal.define({
   '/im/topBoxes/close': { POST: { closeTopbox: false } },
   '/im/topBoxes': { POST: { createTopbox: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

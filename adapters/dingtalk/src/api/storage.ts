@@ -1246,6 +1246,7 @@ Internal.define({
   },
   '/storage/spaces': { POST: { storageAddSpace: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

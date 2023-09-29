@@ -72,6 +72,7 @@ Internal.define({
   '/connector/data': { GET: { pullDataByPage: false } },
   '/connector/triggers/data/sync': { POST: { syncData: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

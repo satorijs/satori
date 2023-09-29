@@ -45,6 +45,7 @@ Internal.define({
     GET: { getPluginPermissionPoint: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

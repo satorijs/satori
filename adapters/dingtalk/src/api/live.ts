@@ -121,6 +121,7 @@ Internal.define({
   '/live/lives/watchUsers': { GET: { queryLiveWatchUserList: false } },
   '/live/lives/watchDetails': { GET: { queryLiveWatchDetail: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

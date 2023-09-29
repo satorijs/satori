@@ -63,6 +63,7 @@ Internal.define({
   '/link/followers': { GET: { listFollower: false } },
   '/link/followers/infos': { GET: { getFollowerInfo: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

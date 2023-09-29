@@ -222,6 +222,7 @@ Internal.define({
   },
   '/badge/codes/decode': { POST: { decodeBadgeCode: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

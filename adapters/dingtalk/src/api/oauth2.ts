@@ -98,6 +98,7 @@ Internal.define({
   '/oauth2/userAccessToken': { POST: { getUserToken: false } },
   '/oauth2/ssoUserInfo': { GET: { getSsoUserInfo: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

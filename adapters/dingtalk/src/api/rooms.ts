@@ -238,6 +238,7 @@ Internal.define({
   '/rooms/meetingRooms': { PUT: { updateMeetingRoom: false } },
   '/rooms/meetingrooms': { POST: { createMeetingRoom: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

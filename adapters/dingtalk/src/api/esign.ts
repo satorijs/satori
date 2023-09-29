@@ -27,6 +27,7 @@ Internal.define({
   '/esign/flowTasks/{taskId}/docs': { GET: { getFlowDocs: false } },
   '/esign/approvals/{taskId}': { GET: { approvalList: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

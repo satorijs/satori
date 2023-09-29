@@ -174,6 +174,7 @@ Internal.define({
   '/card/instances/spaces': { PUT: { appendSpace: false } },
   '/card/instances/deliver': { POST: { deliverCard: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

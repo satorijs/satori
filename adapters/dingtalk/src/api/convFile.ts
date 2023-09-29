@@ -130,6 +130,7 @@ Internal.define({
   '/convFile/conversations/spaces/query': { POST: { convFileGetSpace: false } },
   '/convFile/apps/conversations/files/send': { POST: { sendByApp: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

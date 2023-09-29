@@ -229,6 +229,7 @@ Internal.define({
     POST: { batchRecallPrivateChat: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

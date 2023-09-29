@@ -111,6 +111,7 @@ Internal.define({
     DELETE: { campusDeleteCampusGroup: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

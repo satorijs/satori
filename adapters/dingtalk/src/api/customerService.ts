@@ -123,6 +123,7 @@ Internal.define({
     POST: { createTicket: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

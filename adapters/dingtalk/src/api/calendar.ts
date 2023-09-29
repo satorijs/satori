@@ -579,6 +579,7 @@ Internal.define({
     POST: { respondEvent: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

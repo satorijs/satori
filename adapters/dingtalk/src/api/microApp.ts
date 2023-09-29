@@ -222,6 +222,7 @@ Internal.define({
   },
   '/microApp/apps': { POST: { createInnerApp: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

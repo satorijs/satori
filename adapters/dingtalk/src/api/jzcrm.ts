@@ -228,6 +228,7 @@ Internal.define({
   '/jzcrm/dataView': { GET: { getDataView: false } },
   '/jzcrm/data': { GET: { getDataList: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

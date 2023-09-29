@@ -404,6 +404,7 @@ Internal.define({
   '/h3yun/apps/search': { POST: { getApps: false } },
   '/h3yun/departments': { GET: { getOrganizations: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

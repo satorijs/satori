@@ -630,6 +630,7 @@ Internal.define({
     POST: { batchSendOfficialAccountOTOMessage: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

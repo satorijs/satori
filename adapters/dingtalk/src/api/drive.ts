@@ -80,6 +80,7 @@ Internal.define({
     GET: { listSpaces: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

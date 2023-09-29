@@ -1092,6 +1092,7 @@ Internal.define({
   },
   '/project/users/{userId}/tasks/{taskId}': { DELETE: { deleteTask: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

@@ -160,6 +160,7 @@ Internal.define({
     POST: { registerAndActivateDevice: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

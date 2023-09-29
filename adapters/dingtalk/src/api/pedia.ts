@@ -175,6 +175,7 @@ Internal.define({
     POST: { pediaWordsAdd: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

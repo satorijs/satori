@@ -204,6 +204,7 @@ Internal.define({
   '/hrm/jobRanks': { GET: { queryJobRanks: false } },
   '/hrm/positions/query': { POST: { queryPositions: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

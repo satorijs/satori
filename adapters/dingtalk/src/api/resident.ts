@@ -95,6 +95,7 @@ Internal.define({
   '/resident/industryRoles/users': { GET: { listIndustryRoleUsers: false } },
   '/resident/users/industryRoles': { GET: { listUserIndustryRoles: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

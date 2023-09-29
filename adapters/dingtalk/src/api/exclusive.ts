@@ -277,6 +277,7 @@ Internal.define({
     GET: { getAllLabelableDepts: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

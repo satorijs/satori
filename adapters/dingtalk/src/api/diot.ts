@@ -7,6 +7,7 @@ export interface UpgradeDeviceResponse {
 
 // funcName: isOldApi
 Internal.define({ '/diot/upgrade/device': { POST: { upgradeDevice: false } } })
+
 declare module '../internal' {
   interface Internal {
     /**

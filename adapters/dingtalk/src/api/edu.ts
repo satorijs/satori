@@ -18,6 +18,7 @@ export interface MoveStudentResponse {
 
 // funcName: isOldApi
 Internal.define({ '/edu/students/move': { POST: { moveStudent: false } } })
+
 declare module '../internal' {
   interface Internal {
     /**

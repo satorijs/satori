@@ -2978,1104 +2978,1105 @@ export interface OapiSmartbotMsgPushResponse {
 
 // funcName: isOldApi
 Internal.define({
-  '/service/get_corp_token': { POST: { OapiServiceGetCorpToken: true } },
-  '/sso/gettoken': { GET: { OapiSsoGettoken: true } },
-  '/get_jsapi_ticket': { GET: { OapiGetJsapiTicket: true } },
-  '/gettoken': { GET: { OapiGettoken: true } },
-  '/v2/user/getuserinfo': { POST: { OapiV2UserGetuserinfo: true } },
-  '/sns/getuserinfo_bycode': { POST: { OapiSnsGetuserinfoBycode: true } },
-  '/sso/getuserinfo': { GET: { OapiSsoGetuserinfo: true } },
-  '/service/get_auth_info': { POST: { OapiServiceGetAuthInfo: true } },
-  '/v2/user/update': { POST: { OapiV2UserUpdate: true } },
-  '/v2/user/create': { POST: { OapiV2UserCreate: true } },
-  '/org/union/trunk/get': { POST: { OapiOrgUnionTrunkGet: true } },
+  '/service/get_corp_token': { POST: { oapiServiceGetCorpToken: true } },
+  '/sso/gettoken': { GET: { oapiSsoGettoken: true } },
+  '/get_jsapi_ticket': { GET: { oapiGetJsapiTicket: true } },
+  '/gettoken': { GET: { oapiGettoken: true } },
+  '/v2/user/getuserinfo': { POST: { oapiV2UserGetuserinfo: true } },
+  '/sns/getuserinfo_bycode': { POST: { oapiSnsGetuserinfoBycode: true } },
+  '/sso/getuserinfo': { GET: { oapiSsoGetuserinfo: true } },
+  '/service/get_auth_info': { POST: { oapiServiceGetAuthInfo: true } },
+  '/v2/user/update': { POST: { oapiV2UserUpdate: true } },
+  '/v2/user/create': { POST: { oapiV2UserCreate: true } },
+  '/org/union/trunk/get': { POST: { oapiOrgUnionTrunkGet: true } },
   '/smartwork/hrm/roster/meta/get': {
-    POST: { OapiSmartworkHrmRosterMetaGet: true },
+    POST: { oapiSmartworkHrmRosterMetaGet: true },
   },
   '/smartwork/hrm/employee/v2/list': {
-    POST: { OapiSmartworkHrmEmployeeV2List: true },
+    POST: { oapiSmartworkHrmEmployeeV2List: true },
   },
   '/smartwork/hrm/employee/v2/update': {
-    POST: { OapiSmartworkHrmEmployeeV2Update: true },
+    POST: { oapiSmartworkHrmEmployeeV2Update: true },
   },
   '/smartwork/hrm/employee/field/grouplist': {
-    POST: { OapiSmartworkHrmEmployeeFieldGrouplist: true },
+    POST: { oapiSmartworkHrmEmployeeFieldGrouplist: true },
   },
   '/smartwork/hrm/employee/update': {
-    POST: { OapiSmartworkHrmEmployeeUpdate: true },
+    POST: { oapiSmartworkHrmEmployeeUpdate: true },
   },
   '/smartwork/hrm/employee/queryonjob': {
-    POST: { OapiSmartworkHrmEmployeeQueryonjob: true },
+    POST: { oapiSmartworkHrmEmployeeQueryonjob: true },
   },
   '/smartwork/hrm/employee/querypreentry': {
-    POST: { OapiSmartworkHrmEmployeeQuerypreentry: true },
+    POST: { oapiSmartworkHrmEmployeeQuerypreentry: true },
   },
   '/smartwork/hrm/employee/addpreentry': {
-    POST: { OapiSmartworkHrmEmployeeAddpreentry: true },
+    POST: { oapiSmartworkHrmEmployeeAddpreentry: true },
   },
   '/smartwork/hrm/employee/list': {
-    POST: { OapiSmartworkHrmEmployeeList: true },
+    POST: { oapiSmartworkHrmEmployeeList: true },
   },
-  '/report/template/getbyname': { POST: { OapiReportTemplateGetbyname: true } },
-  '/report/create': { POST: { OapiReportCreate: true } },
-  '/report/savecontent': { POST: { OapiReportSavecontent: true } },
-  '/report/simplelist': { POST: { OapiReportSimplelist: true } },
+  '/report/template/getbyname': { POST: { oapiReportTemplateGetbyname: true } },
+  '/report/create': { POST: { oapiReportCreate: true } },
+  '/report/savecontent': { POST: { oapiReportSavecontent: true } },
+  '/report/simplelist': { POST: { oapiReportSimplelist: true } },
   '/report/statistics/listbytype': {
-    POST: { OapiReportStatisticsListbytype: true },
+    POST: { oapiReportStatisticsListbytype: true },
   },
-  '/report/receiver/list': { POST: { OapiReportReceiverList: true } },
-  '/report/comment/list': { POST: { OapiReportCommentList: true } },
-  '/report/statistics': { POST: { OapiReportStatistics: true } },
-  '/report/getunreadcount': { POST: { OapiReportGetunreadcount: true } },
-  '/report/list': { POST: { OapiReportList: true } },
+  '/report/receiver/list': { POST: { oapiReportReceiverList: true } },
+  '/report/comment/list': { POST: { oapiReportCommentList: true } },
+  '/report/statistics': { POST: { oapiReportStatistics: true } },
+  '/report/getunreadcount': { POST: { oapiReportGetunreadcount: true } },
+  '/report/list': { POST: { oapiReportList: true } },
   '/report/template/listbyuserid': {
-    POST: { OapiReportTemplateListbyuserid: true },
+    POST: { oapiReportTemplateListbyuserid: true },
   },
-  '/checkin/record/get': { POST: { OapiCheckinRecordGet: true } },
-  '/checkin/record': { GET: { OapiCheckinRecord: true } },
-  '/blackboard/category/list': { POST: { OapiBlackboardCategoryList: true } },
-  '/blackboard/update': { POST: { OapiBlackboardUpdate: true } },
-  '/blackboard/delete': { POST: { OapiBlackboardDelete: true } },
-  '/blackboard/get': { POST: { OapiBlackboardGet: true } },
-  '/blackboard/listids': { POST: { OapiBlackboardListids: true } },
-  '/blackboard/create': { POST: { OapiBlackboardCreate: true } },
-  '/blackboard/listtopten': { POST: { OapiBlackboardListtopten: true } },
+  '/checkin/record/get': { POST: { oapiCheckinRecordGet: true } },
+  '/checkin/record': { GET: { oapiCheckinRecord: true } },
+  '/blackboard/category/list': { POST: { oapiBlackboardCategoryList: true } },
+  '/blackboard/update': { POST: { oapiBlackboardUpdate: true } },
+  '/blackboard/delete': { POST: { oapiBlackboardDelete: true } },
+  '/blackboard/get': { POST: { oapiBlackboardGet: true } },
+  '/blackboard/listids': { POST: { oapiBlackboardListids: true } },
+  '/blackboard/create': { POST: { oapiBlackboardCreate: true } },
+  '/blackboard/listtopten': { POST: { oapiBlackboardListtopten: true } },
   '/health/stepinfo/getuserstatus': {
-    POST: { OapiHealthStepinfoGetuserstatus: true },
+    POST: { oapiHealthStepinfoGetuserstatus: true },
   },
   '/health/stepinfo/listbyuserid': {
-    POST: { OapiHealthStepinfoListbyuserid: true },
+    POST: { oapiHealthStepinfoListbyuserid: true },
   },
-  '/health/stepinfo/list': { POST: { OapiHealthStepinfoList: true } },
-  '/microapp/list_by_userid': { GET: { OapiMicroappListByUserid: true } },
-  '/microapp/list': { POST: { OapiMicroappList: true } },
-  '/microapp/delete': { POST: { OapiMicroappDelete: true } },
+  '/health/stepinfo/list': { POST: { oapiHealthStepinfoList: true } },
+  '/microapp/list_by_userid': { GET: { oapiMicroappListByUserid: true } },
+  '/microapp/list': { POST: { oapiMicroappList: true } },
+  '/microapp/delete': { POST: { oapiMicroappDelete: true } },
   '/microapp/set_visible_scopes': {
-    POST: { OapiMicroappSetVisibleScopes: true },
+    POST: { oapiMicroappSetVisibleScopes: true },
   },
-  '/microapp/visible_scopes': { POST: { OapiMicroappVisibleScopes: true } },
-  '/asr/voice/translate': { POST: { OapiAsrVoiceTranslate: true } },
-  '/ai/mt/translate': { POST: { OapiAiMtTranslate: true } },
-  '/ocr/structured/recognize': { POST: { OapiOcrStructuredRecognize: true } },
+  '/microapp/visible_scopes': { POST: { oapiMicroappVisibleScopes: true } },
+  '/asr/voice/translate': { POST: { oapiAsrVoiceTranslate: true } },
+  '/ai/mt/translate': { POST: { oapiAiMtTranslate: true } },
+  '/ocr/structured/recognize': { POST: { oapiOcrStructuredRecognize: true } },
   '/im/chat/scencegroup/message/send_v2': {
-    POST: { OapiImChatScencegroupMessageSendV2: true },
+    POST: { oapiImChatScencegroupMessageSendV2: true },
   },
   '/im/chat/scenegroup/template/close': {
-    POST: { OapiImChatScenegroupTemplateClose: true },
+    POST: { oapiImChatScenegroupTemplateClose: true },
   },
   '/im/chat/scenegroup/template/apply': {
-    POST: { OapiImChatScenegroupTemplateApply: true },
+    POST: { oapiImChatScenegroupTemplateApply: true },
   },
   '/im/chat/scencegroup/interactivecard/callback/register': {
-    POST: { OapiImChatScencegroupInteractivecardCallbackRegister: true },
+    POST: { oapiImChatScencegroupInteractivecardCallbackRegister: true },
   },
-  '/im/chat/scenegroup/create': { POST: { OapiImChatScenegroupCreate: true } },
+  '/im/chat/scenegroup/create': { POST: { oapiImChatScenegroupCreate: true } },
   '/im/chat/scenegroup/member/add': {
-    POST: { OapiImChatScenegroupMemberAdd: true },
+    POST: { oapiImChatScenegroupMemberAdd: true },
   },
   '/im/chat/scenegroup/member/get': {
-    POST: { OapiImChatScenegroupMemberGet: true },
+    POST: { oapiImChatScenegroupMemberGet: true },
   },
-  '/im/chat/scenegroup/update': { POST: { OapiImChatScenegroupUpdate: true } },
+  '/im/chat/scenegroup/update': { POST: { oapiImChatScenegroupUpdate: true } },
   '/im/chat/scenegroup/member/delete': {
-    POST: { OapiImChatScenegroupMemberDelete: true },
+    POST: { oapiImChatScenegroupMemberDelete: true },
   },
-  '/im/chat/scenegroup/get': { POST: { OapiImChatScenegroupGet: true } },
-  '/robot/send': { POST: { OapiRobotSend: true } },
+  '/im/chat/scenegroup/get': { POST: { oapiImChatScenegroupGet: true } },
+  '/robot/send': { POST: { oapiRobotSend: true } },
   '/alitrip/btrip/invoice/setting/rule': {
-    POST: { OapiAlitripBtripInvoiceSettingRule: true },
+    POST: { oapiAlitripBtripInvoiceSettingRule: true },
   },
   '/alitrip/btrip/invoice/setting/add': {
-    POST: { OapiAlitripBtripInvoiceSettingAdd: true },
+    POST: { oapiAlitripBtripInvoiceSettingAdd: true },
   },
   '/alitrip/btrip/project/delete': {
-    POST: { OapiAlitripBtripProjectDelete: true },
+    POST: { oapiAlitripBtripProjectDelete: true },
   },
   '/alitrip/btrip/project/modify': {
-    POST: { OapiAlitripBtripProjectModify: true },
+    POST: { oapiAlitripBtripProjectModify: true },
   },
-  '/alitrip/btrip/project/add': { POST: { OapiAlitripBtripProjectAdd: true } },
+  '/alitrip/btrip/project/add': { POST: { oapiAlitripBtripProjectAdd: true } },
   '/alitrip/btrip/invoice/setting/delete': {
-    POST: { OapiAlitripBtripInvoiceSettingDelete: true },
+    POST: { oapiAlitripBtripInvoiceSettingDelete: true },
   },
   '/alitrip/btrip/invoice/setting/modify': {
-    POST: { OapiAlitripBtripInvoiceSettingModify: true },
+    POST: { oapiAlitripBtripInvoiceSettingModify: true },
   },
-  '/alitrip/btrip/price/query': { POST: { OapiAlitripBtripPriceQuery: true } },
+  '/alitrip/btrip/price/query': { POST: { oapiAlitripBtripPriceQuery: true } },
   '/alitrip/btrip/train/city/suggest': {
-    POST: { OapiAlitripBtripTrainCitySuggest: true },
+    POST: { oapiAlitripBtripTrainCitySuggest: true },
   },
   '/alitrip/btrip/monthbill/url/get': {
-    POST: { OapiAlitripBtripMonthbillUrlGet: true },
+    POST: { oapiAlitripBtripMonthbillUrlGet: true },
   },
-  '/alitrip/btrip/address/get': { POST: { OapiAlitripBtripAddressGet: true } },
+  '/alitrip/btrip/address/get': { POST: { oapiAlitripBtripAddressGet: true } },
   '/alitrip/btrip/approval/modify': {
-    POST: { OapiAlitripBtripApprovalModify: true },
+    POST: { oapiAlitripBtripApprovalModify: true },
   },
   '/alitrip/btrip/flight/city/suggest': {
-    POST: { OapiAlitripBtripFlightCitySuggest: true },
+    POST: { oapiAlitripBtripFlightCitySuggest: true },
   },
   '/alitrip/btrip/vehicle/order/search': {
-    POST: { OapiAlitripBtripVehicleOrderSearch: true },
+    POST: { oapiAlitripBtripVehicleOrderSearch: true },
   },
   '/alitrip/btrip/cost/center/query': {
-    POST: { OapiAlitripBtripCostCenterQuery: true },
+    POST: { oapiAlitripBtripCostCenterQuery: true },
   },
   '/alitrip/btrip/approval/update': {
-    POST: { OapiAlitripBtripApprovalUpdate: true },
+    POST: { oapiAlitripBtripApprovalUpdate: true },
   },
   '/alitrip/btrip/cost/center/new': {
-    POST: { OapiAlitripBtripCostCenterNew: true },
+    POST: { oapiAlitripBtripCostCenterNew: true },
   },
   '/alitrip/btrip/cost/center/modify': {
-    POST: { OapiAlitripBtripCostCenterModify: true },
+    POST: { oapiAlitripBtripCostCenterModify: true },
   },
   '/alitrip/btrip/cost/center/delete': {
-    POST: { OapiAlitripBtripCostCenterDelete: true },
+    POST: { oapiAlitripBtripCostCenterDelete: true },
   },
   '/alitrip/btrip/cost/center/entity/set': {
-    POST: { OapiAlitripBtripCostCenterEntitySet: true },
+    POST: { oapiAlitripBtripCostCenterEntitySet: true },
   },
   '/alitrip/btrip/hotel/order/search': {
-    POST: { OapiAlitripBtripHotelOrderSearch: true },
+    POST: { oapiAlitripBtripHotelOrderSearch: true },
   },
   '/alitrip/btrip/train/order/search': {
-    POST: { OapiAlitripBtripTrainOrderSearch: true },
+    POST: { oapiAlitripBtripTrainOrderSearch: true },
   },
   '/alitrip/btrip/flight/order/search': {
-    POST: { OapiAlitripBtripFlightOrderSearch: true },
+    POST: { oapiAlitripBtripFlightOrderSearch: true },
   },
   '/alitrip/btrip/invoice/search': {
-    POST: { OapiAlitripBtripInvoiceSearch: true },
+    POST: { oapiAlitripBtripInvoiceSearch: true },
   },
   '/alitrip/btrip/cost/center/transfer': {
-    POST: { OapiAlitripBtripCostCenterTransfer: true },
+    POST: { oapiAlitripBtripCostCenterTransfer: true },
   },
-  '/alitrip/btrip/apply/get': { POST: { OapiAlitripBtripApplyGet: true } },
+  '/alitrip/btrip/apply/get': { POST: { oapiAlitripBtripApplyGet: true } },
   '/alitrip/btrip/apply/search': {
-    POST: { OapiAlitripBtripApplySearch: true },
+    POST: { oapiAlitripBtripApplySearch: true },
   },
   '/alitrip/btrip/approval/new': {
-    POST: { OapiAlitripBtripApprovalNew: true },
+    POST: { oapiAlitripBtripApprovalNew: true },
   },
   '/alitrip/btrip/cost/center/entity/delete': {
-    POST: { OapiAlitripBtripCostCenterEntityDelete: true },
+    POST: { oapiAlitripBtripCostCenterEntityDelete: true },
   },
-  '/workspace/auditlog/list': { POST: { OapiWorkspaceAuditlogList: true } },
-  '/edu/cert/get': { POST: { OapiEduCertGet: true } },
-  '/edu/user/list': { POST: { OapiEduUserList: true } },
+  '/workspace/auditlog/list': { POST: { oapiWorkspaceAuditlogList: true } },
+  '/edu/cert/get': { POST: { oapiEduCertGet: true } },
+  '/edu/user/list': { POST: { oapiEduUserList: true } },
   '/smartdevice/device/querybyid': {
-    POST: { OapiSmartdeviceDeviceQuerybyid: true },
+    POST: { oapiSmartdeviceDeviceQuerybyid: true },
   },
   '/smartdevice/device/querylist': {
-    POST: { OapiSmartdeviceDeviceQuerylist: true },
+    POST: { oapiSmartdeviceDeviceQuerylist: true },
   },
-  '/smartdevice/device/query': { POST: { OapiSmartdeviceDeviceQuery: true } },
+  '/smartdevice/device/query': { POST: { oapiSmartdeviceDeviceQuery: true } },
   '/smartdevice/device/updatenick': {
-    POST: { OapiSmartdeviceDeviceUpdatenick: true },
+    POST: { oapiSmartdeviceDeviceUpdatenick: true },
   },
-  '/smartdevice/device/unbind': { POST: { OapiSmartdeviceDeviceUnbind: true } },
-  '/smartdevice/external/bind': { POST: { OapiSmartdeviceExternalBind: true } },
+  '/smartdevice/device/unbind': { POST: { oapiSmartdeviceDeviceUnbind: true } },
+  '/smartdevice/external/bind': { POST: { oapiSmartdeviceExternalBind: true } },
   '/crm/objectdata/contact/delete': {
-    POST: { OapiCrmObjectdataContactDelete: true },
+    POST: { oapiCrmObjectdataContactDelete: true },
   },
   '/crm/objectdata/customobject/create': {
-    POST: { OapiCrmObjectdataCustomobjectCreate: true },
+    POST: { oapiCrmObjectdataCustomobjectCreate: true },
   },
   '/crm/objectdata/customobject/update': {
-    POST: { OapiCrmObjectdataCustomobjectUpdate: true },
+    POST: { oapiCrmObjectdataCustomobjectUpdate: true },
   },
-  '/crm/objectdata/list': { POST: { OapiCrmObjectdataList: true } },
-  '/crm/objectdata/query': { POST: { OapiCrmObjectdataQuery: true } },
-  '/crm/objectmeta/describe': { POST: { OapiCrmObjectmetaDescribe: true } },
+  '/crm/objectdata/list': { POST: { oapiCrmObjectdataList: true } },
+  '/crm/objectdata/query': { POST: { oapiCrmObjectdataQuery: true } },
+  '/crm/objectmeta/describe': { POST: { oapiCrmObjectmetaDescribe: true } },
   '/crm/objectdata/contact/query': {
-    POST: { OapiCrmObjectdataContactQuery: true },
+    POST: { oapiCrmObjectdataContactQuery: true },
   },
   '/crm/objectdata/followrecord/list': {
-    POST: { OapiCrmObjectdataFollowrecordList: true },
+    POST: { oapiCrmObjectdataFollowrecordList: true },
   },
   '/crm/objectdata/followrecord/query': {
-    POST: { OapiCrmObjectdataFollowrecordQuery: true },
+    POST: { oapiCrmObjectdataFollowrecordQuery: true },
   },
   '/crm/objectdata/contact/list': {
-    POST: { OapiCrmObjectdataContactList: true },
+    POST: { oapiCrmObjectdataContactList: true },
   },
   '/crm/objectmeta/contact/describe': {
-    POST: { OapiCrmObjectmetaContactDescribe: true },
+    POST: { oapiCrmObjectmetaContactDescribe: true },
   },
   '/crm/objectmeta/followrecord/describe': {
-    POST: { OapiCrmObjectmetaFollowrecordDescribe: true },
+    POST: { oapiCrmObjectmetaFollowrecordDescribe: true },
   },
-  '/cspace/add_to_single_chat': { POST: { OapiCspaceAddToSingleChat: true } },
-  '/cspace/grant_custom_space': { GET: { OapiCspaceGrantCustomSpace: true } },
-  '/cspace/get_custom_space': { GET: { OapiCspaceGetCustomSpace: true } },
-  '/cspace/add': { GET: { OapiCspaceAdd: true } },
-  '/chat/subadmin/update': { POST: { OapiChatSubadminUpdate: true } },
-  '/chat/qrcode/get': { POST: { OapiChatQrcodeGet: true } },
+  '/cspace/add_to_single_chat': { POST: { oapiCspaceAddToSingleChat: true } },
+  '/cspace/grant_custom_space': { GET: { oapiCspaceGrantCustomSpace: true } },
+  '/cspace/get_custom_space': { GET: { oapiCspaceGetCustomSpace: true } },
+  '/cspace/add': { GET: { oapiCspaceAdd: true } },
+  '/chat/subadmin/update': { POST: { oapiChatSubadminUpdate: true } },
+  '/chat/qrcode/get': { POST: { oapiChatQrcodeGet: true } },
   '/chat/member/friendswitch/update': {
-    POST: { OapiChatMemberFriendswitchUpdate: true },
+    POST: { oapiChatMemberFriendswitchUpdate: true },
   },
-  '/chat/updategroupnick': { POST: { OapiChatUpdategroupnick: true } },
-  '/chat/update': { POST: { OapiChatUpdate: true } },
-  '/chat/create': { POST: { OapiChatCreate: true } },
-  '/chat/get': { GET: { OapiChatGet: true } },
-  '/smartbot/msg/push': { POST: { OapiSmartbotMsgPush: true } },
+  '/chat/updategroupnick': { POST: { oapiChatUpdategroupnick: true } },
+  '/chat/update': { POST: { oapiChatUpdate: true } },
+  '/chat/create': { POST: { oapiChatCreate: true } },
+  '/chat/get': { GET: { oapiChatGet: true } },
+  '/smartbot/msg/push': { POST: { oapiSmartbotMsgPush: true } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**
      * 该接口用于获取企业授权凭证
      * @see https://developers.dingtalk.com/document/isvapp/obtains-the-enterprise-authorized-credential
      */
-    OapiServiceGetCorpToken(
+    oapiServiceGetCorpToken(
       params: OapiServiceGetCorpTokenParams,
     ): Promise<OapiServiceGetCorpTokenResponse>
     /**
      * 获取应用后台免登的access_token
      * @see https://developers.dingtalk.com/document/isvapp/obtain-the-ssotoken-for-micro-application-background-logon-free
      */
-    OapiSsoGettoken(
+    oapiSsoGettoken(
       query: OapiSsoGettokenQuery,
     ): Promise<OapiSsoGettokenResponse>
     /**
      * 获取jsapi ticket
      * @see https://developers.dingtalk.com/document/isvapp/obtain-jsapi_ticket
      */
-    OapiGetJsapiTicket(): Promise<OapiGetJsapiTicketResponse>
+    oapiGetJsapiTicket(): Promise<OapiGetJsapiTicketResponse>
     /**
      * 获取企业内部应用的access_token
      * @see https://developers.dingtalk.com/document/orgapp/obtain-orgapp-token
      */
-    OapiGettoken(query: OapiGettokenQuery): Promise<OapiGettokenResponse>
+    oapiGettoken(query: OapiGettokenQuery): Promise<OapiGettokenResponse>
     /**
      * 通过免登码获取用户userid
      * @see https://developers.dingtalk.com/document/isvapp/obtain-the-userid-of-a-user-by-using-the-log-free
      */
-    OapiV2UserGetuserinfo(
+    oapiV2UserGetuserinfo(
       params: OapiV2UserGetuserinfoParams,
     ): Promise<OapiV2UserGetuserinfoResponse>
     /**
      * 该接口用于获取授权用户信息
      * @see https://developers.dingtalk.com/document/isvapp-server/obtain-the-user-information-based-on-the-sns-temporary-authorization
      */
-    OapiSnsGetuserinfoBycode(
+    oapiSnsGetuserinfoBycode(
       params: OapiSnsGetuserinfoBycodeParams,
     ): Promise<OapiSnsGetuserinfoBycodeResponse>
     /**
      * 获取应用管理后台免登的用户信息
      * @see https://developers.dingtalk.com/document/isvapp/exchange-code-for-the-identity-information-of-a-microapplication-administrator
      */
-    OapiSsoGetuserinfo(
+    oapiSsoGetuserinfo(
       query: OapiSsoGetuserinfoQuery,
     ): Promise<OapiSsoGetuserinfoResponse>
     /**
      * 获取企业授权信息
      * @see https://developers.dingtalk.com/document/isvapp/obtains-the-basic-information-of-an-enterprise
      */
-    OapiServiceGetAuthInfo(
+    oapiServiceGetAuthInfo(
       params: OapiServiceGetAuthInfoParams,
     ): Promise<OapiServiceGetAuthInfoResponse>
     /**
      * 用户信息更新
      * @see https://developers.dingtalk.com/document/orgapp/update-dedicated-accounts-information
      */
-    OapiV2UserUpdate(
+    oapiV2UserUpdate(
       params: OapiV2UserUpdateParams,
     ): Promise<OapiV2UserUpdateResponse>
     /**
      * 用户信息创建
      * @see https://developers.dingtalk.com/document/orgapp/user-information-creation
      */
-    OapiV2UserCreate(
+    oapiV2UserCreate(
       params: OapiV2UserCreateParams,
     ): Promise<OapiV2UserCreateResponse>
     /**
      * 获取主干组织列表
      * @see https://developers.dingtalk.com/document/isvapp/obtain-backbone-organization-list
      */
-    OapiOrgUnionTrunkGet(): Promise<OapiOrgUnionTrunkGetResponse>
+    oapiOrgUnionTrunkGet(): Promise<OapiOrgUnionTrunkGetResponse>
     /**
      * 获取员工花名册的元数据定义（包括花名册分组、字段定义）
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-roster-metadata-query
      */
-    OapiSmartworkHrmRosterMetaGet(
+    oapiSmartworkHrmRosterMetaGet(
       params: OapiSmartworkHrmRosterMetaGetParams,
     ): Promise<OapiSmartworkHrmRosterMetaGetResponse>
     /**
      * 获取员工花名册指定字段的信息，支持明细分组字段
      * @see https://developers.dingtalk.com/document/orgapp/intelligent-personnel-obtain-employee-roster-information
      */
-    OapiSmartworkHrmEmployeeV2List(
+    oapiSmartworkHrmEmployeeV2List(
       params: OapiSmartworkHrmEmployeeV2ListParams,
     ): Promise<OapiSmartworkHrmEmployeeV2ListResponse>
     /**
      * 智能人事更新员工档案信息,支持明细分组
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-update-employee-file-information
      */
-    OapiSmartworkHrmEmployeeV2Update(
+    oapiSmartworkHrmEmployeeV2Update(
       params: OapiSmartworkHrmEmployeeV2UpdateParams,
     ): Promise<OapiSmartworkHrmEmployeeV2UpdateResponse>
     /**
      * 提供给ISV查询花名册的员工档案信息中有权限的字段列表
      * @see https://developers.dingtalk.com/document/isvapp/get-roster-field-group-details
      */
-    OapiSmartworkHrmEmployeeFieldGrouplist(
+    oapiSmartworkHrmEmployeeFieldGrouplist(
       params: OapiSmartworkHrmEmployeeFieldGrouplistParams,
     ): Promise<OapiSmartworkHrmEmployeeFieldGrouplistResponse>
     /**
      * 智能人事更新员工档案员工信息
      * @see https://developers.dingtalk.com/document/isvapp-server/update-employee-roster
      */
-    OapiSmartworkHrmEmployeeUpdate(
+    oapiSmartworkHrmEmployeeUpdate(
       params: OapiSmartworkHrmEmployeeUpdateParams,
     ): Promise<OapiSmartworkHrmEmployeeUpdateResponse>
     /**
      * 智能人事业务，提供企业/ISV按在职状态分页查询公司在职员工id列表
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-on-the-job-employees-of-the
      */
-    OapiSmartworkHrmEmployeeQueryonjob(
+    oapiSmartworkHrmEmployeeQueryonjob(
       params: OapiSmartworkHrmEmployeeQueryonjobParams,
     ): Promise<OapiSmartworkHrmEmployeeQueryonjobResponse>
     /**
      * 智能人事业务，企业/ISV分页查询公司待入职员工id列表
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-employees-to-be-hired
      */
-    OapiSmartworkHrmEmployeeQuerypreentry(
+    oapiSmartworkHrmEmployeeQuerypreentry(
       params: OapiSmartworkHrmEmployeeQuerypreentryParams,
     ): Promise<OapiSmartworkHrmEmployeeQuerypreentryResponse>
     /**
      * 智能人事添加待入职员工信息
      * @see https://developers.dingtalk.com/document/isvapp/add-employees-to-be-hired-through-intelligent-personnel
      */
-    OapiSmartworkHrmEmployeeAddpreentry(
+    oapiSmartworkHrmEmployeeAddpreentry(
       params: OapiSmartworkHrmEmployeeAddpreentryParams,
     ): Promise<OapiSmartworkHrmEmployeeAddpreentryResponse>
     /**
      * 智能人事业务，企业/ISV根据员工id批量访问员工花名册信息
      * @see https://developers.dingtalk.com/document/isvapp-server/obtaining-employee-roster-field-information
      */
-    OapiSmartworkHrmEmployeeList(
+    oapiSmartworkHrmEmployeeList(
       params: OapiSmartworkHrmEmployeeListParams,
     ): Promise<OapiSmartworkHrmEmployeeListResponse>
     /**
      * 企业可以根据模板名称获取模板详情
      * @see https://developers.dingtalk.com/document/isvapp/query-template-details
      */
-    OapiReportTemplateGetbyname(
+    oapiReportTemplateGetbyname(
       params: OapiReportTemplateGetbynameParams,
     ): Promise<OapiReportTemplateGetbynameResponse>
     /**
      * 提供企业员工创建日志的接口
      * @see https://developers.dingtalk.com/document/isvapp/create-a-log
      */
-    OapiReportCreate(
+    oapiReportCreate(
       params: OapiReportCreateParams,
     ): Promise<OapiReportCreateResponse>
     /**
      * 第三方系统会调用这个接口保存日志内容，后续在写日志页面再拉取此内容。
      * @see https://developers.dingtalk.com/document/isvapp/save-custom-log-content
      */
-    OapiReportSavecontent(
+    oapiReportSavecontent(
       params: OapiReportSavecontentParams,
     ): Promise<OapiReportSavecontentResponse>
     /**
      * 企业可以根据员工userid或者日志模板名称，分页获取员工一段时间范围内在【日志】微应用发送的日志概要信息
      * @see https://developers.dingtalk.com/document/orgapp/view-log-summary-data
      */
-    OapiReportSimplelist(
+    oapiReportSimplelist(
       params: OapiReportSimplelistParams,
     ): Promise<OapiReportSimplelistResponse>
     /**
      * 分页获取日志相关人员列表，包括已读人员列表、评论人员列表、点赞人员列表
      * @see https://developers.dingtalk.com/document/orgapp/obtains-a-list-of-log-related-personnel-by-type
      */
-    OapiReportStatisticsListbytype(
+    oapiReportStatisticsListbytype(
       params: OapiReportStatisticsListbytypeParams,
     ): Promise<OapiReportStatisticsListbytypeResponse>
     /**
      * 获取日志的分享人员列表
      * @see https://developers.dingtalk.com/document/orgapp/queries-log-sharing-personnel
      */
-    OapiReportReceiverList(
+    oapiReportReceiverList(
       params: OapiReportReceiverListParams,
     ): Promise<OapiReportReceiverListResponse>
     /**
      * 分页获取评论详情，包括评论人userid、评论内容、评论时间
      * @see https://developers.dingtalk.com/document/orgapp/queries-log-comment-details
      */
-    OapiReportCommentList(
+    oapiReportCommentList(
       params: OapiReportCommentListParams,
     ): Promise<OapiReportCommentListResponse>
     /**
      * 获取日志统计数据
      * @see https://developers.dingtalk.com/document/orgapp/query-log-statistics
      */
-    OapiReportStatistics(
+    oapiReportStatistics(
       params: OapiReportStatisticsParams,
     ): Promise<OapiReportStatisticsResponse>
     /**
      * 查询企业员工的日志未读数
      * @see https://developers.dingtalk.com/document/orgapp/querying-the-employee-s-log-is-not-reading
      */
-    OapiReportGetunreadcount(
+    oapiReportGetunreadcount(
       params: OapiReportGetunreadcountParams,
     ): Promise<OapiReportGetunreadcountResponse>
     /**
      * 企业可以根据员工userid或者日志模板名称，分页获取员工一段时间范围内在【日志】微应用发送和修改的日志详细信息
      * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-the-logs-that-are-sent-by
      */
-    OapiReportList(
+    oapiReportList(
       params: OapiReportListParams,
     ): Promise<OapiReportListResponse>
     /**
      * 根据用户userId获取当前企业下可见的日志模板列表
      * @see https://developers.dingtalk.com/document/orgapp/obtains-the-list-of-visible-log-templates-based-on-the
      */
-    OapiReportTemplateListbyuserid(
+    oapiReportTemplateListbyuserid(
       params: OapiReportTemplateListbyuseridParams,
     ): Promise<OapiReportTemplateListbyuseridResponse>
     /**
      * 查询多个用户一段时间范围内的签到记录，只给企业调用，ISV无法调用。
      * @see https://developers.dingtalk.com/document/isvapp/obtain-the-check-in-records-of-multiple-users
      */
-    OapiCheckinRecordGet(
+    oapiCheckinRecordGet(
       params: OapiCheckinRecordGetParams,
     ): Promise<OapiCheckinRecordGetResponse>
     /**
      * 该接口用于获取部门用户签到记录
      * @see https://developers.dingtalk.com/document/orgapp/get-check-in-data
      */
-    OapiCheckinRecord(
+    oapiCheckinRecord(
       query: OapiCheckinRecordQuery,
     ): Promise<OapiCheckinRecordResponse>
     /**
      * 获取企业公告未删除分类列表
      * @see https://developers.dingtalk.com/document/orgapp/obtains-the-list-of-categories-not-deleted-for-enterprise-announcements
      */
-    OapiBlackboardCategoryList(
+    oapiBlackboardCategoryList(
       params: OapiBlackboardCategoryListParams,
     ): Promise<OapiBlackboardCategoryListResponse>
     /**
      * 根据公告id修改企业公告，只有以下身份可以修改：1、主管理员2、公告子管理员并且是待修改公告的创建者
      * @see https://developers.dingtalk.com/document/orgapp/modify-the-announcement-according-to-the-announcement-id
      */
-    OapiBlackboardUpdate(
+    oapiBlackboardUpdate(
       params: OapiBlackboardUpdateParams,
     ): Promise<OapiBlackboardUpdateResponse>
     /**
      * 根据公告id删除企业公告，只有以下身份可以删除1、主管理员2、公告子管理员并且是待删除公告创建者
      * @see https://developers.dingtalk.com/document/orgapp/delete-announcements-based-on-the-announcement-id
      */
-    OapiBlackboardDelete(
+    oapiBlackboardDelete(
       params: OapiBlackboardDeleteParams,
     ): Promise<OapiBlackboardDeleteResponse>
     /**
-        * 根据公告ID获取企业未删除公告详情，只有以下身份可以查看：
-1、保密公告
-1.1 公告管理员
-1.2 公告的接收人
-2、非保密公告
-2.1 企业内的人都可见
-        * @see https://developers.dingtalk.com/document/orgapp/obtains-the-details-of-a-bulletin-that-is-not-deleted
-       */
-    OapiBlackboardGet(
+     * 根据公告ID获取企业未删除公告详情，只有以下身份可以查看：
+     * 1、保密公告
+     * 1.1 公告管理员
+     * 1.2 公告的接收人
+     * 2、非保密公告
+     * 2.1 企业内的人都可见
+     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-details-of-a-bulletin-that-is-not-deleted
+     */
+    oapiBlackboardGet(
       params: OapiBlackboardGetParams,
     ): Promise<OapiBlackboardGetResponse>
     /**
      * 通过接口可以获取到企业未删除的钉钉公告id列表
      * @see https://developers.dingtalk.com/document/orgapp/obtains-the-id-list-of-announcements-that-are-not-deleted
      */
-    OapiBlackboardListids(
+    oapiBlackboardListids(
       params: OapiBlackboardListidsParams,
     ): Promise<OapiBlackboardListidsResponse>
     /**
      * 管理员可以通过该接口创建钉钉企业公告
      * @see https://developers.dingtalk.com/document/orgapp/create-an-enterprise-announcement
      */
-    OapiBlackboardCreate(
+    oapiBlackboardCreate(
       params: OapiBlackboardCreateParams,
     ): Promise<OapiBlackboardCreateResponse>
     /**
      * 列出用户当前有权限看到的10条公告，可用于在企业自定义工作首页进行公告轮播展示
      * @see https://developers.dingtalk.com/document/orgapp/list-the-user-s-announcement-list
      */
-    OapiBlackboardListtopten(
+    oapiBlackboardListtopten(
       params: OapiBlackboardListtoptenParams,
     ): Promise<OapiBlackboardListtoptenResponse>
     /**
      * 查询用户是否参与企业步数排行榜
      * @see https://developers.dingtalk.com/document/isvapp/check-whether-dingtalk-is-enabled
      */
-    OapiHealthStepinfoGetuserstatus(
+    oapiHealthStepinfoGetuserstatus(
       params: OapiHealthStepinfoGetuserstatusParams,
     ): Promise<OapiHealthStepinfoGetuserstatusResponse>
     /**
      * 批量获取钉钉运动数据
      * @see https://developers.dingtalk.com/document/orgapp/queries-the-number-of-dingtalk-movement-steps-of-multiple-users
      */
-    OapiHealthStepinfoListbyuserid(
+    oapiHealthStepinfoListbyuserid(
       params: OapiHealthStepinfoListbyuseridParams,
     ): Promise<OapiHealthStepinfoListbyuseridResponse>
     /**
      * 查询企业用户或部门每天的钉钉运动步数，最多可以查询31天的数据
      * @see https://developers.dingtalk.com/document/orgapp/queries-individual-or-department-dingtalk-exercise-steps
      */
-    OapiHealthStepinfoList(
+    oapiHealthStepinfoList(
       params: OapiHealthStepinfoListParams,
     ): Promise<OapiHealthStepinfoListResponse>
     /**
      * 该接口用于获取员工可见的应用列表
      * @see https://developers.dingtalk.com/document/orgapp-server/list-the-microapplications-visible-to-employees
      */
-    OapiMicroappListByUserid(
+    oapiMicroappListByUserid(
       query: OapiMicroappListByUseridQuery,
     ): Promise<OapiMicroappListByUseridResponse>
     /**
      * 列出微应用
      * @see https://developers.dingtalk.com/document/orgapp-server/manager-microapplications-api-permission
      */
-    OapiMicroappList(): Promise<OapiMicroappListResponse>
+    oapiMicroappList(): Promise<OapiMicroappListResponse>
     /**
      * 删除微应用
      * @see https://developers.dingtalk.com/document/orgapp-server/delete-an-h5-microapplication
      */
-    OapiMicroappDelete(
+    oapiMicroappDelete(
       params: OapiMicroappDeleteParams,
     ): Promise<OapiMicroappDeleteResponse>
     /**
      * 该接口用于设置应用的可见范围
      * @see https://developers.dingtalk.com/document/orgapp-server/set-the-visible-range-of-the-microapplication
      */
-    OapiMicroappSetVisibleScopes(
+    oapiMicroappSetVisibleScopes(
       params: OapiMicroappSetVisibleScopesParams,
     ): Promise<OapiMicroappSetVisibleScopesResponse>
     /**
      * 获取应用的可见范围
      * @see https://developers.dingtalk.com/document/orgapp-server/gets-the-microapplication-visible-range-set-by-the-enterprise
      */
-    OapiMicroappVisibleScopes(
+    oapiMicroappVisibleScopes(
       params: OapiMicroappVisibleScopesParams,
     ): Promise<OapiMicroappVisibleScopesResponse>
     /**
      * 用户使用音频 media_id 或 url 进行请求，服务通过回调的方式通知用户翻译结果
      * @see https://developers.dingtalk.com/document/isvapp/asr-short-sentence-recognition
      */
-    OapiAsrVoiceTranslate(
+    oapiAsrVoiceTranslate(
       params: OapiAsrVoiceTranslateParams,
     ): Promise<OapiAsrVoiceTranslateResponse>
     /**
      * 输入一段文本，得到翻译指定语言后的译文，支持多种语言的互译
      * @see https://developers.dingtalk.com/document/isvapp/dingtalk-translation
      */
-    OapiAiMtTranslate(
+    oapiAiMtTranslate(
       params: OapiAiMtTranslateParams,
     ): Promise<OapiAiMtTranslateResponse>
     /**
      * OCR文字识别
      * @see https://developers.dingtalk.com/document/isvapp/structured-image-recognition-api
      */
-    OapiOcrStructuredRecognize(
+    oapiOcrStructuredRecognize(
       params: OapiOcrStructuredRecognizeParams,
     ): Promise<OapiOcrStructuredRecognizeResponse>
     /**
      * 场开放场景下，基于群模板定义的机器人向群内发消息
      * @see https://developers.dingtalk.com/document/isvapp/send-group-helper-message
      */
-    OapiImChatScencegroupMessageSendV2(
+    oapiImChatScencegroupMessageSendV2(
       params: OapiImChatScencegroupMessageSendV2Params,
     ): Promise<OapiImChatScencegroupMessageSendV2Response>
     /**
      * 根据定义的模板id，创建自定义场景群
      * @see https://developers.dingtalk.com/document/isvapp/deactivate-group-template
      */
-    OapiImChatScenegroupTemplateClose(
+    oapiImChatScenegroupTemplateClose(
       params: OapiImChatScenegroupTemplateCloseParams,
     ): Promise<OapiImChatScenegroupTemplateCloseResponse>
     /**
      * 根据传入的模板id，启用群会话群模板功能
      * @see https://developers.dingtalk.com/document/isvapp/enable-group-template
      */
-    OapiImChatScenegroupTemplateApply(
+    oapiImChatScenegroupTemplateApply(
       params: OapiImChatScenegroupTemplateApplyParams,
     ): Promise<OapiImChatScenegroupTemplateApplyResponse>
     /**
      * 注册互动卡片回调地址
      * @see https://developers.dingtalk.com/document/orgapp/registration-card-interaction-callback-address-1
      */
-    OapiImChatScencegroupInteractivecardCallbackRegister(
+    oapiImChatScencegroupInteractivecardCallbackRegister(
       params: OapiImChatScencegroupInteractivecardCallbackRegisterParams,
     ): Promise<OapiImChatScencegroupInteractivecardCallbackRegisterResponse>
     /**
      * 根据定义的模板id，创建自定义场景群
      * @see https://developers.dingtalk.com/document/isvapp/create-group
      */
-    OapiImChatScenegroupCreate(
+    oapiImChatScenegroupCreate(
       params: OapiImChatScenegroupCreateParams,
     ): Promise<OapiImChatScenegroupCreateResponse>
     /**
      * 新增场景群成员
      * @see https://developers.dingtalk.com/document/isvapp/add-group-members-1
      */
-    OapiImChatScenegroupMemberAdd(
+    oapiImChatScenegroupMemberAdd(
       params: OapiImChatScenegroupMemberAddParams,
     ): Promise<OapiImChatScenegroupMemberAddResponse>
     /**
      * 获取场景群成员
      * @see https://developers.dingtalk.com/document/group/obtains-scene-members
      */
-    OapiImChatScenegroupMemberGet(
+    oapiImChatScenegroupMemberGet(
       params: OapiImChatScenegroupMemberGetParams,
     ): Promise<OapiImChatScenegroupMemberGetResponse>
     /**
      * 根据传入的群id，更新群相关内容
      * @see https://developers.dingtalk.com/document/isvapp/update-group
      */
-    OapiImChatScenegroupUpdate(
+    oapiImChatScenegroupUpdate(
       params: OapiImChatScenegroupUpdateParams,
     ): Promise<OapiImChatScenegroupUpdateResponse>
     /**
      * 删除场景群成员
      * @see https://developers.dingtalk.com/document/isvapp/delete-group-members
      */
-    OapiImChatScenegroupMemberDelete(
+    oapiImChatScenegroupMemberDelete(
       params: OapiImChatScenegroupMemberDeleteParams,
     ): Promise<OapiImChatScenegroupMemberDeleteResponse>
     /**
      * 根据群id，获取群的基本信息
      * @see https://developers.dingtalk.com/document/isvapp/querying-group-information
      */
-    OapiImChatScenegroupGet(
+    oapiImChatScenegroupGet(
       params: OapiImChatScenegroupGetParams,
     ): Promise<OapiImChatScenegroupGetResponse>
     /**
      * 自定义机器人发送消息
      * @see https://developers.dingtalk.com/document/isvapp/custom-bot-access-send-message
      */
-    OapiRobotSend(params: OapiRobotSendParams): Promise<OapiRobotSendResponse>
+    oapiRobotSend(params: OapiRobotSendParams): Promise<OapiRobotSendResponse>
     /**
      * 配置发票适用人群
      * @see https://developers.dingtalk.com/document/isvapp/configure-invoice-users
      */
-    OapiAlitripBtripInvoiceSettingRule(
+    oapiAlitripBtripInvoiceSettingRule(
       params: OapiAlitripBtripInvoiceSettingRuleParams,
     ): Promise<OapiAlitripBtripInvoiceSettingRuleResponse>
     /**
      * 新增发票配置
      * @see https://developers.dingtalk.com/document/isvapp/new-invoice-configuration
      */
-    OapiAlitripBtripInvoiceSettingAdd(
+    oapiAlitripBtripInvoiceSettingAdd(
       params: OapiAlitripBtripInvoiceSettingAddParams,
     ): Promise<OapiAlitripBtripInvoiceSettingAddResponse>
     /**
      * 删除项目
      * @see https://developers.dingtalk.com/document/isvapp/delete-a-project
      */
-    OapiAlitripBtripProjectDelete(
+    oapiAlitripBtripProjectDelete(
       params: OapiAlitripBtripProjectDeleteParams,
     ): Promise<OapiAlitripBtripProjectDeleteResponse>
     /**
      * 项目变更
      * @see https://developers.dingtalk.com/document/isvapp/project-change
      */
-    OapiAlitripBtripProjectModify(
+    oapiAlitripBtripProjectModify(
       params: OapiAlitripBtripProjectModifyParams,
     ): Promise<OapiAlitripBtripProjectModifyResponse>
     /**
      * 添加项目
      * @see https://developers.dingtalk.com/document/isvapp/add-a-project
      */
-    OapiAlitripBtripProjectAdd(
+    oapiAlitripBtripProjectAdd(
       params: OapiAlitripBtripProjectAddParams,
     ): Promise<OapiAlitripBtripProjectAddResponse>
     /**
      * 删除发票配置
      * @see https://developers.dingtalk.com/document/isvapp/delete-invoice-configuration
      */
-    OapiAlitripBtripInvoiceSettingDelete(
+    oapiAlitripBtripInvoiceSettingDelete(
       params: OapiAlitripBtripInvoiceSettingDeleteParams,
     ): Promise<OapiAlitripBtripInvoiceSettingDeleteResponse>
     /**
      * 修改发票配置
      * @see https://developers.dingtalk.com/document/isvapp/modify-invoice-configuration
      */
-    OapiAlitripBtripInvoiceSettingModify(
+    oapiAlitripBtripInvoiceSettingModify(
       params: OapiAlitripBtripInvoiceSettingModifyParams,
     ): Promise<OapiAlitripBtripInvoiceSettingModifyResponse>
     /**
      * 查询预估价
      * @see https://developers.dingtalk.com/document/isvapp/query-estimated-price
      */
-    OapiAlitripBtripPriceQuery(
+    oapiAlitripBtripPriceQuery(
       params: OapiAlitripBtripPriceQueryParams,
     ): Promise<OapiAlitripBtripPriceQueryResponse>
     /**
      * 火车票城市搜索
      * @see https://developers.dingtalk.com/document/isvapp/train-ticket-city-search
      */
-    OapiAlitripBtripTrainCitySuggest(
+    oapiAlitripBtripTrainCitySuggest(
       params: OapiAlitripBtripTrainCitySuggestParams,
     ): Promise<OapiAlitripBtripTrainCitySuggestResponse>
     /**
      * 获取月对账结算数据
      * @see https://developers.dingtalk.com/document/isvapp/obtain-monthly-reconciliation-settlement-data
      */
-    OapiAlitripBtripMonthbillUrlGet(
+    oapiAlitripBtripMonthbillUrlGet(
       params: OapiAlitripBtripMonthbillUrlGetParams,
     ): Promise<OapiAlitripBtripMonthbillUrlGetResponse>
     /**
      * 获取商旅访问地址
      * @see https://developers.dingtalk.com/document/isvapp/obtain-business-travel-access-addresses
      */
-    OapiAlitripBtripAddressGet(
+    oapiAlitripBtripAddressGet(
       params: OapiAlitripBtripAddressGetParams,
     ): Promise<OapiAlitripBtripAddressGetResponse>
     /**
      * 修改申请单
      * @see https://developers.dingtalk.com/document/isvapp/user-modify-approval-form
      */
-    OapiAlitripBtripApprovalModify(
+    oapiAlitripBtripApprovalModify(
       params: OapiAlitripBtripApprovalModifyParams,
     ): Promise<OapiAlitripBtripApprovalModifyResponse>
     /**
      * 机票城市搜索
      * @see https://developers.dingtalk.com/document/isvapp/air-ticket-city-search
      */
-    OapiAlitripBtripFlightCitySuggest(
+    oapiAlitripBtripFlightCitySuggest(
       params: OapiAlitripBtripFlightCitySuggestParams,
     ): Promise<OapiAlitripBtripFlightCitySuggestResponse>
     /**
      * 获取用车订单数据
      * @see https://developers.dingtalk.com/document/isvapp/vehicle-order-query-interface
      */
-    OapiAlitripBtripVehicleOrderSearch(
+    oapiAlitripBtripVehicleOrderSearch(
       params: OapiAlitripBtripVehicleOrderSearchParams,
     ): Promise<OapiAlitripBtripVehicleOrderSearchResponse>
     /**
      * 查询成本中心
      * @see https://developers.dingtalk.com/document/isvapp/query-cost-center
      */
-    OapiAlitripBtripCostCenterQuery(
+    oapiAlitripBtripCostCenterQuery(
       params: OapiAlitripBtripCostCenterQueryParams,
     ): Promise<OapiAlitripBtripCostCenterQueryResponse>
     /**
      * 更新申请单状态
      * @see https://developers.dingtalk.com/document/isvapp/update-approval-form
      */
-    OapiAlitripBtripApprovalUpdate(
+    oapiAlitripBtripApprovalUpdate(
       params: OapiAlitripBtripApprovalUpdateParams,
     ): Promise<OapiAlitripBtripApprovalUpdateResponse>
     /**
      * 新建成本中心
      * @see https://developers.dingtalk.com/document/isvapp/new-cost-center
      */
-    OapiAlitripBtripCostCenterNew(
+    oapiAlitripBtripCostCenterNew(
       params: OapiAlitripBtripCostCenterNewParams,
     ): Promise<OapiAlitripBtripCostCenterNewResponse>
     /**
      * 修改成本中心基本信息
      * @see https://developers.dingtalk.com/document/isvapp/modify-basic-cost-center-information
      */
-    OapiAlitripBtripCostCenterModify(
+    oapiAlitripBtripCostCenterModify(
       params: OapiAlitripBtripCostCenterModifyParams,
     ): Promise<OapiAlitripBtripCostCenterModifyResponse>
     /**
      * 删除成本中心
      * @see https://developers.dingtalk.com/document/isvapp/delete-cost-center
      */
-    OapiAlitripBtripCostCenterDelete(
+    oapiAlitripBtripCostCenterDelete(
       params: OapiAlitripBtripCostCenterDeleteParams,
     ): Promise<OapiAlitripBtripCostCenterDeleteResponse>
     /**
      * 设置成本中心人员信息
      * @see https://developers.dingtalk.com/document/isvapp/set-up-cost-center-personnel-information
      */
-    OapiAlitripBtripCostCenterEntitySet(
+    oapiAlitripBtripCostCenterEntitySet(
       params: OapiAlitripBtripCostCenterEntitySetParams,
     ): Promise<OapiAlitripBtripCostCenterEntitySetResponse>
     /**
      * 企业获取商旅酒店订单数据
      * @see https://developers.dingtalk.com/document/isvapp/obtains-the-order-data-of-enterprise-hotels
      */
-    OapiAlitripBtripHotelOrderSearch(
+    oapiAlitripBtripHotelOrderSearch(
       params: OapiAlitripBtripHotelOrderSearchParams,
     ): Promise<OapiAlitripBtripHotelOrderSearchResponse>
     /**
      * 获取企业火车票订单数据
      * @see https://developers.dingtalk.com/document/isvapp/obtains-the-enterprise-train-ticket-order-data
      */
-    OapiAlitripBtripTrainOrderSearch(
+    oapiAlitripBtripTrainOrderSearch(
       params: OapiAlitripBtripTrainOrderSearchParams,
     ): Promise<OapiAlitripBtripTrainOrderSearchResponse>
     /**
      * 获取企业机票订单数据
      * @see https://developers.dingtalk.com/document/isvapp/obtains-enterprise-ticket-order-data
      */
-    OapiAlitripBtripFlightOrderSearch(
+    oapiAlitripBtripFlightOrderSearch(
       params: OapiAlitripBtripFlightOrderSearchParams,
     ): Promise<OapiAlitripBtripFlightOrderSearchResponse>
     /**
      * 查询可用发票列表
      * @see https://developers.dingtalk.com/document/isvapp/query-available-invoices
      */
-    OapiAlitripBtripInvoiceSearch(
+    oapiAlitripBtripInvoiceSearch(
       params: OapiAlitripBtripInvoiceSearchParams,
     ): Promise<OapiAlitripBtripInvoiceSearchResponse>
     /**
      * 商旅成本中心转换为外部成本中心
      * @see https://developers.dingtalk.com/document/isvapp/business-travel-cost-center-converted-to-external-cost-center
      */
-    OapiAlitripBtripCostCenterTransfer(
+    oapiAlitripBtripCostCenterTransfer(
       params: OapiAlitripBtripCostCenterTransferParams,
     ): Promise<OapiAlitripBtripCostCenterTransferResponse>
     /**
      * 获取申请单详情
      * @see https://developers.dingtalk.com/document/isvapp/obtains-the-detailed-data-of-a-single-request
      */
-    OapiAlitripBtripApplyGet(
+    oapiAlitripBtripApplyGet(
       params: OapiAlitripBtripApplyGetParams,
     ): Promise<OapiAlitripBtripApplyGetResponse>
     /**
      * 获取申请单列表
      * @see https://developers.dingtalk.com/document/isvapp/search-enterprise-approval-form-data
      */
-    OapiAlitripBtripApplySearch(
+    oapiAlitripBtripApplySearch(
       params: OapiAlitripBtripApplySearchParams,
     ): Promise<OapiAlitripBtripApplySearchResponse>
     /**
      * 用户新建审批单
      * @see https://developers.dingtalk.com/document/isvapp/user-new-approval-form
      */
-    OapiAlitripBtripApprovalNew(
+    oapiAlitripBtripApprovalNew(
       params: OapiAlitripBtripApprovalNewParams,
     ): Promise<OapiAlitripBtripApprovalNewResponse>
     /**
      * 删除成本中心人员信息
      * @see https://developers.dingtalk.com/document/isvapp/delete-cost-center-personnel-information
      */
-    OapiAlitripBtripCostCenterEntityDelete(
+    oapiAlitripBtripCostCenterEntityDelete(
       params: OapiAlitripBtripCostCenterEntityDeleteParams,
     ): Promise<OapiAlitripBtripCostCenterEntityDeleteResponse>
     /**
      * 获取钉钉项目空间任务中文件的操作日志列表
      * @see https://developers.dingtalk.com/document/orgapp/query-file-operation-logs-of-a-project
      */
-    OapiWorkspaceAuditlogList(
+    oapiWorkspaceAuditlogList(
       params: OapiWorkspaceAuditlogListParams,
     ): Promise<OapiWorkspaceAuditlogListResponse>
     /**
      * 查询当前用户的数字化考试情况，是否获取了证书
      * @see https://developers.dingtalk.com/document/isvapp/obtain-digital-certificate
      */
-    OapiEduCertGet(
+    oapiEduCertGet(
       params: OapiEduCertGetParams,
     ): Promise<OapiEduCertGetResponse>
     /**
      * 获取家校用户身份列表
      * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-home-school-user-identities
      */
-    OapiEduUserList(
+    oapiEduUserList(
       params: OapiEduUserListParams,
     ): Promise<OapiEduUserListResponse>
     /**
      * 查询企业下的智能硬件设备详情
      * @see https://developers.dingtalk.com/document/isvapp/the-smart-hardware-can-query-details-based-on-the-device
      */
-    OapiSmartdeviceDeviceQuerybyid(
+    oapiSmartdeviceDeviceQuerybyid(
       params: OapiSmartdeviceDeviceQuerybyidParams,
     ): Promise<OapiSmartdeviceDeviceQuerybyidResponse>
     /**
      * 查询企业下的智能硬件设备列表
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-list-query
      */
-    OapiSmartdeviceDeviceQuerylist(
+    oapiSmartdeviceDeviceQuerylist(
       params: OapiSmartdeviceDeviceQuerylistParams,
     ): Promise<OapiSmartdeviceDeviceQuerylistResponse>
     /**
      * 查询企业下的智能硬件设备详情
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-device-query
      */
-    OapiSmartdeviceDeviceQuery(
+    oapiSmartdeviceDeviceQuery(
       params: OapiSmartdeviceDeviceQueryParams,
     ): Promise<OapiSmartdeviceDeviceQueryResponse>
     /**
      * 解除企业下的智能硬件设备绑定
      * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-device-nickname-modification
      */
-    OapiSmartdeviceDeviceUpdatenick(
+    oapiSmartdeviceDeviceUpdatenick(
       params: OapiSmartdeviceDeviceUpdatenickParams,
     ): Promise<OapiSmartdeviceDeviceUpdatenickResponse>
     /**
      * 解除企业下的智能硬件设备绑定
      * @see https://developers.dingtalk.com/document/isvapp/unbind-a-smart-hardware-device
      */
-    OapiSmartdeviceDeviceUnbind(
+    oapiSmartdeviceDeviceUnbind(
       params: OapiSmartdeviceDeviceUnbindParams,
     ): Promise<OapiSmartdeviceDeviceUnbindResponse>
     /**
      * 智能设备接入钉钉时，需要和组织建立绑定关系，此接口用于创建绑定关系。
      * @see https://developers.dingtalk.com/document/isvapp/establishing-a-binding-relationship-between-intelligent-hardware-and-cloud
      */
-    OapiSmartdeviceExternalBind(
+    oapiSmartdeviceExternalBind(
       params: OapiSmartdeviceExternalBindParams,
     ): Promise<OapiSmartdeviceExternalBindResponse>
     /**
      * 删除当前组织CRM指定联系人的接口
      * @see https://developers.dingtalk.com/document/orgapp/delete-crm-contact
      */
-    OapiCrmObjectdataContactDelete(
+    oapiCrmObjectdataContactDelete(
       params: OapiCrmObjectdataContactDeleteParams,
     ): Promise<OapiCrmObjectdataContactDeleteResponse>
     /**
      * 创建CRM自定义对象数据
      * @see https://developers.dingtalk.com/document/orgapp/dingtalk-paas-master-create-custom-crm-object-data
      */
-    OapiCrmObjectdataCustomobjectCreate(
+    oapiCrmObjectdataCustomobjectCreate(
       params: OapiCrmObjectdataCustomobjectCreateParams,
     ): Promise<OapiCrmObjectdataCustomobjectCreateResponse>
     /**
      * 钉钉PaaS主数据-更新CRM自定义对象数据
      * @see https://developers.dingtalk.com/document/orgapp/crm-master-data-opens-interface-for-updating-custom-object-data
      */
-    OapiCrmObjectdataCustomobjectUpdate(
+    oapiCrmObjectdataCustomobjectUpdate(
       params: OapiCrmObjectdataCustomobjectUpdateParams,
     ): Promise<OapiCrmObjectdataCustomobjectUpdateResponse>
     /**
      * 根据实例ID列表批量获取CRM自定义表单数据，最多可一次获取200条数据
      * @see https://developers.dingtalk.com/document/orgapp/retrieves-custom-crm-forms-from-the-id-list
      */
-    OapiCrmObjectdataList(
+    oapiCrmObjectdataList(
       params: OapiCrmObjectdataListParams,
     ): Promise<OapiCrmObjectdataListResponse>
     /**
      * 获取CRM自定义对象数据，最多可一次获取200条数据
      * @see https://developers.dingtalk.com/document/orgapp/retrieve-custom-crm-object-data
      */
-    OapiCrmObjectdataQuery(
+    oapiCrmObjectdataQuery(
       params: OapiCrmObjectdataQueryParams,
     ): Promise<OapiCrmObjectdataQueryResponse>
     /**
      * 获取自定义对象的元数据
      * @see https://developers.dingtalk.com/document/orgapp/get-metadata-description-of-crm-custom-object
      */
-    OapiCrmObjectmetaDescribe(
+    oapiCrmObjectmetaDescribe(
       params: OapiCrmObjectmetaDescribeParams,
     ): Promise<OapiCrmObjectmetaDescribeResponse>
     /**
      * 根据指定查询条件批量获取联系人数据，最多可一次获取200条数据
      * @see https://developers.dingtalk.com/document/isvapp/query-contact-data
      */
-    OapiCrmObjectdataContactQuery(
+    oapiCrmObjectdataContactQuery(
       params: OapiCrmObjectdataContactQueryParams,
     ): Promise<OapiCrmObjectdataContactQueryResponse>
     /**
      * 根据实例ID列表批量获取跟进记录数据，最多可一次获取200条数据
      * @see https://developers.dingtalk.com/document/orgapp/dingtalk-the-primary-data-of-apsara-stack-agility-paas-allows-you
      */
-    OapiCrmObjectdataFollowrecordList(
+    oapiCrmObjectdataFollowrecordList(
       params: OapiCrmObjectdataFollowrecordListParams,
     ): Promise<OapiCrmObjectdataFollowrecordListResponse>
     /**
      * 根据指定查询条件批量获取跟进记录数据，最多可一次获取200条数据
      * @see https://developers.dingtalk.com/document/orgapp/query-and-dingtalk-data-of-track-records-in-apsara-stack
      */
-    OapiCrmObjectdataFollowrecordQuery(
+    oapiCrmObjectdataFollowrecordQuery(
       params: OapiCrmObjectdataFollowrecordQueryParams,
     ): Promise<OapiCrmObjectdataFollowrecordQueryResponse>
     /**
      * 按照ID列表批量获取联系人数据
      * @see https://developers.dingtalk.com/document/orgapp/retrieves-contact-data-in-batches-based-on-the-id-list
      */
-    OapiCrmObjectdataContactList(
+    oapiCrmObjectdataContactList(
       params: OapiCrmObjectdataContactListParams,
     ): Promise<OapiCrmObjectdataContactListResponse>
     /**
      * 获取联系人对象的元数据
      * @see https://developers.dingtalk.com/document/isvapp/get-metadata-for-a-contact
      */
-    OapiCrmObjectmetaContactDescribe(): Promise<OapiCrmObjectmetaContactDescribeResponse>
+    oapiCrmObjectmetaContactDescribe(): Promise<OapiCrmObjectmetaContactDescribeResponse>
     /**
      * 获取跟进记录对象的元数据
      * @see https://developers.dingtalk.com/document/isvapp/get-the-metadata-of-the-follow-up-record-object
      */
-    OapiCrmObjectmetaFollowrecordDescribe(): Promise<OapiCrmObjectmetaFollowrecordDescribeResponse>
+    oapiCrmObjectmetaFollowrecordDescribe(): Promise<OapiCrmObjectmetaFollowrecordDescribeResponse>
     /**
      * 发送文件给指定用户
      * @see https://developers.dingtalk.com/document/isvapp-server/sends-a-file-to-a-specified-user
      */
-    OapiCspaceAddToSingleChat(
+    oapiCspaceAddToSingleChat(
       params: OapiCspaceAddToSingleChatParams,
     ): Promise<OapiCspaceAddToSingleChatResponse>
     /**
      * 授权用户访问企业下的自定义空间
      * @see https://developers.dingtalk.com/document/isvapp-server/authorize-a-user-to-access-a-custom-workspace-of-an
      */
-    OapiCspaceGrantCustomSpace(
+    oapiCspaceGrantCustomSpace(
       query: OapiCspaceGrantCustomSpaceQuery,
     ): Promise<OapiCspaceGrantCustomSpaceResponse>
     /**
      * 获取企业下的自定义空间
      * @see https://developers.dingtalk.com/document/isvapp-server/obtain-user-space-under-the-enterprise
      */
-    OapiCspaceGetCustomSpace(
+    oapiCspaceGetCustomSpace(
       query: OapiCspaceGetCustomSpaceQuery,
     ): Promise<OapiCspaceGetCustomSpaceResponse>
     /**
      * 新增文件到用户钉盘
      * @see https://developers.dingtalk.com/document/isvapp-server/add-file-to-user-s-dingtalk-disk
      */
-    OapiCspaceAdd(query: OapiCspaceAddQuery): Promise<OapiCspaceAddResponse>
+    oapiCspaceAdd(query: OapiCspaceAddQuery): Promise<OapiCspaceAddResponse>
     /**
      * 增加和删除群管理员接口
      * @see https://developers.dingtalk.com/document/orgapp/set-chat-admin
      */
-    OapiChatSubadminUpdate(
+    oapiChatSubadminUpdate(
       params: OapiChatSubadminUpdateParams,
     ): Promise<OapiChatSubadminUpdateResponse>
     /**
      * 获取群入群二维码邀请链接
      * @see https://developers.dingtalk.com/document/orgapp/obtain-a-qr-code-link
      */
-    OapiChatQrcodeGet(
+    oapiChatQrcodeGet(
       params: OapiChatQrcodeGetParams,
     ): Promise<OapiChatQrcodeGetResponse>
     /**
      * 设置群成员之间是否可以添加好友和私聊的开关
      * @see https://developers.dingtalk.com/document/orgapp/set-private-chat
      */
-    OapiChatMemberFriendswitchUpdate(
+    oapiChatMemberFriendswitchUpdate(
       params: OapiChatMemberFriendswitchUpdateParams,
     ): Promise<OapiChatMemberFriendswitchUpdateResponse>
     /**
      * 设置群成员的群昵称
      * @see https://developers.dingtalk.com/document/orgapp/set-a-group-nickname
      */
-    OapiChatUpdategroupnick(
+    oapiChatUpdategroupnick(
       params: OapiChatUpdategroupnickParams,
     ): Promise<OapiChatUpdategroupnickResponse>
     /**
      * 修改群会话
      * @see https://developers.dingtalk.com/document/orgapp/modify-a-group-session
      */
-    OapiChatUpdate(
+    oapiChatUpdate(
       params: OapiChatUpdateParams,
     ): Promise<OapiChatUpdateResponse>
     /**
      * 该接口用于创建会话
      * @see https://developers.dingtalk.com/document/orgapp/create-group-session
      */
-    OapiChatCreate(
+    oapiChatCreate(
       params: OapiChatCreateParams,
     ): Promise<OapiChatCreateResponse>
     /**
      * 获取群会话
      * @see https://developers.dingtalk.com/document/orgapp/obtain-a-group-session
      */
-    OapiChatGet(query: OapiChatGetQuery): Promise<OapiChatGetResponse>
+    oapiChatGet(query: OapiChatGetQuery): Promise<OapiChatGetResponse>
     /**
      * 通过工作助理机器人给企业员工发送消息
      * @see https://developers.dingtalk.com/document/orgapp/the-message-pushing-interface-of-the-assistant
      */
-    OapiSmartbotMsgPush(
+    oapiSmartbotMsgPush(
       params: OapiSmartbotMsgPushParams,
     ): Promise<OapiSmartbotMsgPushResponse>
   }

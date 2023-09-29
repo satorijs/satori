@@ -145,6 +145,7 @@ Internal.define({
   '/doc/workbooks/{workbookId}/sheets/{sheetId}/ranges/{rangeAddress}/clearData':
     { POST: { clearData: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

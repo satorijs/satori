@@ -64,6 +64,7 @@ Internal.define({
   '/swform/forms/{formCode}/instances': { GET: { listFormInstances: false } },
   '/swform/users/forms': { GET: { listFormSchemasByCreator: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

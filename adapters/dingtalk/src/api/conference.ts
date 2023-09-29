@@ -395,6 +395,7 @@ Internal.define({
     POST: { createScheduleConference: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

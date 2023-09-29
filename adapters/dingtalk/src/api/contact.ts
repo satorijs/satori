@@ -37,6 +37,7 @@ Internal.define({
     POST: { batchApproveUnionApply: false },
   },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

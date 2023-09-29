@@ -14,6 +14,7 @@ export interface QueryBlackboardSpaceResponse {
 Internal.define({
   '/blackboard/spaces': { GET: { queryBlackboardSpace: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**

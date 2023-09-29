@@ -184,6 +184,7 @@ Internal.define({
   '/wiki/words/details': { GET: { wikiWordsDetail: false } },
   '/wiki/words/parse': { POST: { wikiWordsParse: false } },
 })
+
 declare module '../internal' {
   interface Internal {
     /**
