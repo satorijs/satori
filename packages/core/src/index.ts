@@ -70,14 +70,19 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'guild-role-updated'(session: Session): void
   'reaction-added'(session: Session): void
   'reaction-removed'(session: Session): void
+  'login-added'(session: Session): void
+  'login-removed'(session: Session): void
   'login-updated'(session: Session): void
   'friend-request'(session: Session): void
   'guild-request'(session: Session): void
   'guild-member-request'(session: Session): void
   'before-send': EventCallback<Awaitable<void | boolean>, [SendOptions]>
   'send'(session: Session): void
+  /** @deprecated use `login-added` instead */
   'bot-added'(client: Bot): void
+  /** @deprecated use `login-removed` instead */
   'bot-removed'(client: Bot): void
+  /** @deprecated use `login-updated` instead */
   'bot-status-updated'(client: Bot): void
   'bot-connect'(client: Bot): Awaitable<void>
   'bot-disconnect'(client: Bot): Awaitable<void>

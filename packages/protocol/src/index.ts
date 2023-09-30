@@ -262,6 +262,7 @@ export interface Event {
   argv?: Argv
   channel?: Channel
   guild?: Guild
+  login?: Login
   member?: GuildMember
   message?: Message
   operator?: User

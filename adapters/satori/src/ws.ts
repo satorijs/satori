@@ -38,6 +38,20 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
     return this.http.ws('/v1/events')
   }
 
+  getBot(platform: string, selfId: string, login: Universal.Login) {
+    let bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+    // Do not dispatch event from outside adapters.
+    if (bot) return this.bots.includes(bot) ? bot : undefined
+    if (!login) {
+      logger.error('cannot find bot for', platform, selfId)
+      return
+    }
+    bot = new SatoriBot(this.ctx, login)
+    bot.adapter = this
+    bot.http = this.http
+    this.bots.push(bot)
+  }
+
   accept() {
     this.socket.send(JSON.stringify({
       op: Universal.Opcode.IDENTIFY,
@@ -64,19 +78,22 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
       if (parsed.op === Universal.Opcode.READY) {
         logger.debug('ready')
         for (const login of parsed.body.logins) {
-          const { selfId, platform } = login
-          if (this.bots.some(bot => bot.selfId === selfId && bot.platform === platform)) continue
-          const bot = new SatoriBot(this.ctx, login)
-          bot.adapter = this
-          bot.http = this.http
-          this.bots.push(bot)
+          this.getBot(login.platform, login.selfId, login)
         }
       }
 
       if (parsed.op === Universal.Opcode.EVENT) {
-        const { id, selfId, platform } = parsed.body
+        const { id, type, selfId, platform, login } = parsed.body
         this.sequence = id
-        const bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+        // `login-*` events will be dispatched by the bot,
+        // so there is no need to create sessions manually.
+        const bot = this.getBot(platform, selfId, type === 'login-added' && login)
+        if (!bot) return
+        if (type === 'login-updated') {
+          return bot.update(login)
+        } else if (type === 'login-removed') {
+          return bot.dispose()
+        }
         const session = bot.session(parsed.body)
         if (parsed.body._type && parsed.body.type !== 'internal') {
           session.setInternal(parsed.body._type, parsed.body._data)

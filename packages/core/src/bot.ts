@@ -35,12 +35,37 @@ export abstract class Bot<T = any> implements Login {
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
-    ctx.on('ready', () => this.start())
-    ctx.on('dispose', () => {
-      remove(ctx.bots, this)
-      this.context.emit('bot-removed', this)
-      this.stop()
+
+    ctx.on('ready', () => {
+      this.dispatchLoginEvent('login-added')
+      this.start()
     })
+
+    ctx.on('dispose', () => this.dispose())
+  }
+
+  update(login: Login) {
+    this._status = login.status
+    this.user = login.user
+    this.dispatchUpdate()
+  }
+
+  dispose() {
+    remove(this.ctx.bots, this)
+    this.context.emit('bot-removed', this)
+    this.dispatchLoginEvent('login-removed')
+    this.stop()
+  }
+
+  private dispatchLoginEvent(type: string) {
+    const session = this.session()
+    session.type = type
+    session.body.login = this.toJSON()
+    this.dispatch(session)
+  }
+
+  dispatchUpdate() {
+    this.dispatchLoginEvent('login-updated')
   }
 
   get status() {
@@ -52,6 +77,7 @@ export abstract class Bot<T = any> implements Login {
     this._status = value
     if (this.ctx.bots.includes(this)) {
       this.context.emit('bot-status-updated', this)
+      this.dispatchUpdate()
     }
   }
 
