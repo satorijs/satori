@@ -27,42 +27,6 @@ export * from './internal'
 export * from './message'
 export * from './session'
 
-declare global {
-  namespace Satori {
-    type Genres = 'friend' | 'channel' | 'guild' | 'guild-member' | 'guild-role' | 'guild-file' | 'guild-emoji'
-    type Actions = 'added' | 'deleted' | 'updated'
-
-    interface Session {}
-
-    interface Events extends Record<`${Genres}-${Actions}`, {}> {
-      'message': {}
-      'message-deleted': {}
-      'message-updated': {}
-      'message-pinned': {}
-      'message-unpinned': {}
-      'interaction/command': {}
-      'reaction-added': {}
-      'reaction-deleted': {}
-      'reaction-deleted/one': {}
-      'reaction-deleted/all': {}
-      'reaction-deleted/emoji': {}
-      'send': {}
-      'friend-request': {}
-      'guild-request': {}
-      'guild-member-request': {}
-      'guild-member/role': {}
-      'guild-member/ban': {}
-      'guild-member/nickname': {}
-      'notice/poke': {}
-      'notice/lucky-king': {}
-      'notice/honor': {}
-      'notice/honor/talkative': {}
-      'notice/honor/performer': {}
-      'notice/honor/emotion': {}
-    }
-  }
-}
-
 declare module 'cordis-axios' {
   namespace Quester {
     export const Config: Schema<Config>
@@ -86,10 +50,32 @@ Quester.createConfig = function createConfig(this, endpoint) {
 
 type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, Record<keyof Satori.Events, EventCallback> {
-  'satori/session'(session: Session): void
-  'satori/internal'(type: string, data: any): void
+export interface Events<C extends Context = Context> extends cordis.Events<C> {
+  'internal/session'(session: Session): void
+  'interaction/command'(session: Session): void
+  'message'(session: Session): void
+  'message-created'(session: Session): void
+  'message-deleted'(session: Session): void
+  'message-updated'(session: Session): void
+  'message-pinned'(session: Session): void
+  'message-unpinned'(session: Session): void
+  'guild-added'(session: Session): void
+  'guild-removed'(session: Session): void
+  'guild-updated'(session: Session): void
+  'guild-member-added'(session: Session): void
+  'guild-member-removed'(session: Session): void
+  'guild-member-updated'(session: Session): void
+  'guild-role-created'(session: Session): void
+  'guild-role-deleted'(session: Session): void
+  'guild-role-updated'(session: Session): void
+  'reaction-added'(session: Session): void
+  'reaction-removed'(session: Session): void
+  'login-updated'(session: Session): void
+  'friend-request'(session: Session): void
+  'guild-request'(session: Session): void
+  'guild-member-request'(session: Session): void
   'before-send': EventCallback<Awaitable<void | boolean>, [SendOptions]>
+  'send'(session: Session): void
   'bot-added'(client: Bot): void
   'bot-removed'(client: Bot): void
   'bot-status-updated'(client: Bot): void

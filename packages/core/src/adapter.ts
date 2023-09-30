@@ -1,4 +1,5 @@
 import { Awaitable, remove, Time } from 'cosmokit'
+import { Status } from '@satorijs/protocol'
 import { Context } from '.'
 import { Bot } from './bot'
 import Schema from 'schemastery'
@@ -80,17 +81,17 @@ export namespace Adapter {
           if (_retryCount >= retryTimes) {
             if (initial) {
               bot.error = new Error(message)
-              return bot.status = 'offline'
+              return bot.status = Status.OFFLINE
             } else {
               timeout = retryLazy
             }
           }
 
           _retryCount++
-          bot.status = 'reconnect'
+          bot.status = Status.RECONNECT
           logger.warn(`${message}, will retry in ${Time.format(timeout)}...`)
           setTimeout(() => {
-            if (bot.status === 'reconnect') reconnect()
+            if (bot.status === Status.RECONNECT) reconnect()
           }, timeout)
         })
 

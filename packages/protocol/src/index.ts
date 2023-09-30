@@ -41,7 +41,7 @@ export const Methods: Dict<Method> = {
   'guild.member.role': Method('setGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
   'guild.role.list': Method('getGuildRoleList', ['guild_id', 'next']),
   'guild.role.create': Method('createGuildRole', ['guild_id', 'data']),
-  'guild.role.update': Method('modifyGuildRole', ['guild_id', 'role_id', 'data']),
+  'guild.role.update': Method('updateGuildRole', ['guild_id', 'role_id', 'data']),
   'guild.role.delete': Method('deleteGuildRole', ['guild_id', 'role_id']),
   'channel.get': Method('getChannel', ['channel_id', 'guild_id']),
   'channel.list': Method('getChannelList', ['guild_id', 'next']),
@@ -97,7 +97,7 @@ export interface Methods {
   getGuildRoleList(guildId: string, next?: string): Promise<List<GuildRole>>
   getGuildRoleIter(guildId: string): AsyncIterable<GuildRole>
   createGuildRole(guildId: string, data: Partial<GuildRole>): Promise<string>
-  modifyGuildRole(guildId: string, roleId: string, data: Partial<GuildRole>): Promise<void>
+  updateGuildRole(guildId: string, roleId: string, data: Partial<GuildRole>): Promise<void>
   deleteGuildRole(guildId: string, roleId: string): Promise<void>
 
   // channel
@@ -174,11 +174,15 @@ export interface Login {
   user?: User
   platform?: string
   selfId?: string
-  status: Login.Status
+  status: Status
 }
 
-export namespace Login {
-  export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
+export const enum Status {
+  OFFLINE = 0,
+  ONLINE = 1,
+  CONNECT = 2,
+  DISCONNECT = 3,
+  RECONNECT = 4,
 }
 
 export interface Message {

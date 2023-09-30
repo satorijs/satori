@@ -181,7 +181,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return role.id
   }
 
-  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
+  async updateGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
     await this.internal.modifyGuildRole(guildId, roleId, Discord.encodeRole(data))
   }
 

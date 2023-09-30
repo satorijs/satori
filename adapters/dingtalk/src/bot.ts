@@ -30,7 +30,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   }
 
   async getLogin() {
-    const { appList } = await this.internal.OapiMicroappList()
+    const { appList } = await this.internal.oapiMicroappList()
     const self = appList.find(v => v.agentId === this.config.agentId)
     this.user.name = self.name
     this.user.avatar = self.appIcon

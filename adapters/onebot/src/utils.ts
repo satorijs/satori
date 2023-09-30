@@ -198,19 +198,16 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
       case 'group_recall':
         session.type = 'message-deleted'
         session.subtype = 'group'
-        session.subsubtype = 'group'
         break
       case 'friend_recall':
         session.type = 'message-deleted'
         session.subtype = 'private'
         session.channelId = `private:${session.userId}`
-        session.subsubtype = 'private'
         break
       // from go-cqhttp source code, but not mentioned in official docs
       case 'guild_channel_recall':
         session.type = 'message-deleted'
         session.subtype = 'guild'
-        session.subsubtype = 'guild'
         break
       case 'friend_add':
         session.type = 'friend-added'

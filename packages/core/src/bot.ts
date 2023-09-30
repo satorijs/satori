@@ -3,8 +3,12 @@ import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { Session } from './session'
-import { Event, List, Login, Methods, SendOptions, User } from '@satorijs/protocol'
+import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
 import WebSocket from 'ws'
+
+const eventAliases = [
+  ['message-created', 'message'],
+]
 
 export interface Bot extends Methods, User {
   socket?: WebSocket
@@ -24,7 +28,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
   public error?: Error
 
   protected context: Context
-  protected _status: Login.Status = 'offline'
+  protected _status: Status = Status.OFFLINE
 
   constructor(public ctx: Context, public config: T) {
     if (config.platform) {
@@ -75,22 +79,22 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
   }
 
   get isActive() {
-    return this._status !== 'offline' && this._status !== 'disconnect'
+    return this._status !== Status.OFFLINE && this._status !== Status.DISCONNECT
   }
 
   online() {
-    this.status = 'online'
+    this.status = Status.ONLINE
     this.error = null
   }
 
   offline(error?: Error) {
-    this.status = 'offline'
+    this.status = Status.OFFLINE
     this.error = error
   }
 
   async start() {
     if (this.isActive) return
-    this.status = 'connect'
+    this.status = Status.CONNECT
     try {
       await this.context.parallel('bot-connect', this)
       await this.adapter?.start(this)
@@ -101,7 +105,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
 
   async stop() {
     if (!this.isActive) return
-    this.status = 'disconnect'
+    this.status = Status.DISCONNECT
     try {
       await this.context.parallel('bot-disconnect', this)
       await this.adapter?.stop(this)
@@ -122,15 +126,16 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
 
   dispatch(session: Session) {
     if (!this.ctx.lifecycle.isActive) return
-    this.context.emit('satori/session', session)
-    if (session.type === 'internal') return
-    const events: string[] = [session.type]
-    if (session.body.subtype) {
-      events.unshift(events[0] + '/' + session.body.subtype)
-      if (session.body.subsubtype) {
-        events.unshift(events[0] + '/' + session.body.subsubtype)
+    let events = [session.type]
+    for (const aliases of eventAliases) {
+      if (aliases.includes(session.type)) {
+        events = aliases
+        session.type = aliases[0]
+        break
       }
     }
+    this.context.emit('internal/session', session)
+    if (session.type === 'internal') return
     for (const event of events) {
       this.context.emit(session, event as any, session)
     }

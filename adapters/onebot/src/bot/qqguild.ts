@@ -18,9 +18,9 @@ export class QQGuildBot extends BaseBot {
     super(ctx, config)
     this.parent = config.parent
     this.internal = config.parent.internal
-    this.selfId = config.profile.tiny_id
-    this.avatar = config.profile.avatar_url
-    this.username = config.profile.nickname
+    this.user.id = config.profile.tiny_id
+    this.user.name = config.profile.nickname
+    this.user.avatar = config.profile.avatar_url
     this.parent.guildBot = this
   }
 

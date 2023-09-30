@@ -24,6 +24,7 @@ export const decodeGuildMember = (member: Partial<Discord.GuildMember>): Univers
   user: member.user && decodeUser(member.user),
   name: member.nick,
   roles: member.roles,
+  joinedAt: member.joined_at && new Date(member.joined_at).valueOf(),
 })
 
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({

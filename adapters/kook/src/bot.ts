@@ -159,7 +159,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     return role.role_id.toString()
   }
 
-  async modifyGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
+  async updateGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
     await this.internal.updateGuildRole({
       guild_id: guildId,
       ...encodeRole(data),

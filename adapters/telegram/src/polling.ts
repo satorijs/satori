@@ -1,4 +1,4 @@
-import { Adapter, Logger, Quester, Schema, Time } from '@satorijs/satori'
+import { Adapter, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 
@@ -56,11 +56,11 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
 
           if (_initial && _retryCount > retryTimes) {
             bot.error = e
-            return bot.status = 'offline'
+            return bot.status = Universal.Status.OFFLINE
           }
           if (!bot.isActive) return
           _retryCount++
-          bot.status = 'reconnect'
+          bot.status = Universal.Status.RECONNECT
           this.timeout = setTimeout(polling, retryInterval)
         }
       }

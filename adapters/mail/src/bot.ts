@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Schema } from '@satorijs/satori'
+import { Bot, Context, Logger, Schema, Universal } from '@satorijs/satori'
 import { ParsedMail } from 'mailparser'
 import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
@@ -46,7 +46,7 @@ export class MailBot extends Bot<MailBot.Config> {
   onClose() {
     if (!this.isActive) return
     logger.info('IMAP disconnected, will reconnect in 3s...')
-    this.status = 'reconnect'
+    this.status = Universal.Status.RECONNECT
     setTimeout(() => {
       if (!this.isActive) return
       this.imap.connect()

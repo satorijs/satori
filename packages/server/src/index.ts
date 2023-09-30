@@ -124,7 +124,7 @@ export function apply(ctx: Context, config: Config) {
     }))
   }
 
-  ctx.on('satori/session', (session) => {
+  ctx.on('internal/session', (session) => {
     for (const socket of layer.clients) {
       if (!socket[kClient]?.authorized) continue
       dispatch(socket, session)
