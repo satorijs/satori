@@ -118,7 +118,7 @@ export class QQBot extends Bot<QQBot.Config> {
   }
 
   async kickGuildMember(guildId: string, userId: string) {
-    await this.internal.deleteGuildMember(guildId, userId)
+    await this.internal.removeGuildMember(guildId, userId)
   }
 
   async muteGuildMember(guildId: string, userId: string, duration: number) {
