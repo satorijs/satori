@@ -86,7 +86,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
 }
 
 export namespace DingtalkBot {
-  export interface Config extends Bot.Config, WsClient.Config {
+  export interface Config extends WsClient.Config {
     secret: string
     protocol: string
     appkey: string

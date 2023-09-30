@@ -185,10 +185,11 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 }
 
 export namespace SlackBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config {
+  export interface BaseConfig extends Quester.Config {
     token: string
     botToken: string
   }
+
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 
   export const Config: Schema<Config> = Schema.intersect([

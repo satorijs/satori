@@ -1,10 +1,10 @@
-import { Bot, Context, Universal } from '@satorijs/satori'
+import { Context, Universal } from '@satorijs/satori'
 import { BaseBot } from './base'
 import { OneBotBot } from '.'
 import * as OneBot from '../utils'
 
 export namespace QQGuildBot {
-  export interface Config extends Bot.Config {
+  export interface Config extends BaseBot.Config {
     parent: OneBotBot
     profile: OneBot.GuildServiceProfile
   }
@@ -16,9 +16,10 @@ export class QQGuildBot extends BaseBot {
 
   constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config)
+    this.platform = 'qqguild'
+    this.selfId = config.profile.tiny_id
     this.parent = config.parent
     this.internal = config.parent.internal
-    this.user.id = config.profile.tiny_id
     this.user.name = config.profile.nickname
     this.user.avatar = config.profile.avatar_url
     this.parent.guildBot = this

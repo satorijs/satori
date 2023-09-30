@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Quester, Schema, Time, WebSocketLayer } from '@satorijs/satori'
+import { Adapter, Context, Logger, Quester, Schema, Time, Universal, WebSocketLayer } from '@satorijs/satori'
 import { OneBotBot } from './bot'
 import { dispatchSession, Response, TimeoutError } from './utils'
 
@@ -10,18 +10,22 @@ interface SharedConfig<T = 'ws' | 'ws-reverse'> {
 }
 
 export class WsClient extends Adapter.WsClient<OneBotBot> {
-  protected accept = accept
+  declare bot: OneBotBot<OneBotBot.Config & WsClient.Config>
 
-  prepare(bot: OneBotBot<OneBotBot.BaseConfig & WsClient.Config>) {
-    const { token, endpoint } = bot.config
-    const http = this.ctx.http.extend(bot.config)
+  accept(socket: Universal.WebSocket): void {
+    accept(socket, this.bot)
+  }
+
+  prepare() {
+    const { token, endpoint } = this.bot.config
+    const http = this.ctx.http.extend(this.bot.config)
     if (token) http.config.headers.Authorization = `Bearer ${token}`
     return http.ws(endpoint)
   }
 }
 
 export namespace WsClient {
-  export interface Config extends SharedConfig<'ws'>, Quester.Config, Adapter.WsClient.Config {}
+  export interface Config extends SharedConfig<'ws'>, Quester.Config, Adapter.WsClientConfig {}
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
@@ -29,11 +33,13 @@ export namespace WsClient {
       responseTimeout: Schema.natural().role('time').default(Time.minute).description('等待响应的时间 (单位为毫秒)。'),
     }).description('连接设置'),
     Quester.createConfig(true),
-    Adapter.WsClient.Config,
+    Adapter.WsClientConfig,
   ])
 }
 
-export class WsServer extends Adapter.Server<OneBotBot<OneBotBot.BaseConfig & WsServer.Config>> {
+const kSocket = Symbol('socket')
+
+export class WsServer extends Adapter<OneBotBot<OneBotBot.BaseConfig & WsServer.Config>> {
   public wsServer?: WebSocketLayer
 
   constructor(ctx: Context, bot: OneBotBot) {
@@ -49,8 +55,8 @@ export class WsServer extends Adapter.Server<OneBotBot<OneBotBot.BaseConfig & Ws
       const bot = this.bots.find(bot => bot.selfId === selfId)
       if (!bot) return socket.close(1008, 'invalid x-self-id')
 
-      bot.socket = socket
-      accept(bot)
+      bot[kSocket] = socket
+      accept(socket, bot)
     })
 
     ctx.on('dispose', () => {
@@ -59,9 +65,9 @@ export class WsServer extends Adapter.Server<OneBotBot<OneBotBot.BaseConfig & Ws
     })
   }
 
-  async stop(bot: OneBotBot) {
-    bot.socket?.close()
-    bot.socket = null
+  async disconnect(bot: OneBotBot) {
+    bot[kSocket]?.close()
+    bot[kSocket] = null
   }
 }
 
@@ -80,8 +86,8 @@ export namespace WsServer {
 let counter = 0
 const listeners: Record<number, (response: Response) => void> = {}
 
-export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
-  bot.socket.addEventListener('message', ({ data }) => {
+export function accept(socket: Universal.WebSocket, bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
+  socket.addEventListener('message', ({ data }) => {
     let parsed: any
     try {
       parsed = JSON.parse(data.toString())
@@ -98,7 +104,7 @@ export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
     }
   })
 
-  bot.socket.addEventListener('close', () => {
+  socket.addEventListener('close', () => {
     delete bot.internal._request
   })
 
@@ -111,9 +117,7 @@ export function accept(bot: OneBotBot<OneBotBot.BaseConfig & SharedConfig>) {
         delete listeners[data.echo]
         reject(new TimeoutError(params, action))
       }, bot.config.responseTimeout)
-      bot.socket.send(JSON.stringify(data), (error) => {
-        if (error) reject(error)
-      })
+      socket.send(JSON.stringify(data))
     })
   }
 

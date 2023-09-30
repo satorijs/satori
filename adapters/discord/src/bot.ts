@@ -249,7 +249,7 @@ function shapeEqual(a: any, b: any) {
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
+  export interface Config extends Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
     token: string
     slash?: boolean
   }

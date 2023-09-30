@@ -228,7 +228,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 }
 
 export namespace TelegramBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config {
+  export interface BaseConfig extends Quester.Config {
     protocol: 'server' | 'polling'
     token: string
     files?: Config.Files

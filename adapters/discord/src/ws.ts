@@ -21,14 +21,14 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
   heartbeat() {
     logger.debug(`heartbeat d ${this._d}`)
-    this.bot.socket.send(JSON.stringify({
+    this.socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
       d: this._d,
     }))
   }
 
   accept() {
-    this.bot.socket.addEventListener('message', async ({ data }) => {
+    this.socket.addEventListener('message', async ({ data }) => {
       let parsed: Gateway.Payload
       try {
         parsed = JSON.parse(data.toString())
@@ -45,7 +45,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) {
           logger.debug('resuming')
-          this.bot.socket.send(JSON.stringify({
+          this.socket.send(JSON.stringify({
             op: Gateway.Opcode.RESUME,
             d: {
               token: this.bot.config.token,
@@ -54,7 +54,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
             },
           }))
         } else {
-          this.bot.socket.send(JSON.stringify({
+          this.socket.send(JSON.stringify({
             op: Gateway.Opcode.IDENTIFY,
             d: {
               token: this.bot.config.token,
@@ -70,7 +70,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
         if (parsed.d) return
         this._sessionId = ''
         logger.warn('offline: invalid session')
-        this.bot.socket?.close()
+        this.socket?.close()
       }
 
       if (parsed.op === Gateway.Opcode.DISPATCH) {
@@ -95,18 +95,18 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
         logger.warn('offline: discord request reconnect')
-        this.bot.socket?.close()
+        this.socket?.close()
       }
     })
 
-    this.bot.socket.addEventListener('close', () => {
+    this.socket.addEventListener('close', () => {
       clearInterval(this._ping)
     })
   }
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClient.Config {
+  export interface Config extends Adapter.WsClientConfig {
     intents?: number
   }
 
@@ -119,6 +119,6 @@ export namespace WsClient {
         | Gateway.Intent.DIRECT_MESSAGE_REACTIONS
         | Gateway.Intent.MESSAGE_CONTENT),
     }).description('推送设置'),
-    Adapter.WsClient.Config,
+    Adapter.WsClientConfig,
   ] as const)
 }

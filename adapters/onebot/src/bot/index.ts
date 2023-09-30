@@ -1,4 +1,4 @@
-import { Bot, Context, noop, Schema, Session } from '@satorijs/satori'
+import { Context, noop, Schema, Session } from '@satorijs/satori'
 import { HttpServer } from '../http'
 import { WsClient, WsServer } from '../ws'
 import { QQGuildBot } from './qqguild'
@@ -15,9 +15,10 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 
   constructor(ctx: Context, config: T) {
     super(ctx, config)
+    this.selfId = config.selfId
     this.platform = 'onebot'
     this.internal = new OneBot.Internal()
-    this.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
+    this.user.avatar = `http://q.qlogo.cn/headimg_dl?dst_uin=${config.selfId}&spec=640`
 
     if (config.protocol === 'http') {
       ctx.plugin(HttpServer, this)
@@ -48,7 +49,6 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
     // guild service is not supported in this account
     if (!profile?.tiny_id || profile.tiny_id === '0') return
     this.ctx.plugin(QQGuildBot, {
-      ...this.config.qqguild,
       profile,
       parent: this,
       advanced: this.config.advanced,
@@ -107,17 +107,10 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
 }
 
 export namespace OneBotBot {
-  export interface QQGuildConfig extends Bot.Config {}
-
-  export const QQGuildConfig: Schema<QQGuildConfig> = Schema.object({
-    platform: Schema.string().default('qqguild').description('QQ 频道的平台名称。'),
-  })
-
   export interface BaseConfig extends BaseBot.Config {
     selfId: string
     password?: string
     token?: string
-    qqguild?: QQGuildConfig
   }
 
   export const BaseConfig: Schema<BaseConfig> = Schema.object({
@@ -126,7 +119,6 @@ export namespace OneBotBot {
     protocol: process.env.KOISHI_ENV === 'browser'
       ? Schema.const('ws').default('ws')
       : Schema.union(['http', 'ws', 'ws-reverse']).description('选择要使用的协议。').default('ws-reverse'),
-    qqguild: QQGuildConfig.hidden(),
   })
 
   export type Config = BaseConfig & (HttpServer.Config | WsServer.Config | WsClient.Config)

@@ -5,10 +5,11 @@ import { createHmac } from 'crypto'
 
 const logger = new Logger('onebot')
 
-export class HttpServer extends Adapter.Server<OneBotBot> {
+export class HttpServer extends Adapter<OneBotBot> {
   declare bots: OneBotBot[]
 
   async fork(ctx: Context, bot: OneBotBot<OneBotBot.Config & HttpServer.Config>) {
+    super.fork(ctx, bot)
     const config = bot.config
     const { endpoint, token } = config
     if (!endpoint) return
@@ -27,7 +28,7 @@ export class HttpServer extends Adapter.Server<OneBotBot> {
     return bot.initialize()
   }
 
-  async start(bot: OneBotBot<OneBotBot.Config & HttpServer.Config>) {
+  async connect(bot: OneBotBot<OneBotBot.Config & HttpServer.Config>) {
     const { secret, path = '/onebot' } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       if (secret) {
@@ -47,10 +48,6 @@ export class HttpServer extends Adapter.Server<OneBotBot> {
       logger.debug('receive %o', ctx.request.body)
       dispatchSession(bot, ctx.request.body)
     })
-  }
-
-  async stop() {
-    logger.debug('http server closing')
   }
 }
 

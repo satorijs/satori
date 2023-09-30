@@ -8,7 +8,7 @@ import { adaptSession, Cipher } from './utils'
 
 const logger = new Logger('lark')
 
-export class HttpServer extends Adapter.Server<FeishuBot> {
+export class HttpServer extends Adapter<FeishuBot> {
   private ciphers: Record<string, Cipher> = {}
 
   fork(ctx: Context, bot: FeishuBot) {
@@ -18,7 +18,7 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
     return bot.initialize()
   }
 
-  async start(bot: FeishuBot) {
+  async connect(bot: FeishuBot) {
     const { path } = bot.config
     bot.ctx.router.post(path, (ctx) => {
       this._refreshCipher()
@@ -89,10 +89,6 @@ export class HttpServer extends Adapter.Server<FeishuBot> {
       ctx.response.headers['Content-Type'] = resp.headers['content-type']
       ctx.response.body = resp.data
     })
-  }
-
-  async stop() {
-    logger.debug('http server stopped')
   }
 
   dispatchSession(body: AllEvents): void {

@@ -4,10 +4,10 @@ import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 
-export class HttpServer extends Adapter.Server<SlackBot> {
+export class HttpServer extends Adapter<SlackBot> {
   logger = new Logger('slack')
-  async start(bot: SlackBot) {
-    // @ts-ignore
+
+  async connect(bot: SlackBot<SlackBot.Config & HttpServer.Config>) {
     const { signing } = bot.config
     await bot.getLogin()
     bot.ctx.router.post('/slack', async (ctx) => {

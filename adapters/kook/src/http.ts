@@ -4,7 +4,7 @@ import { adaptSession } from './utils'
 
 const logger = new Logger('kook')
 
-export class HttpServer extends Adapter.Server<KookBot<KookBot.BaseConfig & HttpServer.Config>> {
+export class HttpServer extends Adapter<KookBot<KookBot.BaseConfig & HttpServer.Config>> {
   constructor(ctx: Context, bot: KookBot) {
     super()
     let { path } = bot.config as HttpServer.Config
@@ -29,7 +29,7 @@ export class HttpServer extends Adapter.Server<KookBot<KookBot.BaseConfig & Http
     })
   }
 
-  async start(bot: KookBot) {
+  async connect(bot: KookBot) {
     await bot.getLogin()
     bot.online()
   }

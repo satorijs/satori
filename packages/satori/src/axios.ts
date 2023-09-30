@@ -28,7 +28,7 @@ Quester.prototype.file = async function file(this: Quester, url: string) {
 }
 
 Quester.prototype.ws = function ws(this: Quester, url: string, options: ClientRequestArgs = {}) {
-  return new WebSocket(url, {
+  return new WebSocket(this.resolve(url), {
     agent: this.agent(this.config.proxyAgent),
     handshakeTimeout: this.config.timeout,
     ...options,

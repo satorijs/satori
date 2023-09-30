@@ -8,7 +8,7 @@ export class WhatsAppBot extends Bot {
   public internal: Internal
   public http: Quester
 
-  constructor(ctx: Context, config: Bot.Config) {
+  constructor(ctx: Context, config: {}) {
     super(ctx, config)
     this.platform = 'whatsapp'
   }

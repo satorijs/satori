@@ -6,7 +6,7 @@ import { ClientEvent, M_ROOM_MEMBER } from './types'
 
 const logger = new Logger('matrix')
 
-export class HttpAdapter extends Adapter.Server<MatrixBot> {
+export class HttpAdapter extends Adapter<MatrixBot> {
   private txnId: string = null
 
   public constructor(ctx: Context) {
@@ -40,7 +40,7 @@ export class HttpAdapter extends Adapter.Server<MatrixBot> {
     })
   }
 
-  async start(bot: MatrixBot): Promise<void> {
+  async connect(bot: MatrixBot): Promise<void> {
     try {
       await bot.initialize()
       bot.online()

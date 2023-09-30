@@ -152,7 +152,7 @@ export function adaptSession(bot: Bot, input: any) {
   defineProperty(session, 'kook', internal)
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
-    this.bot.dispatch(this.bot.session({
+    bot.dispatch(bot.session({
       type: 'internal',
       _type: 'kook/' + type.replace(/_/g, '-'),
       _data: input.body,

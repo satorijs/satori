@@ -121,8 +121,13 @@ export class Quester {
   }
 
   resolve(url: string) {
-    // do not use new URL(url, this.config.endpoint) here
-    return trimSlash(this.config.endpoint || '') + url
+    try {
+      new URL(url)
+      return url
+    } catch {
+      // do not use new URL(url, this.config.endpoint) here
+      return trimSlash(this.config.endpoint || '') + url
+    }
   }
 
   async file(url: string, options: Quester.FileOptions = {}): Promise<Quester.File> {

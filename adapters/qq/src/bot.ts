@@ -161,7 +161,7 @@ export class QQBot extends Bot<QQBot.Config> {
 }
 
 export namespace QQBot {
-  export interface Config extends Bot.Config, QQ.Options, WsClient.Config {
+  export interface Config extends QQ.Options, WsClient.Config {
     intents?: number
   }
 

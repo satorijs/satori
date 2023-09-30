@@ -2,20 +2,20 @@ import { pick, remove } from 'cosmokit'
 import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
-import { Session } from './session'
+import { defineAccessor, Session } from './session'
 import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
-import WebSocket from 'ws'
 
 const eventAliases = [
   ['message-created', 'message'],
 ]
 
-export interface Bot extends Methods, User {
-  socket?: WebSocket
+export interface Bot extends Methods {
+  userId: string
+  selfId: string
   internal: any
 }
 
-export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
+export abstract class Bot<T = any> implements Login {
   static reusable = true
   static filter = false
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
@@ -31,13 +31,6 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
   protected _status: Status = Status.OFFLINE
 
   constructor(public ctx: Context, public config: T) {
-    if (config.platform) {
-      this.platform = config.platform
-    }
-    if (config.selfId) {
-      this.selfId = config.selfId
-    }
-
     this.internal = null
     this.context = ctx
     ctx.bots.push(this)
@@ -48,22 +41,6 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
       this.context.emit('bot-removed', this)
       this.stop()
     })
-  }
-
-  get userId() {
-    return this.user.id
-  }
-
-  set userId(value) {
-    this.user.id = value
-  }
-
-  get selfId() {
-    return this.user.id
-  }
-
-  set selfId(value) {
-    this.user.id = value
   }
 
   get status() {
@@ -97,7 +74,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
     this.status = Status.CONNECT
     try {
       await this.context.parallel('bot-connect', this)
-      await this.adapter?.start(this)
+      await this.adapter?.connect(this)
     } catch (error) {
       this.offline(error)
     }
@@ -108,7 +85,7 @@ export abstract class Bot<T extends Bot.Config = Bot.Config> implements Login {
     this.status = Status.DISCONNECT
     try {
       await this.context.parallel('bot-disconnect', this)
-      await this.adapter?.stop(this)
+      await this.adapter?.disconnect(this)
     } catch (error) {
       this.context.emit('internal/warning', error)
     } finally {
@@ -207,11 +184,5 @@ for (const name of iterableMethods) {
   }
 }
 
-export namespace Bot {
-  export interface Config {
-    platform?: string
-    selfId?: string
-  }
-
-  export type Status = 'offline' | 'online' | 'connect' | 'disconnect' | 'reconnect'
-}
+defineAccessor(Bot.prototype, 'selfId', ['user', 'id'])
+defineAccessor(Bot.prototype, 'userId', ['user', 'id'])

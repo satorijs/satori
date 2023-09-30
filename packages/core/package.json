@@ -31,7 +31,7 @@
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.5"
+    "@types/ws": "^8.5.6"
   },
   "dependencies": {
     "@satorijs/element": "^2.5.1",
@@ -39,7 +39,7 @@
     "cordis": "^2.8.8",
     "cordis-axios": "^3.3.0",
     "cosmokit": "^1.4.5",
-    "ws": "^8.13.0",
+    "ws": "^8.14.2",
     "reggol": "^1.5.1",
     "schemastery": "^3.13.0"
   }
