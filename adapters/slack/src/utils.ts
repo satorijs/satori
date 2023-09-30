@@ -56,7 +56,7 @@ function adaptMessageBlocks(blocks: NewKnownBlock[]) {
     if (block.type === 'rich_text') {
       for (const element of block.elements) {
         if (element.type === 'rich_text_section') {
-          result = result.concat(adaptRichText(element.elements))
+          result = result.concat(adaptRichText(element.elements as RichText[]))
         } else if (element.type === 'rich_text_list') {
           result.push(h(element.style === 'bullet' ? 'ul' : 'ol', {},
             element.elements.map(v => h('li', {}, adaptRichText(v.elements)),

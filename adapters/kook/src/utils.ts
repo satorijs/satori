@@ -1,4 +1,4 @@
-import { Bot, defineProperty, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
+import { Bot, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export * from './types'
@@ -146,10 +146,7 @@ function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
 
 export function adaptSession(bot: Bot, input: any) {
   const session = bot.session()
-  session.body._data = input
-  const internal = Object.create(bot.internal)
-  Object.assign(internal, input)
-  defineProperty(session, 'kook', internal)
+  session.setInternal('kook', input)
   if (input.type === Kook.Type.system) {
     const { type, body } = input.extra as Kook.Notice
     bot.dispatch(bot.session({

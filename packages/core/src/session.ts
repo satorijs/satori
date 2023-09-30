@@ -114,6 +114,13 @@ export class Session {
     (this.body.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
   }
 
+  setInternal(type: string, data: any) {
+    this.body._type = type
+    this.body._data = data
+    const internal = Object.create(this.bot.internal)
+    defineProperty(this, type, Object.assign(internal, data))
+  }
+
   async transform(elements: h[]): Promise<h[]> {
     return await h.transformAsync(elements, ({ type, attrs, children }, session) => {
       const render = type === 'component' ? attrs.is : this.app['component:' + type]

@@ -9,8 +9,23 @@ export function transformKey(source: any, callback: (key: string) => string) {
   }))
 }
 
+function createInternal(bot: SatoriBot, prefix = '') {
+  return new Proxy(() => {}, {
+    apply(target, thisArg, args) {
+      return bot.http.post('/internal/' + snakeCase(prefix.slice(1)), args)
+    },
+    get(target, key, receiver) {
+      if (typeof key === 'symbol' || key in target) {
+        return Reflect.get(target, key, receiver)
+      }
+      return createInternal(bot, prefix + '.' + key)
+    },
+  })
+}
+
 export class SatoriBot extends Bot<Universal.Login> {
   public http: Quester
+  public internal = createInternal(this)
 
   constructor(ctx: Context, config: Universal.Login) {
     super(ctx, config)
@@ -24,6 +39,6 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     for (const { name } of method.fields) {
       payload[name] = transformKey(args.shift(), snakeCase)
     }
-    this.http.post('/' + key, payload)
+    return this.http.post('/' + key, payload)
   }
 }

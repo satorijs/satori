@@ -23,7 +23,7 @@ export class OneBotBot<T extends OneBotBot.Config = OneBotBot.Config> extends Ba
     if (config.protocol === 'http') {
       ctx.plugin(HttpServer, this)
     } else if (config.protocol === 'ws') {
-      ctx.plugin(WsClient, this)
+      ctx.plugin(WsClient, this as any)
     } else if (config.protocol === 'ws-reverse') {
       ctx.plugin(WsServer, this)
     }

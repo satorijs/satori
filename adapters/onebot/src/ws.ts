@@ -9,9 +9,7 @@ interface SharedConfig<T = 'ws' | 'ws-reverse'> {
   responseTimeout?: number
 }
 
-export class WsClient extends Adapter.WsClient<OneBotBot> {
-  declare bot: OneBotBot<OneBotBot.Config & WsClient.Config>
-
+export class WsClient extends Adapter.WsClient<OneBotBot<OneBotBot.BaseConfig & WsClient.Config>> {
   accept(socket: Universal.WebSocket): void {
     accept(socket, this.bot)
   }

@@ -19,7 +19,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     this.internal = new Internal(this, this.http)
 
     if (config.protocol === 'ws') {
-      ctx.plugin(WsClient, this)
+      ctx.plugin(WsClient, this as any)
     } else {
       ctx.plugin(HttpServer, this)
     }

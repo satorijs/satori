@@ -75,6 +75,25 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
+  ctx.router.post(config.path + '/v1/internal/:name', async (koa) => {
+    const selfId = koa.request.headers['X-Self-ID']
+    const platform = koa.request.headers['X-Platform']
+    const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+    if (!bot) {
+      koa.body = 'bot not found'
+      return koa.status = 403
+    }
+
+    const name = camelCase(koa.params.name)
+    if (!bot.internal?.[name]) {
+      koa.body = 'method not found'
+      return koa.status = 404
+    }
+    const result = await bot.internal[name](...koa.request.body)
+    koa.body = result
+    koa.status = 200
+  })
+
   const buffer: Session[] = []
 
   const timeout = setInterval(() => {

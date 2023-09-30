@@ -1,4 +1,3 @@
-import { defineProperty } from 'cosmokit'
 import { Bot } from './bot'
 import { Channel, SendOptions } from '@satorijs/protocol'
 import { Session } from './session'
@@ -39,7 +38,6 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
       guild: { id: this.guildId },
       subtype: isDirect ? 'private' : 'group',
     })
-    defineProperty(this.session, this.bot.platform, Object.create(this.bot.internal))
     await this.prepare()
     this.session.elements = h.normalize(content)
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return

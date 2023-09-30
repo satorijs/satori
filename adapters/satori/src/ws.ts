@@ -78,6 +78,9 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
         this.sequence = id
         const bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
         const session = bot.session(parsed.body)
+        if (parsed.body._type && parsed.body.type !== 'internal') {
+          session.setInternal(parsed.body._type, parsed.body._data)
+        }
         bot.dispatch(session)
       }
     })
