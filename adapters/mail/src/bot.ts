@@ -14,6 +14,7 @@ export class MailBot extends Bot<MailBot.Config> {
 
   constructor(ctx: Context, config: MailBot.Config) {
     super(ctx, config)
+    this.selfId = config.selfId || config.username
     this.platform = 'mail'
   }
 
@@ -55,8 +56,9 @@ export class MailBot extends Bot<MailBot.Config> {
 }
 
 export namespace MailBot {
-  export interface Config extends Bot.Config {
+  export interface Config {
     name: string
+    selfId: string
     username: string
     password: string
     subject: string

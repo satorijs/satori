@@ -1,6 +1,6 @@
-import { SatoriBot } from './bot'
+import { SatoriAdapter } from './ws'
 
 export * from './bot'
 export * from './ws'
 
-export default SatoriBot
+export default SatoriAdapter

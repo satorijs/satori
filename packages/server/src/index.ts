@@ -75,6 +75,25 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
+  ctx.router.post(config.path + '/v1/internal/:name', async (koa) => {
+    const selfId = koa.request.headers['X-Self-ID']
+    const platform = koa.request.headers['X-Platform']
+    const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+    if (!bot) {
+      koa.body = 'bot not found'
+      return koa.status = 403
+    }
+
+    const name = camelCase(koa.params.name)
+    if (!bot.internal?.[name]) {
+      koa.body = 'method not found'
+      return koa.status = 404
+    }
+    const result = await bot.internal[name](...koa.request.body)
+    koa.body = result
+    koa.status = 200
+  })
+
   const buffer: Session[] = []
 
   const timeout = setInterval(() => {
@@ -99,20 +118,21 @@ export function apply(ctx: Context, config: Config) {
       if (payload.op === Universal.Opcode.IDENTIFY) {
         client.authorized = true
         socket.send(JSON.stringify({
-          op: 'ready',
+          op: Universal.Opcode.READY,
           body: {
             logins: ctx.bots.map(bot => bot.toJSON()),
           },
         }))
-        if (!payload.body.sequence) return
+        if (!payload.body?.sequence) return
         for (const session of buffer) {
           if (session.id <= payload.body.sequence) continue
           dispatch(socket, session)
         }
       } else if (payload.op === Universal.Opcode.PING) {
-        socket.send(JSON.stringify({ op: 'pong', body: {} }))
-      } else {
-        return socket.close(4000, 'invalid message')
+        socket.send(JSON.stringify({
+          op: Universal.Opcode.PONG,
+          body: {},
+        }))
       }
     })
   })

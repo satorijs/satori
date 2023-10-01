@@ -1,4 +1,4 @@
-import { defineProperty, h, hyphenate, Logger, Universal } from '@satorijs/satori'
+import { h, hyphenate, Logger, Universal } from '@satorijs/satori'
 import * as qface from 'qface'
 import { BaseBot, CQCode } from './bot'
 import * as OneBot from './types'
@@ -151,8 +151,7 @@ export async function dispatchSession(bot: BaseBot, data: OneBot.Payload) {
 
   const session = await adaptSession(bot, data)
   if (!session) return
-  const internal = Object.create(bot.internal)
-  defineProperty(session, 'onebot', Object.assign(internal, data))
+  session.setInternal('onebot', data)
   bot.dispatch(session)
 }
 

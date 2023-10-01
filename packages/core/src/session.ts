@@ -114,6 +114,13 @@ export class Session {
     (this.body.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
   }
 
+  setInternal(type: string, data: any) {
+    this.body._type = type
+    this.body._data = data
+    const internal = Object.create(this.bot.internal)
+    defineProperty(this, type, Object.assign(internal, data))
+  }
+
   async transform(elements: h[]): Promise<h[]> {
     return await h.transformAsync(elements, ({ type, attrs, children }, session) => {
       const render = type === 'component' ? attrs.is : this.app['component:' + type]
@@ -124,34 +131,34 @@ export class Session {
   toJSON(): Event {
     return { ...this.body, id: this.id }
   }
-
-  static accessor(name: string, keys: string[]) {
-    Object.defineProperty(Session.prototype, name, {
-      get() {
-        return keys.reduce((data, key) => data?.[key], this.data)
-      },
-      set(value) {
-        const _keys = keys.slice()
-        const last = _keys.pop()
-        const data = _keys.reduce((data, key) => data[key] ??= {}, this.data)
-        data[last] = value
-      },
-    })
-  }
 }
 
-Session.accessor('type', ['type'])
-Session.accessor('subtype', ['subtype'])
-Session.accessor('subsubtype', ['subsubtype'])
-Session.accessor('selfId', ['selfId'])
-Session.accessor('platform', ['platform'])
-Session.accessor('timestamp', ['timestamp'])
-Session.accessor('userId', ['user', 'id'])
-Session.accessor('channelId', ['channel', 'id'])
-Session.accessor('channelName', ['channel', 'name'])
-Session.accessor('guildId', ['guild', 'id'])
-Session.accessor('guildName', ['guild', 'name'])
-Session.accessor('messageId', ['message', 'id'])
-Session.accessor('operatorId', ['operator', 'id'])
-Session.accessor('roleId', ['role', 'id'])
-Session.accessor('quote', ['message', 'quote'])
+export function defineAccessor(prototype: {}, name: string, keys: string[]) {
+  Object.defineProperty(prototype, name, {
+    get() {
+      return keys.reduce((data, key) => data?.[key], this)
+    },
+    set(value) {
+      const _keys = keys.slice()
+      const last = _keys.pop()
+      const data = _keys.reduce((data, key) => data[key] ??= {}, this)
+      data[last] = value
+    },
+  })
+}
+
+defineAccessor(Session.prototype, 'type', ['body', 'type'])
+defineAccessor(Session.prototype, 'subtype', ['body', 'subtype'])
+defineAccessor(Session.prototype, 'subsubtype', ['body', 'subsubtype'])
+defineAccessor(Session.prototype, 'selfId', ['body', 'selfId'])
+defineAccessor(Session.prototype, 'platform', ['body', 'platform'])
+defineAccessor(Session.prototype, 'timestamp', ['body', 'timestamp'])
+defineAccessor(Session.prototype, 'userId', ['body', 'user', 'id'])
+defineAccessor(Session.prototype, 'channelId', ['body', 'channel', 'id'])
+defineAccessor(Session.prototype, 'channelName', ['body', 'channel', 'name'])
+defineAccessor(Session.prototype, 'guildId', ['body', 'guild', 'id'])
+defineAccessor(Session.prototype, 'guildName', ['body', 'guild', 'name'])
+defineAccessor(Session.prototype, 'messageId', ['body', 'message', 'id'])
+defineAccessor(Session.prototype, 'operatorId', ['body', 'operator', 'id'])
+defineAccessor(Session.prototype, 'roleId', ['body', 'role', 'id'])
+defineAccessor(Session.prototype, 'quote', ['body', 'message', 'quote'])

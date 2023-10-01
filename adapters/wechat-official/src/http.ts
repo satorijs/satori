@@ -4,14 +4,16 @@ import xml2js from 'xml2js'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 import { decrypt, encrypt, getSignature } from '@wecom/crypto'
-export class HttpServer extends Adapter.Server<WechatOfficialBot> {
+
+export class HttpServer extends Adapter<WechatOfficialBot> {
   constructor() {
     super()
   }
 
-  async start(bot: WechatOfficialBot) {
+  async connect(bot: WechatOfficialBot) {
     await bot.refreshToken()
     await bot.ensureCustom()
+
     // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
     bot.ctx.router.get('/wechat-official', async (ctx) => {
       let success = false
@@ -101,6 +103,7 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
         ctx.body = 'success'
       }
     })
+
     bot.ctx.router.get('/wechat-official/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
       const selfId = ctx.params.self_id
@@ -120,6 +123,7 @@ export class HttpServer extends Adapter.Server<WechatOfficialBot> {
       ctx.response.body = resp.data
       ctx.status = 200
     })
+
     bot.online()
   }
 }

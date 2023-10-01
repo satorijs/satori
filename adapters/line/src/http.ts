@@ -5,14 +5,14 @@ import { WebhookRequestBody } from './types'
 import { adaptSessions } from './utils'
 import internal from 'stream'
 
-export class HttpServer extends Adapter.Server<LineBot> {
+export class HttpServer extends Adapter<LineBot> {
   logger = new Logger('line')
 
   constructor(ctx: Context, bot: LineBot) {
     super()
   }
 
-  async start(bot: LineBot) {
+  async connect(bot: LineBot) {
     bot.ctx.router.post('/line', async (ctx) => {
       const sign = ctx.headers['x-line-signature']?.toString()
       const parsed = ctx.request.body as WebhookRequestBody

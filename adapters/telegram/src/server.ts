@@ -5,8 +5,8 @@ import * as Telegram from './types'
 
 const logger = new Logger('telegram')
 
-export class HttpServer extends Adapter.Server<TelegramBot> {
-  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
+export class HttpServer extends Adapter<TelegramBot> {
+  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {
@@ -33,10 +33,6 @@ export class HttpServer extends Adapter.Server<TelegramBot> {
       if (!info) throw new Error('Set webhook failed')
       logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
-  }
-
-  async stop() {
-    logger.debug('http server closing')
   }
 }
 

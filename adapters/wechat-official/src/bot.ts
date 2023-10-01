@@ -81,7 +81,7 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
 }
 
 export namespace WechatOfficialBot {
-  export interface Config extends Bot.Config, Quester.Config {
+  export interface Config extends Quester.Config {
     appid: string
     secret: string
     token: string

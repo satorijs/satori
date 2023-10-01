@@ -1,7 +1,5 @@
 import crypto from 'crypto'
-
-import { defineProperty, h, Session, trimSlash } from '@satorijs/satori'
-
+import { h, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot } from './bot'
 import { AllEvents, Events, Lark, MessageContentType, MessageType } from './types'
 
@@ -71,10 +69,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
 
 export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
   const session = bot.session()
-  session.body._data = body
-  const internal = Object.create(bot.internal)
-  Object.assign(internal, body)
-  defineProperty(session, 'lark', internal)
+  session.setInternal('lark', body)
 
   switch (body.type) {
     case 'im.message.receive_v1':

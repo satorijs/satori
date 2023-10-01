@@ -4,6 +4,7 @@ import { WecomMessageEncoder } from './message'
 
 export class WecomBot extends Bot<WecomBot.Config> {
   static MessageEncoder = WecomMessageEncoder
+
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
@@ -115,7 +116,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
 }
 
 export namespace WecomBot {
-  export interface Config extends Bot.Config, Quester.Config {
+  export interface Config extends Quester.Config {
     corpId: string
     token: string
     aesKey: string

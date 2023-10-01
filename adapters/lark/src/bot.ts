@@ -80,7 +80,7 @@ export class LarkBot extends Bot<LarkBot.Config> {
 }
 
 export namespace LarkBot {
-  export interface Config extends Bot.Config, HttpServer.Config, Quester.Config {
+  export interface Config extends HttpServer.Config, Quester.Config {
     appId: string
     appSecret: string
     encryptKey?: string

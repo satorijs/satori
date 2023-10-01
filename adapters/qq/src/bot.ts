@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from './utils'
 import { QQMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -68,10 +68,6 @@ export class QQBot extends Bot<QQBot.Config> {
   stop() {
     clearTimeout(this._timer)
     return super.stop()
-  }
-
-  session(payload?: any, input?: any) {
-    return defineProperty(super.session(payload), 'qq', Object.assign(Object.create(this.internal), input))
   }
 
   async getLogin() {
@@ -161,7 +157,7 @@ export class QQBot extends Bot<QQBot.Config> {
 }
 
 export namespace QQBot {
-  export interface Config extends Bot.Config, QQ.Options, WsClient.Config {
+  export interface Config extends QQ.Options, WsClient.Config {
     intents?: number
   }
 

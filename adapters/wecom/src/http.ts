@@ -5,14 +5,15 @@ import { Message } from './types'
 import { decodeMessage } from './utils'
 import { decrypt, getSignature } from '@wecom/crypto'
 
-export class HttpServer extends Adapter.Server<WecomBot> {
+export class HttpServer extends Adapter<WecomBot> {
   constructor() {
     super()
   }
 
-  async start(bot: WecomBot) {
+  async connect(bot: WecomBot) {
     await bot.refreshToken()
     await bot.getLogin()
+
     // https://developer.work.weixin.qq.com/document/10514
     bot.ctx.router.get('/wecom', async (ctx) => {
       let success = false
@@ -62,6 +63,7 @@ export class HttpServer extends Adapter.Server<WecomBot> {
       ctx.status = 200
       ctx.body = 'success'
     })
+
     /** https://developer.work.weixin.qq.com/document/path/90254 */
     bot.ctx.router.get('/wecom/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
@@ -82,6 +84,7 @@ export class HttpServer extends Adapter.Server<WecomBot> {
       ctx.response.body = resp.data
       ctx.status = 200
     })
+
     bot.online()
   }
 }

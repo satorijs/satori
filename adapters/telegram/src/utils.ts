@@ -1,4 +1,4 @@
-import { defineProperty, Dict, h, Logger, Universal } from '@satorijs/satori'
+import { Dict, h, Logger, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -33,10 +33,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   }
 
   const session = bot.session()
-  session.body._data = update
-  const internal = Object.create(bot.internal)
-  Object.assign(session.telegram, update)
-  defineProperty(session, 'telegram', internal)
+  session.setInternal('telegram', update)
 
   const message = update.message || update.edited_message || update.channel_post || update.edited_channel_post
   const isBotCommand = update.message && update.message.entities?.[0].type === 'bot_command'

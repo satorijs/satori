@@ -24,12 +24,12 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
 
   accept() {
     this.bot.online()
-    this.bot.socket.addEventListener('message', async ({ data }) => {
+    this.socket.addEventListener('message', async ({ data }) => {
       const parsed = JSON.parse(data.toString())
       this.ctx.logger('dingtalk').debug(require('util').inspect(parsed, false, null, true))
       if (parsed.type === 'SYSTEM') {
         if (parsed.headers.topic === 'ping') {
-          this.bot.socket.send(JSON.stringify({
+          this.socket.send(JSON.stringify({
             code: 200,
             headers: parsed.headers,
             message: 'OK',
@@ -47,8 +47,9 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClient.Config { }
+  export interface Config extends Adapter.WsClientConfig {}
+
   export const Config: Schema<Config> = Schema.intersect([
-    Adapter.WsClient.Config,
+    Adapter.WsClientConfig,
   ] as const)
 }

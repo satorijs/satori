@@ -171,7 +171,8 @@ function setupReaction(session: Partial<Session>, data: ReactionEvent) {
 }
 
 export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
-  const session = bot.session({}, input)
+  const session = bot.session()
+  session.setInternal('discord', input)
   if (input.t === 'MESSAGE_CREATE') {
     setupMessageGuildId(session, input.d.guild_id)
     if (input.d.webhook_id && !session.isDirect) {

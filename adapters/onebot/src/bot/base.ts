@@ -76,7 +76,7 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
 }
 
 export namespace BaseBot {
-  export interface Config extends Bot.Config {
+  export interface Config {
     advanced?: AdvancedConfig
   }
 

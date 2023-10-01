@@ -1,4 +1,4 @@
-import { defineProperty, segment, Session, Universal } from '@satorijs/satori'
+import { segment, Session, Universal } from '@satorijs/satori'
 import { MatrixBot } from './bot'
 import * as Matrix from './types'
 import { INode, ITag, parse, SyntaxKind } from 'html5parser'
@@ -139,9 +139,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
 export async function dispatchSession(bot: MatrixBot, event: Matrix.ClientEvent) {
   const session = await adaptSession(bot, event)
   if (!session) return
-
-  const internal = Object.create(bot.internal)
-  defineProperty(session, 'matrix', Object.assign(internal, event))
+  session.setInternal('matrix', event)
   bot.dispatch(session)
 }
 

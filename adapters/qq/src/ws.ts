@@ -17,32 +17,32 @@ export class WsClient extends Adapter.WsClient<QQBot> {
   }
 
   heartbeat() {
-    this.bot.socket.send(JSON.stringify({
+    this.socket.send(JSON.stringify({
       op: Opcode.HEARTBEAT,
       s: this._s,
     }))
   }
 
-  async accept(bot: QQBot) {
-    bot.socket.addEventListener('message', async ({ data }) => {
+  async accept() {
+    this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
       logger.debug(require('util').inspect(parsed, false, null, true))
       if (parsed.op === Opcode.HELLO) {
         if (this._sessionId) {
-          bot.socket.send(JSON.stringify({
+          this.socket.send(JSON.stringify({
             op: Opcode.RESUME,
             d: {
-              token: `Bot ${bot.config.id}.${bot.config.token}`,
+              token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
               session_id: this._sessionId,
               seq: this._s,
             },
           }))
         } else {
-          bot.socket.send(JSON.stringify({
+          this.socket.send(JSON.stringify({
             op: Opcode.IDENTIFY,
             d: {
-              token: `Bot ${bot.config.id}.${bot.config.token}`,
-              intents: bot.config.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
+              token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
+              intents: this.bot.config.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
             },
           }))
         }
@@ -51,10 +51,10 @@ export class WsClient extends Adapter.WsClient<QQBot> {
         this._sessionId = ''
         this._s = null
         logger.warn('offline: invalid session')
-        bot.socket?.close()
+        this.socket?.close()
       } else if (parsed.op === Opcode.RECONNECT) {
         logger.warn('offline: server request reconnect')
-        this.bot.socket?.close()
+        this.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
@@ -64,33 +64,28 @@ export class WsClient extends Adapter.WsClient<QQBot> {
         this._s = parsed.s
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
-          bot.user = decodeUser(parsed.d.user)
-          return bot.online()
+          this.bot.user = decodeUser(parsed.d.user)
+          return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
-          return bot.online()
+          return this.bot.online()
         }
-        const session = await adaptSession(bot, parsed)
-        if (session) bot.dispatch(session)
+        const session = await adaptSession(this.bot, parsed)
+        if (session) this.bot.dispatch(session)
         logger.debug(require('util').inspect(session, false, null, true))
       }
     })
 
-    bot.socket.addEventListener('close', (e) => {
+    this.socket.addEventListener('close', (e) => {
       clearInterval(this._ping)
     })
-  }
-
-  async stop(bot: QQBot): Promise<void> {
-    bot.offline()
-    bot.socket?.close()
   }
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClient.Config { }
+  export interface Config extends Adapter.WsClientConfig { }
 
   export const Config: Schema<Config> = Schema.intersect([
-    Adapter.WsClient.Config,
+    Adapter.WsClientConfig,
   ])
 }

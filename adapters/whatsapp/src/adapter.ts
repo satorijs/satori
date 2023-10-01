@@ -93,6 +93,7 @@ class HttpServer {
 }
 
 export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
+  static schema = true
   static reusable = true
 
   public bots: WhatsAppBot[] = []
@@ -111,12 +112,11 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
     ctx.on('ready', async () => {
       const data = await internal.getPhoneNumbers(config.id)
       for (const item of data) {
-        const bot = new WhatsAppBot(ctx, {
-          selfId: item.id,
-        })
-        this.bots.push(bot)
+        const bot = new WhatsAppBot(ctx, {})
+        bot.selfId = item.id
         bot.adapter = this
         bot.internal = internal
+        this.bots.push(bot)
         bot.online()
       }
     })

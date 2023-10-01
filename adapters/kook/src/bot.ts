@@ -26,7 +26,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     if (config.protocol === 'http') {
       ctx.plugin(HttpServer, this)
     } else if (config.protocol === 'ws') {
-      ctx.plugin(WsClient, this)
+      ctx.plugin(WsClient, this as any)
     }
   }
 
@@ -173,7 +173,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Bot.Config, Quester.Config, KookMessageEncoder.Config {}
+  export interface BaseConfig extends Quester.Config, KookMessageEncoder.Config {}
 
   export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
 

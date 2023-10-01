@@ -147,7 +147,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
 }
 
 export namespace MatrixBot {
-  export interface Config extends Bot.Config, Quester.Config {
+  export interface Config extends Quester.Config {
     name?: string
     avatar?: string
     id?: string

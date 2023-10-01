@@ -73,12 +73,12 @@ export function setupReaction(session: Partial<Session>, data: QQ.MessageReactio
   // https://bot.q.qq.com/wiki/develop/api/openapi/reaction/model.html#reactiontargettype
   session.messageId = data.target.id
   session.isDirect = false
-  // @TODO type
   return session
 }
 
 export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
-  const session = bot.session({}, input)
+  const session = bot.session()
+  session.setInternal('qq', input)
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
     session.type = 'message'

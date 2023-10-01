@@ -1,4 +1,4 @@
-import { Bot, Context, defineProperty, Fragment, h, isNullable, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, isNullable, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -31,10 +31,6 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     })
     this.internal = new Internal(this.http)
     ctx.plugin(WsClient, this)
-  }
-
-  session(payload?: any, input?: any) {
-    return defineProperty(super.session(payload), 'discord', Object.assign(Object.create(this.internal), input))
   }
 
   private async _ensureWebhook(channelId: string) {
@@ -249,7 +245,7 @@ function shapeEqual(a: any, b: any) {
 }
 
 export namespace DiscordBot {
-  export interface Config extends Bot.Config, Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
+  export interface Config extends Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
     token: string
     slash?: boolean
   }

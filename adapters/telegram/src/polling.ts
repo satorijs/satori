@@ -4,11 +4,13 @@ import { handleUpdate } from './utils'
 
 const logger = new Logger('telegram')
 
-export class HttpPolling extends Adapter.Client<TelegramBot> {
+export class HttpPolling extends Adapter<TelegramBot> {
+  static reusable = true
+
   private offset = 0
   private timeout: NodeJS.Timeout
 
-  async start(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Config>) {
+  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Config>) {
     bot.initialize(async () => {
       let _retryCount = 0
       let _initial = true
@@ -69,7 +71,7 @@ export class HttpPolling extends Adapter.Client<TelegramBot> {
     })
   }
 
-  async stop() {
+  async disconnect() {
     clearTimeout(this.timeout)
   }
 }

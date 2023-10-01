@@ -81,7 +81,7 @@ export class LineBot extends Bot<LineBot.Config> {
 }
 
 export namespace LineBot {
-  export interface Config extends Bot.Config {
+  export interface Config {
     token: string
     secret: string
     api: Quester.Config
