@@ -77,7 +77,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 通过业务主键拉取单条连接器主数据
-     * @see https://developers.dingtalk.com/document/connector/pull-a-single-primary-record-based-on-the-business-primary
+     * @see https://open.dingtalk.com/document/connector/pull-a-single-primary-record-based-on-the-business-primary
      */
     pullDataByPk(
       dataModelId: string,
@@ -85,12 +85,12 @@ declare module '../internal' {
     ): Promise<PullDataByPkResponse>
     /**
      * 分页拉取连接器主数据
-     * @see https://developers.dingtalk.com/document/connector/bulk-pull-dingtalk-connector-master-data
+     * @see https://open.dingtalk.com/document/connector/bulk-pull-dingtalk-connector-master-data
      */
     pullDataByPage(query: PullDataByPageQuery): Promise<PullDataByPageResponse>
     /**
      * 同步连接器数据
-     * @see https://developers.dingtalk.com/document/connector/dingtalk-connector-data-synchronization-interface
+     * @see https://open.dingtalk.com/document/connector/dingtalk-connector-data-synchronization-interface
      */
     syncData(params: SyncDataParams): Promise<SyncDataResponse>
   }

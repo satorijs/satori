@@ -12,7 +12,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 升级设备
-     * @see https://developers.dingtalk.com/document/app/upgrade-equipment
+     * @see https://open.dingtalk.com/document/app/upgrade-equipment
      */
     upgradeDevice(): Promise<UpgradeDeviceResponse>
   }

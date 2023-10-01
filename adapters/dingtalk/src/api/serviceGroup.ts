@@ -164,50 +164,50 @@ declare module '../internal' {
   interface Internal {
     /**
      * 添加服务群成员
-     * @see https://developers.dingtalk.com/document/orgapp/add-service-group-members
+     * @see https://open.dingtalk.com/document/orgapp/add-service-group-members
      */
     addMemberToServiceGroup(
       params: AddMemberToServiceGroupParams,
     ): Promise<AddMemberToServiceGroupResponse>
     /**
      * 服务群发任务
-     * @see https://developers.dingtalk.com/document/orgapp/service-group-sending-task-interface
+     * @see https://open.dingtalk.com/document/orgapp/service-group-sending-task-interface
      */
     sendMsgByTask(params: SendMsgByTaskParams): Promise<SendMsgByTaskResponse>
     /**
      * 升级普通群为服务群
-     * @see https://developers.dingtalk.com/document/orgapp/a-dingtalk-group-is-upgraded-to-one-of-the-intelligent
+     * @see https://open.dingtalk.com/document/orgapp/a-dingtalk-group-is-upgraded-to-one-of-the-intelligent
      */
     upgradeNormalGroup(params: UpgradeNormalGroupParams): Promise<void>
     /**
      * 升级云客服服务群为钉钉智能服务群
-     * @see https://developers.dingtalk.com/document/orgapp/upgraded-the-cloud-customer-service-group-to-the-dingtalk-intelligent
+     * @see https://open.dingtalk.com/document/orgapp/upgraded-the-cloud-customer-service-group-to-the-dingtalk-intelligent
      */
     upgradeCloudGroup(params: UpgradeCloudGroupParams): Promise<void>
     /**
      * 查询服务群活跃成员
-     * @see https://developers.dingtalk.com/document/orgapp/queries-active-service-users
+     * @see https://open.dingtalk.com/document/orgapp/queries-active-service-users
      */
     queryActiveUsers(
       query: QueryActiveUsersQuery,
     ): Promise<QueryActiveUsersResponse>
     /**
      * 服务群发消息
-     * @see https://developers.dingtalk.com/document/orgapp/service-group-message-sending-interface
+     * @see https://open.dingtalk.com/document/orgapp/service-group-message-sending-interface
      */
     sendServiceGroupMessage(
       params: SendServiceGroupMessageParams,
     ): Promise<SendServiceGroupMessageResponse>
     /**
      * 创建服务群
-     * @see https://developers.dingtalk.com/document/orgapp/create-a-scenario-service-group
+     * @see https://open.dingtalk.com/document/orgapp/create-a-scenario-service-group
      */
     serviceGroupCreateGroup(
       params: ServiceGroupCreateGroupParams,
     ): Promise<ServiceGroupCreateGroupResponse>
     /**
      * 更换服务群所在的群分组
-     * @see https://developers.dingtalk.com/document/isvapp/modify-a-service-group
+     * @see https://open.dingtalk.com/document/isvapp/modify-a-service-group
      */
     serviceGroupUpdateGroupSet(
       params: ServiceGroupUpdateGroupSetParams,

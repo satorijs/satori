@@ -227,56 +227,56 @@ declare module '../internal' {
   interface Internal {
     /**
      * 钉工牌通知消息
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-badge-notification-message
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-badge-notification-message
      */
     createBadgeNotify(
       params: CreateBadgeNotifyParams,
     ): Promise<CreateBadgeNotifyResponse>
     /**
      * 通知钉工牌码验证结果
-     * @see https://developers.dingtalk.com/document/isvapp/notification-dingtalk-badge-verification-result
+     * @see https://open.dingtalk.com/document/isvapp/notification-dingtalk-badge-verification-result
      */
     notifyBadgeCodeVerifyResult(
       params: NotifyBadgeCodeVerifyResultParams,
     ): Promise<NotifyBadgeCodeVerifyResultResponse>
     /**
      * 配置企业钉工牌
-     * @see https://developers.dingtalk.com/document/isvapp/save-dingtalk-enterprise-instance
+     * @see https://open.dingtalk.com/document/isvapp/save-dingtalk-enterprise-instance
      */
     saveBadgeCodeCorpInstance(
       params: SaveBadgeCodeCorpInstanceParams,
     ): Promise<SaveBadgeCodeCorpInstanceResponse>
     /**
      * 通知支付结果
-     * @see https://developers.dingtalk.com/document/isvapp/sync-dingtalk-badge-code-payment-result
+     * @see https://open.dingtalk.com/document/isvapp/sync-dingtalk-badge-code-payment-result
      */
     notifyBadgeCodePayResult(
       params: NotifyBadgeCodePayResultParams,
     ): Promise<NotifyBadgeCodePayResultResponse>
     /**
      * 创建钉工牌电子码
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-badge-user-instance
+     * @see https://open.dingtalk.com/document/isvapp/create-a-badge-user-instance
      */
     createBadgeCodeUserInstance(
       params: CreateBadgeCodeUserInstanceParams,
     ): Promise<CreateBadgeCodeUserInstanceResponse>
     /**
      * 通知退款结果
-     * @see https://developers.dingtalk.com/document/isvapp/notification-dingtalk-badge-code-refund-result
+     * @see https://open.dingtalk.com/document/isvapp/notification-dingtalk-badge-code-refund-result
      */
     notifyBadgeCodeRefundResult(
       params: NotifyBadgeCodeRefundResultParams,
     ): Promise<NotifyBadgeCodeRefundResultResponse>
     /**
      * 更新钉工牌电子码
-     * @see https://developers.dingtalk.com/document/isvapp/update-dingtalk-user-instance
+     * @see https://open.dingtalk.com/document/isvapp/update-dingtalk-user-instance
      */
     updateBadgeCodeUserInstance(
       params: UpdateBadgeCodeUserInstanceParams,
     ): Promise<UpdateBadgeCodeUserInstanceResponse>
     /**
      * 解码钉工牌电子码
-     * @see https://developers.dingtalk.com/document/isvapp/stack-dingtalk-badge
+     * @see https://open.dingtalk.com/document/isvapp/stack-dingtalk-badge
      */
     decodeBadgeCode(
       params: DecodeBadgeCodeParams,

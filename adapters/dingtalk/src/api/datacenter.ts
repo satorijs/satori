@@ -488,182 +488,182 @@ declare module '../internal' {
   interface Internal {
     /**
      * 数据资产平台数据服务接口
-     * @see https://developers.dingtalk.com/document/orgapp-server/data-assets-platform-data-services-apis
+     * @see https://open.dingtalk.com/document/orgapp-server/data-assets-platform-data-services-apis
      */
     queryGeneralDataService(
       query: QueryGeneralDataServiceQuery,
     ): Promise<QueryGeneralDataServiceResponse>
     /**
      * 获取企业用户在线统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/retrieve-online-statistics-of-enterprise-users
+     * @see https://open.dingtalk.com/document/orgapp/retrieve-online-statistics-of-enterprise-users
      */
     queryOnlineUserStatisticalData(
       query: QueryOnlineUserStatisticalDataQuery,
     ): Promise<QueryOnlineUserStatisticalDataResponse>
     /**
      * 获取企业用户激活状态统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-statistics-on-user-activation-status
+     * @see https://open.dingtalk.com/document/orgapp/obtains-statistics-on-user-activation-status
      */
     queryActiveUserStatisticalData(
       query: QueryActiveUserStatisticalDataQuery,
     ): Promise<QueryActiveUserStatisticalDataResponse>
     /**
      * 获取企业员工类型统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-statistics-on-employee-types
+     * @see https://open.dingtalk.com/document/orgapp/obtains-statistics-on-employee-types
      */
     queryEmployeeTypeStatisticalData(
       query: QueryEmployeeTypeStatisticalDataQuery,
     ): Promise<QueryEmployeeTypeStatisticalDataResponse>
     /**
      * 获取企业全员圈统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-statistical-data-of-all-employees-of-an-enterprise
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-statistical-data-of-all-employees-of-an-enterprise
      */
     queryCircleStatisticalData(
       query: QueryCircleStatisticalDataQuery,
     ): Promise<QueryCircleStatisticalDataResponse>
     /**
      * 获取企业单聊统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-statistics-on-one-time-enterprise-chats
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-statistics-on-one-time-enterprise-chats
      */
     querySingleMessageStatisticalData(
       query: QuerySingleMessageStatisticalDataQuery,
     ): Promise<QuerySingleMessageStatisticalDataResponse>
     /**
      * 获取企业群聊统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-enterprise-group-chat-statistics
+     * @see https://open.dingtalk.com/document/orgapp/obtain-enterprise-group-chat-statistics
      */
     queryGroupMessageStatisticalData(
       query: QueryGroupMessageStatisticalDataQuery,
     ): Promise<QueryGroupMessageStatisticalDataResponse>
     /**
      * 获取企业DING发送统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-sending-statistics-of-an-enterprise-ding
+     * @see https://open.dingtalk.com/document/orgapp/obtain-sending-statistics-of-an-enterprise-ding
      */
     queryDingSendStatisticalData(
       query: QueryDingSendStatisticalDataQuery,
     ): Promise<QueryDingSendStatisticalDataResponse>
     /**
      * 获取企业DING接收及评论统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-statistics-on-receiving-and-comments-of-enterprise-ding
+     * @see https://open.dingtalk.com/document/orgapp/obtain-statistics-on-receiving-and-comments-of-enterprise-ding
      */
     queryDingReciveStatisticalData(
       query: QueryDingReciveStatisticalDataQuery,
     ): Promise<QueryDingReciveStatisticalDataResponse>
     /**
      * 获取企业视频会议统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/get-enterprise-video-conference-statistics
+     * @see https://open.dingtalk.com/document/orgapp/get-enterprise-video-conference-statistics
      */
     queryVedioMeetingStatisticalData(
       query: QueryVedioMeetingStatisticalDataQuery,
     ): Promise<QueryVedioMeetingStatisticalDataResponse>
     /**
      * 获取企业电话会议统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/get-enterprise-teleconference-statistics
+     * @see https://open.dingtalk.com/document/orgapp/get-enterprise-teleconference-statistics
      */
     queryTelMeetingStatisticalData(
       query: QueryTelMeetingStatisticalDataQuery,
     ): Promise<QueryTelMeetingStatisticalDataResponse>
     /**
      * 获取企业群直播统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-live-stream-statistics-for-an-enterprise-group
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-live-stream-statistics-for-an-enterprise-group
      */
     queryGroupLiveStatisticalData(
       query: QueryGroupLiveStatisticalDataQuery,
     ): Promise<QueryGroupLiveStatisticalDataResponse>
     /**
      * 获取企业发送红包统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-statistics-on-red-packets-issued-by-enterprises
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-statistics-on-red-packets-issued-by-enterprises
      */
     queryRedEnvelopeSendStatisticalData(
       query: QueryRedEnvelopeSendStatisticalDataQuery,
     ): Promise<QueryRedEnvelopeSendStatisticalDataResponse>
     /**
      * 获取企业接收红包统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-red-envelope-receiving-statistics-of-an-enterprise
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-red-envelope-receiving-statistics-of-an-enterprise
      */
     queryRedEnvelopeReciveStatisticalData(
       query: QueryRedEnvelopeReciveStatisticalDataQuery,
     ): Promise<QueryRedEnvelopeReciveStatisticalDataResponse>
     /**
      * 获取企业公告统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-corporate-announcement-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-corporate-announcement-statistics
      */
     queryBlackboardStatisticalData(
       query: QueryBlackboardStatisticalDataQuery,
     ): Promise<QueryBlackboardStatisticalDataResponse>
     /**
      * 获取企业待办统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-to-do-statistics-of-an-enterprise
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-to-do-statistics-of-an-enterprise
      */
     queryTodoStatisticalData(
       query: QueryTodoStatisticalDataQuery,
     ): Promise<QueryTodoStatisticalDataResponse>
     /**
      * 获取企业钉钉运动统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-dingtalk-movement-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-dingtalk-movement-statistics
      */
     queryHealthStatisticalData(
       query: QueryHealthStatisticalDataQuery,
     ): Promise<QueryHealthStatisticalDataResponse>
     /**
      * 获取企业文档统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/get-enterprise-document-statistics
+     * @see https://open.dingtalk.com/document/orgapp/get-enterprise-document-statistics
      */
     queryDocumentStatisticalData(
       query: QueryDocumentStatisticalDataQuery,
     ): Promise<QueryDocumentStatisticalDataResponse>
     /**
      * 获取企业签到统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-enterprise-check-in-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-enterprise-check-in-statistics
      */
     queryCheckinStatisticalData(
       query: QueryCheckinStatisticalDataQuery,
     ): Promise<QueryCheckinStatisticalDataResponse>
     /**
      * 获取企业审批统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-enterprise-approval-statistics
+     * @see https://open.dingtalk.com/document/orgapp/obtains-enterprise-approval-statistics
      */
     queryApprovalStatisticalData(
       query: QueryApprovalStatisticalDataQuery,
     ): Promise<QueryApprovalStatisticalDataResponse>
     /**
      * 获取企业日志统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-enterprise-log-statistics
+     * @see https://open.dingtalk.com/document/orgapp/obtain-enterprise-log-statistics
      */
     queryReportStatisticalData(
       query: QueryReportStatisticalDataQuery,
     ): Promise<QueryReportStatisticalDataResponse>
     /**
      * 获取企业考勤统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-enterprise-attendance-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-enterprise-attendance-statistics
      */
     queryAttendanceStatisticalData(
       query: QueryAttendanceStatisticalDataQuery,
     ): Promise<QueryAttendanceStatisticalDataResponse>
     /**
      * 获取企业钉盘统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-statistics-on-enterprise-dingtalk-trays
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-statistics-on-enterprise-dingtalk-trays
      */
     queryDriveStatisticalData(
       query: QueryDriveStatisticalDataQuery,
     ): Promise<QueryDriveStatisticalDataResponse>
     /**
      * 获取企业邮箱统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-enterprise-email-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-enterprise-email-statistics
      */
     queryMailStatisticalData(
       query: QueryMailStatisticalDataQuery,
     ): Promise<QueryMailStatisticalDataResponse>
     /**
      * 获取企业日程统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-enterprise-schedule-statistics
+     * @see https://open.dingtalk.com/document/orgapp/queries-enterprise-schedule-statistics
      */
     queryCalendarStatisticalData(
       query: QueryCalendarStatisticalDataQuery,
     ): Promise<QueryCalendarStatisticalDataResponse>
     /**
      * 获取数字区县组织信息
-     * @see https://developers.dingtalk.com/document/orgapp/querydigitaldistrictorginfo-api-reference
+     * @see https://open.dingtalk.com/document/orgapp/querydigitaldistrictorginfo-api-reference
      */
     queryDigitalDistrictOrgInfo(
       params: QueryDigitalDistrictOrgInfoParams,

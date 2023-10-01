@@ -1752,117 +1752,117 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取应用内表单列表信息
-     * @see https://developers.dingtalk.com/document/app/depending-on-the-application-id-to-get-the-form-list
+     * @see https://open.dingtalk.com/document/app/depending-on-the-application-id-to-get-the-form-list
      */
     getFormListInApp(
       query: GetFormListInAppQuery,
     ): Promise<GetFormListInAppResponse>
     /**
      * 根据表单ID获取字段信息
-     * @see https://developers.dingtalk.com/document/isvapp/get-form-field-information-based-on-form-uuid
+     * @see https://open.dingtalk.com/document/isvapp/get-form-field-information-based-on-form-uuid
      */
     getFieldDefByUuid(
       query: GetFieldDefByUuidQuery,
     ): Promise<GetFieldDefByUuidResponse>
     /**
      * 批量审批
-     * @see https://developers.dingtalk.com/document/app/bulk-approval
+     * @see https://open.dingtalk.com/document/app/bulk-approval
      */
     executeBatchTask(
       params: ExecuteBatchTaskParams,
     ): Promise<ExecuteBatchTaskResponse>
     /**
      * 查询表单的变更记录
-     * @see https://developers.dingtalk.com/document/app/query-the-operation-records-of-a-form
+     * @see https://open.dingtalk.com/document/app/query-the-operation-records-of-a-form
      */
     listOperationLogs(
       params: ListOperationLogsParams,
     ): Promise<ListOperationLogsResponse>
     /**
      * 查询表单实例评论列表
-     * @see https://developers.dingtalk.com/document/isvapp/batch-query-of-comments-appropriate-for-form-instances
+     * @see https://open.dingtalk.com/document/isvapp/batch-query-of-comments-appropriate-for-form-instances
      */
     listFormRemarks(
       params: ListFormRemarksParams,
     ): Promise<ListFormRemarksResponse>
     /**
      * 查询服务调用记录
-     * @see https://developers.dingtalk.com/document/isvapp/execution-records-of-form-service-calls
+     * @see https://open.dingtalk.com/document/isvapp/execution-records-of-form-service-calls
      */
     queryServiceRecord(
       query: QueryServiceRecordQuery,
     ): Promise<QueryServiceRecordResponse>
     /**
      * 批量删除指定的表单实例
-     * @see https://developers.dingtalk.com/document/isvapp/delete-multiple-form-instances
+     * @see https://open.dingtalk.com/document/isvapp/delete-multiple-form-instances
      */
     batchRemovalByFormInstanceIdList(
       params: BatchRemovalByFormInstanceIdListParams,
     ): Promise<void>
     /**
      * 将多条表单实例的指定表单组件更新成指定值
-     * @see https://developers.dingtalk.com/document/isvapp/batch-update-of-component-values-in-form-instances
+     * @see https://open.dingtalk.com/document/isvapp/batch-update-of-component-values-in-form-instances
      */
     batchUpdateFormDataByInstanceId(
       params: BatchUpdateFormDataByInstanceIdParams,
     ): Promise<BatchUpdateFormDataByInstanceIdResponse>
     /**
      * 通过表单实例数据批量更新表单实例
-     * @see https://developers.dingtalk.com/document/isvapp/batch-update-of-form-instances-through-form-component-data
+     * @see https://open.dingtalk.com/document/isvapp/batch-update-of-form-instances-through-form-component-data
      */
     batchUpdateFormDataByInstanceMap(
       params: BatchUpdateFormDataByInstanceMapParams,
     ): Promise<BatchUpdateFormDataByInstanceMapResponse>
     /**
      * 获取组织下的宜搭应用列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-application-list
+     * @see https://open.dingtalk.com/document/isvapp/query-the-application-list
      */
     listApplication(
       query: ListApplicationQuery,
     ): Promise<ListApplicationResponse>
     /**
      * 批量保存表单实例数据
-     * @see https://developers.dingtalk.com/document/isvapp/create-multiple-form-instances
+     * @see https://open.dingtalk.com/document/isvapp/create-multiple-form-instances
      */
     batchSaveFormData(
       params: BatchSaveFormDataParams,
     ): Promise<BatchSaveFormDataResponse>
     /**
      * 通过高级查询条件查询表单实例数据(不返回子表单组件数据)
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-form-instance-data-using-advanced-query-conditions-excluding-subform
+     * @see https://open.dingtalk.com/document/isvapp/obtain-form-instance-data-using-advanced-query-conditions-excluding-subform
      */
     searchFormDataSecondGenerationNoTableField(
       params: SearchFormDataSecondGenerationNoTableFieldParams,
     ): Promise<SearchFormDataSecondGenerationNoTableFieldResponse>
     /**
      * 新增或更新表单实例
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-update-form-instances
+     * @see https://open.dingtalk.com/document/isvapp/add-or-update-form-instances
      */
     createOrUpdateFormData(
       params: CreateOrUpdateFormDataParams,
     ): Promise<CreateOrUpdateFormDataResponse>
     /**
      * 通过高级检索条件查询表单实例
-     * @see https://developers.dingtalk.com/document/isvapp/query-form-instances-using-advanced-search-conditions
+     * @see https://open.dingtalk.com/document/isvapp/query-form-instances-using-advanced-search-conditions
      */
     searchFormDataSecondGeneration(
       params: SearchFormDataSecondGenerationParams,
     ): Promise<SearchFormDataSecondGenerationResponse>
     /**
      * 批量获取指定表单实例ID列表对应的表单实例数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-multiple-form-instance-data
+     * @see https://open.dingtalk.com/document/isvapp/obtain-multiple-form-instance-data
      */
     batchGetFormDataByIdList(
       params: BatchGetFormDataByIdListParams,
     ): Promise<BatchGetFormDataByIdListResponse>
     /**
      * 查询抄送我的任务列表（应用维度）
-     * @see https://developers.dingtalk.com/document/app/query-copied-my-task-list-application-dimension
+     * @see https://open.dingtalk.com/document/app/query-copied-my-task-list-application-dimension
      */
     getTaskCopies(query: GetTaskCopiesQuery): Promise<GetTaskCopiesResponse>
     /**
      * 根据条件搜索表单实例 ID 列表
-     * @see https://developers.dingtalk.com/document/app/obtain-the-ids-of-multiple-form-instances
+     * @see https://open.dingtalk.com/document/app/obtain-the-ids-of-multiple-form-instances
      */
     searchFormDataIdList(
       appType: string,
@@ -1872,7 +1872,7 @@ declare module '../internal' {
     ): Promise<SearchFormDataIdListResponse>
     /**
      * 获取子表单数据
-     * @see https://developers.dingtalk.com/document/app/obtain-child-table-component-data
+     * @see https://open.dingtalk.com/document/app/obtain-child-table-component-data
      */
     listTableDataByFormInstanceIdTableId(
       formInstanceId: string,
@@ -1880,7 +1880,7 @@ declare module '../internal' {
     ): Promise<ListTableDataByFormInstanceIdTableIdResponse>
     /**
      * 查询已完成任务列表
-     * @see https://developers.dingtalk.com/document/app/obtains-the-completed-approval-tasks-in-an-organization
+     * @see https://open.dingtalk.com/document/app/obtains-the-completed-approval-tasks-in-an-organization
      */
     getCorpAccomplishmentTasks(
       corpId: string,
@@ -1889,7 +1889,7 @@ declare module '../internal' {
     ): Promise<GetCorpAccomplishmentTasksResponse>
     /**
      * 获取表单定义
-     * @see https://developers.dingtalk.com/document/app/get-a-list-of-form-component-definitions
+     * @see https://open.dingtalk.com/document/app/get-a-list-of-form-component-definitions
      */
     getFormComponentDefinitionList(
       appType: string,
@@ -1898,7 +1898,7 @@ declare module '../internal' {
     ): Promise<GetFormComponentDefinitionListResponse>
     /**
      * 根据条件搜索流程实例 ID
-     * @see https://developers.dingtalk.com/document/app/obtains-a-list-of-instance-ids
+     * @see https://open.dingtalk.com/document/app/obtains-a-list-of-instance-ids
      */
     getInstanceIdList(
       query: GetInstanceIdListQuery,
@@ -1906,14 +1906,14 @@ declare module '../internal' {
     ): Promise<GetInstanceIdListResponse>
     /**
      * 根据实例 ID 列表批量获取流程实例详情
-     * @see https://developers.dingtalk.com/document/app/queries-multiple-process-instances
+     * @see https://open.dingtalk.com/document/app/queries-multiple-process-instances
      */
     getInstancesByIdList(
       query: GetInstancesByIdListQuery,
     ): Promise<GetInstancesByIdListResponse>
     /**
      * 获取组织内某人提交的任务
-     * @see https://developers.dingtalk.com/document/app/obtains-the-tasks-submitted-by-someone-in-an-organization
+     * @see https://open.dingtalk.com/document/app/obtains-the-tasks-submitted-by-someone-in-an-organization
      */
     getMeCorpSubmission(
       userId: string,
@@ -1921,7 +1921,7 @@ declare module '../internal' {
     ): Promise<GetMeCorpSubmissionResponse>
     /**
      * 获取流程定义
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-process-definition
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-process-definition
      */
     getProcessDefinition(
       processInstanceId: string,
@@ -1929,12 +1929,12 @@ declare module '../internal' {
     ): Promise<GetProcessDefinitionResponse>
     /**
      * 查询待办任务列表
-     * @see https://developers.dingtalk.com/document/app/query-tasks-from-the-organization-dimension
+     * @see https://open.dingtalk.com/document/app/query-tasks-from-the-organization-dimension
      */
     getCorpTasks(query: GetCorpTasksQuery): Promise<GetCorpTasksResponse>
     /**
      * 查询抄送我的任务列表（企业维度）
-     * @see https://developers.dingtalk.com/document/app/get-notifications-sent-to-users
+     * @see https://open.dingtalk.com/document/app/get-notifications-sent-to-users
      */
     getNotifyMe(
       userId: string,
@@ -1942,7 +1942,7 @@ declare module '../internal' {
     ): Promise<GetNotifyMeResponse>
     /**
      * 获取流程节点按钮列表
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-a-list-of-process-node-buttons-1
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-a-list-of-process-node-buttons-1
      */
     getActivityButtonList(
       appType: string,
@@ -1952,51 +1952,51 @@ declare module '../internal' {
     ): Promise<GetActivityButtonListResponse>
     /**
      * 获取平台服务资源
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-platform-service-resources
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-platform-service-resources
      */
     getApplicationAuthorizationServicePlatformResource(
       query: GetApplicationAuthorizationServicePlatformResourceQuery,
     ): Promise<GetApplicationAuthorizationServicePlatformResourceResponse>
     /**
      * 更新流程实例
-     * @see https://developers.dingtalk.com/document/isvapp-server/update-process-instance-1
+     * @see https://open.dingtalk.com/document/isvapp-server/update-process-instance-1
      */
     updateInstance(params: UpdateInstanceParams): Promise<void>
     /**
      * 删除流程实例
-     * @see https://developers.dingtalk.com/document/app/delete-process-instance
+     * @see https://open.dingtalk.com/document/app/delete-process-instance
      */
     deleteInstance(query: DeleteInstanceQuery): Promise<void>
     /**
      * 获取审批记录
-     * @see https://developers.dingtalk.com/document/app/queries-an-approval-record
+     * @see https://open.dingtalk.com/document/app/queries-an-approval-record
      */
     getOperationRecords(
       query: GetOperationRecordsQuery,
     ): Promise<GetOperationRecordsResponse>
     /**
      * 终止流程实例
-     * @see https://developers.dingtalk.com/document/app/terminate-a-process-instance
+     * @see https://open.dingtalk.com/document/app/terminate-a-process-instance
      */
     terminateInstance(query: TerminateInstanceQuery): Promise<void>
     /**
      * 执行审批任务
-     * @see https://developers.dingtalk.com/document/app/execute-approval-tasks
+     * @see https://open.dingtalk.com/document/app/execute-approval-tasks
      */
     executeTask(params: ExecuteTaskParams): Promise<void>
     /**
      * 执行宜搭平台的审批任务
-     * @see https://developers.dingtalk.com/document/isvapp-server/execute-appropriate-approval-tasks
+     * @see https://open.dingtalk.com/document/isvapp-server/execute-appropriate-approval-tasks
      */
     executePlatformTask(params: ExecutePlatformTaskParams): Promise<void>
     /**
      * 执行转交任务
-     * @see https://developers.dingtalk.com/document/app/transfer-tasks
+     * @see https://open.dingtalk.com/document/app/transfer-tasks
      */
     redirectTask(params: RedirectTaskParams): Promise<void>
     /**
      * 附件地址转临时免登地址
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-temporary-free-access-address-of-yixian-accessories
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-temporary-free-access-address-of-yixian-accessories
      */
     getOpenUrl(
       appType: string,
@@ -2004,132 +2004,132 @@ declare module '../internal' {
     ): Promise<GetOpenUrlResponse>
     /**
      * 提交表单/流程实例下的评论
-     * @see https://developers.dingtalk.com/document/app/submit-comment
+     * @see https://open.dingtalk.com/document/app/submit-comment
      */
     saveFormRemark(
       params: SaveFormRemarkParams,
     ): Promise<SaveFormRemarkResponse>
     /**
      * 获取应用下的页面列表
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtains-the-page-list-under-an-application
+     * @see https://open.dingtalk.com/document/isvapp-server/obtains-the-page-list-under-an-application
      */
     listNavigationByFormType(
       query: ListNavigationByFormTypeQuery,
     ): Promise<ListNavigationByFormTypeResponse>
     /**
      * 多渠道新购校验
-     * @see https://developers.dingtalk.com/document/isvapp-server/multi-channel-new-purchase-verification
+     * @see https://open.dingtalk.com/document/isvapp-server/multi-channel-new-purchase-verification
      */
     validateOrderBuy(
       query: ValidateOrderBuyQuery,
     ): Promise<ValidateOrderBuyResponse>
     /**
      * 查询流程运行任务（vpc）
-     * @see https://developers.dingtalk.com/document/app/query-process-running-tasks-vpc
+     * @see https://open.dingtalk.com/document/app/query-process-running-tasks-vpc
      */
     getRunningTasks(
       query: GetRunningTasksQuery,
     ): Promise<GetRunningTasksResponse>
     /**
      * 获取流程设计的节点信息
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-the-information-about-the-nodes-in-process-design-1
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-the-information-about-the-nodes-in-process-design-1
      */
     getActivityList(
       query: GetActivityListQuery,
     ): Promise<GetActivityListResponse>
     /**
      * 执行自定义API
-     * @see https://developers.dingtalk.com/document/isvapp-server/run-custom-api
+     * @see https://open.dingtalk.com/document/isvapp-server/run-custom-api
      */
     executeCustomApi(
       query: ExecuteCustomApiQuery,
     ): Promise<ExecuteCustomApiResponse>
     /**
      * 查询激活码
-     * @see https://developers.dingtalk.com/document/isvapp-server/query-activation-code
+     * @see https://open.dingtalk.com/document/isvapp-server/query-activation-code
      */
     searchActivationCode(
       query: SearchActivationCodeQuery,
     ): Promise<SearchActivationCodeResponse>
     /**
      * 查询销售用户信息
-     * @see https://developers.dingtalk.com/document/isvapp-server/query-sales-user-information
+     * @see https://open.dingtalk.com/document/isvapp-server/query-sales-user-information
      */
     getSaleUserInfoByUserId(
       query: GetSaleUserInfoByUserIdQuery,
     ): Promise<GetSaleUserInfoByUserIdResponse>
     /**
      * 查询企业级别
-     * @see https://developers.dingtalk.com/document/isvapp-server/query-enterprise-level
+     * @see https://open.dingtalk.com/document/isvapp-server/query-enterprise-level
      */
     getCorpLevelByAccountId(
       query: GetCorpLevelByAccountIdQuery,
     ): Promise<GetCorpLevelByAccountIdResponse>
     /**
      * 更新状态
-     * @see https://developers.dingtalk.com/document/isvapp-server/update-status
+     * @see https://open.dingtalk.com/document/isvapp-server/update-status
      */
     updateStatus(params: UpdateStatusParams): Promise<void>
     /**
      * 校验订单的升级
-     * @see https://developers.dingtalk.com/document/isvapp-server/verification-order-upgrade
+     * @see https://open.dingtalk.com/document/isvapp-server/verification-order-upgrade
      */
     validateOrderUpgrade(
       query: ValidateOrderUpgradeQuery,
     ): Promise<ValidateOrderUpgradeResponse>
     /**
      * 发布商品
-     * @see https://developers.dingtalk.com/document/isvapp-server/release-products
+     * @see https://open.dingtalk.com/document/isvapp-server/release-products
      */
     releaseCommodity(
       query: ReleaseCommodityQuery,
     ): Promise<ReleaseCommodityResponse>
     /**
      * 使商品过期
-     * @see https://developers.dingtalk.com/document/isvapp-server/make-goods-expire
+     * @see https://open.dingtalk.com/document/isvapp-server/make-goods-expire
      */
     expireCommodity(
       query: ExpireCommodityQuery,
     ): Promise<ExpireCommodityResponse>
     /**
      * 退还商品
-     * @see https://developers.dingtalk.com/document/isvapp-server/refund-of-goods
+     * @see https://open.dingtalk.com/document/isvapp-server/refund-of-goods
      */
     refundCommodity(
       query: RefundCommodityQuery,
     ): Promise<RefundCommodityResponse>
     /**
      * 搜索表单中指定人员组件的值
-     * @see https://developers.dingtalk.com/document/app/gets-the-value-of-the-employee-component
+     * @see https://open.dingtalk.com/document/app/gets-the-value-of-the-employee-component
      */
     searchEmployeeFieldValues(
       params: SearchEmployeeFieldValuesParams,
     ): Promise<SearchEmployeeFieldValuesResponse>
     /**
      * 删除序列
-     * @see https://developers.dingtalk.com/document/isvapp-server/delete-sequence
+     * @see https://open.dingtalk.com/document/isvapp-server/delete-sequence
      */
     deleteSequence(query: DeleteSequenceQuery): Promise<void>
     /**
      * 新增表单实例
-     * @see https://developers.dingtalk.com/document/app/save-form-data
+     * @see https://open.dingtalk.com/document/app/save-form-data
      */
     saveFormData(params: SaveFormDataParams): Promise<SaveFormDataResponse>
     /**
      * 更新表单实例
-     * @see https://developers.dingtalk.com/document/orgapp/update-form-data
+     * @see https://open.dingtalk.com/document/orgapp/update-form-data
      */
     updateFormData(params: UpdateFormDataParams): Promise<void>
     /**
      * 根据条件搜索表单实例详情列表,对应原searchFormDatas
-     * @see https://developers.dingtalk.com/document/app/querying-form-instance-data
+     * @see https://open.dingtalk.com/document/app/querying-form-instance-data
      */
     searchFormDatas(
       params: SearchFormDatasParams,
     ): Promise<SearchFormDatasResponse>
     /**
      * 根据搜索条件获取流程表单实例详情
-     * @see https://developers.dingtalk.com/document/app/obtain-process-instance
+     * @see https://open.dingtalk.com/document/app/obtain-process-instance
      */
     getInstances(
       query: GetInstancesQuery,
@@ -2137,12 +2137,12 @@ declare module '../internal' {
     ): Promise<GetInstancesResponse>
     /**
      * 删除表单实例
-     * @see https://developers.dingtalk.com/document/app/delete-form-data
+     * @see https://open.dingtalk.com/document/app/delete-form-data
      */
     deleteFormData(query: DeleteFormDataQuery): Promise<void>
     /**
      * 根据实例 ID 获取流程实例详情
-     * @see https://developers.dingtalk.com/document/app/queries-a-process-instance-based-on-its-id
+     * @see https://open.dingtalk.com/document/app/queries-a-process-instance-based-on-its-id
      */
     getInstanceById(
       id: string,
@@ -2150,12 +2150,12 @@ declare module '../internal' {
     ): Promise<GetInstanceByIdResponse>
     /**
      * 发起新的流程实例
-     * @see https://developers.dingtalk.com/document/app/initiate-the-approval-process
+     * @see https://open.dingtalk.com/document/app/initiate-the-approval-process
      */
     startInstance(params: StartInstanceParams): Promise<StartInstanceResponse>
     /**
      * 根据表单 ID 查询实例详情
-     * @see https://developers.dingtalk.com/document/app/query-form-data
+     * @see https://open.dingtalk.com/document/app/query-form-data
      */
     getFormDataByID(
       id: string,

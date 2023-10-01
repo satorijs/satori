@@ -1251,7 +1251,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 搜索知识库
-     * @see https://developers.dingtalk.com/document/orgapp/search-knowledge-base
+     * @see https://open.dingtalk.com/document/orgapp/search-knowledge-base
      */
     searchWorkspaces(
       query: SearchWorkspacesQuery,
@@ -1259,7 +1259,7 @@ declare module '../internal' {
     ): Promise<SearchWorkspacesResponse>
     /**
      * 设置权限继承模式
-     * @see https://developers.dingtalk.com/document/orgapp/set-permission-inheritance-mode
+     * @see https://open.dingtalk.com/document/orgapp/set-permission-inheritance-mode
      */
     setPermissionInheritance(
       dentryUuid: string,
@@ -1268,7 +1268,7 @@ declare module '../internal' {
     ): Promise<SetPermissionInheritanceResponse>
     /**
      * 获取权限继承模式
-     * @see https://developers.dingtalk.com/document/orgapp/get-permission-inheritance-mode
+     * @see https://open.dingtalk.com/document/orgapp/get-permission-inheritance-mode
      */
     getPermissionInheritance(
       dentryUuid: string,
@@ -1276,7 +1276,7 @@ declare module '../internal' {
     ): Promise<GetPermissionInheritanceResponse>
     /**
      * 修改权限
-     * @see https://developers.dingtalk.com/document/orgapp/modify-permissions-file
+     * @see https://open.dingtalk.com/document/orgapp/modify-permissions-file
      */
     storageUpdatePermission(
       dentryUuid: string,
@@ -1285,7 +1285,7 @@ declare module '../internal' {
     ): Promise<StorageUpdatePermissionResponse>
     /**
      * 删除权限
-     * @see https://developers.dingtalk.com/document/orgapp/delete-permissions-file
+     * @see https://open.dingtalk.com/document/orgapp/delete-permissions-file
      */
     storageDeletePermission(
       dentryUuid: string,
@@ -1294,7 +1294,7 @@ declare module '../internal' {
     ): Promise<StorageDeletePermissionResponse>
     /**
      * 添加权限
-     * @see https://developers.dingtalk.com/document/orgapp/add-permissions-file
+     * @see https://open.dingtalk.com/document/orgapp/add-permissions-file
      */
     storageAddPermission(
       dentryUuid: string,
@@ -1303,7 +1303,7 @@ declare module '../internal' {
     ): Promise<StorageAddPermissionResponse>
     /**
      * 获取权限列表
-     * @see https://developers.dingtalk.com/document/orgapp/get-permission-list
+     * @see https://open.dingtalk.com/document/orgapp/get-permission-list
      */
     listPermissionsOrg(
       dentryUuid: string,
@@ -1312,7 +1312,7 @@ declare module '../internal' {
     ): Promise<ListPermissionsOrgResponse>
     /**
      * 搜索文件
-     * @see https://developers.dingtalk.com/document/orgapp/search-for-files
+     * @see https://open.dingtalk.com/document/orgapp/search-for-files
      */
     searchDentries(
       query: SearchDentriesQuery,
@@ -1320,7 +1320,7 @@ declare module '../internal' {
     ): Promise<SearchDentriesResponse>
     /**
      * 提交文件
-     * @see https://developers.dingtalk.com/document/app/submittal-file
+     * @see https://open.dingtalk.com/document/app/submittal-file
      */
     storageCommitFile(
       parentDentryUuid: string,
@@ -1329,7 +1329,7 @@ declare module '../internal' {
     ): Promise<StorageCommitFileResponse>
     /**
      * 获取文件上传信息
-     * @see https://developers.dingtalk.com/document/app/obtain-file-upload-informations
+     * @see https://open.dingtalk.com/document/app/obtain-file-upload-informations
      */
     storageGetFileUploadInfo(
       parentDentryUuid: string,
@@ -1338,7 +1338,7 @@ declare module '../internal' {
     ): Promise<StorageGetFileUploadInfoResponse>
     /**
      * 取消订阅文件变更事件
-     * @see https://developers.dingtalk.com/document/isvapp/unsubscribe-from-file-change-event
+     * @see https://open.dingtalk.com/document/isvapp/unsubscribe-from-file-change-event
      */
     unsubscribeEvent(
       query: UnsubscribeEventQuery,
@@ -1346,7 +1346,7 @@ declare module '../internal' {
     ): Promise<UnsubscribeEventResponse>
     /**
      * 获取文件列表
-     * @see https://developers.dingtalk.com/document/isvapp/get-the-list-of-files-or-folders-under-a-space
+     * @see https://open.dingtalk.com/document/isvapp/get-the-list-of-files-or-folders-under-a-space
      */
     listAllDentries(
       spaceId: string,
@@ -1355,7 +1355,7 @@ declare module '../internal' {
     ): Promise<ListAllDentriesResponse>
     /**
      * 批量获取文件(夹)信息
-     * @see https://developers.dingtalk.com/document/isvapp/get-file-or-folder-information-in-bulk
+     * @see https://open.dingtalk.com/document/isvapp/get-file-or-folder-information-in-bulk
      */
     getDentries(
       spaceId: string,
@@ -1364,7 +1364,7 @@ declare module '../internal' {
     ): Promise<GetDentriesResponse>
     /**
      * 批量获取文件缩略图
-     * @see undefined
+     * @see https://open.dingtalk.com/document/isvapp/get-file-thumbnails-in-bulk
      */
     getDentryThumbnails(
       spaceId: string,
@@ -1373,7 +1373,7 @@ declare module '../internal' {
     ): Promise<GetDentryThumbnailsResponse>
     /**
      * 批量移动文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/bulk-move-files-or-folders
+     * @see https://open.dingtalk.com/document/isvapp/bulk-move-files-or-folders
      */
     moveDentries(
       spaceId: string,
@@ -1382,7 +1382,7 @@ declare module '../internal' {
     ): Promise<MoveDentriesResponse>
     /**
      * 批量拷贝文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/copy-files-or-folders-in-bulk
+     * @see https://open.dingtalk.com/document/isvapp/copy-files-or-folders-in-bulk
      */
     copyDentries(
       spaceId: string,
@@ -1391,7 +1391,7 @@ declare module '../internal' {
     ): Promise<CopyDentriesResponse>
     /**
      * 批量删除文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/delete-files-or-folders-in-bulk
+     * @see https://open.dingtalk.com/document/isvapp/delete-files-or-folders-in-bulk
      */
     deleteDentries(
       spaceId: string,
@@ -1400,12 +1400,12 @@ declare module '../internal' {
     ): Promise<DeleteDentriesResponse>
     /**
      * 获取异步任务信息
-     * @see https://developers.dingtalk.com/document/isvapp/get-the-asynchronous-task-information-in-storage
+     * @see https://open.dingtalk.com/document/isvapp/get-the-asynchronous-task-information-in-storage
      */
     getTask(taskId: string, query: GetTaskQuery): Promise<GetTaskResponse>
     /**
      * 初始化文件分片上传
-     * @see https://developers.dingtalk.com/document/isvapp/initialize-a-multipart-upload-object
+     * @see https://open.dingtalk.com/document/isvapp/initialize-a-multipart-upload-object
      */
     initMultipartFileUpload(
       spaceId: string,
@@ -1414,7 +1414,7 @@ declare module '../internal' {
     ): Promise<InitMultipartFileUploadResponse>
     /**
      * 获取文件上传信息(分片上传)
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-information-about-multipart-uploads-of-an-object
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-information-about-multipart-uploads-of-an-object
      */
     getMultipartFileUploadInfos(
       query: GetMultipartFileUploadInfosQuery,
@@ -1422,12 +1422,12 @@ declare module '../internal' {
     ): Promise<GetMultipartFileUploadInfosResponse>
     /**
      * 获取企业存储中企业维度的信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-enterprise-information-1
+     * @see https://open.dingtalk.com/document/isvapp/obtain-enterprise-information-1
      */
     getOrg(corpId: string, query: GetOrgQuery): Promise<GetOrgResponse>
     /**
      * 还原回收站中的回收项
-     * @see https://developers.dingtalk.com/document/isvapp/restore-recycle-items
+     * @see https://open.dingtalk.com/document/isvapp/restore-recycle-items
      */
     restoreRecycleItem(
       recycleBinId: string,
@@ -1437,12 +1437,12 @@ declare module '../internal' {
     ): Promise<RestoreRecycleItemResponse>
     /**
      * 获取回收站信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-information-about-the-recycle-bin
+     * @see https://open.dingtalk.com/document/isvapp/obtain-information-about-the-recycle-bin
      */
     getRecycleBin(query: GetRecycleBinQuery): Promise<GetRecycleBinResponse>
     /**
      * 获取回收项详情
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-recycling-item-information
+     * @see https://open.dingtalk.com/document/isvapp/obtain-recycling-item-information
      */
     getRecycleItem(
       recycleBinId: string,
@@ -1451,7 +1451,7 @@ declare module '../internal' {
     ): Promise<GetRecycleItemResponse>
     /**
      * 删除回收项, 删除之后该记录从回收站删除, 后续文件就无法恢复了
-     * @see https://developers.dingtalk.com/document/isvapp/delete-recycle-item
+     * @see https://open.dingtalk.com/document/isvapp/delete-recycle-item
      */
     deleteRecycleItem(
       recycleBinId: string,
@@ -1460,7 +1460,7 @@ declare module '../internal' {
     ): Promise<DeleteRecycleItemResponse>
     /**
      * 清空回收站
-     * @see https://developers.dingtalk.com/document/isvapp/empty-the-recycle-bin
+     * @see https://open.dingtalk.com/document/isvapp/empty-the-recycle-bin
      */
     clearRecycleBin(
       recycleBinId: string,
@@ -1468,7 +1468,7 @@ declare module '../internal' {
     ): Promise<ClearRecycleBinResponse>
     /**
      * 批量删除回收项, 删除之后该记录从回收站删除, 后续文件就无法恢复了
-     * @see https://developers.dingtalk.com/document/isvapp/batch-delete-recycle-items
+     * @see https://open.dingtalk.com/document/isvapp/batch-delete-recycle-items
      */
     deleteRecycleItems(
       recycleBinId: string,
@@ -1477,7 +1477,7 @@ declare module '../internal' {
     ): Promise<DeleteRecycleItemsResponse>
     /**
      * 批量还原回收站中的回收项
-     * @see https://developers.dingtalk.com/document/isvapp/batch-restore-recycled-items
+     * @see https://open.dingtalk.com/document/isvapp/batch-restore-recycled-items
      */
     restoreRecycleItems(
       recycleBinId: string,
@@ -1486,7 +1486,7 @@ declare module '../internal' {
     ): Promise<RestoreRecycleItemsResponse>
     /**
      * 获取文件历史版本
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-file-versions
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-file-versions
      */
     listDentryVersions(
       spaceId: string,
@@ -1495,7 +1495,7 @@ declare module '../internal' {
     ): Promise<ListDentryVersionsResponse>
     /**
      * 获取文件打开链接
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-object-preview-or-editing-information
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-object-preview-or-editing-information
      */
     getDentryOpenInfo(
       spaceId: string,
@@ -1505,7 +1505,7 @@ declare module '../internal' {
     ): Promise<GetDentryOpenInfoResponse>
     /**
      * 移动文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/move-a-file-or-folder
+     * @see https://open.dingtalk.com/document/isvapp/move-a-file-or-folder
      */
     moveDentry(
       spaceId: string,
@@ -1515,7 +1515,7 @@ declare module '../internal' {
     ): Promise<MoveDentryResponse>
     /**
      * 获取权限列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-a-permission-list-storage
+     * @see https://open.dingtalk.com/document/isvapp/obtain-a-permission-list-storage
      */
     listPermissionsIsv(
       spaceId: string,
@@ -1525,7 +1525,7 @@ declare module '../internal' {
     ): Promise<ListPermissionsIsvResponse>
     /**
      * 获取文件下载信息
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-download-information-about-a-file
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-download-information-about-a-file
      */
     getFileDownloadInfo(
       spaceId: string,
@@ -1535,7 +1535,7 @@ declare module '../internal' {
     ): Promise<GetFileDownloadInfoResponse>
     /**
      * 获取回收项列表
-     * @see https://developers.dingtalk.com/document/isvapp/gets-the-list-of-recycle-items
+     * @see https://open.dingtalk.com/document/isvapp/gets-the-list-of-recycle-items
      */
     listRecycleItems(
       recycleBinId: string,
@@ -1543,7 +1543,7 @@ declare module '../internal' {
     ): Promise<ListRecycleItemsResponse>
     /**
      * 删除文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-file-or-folder
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-file-or-folder
      */
     deleteDentry(
       spaceId: string,
@@ -1552,7 +1552,7 @@ declare module '../internal' {
     ): Promise<DeleteDentryResponse>
     /**
      * 重命名文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/rename-a-file-or-folder
+     * @see https://open.dingtalk.com/document/isvapp/rename-a-file-or-folder
      */
     renameDentry(
       spaceId: string,
@@ -1562,7 +1562,7 @@ declare module '../internal' {
     ): Promise<RenameDentryResponse>
     /**
      * 获取文件列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-file-list-storage
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-file-list-storage
      */
     listDentries(
       spaceId: string,
@@ -1570,7 +1570,7 @@ declare module '../internal' {
     ): Promise<ListDentriesResponse>
     /**
      * 恢复文件历史版本
-     * @see https://developers.dingtalk.com/document/isvapp/restore-previous-versions-of-files
+     * @see https://open.dingtalk.com/document/isvapp/restore-previous-versions-of-files
      */
     revertDentryVersion(
       spaceId: string,
@@ -1580,7 +1580,7 @@ declare module '../internal' {
     ): Promise<RevertDentryVersionResponse>
     /**
      * 拷贝文件或文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/copy-an-object
+     * @see https://open.dingtalk.com/document/isvapp/copy-an-object
      */
     copyDentry(
       spaceId: string,
@@ -1590,12 +1590,12 @@ declare module '../internal' {
     ): Promise<CopyDentryResponse>
     /**
      * 获取开放平台应用在企业存储中的相关应用信息
-     * @see https://developers.dingtalk.com/document/isvapp/queries-application-information-1
+     * @see https://open.dingtalk.com/document/isvapp/queries-application-information-1
      */
     getCurrentApp(query: GetCurrentAppQuery): Promise<GetCurrentAppResponse>
     /**
      * 获取空间信息
-     * @see https://developers.dingtalk.com/document/isvapp/get-space-information
+     * @see https://open.dingtalk.com/document/isvapp/get-space-information
      */
     storageGetSpace(
       spaceId: string,
@@ -1603,7 +1603,7 @@ declare module '../internal' {
     ): Promise<StorageGetSpaceResponse>
     /**
      * 添加文件夹
-     * @see https://developers.dingtalk.com/document/isvapp/add-folder
+     * @see https://open.dingtalk.com/document/isvapp/add-folder
      */
     addFolder(
       spaceId: string,
@@ -1613,7 +1613,7 @@ declare module '../internal' {
     ): Promise<AddFolderResponse>
     /**
      * 获取文件(夹)信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-file-or-folder-information
+     * @see https://open.dingtalk.com/document/isvapp/obtain-file-or-folder-information
      */
     getDentry(
       spaceId: string,
@@ -1623,7 +1623,7 @@ declare module '../internal' {
     ): Promise<GetDentryResponse>
     /**
      * 删除文件上的App属性值
-     * @see https://developers.dingtalk.com/document/isvapp/delete-file-app-attribute
+     * @see https://open.dingtalk.com/document/isvapp/delete-file-app-attribute
      */
     deleteDentryAppProperties(
       spaceId: number,
@@ -1633,7 +1633,7 @@ declare module '../internal' {
     ): Promise<DeleteDentryAppPropertiesResponse>
     /**
      * 修改文件上的App属性值
-     * @see https://developers.dingtalk.com/document/isvapp/update-the-application-properties-of-a-file-or-folder
+     * @see https://open.dingtalk.com/document/isvapp/update-the-application-properties-of-a-file-or-folder
      */
     updateDentryAppProperties(
       spaceId: number,
@@ -1643,7 +1643,7 @@ declare module '../internal' {
     ): Promise<UpdateDentryAppPropertiesResponse>
     /**
      * 提交文件
-     * @see https://developers.dingtalk.com/document/orgapp/submit-documents
+     * @see https://open.dingtalk.com/document/orgapp/submit-documents
      */
     storageCommitFile(
       spaceId: string,
@@ -1652,7 +1652,7 @@ declare module '../internal' {
     ): Promise<StorageCommitFileResponse>
     /**
      * 获取文件上传信息
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-storage-upload-information
+     * @see https://open.dingtalk.com/document/orgapp/obtain-storage-upload-information
      */
     storageGetFileUploadInfo(
       spaceId: string,
@@ -1661,7 +1661,7 @@ declare module '../internal' {
     ): Promise<StorageGetFileUploadInfoResponse>
     /**
      * 修改权限
-     * @see https://developers.dingtalk.com/document/isvapp/modify-storage-permissions
+     * @see https://open.dingtalk.com/document/isvapp/modify-storage-permissions
      */
     storageUpdatePermission(
       spaceId: string,
@@ -1671,7 +1671,7 @@ declare module '../internal' {
     ): Promise<StorageUpdatePermissionResponse>
     /**
      * 删除权限
-     * @see https://developers.dingtalk.com/document/isvapp/delete-storage-permissions
+     * @see https://open.dingtalk.com/document/isvapp/delete-storage-permissions
      */
     storageDeletePermission(
       spaceId: string,
@@ -1681,7 +1681,7 @@ declare module '../internal' {
     ): Promise<StorageDeletePermissionResponse>
     /**
      * 添加权限
-     * @see https://developers.dingtalk.com/document/isvapp/add-permissions-storage
+     * @see https://open.dingtalk.com/document/isvapp/add-permissions-storage
      */
     storageAddPermission(
       spaceId: string,
@@ -1691,7 +1691,7 @@ declare module '../internal' {
     ): Promise<StorageAddPermissionResponse>
     /**
      * 添加空间
-     * @see https://developers.dingtalk.com/document/isvapp/add-space
+     * @see https://open.dingtalk.com/document/isvapp/add-space
      */
     storageAddSpace(
       query: StorageAddSpaceQuery,

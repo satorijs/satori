@@ -243,7 +243,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询设备属性
-     * @see https://developers.dingtalk.com/document/app/querying-video-conference-device-attribute-information
+     * @see https://open.dingtalk.com/document/app/querying-video-conference-device-attribute-information
      */
     queryDeviceProperties(
       query: QueryDevicePropertiesQuery,
@@ -251,14 +251,14 @@ declare module '../internal' {
     ): Promise<QueryDevicePropertiesResponse>
     /**
      * 查询设备信息
-     * @see https://developers.dingtalk.com/document/app/querying-video-conference-device-information
+     * @see https://open.dingtalk.com/document/app/querying-video-conference-device-information
      */
     queryMeetingRoomDevice(
       query: QueryMeetingRoomDeviceQuery,
     ): Promise<QueryMeetingRoomDeviceResponse>
     /**
      * 删除会议室分组
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-conference-room-group
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-conference-room-group
      */
     deleteMeetingRoomGroup(
       groupId: number,
@@ -266,21 +266,21 @@ declare module '../internal' {
     ): Promise<DeleteMeetingRoomGroupResponse>
     /**
      * 更新会议室分组信息
-     * @see https://developers.dingtalk.com/document/isvapp/update-meeting-room-group-information
+     * @see https://open.dingtalk.com/document/isvapp/update-meeting-room-group-information
      */
     updateMeetingRoomGroup(
       params: UpdateMeetingRoomGroupParams,
     ): Promise<UpdateMeetingRoomGroupResponse>
     /**
      * 查询会议室分组列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-meeting-room-groups
+     * @see https://open.dingtalk.com/document/isvapp/query-meeting-room-groups
      */
     queryMeetingRoomGroupList(
       query: QueryMeetingRoomGroupListQuery,
     ): Promise<QueryMeetingRoomGroupListResponse>
     /**
      * 查询会议室分组信息
-     * @see https://developers.dingtalk.com/document/isvapp/query-meeting-room-group-information
+     * @see https://open.dingtalk.com/document/isvapp/query-meeting-room-group-information
      */
     queryMeetingRoomGroup(
       groupId: number,
@@ -288,14 +288,14 @@ declare module '../internal' {
     ): Promise<QueryMeetingRoomGroupResponse>
     /**
      * 创建会议室分组
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-meeting-room-group
+     * @see https://open.dingtalk.com/document/isvapp/create-a-meeting-room-group
      */
     createMeetingRoomGroup(
       params: CreateMeetingRoomGroupParams,
     ): Promise<CreateMeetingRoomGroupResponse>
     /**
      * 删除会议室
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-meeting-room
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-meeting-room
      */
     deleteMeetingRoom(
       roomId: string,
@@ -303,21 +303,21 @@ declare module '../internal' {
     ): Promise<DeleteMeetingRoomResponse>
     /**
      * 查询会议室列表
-     * @see https://developers.dingtalk.com/document/isvapp/check-the-meeting-room-list
+     * @see https://open.dingtalk.com/document/isvapp/check-the-meeting-room-list
      */
     queryMeetingRoomList(
       query: QueryMeetingRoomListQuery,
     ): Promise<QueryMeetingRoomListResponse>
     /**
      * 更新会议室信息
-     * @see https://developers.dingtalk.com/document/isvapp/update-meeting-room-information
+     * @see https://open.dingtalk.com/document/isvapp/update-meeting-room-information
      */
     updateMeetingRoom(
       params: UpdateMeetingRoomParams,
     ): Promise<UpdateMeetingRoomResponse>
     /**
      * 查询会议室详情
-     * @see https://developers.dingtalk.com/document/isvapp/check-meeting-room-details
+     * @see https://open.dingtalk.com/document/isvapp/check-meeting-room-details
      */
     queryMeetingRoom(
       roomId: string,
@@ -325,7 +325,7 @@ declare module '../internal' {
     ): Promise<QueryMeetingRoomResponse>
     /**
      * 创建智能会议室
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-meeting-room
+     * @see https://open.dingtalk.com/document/isvapp/create-a-meeting-room
      */
     createMeetingRoom(
       params: CreateMeetingRoomParams,

@@ -42,12 +42,12 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询企业认证信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-enterprise-authentication-information
+     * @see https://open.dingtalk.com/document/isvapp/obtain-enterprise-authentication-information
      */
     getOrgAuthInfo(query: GetOrgAuthInfoQuery): Promise<GetOrgAuthInfoResponse>
     /**
      * 批量通过分支组织的关联申请
-     * @see https://developers.dingtalk.com/document/isvapp/apply-for-association-with-multiple-branches-in-batch-batch-through-the-application-of-partner-organizations-to-join-contact
+     * @see https://open.dingtalk.com/document/isvapp/apply-for-association-with-multiple-branches-in-batch-batch-through-the-application-of-partner-organizations-to-join-contact
      */
     batchApproveUnionApply(
       params: BatchApproveUnionApplyParams,

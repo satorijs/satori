@@ -126,36 +126,36 @@ declare module '../internal' {
   interface Internal {
     /**
      * 删除直播
-     * @see https://developers.dingtalk.com/document/isvapp/delete-live-streaming
+     * @see https://open.dingtalk.com/document/isvapp/delete-live-streaming
      */
     deleteLive(query: DeleteLiveQuery): Promise<DeleteLiveResponse>
     /**
      * 查询直播观看人员信息
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-viewing-information-of-viewers
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-viewing-information-of-viewers
      */
     queryLiveWatchUserList(
       query: QueryLiveWatchUserListQuery,
     ): Promise<QueryLiveWatchUserListResponse>
     /**
      * 获取直播的观看数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-playback-data-of-a-live-stream
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-playback-data-of-a-live-stream
      */
     queryLiveWatchDetail(
       query: QueryLiveWatchDetailQuery,
     ): Promise<QueryLiveWatchDetailResponse>
     /**
      * 修改直播属性信息
-     * @see https://developers.dingtalk.com/document/isvapp/modify-live-streaming
+     * @see https://open.dingtalk.com/document/isvapp/modify-live-streaming
      */
     updateLive(params: UpdateLiveParams): Promise<UpdateLiveResponse>
     /**
      * 创建直播
-     * @see https://developers.dingtalk.com/document/isvapp/create-live-streaming
+     * @see https://open.dingtalk.com/document/isvapp/create-live-streaming
      */
     createLive(params: CreateLiveParams): Promise<CreateLiveResponse>
     /**
      * 查询直播详情
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-live-streaming-information
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-live-streaming-information
      */
     queryLiveInfo(query: QueryLiveInfoQuery): Promise<QueryLiveInfoResponse>
   }

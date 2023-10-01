@@ -180,42 +180,42 @@ declare module '../internal' {
   interface Internal {
     /**
      * 根据词条主键ID查询当前词条详情
-     * @see https://developers.dingtalk.com/document/app/entry-query
+     * @see https://open.dingtalk.com/document/app/entry-query
      */
     pediaWordsQuery(
       query: PediaWordsQueryQuery,
     ): Promise<PediaWordsQueryResponse>
     /**
      * 分页获取企业词条信息
-     * @see https://developers.dingtalk.com/document/app/entry-search
+     * @see https://open.dingtalk.com/document/app/entry-search
      */
     pediaWordsSearch(
       params: PediaWordsSearchParams,
     ): Promise<PediaWordsSearchResponse>
     /**
      * 企业百科针对待审核词条进行审核
-     * @see https://developers.dingtalk.com/document/app/entry-review
+     * @see https://open.dingtalk.com/document/app/entry-review
      */
     pediaWordsApprove(
       params: PediaWordsApproveParams,
     ): Promise<PediaWordsApproveResponse>
     /**
      * 企业百科针对uuid删除当前词条
-     * @see https://developers.dingtalk.com/document/app/entry-delete
+     * @see https://open.dingtalk.com/document/app/entry-delete
      */
     pediaWordsDelete(
       query: PediaWordsDeleteQuery,
     ): Promise<PediaWordsDeleteResponse>
     /**
      * 企业百科对当前已经生效词条进行编辑
-     * @see https://developers.dingtalk.com/document/app/update-entry
+     * @see https://open.dingtalk.com/document/app/update-entry
      */
     pediaWordsUpdate(
       params: PediaWordsUpdateParams,
     ): Promise<PediaWordsUpdateResponse>
     /**
      * 企业百科增加当前企业词条信息
-     * @see https://developers.dingtalk.com/document/app/new-entry
+     * @see https://open.dingtalk.com/document/app/new-entry
      */
     pediaWordsAdd(params: PediaWordsAddParams): Promise<PediaWordsAddResponse>
   }

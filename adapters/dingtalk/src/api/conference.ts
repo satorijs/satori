@@ -143,7 +143,7 @@ export interface StopStreamOutParams {
   streamId: string
   /** 是否停止所有流，为true时**streamId**参数无效。 */
   stopAllStream: unknown
-  /** 用户unionId，可以调用[通过免登码获取用户信息(v2)](https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
+  /** 用户unionId，可以调用[通过免登码获取用户信息(v2)](https://open.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
   unionId: string
 }
 
@@ -152,7 +152,7 @@ export interface StopStreamOutResponse {
 }
 
 export interface StartStreamOutParams {
-  /** 用户unionId，可以调用[通过免登码获取用户信息(v2)](https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
+  /** 用户unionId，可以调用[通过免登码获取用户信息(v2)](https://open.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
   unionId: string
   /** 是否需要主持人加入后才允许推流。 */
   needHostJoin: unknown
@@ -400,7 +400,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 邀请其他人员
-     * @see https://developers.dingtalk.com/document/orgapp/invite-users-to-join
+     * @see https://open.dingtalk.com/document/orgapp/invite-users-to-join
      */
     inviteUsers(
       conferenceId: string,
@@ -408,12 +408,12 @@ declare module '../internal' {
     ): Promise<InviteUsersResponse>
     /**
      * 设置全员看他
-     * @see https://developers.dingtalk.com/document/orgapp/set-the-whole-staff-to-see-him
+     * @see https://open.dingtalk.com/document/orgapp/set-the-whole-staff-to-see-him
      */
     focus(conferenceId: string, params: FocusParams): Promise<FocusResponse>
     /**
      * 设置联席主持人
-     * @see https://developers.dingtalk.com/document/orgapp/set-up-co-hosts
+     * @see https://open.dingtalk.com/document/orgapp/set-up-co-hosts
      */
     cohosts(
       conferenceId: string,
@@ -421,7 +421,7 @@ declare module '../internal' {
     ): Promise<CohostsResponse>
     /**
      * 指定人员静音或取消静音
-     * @see https://developers.dingtalk.com/document/orgapp/specify-person-to-mute-or-unmute
+     * @see https://open.dingtalk.com/document/orgapp/specify-person-to-mute-or-unmute
      */
     muteMembers(
       conferenceId: string,
@@ -429,7 +429,7 @@ declare module '../internal' {
     ): Promise<MuteMembersResponse>
     /**
      * 分页获取预约会议历史会议信息，当前仅返回最后一次的会议信息
-     * @see https://developers.dingtalk.com/document/orgapp/query-appointment-meeting-history-meeting-information
+     * @see https://open.dingtalk.com/document/orgapp/query-appointment-meeting-history-meeting-information
      */
     queryScheduleConferenceInfo(
       scheduleConferenceId: string,
@@ -437,7 +437,7 @@ declare module '../internal' {
     ): Promise<QueryScheduleConferenceInfoResponse>
     /**
      * 查询会议录制的详情信息
-     * @see https://developers.dingtalk.com/document/isvapp/query-recording-information
+     * @see https://open.dingtalk.com/document/isvapp/query-recording-information
      */
     queryCloudRecordVideo(
       conferenceId: string,
@@ -445,7 +445,7 @@ declare module '../internal' {
     ): Promise<QueryCloudRecordVideoResponse>
     /**
      * 查询会议录制中的文本信息
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-text-information-about-cloud-recording
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-text-information-about-cloud-recording
      */
     queryCloudRecordText(
       conferenceId: string,
@@ -453,7 +453,7 @@ declare module '../internal' {
     ): Promise<QueryCloudRecordTextResponse>
     /**
      * 查询会议录制中的视频信息
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-playback-information-about-a-recorded-cloud-video
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-playback-information-about-a-recorded-cloud-video
      */
     queryCloudRecordVideoPlayInfo(
       conferenceId: string,
@@ -461,7 +461,7 @@ declare module '../internal' {
     ): Promise<QueryCloudRecordVideoPlayInfoResponse>
     /**
      * 停止视频会议云录制
-     * @see https://developers.dingtalk.com/document/isvapp/video-conferencing-stops-cloud-recording
+     * @see https://open.dingtalk.com/document/isvapp/video-conferencing-stops-cloud-recording
      */
     stopCloudRecord(
       conferenceId: string,
@@ -469,7 +469,7 @@ declare module '../internal' {
     ): Promise<StopCloudRecordResponse>
     /**
      * 会议停止直播推流
-     * @see https://developers.dingtalk.com/document/orgapp/videoconferencing-stops-live-stream-ingest
+     * @see https://open.dingtalk.com/document/orgapp/videoconferencing-stops-live-stream-ingest
      */
     stopStreamOut(
       conferenceId: string,
@@ -477,7 +477,7 @@ declare module '../internal' {
     ): Promise<StopStreamOutResponse>
     /**
      * 会议开始直播推流
-     * @see https://developers.dingtalk.com/document/orgapp/video-conference-enables-live-stream-ingest
+     * @see https://open.dingtalk.com/document/orgapp/video-conference-enables-live-stream-ingest
      */
     startStreamOut(
       conferenceId: string,
@@ -485,7 +485,7 @@ declare module '../internal' {
     ): Promise<StartStreamOutResponse>
     /**
      * 开启视频会议云录制
-     * @see https://developers.dingtalk.com/document/isvapp/video-conference-open-cloud-recording
+     * @see https://open.dingtalk.com/document/isvapp/video-conference-open-cloud-recording
      */
     startCloudRecord(
       conferenceId: string,
@@ -493,14 +493,14 @@ declare module '../internal' {
     ): Promise<StartCloudRecordResponse>
     /**
      * 批量查询视频会议信息
-     * @see https://developers.dingtalk.com/document/isvapp/batch-query-of-video-conference-information
+     * @see https://open.dingtalk.com/document/isvapp/batch-query-of-video-conference-information
      */
     queryConferenceInfoBatch(
       params: QueryConferenceInfoBatchParams,
     ): Promise<QueryConferenceInfoBatchResponse>
     /**
      * 关闭视频会议
-     * @see https://developers.dingtalk.com/document/isvapp/close-audio-video-conferencing
+     * @see https://open.dingtalk.com/document/isvapp/close-audio-video-conferencing
      */
     closeVideoConference(
       conferenceId: string,
@@ -508,14 +508,14 @@ declare module '../internal' {
     ): Promise<CloseVideoConferenceResponse>
     /**
      * 创建视频会议
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-video-conference
+     * @see https://open.dingtalk.com/document/isvapp/create-a-video-conference
      */
     createVideoConference(
       params: CreateVideoConferenceParams,
     ): Promise<CreateVideoConferenceResponse>
     /**
      * 查询视频会议成员
-     * @see https://developers.dingtalk.com/document/app/query-video-meeting-member-information
+     * @see https://open.dingtalk.com/document/app/query-video-meeting-member-information
      */
     queryConferenceMembers(
       conferenceId: string,
@@ -523,21 +523,21 @@ declare module '../internal' {
     ): Promise<QueryConferenceMembersResponse>
     /**
      * 查询视频会议信息
-     * @see https://developers.dingtalk.com/document/app/querying-video-conference-information
+     * @see https://open.dingtalk.com/document/app/querying-video-conference-information
      */
     queryConferenceInfo(
       conferenceId: string,
     ): Promise<QueryConferenceInfoResponse>
     /**
      * 取消预约会议
-     * @see https://developers.dingtalk.com/document/app/cancel-appointment-meeting
+     * @see https://open.dingtalk.com/document/app/cancel-appointment-meeting
      */
     cancelScheduleConference(
       params: CancelScheduleConferenceParams,
     ): Promise<CancelScheduleConferenceResponse>
     /**
      * 查询预约会议信息
-     * @see https://developers.dingtalk.com/document/app/query-meeting-reservation
+     * @see https://open.dingtalk.com/document/app/query-meeting-reservation
      */
     queryScheduleConference(
       scheduleConferenceId: string,
@@ -545,14 +545,14 @@ declare module '../internal' {
     ): Promise<QueryScheduleConferenceResponse>
     /**
      * 更新预约会议
-     * @see https://developers.dingtalk.com/document/app/update-appointment-meeting
+     * @see https://open.dingtalk.com/document/app/update-appointment-meeting
      */
     updateScheduleConference(
       params: UpdateScheduleConferenceParams,
     ): Promise<UpdateScheduleConferenceResponse>
     /**
      * 创建预约会议
-     * @see https://developers.dingtalk.com/document/app/create-appointment-meeting
+     * @see https://open.dingtalk.com/document/app/create-appointment-meeting
      */
     createScheduleConference(
       params: CreateScheduleConferenceParams,

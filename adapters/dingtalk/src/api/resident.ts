@@ -6,7 +6,7 @@ export interface AddPointQuery {
   isCircle: unknown
   /** 加减积分的唯一幂等标志，由调用方自己生成。 */
   uuid: string
-  /** 用户userid，可以调用[通过免登码获取用户信息](https://developers.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
+  /** 用户userid，可以调用[通过免登码获取用户信息](https://open.dingtalk.com/document/app/obtain-the-userid-of-a-user-by-using-the-log-free)接口获取。 */
   userId: string
   /** 规则代码。可以为空。 */
   ruleCode?: string
@@ -100,31 +100,31 @@ declare module '../internal' {
   interface Internal {
     /**
      * 增加或减少居民积分
-     * @see https://developers.dingtalk.com/document/isvapp/increase-or-decrease-resident-points
+     * @see https://open.dingtalk.com/document/isvapp/increase-or-decrease-resident-points
      */
     addPoint(query: AddPointQuery): Promise<void>
     /**
      * 查询数字区县居民积分流水
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-integral-flow-records-by-page
+     * @see https://open.dingtalk.com/document/isvapp/query-the-integral-flow-records-by-page
      */
     pagePointHistory(
       query: PagePointHistoryQuery,
     ): Promise<PagePointHistoryResponse>
     /**
      * 查询组织维度配置的的积分规则
-     * @see https://developers.dingtalk.com/document/isvapp/query-all-credit-rules
+     * @see https://open.dingtalk.com/document/isvapp/query-all-credit-rules
      */
     listPointRules(query: ListPointRulesQuery): Promise<ListPointRulesResponse>
     /**
      * 获取行业角色下的用户列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-users-under-an-industry-role
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-users-under-an-industry-role
      */
     listIndustryRoleUsers(
       query: ListIndustryRoleUsersQuery,
     ): Promise<ListIndustryRoleUsersResponse>
     /**
      * 获取用户所在的行业角色信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-information-about-the-industry-role-to-which-the-user
+     * @see https://open.dingtalk.com/document/isvapp/obtains-information-about-the-industry-role-to-which-the-user
      */
     listUserIndustryRoles(
       query: ListUserIndustryRolesQuery,

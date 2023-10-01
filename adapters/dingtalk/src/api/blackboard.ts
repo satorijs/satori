@@ -19,7 +19,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取公告钉盘空间信息
-     * @see https://developers.dingtalk.com/document/app/obtain-bulletin-nail-disk-space-information
+     * @see https://open.dingtalk.com/document/app/obtain-bulletin-nail-disk-space-information
      */
     queryBlackboardSpace(
       query: QueryBlackboardSpaceQuery,

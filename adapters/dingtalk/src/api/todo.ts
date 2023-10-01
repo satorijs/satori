@@ -172,7 +172,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询企业下用户待办列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-to-do-list-of-enterprise-users
+     * @see https://open.dingtalk.com/document/isvapp/query-the-to-do-list-of-enterprise-users
      */
     queryOrgTodoTasks(
       unionId: string,
@@ -180,7 +180,7 @@ declare module '../internal' {
     ): Promise<QueryOrgTodoTasksResponse>
     /**
      * 更新钉钉待办执行者状态
-     * @see https://developers.dingtalk.com/document/isvapp/update-dingtalk-to-do-status
+     * @see https://open.dingtalk.com/document/isvapp/update-dingtalk-to-do-status
      */
     updateTodoTaskExecutorStatus(
       unionId: string,
@@ -190,7 +190,7 @@ declare module '../internal' {
     ): Promise<UpdateTodoTaskExecutorStatusResponse>
     /**
      * 创建待办
-     * @see https://developers.dingtalk.com/document/isvapp/add-dingtalk-to-do-task
+     * @see https://open.dingtalk.com/document/isvapp/add-dingtalk-to-do-task
      */
     createTodoTask(
       unionId: string,
@@ -199,7 +199,7 @@ declare module '../internal' {
     ): Promise<CreateTodoTaskResponse>
     /**
      * 更新钉钉待办任务
-     * @see https://developers.dingtalk.com/document/isvapp/updates-dingtalk-to-do-tasks
+     * @see https://open.dingtalk.com/document/isvapp/updates-dingtalk-to-do-tasks
      */
     updateTodoTask(
       unionId: string,
@@ -209,7 +209,7 @@ declare module '../internal' {
     ): Promise<UpdateTodoTaskResponse>
     /**
      * 删除钉钉待办任务
-     * @see https://developers.dingtalk.com/document/isvapp/delete-dingtalk-to-do-tasks
+     * @see https://open.dingtalk.com/document/isvapp/delete-dingtalk-to-do-tasks
      */
     deleteTodoTask(
       unionId: string,

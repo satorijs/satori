@@ -1097,7 +1097,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 创建或更新项目概览中自定义字段值
-     * @see https://developers.dingtalk.com/document/orgapp/create-project-custom-fields
+     * @see https://open.dingtalk.com/document/orgapp/create-project-custom-fields
      */
     createProjectCustomfieldStatus(
       userId: string,
@@ -1106,7 +1106,7 @@ declare module '../internal' {
     ): Promise<CreateProjectCustomfieldStatusResponse>
     /**
      * 更新任务标题
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-content
+     * @see https://open.dingtalk.com/document/orgapp/update-task-content
      */
     updateTaskContent(
       userId: string,
@@ -1115,7 +1115,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskContentResponse>
     /**
      * 更新任务备注
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-notes
+     * @see https://open.dingtalk.com/document/orgapp/update-task-notes
      */
     updateTaskNote(
       userId: string,
@@ -1124,7 +1124,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskNoteResponse>
     /**
      * 更新任务参与者
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-participants
+     * @see https://open.dingtalk.com/document/orgapp/update-task-participants
      */
     updateTaskInvolvemembers(
       userId: string,
@@ -1133,7 +1133,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskInvolvemembersResponse>
     /**
      * 更新任务执行者
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-performer
+     * @see https://open.dingtalk.com/document/orgapp/update-task-performer
      */
     updateTaskExecutor(
       userId: string,
@@ -1142,7 +1142,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskExecutorResponse>
     /**
      * 更新任务优先级
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-priority
+     * @see https://open.dingtalk.com/document/orgapp/update-task-priority
      */
     updateTaskPriority(
       userId: string,
@@ -1151,7 +1151,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskPriorityResponse>
     /**
      * 更新任务截止时间
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-deadline
+     * @see https://open.dingtalk.com/document/orgapp/update-task-deadline
      */
     updateTaskDueDate(
       userId: string,
@@ -1160,7 +1160,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskDueDateResponse>
     /**
      * 获取任务详情
-     * @see https://developers.dingtalk.com/document/orgapp/get-task-details
+     * @see https://open.dingtalk.com/document/orgapp/get-task-details
      */
     getTaskByIds(
       userId: string,
@@ -1168,12 +1168,12 @@ declare module '../internal' {
     ): Promise<GetTaskByIdsResponse>
     /**
      * 任务迁移至回收站
-     * @see https://developers.dingtalk.com/document/orgapp/archive-tasks
+     * @see https://open.dingtalk.com/document/orgapp/archive-tasks
      */
     archiveTask(userId: string, taskId: string): Promise<ArchiveTaskResponse>
     /**
      * 查询用户任务列表
-     * @see https://developers.dingtalk.com/document/orgapp/querying-user-tasks
+     * @see https://open.dingtalk.com/document/orgapp/querying-user-tasks
      */
     searchUserTask(
       userId: string,
@@ -1181,7 +1181,7 @@ declare module '../internal' {
     ): Promise<SearchUserTaskResponse>
     /**
      * 获取任务列表
-     * @see https://developers.dingtalk.com/document/orgapp/get-task-list
+     * @see https://open.dingtalk.com/document/orgapp/get-task-list
      */
     seachTaskStage(
       userId: string,
@@ -1190,7 +1190,7 @@ declare module '../internal' {
     ): Promise<SeachTaskStageResponse>
     /**
      * 查询任务分组
-     * @see https://developers.dingtalk.com/document/orgapp/query-task-grouping
+     * @see https://open.dingtalk.com/document/orgapp/query-task-grouping
      */
     searchTaskList(
       userId: string,
@@ -1199,7 +1199,7 @@ declare module '../internal' {
     ): Promise<SearchTaskListResponse>
     /**
      * 查询任务工作流
-     * @see https://developers.dingtalk.com/document/orgapp/query-task-workflow
+     * @see https://open.dingtalk.com/document/orgapp/query-task-workflow
      */
     searchTaskFlow(
       userId: string,
@@ -1208,7 +1208,7 @@ declare module '../internal' {
     ): Promise<SearchTaskFlowResponse>
     /**
      * 查询项目状态
-     * @see https://developers.dingtalk.com/document/orgapp/query-project-status
+     * @see https://open.dingtalk.com/document/orgapp/query-project-status
      */
     getProjectStatusList(
       userId: string,
@@ -1216,7 +1216,7 @@ declare module '../internal' {
     ): Promise<GetProjectStatusListResponse>
     /**
      * 删除项目成员
-     * @see https://developers.dingtalk.com/document/orgapp/delete-project-members
+     * @see https://open.dingtalk.com/document/orgapp/delete-project-members
      */
     deleteProjectMember(
       userId: string,
@@ -1225,7 +1225,7 @@ declare module '../internal' {
     ): Promise<DeleteProjectMemberResponse>
     /**
      * 获取项目成员
-     * @see https://developers.dingtalk.com/document/orgapp/get-project-members
+     * @see https://open.dingtalk.com/document/orgapp/get-project-members
      */
     getProjectMemebers(
       userId: string,
@@ -1234,7 +1234,7 @@ declare module '../internal' {
     ): Promise<GetProjectMemebersResponse>
     /**
      * 查询项目
-     * @see https://developers.dingtalk.com/document/orgapp/query-enterprise-all-projects
+     * @see https://open.dingtalk.com/document/orgapp/query-enterprise-all-projects
      */
     queryProject(
       userId: string,
@@ -1242,7 +1242,7 @@ declare module '../internal' {
     ): Promise<QueryProjectResponse>
     /**
      * 搜索任务工作流状态
-     * @see https://developers.dingtalk.com/document/isvapp/search-task-workflow-status
+     * @see https://open.dingtalk.com/document/isvapp/search-task-workflow-status
      */
     searchTaskflowStatus(
       userId: string,
@@ -1251,7 +1251,7 @@ declare module '../internal' {
     ): Promise<SearchTaskflowStatusResponse>
     /**
      * 更新任务工作流状态
-     * @see https://developers.dingtalk.com/document/isvapp/update-task-workflow-status
+     * @see https://open.dingtalk.com/document/isvapp/update-task-workflow-status
      */
     updateTaskTaskflowstatus(
       userId: string,
@@ -1260,7 +1260,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskTaskflowstatusResponse>
     /**
      * 更新任务开始时间
-     * @see https://developers.dingtalk.com/document/orgapp/update-task-start-time
+     * @see https://open.dingtalk.com/document/orgapp/update-task-start-time
      */
     updateTaskStartdate(
       userId: string,
@@ -1269,7 +1269,7 @@ declare module '../internal' {
     ): Promise<UpdateTaskStartdateResponse>
     /**
      * 创建项目
-     * @see https://developers.dingtalk.com/document/orgapp/create-project
+     * @see https://open.dingtalk.com/document/orgapp/create-project
      */
     createProject(
       userId: string,
@@ -1277,7 +1277,7 @@ declare module '../internal' {
     ): Promise<CreateProjectResponse>
     /**
      * 获取用户加入的项目
-     * @see https://developers.dingtalk.com/document/orgapp/get-projects-joined-by-users
+     * @see https://open.dingtalk.com/document/orgapp/get-projects-joined-by-users
      */
     getUserJoinedProject(
       userId: string,
@@ -1285,7 +1285,7 @@ declare module '../internal' {
     ): Promise<GetUserJoinedProjectResponse>
     /**
      * 项目放入回收站
-     * @see https://developers.dingtalk.com/document/orgapp/items-in-recycle-bin
+     * @see https://open.dingtalk.com/document/orgapp/items-in-recycle-bin
      */
     archiveProject(
       userId: string,
@@ -1293,7 +1293,7 @@ declare module '../internal' {
     ): Promise<ArchiveProjectResponse>
     /**
      * 恢复项目归档
-     * @see https://developers.dingtalk.com/document/orgapp/cancel-project-archiving
+     * @see https://open.dingtalk.com/document/orgapp/cancel-project-archiving
      */
     unSuspendProject(
       projectId: string,
@@ -1301,7 +1301,7 @@ declare module '../internal' {
     ): Promise<UnSuspendProjectResponse>
     /**
      * 归档项目
-     * @see https://developers.dingtalk.com/document/orgapp/archiving-project
+     * @see https://open.dingtalk.com/document/orgapp/archiving-project
      */
     suspendProject(
       projectId: string,
@@ -1309,7 +1309,7 @@ declare module '../internal' {
     ): Promise<SuspendProjectResponse>
     /**
      * 查询项目中的任务
-     * @see https://developers.dingtalk.com/document/isvapp/query-tasks-in-a-project
+     * @see https://open.dingtalk.com/document/isvapp/query-tasks-in-a-project
      */
     queryTaskOfProject(
       userId: string,
@@ -1318,7 +1318,7 @@ declare module '../internal' {
     ): Promise<QueryTaskOfProjectResponse>
     /**
      * 录入实际工时接口
-     * @see https://developers.dingtalk.com/document/isvapp/create-actual-work
+     * @see https://open.dingtalk.com/document/isvapp/create-actual-work
      */
     createWorkTime(
       userId: string,
@@ -1327,7 +1327,7 @@ declare module '../internal' {
     ): Promise<CreateWorkTimeResponse>
     /**
      * 录入计划工时
-     * @see https://developers.dingtalk.com/document/isvapp/create-planned-work
+     * @see https://open.dingtalk.com/document/isvapp/create-planned-work
      */
     createPlanTime(
       userId: string,
@@ -1336,7 +1336,7 @@ declare module '../internal' {
     ): Promise<CreatePlanTimeResponse>
     /**
      * 更新任务自定义字段的值
-     * @see https://developers.dingtalk.com/document/isvapp/update-task-custom-field-value
+     * @see https://open.dingtalk.com/document/isvapp/update-task-custom-field-value
      */
     updateCustomfieldValue(
       userId: string,
@@ -1345,21 +1345,21 @@ declare module '../internal' {
     ): Promise<UpdateCustomfieldValueResponse>
     /**
      * 根据钉钉UserId获取Teambition用户Id
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-dingtalk-teambition-user-id-based-on-userid
+     * @see https://open.dingtalk.com/document/isvapp/obtain-dingtalk-teambition-user-id-based-on-userid
      */
     getTbUserIdByStaffId(
       query: GetTbUserIdByStaffIdQuery,
     ): Promise<GetTbUserIdByStaffIdResponse>
     /**
      * 获取Teambition企业Id
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-teambition-enterprise-id
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-teambition-enterprise-id
      */
     getTbOrgIdByDingOrgId(
       query: GetTbOrgIdByDingOrgIdQuery,
     ): Promise<GetTbOrgIdByDingOrgIdResponse>
     /**
      * 更新项目的分组
-     * @see https://developers.dingtalk.com/document/isvapp/update-project-grouping
+     * @see https://open.dingtalk.com/document/isvapp/update-project-grouping
      */
     updateProjectGroup(
       userId: string,
@@ -1368,7 +1368,7 @@ declare module '../internal' {
     ): Promise<UpdateProjectGroupResponse>
     /**
      * 增加项目成员
-     * @see https://developers.dingtalk.com/document/isvapp/add-project-members
+     * @see https://open.dingtalk.com/document/isvapp/add-project-members
      */
     addProjectMember(
       userId: string,
@@ -1377,7 +1377,7 @@ declare module '../internal' {
     ): Promise<AddProjectMemberResponse>
     /**
      * 根据项目模板创建项目
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-project-from-a-project-template
+     * @see https://open.dingtalk.com/document/isvapp/create-a-project-from-a-project-template
      */
     createProjectByTemplate(
       userId: string,
@@ -1385,7 +1385,7 @@ declare module '../internal' {
     ): Promise<CreateProjectByTemplateResponse>
     /**
      * 查询可见的项目分组
-     * @see https://developers.dingtalk.com/document/isvapp/query-available-project-groups
+     * @see https://open.dingtalk.com/document/isvapp/query-available-project-groups
      */
     getProjectGroup(
       userId: string,
@@ -1393,7 +1393,7 @@ declare module '../internal' {
     ): Promise<GetProjectGroupResponse>
     /**
      * 按项目模板名字搜索企业自定义模板
-     * @see https://developers.dingtalk.com/document/isvapp/search-for-enterprise-custom-templates-by-project-template-name
+     * @see https://open.dingtalk.com/document/isvapp/search-for-enterprise-custom-templates-by-project-template-name
      */
     searchProjectTemplate(
       userId: string,
@@ -1401,7 +1401,7 @@ declare module '../internal' {
     ): Promise<SearchProjectTemplateResponse>
     /**
      * 创建任务关联对象
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-linked-object-associated-with-a-task
+     * @see https://open.dingtalk.com/document/isvapp/create-a-linked-object-associated-with-a-task
      */
     createTaskObjectLink(
       userId: string,
@@ -1410,7 +1410,7 @@ declare module '../internal' {
     ): Promise<CreateTaskObjectLinkResponse>
     /**
      * 创建项目任务
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-project-task
+     * @see https://open.dingtalk.com/document/isvapp/create-a-project-task
      */
     createTask(
       userId: string,
@@ -1418,7 +1418,7 @@ declare module '../internal' {
     ): Promise<CreateTaskResponse>
     /**
      * 批量获取任务详情
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-details-about-multiple-free-tasks-isv
+     * @see https://open.dingtalk.com/document/isvapp/obtains-details-about-multiple-free-tasks-isv
      */
     getOrganizatioTaskByIds(
       userId: string,
@@ -1426,7 +1426,7 @@ declare module '../internal' {
     ): Promise<GetOrganizatioTaskByIdsResponse>
     /**
      * 更新自由任务优先级
-     * @see https://developers.dingtalk.com/document/isvapp/update-the-priority-of-a-free-migration-job
+     * @see https://open.dingtalk.com/document/isvapp/update-the-priority-of-a-free-migration-job
      */
     updateOrganizationTaskPriority(
       taskId: string,
@@ -1435,7 +1435,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskPriorityResponse>
     /**
      * 更改自由任务备注
-     * @see https://developers.dingtalk.com/document/isvapp/update-free-task-notes-isv
+     * @see https://open.dingtalk.com/document/isvapp/update-free-task-notes-isv
      */
     updateOrganizationTaskNote(
       taskId: string,
@@ -1444,7 +1444,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskNoteResponse>
     /**
      * 更新自由任务参与者
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-remove-participants-of-free-tasks
+     * @see https://open.dingtalk.com/document/isvapp/add-or-remove-participants-of-free-tasks
      */
     updateOrganizationTaskInvolveMembers(
       taskId: string,
@@ -1453,7 +1453,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskInvolveMembersResponse>
     /**
      * 更改自由任务执行者
-     * @see https://developers.dingtalk.com/document/isvapp/update-free-task-executor
+     * @see https://open.dingtalk.com/document/isvapp/update-free-task-executor
      */
     updateOrganizationTaskExecutor(
       taskId: string,
@@ -1462,7 +1462,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskExecutorResponse>
     /**
      * 更新自由任务截止时间
-     * @see https://developers.dingtalk.com/document/isvapp/update-free-task-deadline
+     * @see https://open.dingtalk.com/document/isvapp/update-free-task-deadline
      */
     updateOrganizationTaskDueDate(
       taskId: string,
@@ -1471,7 +1471,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskDueDateResponse>
     /**
      * 更改自由任务标题
-     * @see https://developers.dingtalk.com/document/isvapp/update-free-task-title
+     * @see https://open.dingtalk.com/document/isvapp/update-free-task-title
      */
     updateOrganizationTaskContent(
       taskId: string,
@@ -1480,7 +1480,7 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskContentResponse>
     /**
      * 更改自由任务状态
-     * @see https://developers.dingtalk.com/document/isvapp/update-free-task-status
+     * @see https://open.dingtalk.com/document/isvapp/update-free-task-status
      */
     updateOrganizationTaskStatus(
       taskId: string,
@@ -1489,14 +1489,14 @@ declare module '../internal' {
     ): Promise<UpdateOrganizationTaskStatusResponse>
     /**
      * 获取企业优先级列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-a-priority-list-isv
+     * @see https://open.dingtalk.com/document/isvapp/query-a-priority-list-isv
      */
     getOrganizationPriorityList(
       userId: string,
     ): Promise<GetOrganizationPriorityListResponse>
     /**
      * 获取自由任务详情
-     * @see https://developers.dingtalk.com/document/isvapp/queries-free-task-details-isv
+     * @see https://open.dingtalk.com/document/isvapp/queries-free-task-details-isv
      */
     getOrganizationTask(
       taskId: string,
@@ -1504,12 +1504,12 @@ declare module '../internal' {
     ): Promise<GetOrganizationTaskResponse>
     /**
      * 删除任务
-     * @see https://developers.dingtalk.com/document/orgapp/delete-task
+     * @see https://open.dingtalk.com/document/orgapp/delete-task
      */
     deleteTask(userId: string, taskId: string): Promise<DeleteTaskResponse>
     /**
      * 创建自由任务
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-free-task-isv
+     * @see https://open.dingtalk.com/document/isvapp/create-a-free-task-isv
      */
     createOrganizationTask(
       userId: string,

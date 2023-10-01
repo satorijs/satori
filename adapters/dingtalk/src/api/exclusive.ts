@@ -282,90 +282,90 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取用户截屏操作记录
-     * @see https://developers.dingtalk.com/document/app/obtain-anti-screen-capture-operation-records
+     * @see https://open.dingtalk.com/document/app/obtain-anti-screen-capture-operation-records
      */
     queryUserBehavior(
       params: QueryUserBehaviorParams,
     ): Promise<QueryUserBehaviorResponse>
     /**
      * 获取公共设备列表。
-     * @see https://developers.dingtalk.com/document/orgapp/query-public-equipment
+     * @see https://open.dingtalk.com/document/orgapp/query-public-equipment
      */
     getPublicDevices(
       query: GetPublicDevicesQuery,
     ): Promise<GetPublicDevicesResponse>
     /**
      * 通过接口发送电话DING
-     * @see https://developers.dingtalk.com/document/orgapp/outgoing-phone-ding
+     * @see https://open.dingtalk.com/document/orgapp/outgoing-phone-ding
      */
     sendPhoneDing(params: SendPhoneDingParams): Promise<SendPhoneDingResponse>
     /**
      * 根据userId查询人员的标签信息
-     * @see https://developers.dingtalk.com/document/isvapp/you-can-call-this-operation-to-retrieve-the-user-tag
+     * @see https://open.dingtalk.com/document/isvapp/you-can-call-this-operation-to-retrieve-the-user-tag
      */
     queryPartnerInfo(userId: string): Promise<QueryPartnerInfoResponse>
     /**
      * 根据会议逻辑ID查询会议基本信息
-     * @see https://developers.dingtalk.com/document/isvapp/you-can-call-this-operation-to-query-the-basic-information
+     * @see https://open.dingtalk.com/document/isvapp/you-can-call-this-operation-to-query-the-basic-information
      */
     getConfBaseInfoByLogicalId(
       query: GetConfBaseInfoByLogicalIdQuery,
     ): Promise<GetConfBaseInfoByLogicalIdResponse>
     /**
      * 批量新增可信设备
-     * @see https://developers.dingtalk.com/document/isvapp/add-trusted-devices-in-batches
+     * @see https://open.dingtalk.com/document/isvapp/add-trusted-devices-in-batches
      */
     createTrustedDeviceBatch(
       params: CreateTrustedDeviceBatchParams,
     ): Promise<CreateTrustedDeviceBatchResponse>
     /**
      * 获取企业文件审计日志
-     * @see https://developers.dingtalk.com/document/app/queries-file-audit-logs
+     * @see https://open.dingtalk.com/document/app/queries-file-audit-logs
      */
     listAuditLog(query: ListAuditLogQuery): Promise<ListAuditLogResponse>
     /**
      * 群禁言或解禁
-     * @see https://developers.dingtalk.com/document/isvapp/exclusive-dingtalk-group-ban
+     * @see https://open.dingtalk.com/document/isvapp/exclusive-dingtalk-group-ban
      */
     banOrOpenGroupWords(
       params: BanOrOpenGroupWordsParams,
     ): Promise<BanOrOpenGroupWordsResponse>
     /**
      * 获取审计协议签署人员信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-information-about-the-persons-who-sign-the-audit
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-information-about-the-persons-who-sign-the-audit
      */
     getSignedDetailByPage(
       query: GetSignedDetailByPageQuery,
     ): Promise<GetSignedDetailByPageResponse>
     /**
      * 发送文件更改的评论
-     * @see https://developers.dingtalk.com/document/isvapp/send-comments-on-file-changes
+     * @see https://open.dingtalk.com/document/isvapp/send-comments-on-file-changes
      */
     publishFileChangeNotice(
       params: PublishFileChangeNoticeParams,
     ): Promise<void>
     /**
      * 通过接口发送应用内DING
-     * @see https://developers.dingtalk.com/document/orgapp/send-in-application-ding
+     * @see https://open.dingtalk.com/document/orgapp/send-in-application-ding
      */
     sendAppDing(params: SendAppDingParams): Promise<void>
     /**
      * 伙伴钉根据父标签查询子标签
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-child-tags-from-a-parent-tag
+     * @see https://open.dingtalk.com/document/isvapp/obtain-child-tags-from-a-parent-tag
      */
     getPartnerTypeByParentId(
       parentId: string,
     ): Promise<GetPartnerTypeByParentIdResponse>
     /**
      * 设置部门伙伴类型和伙伴编码
-     * @see https://developers.dingtalk.com/document/isvapp/set-department-partner-type-and-partner-code
+     * @see https://open.dingtalk.com/document/isvapp/set-department-partner-type-and-partner-code
      */
     setDeptPartnerTypeAndNum(
       params: SetDeptPartnerTypeAndNumParams,
     ): Promise<void>
     /**
      * 获取可打标部门列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-departments-that-can-be-marked
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-departments-that-can-be-marked
      */
     getAllLabelableDepts(): Promise<GetAllLabelableDeptsResponse>
   }

@@ -635,35 +635,35 @@ declare module '../internal' {
   interface Internal {
     /**
      * 营销服融合三方全局信息
-     * @see https://developers.dingtalk.com/document/isvapp/get-customer-management-global-information
+     * @see https://open.dingtalk.com/document/isvapp/get-customer-management-global-information
      */
     queryGlobalInfo(
       query: QueryGlobalInfoQuery,
     ): Promise<QueryGlobalInfoResponse>
     /**
      * 批量修改跟进记录
-     * @see https://developers.dingtalk.com/document/orgapp/batch-update-follow-up-record-data
+     * @see https://open.dingtalk.com/document/orgapp/batch-update-follow-up-record-data
      */
     batchUpdateFollowRecords(
       params: BatchUpdateFollowRecordsParams,
     ): Promise<BatchUpdateFollowRecordsResponse>
     /**
      * 批量新增跟进记录
-     * @see https://developers.dingtalk.com/document/orgapp/batch-add-follow-up-record-data
+     * @see https://open.dingtalk.com/document/orgapp/batch-add-follow-up-record-data
      */
     batchAddFollowRecords(
       params: BatchAddFollowRecordsParams,
     ): Promise<BatchAddFollowRecordsResponse>
     /**
      * 批量删除跟进记录
-     * @see https://developers.dingtalk.com/document/orgapp/batch-delete-follow-up-record-data
+     * @see https://open.dingtalk.com/document/orgapp/batch-delete-follow-up-record-data
      */
     batchRemoveFollowRecords(
       params: BatchRemoveFollowRecordsParams,
     ): Promise<BatchRemoveFollowRecordsResponse>
     /**
      * 删除CRM自定义对象数据
-     * @see https://developers.dingtalk.com/document/orgapp/delete-crm-custom-object-data
+     * @see https://open.dingtalk.com/document/orgapp/delete-crm-custom-object-data
      */
     deleteCrmCustomObjectData(
       instanceId: string,
@@ -671,63 +671,63 @@ declare module '../internal' {
     ): Promise<DeleteCrmCustomObjectDataResponse>
     /**
      * 批量修改联系人
-     * @see https://developers.dingtalk.com/document/orgapp/modify-contact-data-in-batches
+     * @see https://open.dingtalk.com/document/orgapp/modify-contact-data-in-batches
      */
     batchUpdateContacts(
       params: BatchUpdateContactsParams,
     ): Promise<BatchUpdateContactsResponse>
     /**
      * 批量新增联系人
-     * @see https://developers.dingtalk.com/document/orgapp/add-contact-data-in-batches
+     * @see https://open.dingtalk.com/document/orgapp/add-contact-data-in-batches
      */
     batchAddContacts(
       params: BatchAddContactsParams,
     ): Promise<BatchAddContactsResponse>
     /**
      * 批量新增关系数据
-     * @see https://developers.dingtalk.com/document/orgapp/add-multiple-relationship-data-in-batches
+     * @see https://open.dingtalk.com/document/orgapp/add-multiple-relationship-data-in-batches
      */
     batchAddRelationDatas(
       params: BatchAddRelationDatasParams,
     ): Promise<BatchAddRelationDatasResponse>
     /**
      * 批量修改关系数据
-     * @see https://developers.dingtalk.com/document/orgapp/update-multiple-relational-data-tables-at-a-time
+     * @see https://open.dingtalk.com/document/orgapp/update-multiple-relational-data-tables-at-a-time
      */
     batchUpdateRelationDatas(
       params: BatchUpdateRelationDatasParams,
     ): Promise<BatchUpdateRelationDatasResponse>
     /**
      * 获取个人客户或企业客户查重字段
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-duplicate-check-fields
+     * @see https://open.dingtalk.com/document/isvapp/obtain-duplicate-check-fields
      */
     getRelationUkSetting(
       query: GetRelationUkSettingQuery,
     ): Promise<GetRelationUkSettingResponse>
     /**
      * 创建客户群
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-customer-group
+     * @see https://open.dingtalk.com/document/isvapp/create-a-customer-group
      */
     crmCreateGroup(
       params: CrmCreateGroupParams,
     ): Promise<CrmCreateGroupResponse>
     /**
      * 批量查询客户群
-     * @see https://developers.dingtalk.com/document/isvapp/query-customer-groups-in-batches
+     * @see https://open.dingtalk.com/document/isvapp/query-customer-groups-in-batches
      */
     getCrmGroupChatMulti(
       params: GetCrmGroupChatMultiParams,
     ): Promise<GetCrmGroupChatMultiResponse>
     /**
      * 获取单个客户群详情
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-a-single-customer-group
+     * @see https://open.dingtalk.com/document/isvapp/obtain-a-single-customer-group
      */
     getCrmGroupChatSingle(
       query: GetCrmGroupChatSingleQuery,
     ): Promise<GetCrmGroupChatSingleResponse>
     /**
      * 查询客户数据
-     * @see https://developers.dingtalk.com/document/isvapp/querying-customer-data
+     * @see https://open.dingtalk.com/document/isvapp/querying-customer-data
      */
     queryRelationDatasByTargetId(
       targetId: string,
@@ -735,50 +735,50 @@ declare module '../internal' {
     ): Promise<QueryRelationDatasByTargetIdResponse>
     /**
      * 查询客户群列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-a-list-of-customer-groups
+     * @see https://open.dingtalk.com/document/isvapp/query-a-list-of-customer-groups
      */
     queryCrmGroupChats(
       query: QueryCrmGroupChatsQuery,
     ): Promise<QueryCrmGroupChatsResponse>
     /**
      * 更新客户群组
-     * @see https://developers.dingtalk.com/document/orgapp/crm-update-group
+     * @see https://open.dingtalk.com/document/orgapp/crm-update-group
      */
     crmUpdateGroupSet(params: CrmUpdateGroupSetParams): Promise<void>
     /**
      * 查询客户群组列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-list-of-customer-groups-set
+     * @see https://open.dingtalk.com/document/isvapp/query-the-list-of-customer-groups-set
      */
     listGroupSet(query: ListGroupSetQuery): Promise<ListGroupSetResponse>
     /**
      * 创建群组
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-customer-group-set
+     * @see https://open.dingtalk.com/document/isvapp/create-a-customer-group-set
      */
     createGroupSet(
       params: CreateGroupSetParams,
     ): Promise<CreateGroupSetResponse>
     /**
      * 获取单个客户群组详情
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-details-of-a-single-customer-group
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-details-of-a-single-customer-group
      */
     getGroupSet(query: GetGroupSetQuery): Promise<GetGroupSetResponse>
     /**
      * 更新crm个人客户（或企业客户）
-     * @see https://developers.dingtalk.com/document/isvapp/update-crm-personal-customers
+     * @see https://open.dingtalk.com/document/isvapp/update-crm-personal-customers
      */
     updateCrmPersonalCustomer(
       params: UpdateCrmPersonalCustomerParams,
     ): Promise<UpdateCrmPersonalCustomerResponse>
     /**
      * 添加crm个人客户（或企业客户）
-     * @see https://developers.dingtalk.com/document/orgapp/add-crm-personal-customers
+     * @see https://open.dingtalk.com/document/orgapp/add-crm-personal-customers
      */
     addCrmPersonalCustomer(
       params: AddCrmPersonalCustomerParams,
     ): Promise<AddCrmPersonalCustomerResponse>
     /**
      * 删除crm个人客户（或企业客户）
-     * @see https://developers.dingtalk.com/document/orgapp/delete-crm-personal-customer
+     * @see https://open.dingtalk.com/document/orgapp/delete-crm-personal-customer
      */
     deleteCrmPersonalCustomer(
       dataId: string,
@@ -786,42 +786,42 @@ declare module '../internal' {
     ): Promise<DeleteCrmPersonalCustomerResponse>
     /**
      * 获取CRM客户对象的元数据描述
-     * @see https://developers.dingtalk.com/document/isvapp/get-metadata-description-of-crm-customer-object-1
+     * @see https://open.dingtalk.com/document/isvapp/get-metadata-description-of-crm-customer-object-1
      */
     describeCrmPersonalCustomerObjectMeta(
       query: DescribeCrmPersonalCustomerObjectMetaQuery,
     ): Promise<DescribeCrmPersonalCustomerObjectMetaResponse>
     /**
      * 批量获取crm个人客户
-     * @see https://developers.dingtalk.com/document/isvapp/acquire-crm-individual-customers-in-batches
+     * @see https://open.dingtalk.com/document/isvapp/acquire-crm-individual-customers-in-batches
      */
     listCrmPersonalCustomers(
       query: ListCrmPersonalCustomersQuery,
     ): Promise<ListCrmPersonalCustomersResponse>
     /**
      * 根据指定查询条件批量获取客户数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-crm-individual-customers-in-batches-based-on-specified-query
+     * @see https://open.dingtalk.com/document/isvapp/obtains-crm-individual-customers-in-batches-based-on-specified-query
      */
     queryCrmPersonalCustomer(
       query: QueryCrmPersonalCustomerQuery,
     ): Promise<QueryCrmPersonalCustomerResponse>
     /**
      * 获取全量个人或企业客户数据
-     * @see https://developers.dingtalk.com/document/orgapp/crm-obtains-all-private-sea-customer-data
+     * @see https://open.dingtalk.com/document/orgapp/crm-obtains-all-private-sea-customer-data
      */
     queryAllCustomer(
       params: QueryAllCustomerParams,
     ): Promise<QueryAllCustomerResponse>
     /**
      * 服务窗单发接口，指定消息接收人发送
-     * @see https://developers.dingtalk.com/document/isvapp/sends-a-single-message-from-the-service-window
+     * @see https://open.dingtalk.com/document/isvapp/sends-a-single-message-from-the-service-window
      */
     sendOfficialAccountOTOMessage(
       params: SendOfficialAccountOTOMessageParams,
     ): Promise<SendOfficialAccountOTOMessageResponse>
     /**
      * 服务窗消息群发
-     * @see https://developers.dingtalk.com/document/isvapp/batch-sending-of-service-window-messages
+     * @see https://open.dingtalk.com/document/isvapp/batch-sending-of-service-window-messages
      */
     batchSendOfficialAccountOTOMessage(
       params: BatchSendOfficialAccountOTOMessageParams,

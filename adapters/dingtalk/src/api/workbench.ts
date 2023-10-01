@@ -50,21 +50,21 @@ declare module '../internal' {
   interface Internal {
     /**
      * 批量添加最近使用记录
-     * @see https://developers.dingtalk.com/document/app/add-recently-used-apps-in-bulk
+     * @see https://open.dingtalk.com/document/app/add-recently-used-apps-in-bulk
      */
     addRecentUserAppList(
       params: AddRecentUserAppListParams,
     ): Promise<AddRecentUserAppListResponse>
     /**
      * 获取插件的校验规则
-     * @see https://developers.dingtalk.com/document/dashboard/you-can-call-this-operation-to-obtain-the-information-about
+     * @see https://open.dingtalk.com/document/dashboard/you-can-call-this-operation-to-obtain-the-information-about
      */
     getPluginRuleCheckInfo(
       query: GetPluginRuleCheckInfoQuery,
     ): Promise<GetPluginRuleCheckInfoResponse>
     /**
      * 获取工作台插件的权限点
-     * @see https://developers.dingtalk.com/document/dashboard/obtain-the-permissions-of-the-workbench-plug-in
+     * @see https://open.dingtalk.com/document/dashboard/obtain-the-permissions-of-the-workbench-plug-in
      */
     getPluginPermissionPoint(
       query: GetPluginPermissionPointQuery,

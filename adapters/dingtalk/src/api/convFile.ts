@@ -135,7 +135,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 发送文件链接到指定会话
-     * @see https://developers.dingtalk.com/document/orgapp/send-a-file-link-to-the-specified-session
+     * @see https://open.dingtalk.com/document/orgapp/send-a-file-link-to-the-specified-session
      */
     sendLink(
       query: SendLinkQuery,
@@ -143,12 +143,12 @@ declare module '../internal' {
     ): Promise<SendLinkResponse>
     /**
      * 发送文件到指定会话
-     * @see https://developers.dingtalk.com/document/orgapp/send-file-to-specified-session
+     * @see https://open.dingtalk.com/document/orgapp/send-file-to-specified-session
      */
     send(query: SendQuery, params: SendParams): Promise<SendResponse>
     /**
      * 获取IM会话存储空间信息
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-group-storage-space-information
+     * @see https://open.dingtalk.com/document/orgapp/obtain-group-storage-space-information
      */
     convFileGetSpace(
       query: ConvFileGetSpaceQuery,
@@ -156,7 +156,7 @@ declare module '../internal' {
     ): Promise<ConvFileGetSpaceResponse>
     /**
      * 以应用身份发送文件给自己
-     * @see https://developers.dingtalk.com/document/isvapp/sends-a-storage-file-to-a-specified-user
+     * @see https://open.dingtalk.com/document/isvapp/sends-a-storage-file-to-a-specified-user
      */
     sendByApp(
       query: SendByAppQuery,

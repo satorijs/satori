@@ -128,7 +128,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 执行工单活动
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-customer-service-execute-work-order-activities
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-customer-service-execute-work-order-activities
      */
     executeActivity(
       ticketId: string,
@@ -136,7 +136,7 @@ declare module '../internal' {
     ): Promise<ExecuteActivityResponse>
     /**
      * 查询动作记录
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-customer-service-query-action-records
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-customer-service-query-action-records
      */
     pageListAction(
       ticketId: string,
@@ -144,12 +144,12 @@ declare module '../internal' {
     ): Promise<PageListActionResponse>
     /**
      * 分页查询工单
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-customer-service-paging-query-work-order
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-customer-service-paging-query-work-order
      */
     pageListTicket(query: PageListTicketQuery): Promise<PageListTicketResponse>
     /**
      * 创建自助单
-     * @see https://developers.dingtalk.com/document/isvapp/smart-customer-service-create-a-self-service-order
+     * @see https://open.dingtalk.com/document/isvapp/smart-customer-service-create-a-self-service-order
      */
     createTicket(params: CreateTicketParams): Promise<CreateTicketResponse>
   }

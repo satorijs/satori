@@ -69,7 +69,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取单条填表实例详情
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-instance-details-of-a-single-fill-table
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-instance-details-of-a-single-fill-table
      */
     getFormInstance(
       formInstanceId: string,
@@ -77,7 +77,7 @@ declare module '../internal' {
     ): Promise<GetFormInstanceResponse>
     /**
      * 获取填表实例列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-table-filling-instance-list-data
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-table-filling-instance-list-data
      */
     listFormInstances(
       formCode: string,
@@ -85,7 +85,7 @@ declare module '../internal' {
     ): Promise<ListFormInstancesResponse>
     /**
      * 获取用户创建的填表模板列表
-     * @see https://developers.dingtalk.com/document/isvapp/new-obtains-the-template-that-a-user-creates
+     * @see https://open.dingtalk.com/document/isvapp/new-obtains-the-template-that-a-user-creates
      */
     listFormSchemasByCreator(
       query: ListFormSchemasByCreatorQuery,

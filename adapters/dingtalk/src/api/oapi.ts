@@ -229,7 +229,7 @@ export interface OapiV2UserUpdateParams {
   exclusive_mobile_verify_status?: string
   /** 修改本组织专属帐号时可指定昵称 */
   nickname?: string
-  /** 修改本组织专属帐号时可指定头像MediaId。只支持参考jpg/png，生成方法 https://developers.dingtalk.com/document/app/upload-media-files */
+  /** 修改本组织专属帐号时可指定头像MediaId。只支持参考jpg/png，生成方法 https://open.dingtalk.com/document/app/upload-media-files */
   avatarMediaId?: string
   /** 自定义字段更新模式，0-覆盖方式  1-追加方式  (默认是覆盖) */
   ext_attrs_update_mode?: unknown
@@ -305,7 +305,7 @@ export interface OapiV2UserCreateParams {
   outer_exclusive_corpid?: string
   /** 需要添加的专属帐号所属userid */
   outer_exclusive_userid?: string
-  /** 创建本组织专属帐号时可指定头像MediaId。只支持参考jpg/png，生成方法 https://developers.dingtalk.com/document/app/upload-media-files */
+  /** 创建本组织专属帐号时可指定头像MediaId。只支持参考jpg/png，生成方法 https://open.dingtalk.com/document/app/upload-media-files */
   avatarMediaId?: string
   /** 创建本组织专属帐号时可指定昵称 */
   nickname?: string
@@ -3226,246 +3226,246 @@ declare module '../internal' {
   interface Internal {
     /**
      * 该接口用于获取企业授权凭证
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-enterprise-authorized-credential
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-enterprise-authorized-credential
      */
     oapiServiceGetCorpToken(
       params: OapiServiceGetCorpTokenParams,
     ): Promise<OapiServiceGetCorpTokenResponse>
     /**
      * 获取应用后台免登的access_token
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-ssotoken-for-micro-application-background-logon-free
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-ssotoken-for-micro-application-background-logon-free
      */
     oapiSsoGettoken(
       query: OapiSsoGettokenQuery,
     ): Promise<OapiSsoGettokenResponse>
     /**
      * 获取jsapi ticket
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-jsapi_ticket
+     * @see https://open.dingtalk.com/document/isvapp/obtain-jsapi_ticket
      */
     oapiGetJsapiTicket(): Promise<OapiGetJsapiTicketResponse>
     /**
      * 获取企业内部应用的access_token
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-orgapp-token
+     * @see https://open.dingtalk.com/document/orgapp/obtain-orgapp-token
      */
     oapiGettoken(query: OapiGettokenQuery): Promise<OapiGettokenResponse>
     /**
      * 通过免登码获取用户userid
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-userid-of-a-user-by-using-the-log-free
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-userid-of-a-user-by-using-the-log-free
      */
     oapiV2UserGetuserinfo(
       params: OapiV2UserGetuserinfoParams,
     ): Promise<OapiV2UserGetuserinfoResponse>
     /**
      * 该接口用于获取授权用户信息
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-the-user-information-based-on-the-sns-temporary-authorization
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-the-user-information-based-on-the-sns-temporary-authorization
      */
     oapiSnsGetuserinfoBycode(
       params: OapiSnsGetuserinfoBycodeParams,
     ): Promise<OapiSnsGetuserinfoBycodeResponse>
     /**
      * 获取应用管理后台免登的用户信息
-     * @see https://developers.dingtalk.com/document/isvapp/exchange-code-for-the-identity-information-of-a-microapplication-administrator
+     * @see https://open.dingtalk.com/document/isvapp/exchange-code-for-the-identity-information-of-a-microapplication-administrator
      */
     oapiSsoGetuserinfo(
       query: OapiSsoGetuserinfoQuery,
     ): Promise<OapiSsoGetuserinfoResponse>
     /**
      * 获取企业授权信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-basic-information-of-an-enterprise
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-basic-information-of-an-enterprise
      */
     oapiServiceGetAuthInfo(
       params: OapiServiceGetAuthInfoParams,
     ): Promise<OapiServiceGetAuthInfoResponse>
     /**
      * 用户信息更新
-     * @see https://developers.dingtalk.com/document/orgapp/update-dedicated-accounts-information
+     * @see https://open.dingtalk.com/document/orgapp/update-dedicated-accounts-information
      */
     oapiV2UserUpdate(
       params: OapiV2UserUpdateParams,
     ): Promise<OapiV2UserUpdateResponse>
     /**
      * 用户信息创建
-     * @see https://developers.dingtalk.com/document/orgapp/user-information-creation
+     * @see https://open.dingtalk.com/document/orgapp/user-information-creation
      */
     oapiV2UserCreate(
       params: OapiV2UserCreateParams,
     ): Promise<OapiV2UserCreateResponse>
     /**
      * 获取主干组织列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-backbone-organization-list
+     * @see https://open.dingtalk.com/document/isvapp/obtain-backbone-organization-list
      */
     oapiOrgUnionTrunkGet(): Promise<OapiOrgUnionTrunkGetResponse>
     /**
      * 获取员工花名册的元数据定义（包括花名册分组、字段定义）
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-roster-metadata-query
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-personnel-roster-metadata-query
      */
     oapiSmartworkHrmRosterMetaGet(
       params: OapiSmartworkHrmRosterMetaGetParams,
     ): Promise<OapiSmartworkHrmRosterMetaGetResponse>
     /**
      * 获取员工花名册指定字段的信息，支持明细分组字段
-     * @see https://developers.dingtalk.com/document/orgapp/intelligent-personnel-obtain-employee-roster-information
+     * @see https://open.dingtalk.com/document/orgapp/intelligent-personnel-obtain-employee-roster-information
      */
     oapiSmartworkHrmEmployeeV2List(
       params: OapiSmartworkHrmEmployeeV2ListParams,
     ): Promise<OapiSmartworkHrmEmployeeV2ListResponse>
     /**
      * 智能人事更新员工档案信息,支持明细分组
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-update-employee-file-information
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-personnel-update-employee-file-information
      */
     oapiSmartworkHrmEmployeeV2Update(
       params: OapiSmartworkHrmEmployeeV2UpdateParams,
     ): Promise<OapiSmartworkHrmEmployeeV2UpdateResponse>
     /**
      * 提供给ISV查询花名册的员工档案信息中有权限的字段列表
-     * @see https://developers.dingtalk.com/document/isvapp/get-roster-field-group-details
+     * @see https://open.dingtalk.com/document/isvapp/get-roster-field-group-details
      */
     oapiSmartworkHrmEmployeeFieldGrouplist(
       params: OapiSmartworkHrmEmployeeFieldGrouplistParams,
     ): Promise<OapiSmartworkHrmEmployeeFieldGrouplistResponse>
     /**
      * 智能人事更新员工档案员工信息
-     * @see https://developers.dingtalk.com/document/isvapp-server/update-employee-roster
+     * @see https://open.dingtalk.com/document/isvapp-server/update-employee-roster
      */
     oapiSmartworkHrmEmployeeUpdate(
       params: OapiSmartworkHrmEmployeeUpdateParams,
     ): Promise<OapiSmartworkHrmEmployeeUpdateResponse>
     /**
      * 智能人事业务，提供企业/ISV按在职状态分页查询公司在职员工id列表
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-on-the-job-employees-of-the
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-on-the-job-employees-of-the
      */
     oapiSmartworkHrmEmployeeQueryonjob(
       params: OapiSmartworkHrmEmployeeQueryonjobParams,
     ): Promise<OapiSmartworkHrmEmployeeQueryonjobResponse>
     /**
      * 智能人事业务，企业/ISV分页查询公司待入职员工id列表
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-employees-to-be-hired
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-personnel-query-the-list-of-employees-to-be-hired
      */
     oapiSmartworkHrmEmployeeQuerypreentry(
       params: OapiSmartworkHrmEmployeeQuerypreentryParams,
     ): Promise<OapiSmartworkHrmEmployeeQuerypreentryResponse>
     /**
      * 智能人事添加待入职员工信息
-     * @see https://developers.dingtalk.com/document/isvapp/add-employees-to-be-hired-through-intelligent-personnel
+     * @see https://open.dingtalk.com/document/isvapp/add-employees-to-be-hired-through-intelligent-personnel
      */
     oapiSmartworkHrmEmployeeAddpreentry(
       params: OapiSmartworkHrmEmployeeAddpreentryParams,
     ): Promise<OapiSmartworkHrmEmployeeAddpreentryResponse>
     /**
      * 智能人事业务，企业/ISV根据员工id批量访问员工花名册信息
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtaining-employee-roster-field-information
+     * @see https://open.dingtalk.com/document/isvapp-server/obtaining-employee-roster-field-information
      */
     oapiSmartworkHrmEmployeeList(
       params: OapiSmartworkHrmEmployeeListParams,
     ): Promise<OapiSmartworkHrmEmployeeListResponse>
     /**
      * 企业可以根据模板名称获取模板详情
-     * @see https://developers.dingtalk.com/document/isvapp/query-template-details
+     * @see https://open.dingtalk.com/document/isvapp/query-template-details
      */
     oapiReportTemplateGetbyname(
       params: OapiReportTemplateGetbynameParams,
     ): Promise<OapiReportTemplateGetbynameResponse>
     /**
      * 提供企业员工创建日志的接口
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-log
+     * @see https://open.dingtalk.com/document/isvapp/create-a-log
      */
     oapiReportCreate(
       params: OapiReportCreateParams,
     ): Promise<OapiReportCreateResponse>
     /**
      * 第三方系统会调用这个接口保存日志内容，后续在写日志页面再拉取此内容。
-     * @see https://developers.dingtalk.com/document/isvapp/save-custom-log-content
+     * @see https://open.dingtalk.com/document/isvapp/save-custom-log-content
      */
     oapiReportSavecontent(
       params: OapiReportSavecontentParams,
     ): Promise<OapiReportSavecontentResponse>
     /**
      * 企业可以根据员工userid或者日志模板名称，分页获取员工一段时间范围内在【日志】微应用发送的日志概要信息
-     * @see https://developers.dingtalk.com/document/orgapp/view-log-summary-data
+     * @see https://open.dingtalk.com/document/orgapp/view-log-summary-data
      */
     oapiReportSimplelist(
       params: OapiReportSimplelistParams,
     ): Promise<OapiReportSimplelistResponse>
     /**
      * 分页获取日志相关人员列表，包括已读人员列表、评论人员列表、点赞人员列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-a-list-of-log-related-personnel-by-type
+     * @see https://open.dingtalk.com/document/orgapp/obtains-a-list-of-log-related-personnel-by-type
      */
     oapiReportStatisticsListbytype(
       params: OapiReportStatisticsListbytypeParams,
     ): Promise<OapiReportStatisticsListbytypeResponse>
     /**
      * 获取日志的分享人员列表
-     * @see https://developers.dingtalk.com/document/orgapp/queries-log-sharing-personnel
+     * @see https://open.dingtalk.com/document/orgapp/queries-log-sharing-personnel
      */
     oapiReportReceiverList(
       params: OapiReportReceiverListParams,
     ): Promise<OapiReportReceiverListResponse>
     /**
      * 分页获取评论详情，包括评论人userid、评论内容、评论时间
-     * @see https://developers.dingtalk.com/document/orgapp/queries-log-comment-details
+     * @see https://open.dingtalk.com/document/orgapp/queries-log-comment-details
      */
     oapiReportCommentList(
       params: OapiReportCommentListParams,
     ): Promise<OapiReportCommentListResponse>
     /**
      * 获取日志统计数据
-     * @see https://developers.dingtalk.com/document/orgapp/query-log-statistics
+     * @see https://open.dingtalk.com/document/orgapp/query-log-statistics
      */
     oapiReportStatistics(
       params: OapiReportStatisticsParams,
     ): Promise<OapiReportStatisticsResponse>
     /**
      * 查询企业员工的日志未读数
-     * @see https://developers.dingtalk.com/document/orgapp/querying-the-employee-s-log-is-not-reading
+     * @see https://open.dingtalk.com/document/orgapp/querying-the-employee-s-log-is-not-reading
      */
     oapiReportGetunreadcount(
       params: OapiReportGetunreadcountParams,
     ): Promise<OapiReportGetunreadcountResponse>
     /**
      * 企业可以根据员工userid或者日志模板名称，分页获取员工一段时间范围内在【日志】微应用发送和修改的日志详细信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-the-logs-that-are-sent-by
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-the-logs-that-are-sent-by
      */
     oapiReportList(
       params: OapiReportListParams,
     ): Promise<OapiReportListResponse>
     /**
      * 根据用户userId获取当前企业下可见的日志模板列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-list-of-visible-log-templates-based-on-the
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-list-of-visible-log-templates-based-on-the
      */
     oapiReportTemplateListbyuserid(
       params: OapiReportTemplateListbyuseridParams,
     ): Promise<OapiReportTemplateListbyuseridResponse>
     /**
      * 查询多个用户一段时间范围内的签到记录，只给企业调用，ISV无法调用。
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-check-in-records-of-multiple-users
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-check-in-records-of-multiple-users
      */
     oapiCheckinRecordGet(
       params: OapiCheckinRecordGetParams,
     ): Promise<OapiCheckinRecordGetResponse>
     /**
      * 该接口用于获取部门用户签到记录
-     * @see https://developers.dingtalk.com/document/orgapp/get-check-in-data
+     * @see https://open.dingtalk.com/document/orgapp/get-check-in-data
      */
     oapiCheckinRecord(
       query: OapiCheckinRecordQuery,
     ): Promise<OapiCheckinRecordResponse>
     /**
      * 获取企业公告未删除分类列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-list-of-categories-not-deleted-for-enterprise-announcements
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-list-of-categories-not-deleted-for-enterprise-announcements
      */
     oapiBlackboardCategoryList(
       params: OapiBlackboardCategoryListParams,
     ): Promise<OapiBlackboardCategoryListResponse>
     /**
      * 根据公告id修改企业公告，只有以下身份可以修改：1、主管理员2、公告子管理员并且是待修改公告的创建者
-     * @see https://developers.dingtalk.com/document/orgapp/modify-the-announcement-according-to-the-announcement-id
+     * @see https://open.dingtalk.com/document/orgapp/modify-the-announcement-according-to-the-announcement-id
      */
     oapiBlackboardUpdate(
       params: OapiBlackboardUpdateParams,
     ): Promise<OapiBlackboardUpdateResponse>
     /**
      * 根据公告id删除企业公告，只有以下身份可以删除1、主管理员2、公告子管理员并且是待删除公告创建者
-     * @see https://developers.dingtalk.com/document/orgapp/delete-announcements-based-on-the-announcement-id
+     * @see https://open.dingtalk.com/document/orgapp/delete-announcements-based-on-the-announcement-id
      */
     oapiBlackboardDelete(
       params: OapiBlackboardDeleteParams,
@@ -3477,604 +3477,604 @@ declare module '../internal' {
      * 1.2 公告的接收人
      * 2、非保密公告
      * 2.1 企业内的人都可见
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-details-of-a-bulletin-that-is-not-deleted
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-details-of-a-bulletin-that-is-not-deleted
      */
     oapiBlackboardGet(
       params: OapiBlackboardGetParams,
     ): Promise<OapiBlackboardGetResponse>
     /**
      * 通过接口可以获取到企业未删除的钉钉公告id列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-id-list-of-announcements-that-are-not-deleted
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-id-list-of-announcements-that-are-not-deleted
      */
     oapiBlackboardListids(
       params: OapiBlackboardListidsParams,
     ): Promise<OapiBlackboardListidsResponse>
     /**
      * 管理员可以通过该接口创建钉钉企业公告
-     * @see https://developers.dingtalk.com/document/orgapp/create-an-enterprise-announcement
+     * @see https://open.dingtalk.com/document/orgapp/create-an-enterprise-announcement
      */
     oapiBlackboardCreate(
       params: OapiBlackboardCreateParams,
     ): Promise<OapiBlackboardCreateResponse>
     /**
      * 列出用户当前有权限看到的10条公告，可用于在企业自定义工作首页进行公告轮播展示
-     * @see https://developers.dingtalk.com/document/orgapp/list-the-user-s-announcement-list
+     * @see https://open.dingtalk.com/document/orgapp/list-the-user-s-announcement-list
      */
     oapiBlackboardListtopten(
       params: OapiBlackboardListtoptenParams,
     ): Promise<OapiBlackboardListtoptenResponse>
     /**
      * 查询用户是否参与企业步数排行榜
-     * @see https://developers.dingtalk.com/document/isvapp/check-whether-dingtalk-is-enabled
+     * @see https://open.dingtalk.com/document/isvapp/check-whether-dingtalk-is-enabled
      */
     oapiHealthStepinfoGetuserstatus(
       params: OapiHealthStepinfoGetuserstatusParams,
     ): Promise<OapiHealthStepinfoGetuserstatusResponse>
     /**
      * 批量获取钉钉运动数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-number-of-dingtalk-movement-steps-of-multiple-users
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-number-of-dingtalk-movement-steps-of-multiple-users
      */
     oapiHealthStepinfoListbyuserid(
       params: OapiHealthStepinfoListbyuseridParams,
     ): Promise<OapiHealthStepinfoListbyuseridResponse>
     /**
      * 查询企业用户或部门每天的钉钉运动步数，最多可以查询31天的数据
-     * @see https://developers.dingtalk.com/document/orgapp/queries-individual-or-department-dingtalk-exercise-steps
+     * @see https://open.dingtalk.com/document/orgapp/queries-individual-or-department-dingtalk-exercise-steps
      */
     oapiHealthStepinfoList(
       params: OapiHealthStepinfoListParams,
     ): Promise<OapiHealthStepinfoListResponse>
     /**
      * 该接口用于获取员工可见的应用列表
-     * @see https://developers.dingtalk.com/document/orgapp-server/list-the-microapplications-visible-to-employees
+     * @see https://open.dingtalk.com/document/orgapp-server/list-the-microapplications-visible-to-employees
      */
     oapiMicroappListByUserid(
       query: OapiMicroappListByUseridQuery,
     ): Promise<OapiMicroappListByUseridResponse>
     /**
      * 列出微应用
-     * @see https://developers.dingtalk.com/document/orgapp-server/manager-microapplications-api-permission
+     * @see https://open.dingtalk.com/document/orgapp-server/manager-microapplications-api-permission
      */
     oapiMicroappList(): Promise<OapiMicroappListResponse>
     /**
      * 删除微应用
-     * @see https://developers.dingtalk.com/document/orgapp-server/delete-an-h5-microapplication
+     * @see https://open.dingtalk.com/document/orgapp-server/delete-an-h5-microapplication
      */
     oapiMicroappDelete(
       params: OapiMicroappDeleteParams,
     ): Promise<OapiMicroappDeleteResponse>
     /**
      * 该接口用于设置应用的可见范围
-     * @see https://developers.dingtalk.com/document/orgapp-server/set-the-visible-range-of-the-microapplication
+     * @see https://open.dingtalk.com/document/orgapp-server/set-the-visible-range-of-the-microapplication
      */
     oapiMicroappSetVisibleScopes(
       params: OapiMicroappSetVisibleScopesParams,
     ): Promise<OapiMicroappSetVisibleScopesResponse>
     /**
      * 获取应用的可见范围
-     * @see https://developers.dingtalk.com/document/orgapp-server/gets-the-microapplication-visible-range-set-by-the-enterprise
+     * @see https://open.dingtalk.com/document/orgapp-server/gets-the-microapplication-visible-range-set-by-the-enterprise
      */
     oapiMicroappVisibleScopes(
       params: OapiMicroappVisibleScopesParams,
     ): Promise<OapiMicroappVisibleScopesResponse>
     /**
      * 用户使用音频 media_id 或 url 进行请求，服务通过回调的方式通知用户翻译结果
-     * @see https://developers.dingtalk.com/document/isvapp/asr-short-sentence-recognition
+     * @see https://open.dingtalk.com/document/isvapp/asr-short-sentence-recognition
      */
     oapiAsrVoiceTranslate(
       params: OapiAsrVoiceTranslateParams,
     ): Promise<OapiAsrVoiceTranslateResponse>
     /**
      * 输入一段文本，得到翻译指定语言后的译文，支持多种语言的互译
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-translation
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-translation
      */
     oapiAiMtTranslate(
       params: OapiAiMtTranslateParams,
     ): Promise<OapiAiMtTranslateResponse>
     /**
      * OCR文字识别
-     * @see https://developers.dingtalk.com/document/isvapp/structured-image-recognition-api
+     * @see https://open.dingtalk.com/document/isvapp/structured-image-recognition-api
      */
     oapiOcrStructuredRecognize(
       params: OapiOcrStructuredRecognizeParams,
     ): Promise<OapiOcrStructuredRecognizeResponse>
     /**
      * 场开放场景下，基于群模板定义的机器人向群内发消息
-     * @see https://developers.dingtalk.com/document/isvapp/send-group-helper-message
+     * @see https://open.dingtalk.com/document/isvapp/send-group-helper-message
      */
     oapiImChatScencegroupMessageSendV2(
       params: OapiImChatScencegroupMessageSendV2Params,
     ): Promise<OapiImChatScencegroupMessageSendV2Response>
     /**
      * 根据定义的模板id，创建自定义场景群
-     * @see https://developers.dingtalk.com/document/isvapp/deactivate-group-template
+     * @see https://open.dingtalk.com/document/isvapp/deactivate-group-template
      */
     oapiImChatScenegroupTemplateClose(
       params: OapiImChatScenegroupTemplateCloseParams,
     ): Promise<OapiImChatScenegroupTemplateCloseResponse>
     /**
      * 根据传入的模板id，启用群会话群模板功能
-     * @see https://developers.dingtalk.com/document/isvapp/enable-group-template
+     * @see https://open.dingtalk.com/document/isvapp/enable-group-template
      */
     oapiImChatScenegroupTemplateApply(
       params: OapiImChatScenegroupTemplateApplyParams,
     ): Promise<OapiImChatScenegroupTemplateApplyResponse>
     /**
      * 注册互动卡片回调地址
-     * @see https://developers.dingtalk.com/document/orgapp/registration-card-interaction-callback-address-1
+     * @see https://open.dingtalk.com/document/orgapp/registration-card-interaction-callback-address-1
      */
     oapiImChatScencegroupInteractivecardCallbackRegister(
       params: OapiImChatScencegroupInteractivecardCallbackRegisterParams,
     ): Promise<OapiImChatScencegroupInteractivecardCallbackRegisterResponse>
     /**
      * 根据定义的模板id，创建自定义场景群
-     * @see https://developers.dingtalk.com/document/isvapp/create-group
+     * @see https://open.dingtalk.com/document/isvapp/create-group
      */
     oapiImChatScenegroupCreate(
       params: OapiImChatScenegroupCreateParams,
     ): Promise<OapiImChatScenegroupCreateResponse>
     /**
      * 新增场景群成员
-     * @see https://developers.dingtalk.com/document/isvapp/add-group-members-1
+     * @see https://open.dingtalk.com/document/isvapp/add-group-members-1
      */
     oapiImChatScenegroupMemberAdd(
       params: OapiImChatScenegroupMemberAddParams,
     ): Promise<OapiImChatScenegroupMemberAddResponse>
     /**
      * 获取场景群成员
-     * @see https://developers.dingtalk.com/document/group/obtains-scene-members
+     * @see https://open.dingtalk.com/document/group/obtains-scene-members
      */
     oapiImChatScenegroupMemberGet(
       params: OapiImChatScenegroupMemberGetParams,
     ): Promise<OapiImChatScenegroupMemberGetResponse>
     /**
      * 根据传入的群id，更新群相关内容
-     * @see https://developers.dingtalk.com/document/isvapp/update-group
+     * @see https://open.dingtalk.com/document/isvapp/update-group
      */
     oapiImChatScenegroupUpdate(
       params: OapiImChatScenegroupUpdateParams,
     ): Promise<OapiImChatScenegroupUpdateResponse>
     /**
      * 删除场景群成员
-     * @see https://developers.dingtalk.com/document/isvapp/delete-group-members
+     * @see https://open.dingtalk.com/document/isvapp/delete-group-members
      */
     oapiImChatScenegroupMemberDelete(
       params: OapiImChatScenegroupMemberDeleteParams,
     ): Promise<OapiImChatScenegroupMemberDeleteResponse>
     /**
      * 根据群id，获取群的基本信息
-     * @see https://developers.dingtalk.com/document/isvapp/querying-group-information
+     * @see https://open.dingtalk.com/document/isvapp/querying-group-information
      */
     oapiImChatScenegroupGet(
       params: OapiImChatScenegroupGetParams,
     ): Promise<OapiImChatScenegroupGetResponse>
     /**
      * 自定义机器人发送消息
-     * @see https://developers.dingtalk.com/document/isvapp/custom-bot-access-send-message
+     * @see https://open.dingtalk.com/document/isvapp/custom-bot-access-send-message
      */
     oapiRobotSend(params: OapiRobotSendParams): Promise<OapiRobotSendResponse>
     /**
      * 配置发票适用人群
-     * @see https://developers.dingtalk.com/document/isvapp/configure-invoice-users
+     * @see https://open.dingtalk.com/document/isvapp/configure-invoice-users
      */
     oapiAlitripBtripInvoiceSettingRule(
       params: OapiAlitripBtripInvoiceSettingRuleParams,
     ): Promise<OapiAlitripBtripInvoiceSettingRuleResponse>
     /**
      * 新增发票配置
-     * @see https://developers.dingtalk.com/document/isvapp/new-invoice-configuration
+     * @see https://open.dingtalk.com/document/isvapp/new-invoice-configuration
      */
     oapiAlitripBtripInvoiceSettingAdd(
       params: OapiAlitripBtripInvoiceSettingAddParams,
     ): Promise<OapiAlitripBtripInvoiceSettingAddResponse>
     /**
      * 删除项目
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-project
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-project
      */
     oapiAlitripBtripProjectDelete(
       params: OapiAlitripBtripProjectDeleteParams,
     ): Promise<OapiAlitripBtripProjectDeleteResponse>
     /**
      * 项目变更
-     * @see https://developers.dingtalk.com/document/isvapp/project-change
+     * @see https://open.dingtalk.com/document/isvapp/project-change
      */
     oapiAlitripBtripProjectModify(
       params: OapiAlitripBtripProjectModifyParams,
     ): Promise<OapiAlitripBtripProjectModifyResponse>
     /**
      * 添加项目
-     * @see https://developers.dingtalk.com/document/isvapp/add-a-project
+     * @see https://open.dingtalk.com/document/isvapp/add-a-project
      */
     oapiAlitripBtripProjectAdd(
       params: OapiAlitripBtripProjectAddParams,
     ): Promise<OapiAlitripBtripProjectAddResponse>
     /**
      * 删除发票配置
-     * @see https://developers.dingtalk.com/document/isvapp/delete-invoice-configuration
+     * @see https://open.dingtalk.com/document/isvapp/delete-invoice-configuration
      */
     oapiAlitripBtripInvoiceSettingDelete(
       params: OapiAlitripBtripInvoiceSettingDeleteParams,
     ): Promise<OapiAlitripBtripInvoiceSettingDeleteResponse>
     /**
      * 修改发票配置
-     * @see https://developers.dingtalk.com/document/isvapp/modify-invoice-configuration
+     * @see https://open.dingtalk.com/document/isvapp/modify-invoice-configuration
      */
     oapiAlitripBtripInvoiceSettingModify(
       params: OapiAlitripBtripInvoiceSettingModifyParams,
     ): Promise<OapiAlitripBtripInvoiceSettingModifyResponse>
     /**
      * 查询预估价
-     * @see https://developers.dingtalk.com/document/isvapp/query-estimated-price
+     * @see https://open.dingtalk.com/document/isvapp/query-estimated-price
      */
     oapiAlitripBtripPriceQuery(
       params: OapiAlitripBtripPriceQueryParams,
     ): Promise<OapiAlitripBtripPriceQueryResponse>
     /**
      * 火车票城市搜索
-     * @see https://developers.dingtalk.com/document/isvapp/train-ticket-city-search
+     * @see https://open.dingtalk.com/document/isvapp/train-ticket-city-search
      */
     oapiAlitripBtripTrainCitySuggest(
       params: OapiAlitripBtripTrainCitySuggestParams,
     ): Promise<OapiAlitripBtripTrainCitySuggestResponse>
     /**
      * 获取月对账结算数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-monthly-reconciliation-settlement-data
+     * @see https://open.dingtalk.com/document/isvapp/obtain-monthly-reconciliation-settlement-data
      */
     oapiAlitripBtripMonthbillUrlGet(
       params: OapiAlitripBtripMonthbillUrlGetParams,
     ): Promise<OapiAlitripBtripMonthbillUrlGetResponse>
     /**
      * 获取商旅访问地址
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-business-travel-access-addresses
+     * @see https://open.dingtalk.com/document/isvapp/obtain-business-travel-access-addresses
      */
     oapiAlitripBtripAddressGet(
       params: OapiAlitripBtripAddressGetParams,
     ): Promise<OapiAlitripBtripAddressGetResponse>
     /**
      * 修改申请单
-     * @see https://developers.dingtalk.com/document/isvapp/user-modify-approval-form
+     * @see https://open.dingtalk.com/document/isvapp/user-modify-approval-form
      */
     oapiAlitripBtripApprovalModify(
       params: OapiAlitripBtripApprovalModifyParams,
     ): Promise<OapiAlitripBtripApprovalModifyResponse>
     /**
      * 机票城市搜索
-     * @see https://developers.dingtalk.com/document/isvapp/air-ticket-city-search
+     * @see https://open.dingtalk.com/document/isvapp/air-ticket-city-search
      */
     oapiAlitripBtripFlightCitySuggest(
       params: OapiAlitripBtripFlightCitySuggestParams,
     ): Promise<OapiAlitripBtripFlightCitySuggestResponse>
     /**
      * 获取用车订单数据
-     * @see https://developers.dingtalk.com/document/isvapp/vehicle-order-query-interface
+     * @see https://open.dingtalk.com/document/isvapp/vehicle-order-query-interface
      */
     oapiAlitripBtripVehicleOrderSearch(
       params: OapiAlitripBtripVehicleOrderSearchParams,
     ): Promise<OapiAlitripBtripVehicleOrderSearchResponse>
     /**
      * 查询成本中心
-     * @see https://developers.dingtalk.com/document/isvapp/query-cost-center
+     * @see https://open.dingtalk.com/document/isvapp/query-cost-center
      */
     oapiAlitripBtripCostCenterQuery(
       params: OapiAlitripBtripCostCenterQueryParams,
     ): Promise<OapiAlitripBtripCostCenterQueryResponse>
     /**
      * 更新申请单状态
-     * @see https://developers.dingtalk.com/document/isvapp/update-approval-form
+     * @see https://open.dingtalk.com/document/isvapp/update-approval-form
      */
     oapiAlitripBtripApprovalUpdate(
       params: OapiAlitripBtripApprovalUpdateParams,
     ): Promise<OapiAlitripBtripApprovalUpdateResponse>
     /**
      * 新建成本中心
-     * @see https://developers.dingtalk.com/document/isvapp/new-cost-center
+     * @see https://open.dingtalk.com/document/isvapp/new-cost-center
      */
     oapiAlitripBtripCostCenterNew(
       params: OapiAlitripBtripCostCenterNewParams,
     ): Promise<OapiAlitripBtripCostCenterNewResponse>
     /**
      * 修改成本中心基本信息
-     * @see https://developers.dingtalk.com/document/isvapp/modify-basic-cost-center-information
+     * @see https://open.dingtalk.com/document/isvapp/modify-basic-cost-center-information
      */
     oapiAlitripBtripCostCenterModify(
       params: OapiAlitripBtripCostCenterModifyParams,
     ): Promise<OapiAlitripBtripCostCenterModifyResponse>
     /**
      * 删除成本中心
-     * @see https://developers.dingtalk.com/document/isvapp/delete-cost-center
+     * @see https://open.dingtalk.com/document/isvapp/delete-cost-center
      */
     oapiAlitripBtripCostCenterDelete(
       params: OapiAlitripBtripCostCenterDeleteParams,
     ): Promise<OapiAlitripBtripCostCenterDeleteResponse>
     /**
      * 设置成本中心人员信息
-     * @see https://developers.dingtalk.com/document/isvapp/set-up-cost-center-personnel-information
+     * @see https://open.dingtalk.com/document/isvapp/set-up-cost-center-personnel-information
      */
     oapiAlitripBtripCostCenterEntitySet(
       params: OapiAlitripBtripCostCenterEntitySetParams,
     ): Promise<OapiAlitripBtripCostCenterEntitySetResponse>
     /**
      * 企业获取商旅酒店订单数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-order-data-of-enterprise-hotels
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-order-data-of-enterprise-hotels
      */
     oapiAlitripBtripHotelOrderSearch(
       params: OapiAlitripBtripHotelOrderSearchParams,
     ): Promise<OapiAlitripBtripHotelOrderSearchResponse>
     /**
      * 获取企业火车票订单数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-enterprise-train-ticket-order-data
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-enterprise-train-ticket-order-data
      */
     oapiAlitripBtripTrainOrderSearch(
       params: OapiAlitripBtripTrainOrderSearchParams,
     ): Promise<OapiAlitripBtripTrainOrderSearchResponse>
     /**
      * 获取企业机票订单数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-enterprise-ticket-order-data
+     * @see https://open.dingtalk.com/document/isvapp/obtains-enterprise-ticket-order-data
      */
     oapiAlitripBtripFlightOrderSearch(
       params: OapiAlitripBtripFlightOrderSearchParams,
     ): Promise<OapiAlitripBtripFlightOrderSearchResponse>
     /**
      * 查询可用发票列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-available-invoices
+     * @see https://open.dingtalk.com/document/isvapp/query-available-invoices
      */
     oapiAlitripBtripInvoiceSearch(
       params: OapiAlitripBtripInvoiceSearchParams,
     ): Promise<OapiAlitripBtripInvoiceSearchResponse>
     /**
      * 商旅成本中心转换为外部成本中心
-     * @see https://developers.dingtalk.com/document/isvapp/business-travel-cost-center-converted-to-external-cost-center
+     * @see https://open.dingtalk.com/document/isvapp/business-travel-cost-center-converted-to-external-cost-center
      */
     oapiAlitripBtripCostCenterTransfer(
       params: OapiAlitripBtripCostCenterTransferParams,
     ): Promise<OapiAlitripBtripCostCenterTransferResponse>
     /**
      * 获取申请单详情
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-detailed-data-of-a-single-request
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-detailed-data-of-a-single-request
      */
     oapiAlitripBtripApplyGet(
       params: OapiAlitripBtripApplyGetParams,
     ): Promise<OapiAlitripBtripApplyGetResponse>
     /**
      * 获取申请单列表
-     * @see https://developers.dingtalk.com/document/isvapp/search-enterprise-approval-form-data
+     * @see https://open.dingtalk.com/document/isvapp/search-enterprise-approval-form-data
      */
     oapiAlitripBtripApplySearch(
       params: OapiAlitripBtripApplySearchParams,
     ): Promise<OapiAlitripBtripApplySearchResponse>
     /**
      * 用户新建审批单
-     * @see https://developers.dingtalk.com/document/isvapp/user-new-approval-form
+     * @see https://open.dingtalk.com/document/isvapp/user-new-approval-form
      */
     oapiAlitripBtripApprovalNew(
       params: OapiAlitripBtripApprovalNewParams,
     ): Promise<OapiAlitripBtripApprovalNewResponse>
     /**
      * 删除成本中心人员信息
-     * @see https://developers.dingtalk.com/document/isvapp/delete-cost-center-personnel-information
+     * @see https://open.dingtalk.com/document/isvapp/delete-cost-center-personnel-information
      */
     oapiAlitripBtripCostCenterEntityDelete(
       params: OapiAlitripBtripCostCenterEntityDeleteParams,
     ): Promise<OapiAlitripBtripCostCenterEntityDeleteResponse>
     /**
      * 获取钉钉项目空间任务中文件的操作日志列表
-     * @see https://developers.dingtalk.com/document/orgapp/query-file-operation-logs-of-a-project
+     * @see https://open.dingtalk.com/document/orgapp/query-file-operation-logs-of-a-project
      */
     oapiWorkspaceAuditlogList(
       params: OapiWorkspaceAuditlogListParams,
     ): Promise<OapiWorkspaceAuditlogListResponse>
     /**
      * 查询当前用户的数字化考试情况，是否获取了证书
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-digital-certificate
+     * @see https://open.dingtalk.com/document/isvapp/obtain-digital-certificate
      */
     oapiEduCertGet(
       params: OapiEduCertGetParams,
     ): Promise<OapiEduCertGetResponse>
     /**
      * 获取家校用户身份列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-home-school-user-identities
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-home-school-user-identities
      */
     oapiEduUserList(
       params: OapiEduUserListParams,
     ): Promise<OapiEduUserListResponse>
     /**
      * 查询企业下的智能硬件设备详情
-     * @see https://developers.dingtalk.com/document/isvapp/the-smart-hardware-can-query-details-based-on-the-device
+     * @see https://open.dingtalk.com/document/isvapp/the-smart-hardware-can-query-details-based-on-the-device
      */
     oapiSmartdeviceDeviceQuerybyid(
       params: OapiSmartdeviceDeviceQuerybyidParams,
     ): Promise<OapiSmartdeviceDeviceQuerybyidResponse>
     /**
      * 查询企业下的智能硬件设备列表
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-list-query
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-hardware-list-query
      */
     oapiSmartdeviceDeviceQuerylist(
       params: OapiSmartdeviceDeviceQuerylistParams,
     ): Promise<OapiSmartdeviceDeviceQuerylistResponse>
     /**
      * 查询企业下的智能硬件设备详情
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-device-query
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-hardware-device-query
      */
     oapiSmartdeviceDeviceQuery(
       params: OapiSmartdeviceDeviceQueryParams,
     ): Promise<OapiSmartdeviceDeviceQueryResponse>
     /**
      * 解除企业下的智能硬件设备绑定
-     * @see https://developers.dingtalk.com/document/isvapp/intelligent-hardware-device-nickname-modification
+     * @see https://open.dingtalk.com/document/isvapp/intelligent-hardware-device-nickname-modification
      */
     oapiSmartdeviceDeviceUpdatenick(
       params: OapiSmartdeviceDeviceUpdatenickParams,
     ): Promise<OapiSmartdeviceDeviceUpdatenickResponse>
     /**
      * 解除企业下的智能硬件设备绑定
-     * @see https://developers.dingtalk.com/document/isvapp/unbind-a-smart-hardware-device
+     * @see https://open.dingtalk.com/document/isvapp/unbind-a-smart-hardware-device
      */
     oapiSmartdeviceDeviceUnbind(
       params: OapiSmartdeviceDeviceUnbindParams,
     ): Promise<OapiSmartdeviceDeviceUnbindResponse>
     /**
      * 智能设备接入钉钉时，需要和组织建立绑定关系，此接口用于创建绑定关系。
-     * @see https://developers.dingtalk.com/document/isvapp/establishing-a-binding-relationship-between-intelligent-hardware-and-cloud
+     * @see https://open.dingtalk.com/document/isvapp/establishing-a-binding-relationship-between-intelligent-hardware-and-cloud
      */
     oapiSmartdeviceExternalBind(
       params: OapiSmartdeviceExternalBindParams,
     ): Promise<OapiSmartdeviceExternalBindResponse>
     /**
      * 删除当前组织CRM指定联系人的接口
-     * @see https://developers.dingtalk.com/document/orgapp/delete-crm-contact
+     * @see https://open.dingtalk.com/document/orgapp/delete-crm-contact
      */
     oapiCrmObjectdataContactDelete(
       params: OapiCrmObjectdataContactDeleteParams,
     ): Promise<OapiCrmObjectdataContactDeleteResponse>
     /**
      * 创建CRM自定义对象数据
-     * @see https://developers.dingtalk.com/document/orgapp/dingtalk-paas-master-create-custom-crm-object-data
+     * @see https://open.dingtalk.com/document/orgapp/dingtalk-paas-master-create-custom-crm-object-data
      */
     oapiCrmObjectdataCustomobjectCreate(
       params: OapiCrmObjectdataCustomobjectCreateParams,
     ): Promise<OapiCrmObjectdataCustomobjectCreateResponse>
     /**
      * 钉钉PaaS主数据-更新CRM自定义对象数据
-     * @see https://developers.dingtalk.com/document/orgapp/crm-master-data-opens-interface-for-updating-custom-object-data
+     * @see https://open.dingtalk.com/document/orgapp/crm-master-data-opens-interface-for-updating-custom-object-data
      */
     oapiCrmObjectdataCustomobjectUpdate(
       params: OapiCrmObjectdataCustomobjectUpdateParams,
     ): Promise<OapiCrmObjectdataCustomobjectUpdateResponse>
     /**
      * 根据实例ID列表批量获取CRM自定义表单数据，最多可一次获取200条数据
-     * @see https://developers.dingtalk.com/document/orgapp/retrieves-custom-crm-forms-from-the-id-list
+     * @see https://open.dingtalk.com/document/orgapp/retrieves-custom-crm-forms-from-the-id-list
      */
     oapiCrmObjectdataList(
       params: OapiCrmObjectdataListParams,
     ): Promise<OapiCrmObjectdataListResponse>
     /**
      * 获取CRM自定义对象数据，最多可一次获取200条数据
-     * @see https://developers.dingtalk.com/document/orgapp/retrieve-custom-crm-object-data
+     * @see https://open.dingtalk.com/document/orgapp/retrieve-custom-crm-object-data
      */
     oapiCrmObjectdataQuery(
       params: OapiCrmObjectdataQueryParams,
     ): Promise<OapiCrmObjectdataQueryResponse>
     /**
      * 获取自定义对象的元数据
-     * @see https://developers.dingtalk.com/document/orgapp/get-metadata-description-of-crm-custom-object
+     * @see https://open.dingtalk.com/document/orgapp/get-metadata-description-of-crm-custom-object
      */
     oapiCrmObjectmetaDescribe(
       params: OapiCrmObjectmetaDescribeParams,
     ): Promise<OapiCrmObjectmetaDescribeResponse>
     /**
      * 根据指定查询条件批量获取联系人数据，最多可一次获取200条数据
-     * @see https://developers.dingtalk.com/document/isvapp/query-contact-data
+     * @see https://open.dingtalk.com/document/isvapp/query-contact-data
      */
     oapiCrmObjectdataContactQuery(
       params: OapiCrmObjectdataContactQueryParams,
     ): Promise<OapiCrmObjectdataContactQueryResponse>
     /**
      * 根据实例ID列表批量获取跟进记录数据，最多可一次获取200条数据
-     * @see https://developers.dingtalk.com/document/orgapp/dingtalk-the-primary-data-of-apsara-stack-agility-paas-allows-you
+     * @see https://open.dingtalk.com/document/orgapp/dingtalk-the-primary-data-of-apsara-stack-agility-paas-allows-you
      */
     oapiCrmObjectdataFollowrecordList(
       params: OapiCrmObjectdataFollowrecordListParams,
     ): Promise<OapiCrmObjectdataFollowrecordListResponse>
     /**
      * 根据指定查询条件批量获取跟进记录数据，最多可一次获取200条数据
-     * @see https://developers.dingtalk.com/document/orgapp/query-and-dingtalk-data-of-track-records-in-apsara-stack
+     * @see https://open.dingtalk.com/document/orgapp/query-and-dingtalk-data-of-track-records-in-apsara-stack
      */
     oapiCrmObjectdataFollowrecordQuery(
       params: OapiCrmObjectdataFollowrecordQueryParams,
     ): Promise<OapiCrmObjectdataFollowrecordQueryResponse>
     /**
      * 按照ID列表批量获取联系人数据
-     * @see https://developers.dingtalk.com/document/orgapp/retrieves-contact-data-in-batches-based-on-the-id-list
+     * @see https://open.dingtalk.com/document/orgapp/retrieves-contact-data-in-batches-based-on-the-id-list
      */
     oapiCrmObjectdataContactList(
       params: OapiCrmObjectdataContactListParams,
     ): Promise<OapiCrmObjectdataContactListResponse>
     /**
      * 获取联系人对象的元数据
-     * @see https://developers.dingtalk.com/document/isvapp/get-metadata-for-a-contact
+     * @see https://open.dingtalk.com/document/isvapp/get-metadata-for-a-contact
      */
     oapiCrmObjectmetaContactDescribe(): Promise<OapiCrmObjectmetaContactDescribeResponse>
     /**
      * 获取跟进记录对象的元数据
-     * @see https://developers.dingtalk.com/document/isvapp/get-the-metadata-of-the-follow-up-record-object
+     * @see https://open.dingtalk.com/document/isvapp/get-the-metadata-of-the-follow-up-record-object
      */
     oapiCrmObjectmetaFollowrecordDescribe(): Promise<OapiCrmObjectmetaFollowrecordDescribeResponse>
     /**
      * 发送文件给指定用户
-     * @see https://developers.dingtalk.com/document/isvapp-server/sends-a-file-to-a-specified-user
+     * @see https://open.dingtalk.com/document/isvapp-server/sends-a-file-to-a-specified-user
      */
     oapiCspaceAddToSingleChat(
       params: OapiCspaceAddToSingleChatParams,
     ): Promise<OapiCspaceAddToSingleChatResponse>
     /**
      * 授权用户访问企业下的自定义空间
-     * @see https://developers.dingtalk.com/document/isvapp-server/authorize-a-user-to-access-a-custom-workspace-of-an
+     * @see https://open.dingtalk.com/document/isvapp-server/authorize-a-user-to-access-a-custom-workspace-of-an
      */
     oapiCspaceGrantCustomSpace(
       query: OapiCspaceGrantCustomSpaceQuery,
     ): Promise<OapiCspaceGrantCustomSpaceResponse>
     /**
      * 获取企业下的自定义空间
-     * @see https://developers.dingtalk.com/document/isvapp-server/obtain-user-space-under-the-enterprise
+     * @see https://open.dingtalk.com/document/isvapp-server/obtain-user-space-under-the-enterprise
      */
     oapiCspaceGetCustomSpace(
       query: OapiCspaceGetCustomSpaceQuery,
     ): Promise<OapiCspaceGetCustomSpaceResponse>
     /**
      * 新增文件到用户钉盘
-     * @see https://developers.dingtalk.com/document/isvapp-server/add-file-to-user-s-dingtalk-disk
+     * @see https://open.dingtalk.com/document/isvapp-server/add-file-to-user-s-dingtalk-disk
      */
     oapiCspaceAdd(query: OapiCspaceAddQuery): Promise<OapiCspaceAddResponse>
     /**
      * 增加和删除群管理员接口
-     * @see https://developers.dingtalk.com/document/orgapp/set-chat-admin
+     * @see https://open.dingtalk.com/document/orgapp/set-chat-admin
      */
     oapiChatSubadminUpdate(
       params: OapiChatSubadminUpdateParams,
     ): Promise<OapiChatSubadminUpdateResponse>
     /**
      * 获取群入群二维码邀请链接
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-a-qr-code-link
+     * @see https://open.dingtalk.com/document/orgapp/obtain-a-qr-code-link
      */
     oapiChatQrcodeGet(
       params: OapiChatQrcodeGetParams,
     ): Promise<OapiChatQrcodeGetResponse>
     /**
      * 设置群成员之间是否可以添加好友和私聊的开关
-     * @see https://developers.dingtalk.com/document/orgapp/set-private-chat
+     * @see https://open.dingtalk.com/document/orgapp/set-private-chat
      */
     oapiChatMemberFriendswitchUpdate(
       params: OapiChatMemberFriendswitchUpdateParams,
     ): Promise<OapiChatMemberFriendswitchUpdateResponse>
     /**
      * 设置群成员的群昵称
-     * @see https://developers.dingtalk.com/document/orgapp/set-a-group-nickname
+     * @see https://open.dingtalk.com/document/orgapp/set-a-group-nickname
      */
     oapiChatUpdategroupnick(
       params: OapiChatUpdategroupnickParams,
     ): Promise<OapiChatUpdategroupnickResponse>
     /**
      * 修改群会话
-     * @see https://developers.dingtalk.com/document/orgapp/modify-a-group-session
+     * @see https://open.dingtalk.com/document/orgapp/modify-a-group-session
      */
     oapiChatUpdate(
       params: OapiChatUpdateParams,
     ): Promise<OapiChatUpdateResponse>
     /**
      * 该接口用于创建会话
-     * @see https://developers.dingtalk.com/document/orgapp/create-group-session
+     * @see https://open.dingtalk.com/document/orgapp/create-group-session
      */
     oapiChatCreate(
       params: OapiChatCreateParams,
     ): Promise<OapiChatCreateResponse>
     /**
      * 获取群会话
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-a-group-session
+     * @see https://open.dingtalk.com/document/orgapp/obtain-a-group-session
      */
     oapiChatGet(query: OapiChatGetQuery): Promise<OapiChatGetResponse>
     /**
      * 通过工作助理机器人给企业员工发送消息
-     * @see https://developers.dingtalk.com/document/orgapp/the-message-pushing-interface-of-the-assistant
+     * @see https://open.dingtalk.com/document/orgapp/the-message-pushing-interface-of-the-assistant
      */
     oapiSmartbotMsgPush(
       params: OapiSmartbotMsgPushParams,

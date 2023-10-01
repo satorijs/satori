@@ -234,90 +234,90 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询群内的机器人列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-the-list-of-robots-in-the-group
+     * @see https://open.dingtalk.com/document/orgapp/obtain-the-list-of-robots-in-the-group
      */
     getBotListInGroup(
       params: GetBotListInGroupParams,
     ): Promise<GetBotListInGroupResponse>
     /**
      * 获取机器人消息中文件下载链接
-     * @see https://developers.dingtalk.com/document/isvapp/download-the-file-content-of-the-robot-receiving-message
+     * @see https://open.dingtalk.com/document/isvapp/download-the-file-content-of-the-robot-receiving-message
      */
     robotMessageFileDownload(
       params: RobotMessageFileDownloadParams,
     ): Promise<RobotMessageFileDownloadResponse>
     /**
      * 清空单聊机器人快捷入口
-     * @see https://developers.dingtalk.com/document/orgapp/clear-single-chat-robot-quick-entry
+     * @see https://open.dingtalk.com/document/orgapp/clear-single-chat-robot-quick-entry
      */
     clearRobotPlugin(
       params: ClearRobotPluginParams,
     ): Promise<ClearRobotPluginResponse>
     /**
      * 设置单聊机器人快捷入口
-     * @see https://developers.dingtalk.com/document/orgapp/set-robot-quick-entrance
+     * @see https://open.dingtalk.com/document/orgapp/set-robot-quick-entrance
      */
     setRobotPlugin(
       params: SetRobotPluginParams,
     ): Promise<SetRobotPluginResponse>
     /**
      * 查询单聊机器人快捷入口
-     * @see https://developers.dingtalk.com/document/orgapp/quick-entrance-of-inquiry-single-chat-robot
+     * @see https://open.dingtalk.com/document/orgapp/quick-entrance-of-inquiry-single-chat-robot
      */
     queryRobotPlugin(
       params: QueryRobotPluginParams,
     ): Promise<QueryRobotPluginResponse>
     /**
      * 企业机器人撤回内部群消息
-     * @see https://developers.dingtalk.com/document/orgapp/enterprise-chatbot-withdraws-internal-group-messages
+     * @see https://open.dingtalk.com/document/orgapp/enterprise-chatbot-withdraws-internal-group-messages
      */
     orgGroupRecall(
       params: OrgGroupRecallParams,
     ): Promise<OrgGroupRecallResponse>
     /**
      * 查询企业机器人群聊消息用户已读状态
-     * @see https://developers.dingtalk.com/document/orgapp/chatbot-queries-the-read-status-of-a-message
+     * @see https://open.dingtalk.com/document/orgapp/chatbot-queries-the-read-status-of-a-message
      */
     orgGroupQuery(params: OrgGroupQueryParams): Promise<OrgGroupQueryResponse>
     /**
      * 机器人发送群聊消息
-     * @see https://developers.dingtalk.com/document/orgapp/the-robot-sends-a-group-message
+     * @see https://open.dingtalk.com/document/orgapp/the-robot-sends-a-group-message
      */
     orgGroupSend(params: OrgGroupSendParams): Promise<OrgGroupSendResponse>
     /**
      * 批量撤回人与机器人会话中机器人消息
-     * @see https://developers.dingtalk.com/document/orgapp/batch-message-recall-chat
+     * @see https://open.dingtalk.com/document/orgapp/batch-message-recall-chat
      */
     batchRecallOTO(
       params: BatchRecallOTOParams,
     ): Promise<BatchRecallOTOResponse>
     /**
      * 批量查询人与机器人会话机器人消息是否已读
-     * @see https://developers.dingtalk.com/document/orgapp/chatbot-batch-query-the-read-status-of-messages
+     * @see https://open.dingtalk.com/document/orgapp/chatbot-batch-query-the-read-status-of-messages
      */
     batchOTOQuery(query: BatchOTOQueryQuery): Promise<BatchOTOQueryResponse>
     /**
      * 批量发送人与机器人会话中机器人消息
-     * @see https://developers.dingtalk.com/document/orgapp/chatbots-send-one-on-one-chat-messages-in-batches
+     * @see https://open.dingtalk.com/document/orgapp/chatbots-send-one-on-one-chat-messages-in-batches
      */
     batchSendOTO(params: BatchSendOTOParams): Promise<BatchSendOTOResponse>
     /**
      * 人与人会话中机器人发送普通消息
-     * @see https://developers.dingtalk.com/document/orgapp/the-robot-sends-ordinary-messages-in-a-person-to-person-conversation
+     * @see https://open.dingtalk.com/document/orgapp/the-robot-sends-ordinary-messages-in-a-person-to-person-conversation
      */
     privateChatSend(
       params: PrivateChatSendParams,
     ): Promise<PrivateChatSendResponse>
     /**
      * 查询人与人会话中机器人已读消息
-     * @see https://developers.dingtalk.com/document/orgapp/query-the-read-list-of-robot-messages-in-person-to-person-conversations
+     * @see https://open.dingtalk.com/document/orgapp/query-the-read-list-of-robot-messages-in-person-to-person-conversations
      */
     privateChatQuery(
       params: PrivateChatQueryParams,
     ): Promise<PrivateChatQueryResponse>
     /**
      * 批量撤回人与人会话中机器人消息
-     * @see https://developers.dingtalk.com/document/orgapp/batch-withdrawal-of-single-chat-robot-messages-in-person-to-person-conversations
+     * @see https://open.dingtalk.com/document/orgapp/batch-withdrawal-of-single-chat-robot-messages-in-person-to-person-conversations
      */
     batchRecallPrivateChat(
       params: BatchRecallPrivateChatParams,

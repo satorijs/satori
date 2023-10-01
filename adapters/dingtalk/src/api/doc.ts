@@ -150,7 +150,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 设置行隐藏或显示
-     * @see https://developers.dingtalk.com/document/app/set-row-visibility
+     * @see https://open.dingtalk.com/document/app/set-row-visibility
      */
     setRowsVisibility(
       workbookId: string,
@@ -160,7 +160,7 @@ declare module '../internal' {
     ): Promise<SetRowsVisibilityResponse>
     /**
      * 设置列隐藏或显示
-     * @see https://developers.dingtalk.com/document/app/set-column-visibility
+     * @see https://open.dingtalk.com/document/app/set-column-visibility
      */
     setColumnsVisibility(
       workbookId: string,
@@ -170,7 +170,7 @@ declare module '../internal' {
     ): Promise<SetColumnsVisibilityResponse>
     /**
      * 删除行
-     * @see https://developers.dingtalk.com/document/app/delete-row
+     * @see https://open.dingtalk.com/document/app/delete-row
      */
     deleteRows(
       workbookId: string,
@@ -180,7 +180,7 @@ declare module '../internal' {
     ): Promise<DeleteRowsResponse>
     /**
      * 删除列
-     * @see https://developers.dingtalk.com/document/app/delete-column
+     * @see https://open.dingtalk.com/document/app/delete-column
      */
     deleteColumns(
       workbookId: string,
@@ -190,7 +190,7 @@ declare module '../internal' {
     ): Promise<DeleteColumnsResponse>
     /**
      * 指定行上方插入若干行
-     * @see https://developers.dingtalk.com/document/app/insert-rows-before-rows
+     * @see https://open.dingtalk.com/document/app/insert-rows-before-rows
      */
     insertRowsBefore(
       workbookId: string,
@@ -200,7 +200,7 @@ declare module '../internal' {
     ): Promise<InsertRowsBeforeResponse>
     /**
      * 指定列左侧插入若干列
-     * @see https://developers.dingtalk.com/document/app/insert-column-before-column
+     * @see https://open.dingtalk.com/document/app/insert-column-before-column
      */
     insertColumnsBefore(
       workbookId: string,
@@ -210,7 +210,7 @@ declare module '../internal' {
     ): Promise<InsertColumnsBeforeResponse>
     /**
      * 清除单元格区域内所有内容
-     * @see https://developers.dingtalk.com/document/app/clear-all
+     * @see https://open.dingtalk.com/document/app/clear-all
      */
     clear(
       workbookId: string,
@@ -220,7 +220,7 @@ declare module '../internal' {
     ): Promise<ClearResponse>
     /**
      * 清除单元格区域内数据
-     * @see https://developers.dingtalk.com/document/app/clear-cell-data
+     * @see https://open.dingtalk.com/document/app/clear-cell-data
      */
     clearData(
       workbookId: string,

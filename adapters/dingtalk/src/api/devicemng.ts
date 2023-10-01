@@ -165,35 +165,35 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取报修信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-repair-report-record
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-repair-report-record
      */
     listMaintainInfo(
       params: ListMaintainInfoParams,
     ): Promise<ListMaintainInfoResponse>
     /**
      * 获取巡检、保养记录
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-inspection-and-maintenance-records
+     * @see https://open.dingtalk.com/document/isvapp/obtain-inspection-and-maintenance-records
      */
     listInspectInfo(
       params: ListInspectInfoParams,
     ): Promise<ListInspectInfoResponse>
     /**
      * 查询激活的设备信息
-     * @see https://developers.dingtalk.com/document/isvapp/query-information-about-a-registered-device
+     * @see https://open.dingtalk.com/document/isvapp/query-information-about-a-registered-device
      */
     listActivateDevices(
       query: ListActivateDevicesQuery,
     ): Promise<ListActivateDevicesResponse>
     /**
      * 批量注册与激活设备
-     * @see https://developers.dingtalk.com/document/isvapp/register-and-activate-devices-in-batches
+     * @see https://open.dingtalk.com/document/isvapp/register-and-activate-devices-in-batches
      */
     registerAndActivateDeviceBatch(
       params: RegisterAndActivateDeviceBatchParams,
     ): Promise<RegisterAndActivateDeviceBatchResponse>
     /**
      * 注册与激活设备
-     * @see https://developers.dingtalk.com/document/isvapp/register-the-device-to-the-dingtalk
+     * @see https://open.dingtalk.com/document/isvapp/register-the-device-to-the-dingtalk
      */
     registerAndActivateDevice(
       params: RegisterAndActivateDeviceParams,

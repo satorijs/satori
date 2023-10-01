@@ -85,24 +85,24 @@ declare module '../internal' {
   interface Internal {
     /**
      * 新建自定义空间
-     * @see https://developers.dingtalk.com/document/isvapp/new-custom-space
+     * @see https://open.dingtalk.com/document/isvapp/new-custom-space
      */
     addCustomSpace(
       params: AddCustomSpaceParams,
     ): Promise<AddCustomSpaceResponse>
     /**
      * 删除空间
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-space
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-space
      */
     deleteSpace(spaceId: string, query: DeleteSpaceQuery): Promise<void>
     /**
      * 新建空间
-     * @see https://developers.dingtalk.com/document/isvapp/new-space
+     * @see https://open.dingtalk.com/document/isvapp/new-space
      */
     driveAddSpace(params: DriveAddSpaceParams): Promise<DriveAddSpaceResponse>
     /**
      * 获取空间列表
-     * @see https://developers.dingtalk.com/document/isvapp/queries-a-space-list
+     * @see https://open.dingtalk.com/document/isvapp/queries-a-space-list
      */
     listSpaces(query: ListSpacesQuery): Promise<ListSpacesResponse>
   }

@@ -381,84 +381,84 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询商旅火车票结算记账数据
-     * @see https://developers.dingtalk.com/document/isvapp/business-travel-train-ticket-settlement-bookkeeping-query-interface
+     * @see https://open.dingtalk.com/document/isvapp/business-travel-train-ticket-settlement-bookkeeping-query-interface
      */
     billSettementBtripTrain(
       query: BillSettementBtripTrainQuery,
     ): Promise<BillSettementBtripTrainResponse>
     /**
      * 查询酒店结算记账数据
-     * @see https://developers.dingtalk.com/document/isvapp/hotel-settlement-bookkeeping-query-interface
+     * @see https://open.dingtalk.com/document/isvapp/hotel-settlement-bookkeeping-query-interface
      */
     billSettementHotel(
       query: BillSettementHotelQuery,
     ): Promise<BillSettementHotelResponse>
     /**
      * 查询用车结算记账记录
-     * @see https://developers.dingtalk.com/document/isvapp/query-interface-for-vehicle-settlement-and-bookkeeping
+     * @see https://open.dingtalk.com/document/isvapp/query-interface-for-vehicle-settlement-and-bookkeeping
      */
     billSettementCar(
       query: BillSettementCarQuery,
     ): Promise<BillSettementCarResponse>
     /**
      * 查询机票结算记账数据
-     * @see https://developers.dingtalk.com/document/isvapp/ticket-settlement-bookkeeping-query-interface
+     * @see https://open.dingtalk.com/document/isvapp/ticket-settlement-bookkeeping-query-interface
      */
     billSettementFlight(
       query: BillSettementFlightQuery,
     ): Promise<BillSettementFlightResponse>
     /**
      * 搜索第三方机票超标审批单
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-flight-get
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-flight-get
      */
     getFlightExceedApply(
       query: GetFlightExceedApplyQuery,
     ): Promise<GetFlightExceedApplyResponse>
     /**
      * 关联单号查询相关订单信息列表
-     * @see https://developers.dingtalk.com/document/isvapp/link-no-to-query-the-list-of-related-order-information
+     * @see https://open.dingtalk.com/document/isvapp/link-no-to-query-the-list-of-related-order-information
      */
     queryUnionOrder(
       query: QueryUnionOrderQuery,
     ): Promise<QueryUnionOrderResponse>
     /**
      * 搜索第三方火车票超标审批单
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-train-get
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-train-get
      */
     getTrainExceedApply(
       query: GetTrainExceedApplyQuery,
     ): Promise<GetTrainExceedApplyResponse>
     /**
      * 搜索第三方酒店超标审批单
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-hotel-get
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-hotel-get
      */
     getHotelExceedApply(
       query: GetHotelExceedApplyQuery,
     ): Promise<GetHotelExceedApplyResponse>
     /**
      * 同步超标审批结果
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-sync
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-oapi-alitrip-btrip-exceedapply-sync
      */
     syncExceedApply(
       query: SyncExceedApplyQuery,
     ): Promise<SyncExceedApplyResponse>
     /**
      * 查询市内用车申请单
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-application-form-for-third-party-vehicles-in-the-city
+     * @see https://open.dingtalk.com/document/isvapp/query-the-application-form-for-third-party-vehicles-in-the-city
      */
     queryCityCarApply(
       query: QueryCityCarApplyQuery,
     ): Promise<QueryCityCarApplyResponse>
     /**
      * 审批市内用车申请单
-     * @see https://developers.dingtalk.com/document/isvapp/approval-of-third-party-city-car-application-form
+     * @see https://open.dingtalk.com/document/isvapp/approval-of-third-party-city-car-application-form
      */
     approveCityCarApply(
       params: ApproveCityCarApplyParams,
     ): Promise<ApproveCityCarApplyResponse>
     /**
      * 同步市内用车申请单
-     * @see https://developers.dingtalk.com/document/isvapp/synchronize-third-party-city-vehicle-approval-form
+     * @see https://open.dingtalk.com/document/isvapp/synchronize-third-party-city-vehicle-approval-form
      */
     addCityCarApply(
       params: AddCityCarApplyParams,

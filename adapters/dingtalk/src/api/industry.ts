@@ -116,35 +116,35 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询园区项目详情
-     * @see https://developers.dingtalk.com/document/isvapp/query-a-project-in-a-specified-campus
+     * @see https://open.dingtalk.com/document/isvapp/query-a-project-in-a-specified-campus
      */
     campusGetCampus(
       query: CampusGetCampusQuery,
     ): Promise<CampusGetCampusResponse>
     /**
      * 查询项目组信息
-     * @see https://developers.dingtalk.com/document/isvapp/query-a-project-group-in-the-specified-park
+     * @see https://open.dingtalk.com/document/isvapp/query-a-project-group-in-the-specified-park
      */
     campusGetCampusGroup(
       query: CampusGetCampusGroupQuery,
     ): Promise<CampusGetCampusGroupResponse>
     /**
      * 创建园区项目
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-campus-project
+     * @see https://open.dingtalk.com/document/isvapp/create-a-campus-project
      */
     campusCreateCampus(
       params: CampusCreateCampusParams,
     ): Promise<CampusCreateCampusResponse>
     /**
      * 创建项目组
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-project-group
+     * @see https://open.dingtalk.com/document/isvapp/create-a-project-group
      */
     campusCreateCampusGroup(
       params: CampusCreateCampusGroupParams,
     ): Promise<CampusCreateCampusGroupResponse>
     /**
      * 删除项目组
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-project-group
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-project-group
      */
     campusDeleteCampusGroup(
       query: CampusDeleteCampusGroupQuery,

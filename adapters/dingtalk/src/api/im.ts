@@ -93,7 +93,7 @@ export interface UpdateGroupSubAdminResponse {
 }
 
 export interface UpdateMemberGroupNickParams {
-  /** 场景群群ID，可以调用[创建场景群](https://developers.dingtalk.com/document/chatgroup/create-a-scene-group-v2)接口获取。 */
+  /** 场景群群ID，可以调用[创建场景群](https://open.dingtalk.com/document/chatgroup/create-a-scene-group-v2)接口获取。 */
   openConversationId: string
   /** 用户的userid。 */
   userId: string
@@ -734,244 +734,244 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询群内群模板机器人
-     * @see https://developers.dingtalk.com/document/isvapp/query-intra-group-template-robot
+     * @see https://open.dingtalk.com/document/isvapp/query-intra-group-template-robot
      */
     querySceneGroupTemplateRobot(
       query: QuerySceneGroupTemplateRobotQuery,
     ): Promise<QuerySceneGroupTemplateRobotResponse>
     /**
      * 查询群成员
-     * @see https://developers.dingtalk.com/document/orgapp/query-group-members
+     * @see https://open.dingtalk.com/document/orgapp/query-group-members
      */
     batchQueryGroupMember(
       params: BatchQueryGroupMemberParams,
     ): Promise<BatchQueryGroupMemberResponse>
     /**
      * 查询群禁言状态
-     * @see https://developers.dingtalk.com/document/orgapp/query-group-silence-status
+     * @see https://open.dingtalk.com/document/orgapp/query-group-silence-status
      */
     queryGroupMuteStatus(
       query: QueryGroupMuteStatusQuery,
     ): Promise<QueryGroupMuteStatusResponse>
     /**
      * 设置群成员禁言状态
-     * @see https://developers.dingtalk.com/document/orgapp/set-group-members-access-control
+     * @see https://open.dingtalk.com/document/orgapp/set-group-members-access-control
      */
     updateMemberBanWords(params: UpdateMemberBanWordsParams): Promise<void>
     /**
      * 查询群简要信息
-     * @see https://developers.dingtalk.com/document/isvapp/query-group-brief-information
+     * @see https://open.dingtalk.com/document/isvapp/query-group-brief-information
      */
     getSceneGroupInfo(
       params: GetSceneGroupInfoParams,
     ): Promise<GetSceneGroupInfoResponse>
     /**
      * 更新群管理员
-     * @see https://developers.dingtalk.com/document/isvapp/update-group-administrator
+     * @see https://open.dingtalk.com/document/isvapp/update-group-administrator
      */
     updateGroupSubAdmin(
       params: UpdateGroupSubAdminParams,
     ): Promise<UpdateGroupSubAdminResponse>
     /**
      * 更新群成员的群昵称
-     * @see https://developers.dingtalk.com/document/isvapp/update-group-nicknames-for-group-members
+     * @see https://open.dingtalk.com/document/isvapp/update-group-nicknames-for-group-members
      */
     updateMemberGroupNick(
       params: UpdateMemberGroupNickParams,
     ): Promise<UpdateMemberGroupNickResponse>
     /**
      * 发送模板响应式可交互式卡片
-     * @see https://developers.dingtalk.com/document/orgapp/send-lightweight-interactive-cards
+     * @see https://open.dingtalk.com/document/orgapp/send-lightweight-interactive-cards
      */
     sendTemplateInteractiveCard(
       params: SendTemplateInteractiveCardParams,
     ): Promise<SendTemplateInteractiveCardResponse>
     /**
      * 更新钉钉互动卡片
-     * @see https://developers.dingtalk.com/document/orgapp/update-dingtalk-interactive-cards-1
+     * @see https://open.dingtalk.com/document/orgapp/update-dingtalk-interactive-cards-1
      */
     updateInteractiveCard(
       params: UpdateInteractiveCardParams,
     ): Promise<UpdateInteractiveCardResponse>
     /**
      * 发送可交互式动态卡片
-     * @see https://developers.dingtalk.com/document/orgapp/send-interactive-dynamic-cards-1
+     * @see https://open.dingtalk.com/document/orgapp/send-interactive-dynamic-cards-1
      */
     sendInteractiveCard(
       params: SendInteractiveCardParams,
     ): Promise<SendInteractiveCardResponse>
     /**
      * 更新机器人发送互动卡片
-     * @see https://developers.dingtalk.com/document/orgapp/update-the-robot-to-send-interactive-cards
+     * @see https://open.dingtalk.com/document/orgapp/update-the-robot-to-send-interactive-cards
      */
     updateRobotInteractiveCard(
       params: UpdateRobotInteractiveCardParams,
     ): Promise<UpdateRobotInteractiveCardResponse>
     /**
      * 机器人发送互动卡片（普通版）
-     * @see https://developers.dingtalk.com/document/orgapp/robots-send-interactive-cards
+     * @see https://open.dingtalk.com/document/orgapp/robots-send-interactive-cards
      */
     sendRobotInteractiveCard(
       params: SendRobotInteractiveCardParams,
     ): Promise<SendRobotInteractiveCardResponse>
     /**
      * 获取群会话的OpenConversationId
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-group-openconversationid
+     * @see https://open.dingtalk.com/document/orgapp/obtain-group-openconversationid
      */
     chatIdToOpenConversationId(
       chatId: string,
     ): Promise<ChatIdToOpenConversationIdResponse>
     /**
      * 设置群管理员
-     * @see https://developers.dingtalk.com/document/orgapp/batch-setup-group-administrator
+     * @see https://open.dingtalk.com/document/orgapp/batch-setup-group-administrator
      */
     chatSubAdminUpdate(
       params: ChatSubAdminUpdateParams,
     ): Promise<ChatSubAdminUpdateResponse>
     /**
      * 创建普通群
-     * @see https://developers.dingtalk.com/document/app/create-common-group-new-version
+     * @see https://open.dingtalk.com/document/app/create-common-group-new-version
      */
     imCreateGroup(params: ImCreateGroupParams): Promise<ImCreateGroupResponse>
     /**
      * 创建两人群
-     * @see https://developers.dingtalk.com/document/app/creating-two-groups-of-people
+     * @see https://open.dingtalk.com/document/app/creating-two-groups-of-people
      */
     createCoupleGroup(
       params: CreateCoupleGroupParams,
     ): Promise<CreateCoupleGroupResponse>
     /**
      * 更换群主
-     * @see https://developers.dingtalk.com/document/isvapp/change-group-owner
+     * @see https://open.dingtalk.com/document/isvapp/change-group-owner
      */
     changeGroupOwner(
       params: ChangeGroupOwnerParams,
     ): Promise<ChangeGroupOwnerResponse>
     /**
      * 解散互通群
-     * @see https://developers.dingtalk.com/document/isvapp/disband-bc-interconnection-group
+     * @see https://open.dingtalk.com/document/isvapp/disband-bc-interconnection-group
      */
     dismissGroupConversation(
       params: DismissGroupConversationParams,
     ): Promise<DismissGroupConversationResponse>
     /**
      * 机器人发送消息
-     * @see https://developers.dingtalk.com/document/app/group-robots-send-messages
+     * @see https://open.dingtalk.com/document/app/group-robots-send-messages
      */
     sendRobotMessage(
       params: SendRobotMessageParams,
     ): Promise<SendRobotMessageResponse>
     /**
      * 创建店铺群
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-store-group
+     * @see https://open.dingtalk.com/document/isvapp/create-a-store-group
      */
     createStoreGroupConversation(
       params: CreateStoreGroupConversationParams,
     ): Promise<CreateStoreGroupConversationResponse>
     /**
      * 创建钉外两人群
-     * @see https://developers.dingtalk.com/document/isvapp/create-two-people-outside-the-nail
+     * @see https://open.dingtalk.com/document/isvapp/create-two-people-outside-the-nail
      */
     createCoupleGroupConversation(
       params: CreateCoupleGroupConversationParams,
     ): Promise<CreateCoupleGroupConversationResponse>
     /**
      * 修改群名称
-     * @see https://developers.dingtalk.com/document/isvapp/modify-the-group-name
+     * @see https://open.dingtalk.com/document/isvapp/modify-the-group-name
      */
     updateGroupName(
       params: UpdateGroupNameParams,
     ): Promise<UpdateGroupNameResponse>
     /**
      * 修改群头像
-     * @see https://developers.dingtalk.com/document/isvapp/modify-the-avatar-of-a-communication-group
+     * @see https://open.dingtalk.com/document/isvapp/modify-the-avatar-of-a-communication-group
      */
     updateGroupAvatar(
       params: UpdateGroupAvatarParams,
     ): Promise<UpdateGroupAvatarResponse>
     /**
      * 批量查询群信息
-     * @see https://developers.dingtalk.com/document/isvapp/batch-query-cross-nail-two-group-list
+     * @see https://open.dingtalk.com/document/isvapp/batch-query-cross-nail-two-group-list
      */
     querySingleGroup(
       params: QuerySingleGroupParams,
     ): Promise<QuerySingleGroupResponse>
     /**
      * 查询群成员列表
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-group-member-list
+     * @see https://open.dingtalk.com/document/isvapp/query-the-group-member-list
      */
     queryGroupMember(
       query: QueryGroupMemberQuery,
     ): Promise<QueryGroupMemberResponse>
     /**
      * 批量查询未读消息数
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-number-of-unread-messages-for-users-outside-of
+     * @see https://open.dingtalk.com/document/isvapp/query-the-number-of-unread-messages-for-users-outside-of
      */
     queryUnReadMessage(
       params: QueryUnReadMessageParams,
     ): Promise<QueryUnReadMessageResponse>
     /**
      * 发送ToB消息
-     * @see https://developers.dingtalk.com/document/isvapp/a-user-outside-the-dingtalk-sends-a-message-to-the
+     * @see https://open.dingtalk.com/document/isvapp/a-user-outside-the-dingtalk-sends-a-message-to-the
      */
     sendMessage(params: SendMessageParams): Promise<SendMessageResponse>
     /**
      * 移除群成员
-     * @see https://developers.dingtalk.com/document/isvapp/remove-a-connected-group-member
+     * @see https://open.dingtalk.com/document/isvapp/remove-a-connected-group-member
      */
     removeGroupMember(
       params: RemoveGroupMemberParams,
     ): Promise<RemoveGroupMemberResponse>
     /**
      * 添加群成员
-     * @see https://developers.dingtalk.com/document/isvapp/add-group-members
+     * @see https://open.dingtalk.com/document/isvapp/add-group-members
      */
     addGroupMember(
       params: AddGroupMemberParams,
     ): Promise<AddGroupMemberResponse>
     /**
      * 创建互通群（支持普通互通群、跨钉两人群）
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-common-group-or-cross-nail-group
+     * @see https://open.dingtalk.com/document/isvapp/create-a-common-group-or-cross-nail-group
      */
     createGroupConversation(
       params: CreateGroupConversationParams,
     ): Promise<CreateGroupConversationResponse>
     /**
      * 发送ToC消息
-     * @see https://developers.dingtalk.com/document/isvapp/dingtalk-users-send-messages-to-the-group-or-dingtalk-users
+     * @see https://open.dingtalk.com/document/isvapp/dingtalk-users-send-messages-to-the-group-or-dingtalk-users
      */
     sendDingMessage(
       params: SendDingMessageParams,
     ): Promise<SendDingMessageResponse>
     /**
      * 创建ToB会话地址
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-session-address
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-session-address
      */
     getConversationUrl(
       params: GetConversationUrlParams,
     ): Promise<GetConversationUrlResponse>
     /**
      * 创建钉外账号
-     * @see https://developers.dingtalk.com/document/isvapp/create-bc-account-association
+     * @see https://open.dingtalk.com/document/isvapp/create-bc-account-association
      */
     createInterconnection(
       params: CreateInterconnectionParams,
     ): Promise<CreateInterconnectionResponse>
     /**
      * 人与人会话中机器人发送互动卡片
-     * @see https://developers.dingtalk.com/document/orgapp/send-dingtalk-interactive-cards-to-person-to-person-chat-sessions
+     * @see https://open.dingtalk.com/document/orgapp/send-dingtalk-interactive-cards-to-person-to-person-chat-sessions
      */
     sendOTOInteractiveCard(
       params: SendOTOInteractiveCardParams,
     ): Promise<SendOTOInteractiveCardResponse>
     /**
      * 关闭互动卡片吊顶
-     * @see https://developers.dingtalk.com/document/orgapp/close-interactive-card-ceiling
+     * @see https://open.dingtalk.com/document/orgapp/close-interactive-card-ceiling
      */
     closeTopbox(params: CloseTopboxParams): Promise<CloseTopboxResponse>
     /**
      * 创建并开启互动卡片吊顶
-     * @see https://developers.dingtalk.com/document/orgapp/create-and-open-an-interactive-card-ceiling
+     * @see https://open.dingtalk.com/document/orgapp/create-and-open-an-interactive-card-ceiling
      */
     createTopbox(params: CreateTopboxParams): Promise<CreateTopboxResponse>
   }

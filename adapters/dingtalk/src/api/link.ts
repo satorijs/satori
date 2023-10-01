@@ -68,24 +68,24 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取用户关注状态
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-the-attention-status-of-the-user-service-window
+     * @see https://open.dingtalk.com/document/orgapp/obtain-the-attention-status-of-the-user-service-window
      */
     getUserFollowStatus(
       query: GetUserFollowStatusQuery,
     ): Promise<GetUserFollowStatusResponse>
     /**
      * 获取企业下服务窗帐号列表
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-list-of-services-under-an-enterprise
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-list-of-services-under-an-enterprise
      */
     listAccount(): Promise<ListAccountResponse>
     /**
      * 批量获取关注服务窗用户信息
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-follower-information-from-the-service-window
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-follower-information-from-the-service-window
      */
     listFollower(query: ListFollowerQuery): Promise<ListFollowerResponse>
     /**
      * 获取服务窗关注人信息
-     * @see https://developers.dingtalk.com/document/orgapp/queries-the-follower-information-of-the-service-window
+     * @see https://open.dingtalk.com/document/orgapp/queries-the-follower-information-of-the-service-window
      */
     getFollowerInfo(
       query: GetFollowerInfoQuery,

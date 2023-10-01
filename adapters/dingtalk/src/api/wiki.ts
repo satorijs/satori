@@ -189,12 +189,12 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取节点列表
-     * @see https://developers.dingtalk.com/document/orgapp/get-node-list
+     * @see https://open.dingtalk.com/document/orgapp/get-node-list
      */
     listNodes(query: ListNodesQuery): Promise<ListNodesResponse>
     /**
      * 通过链接获取节点
-     * @see https://developers.dingtalk.com/document/orgapp/get-node-by-link
+     * @see https://open.dingtalk.com/document/orgapp/get-node-by-link
      */
     getNodeByUrl(
       query: GetNodeByUrlQuery,
@@ -202,7 +202,7 @@ declare module '../internal' {
     ): Promise<GetNodeByUrlResponse>
     /**
      * 批量获取节点
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-nodes-in-batch
+     * @see https://open.dingtalk.com/document/orgapp/obtain-nodes-in-batch
      */
     getNodes(
       query: GetNodesQuery,
@@ -210,19 +210,19 @@ declare module '../internal' {
     ): Promise<GetNodesResponse>
     /**
      * 获取节点
-     * @see https://developers.dingtalk.com/document/orgapp/get-node
+     * @see https://open.dingtalk.com/document/orgapp/get-node
      */
     getNode(nodeId: string, query: GetNodeQuery): Promise<GetNodeResponse>
     /**
      * 根据词条名称获取该词条释义
-     * @see https://developers.dingtalk.com/document/orgapp/enterprise-encyclopedia-query-entry-details-by-entry-name
+     * @see https://open.dingtalk.com/document/orgapp/enterprise-encyclopedia-query-entry-details-by-entry-name
      */
     wikiWordsDetail(
       query: WikiWordsDetailQuery,
     ): Promise<WikiWordsDetailResponse>
     /**
      * 外部传递过来的消息根据百科词库分词
-     * @see https://developers.dingtalk.com/document/orgapp/enterprise-encyclopedia-match-entries-in-a-text
+     * @see https://open.dingtalk.com/document/orgapp/enterprise-encyclopedia-match-entries-in-a-text
      */
     wikiWordsParse(
       params: WikiWordsParseParams,

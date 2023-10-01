@@ -409,126 +409,126 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取文件上传地址
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-upload-url-of-a-file-2
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-upload-url-of-a-file-2
      */
     getUploadUrl(query: GetUploadUrlQuery): Promise<GetUploadUrlResponse>
     /**
      * 获取应用功能节点
-     * @see https://developers.dingtalk.com/document/isvapp/queries-the-application-feature-nodes
+     * @see https://open.dingtalk.com/document/isvapp/queries-the-application-feature-nodes
      */
     queryAppFunctionNodes(
       query: QueryAppFunctionNodesQuery,
     ): Promise<QueryAppFunctionNodesResponse>
     /**
      * 创建流程实例
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-process-instance
+     * @see https://open.dingtalk.com/document/isvapp/create-a-process-instance
      */
     createProcessesInstance(
       params: CreateProcessesInstanceParams,
     ): Promise<CreateProcessesInstanceResponse>
     /**
      * 删除流程实例数据
-     * @see https://developers.dingtalk.com/document/isvapp/delete-process-instance-data
+     * @see https://open.dingtalk.com/document/isvapp/delete-process-instance-data
      */
     deleteProcessesInstance(
       query: DeleteProcessesInstanceQuery,
     ): Promise<DeleteProcessesInstanceResponse>
     /**
      * 获取表单对象结构
-     * @see https://developers.dingtalk.com/document/isvapp/gets-the-form-object-structure
+     * @see https://open.dingtalk.com/document/isvapp/gets-the-form-object-structure
      */
     loadBizFields(query: LoadBizFieldsQuery): Promise<LoadBizFieldsResponse>
     /**
      * 获取流程实例节点工作项
-     * @see https://developers.dingtalk.com/document/isvapp/query-flow-instance-node-work-items
+     * @see https://open.dingtalk.com/document/isvapp/query-flow-instance-node-work-items
      */
     queryProcessesWorkItems(
       query: QueryProcessesWorkItemsQuery,
     ): Promise<QueryProcessesWorkItemsResponse>
     /**
      * 批量新增表单业务数据
-     * @see https://developers.dingtalk.com/document/isvapp/batch-add-form-business-data
+     * @see https://open.dingtalk.com/document/isvapp/batch-add-form-business-data
      */
     batchInsertBizObject(
       params: BatchInsertBizObjectParams,
     ): Promise<BatchInsertBizObjectResponse>
     /**
      * 删除业务对象
-     * @see https://developers.dingtalk.com/document/isvapp/delete-a-business-object
+     * @see https://open.dingtalk.com/document/isvapp/delete-a-business-object
      */
     deleteBizObject(
       query: DeleteBizObjectQuery,
     ): Promise<DeleteBizObjectResponse>
     /**
      * 取消流程实例
-     * @see https://developers.dingtalk.com/document/isvapp/cancel-a-process-instance
+     * @see https://open.dingtalk.com/document/isvapp/cancel-a-process-instance
      */
     cancelProcessInstance(
       params: CancelProcessInstanceParams,
     ): Promise<CancelProcessInstanceResponse>
     /**
      * 创建表单业务数据
-     * @see https://developers.dingtalk.com/document/isvapp/create-form-business-data
+     * @see https://open.dingtalk.com/document/isvapp/create-form-business-data
      */
     createBizObject(
       params: CreateBizObjectParams,
     ): Promise<CreateBizObjectResponse>
     /**
      * 查询流程实例
-     * @see https://developers.dingtalk.com/document/isvapp/query-flow-instances
+     * @see https://open.dingtalk.com/document/isvapp/query-flow-instances
      */
     queryProcessesInstance(
       query: QueryProcessesInstanceQuery,
     ): Promise<QueryProcessesInstanceResponse>
     /**
      * 修改表单业务对象数据
-     * @see https://developers.dingtalk.com/document/isvapp/modify-form-business-object-data
+     * @see https://open.dingtalk.com/document/isvapp/modify-form-business-object-data
      */
     updateBizObject(
       params: UpdateBizObjectParams,
     ): Promise<UpdateBizObjectResponse>
     /**
      * 获取业务实例信息
-     * @see https://developers.dingtalk.com/document/isvapp/queries-business-instance-information
+     * @see https://open.dingtalk.com/document/isvapp/queries-business-instance-information
      */
     loadBizObject(query: LoadBizObjectQuery): Promise<LoadBizObjectResponse>
     /**
      * 查询表单业务数据列表
-     * @see https://developers.dingtalk.com/document/isvapp/querying-form-business-data
+     * @see https://open.dingtalk.com/document/isvapp/querying-form-business-data
      */
     loadBizObjects(
       params: LoadBizObjectsParams,
     ): Promise<LoadBizObjectsResponse>
     /**
      * 获取附件临时免登地址
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-temporary-attachment-free-address
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-temporary-attachment-free-address
      */
     getAttachmentTemporaryUrl(
       query: GetAttachmentTemporaryUrlQuery,
     ): Promise<GetAttachmentTemporaryUrlResponse>
     /**
      * 获取角色用户数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-role-data-1
+     * @see https://open.dingtalk.com/document/isvapp/obtain-role-data-1
      */
     getRoleUsers(query: GetRoleUsersQuery): Promise<GetRoleUsersResponse>
     /**
      * 获取角色数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-role-data
+     * @see https://open.dingtalk.com/document/isvapp/obtain-role-data
      */
     getRoles(): Promise<GetRolesResponse>
     /**
      * 获取用户数据
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-user-data
+     * @see https://open.dingtalk.com/document/isvapp/obtain-user-data
      */
     getUsers(query: GetUsersQuery): Promise<GetUsersResponse>
     /**
      * 获取应用列表
-     * @see https://developers.dingtalk.com/document/isvapp/queries-applications
+     * @see https://open.dingtalk.com/document/isvapp/queries-applications
      */
     getApps(params: GetAppsParams): Promise<GetAppsResponse>
     /**
      * 获取组织数据
-     * @see https://developers.dingtalk.com/document/isvapp/queries-organization-data
+     * @see https://open.dingtalk.com/document/isvapp/queries-organization-data
      */
     getOrganizations(
       query: GetOrganizationsQuery,

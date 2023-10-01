@@ -179,36 +179,36 @@ declare module '../internal' {
   interface Internal {
     /**
      * 更新卡片
-     * @see https://developers.dingtalk.com/document/orgapp/interactive-card-update-interface
+     * @see https://open.dingtalk.com/document/orgapp/interactive-card-update-interface
      */
     updateCard(params: UpdateCardParams): Promise<UpdateCardResponse>
     /**
      * 创建卡片
-     * @see https://developers.dingtalk.com/document/orgapp/interface-for-creating-a-card-instance
+     * @see https://open.dingtalk.com/document/orgapp/interface-for-creating-a-card-instance
      */
     createCard(params: CreateCardParams): Promise<CreateCardResponse>
     /**
      * 创建并投放卡片
-     * @see https://developers.dingtalk.com/document/orgapp/create-and-deliver-cards
+     * @see https://open.dingtalk.com/document/orgapp/create-and-deliver-cards
      */
     createAndDeliver(
       params: CreateAndDeliverParams,
     ): Promise<CreateAndDeliverResponse>
     /**
      * 注册卡片回调地址
-     * @see https://developers.dingtalk.com/document/orgapp/register-card-callback-address
+     * @see https://open.dingtalk.com/document/orgapp/register-card-callback-address
      */
     registerCallback(
       params: RegisterCallbackParams,
     ): Promise<RegisterCallbackResponse>
     /**
      * 新增或更新卡片的场域信息
-     * @see https://developers.dingtalk.com/document/orgapp/add-field-interface
+     * @see https://open.dingtalk.com/document/orgapp/add-field-interface
      */
     appendSpace(params: AppendSpaceParams): Promise<AppendSpaceResponse>
     /**
      * 投放卡片
-     * @see https://developers.dingtalk.com/document/isvapp/delivery-card-interface
+     * @see https://open.dingtalk.com/document/isvapp/delivery-card-interface
      */
     deliverCard(params: DeliverCardParams): Promise<DeliverCardResponse>
   }

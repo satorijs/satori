@@ -227,7 +227,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 回滚企业内部小程序版本
-     * @see https://developers.dingtalk.com/document/app/rollback-of-enterprise-internal-applet-version
+     * @see https://open.dingtalk.com/document/app/rollback-of-enterprise-internal-applet-version
      */
     rollbackInnerAppVersion(
       agentId: number,
@@ -235,7 +235,7 @@ declare module '../internal' {
     ): Promise<RollbackInnerAppVersionResponse>
     /**
      * 发布企业内部小程序版本
-     * @see https://developers.dingtalk.com/document/orgapp/release-internal-applet-version
+     * @see https://open.dingtalk.com/document/orgapp/release-internal-applet-version
      */
     publishInnerAppVersion(
       agentId: number,
@@ -243,7 +243,7 @@ declare module '../internal' {
     ): Promise<PublishInnerAppVersionResponse>
     /**
      * 获取企业内部小程序历史版本列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-the-list-of-historical-versions-of-enterprise-internal-applets
+     * @see https://open.dingtalk.com/document/orgapp/obtain-the-list-of-historical-versions-of-enterprise-internal-applets
      */
     pageInnerAppHistoryVersion(
       agentId: number,
@@ -251,22 +251,22 @@ declare module '../internal' {
     ): Promise<PageInnerAppHistoryVersionResponse>
     /**
      * 获取企业内部小程序的版本列表
-     * @see https://developers.dingtalk.com/document/orgapp/get-the-version-list-of-the-enterprise-internal-applet
+     * @see https://open.dingtalk.com/document/orgapp/get-the-version-list-of-the-enterprise-internal-applet
      */
     listInnerAppVersion(agentId: number): Promise<ListInnerAppVersionResponse>
     /**
      * 获取企业所有内部应用列表
-     * @see https://developers.dingtalk.com/document/orgapp/get-a-list-of-all-applications-inside-the-enterprise
+     * @see https://open.dingtalk.com/document/orgapp/get-a-list-of-all-applications-inside-the-enterprise
      */
     listAllInnerApps(): Promise<ListAllInnerAppsResponse>
     /**
      * 获取企业内部应用微应用的可使用范围
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-application-visible-range
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-application-visible-range
      */
     getMicroAppScope(agentId: number): Promise<GetMicroAppScopeResponse>
     /**
      * 更新企业内部应用微应用的可使用范围
-     * @see https://developers.dingtalk.com/document/orgapp/update-the-visible-range-of-micro-applications
+     * @see https://open.dingtalk.com/document/orgapp/update-the-visible-range-of-micro-applications
      */
     setMicroAppScope(
       agentId: number,
@@ -274,17 +274,17 @@ declare module '../internal' {
     ): Promise<SetMicroAppScopeResponse>
     /**
      * 获取用户可见的企业应用列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-the-list-of-enterprise-applications-visible-to-a-user
+     * @see https://open.dingtalk.com/document/orgapp/obtains-the-list-of-enterprise-applications-visible-to-a-user
      */
     listUserVilebleApp(userId: string): Promise<ListUserVilebleAppResponse>
     /**
      * 获取企业所有应用列表
-     * @see https://developers.dingtalk.com/document/orgapp/obtains-a-list-of-all-enterprise-applications
+     * @see https://open.dingtalk.com/document/orgapp/obtains-a-list-of-all-enterprise-applications
      */
     listAllApp(): Promise<ListAllAppResponse>
     /**
      * 删除企业内部应用
-     * @see https://developers.dingtalk.com/document/app/delete-an-internal-h5-application
+     * @see https://open.dingtalk.com/document/app/delete-an-internal-h5-application
      */
     deleteInnerApp(
       agentId: number,
@@ -292,7 +292,7 @@ declare module '../internal' {
     ): Promise<DeleteInnerAppResponse>
     /**
      * 更新企业内部应用
-     * @see https://developers.dingtalk.com/document/app/update-internal-h5-applications
+     * @see https://open.dingtalk.com/document/app/update-internal-h5-applications
      */
     updateInnerApp(
       agentId: number,
@@ -300,7 +300,7 @@ declare module '../internal' {
     ): Promise<UpdateInnerAppResponse>
     /**
      * 创建企业内部应用
-     * @see https://developers.dingtalk.com/document/app/create-an-h5-application-for-your-enterprise
+     * @see https://open.dingtalk.com/document/app/create-an-h5-application-for-your-enterprise
      */
     createInnerApp(
       params: CreateInnerAppParams,

@@ -209,28 +209,28 @@ declare module '../internal' {
   interface Internal {
     /**
      * 修改员工最后一次离职信息
-     * @see https://developers.dingtalk.com/document/app/modify-resigned-employee-information
+     * @see https://open.dingtalk.com/document/app/modify-resigned-employee-information
      */
     hrmProcessUpdateTerminationInfo(
       params: HrmProcessUpdateTerminationInfoParams,
     ): Promise<HrmProcessUpdateTerminationInfoResponse>
     /**
      * 智能人事转正接口
-     * @see https://developers.dingtalk.com/document/orgapp/intelligent-personnel-staff-to-become-regular
+     * @see https://open.dingtalk.com/document/orgapp/intelligent-personnel-staff-to-become-regular
      */
     hrmProcessRegular(
       params: HrmProcessRegularParams,
     ): Promise<HrmProcessRegularResponse>
     /**
      * 获取离职员工列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-list-of-employees-who-have-left
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-list-of-employees-who-have-left
      */
     queryDismissionStaffIdList(
       query: QueryDismissionStaffIdListQuery,
     ): Promise<QueryDismissionStaffIdListResponse>
     /**
      * 新增或删除花名册选项类型字段的选项
-     * @see https://developers.dingtalk.com/document/orgapp/intelligent-personnel-roster-field-option-modification
+     * @see https://open.dingtalk.com/document/orgapp/intelligent-personnel-roster-field-option-modification
      */
     rosterMetaFieldOptionsUpdate(
       query: RosterMetaFieldOptionsUpdateQuery,
@@ -238,31 +238,31 @@ declare module '../internal' {
     ): Promise<RosterMetaFieldOptionsUpdateResponse>
     /**
      * 智能人事员工调岗
-     * @see https://developers.dingtalk.com/document/orgapp/intelligent-personnel-staff-transfer
+     * @see https://open.dingtalk.com/document/orgapp/intelligent-personnel-staff-transfer
      */
     hrmProcessTransfer(
       params: HrmProcessTransferParams,
     ): Promise<HrmProcessTransferResponse>
     /**
      * 批量获取员工离职信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-multiple-employee-demission-information-1
+     * @see https://open.dingtalk.com/document/isvapp/obtain-multiple-employee-demission-information-1
      */
     queryHrmEmployeeDismissionInfo(
       query: QueryHrmEmployeeDismissionInfoQuery,
     ): Promise<QueryHrmEmployeeDismissionInfoResponse>
     /**
      * 获取企业职务列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-a-list-of-enterprise-jobs
+     * @see https://open.dingtalk.com/document/isvapp/obtains-a-list-of-enterprise-jobs
      */
     queryJobs(query: QueryJobsQuery): Promise<QueryJobsResponse>
     /**
      * 获取企业职级列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-a-list-of-enterprise-ranks
+     * @see https://open.dingtalk.com/document/isvapp/obtain-a-list-of-enterprise-ranks
      */
     queryJobRanks(query: QueryJobRanksQuery): Promise<QueryJobRanksResponse>
     /**
      * 获取企业职位列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-a-list-of-enterprise-positions
+     * @see https://open.dingtalk.com/document/isvapp/obtain-a-list-of-enterprise-positions
      */
     queryPositions(
       query: QueryPositionsQuery,

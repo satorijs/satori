@@ -167,7 +167,7 @@ export interface ListCalendarsResponse {
 }
 
 export interface GetScheduleParams {
-  /** 查询目标用户的unionId，可通过[根据userid获取用户详情](https://developers.dingtalk.com/document/app/query-user-details)接口获取。 */
+  /** 查询目标用户的unionId，可通过[根据userid获取用户详情](https://open.dingtalk.com/document/app/query-user-details)接口获取。 */
   userIds: string[]
   /** 查询的开始时间。 */
   startTime: string
@@ -584,7 +584,7 @@ declare module '../internal' {
   interface Internal {
     /**
      * 查询会议室忙闲
-     * @see https://developers.dingtalk.com/document/isvapp/queries-free-and-busy-meeting-room-information
+     * @see https://open.dingtalk.com/document/isvapp/queries-free-and-busy-meeting-room-information
      */
     getMeetingRoomsSchedule(
       userId: string,
@@ -592,7 +592,7 @@ declare module '../internal' {
     ): Promise<GetMeetingRoomsScheduleResponse>
     /**
      * 添加会议室
-     * @see https://developers.dingtalk.com/document/app/add-a-meeting-room
+     * @see https://open.dingtalk.com/document/app/add-a-meeting-room
      */
     addMeetingRooms(
       userId: string,
@@ -602,7 +602,7 @@ declare module '../internal' {
     ): Promise<AddMeetingRoomsResponse>
     /**
      * 删除会议室
-     * @see https://developers.dingtalk.com/document/isvapp/cancel-a-meeting-room-reservation
+     * @see https://open.dingtalk.com/document/isvapp/cancel-a-meeting-room-reservation
      */
     removeMeetingRooms(
       userId: string,
@@ -612,7 +612,7 @@ declare module '../internal' {
     ): Promise<RemoveMeetingRoomsResponse>
     /**
      * 取消订阅公共日历
-     * @see https://developers.dingtalk.com/document/orgapp/unsubscribe-from-a-public-calendar
+     * @see https://open.dingtalk.com/document/orgapp/unsubscribe-from-a-public-calendar
      */
     unsubscribeCalendar(
       userId: string,
@@ -620,7 +620,7 @@ declare module '../internal' {
     ): Promise<UnsubscribeCalendarResponse>
     /**
      * 删除订阅日历
-     * @see https://developers.dingtalk.com/document/isvapp/delete-subscription-calendar
+     * @see https://open.dingtalk.com/document/isvapp/delete-subscription-calendar
      */
     deleteSubscribedCalendar(
       userId: string,
@@ -628,7 +628,7 @@ declare module '../internal' {
     ): Promise<DeleteSubscribedCalendarResponse>
     /**
      * 查询单个订阅日历详情
-     * @see https://developers.dingtalk.com/document/isvapp/query-a-single-subscription-calendar
+     * @see https://open.dingtalk.com/document/isvapp/query-a-single-subscription-calendar
      */
     getSubscribedCalendar(
       userId: string,
@@ -636,7 +636,7 @@ declare module '../internal' {
     ): Promise<GetSubscribedCalendarResponse>
     /**
      * 创建订阅日历
-     * @see https://developers.dingtalk.com/document/isvapp/create-subscription-calendar
+     * @see https://open.dingtalk.com/document/isvapp/create-subscription-calendar
      */
     createSubscribedCalendar(
       userId: string,
@@ -644,7 +644,7 @@ declare module '../internal' {
     ): Promise<CreateSubscribedCalendarResponse>
     /**
      * 针对单个日程进行签退
-     * @see https://developers.dingtalk.com/document/isvapp/sign-off-for-a-single-schedule
+     * @see https://open.dingtalk.com/document/isvapp/sign-off-for-a-single-schedule
      */
     signOut(
       userId: string,
@@ -653,7 +653,7 @@ declare module '../internal' {
     ): Promise<SignOutResponse>
     /**
      * 查看单个日程的签退详情
-     * @see https://developers.dingtalk.com/document/isvapp/view-the-billing-details-of-a-single-schedule
+     * @see https://open.dingtalk.com/document/isvapp/view-the-billing-details-of-a-single-schedule
      */
     getSignOutList(
       userId: string,
@@ -663,12 +663,12 @@ declare module '../internal' {
     ): Promise<GetSignOutListResponse>
     /**
      * 订阅公共日历
-     * @see https://developers.dingtalk.com/document/orgapp/subscribe-to-a-public-calendar
+     * @see https://open.dingtalk.com/document/orgapp/subscribe-to-a-public-calendar
      */
     subscribeCalendar(userId: string, calendarId: string): Promise<void>
     /**
      * 获取日程参与者
-     * @see https://developers.dingtalk.com/document/isvapp/query-schedule-participants
+     * @see https://open.dingtalk.com/document/isvapp/query-schedule-participants
      */
     listAttendees(
       userId: string,
@@ -678,7 +678,7 @@ declare module '../internal' {
     ): Promise<ListAttendeesResponse>
     /**
      * 针对单个日程进行签到
-     * @see https://developers.dingtalk.com/document/orgapp-server/sign-in-for-a-single-schedule
+     * @see https://open.dingtalk.com/document/orgapp-server/sign-in-for-a-single-schedule
      */
     signIn(
       userId: string,
@@ -687,17 +687,17 @@ declare module '../internal' {
     ): Promise<SignInResponse>
     /**
      * 获取访问控制列表
-     * @see https://developers.dingtalk.com/document/personalapp/get-access-control-list
+     * @see https://open.dingtalk.com/document/personalapp/get-access-control-list
      */
     listAcls(userId: string, calendarId: string): Promise<ListAclsResponse>
     /**
      * 删除访问控制
-     * @see https://developers.dingtalk.com/document/personalapp/delete-access-control
+     * @see https://open.dingtalk.com/document/personalapp/delete-access-control
      */
     deleteAcl(userId: string, calendarId: string, aclId: string): Promise<void>
     /**
      * 创建访问控制
-     * @see https://developers.dingtalk.com/document/personalapp/create-access-control
+     * @see https://open.dingtalk.com/document/personalapp/create-access-control
      */
     createAcls(
       userId: string,
@@ -706,7 +706,7 @@ declare module '../internal' {
     ): Promise<CreateAclsResponse>
     /**
      * 查看单个日程的签到详情
-     * @see https://developers.dingtalk.com/document/isvapp/view-the-check-in-details-of-a-single-schedule
+     * @see https://open.dingtalk.com/document/isvapp/view-the-check-in-details-of-a-single-schedule
      */
     getSignInList(
       userId: string,
@@ -716,12 +716,12 @@ declare module '../internal' {
     ): Promise<GetSignInListResponse>
     /**
      * 查询日历
-     * @see https://developers.dingtalk.com/document/isvapp/query-the-calendar
+     * @see https://open.dingtalk.com/document/isvapp/query-the-calendar
      */
     listCalendars(userId: string): Promise<ListCalendarsResponse>
     /**
      * 获取用户忙闲信息
-     * @see https://developers.dingtalk.com/document/isvapp/free-schedule
+     * @see https://open.dingtalk.com/document/isvapp/free-schedule
      */
     getSchedule(
       userId: string,
@@ -729,7 +729,7 @@ declare module '../internal' {
     ): Promise<GetScheduleResponse>
     /**
      * 查询日程列表
-     * @see https://developers.dingtalk.com/document/personalapp/query-an-event-list-1
+     * @see https://open.dingtalk.com/document/personalapp/query-an-event-list-1
      */
     listEvents(
       userId: string,
@@ -738,7 +738,7 @@ declare module '../internal' {
     ): Promise<ListEventsResponse>
     /**
      * 查询日程列表
-     * @see https://developers.dingtalk.com/document/personalapp/query-a-single-schedule
+     * @see https://open.dingtalk.com/document/personalapp/query-a-single-schedule
      */
     getEvent(
       userId: string,
@@ -748,7 +748,7 @@ declare module '../internal' {
     ): Promise<GetEventResponse>
     /**
      * 新增日程参与人
-     * @see https://developers.dingtalk.com/document/isvapp/add-schedule-participant
+     * @see https://open.dingtalk.com/document/isvapp/add-schedule-participant
      */
     addAttendee(
       userId: string,
@@ -758,7 +758,7 @@ declare module '../internal' {
     ): Promise<void>
     /**
      * 删除日程参与人
-     * @see https://developers.dingtalk.com/document/isvapp/delete-schedule-participant
+     * @see https://open.dingtalk.com/document/isvapp/delete-schedule-participant
      */
     removeAttendee(
       userId: string,
@@ -768,7 +768,7 @@ declare module '../internal' {
     ): Promise<void>
     /**
      * 删除指定日程
-     * @see https://developers.dingtalk.com/document/isvapp/delete-schedule
+     * @see https://open.dingtalk.com/document/isvapp/delete-schedule
      */
     deleteEvent(
       userId: string,
@@ -777,7 +777,7 @@ declare module '../internal' {
     ): Promise<void>
     /**
      * 创建日程
-     * @see https://developers.dingtalk.com/document/personalapp/create-schedule
+     * @see https://open.dingtalk.com/document/personalapp/create-schedule
      */
     createEvent(
       userId: string,
@@ -786,7 +786,7 @@ declare module '../internal' {
     ): Promise<CreateEventResponse>
     /**
      * 查询日程视图列表以查看闲忙，展开循环日程
-     * @see https://developers.dingtalk.com/document/personalapp/query-schedule-view-1
+     * @see https://open.dingtalk.com/document/personalapp/query-schedule-view-1
      */
     listEventsView(
       userId: string,
@@ -795,7 +795,7 @@ declare module '../internal' {
     ): Promise<ListEventsViewResponse>
     /**
      * 回复日程邀请
-     * @see https://developers.dingtalk.com/document/isvapp/participants-respond-to-schedule-invitations
+     * @see https://open.dingtalk.com/document/isvapp/participants-respond-to-schedule-invitations
      */
     respondEvent(
       userId: string,
@@ -805,7 +805,7 @@ declare module '../internal' {
     ): Promise<void>
     /**
      * 修改日程
-     * @see https://developers.dingtalk.com/document/personalapp/modify-schedule
+     * @see https://open.dingtalk.com/document/personalapp/modify-schedule
      */
     patchEvent(
       userId: string,

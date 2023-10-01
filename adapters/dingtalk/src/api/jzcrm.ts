@@ -233,71 +233,71 @@ declare module '../internal' {
   interface Internal {
     /**
      * 联系人
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-contacts
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-contacts
      */
     editContact(params: EditContactParams): Promise<EditContactResponse>
     /**
      * 客户公共池
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-customer-public-pools
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-customer-public-pools
      */
     editCustomerPool(
       params: EditCustomerPoolParams,
     ): Promise<EditCustomerPoolResponse>
     /**
      * 编辑销售换货单数据
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-a-sales-order
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-a-sales-order
      */
     editExchange(params: EditExchangeParams): Promise<EditExchangeResponse>
     /**
      * 编辑产品数据
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-product-information
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-product-information
      */
     editGoods(params: EditGoodsParams): Promise<EditGoodsResponse>
     /**
      * 编辑出库单信息
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-an-issue-ticket
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-an-issue-ticket
      */
     editOutstock(params: EditOutstockParams): Promise<EditOutstockResponse>
     /**
      * 编辑入库单数据
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-a-shipment-record
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-a-shipment-record
      */
     editIntostock(params: EditIntostockParams): Promise<EditIntostockResponse>
     /**
      * 生产单
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-a-production-order
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-a-production-order
      */
     editProduction(
       params: EditProductionParams,
     ): Promise<EditProductionResponse>
     /**
      * 采购单
-     * @see https://developers.dingtalk.com/document/isvapp/edit-purchase-order
+     * @see https://open.dingtalk.com/document/isvapp/edit-purchase-order
      */
     editPurchase(params: EditPurchaseParams): Promise<EditPurchaseResponse>
     /**
      * 合同订单
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-contract-orders
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-contract-orders
      */
     editOrder(params: EditOrderParams): Promise<EditOrderResponse>
     /**
      * 发货单
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-invoices
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-invoices
      */
     editInvoice(params: EditInvoiceParams): Promise<EditInvoiceResponse>
     /**
      * 客户资料
-     * @see https://developers.dingtalk.com/document/isvapp/add-or-edit-customer-profile
+     * @see https://open.dingtalk.com/document/isvapp/add-or-edit-customer-profile
      */
     editCustomer(params: EditCustomerParams): Promise<EditCustomerResponse>
     /**
      * 获取数据详情
-     * @see https://developers.dingtalk.com/document/isvapp/queries-data-details
+     * @see https://open.dingtalk.com/document/isvapp/queries-data-details
      */
     getDataView(query: GetDataViewQuery): Promise<GetDataViewResponse>
     /**
      * 获取数据列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-data-list
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-data-list
      */
     getDataList(query: GetDataListQuery): Promise<GetDataListResponse>
   }

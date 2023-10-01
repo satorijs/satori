@@ -60,19 +60,19 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取补卡规则列表
-     * @see https://developers.dingtalk.com/document/isvapp/retrieve-a-list-of-replenishment-rules-by-page
+     * @see https://open.dingtalk.com/document/isvapp/retrieve-a-list-of-replenishment-rules-by-page
      */
     getAdjustments(query: GetAdjustmentsQuery): Promise<GetAdjustmentsResponse>
     /**
      * 加班规则列表
-     * @see https://developers.dingtalk.com/document/isvapp/retrieve-a-list-of-overtime-rules-by-page
+     * @see https://open.dingtalk.com/document/isvapp/retrieve-a-list-of-overtime-rules-by-page
      */
     getSimpleOvertimeSetting(
       query: GetSimpleOvertimeSettingQuery,
     ): Promise<GetSimpleOvertimeSettingResponse>
     /**
      * 批量获取加班规则设置
-     * @see https://developers.dingtalk.com/document/isvapp/batch-retrieve-overtime-rules
+     * @see https://open.dingtalk.com/document/isvapp/batch-retrieve-overtime-rules
      */
     getOvertimeSetting(
       params: GetOvertimeSettingParams,

@@ -103,43 +103,43 @@ declare module '../internal' {
   interface Internal {
     /**
      * 生成jsapi ticket
-     * @see https://developers.dingtalk.com/document/isvapp/create-a-jsapi-ticket
+     * @see https://open.dingtalk.com/document/isvapp/create-a-jsapi-ticket
      */
     createJsapiTicket(): Promise<CreateJsapiTicketResponse>
     /**
      * 生成微应用管理后台accessToken
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-access_token-of-the-micro-application-background-without-log-on
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-access_token-of-the-micro-application-background-without-log-on
      */
     getSsoAccessToken(
       params: GetSsoAccessTokenParams,
     ): Promise<GetSsoAccessTokenResponse>
     /**
      * 查询个人授权记录
-     * @see https://developers.dingtalk.com/document/isvapp/query-individual-authorization-records
+     * @see https://open.dingtalk.com/document/isvapp/query-individual-authorization-records
      */
     getPersonalAuthRule(): Promise<GetPersonalAuthRuleResponse>
     /**
      * 获取企业accessToken(企业内部应用)
-     * @see https://developers.dingtalk.com/document/orgapp/obtain-the-access_token-of-an-internal-app
+     * @see https://open.dingtalk.com/document/orgapp/obtain-the-access_token-of-an-internal-app
      */
     getAccessToken(
       params: GetAccessTokenParams,
     ): Promise<GetAccessTokenResponse>
     /**
      * 获取企业accessToken(应用商店应用)
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-the-access_token-of-the-authorized-enterprise
+     * @see https://open.dingtalk.com/document/isvapp/obtain-the-access_token-of-the-authorized-enterprise
      */
     getCorpAccessToken(
       params: GetCorpAccessTokenParams,
     ): Promise<GetCorpAccessTokenResponse>
     /**
      * 获取用户token
-     * @see https://developers.dingtalk.com/document/isvapp/obtain-user-token
+     * @see https://open.dingtalk.com/document/isvapp/obtain-user-token
      */
     getUserToken(params: GetUserTokenParams): Promise<GetUserTokenResponse>
     /**
      * 查询微应用后台免登的用户信息
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-identity-of-an-application-administrator
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-identity-of-an-application-administrator
      */
     getSsoUserInfo(query: GetSsoUserInfoQuery): Promise<GetSsoUserInfoResponse>
   }

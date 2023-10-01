@@ -32,12 +32,12 @@ declare module '../internal' {
   interface Internal {
     /**
      * 获取流程任务的所有合同列表
-     * @see https://developers.dingtalk.com/document/isvapp/get-a-list-of-all-contracts-for-the-process-task
+     * @see https://open.dingtalk.com/document/isvapp/get-a-list-of-all-contracts-for-the-process-task
      */
     getFlowDocs(taskId: string): Promise<GetFlowDocsResponse>
     /**
      * 获取流程任务用印审批列表
-     * @see https://developers.dingtalk.com/document/isvapp/obtains-the-print-approval-list-for-process-tasks
+     * @see https://open.dingtalk.com/document/isvapp/obtains-the-print-approval-list-for-process-tasks
      */
     approvalList(taskId: string): Promise<ApprovalListResponse>
   }
