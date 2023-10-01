@@ -35,6 +35,28 @@ export enum Intents {
    */
   DIRECT_MESSAGES = 1 << 12,
   /**
+   * 论坛事件, 此为公域的论坛事件
+   * - OPEN_FORUM_THREAD_CREATE 当用户创建主题时
+   * - OPEN_FORUM_THREAD_UPDATE 当用户更新主题时
+   * - OPEN_FORUM_THREAD_DELETE 当用户删除主题时
+   * - OPEN_FORUM_POST_CREATE   当用户创建帖子时
+   * - OPEN_FORUM_POST_DELETE   当用户删除帖子时
+   * - OPEN_FORUM_REPLY_CREATE  当用户回复评论时
+   * - OPEN_FORUM_REPLY_DELETE  当用户删除评论时
+   */
+  OPEN_FORUMS_EVENT = 1 << 18,
+  /**
+   * 音视频/直播子频道成员进出事件
+   * - AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER 当用户进入音视频/直播子频道
+   * - AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT  当用户离开音视频/直播子频道
+   */
+  AUDIO_OR_LIVE_CHANNEL_MEMBER = 1 << 19,
+  /**
+   * - C2C_MESSAGE_CREATE 用户在单聊发送消息给机器人
+   * - GROUP_AT_MESSAGE_CREATE 用户在群聊 @ 机器人发送消息
+   */
+  USER_MESSAGE = 1 << 25,
+  /**
    * - INTERACTION_CREATE 互动事件创建时
    */
   INTERACTIONS = 1 << 26,
@@ -87,8 +109,12 @@ export enum Opcode {
   /** 当客户端与网关建立ws连接之后，网关下发的第一条消息 */
   HELLO = 10,
   /** 当发送心跳成功之后，就会收到该消息 */
-  HEARTBEAT_ACK = 11
+  HEARTBEAT_ACK = 11,
+  /** 仅用于 http 回调模式的回包，代表机器人收到了平台推送的数据 */
+  HTTP_CAKKBACK_ACK = 12
 }
+
+export type WithOpUser<T> = T & { op_user_id: string }
 
 export interface GatewayEvents {
   READY: {
@@ -99,22 +125,56 @@ export interface GatewayEvents {
   }
   RESUMED: string
   MESSAGE_CREATE: Message
+  MESSAGE_AUDIT_PASS: MessageAudited
+  MESSAGE_AUDIT_REJECT: MessageAudited
   AT_MESSAGE_CREATE: Message
   DIRECT_MESSAGE_CREATE: Message
   MESSAGE_REACTION_ADD: MessageReaction
   MESSAGE_REACTION_REMOVE: MessageReaction
-  GUILD_CREATE: Guild
-  GUILD_UPDATE: Guild
-  GUILD_DELETE: Guild
-  CHANNEL_CREATE: Channel
-  CHANNEL_UPDATE: Channel
-  CHANNEL_DELETE: Channel
-  GUILD_MEMBER_ADD: MemberWithGuild
-  GUILD_MEMBER_UPDATE: MemberWithGuild
-  GUILD_MEMBER_DELETE: MemberWithGuild
+  GUILD_CREATE: WithOpUser<Guild>
+  GUILD_UPDATE: WithOpUser<Guild>
+  GUILD_DELETE: WithOpUser<Guild>
+  CHANNEL_CREATE: WithOpUser<Channel>
+  CHANNEL_UPDATE: WithOpUser<Channel>
+  CHANNEL_DELETE: WithOpUser<Channel>
+  GUILD_MEMBER_ADD: WithOpUser<MemberWithGuild>
+  GUILD_MEMBER_UPDATE: WithOpUser<MemberWithGuild>
+  GUILD_MEMBER_DELETE: WithOpUser<MemberWithGuild>
   MESSAGE_DELETE: Message.DeletionPayload
   PUBLIC_MESSAGE_DELETE: Message.DeletionPayload
   DIRECT_MESSAGE_DELETE: Message.DeletionPayload
+  AUDIO_START: Partial<AudioAction>
+  AUDIO_FINISH: Partial<AudioAction>
+  AUDIO_ON_MIC: Partial<AudioAction>
+  AUDIO_OFF_MIC: Partial<AudioAction>
+  FORUM_THREAD_CREATE: Forum.Thread
+  FORUM_THREAD_UPDATE: Forum.Thread
+  FORUM_THREAD_DELETE: Forum.Thread
+  FORUM_POST_CREATE: Forum.Post
+  FORUM_POST_DELETE: Forum.Post
+  FORUM_REPLY_CREATE: Forum.Reply
+  FORUM_REPLY_DELETE: Forum.Reply
+  FORUM_PUBLISH_AUDIT_RESULT: Forum.AuditResult
+  OPEN_FORUM_THREAD_CREATE: Partial<Forum.Thread>
+  OPEN_FORUM_THREAD_UPDATE: Partial<Forum.Thread>
+  OPEN_FORUM_THREAD_DELETE: Partial<Forum.Thread>
+  OPEN_FORUM_POST_CREATE: Partial<Forum.Thread>
+  OPEN_FORUM_POST_DELETE: Partial<Forum.Thread>
+  OPEN_FORUM_REPLY_CREATE: Partial<Forum.Thread>
+  OPEN_FORUM_REPLY_DELETE: Partial<Forum.Thread>
+  AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER: Partial<Channel>
+  AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT: Partial<Channel>
+  C2C_MESSAGE_CREATE: UserMessage
+  GROUP_AT_MESSAGE_CREATE: UserMessage
+  INTERACTION_CREATE: Interaction
+  GROUP_ADD_ROBOT: GroupEvent
+  GROUP_DEL_ROBOT: GroupEvent
+  GROUP_MSG_REJECT: GroupEvent
+  GROUP_MSG_RECEIVE: GroupEvent
+  FRIEND_ADD: UserEvent
+  FRIEND_DEL: UserEvent
+  C2C_MSG_REJECT: UserEvent
+  C2C_MSG_RECEIVE: UserEvent // 文档写错了?
 }
 
 export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
@@ -181,6 +241,34 @@ export interface Attachment {
   size: number
   url: string
   width: number
+}
+
+export interface AudioAction {
+  /** 频道id */
+  guild_id: string
+  /** 子频道id */
+  channel_id: string
+  /** 音频数据的url status为0时传 */
+  audio_url: string
+  /** 状态文本（比如：简单爱-周杰伦），可选，status为0时传，其他操作不传 */
+  text: string
+}
+
+export interface MessageAudited {
+  /** 消息审核 id */
+  audit_id: string
+  /** 消息 id，只有审核通过事件才会有值 */
+  message_id: string
+  /** 频道 id */
+  guild_id: string
+  /* 子频道 id */
+  channel_id: string
+  /* 消息审核时间 */
+  audit_time: string
+  /* 消息创建时间 */
+  create_time: string
+  /** 子频道消息 seq，用于消息间的排序，seq 在同一子频道中按从先到后的顺序递增，不同的子频道之间消息无法排序 */
+  seq_in_channel: string
 }
 
 export interface Message {
@@ -327,7 +415,14 @@ export interface User {
   username: string
   avatar: string
   bot: boolean
+  /** 特殊关联应用的 openid，需要特殊申请并配置后才会返回。如需申请，请联系平台运营人员。 */
+  union_openid: string
+  /** 机器人关联的互联应用的用户信息，与union_openid关联的应用是同一个。如需申请，请联系平台运营人员。 */
+  union_user_account: string
 }
+
+export type CreateGuildRoleParams =
+  Partial<Pick<Role, 'name' | 'color' | 'hoist'>>
 
 export interface Role {
   /** 身份组 ID , 默认值可参考 DefaultRoles */
@@ -377,6 +472,15 @@ export interface Guild {
   description?: number
   joined_at?: string
 }
+
+export type CreateGuildParams =
+  Pick<Channel, 'name' | 'type' | 'sub_type' | 'position'
+    | 'parent_id' | 'private_type' | 'speak_permission' | 'application_id'> & {
+      private_user_ids: string[]
+    }
+
+export type ModifyGuildParams =
+  Pick<Channel, 'name' | 'position' | 'parent_id' | 'private_type' | 'speak_permission'>
 
 export enum ChannelType {
   /** 文字子频道 */
@@ -471,10 +575,30 @@ export interface MemberWithGuild {
   joined_at: string
 }
 
+export interface CreateGuildAnnounceParams {
+  message_id: string
+  channel_id: string
+  announces_type: AnnounceType
+  recommend_channels: RecommendChannel[]
+}
+
+export enum AnnounceType {
+  MEMBER = 0,
+  WELCOME = 1
+}
+
+/** 推荐子频道对象 */
+export interface RecommendChannel {
+  /** 子频道 id */
+  channel_id: string
+  /** 推荐语 */
+  introduce: string
+}
+
 /**
  * 公告对象
  */
-export interface Announce {
+export interface Announces {
   /** 频道 id */
   guild_id: string
   /** 子频道 id */
@@ -564,9 +688,9 @@ export interface Schedule {
   /** 创建者 */
   creator: Member
   /** 日程开始时跳转到的子频道 id */
-  jumpchannel_id: string
+  jump_channel_id: string
   /** 日程提醒类型，取值参考 RemindType */
-  remindType: RemindType
+  remind_type: RemindType
 }
 
 /**
@@ -691,4 +815,426 @@ export interface Options {
   retryTimes?: number
   /** 重连时间间隔，单位 ms */
   retryInterval?: number
+}
+
+export namespace Forum {
+  /** 话题频道内发表的主帖称为主题 */
+  export interface Thread {
+    /** 频道ID */
+    guild_id: string
+    /** 子频道ID */
+    channel_id: string
+    /** 作者ID */
+    author_id: string
+    /** 主帖内容 */
+    thread_info: ThreadInfo
+  }
+
+  /** 帖子事件包含的主帖内容相关信息 */
+  export interface ThreadInfo {
+    /** 主帖ID */
+    thread_id: string
+    /** 帖子标题 */
+    title: string
+    /** 帖子内容 */
+    content: string
+    /** 发表时间 */
+    date_time: string
+  }
+
+  /** 话题频道内对主题的评论称为帖子 */
+  export interface Post {
+    /** 频道ID */
+    guild_id: string
+    /** 子频道ID */
+    channel_id: string
+    /** 作者ID */
+    author_id: string
+    /** 帖子内容 */
+    post_info: PostInfo
+  }
+
+  /** 帖子事件包含的帖子内容信息 */
+  export interface PostInfo {
+    /** 主题ID */
+    thread_id: string
+    /** 帖子ID */
+    post_id: string
+    /** 帖子内容 */
+    content: string
+    /** 评论时间 */
+    date_time: string
+  }
+
+  /** 话题频道内对帖子的评论称为回复 */
+  export interface Reply {
+    /** 频道ID */
+    guild_id: string
+    /** 子频道ID */
+    channel_id: string
+    /** 作者ID */
+    author_id: string
+    /** 回复内容 */
+    reply_info: ReplyInfo
+  }
+
+  /** 回复事件包含的回复内容信息 */
+  interface ReplyInfo {
+    /** 主题ID */
+    thread_id: string
+    /** 帖子ID */
+    post_id: string
+    /** 回复ID */
+    reply_id: string
+    /** 回复内容 */
+    content: string
+    /** 回复时间 */
+    date_time: string
+  }
+
+  /** 论坛帖子审核结果事件 */
+  export interface AuditResult {
+    /** 频道ID */
+    guild_id: string
+    /** 子频道ID */
+    channel_id: string
+    /** 作者ID */
+    author_id: string
+    /** 主题ID */
+    thread_id: string
+    /** 帖子ID */
+    post_id: string
+    /** 回复ID */
+    reply_id: string
+    /** 审核的类型 */
+    type: AuditType
+    /** 审核结果. 0:成功 1:失败 */
+    result: number
+    /** result不为0时错误信息 */
+    err_msg: string
+  }
+
+  export enum AuditType {
+    /** 帖子 */
+    PUBLISH_THREAD = 1,
+    /** 评论 */
+    PUBLISH_POST = 2,
+    /** 回复 */
+    PUBLISH_REPLY = 3
+  }
+  /** 富文本内容 */
+  export interface RichObject {
+    /** 富文本类型 */
+    type: RichType
+    /** 文本 */
+    text_info: TextInfo
+    /** @ 内容 */
+    at_info: AtInfo
+    /** 链接 */
+    url_info: URLInfo
+    /** 表情 */
+    emoji_info: EmojiInfo
+    /** 提到的子频道 */
+    channel_info: ChannelInfo
+  }
+
+  export enum RichType {
+    /** 普通文本 */
+    TEXT = 1,
+    /** at信息 */
+    AT = 2,
+    /** url信息 */
+    URL = 3,
+    /** 表情 */
+    EMOJI = 4,
+    /** #子频道 */
+    CHANNEL = 5,
+    /** 视频 */
+    VIDEO = 10,
+    /** 图片 */
+    IMAGE = 11
+  }
+
+  export interface TextInfo {
+    /** 普通文本 */
+    text: string
+  }
+
+  export interface AtInfo {
+    /** at类型 */
+    type: AtType
+    /** 用户 */
+    user_info: AtUserInfo
+    /** 角色组信息 */
+    role_info: AtRoleInfo
+    /** 频道信息 */
+    guild_info: AtGuildInfo
+  }
+
+  export enum AtType {
+    /** at特定人 */
+    AT_EXPLICIT_USER = 1,
+    /** at角色组所有人 */
+    AT_ROLE_GROUP = 2,
+    /** at频道所有人 */
+    AT_GUILD = 3
+  }
+
+  export interface AtUserInfo {
+    /** 身份组ID */
+    id: string
+    /** 用户昵称 */
+    nick: string
+  }
+
+  export interface AtRoleInfo {
+    /** 身份组ID */
+    role_id: number
+    /** 身份组名称 */
+    name: string
+    /** 颜色值 */
+    color: number
+  }
+
+  export interface AtGuildInfo {
+    /** 频道ID */
+    guild_id: string
+    /** 频道名称 */
+    guild_name: string
+  }
+
+  export interface URLInfo {
+    /** 链接地址 */
+    url: string
+    /** 链接显示文本 */
+    display_text: string
+  }
+
+  export interface EmojiInfo {
+    /** 表情id */
+    id: string
+    /** 表情类型 */
+    type: string
+    /** 名称 */
+    name: string
+    /** 链接 */
+    url: string
+  }
+
+  export interface ChannelInfo {
+    /** 子频道id */
+    channel_id: number
+    /** 子频道名称 */
+    channel_name: string
+  }
+
+  /** 富文本内容 */
+  export interface RichText {
+    /** 段落，一段落一行，段落内无元素的为空行 */
+    paragraphs: Paragraph[]
+  }
+
+  export interface Paragraph {
+    /** 元素列表 */
+    elems: Elem[]
+    /** 段落属性 */
+    props: ParagraphProps
+  }
+
+  export interface Elem {
+    /** 文本元素 */
+    text: TextElem
+    /** 图片元素 */
+    image: ImageElem
+    /** 视频元素 */
+    video: VideoElem
+    /** URL元素 */
+    url: URLElem
+    /** 元素类型 */
+    type: ElemType
+  }
+
+  export enum ElemType {
+    /** 文本 */
+    ELEM_TYPE_TEXT = 1,
+    /** 图片 */
+    ELEM_TYPE_IMAGE = 2,
+    /** 视频 */
+    ELEM_TYPE_VIDEO = 3,
+    /** URL */
+    ELEM_TYPE_URL = 4
+  }
+
+  export interface TextElem {
+    /** 正文 */
+    text: string
+    /** 文本属性 */
+    props: TextProps
+  }
+
+  export interface TextProps {
+    /** 加粗 */
+    font_bold: boolean
+    /** 斜体 */
+    italic: boolean
+    /** 下划线 */
+    underline: boolean
+  }
+
+  export interface ImageElem {
+    /** 第三方图片链接 */
+    third_url: string
+    /** 宽度比例（缩放比，在屏幕里显示的比例） */
+    width_percent: number
+  }
+
+  export interface PlatImage {
+    /** 架平图片链接 */
+    url: string
+    /** 图片宽度 */
+    width: number
+    /** 图片高度 */
+    height: number
+    /** 图片ID */
+    image_id: string
+  }
+
+  export interface VideoElem {
+    /** 第三方视频文件链接 */
+    third_url: string
+  }
+
+  export interface PlatVideo {
+    /** 架平图片链接 */
+    url: string
+    /** 图片宽度 */
+    width: number
+    /** 图片高度 */
+    height: number
+    /** 视频ID */
+    video_id: string
+    /** 视频时长 */
+    duration: number
+    /** 视频封面图属性 */
+    cover: PlatImage
+  }
+
+  export interface URLElem {
+    /** URL链接 */
+    url: string
+    /** URL描述 */
+    desc: string
+  }
+
+  export interface ParagraphProps {
+    /** 段落对齐方向属性，数值可以参考Alignment */
+    alignment: Alignment
+  }
+
+  enum Alignment {
+    /** 左对齐 */
+    ALIGNMENT_LEFT = 0,
+    /** 居中 */
+    ALIGNMENT_MIDDLE = 1,
+    /** 右对齐 */
+    ALIGNMENT_RIGHT = 2
+  }
+}
+
+export interface CreatePostRequest {
+  /** 帖子标题 */
+  title: string
+  /** 帖子内容 */
+  content: string
+  /** 帖子文本格式 */
+  format: PostFormat
+}
+export enum PostFormat {
+  FORMAT_TEXT = 1,
+  FORMAT_HTML = 2,
+  FORMAT_MARKDOWN = 3,
+  FORMAT_JSON = 4
+}
+
+export enum MessageType {
+  TEXT = 0,
+  MIXED = 1,
+  MARKDOWN = 2,
+  ARK = 3,
+  EMBED = 4,
+  // @TODO merge?
+  AT = 5,
+}
+
+export interface SendMessageParams {
+  /** 文本内容 */
+  content?: string
+  /** 消息类型
+   * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
+   */
+  msg_type: MessageType
+  markdown?: object
+  keyboard?: object
+  ark?: object
+  image?: unknown
+  message_reference?: object
+  event_id?: string
+  msg_id?: string
+  // @TODO merge?
+  timestamp: number
+}
+
+export enum FileType {
+  IMAGE = 1,
+  VIDEO = 2,
+  AUDIO = 3,
+  FILE = 4
+}
+
+export interface SendFileParams {
+  file_type: FileType
+  url: string
+  srv_send_msg: true
+  file_data?: unknown
+}
+
+export interface UserMessage {
+  id: string
+  author: {
+    id: string
+  }
+  content: string
+  timestamp: string
+  group_id: string
+  attachments?: Attachment[] // not listed in document?
+}
+
+export interface Interaction {
+  id: string
+  type: 11
+  // chat_type: number
+  timestamp: string
+  guild_id: string
+  channel_id: string
+  group_open_id: string
+  chat_type: number // @TODO enum
+  data: {
+    resolved: {
+      button_data: string
+      button_id: string
+      user_id: string
+    }
+  }
+  version: 1
+}
+
+export interface GroupEvent {
+  timestamp: number
+  group_openid: string
+  op_member_openid: string
+}
+
+export interface UserEvent {
+  timestamp: number
+  openid: string
 }
