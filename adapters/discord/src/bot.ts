@@ -174,7 +174,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 
   async createGuildRole(guildId: string, data: Partial<Universal.GuildRole>) {
     const role = await this.internal.createGuildRole(guildId, Discord.encodeRole(data))
-    return role.id
+    return Discord.decodeRole(role)
   }
 
   async updateGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {
@@ -185,11 +185,9 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     return this.internal.deleteGuildRole(guildId, roleId)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, options?: Universal.SendOptions) {
-    const channel = await this.internal.createDM({
-      recipient_id: userId,
-    })
-    return this.sendMessage(channel.id, content, null, options)
+  async createDirectChannel(userId: string) {
+    const channel = await this.internal.createDM({ recipient_id: userId })
+    return Discord.decodeChannel(channel)
   }
 
   async updateCommands(commands: Universal.Command[]) {

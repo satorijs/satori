@@ -64,7 +64,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       session.body.user = this.bot.user
       session.timestamp = Date.now()
       session.app.emit(session, 'send', session)
-      this.results.push(session)
+      this.results.push(session.body.message)
     }
   }
 

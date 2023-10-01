@@ -13,8 +13,8 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
     return new OneBotMessageEncoder(this, channelId, guildId, options).send(fragment)
   }
 
-  sendPrivateMessage(userId: string, fragment: Fragment, options?: Universal.SendOptions) {
-    return this.sendMessage('private:' + userId, fragment, null, options)
+  async createDirectChannel(userId: string) {
+    return { id: 'private:' + userId, type: Universal.Channel.Type.DIRECT }
   }
 
   async getMessage(channelId: string, messageId: string) {

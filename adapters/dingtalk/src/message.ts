@@ -20,8 +20,8 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
   /**
    * Markdown: https://open.dingtalk.com/document/isvapp/robot-message-types-and-data-format
    */
-
   hasRichContent = true
+
   async flush(): Promise<void> {
     if (this.buffer.length && !this.hasRichContent) {
       await this.sendMessage('sampleText', {
@@ -53,7 +53,9 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
     session.channelId = this.session.channelId
     session.guildId = this.session.guildId
     session.app.emit(session, 'send', session)
-    this.results.push(session)
+    this.results.push({
+      id: processQueryKey,
+    })
   }
 
   // https://open.dingtalk.com/document/orgapp/upload-media-files?spm=ding_open_doc.document.0.0.3b166172ERBuHw

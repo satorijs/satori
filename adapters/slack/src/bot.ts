@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptMessage, decodeChannel, decodeGuild, decodeGuildMember, decodeUser } from './utils'
@@ -138,12 +138,12 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     return decodeGuildMember(user)
   }
 
-  async sendPrivateMessage(channelId: string, content: Fragment, options?: Universal.SendOptions) {
+  async createDirectChannel(userId: string) {
     // "channels:write,groups:write,mpim:write,im:write",
     const { channel } = await this.internal.conversationsOpen(Token.BOT, {
-      users: channelId,
+      users: userId,
     })
-    return this.sendMessage(channel.id, content, undefined, options)
+    return { id: channel.id, type: Universal.Channel.Type.DIRECT }
   }
 
   async getReactions(channelId: string, messageId: string, emoji: string) {

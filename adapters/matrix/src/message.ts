@@ -13,7 +13,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
         this.channelId, type, Buffer.from(data), this.reply?.id, mime, filename,
       )
       session.messageId = id
-      this.results.push(session)
+      this.results.push(session.body.message)
       this.reply = null
     } catch (e) {
       this.errors.push(e)
@@ -31,7 +31,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
         this.channelId, this.buffer, this.reply?.id,
       )
       session.messageId = id
-      this.results.push(session)
+      this.results.push(session.body.message)
       this.buffer = ''
       this.reply = null
     } catch (e) {

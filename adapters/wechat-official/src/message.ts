@@ -8,14 +8,16 @@ import { SendMessage } from './types'
 export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialBot> {
   buffer = ''
   sent = false
+
   upsertSend() {
     const session = this.bot.session()
     session.type = 'message'
     session.isDirect = true
     session.userId = this.bot.selfId
     session.timestamp = new Date().valueOf()
-    session.app.emit(session, 'send', session)
-    this.results.push(session)
+    // FIXME: missing message.id
+    // session.app.emit(session, 'send', session)
+    // this.results.push(session.body.message)
   }
 
   async sendByHttpResponse(payload: Partial<SendMessage>) {

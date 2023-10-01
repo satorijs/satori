@@ -34,7 +34,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       session.timestamp = Number(resp.data.create_time) * 1000
       session.userId = resp.data.sender.id
       session.app.emit(session, 'send', session)
-      this.results.push(session)
+      this.results.push(session.body.message)
     } catch (e) {
       // try to extract error message from Lark API
       if (Quester.isAxiosError(e)) {

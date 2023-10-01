@@ -196,6 +196,10 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     }
   }
 
+  async createDirectChannel(id: string) {
+    return { id, type: Universal.Channel.Type.DIRECT }
+  }
+
   async updateCommands(commands: Universal.Command[]) {
     if (!this.config.slash) return
     const result = {} as Record<string, Telegram.BotCommand[]>

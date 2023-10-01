@@ -89,7 +89,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
-    this.results.push(session)
+    this.results.push(session.body.message)
     session.app.emit(session, 'send', session)
     this.content = ''
     this.file = null
@@ -159,10 +159,11 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.options.session.body.message.user.id, data)
       session.messageId = msg_id
     } else {
+      // FIXME: missing message id
       await this.bot.internal.sendMessage(this.session.guildId, data)
     }
 
-    this.results.push(session)
+    this.results.push(session.body.message)
     session.app.emit(session, 'send', session)
   }
 

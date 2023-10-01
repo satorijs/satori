@@ -9,6 +9,7 @@ const logger = new Logger('dingtalk')
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
 export class DingtalkBot extends Bot<DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
+
   public oldHttp: Quester
   public http: Quester
   public internal: Internal

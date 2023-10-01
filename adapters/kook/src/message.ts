@@ -34,7 +34,7 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
       session.type = 'send'
       session.messageId = result.msg_id
       session.timestamp = result.timestamp
-      this.results.push(session)
+      this.results.push(session.body.message)
       session.app.emit(session, 'send', session)
     } catch (e) {
       this.errors.push(e)

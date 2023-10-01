@@ -16,6 +16,7 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
   block: Line.Message = null
   sender: Line.Sender = {}
   emojis: Line.Emoji[] = []
+
   async flush(): Promise<void> {
     await this.insertBlock()
     // https://developers.line.biz/en/reference/messaging-api/#send-push-message

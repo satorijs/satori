@@ -27,7 +27,7 @@ export class MailMessageEncoder extends MessageEncoder<MailBot> {
     session.messageId = messageId
     session.timestamp = +new Date()
     session.userId = this.bot.selfId
-    this.results.push(session)
+    this.results.push(session.body.message)
     session.app.emit(session, 'send', session)
 
     this.buffer = ''

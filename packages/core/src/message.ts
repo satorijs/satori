@@ -1,5 +1,5 @@
 import { Bot } from './bot'
-import { Channel, SendOptions } from '@satorijs/protocol'
+import { Channel, Message, SendOptions } from '@satorijs/protocol'
 import { Session } from './session'
 import h from '@satorijs/element'
 
@@ -11,7 +11,7 @@ class AggregateError extends Error {
 
 export abstract class MessageEncoder<B extends Bot = Bot> {
   public errors: Error[] = []
-  public results: Session[] = []
+  public results: Message[] = []
   public session: Session
 
   constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
@@ -47,7 +47,7 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
     if (this.errors.length) {
       throw new AggregateError(this.errors)
     } else {
-      return this.results.map(result => result.messageId)
+      return this.results
     }
   }
 }

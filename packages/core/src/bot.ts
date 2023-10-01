@@ -38,7 +38,7 @@ export abstract class Bot<T = any> implements Login {
 
     ctx.on('ready', () => {
       this.dispatchLoginEvent('login-added')
-      this.start()
+      return this.start()
     })
 
     ctx.on('dispose', () => this.dispose())
@@ -54,7 +54,7 @@ export abstract class Bot<T = any> implements Login {
     remove(this.ctx.bots, this)
     this.context.emit('bot-removed', this)
     this.dispatchLoginEvent('login-removed')
-    this.stop()
+    return this.stop()
   }
 
   private dispatchLoginEvent(type: string) {
@@ -144,14 +144,14 @@ export abstract class Bot<T = any> implements Login {
     }
   }
 
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
     return new MessageEncoder(this, channelId, guildId, options).send(content)
   }
 
-  async sendPrivateMessage(channelId: string, content: Fragment, options?: SendOptions) {
-    const { MessageEncoder } = this.constructor as typeof Bot
-    return new MessageEncoder(this, channelId, null, options).send(content)
+  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
+    const { id } = await this.createDirectChannel(userId)
+    return this.sendMessage(id, content, null, options)
   }
 
   async supports(name: string, session: Partial<Session> = {}) {

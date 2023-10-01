@@ -107,9 +107,9 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     await this.request('POST', '/guild/kickout', { guild_id, user_id })
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, options?: Universal.SendOptions) {
+  async createDirectChannel(userId: string) {
     const { code } = await this.request('POST', '/user-chat/create', { target_id: userId })
-    return this.sendMessage(code, content, null, options)
+    return { id: code, type: Universal.Channel.Type.DIRECT }
   }
 
   createReaction(channelId: string, messageId: string, emoji: string) {
@@ -156,7 +156,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
       guild_id: guildId,
       ...data,
     })
-    return role.role_id.toString()
+    return decodeRole(role)
   }
 
   async updateGuildRole(guildId: string, roleId: string, data: Partial<Universal.GuildRole>) {

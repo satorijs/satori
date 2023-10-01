@@ -1,4 +1,4 @@
-import { h, MessageEncoder, Session } from '@satorijs/satori'
+import { h, MessageEncoder } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import FormData from 'form-data'
 import { adaptMessage, adaptSentAsset } from './utils'
@@ -26,7 +26,6 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   thread_ts = null
   elements: any[] = []
   addition: Record<string, any> = {}
-  results: Session[] = []
 
   async flush() {
     if (!this.buffer.length) return
@@ -41,7 +40,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     await adaptMessage(this.bot, r.message, session.body.message = {}, session.body)
     session.channelId = this.channelId
     session.app.emit(session, 'send', session)
-    this.results.push(session)
+    this.results.push(session.body.message)
     this.buffer = ''
   }
 
@@ -65,7 +64,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       const session = this.bot.session()
       adaptSentAsset(sent.file, session)
       session.app.emit(session, 'send', session)
-      this.results.push(session)
+      this.results.push(session.body.message)
     }
   }
 

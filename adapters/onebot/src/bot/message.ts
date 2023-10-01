@@ -25,7 +25,7 @@ export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
       ? '' + await this.bot.internal.sendGroupForwardMsg(this.guildId, this.stack[0].children)
       : '' + await this.bot.internal.sendPrivateForwardMsg(this.channelId.slice(8), this.stack[0].children)
     session.app.emit(session, 'send', session)
-    this.results.push(session)
+    this.results.push(session.body.message)
   }
 
   async flush() {
@@ -81,7 +81,7 @@ export class OneBotMessageEncoder extends MessageEncoder<BaseBot> {
         ? '' + await this.bot.internal.sendGroupMsg(this.guildId, this.children)
         : '' + await this.bot.internal.sendPrivateMsg(this.channelId.slice(8), this.children)
     session.app.emit(session, 'send', session)
-    this.results.push(session)
+    this.results.push(session.body.message)
     this.children = []
   }
 

@@ -1,4 +1,4 @@
-import { Dict, h, Logger, MessageEncoder, Quester, Schema, Session, Universal } from '@satorijs/satori'
+import { Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { Channel, Message } from './types'
@@ -12,7 +12,7 @@ class State {
   author: Partial<Universal.User> = {}
   quote: Partial<Universal.Message> = {}
   channel: Partial<Channel> = {}
-  fakeMessageMap: Record<string, Session[]> = {} // [userInput] = discord messages
+  fakeMessageMap: Record<string, Universal.Message[]> = {} // [userInput] = discord messages
   threadCreated = false // forward: send the first message and create a thread
 
   constructor(public type: 'message' | 'forward') { }
@@ -56,7 +56,11 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       const session = this.bot.session()
       const message = await decodeMessage(this.bot, result, session.body.message = {}, session.body)
       session.app.emit(session, 'send', session)
-      this.results.push(session)
+      this.results.push(session.body.message)
+      Object.defineProperty(session.body.message, 'channel', {
+        configurable: true,
+        get: () => session.body.channel,
+      })
 
       if (this.stack[0].type === 'forward' && !this.stack[0].threadCreated) {
         this.stack[0].threadCreated = true
@@ -276,8 +280,8 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
         let replyId = attrs.id, channelId = this.channelId
         if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
           // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
-          replyId = this.stack[0].fakeMessageMap[attrs.id][0].messageId
-          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channelId
+          replyId = this.stack[0].fakeMessageMap[attrs.id][0].id
+          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channel.id
         }
         const quote = await this.bot.getMessage(channelId, replyId)
         this.addition.embeds = [{
