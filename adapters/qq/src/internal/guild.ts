@@ -1,7 +1,7 @@
 import { Quester } from '@satorijs/satori'
-import * as QQ from './types'
+import * as QQ from '../types'
 
-export class Internal {
+export class GuildInternal {
   constructor(private http: () => Quester) { }
 
   async getMe() {

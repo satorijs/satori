@@ -52,6 +52,11 @@ export enum Intents {
    */
   AUDIO_OR_LIVE_CHANNEL_MEMBER = 1 << 19,
   /**
+   * - C2C_MESSAGE_CREATE 用户在单聊发送消息给机器人
+   * - GROUP_AT_MESSAGE_CREATE 用户在群聊 @ 机器人发送消息
+   */
+  USER_MESSAGE = 1 << 25,
+  /**
    * - INTERACTION_CREATE 互动事件创建时
    */
   INTERACTIONS = 1 << 26,
@@ -159,6 +164,17 @@ export interface GatewayEvents {
   OPEN_FORUM_REPLY_DELETE: Partial<Forum.Thread>
   AUDIO_OR_LIVE_CHANNEL_MEMBER_ENTER: Partial<Channel>
   AUDIO_OR_LIVE_CHANNEL_MEMBER_EXIT: Partial<Channel>
+  C2C_MESSAGE_CREATE: UserMessage
+  GROUP_AT_MESSAGE_CREATE: UserMessage
+  INTERACTION_CREATE: Interaction
+  GROUP_ADD_ROBOT: GroupEvent
+  GROUP_DEL_ROBOT: GroupEvent
+  GROUP_MSG_REJECT: GroupEvent
+  GROUP_MSG_RECEIVE: GroupEvent
+  FRIEND_ADD: UserEvent
+  FRIEND_DEL: UserEvent
+  C2C_MSG_REJECT: UserEvent
+  C2C_MSG_RECEIVE: UserEvent // 文档写错了?
 }
 
 export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
@@ -465,7 +481,6 @@ export type CreateGuildParams =
 
 export type ModifyGuildParams =
   Pick<Channel, 'name' | 'position' | 'parent_id' | 'private_type' | 'speak_permission'>
-
 
 export enum ChannelType {
   /** 文字子频道 */
@@ -1139,4 +1154,87 @@ export enum PostFormat {
   FORMAT_HTML = 2,
   FORMAT_MARKDOWN = 3,
   FORMAT_JSON = 4
+}
+
+export enum MessageType {
+  TEXT = 0,
+  MIXED = 1,
+  MARKDOWN = 2,
+  ARK = 3,
+  EMBED = 4,
+  // @TODO merge?
+  AT = 5,
+}
+
+export interface SendMessageParams {
+  /** 文本内容 */
+  content?: string
+  /** 消息类型
+   * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
+   */
+  msg_type: MessageType
+  markdown?: object
+  keyboard?: object
+  ark?: object
+  image?: unknown
+  message_reference?: object
+  event_id?: string
+  msg_id?: string
+  // @TODO merge?
+  timestamp: number
+}
+
+export enum FileType {
+  IMAGE = 1,
+  VIDEO = 2,
+  AUDIO = 3,
+  FILE = 4
+}
+
+export interface SendFileParams {
+  file_type: FileType
+  url: string
+  srv_send_msg: true
+  file_data?: unknown
+}
+
+export interface UserMessage {
+  id: string
+  author: {
+    id: string
+  }
+  content: string
+  timestamp: string
+  group_id: string
+  attachments?: Attachment[] // not listed in document?
+}
+
+export interface Interaction {
+  id: string
+  type: 11
+  // chat_type: number
+  timestamp: string
+  guild_id: string
+  channel_id: string
+  group_open_id: string
+  chat_type: number // @TODO enum
+  data: {
+    resolved: {
+      button_data: string
+      button_id: string
+      user_id: string
+    }
+  }
+  version: 1
+}
+
+export interface GroupEvent {
+  timestamp: number
+  group_openid: string
+  op_member_openid: string
+}
+
+export interface UserEvent {
+  timestamp: number
+  openid: string
 }

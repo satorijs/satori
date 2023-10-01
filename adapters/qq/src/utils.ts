@@ -1,4 +1,4 @@
-import { h, Session, Universal } from '@satorijs/satori'
+import { Bot, h, Session, Universal } from '@satorijs/satori'
 import * as QQ from './types'
 import { QQBot } from './bot'
 import { unescape } from '@satorijs/element'
@@ -28,8 +28,38 @@ export const decodeGuildMember = (member: QQ.Member): Universal.GuildMember => (
   roles: member.roles,
 })
 
-export async function decodeMessage(
+export function decodeGroupMessage(
   bot: QQBot,
+  data: QQ.UserMessage,
+  message: Universal.Message = {},
+  payload: Universal.MessageLike = message,
+) {
+  message.id = data.id
+  const date = data.timestamp.slice(0, data.timestamp.indexOf('m=')).trim().replace(/\+(\d{4}) CST/, 'GMT+$1')
+  message.timestamp = new Date(date).valueOf()
+  message.elements = []
+  if (data.content.length) message.elements.push(h.text(data.content))
+  for (const attachment of (data.attachments ?? [])) {
+    if (attachment.content_type === 'file') {
+      message.elements.push(h.file(attachment.url, {
+        filename: attachment.filename,
+      }))
+    } else if (attachment.content_type.startsWith('image/')) {
+      message.elements.push(h.image(attachment.url))
+    } else if (attachment.content_type === 'voice') {
+      message.elements.push(h.audio(attachment.url))
+    } else if (attachment.content_type === 'video') {
+      message.elements.push(h.video(attachment.url))
+    }
+  }
+
+  message.guild = { id: data.group_id }
+  message.user = { id: data.author.id }
+  return message
+}
+
+export async function decodeMessage(
+  bot: Bot,
   data: QQ.Message,
   message: Universal.Message = {},
   payload: Universal.MessageLike = message,
@@ -77,7 +107,13 @@ export function setupReaction(session: Partial<Session>, data: QQ.MessageReactio
 }
 
 export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
-  const session = bot.session()
+  let session = bot.session()
+
+  if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',
+    'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT'].includes(input.t)) {
+    session = bot.guildBot.session()
+  }
+
   session.setInternal('qq', input)
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
@@ -120,6 +156,37 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
       session.guildId = input.d.message.guild_id
       session.channelId = input.d.message.channel_id
     }
+  } else if (input.t === 'GROUP_AT_MESSAGE_CREATE') {
+    session.type = 'message'
+    session.isDirect = false
+    decodeGroupMessage(bot, input.d, session.body.message = {}, session.body)
+    session.guildId = session.body.message.guild.id
+    session.channelId = session.guildId
+    session.userId = session.body.message.user.id
+  } else if (input.t === 'C2C_MESSAGE_CREATE') {
+    session.type = 'message'
+    session.isDirect = true
+    decodeGroupMessage(bot, input.d, session.body.message = {}, session.body)
+    session.userId = input.d.author.id
+    session.channelId = session.userId
+  } else if (input.t === 'FRIEND_ADD') {
+    session.type = 'friend-added'
+    session.timestamp = input.d.timestamp
+    session.userId = input.d.openid
+  } else if (input.t === 'FRIEND_DEL') {
+    session.type = 'friend-added'
+    session.timestamp = input.d.timestamp
+    session.userId = input.d.openid
+  } else if (input.t === 'GROUP_ADD_ROBOT') {
+    session.type = 'guild-added'
+    session.timestamp = input.d.timestamp
+    session.guildId = input.d.group_openid
+    session.operatorId = input.d.op_member_openid
+  } else if (input.t === 'GROUP_DEL_ROBOT') {
+    session.type = 'guild-removed'
+    session.timestamp = input.d.timestamp
+    session.guildId = input.d.group_openid
+    session.operatorId = input.d.op_member_openid
   } else {
     return
   }

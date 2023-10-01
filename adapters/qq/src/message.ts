@@ -4,8 +4,9 @@ import { QQBot } from './bot'
 import FormData from 'form-data'
 import { decodeMessage } from './utils'
 import { escape } from '@satorijs/element'
+import { QQGuildBot } from './bot/guild'
 
-export class QQMessageEncoder extends MessageEncoder<QQBot> {
+export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private content: string = ''
   private file: Buffer
   private filename: string
@@ -59,14 +60,14 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       // if (this.fileUrl) {
       //   form.append('image', this.fileUrl)
       // }
-      r = await this.bot.guildHttp.post<QQ.Message>(endpoint, form, {
+      r = await this.bot.http.post<QQ.Message>(endpoint, form, {
         headers: form.getHeaders(),
       })
     } else {
-      r = await this.bot.guildHttp.post<QQ.Message>(endpoint, {
+      r = await this.bot.http.post<QQ.Message>(endpoint, {
         ...{
           content: this.content,
-          msg_id: this.options.session.messageId,
+          msg_id: this.options.session.messageId ?? this.options.session.id,
           image: this.fileUrl,
         },
         ...(this.reference ? {
@@ -132,6 +133,67 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       await this.flush()
       await this.resolveFile(attrs)
       await this.flush()
+    } else if (type === 'message') {
+      await this.flush()
+      await this.render(children)
+      await this.flush()
+    } else {
+      await this.render(children)
+    }
+  }
+}
+
+export class QQMessageEncoder extends MessageEncoder<QQBot> {
+  private content: string = ''
+  async flush() {
+    if (!this.content.trim()) return
+    const data: QQ.SendMessageParams = {
+      content: this.content,
+      msg_type: 0,
+      timestamp: Math.floor(Date.now() / 1000),
+      msg_id: this.options.session.messageId,
+    }
+    const session = this.bot.session()
+    session.type = 'send'
+    if (this.session.isDirect) {
+      const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.options.session.body.message.user.id, data)
+      session.messageId = msg_id
+    } else {
+      await this.bot.internal.sendMessage(this.session.guildId, data)
+    }
+
+    this.results.push(session)
+    session.app.emit(session, 'send', session)
+  }
+
+  async sendFile(type: string, attrs: Dict) {
+    if (!attrs.url.startsWith('http')) {
+      return this.bot.ctx.logger('qq').warn('unsupported file url %s', attrs.url)
+    }
+    let file_type = 0
+    if (type === 'image') file_type = 1
+    else if (type === 'video') file_type = 2
+    else return
+    const data: QQ.SendFileParams = {
+      file_type,
+      url: attrs.url,
+      srv_send_msg: true,
+    }
+    if (this.session.isDirect) {
+      await this.bot.internal.sendFilePrivate(this.options.session.body.message.user.id, data)
+    } else {
+      await this.bot.internal.sendFileGuild(this.session.guildId, data)
+    }
+  }
+
+  async visit(element: h) {
+    const { type, attrs, children } = element
+    if (type === 'text') {
+      this.content += escape(attrs.content)
+    } else if (type === 'image' && attrs.url) {
+      await this.sendFile(type, attrs)
+    } else if (type === 'video' && attrs.url) {
+      await this.sendFile(type, attrs)
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)

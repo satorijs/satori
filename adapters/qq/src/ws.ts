@@ -1,6 +1,6 @@
 import { Adapter, Logger, Schema } from '@satorijs/satori'
 import { QQBot } from './bot'
-import { Intents, Opcode, Payload } from './types'
+import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 
 const logger = new Logger('qq')
@@ -11,9 +11,10 @@ export class WsClient extends Adapter.WsClient<QQBot> {
   _ping: NodeJS.Timeout
 
   async prepare() {
-    const { url } = await this.bot.guildHttp.get(`/gateway`)
+    await this.bot.getAccessToken()
+    const { url } = await this.bot.groupHttp.get(`/gateway`)
     logger.debug('url: %s', url)
-    return this.bot.guildHttp.ws(url)
+    return this.bot.groupHttp.ws(url)
   }
 
   heartbeat() {
@@ -28,11 +29,13 @@ export class WsClient extends Adapter.WsClient<QQBot> {
       const parsed: Payload = JSON.parse(data.toString())
       logger.debug(require('util').inspect(parsed, false, null, true))
       if (parsed.op === Opcode.HELLO) {
+        const token = await this.bot.getAccessToken()
         if (this._sessionId) {
           this.socket.send(JSON.stringify({
             op: Opcode.RESUME,
             d: {
-              token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
+              token: `QQBot ${token}`,
+              // token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
               session_id: this._sessionId,
               seq: this._s,
             },
@@ -41,8 +44,10 @@ export class WsClient extends Adapter.WsClient<QQBot> {
           this.socket.send(JSON.stringify({
             op: Opcode.IDENTIFY,
             d: {
-              token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
-              intents: this.bot.config.type === 'private' ? Intents.GUILD_MESSAGES : Intents.PUBLIC_GUILD_MESSAGES,
+              // token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
+              token: `QQBot ${token}`,
+              intents: this.bot.config.intents,
+              shard: [0, 1],
             },
           }))
         }
@@ -65,6 +70,7 @@ export class WsClient extends Adapter.WsClient<QQBot> {
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
           this.bot.user = decodeUser(parsed.d.user)
+          this.bot.guildBot.user = this.bot.user
           return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
