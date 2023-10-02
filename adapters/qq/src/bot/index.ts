@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
@@ -83,6 +83,10 @@ export class QQBot extends Bot<QQBot.Config> {
 
   async getLogin() {
     return this.toJSON()
+  }
+
+  async createDirectChannel(id: string) {
+    return { id, type: Universal.Channel.Type.DIRECT }
   }
 }
 

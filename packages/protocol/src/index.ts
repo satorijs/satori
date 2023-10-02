@@ -58,7 +58,7 @@ export const Methods: Dict<Method> = {
 
   'login.get': Method('getLogin', []),
   'user.get': Method('getUser', ['user_id']),
-  'user.channel.create': Method('createDirectChannel', ['user_id']),
+  'user.channel.create': Method('createDirectChannel', ['user_id', 'guild_id']),
   'friend.list': Method('getFriendList', ['next']),
   'friend.delete': Method('deleteFriend', ['user_id']),
 
@@ -121,7 +121,7 @@ export interface Methods {
   getChannel(channelId: string, guildId?: string): Promise<Channel>
   getChannelList(guildId: string, next?: string): Promise<List<Channel>>
   getChannelIter(guildId: string): AsyncIterable<Channel>
-  createDirectChannel(userId: string): Promise<Channel>
+  createDirectChannel(userId: string, guildId?: string): Promise<Channel>
   createChannel(guildId: string, data: Partial<Channel>): Promise<Channel>
   updateChannel(channelId: string, data: Partial<Channel>): Promise<void>
   deleteChannel(channelId: string): Promise<void>

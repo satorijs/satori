@@ -12,39 +12,16 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private filename: string
   fileUrl: string
   reference: string
-  dms: QQ.DMS
-
-  async initDms() {
-    const dms = await this.bot.internal.createDMS(this.options.session.userId, this.session.guildId || this.options.session.guildId)
-    this.bot.ctx.logger('qq').debug(require('util').inspect(dms, false, null, true))
-    this.dms = dms
-  }
-
-  async prepare() {
-    if (this.session.isDirect && !this.options.session) {
-      // initiative send
-      await this.initDms()
-    }
-  }
 
   // 先文后图
   async flush() {
     if (!this.content.trim().length && !this.file && !this.fileUrl) {
       return
     }
-    let endpoint = `/channels/${this.session.channelId}/messages`
-    // let srcGuildId // directMsg
-    if (this.session.isDirect && !this.options?.session) {
-      // initiative send
-      endpoint = `/dms/${this.dms.guild_id}/messages`
-      // srcGuildId = this.session.guildId
-    } else if (this.session.isDirect && this.options?.session) {
-      // @ts-ignore
-      const payload = this.options.session.qq.d as QQ.Message
-      endpoint = `/dms/${payload.guild_id}/messages`
-      // srcGuildId = payload.src_guild_id
-    }
+    const isDirect = this.channelId.includes('_')
 
+    let endpoint = `/channels/${this.channelId}/messages`
+    if (isDirect) endpoint = `/dms/${this.channelId.split('_')[0]}/messages`
     const useFormData = Boolean(this.file)
     let r: QQ.Message
     this.bot.ctx.logger('qq').debug('use form data %s', useFormData)
@@ -67,7 +44,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       r = await this.bot.http.post<QQ.Message>(endpoint, {
         ...{
           content: this.content,
-          msg_id: this.options.session.messageId ?? this.options.session.id,
+          msg_id: this.options?.session?.messageId ?? this.options?.session?.id,
           image: this.fileUrl,
         },
         ...(this.reference ? {
@@ -81,16 +58,16 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     session.type = 'send'
-    await decodeMessage(this.bot, r, session.body.message = {}, session.body)
-    if (this.session.isDirect) {
+    // await decodeMessage(this.bot, r, session.body.message = {}, session.body)
+    if (isDirect) {
       session.guildId = this.session.guildId
-      session.channelId = this.session.channelId
+      session.channelId = this.channelId
       session.isDirect = true
     }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
-    this.results.push(session.body.message)
-    session.app.emit(session, 'send', session)
+    // this.results.push(session.body.message)
+    // session.app.emit(session, 'send', session)
     this.content = ''
     this.file = null
     this.filename = null
@@ -151,25 +128,26 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       content: this.content,
       msg_type: 0,
       timestamp: Math.floor(Date.now() / 1000),
-      msg_id: this.options.session.messageId,
+      msg_id: this.options?.session?.messageId,
     }
     const session = this.bot.session()
     session.type = 'send'
     if (this.session.isDirect) {
-      const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.options.session.body.message.user.id, data)
+      const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
       session.messageId = msg_id
     } else {
       // FIXME: missing message id
-      await this.bot.internal.sendMessage(this.session.guildId, data)
+      await this.bot.internal.sendMessage(this.guildId, data)
     }
 
-    this.results.push(session.body.message)
-    session.app.emit(session, 'send', session)
+    // this.results.push(session.body.message)
+    // session.app.emit(session, 'send', session)
+    this.content = ''
   }
 
   async sendFile(type: string, attrs: Dict) {
     if (!attrs.url.startsWith('http')) {
-      return this.bot.ctx.logger('qq').warn('unsupported file url %s', attrs.url)
+      return this.bot.ctx.logger('qq').warn('unsupported file url')
     }
     let file_type = 0
     if (type === 'image') file_type = 1

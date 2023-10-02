@@ -109,4 +109,11 @@ export class QQGuildBot extends Bot {
   async getLogin(): Promise<Universal.Login> {
     return this.parent.getLogin()
   }
+
+  async createDirectChannel(id: string, guild_id?: string) {
+    let input_guild_id = guild_id
+    if (guild_id.includes('_')) input_guild_id = guild_id.split('_')[0] // call sendPM directly from DM channel
+    const dms = await this.internal.createDMS(id, input_guild_id)
+    return { id: `${dms.guild_id}_${input_guild_id}`, type: Universal.Channel.Type.DIRECT }
+  }
 }
