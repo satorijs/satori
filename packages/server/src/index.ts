@@ -140,7 +140,7 @@ export function apply(ctx: Context, config: Config) {
   function dispatch(socket: WebSocket, session: Session) {
     socket.send(JSON.stringify({
       op: 'event',
-      body: transformKey(session.body, snakeCase),
+      body: transformKey(session.event, snakeCase),
     }))
   }
 

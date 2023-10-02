@@ -60,7 +60,7 @@ export abstract class Bot<T = any> implements Login {
   private dispatchLoginEvent(type: string) {
     const session = this.session()
     session.type = type
-    session.body.login = this.toJSON()
+    session.event.login = this.toJSON()
     this.dispatch(session)
   }
 
@@ -144,9 +144,10 @@ export abstract class Bot<T = any> implements Login {
     }
   }
 
-  sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
-    return new MessageEncoder(this, channelId, guildId, options).send(content)
+    const messages = await new MessageEncoder(this, channelId, guildId, options).send(content)
+    return messages.map(message => message.id)
   }
 
   async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {

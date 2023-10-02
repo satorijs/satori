@@ -125,7 +125,7 @@ export async function adaptMessage(
 export async function dispatchSession(bot: MailBot, mail: ParsedMail) {
   const session = bot.session()
   session.type = 'message'
-  if (!await adaptMessage(bot, mail, session.body.message = {}, session.body)) {
+  if (!await adaptMessage(bot, mail, session.event.message = {}, session.event)) {
     return null
   }
   defineProperty(session, 'mail', mail)

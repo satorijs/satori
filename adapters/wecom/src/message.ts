@@ -14,7 +14,7 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     session.userId = this.bot.selfId
     session.timestamp = new Date().valueOf()
     session.app.emit(session, 'send', session)
-    this.results.push(session.body.message)
+    this.results.push(session.event.message)
   }
 
   /** https://developer.work.weixin.qq.com/document/path/90236 */

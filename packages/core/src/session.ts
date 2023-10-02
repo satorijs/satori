@@ -33,14 +33,14 @@ export class Session {
   public id: number
   public bot: Bot
   public app: Context['root']
-  public body: Omit<Event, 'id'>
+  public event: Event
   public locales: string[] = []
 
   constructor(bot: Bot, payload: Partial<Event>) {
     payload.selfId ??= bot.selfId
     payload.platform ??= bot.platform
     payload.timestamp ??= Date.now()
-    this.body = payload as Event
+    this.event = payload as Event
     this.id = ++Session.counter
     Object.assign(this, payload)
     for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
@@ -56,67 +56,67 @@ export class Session {
 
   /** @deprecated */
   get data() {
-    return this.body
+    return this.event
   }
 
   get isDirect() {
-    return this.body.channel.type === Channel.Type.DIRECT
+    return this.event.channel.type === Channel.Type.DIRECT
   }
 
   set isDirect(value) {
-    (this.body.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
+    (this.event.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
   }
 
   get author(): GuildMember & User {
     return {
-      ...this.body.user,
-      ...this.body.member,
-      userId: this.body.user?.id,
-      username: this.body.user?.name,
-      nickname: this.body.member?.name,
+      ...this.event.user,
+      ...this.event.member,
+      userId: this.event.user?.id,
+      username: this.event.user?.name,
+      nickname: this.event.member?.name,
     }
   }
 
   get uid() {
-    return `${this.body.platform}:${this.userId}`
+    return `${this.platform}:${this.userId}`
   }
 
   get gid() {
-    return `${this.body.platform}:${this.guildId}`
+    return `${this.platform}:${this.guildId}`
   }
 
   get cid() {
-    return `${this.body.platform}:${this.channelId}`
+    return `${this.platform}:${this.channelId}`
   }
 
   get fid() {
-    return `${this.body.platform}:${this.channelId}:${this.userId}`
+    return `${this.platform}:${this.channelId}:${this.userId}`
   }
 
   get sid() {
-    return `${this.body.platform}:${this.body.selfId}`
+    return `${this.platform}:${this.selfId}`
   }
 
   get elements() {
-    return this.body.message?.elements
+    return this.event.message?.elements
   }
 
   set elements(value) {
-    this.body.message ??= {}
-    this.body.message.elements = value
+    this.event.message ??= {}
+    this.event.message.elements = value
   }
 
   get content(): string | undefined {
-    return this.body.message?.elements?.join('')
+    return this.event.message?.elements?.join('')
   }
 
   set content(value: string | undefined) {
-    (this.body.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
+    (this.event.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
   }
 
   setInternal(type: string, data: any) {
-    this.body._type = type
-    this.body._data = data
+    this.event._type = type
+    this.event._data = data
     const internal = Object.create(this.bot.internal)
     defineProperty(this, type, Object.assign(internal, data))
   }
@@ -129,7 +129,7 @@ export class Session {
   }
 
   toJSON(): Event {
-    return { ...this.body, id: this.id }
+    return { ...this.event, id: this.id }
   }
 }
 
@@ -147,18 +147,18 @@ export function defineAccessor(prototype: {}, name: string, keys: string[]) {
   })
 }
 
-defineAccessor(Session.prototype, 'type', ['body', 'type'])
-defineAccessor(Session.prototype, 'subtype', ['body', 'subtype'])
-defineAccessor(Session.prototype, 'subsubtype', ['body', 'subsubtype'])
-defineAccessor(Session.prototype, 'selfId', ['body', 'selfId'])
-defineAccessor(Session.prototype, 'platform', ['body', 'platform'])
-defineAccessor(Session.prototype, 'timestamp', ['body', 'timestamp'])
-defineAccessor(Session.prototype, 'userId', ['body', 'user', 'id'])
-defineAccessor(Session.prototype, 'channelId', ['body', 'channel', 'id'])
-defineAccessor(Session.prototype, 'channelName', ['body', 'channel', 'name'])
-defineAccessor(Session.prototype, 'guildId', ['body', 'guild', 'id'])
-defineAccessor(Session.prototype, 'guildName', ['body', 'guild', 'name'])
-defineAccessor(Session.prototype, 'messageId', ['body', 'message', 'id'])
-defineAccessor(Session.prototype, 'operatorId', ['body', 'operator', 'id'])
-defineAccessor(Session.prototype, 'roleId', ['body', 'role', 'id'])
-defineAccessor(Session.prototype, 'quote', ['body', 'message', 'quote'])
+defineAccessor(Session.prototype, 'type', ['event', 'type'])
+defineAccessor(Session.prototype, 'subtype', ['event', 'subtype'])
+defineAccessor(Session.prototype, 'subsubtype', ['event', 'subsubtype'])
+defineAccessor(Session.prototype, 'selfId', ['event', 'selfId'])
+defineAccessor(Session.prototype, 'platform', ['event', 'platform'])
+defineAccessor(Session.prototype, 'timestamp', ['event', 'timestamp'])
+defineAccessor(Session.prototype, 'userId', ['event', 'user', 'id'])
+defineAccessor(Session.prototype, 'channelId', ['event', 'channel', 'id'])
+defineAccessor(Session.prototype, 'channelName', ['event', 'channel', 'name'])
+defineAccessor(Session.prototype, 'guildId', ['event', 'guild', 'id'])
+defineAccessor(Session.prototype, 'guildName', ['event', 'guild', 'name'])
+defineAccessor(Session.prototype, 'messageId', ['event', 'message', 'id'])
+defineAccessor(Session.prototype, 'operatorId', ['event', 'operator', 'id'])
+defineAccessor(Session.prototype, 'roleId', ['event', 'role', 'id'])
+defineAccessor(Session.prototype, 'quote', ['event', 'message', 'quote'])

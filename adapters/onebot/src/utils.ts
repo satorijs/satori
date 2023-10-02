@@ -161,7 +161,7 @@ export async function adaptSession(bot: BaseBot, data: OneBot.Payload) {
   session.type = data.post_type
 
   if (data.post_type === 'message' || data.post_type === 'message_sent') {
-    await adaptMessage(bot, data, session.body.message = {}, session.body)
+    await adaptMessage(bot, data, session.event.message = {}, session.event)
     if (data.post_type === 'message_sent' && !session.guildId) {
       session.channelId = 'private:' + data.target_id
     }

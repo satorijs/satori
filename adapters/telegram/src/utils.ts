@@ -50,11 +50,11 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
 
   if (isBotCommand) {
     session.type = 'interaction/command'
-    await decodeMessage(bot, message, session.body.message = {}, session.body)
+    await decodeMessage(bot, message, session.event.message = {}, session.event)
     session.content = session.content.slice(1)
   } else if (message) {
     session.type = update.message || update.channel_post ? 'message' : 'message-updated'
-    await decodeMessage(bot, message, session.body.message = {}, session.body)
+    await decodeMessage(bot, message, session.event.message = {}, session.event)
   } else if (update.chat_join_request) {
     session.timestamp = update.chat_join_request.date * 1000
     session.type = 'guild-member-request'

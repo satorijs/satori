@@ -61,10 +61,10 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
       session.channelId = this.channelId
       session.guildId = this.channelId
       session.isDirect = true
-      session.body.user = this.bot.user
+      session.event.user = this.bot.user
       session.timestamp = Date.now()
       session.app.emit(session, 'send', session)
-      this.results.push(session.body.message)
+      this.results.push(session.event.message)
     }
   }
 

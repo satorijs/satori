@@ -2,7 +2,6 @@ import * as QQ from './types'
 import { Dict, h, MessageEncoder } from '@satorijs/satori'
 import { QQBot } from './bot'
 import FormData from 'form-data'
-import { decodeMessage } from './utils'
 import { escape } from '@satorijs/element'
 import { QQGuildBot } from './bot/guild'
 
@@ -58,7 +57,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
     const session = this.bot.session()
     session.type = 'send'
-    // await decodeMessage(this.bot, r, session.body.message = {}, session.body)
+    // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
     if (isDirect) {
       session.guildId = this.session.guildId
       session.channelId = this.channelId
@@ -66,7 +65,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
-    // this.results.push(session.body.message)
+    // this.results.push(session.event.message)
     // session.app.emit(session, 'send', session)
     this.content = ''
     this.file = null
@@ -140,7 +139,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       await this.bot.internal.sendMessage(this.guildId, data)
     }
 
-    // this.results.push(session.body.message)
+    // this.results.push(session.event.message)
     // session.app.emit(session, 'send', session)
     this.content = ''
   }
@@ -159,7 +158,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       srv_send_msg: true,
     }
     if (this.session.isDirect) {
-      await this.bot.internal.sendFilePrivate(this.options.session.body.message.user.id, data)
+      await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
     } else {
       await this.bot.internal.sendFileGuild(this.session.guildId, data)
     }

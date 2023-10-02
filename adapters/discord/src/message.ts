@@ -54,12 +54,12 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
-      const message = await decodeMessage(this.bot, result, session.body.message = {}, session.body)
+      const message = await decodeMessage(this.bot, result, session.event.message = {}, session.event)
       session.app.emit(session, 'send', session)
-      this.results.push(session.body.message)
-      Object.defineProperty(session.body.message, 'channel', {
+      this.results.push(session.event.message)
+      Object.defineProperty(session.event.message, 'channel', {
         configurable: true,
-        get: () => session.body.channel,
+        get: () => session.event.channel,
       })
 
       if (this.stack[0].type === 'forward' && !this.stack[0].threadCreated) {

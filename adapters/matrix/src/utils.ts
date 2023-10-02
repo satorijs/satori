@@ -71,7 +71,7 @@ export async function adaptSession(bot: MatrixBot, event: Matrix.ClientEvent): P
     } else {
       session.type = 'message'
     }
-    if (!await adaptMessage(bot, event, session.body.message = {}, session.body)) return null
+    if (!await adaptMessage(bot, event, session.event.message = {}, session.event)) return null
     return session
   }
   session.userId = event.sender

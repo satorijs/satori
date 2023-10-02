@@ -37,10 +37,10 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
     })
     if (!r.ok) throw new Error(r['error'])
     const session = this.bot.session()
-    await adaptMessage(this.bot, r.message, session.body.message = {}, session.body)
+    await adaptMessage(this.bot, r.message, session.event.message = {}, session.event)
     session.channelId = this.channelId
     session.app.emit(session, 'send', session)
-    this.results.push(session.body.message)
+    this.results.push(session.event.message)
     this.buffer = ''
   }
 
@@ -64,7 +64,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
       const session = this.bot.session()
       adaptSentAsset(sent.file, session)
       session.app.emit(session, 'send', session)
-      this.results.push(session.body.message)
+      this.results.push(session.event.message)
     }
   }
 

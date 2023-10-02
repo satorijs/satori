@@ -118,7 +118,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
     session.type = 'message'
-    await decodeMessage(bot, input.d, session.body.message = {}, session.body)
+    await decodeMessage(bot, input.d, session.event.message = {}, session.event)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     if (input.d.target.type !== 'ReactionTargetType_MSG') return
     setupReaction(session, input.d)
@@ -134,14 +134,14 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
       CHANNEL_DELETE: 'channel-deleted',
     }[input.t]
     session.guildId = input.d.guild_id
-    session.body.channel = decodeChannel(input.d)
+    session.event.channel = decodeChannel(input.d)
   } else if (input.t === 'GUILD_CREATE' || input.t === 'GUILD_UPDATE' || input.t === 'GUILD_DELETE') {
     session.type = {
       GUILD_CREATE: 'guild-added',
       GUILD_UPDATE: 'guild-updated',
       GUILD_DELETE: 'guild-deleted',
     }[input.t]
-    session.body.guild = decodeGuild(input.d)
+    session.event.guild = decodeGuild(input.d)
   } else if (input.t === 'DIRECT_MESSAGE_DELETE' || input.t === 'MESSAGE_DELETE' || input.t === 'PUBLIC_MESSAGE_DELETE') {
     if (bot.config.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
     session.type = 'message-deleted'
@@ -159,14 +159,14 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   } else if (input.t === 'GROUP_AT_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = false
-    decodeGroupMessage(bot, input.d, session.body.message = {}, session.body)
-    session.guildId = session.body.message.guild.id
+    decodeGroupMessage(bot, input.d, session.event.message = {}, session.event)
+    session.guildId = session.event.message.guild.id
     session.channelId = session.guildId
-    session.userId = session.body.message.user.id
+    session.userId = session.event.message.user.id
   } else if (input.t === 'C2C_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = true
-    decodeGroupMessage(bot, input.d, session.body.message = {}, session.body)
+    decodeGroupMessage(bot, input.d, session.event.message = {}, session.event)
     session.userId = input.d.author.id
     session.channelId = session.userId
   } else if (input.t === 'FRIEND_ADD') {

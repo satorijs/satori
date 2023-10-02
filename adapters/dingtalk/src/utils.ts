@@ -16,14 +16,14 @@ export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Se
     session.channelId = body.conversationId
   }
   if (body.conversationTitle) {
-    session.body.channel.name = body.conversationTitle
+    session.event.channel.name = body.conversationTitle
   }
 
-  session.body.user = {
+  session.event.user = {
     id: body.senderStaffId,
     name: body.senderNick,
   }
-  session.body.member = {
+  session.event.member = {
     roles: body.isAdmin ? ['admin'] : [],
   }
   session.timestamp = +body.createAt

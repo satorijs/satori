@@ -74,8 +74,8 @@ export interface List<T> {
 
 export interface Methods {
   // message
-  sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
-  sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<Message[]>
+  sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+  sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
   getMessageList(channelId: string, next?: string): Promise<List<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
@@ -376,9 +376,9 @@ export namespace WebSocket {
 }
 
 export interface WebSocket {
-  readonly url: string
-  readonly protocol: string
-  readonly readyState: WebSocket.ReadyState
+  readonly url?: string
+  readonly protocol?: string
+  readonly readyState?: WebSocket.ReadyState
   close(code?: number, reason?: string): void
   send(data: string): void
   dispatchEvent?(event: any): boolean

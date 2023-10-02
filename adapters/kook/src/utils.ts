@@ -128,13 +128,13 @@ function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: P
     session.isDirect = true
     session.channelId = meta.code
   }
-  session.body.channel.name = meta.channel_name
-  adaptMessageSession(data, meta, session.body.message = {}, session.body)
+  session.event.channel.name = meta.channel_name
+  adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
 function adaptMessageModify(data: Kook.Data, meta: Kook.NoticeBody, session: Session) {
   session.channelId = meta.channel_id
-  adaptMessageSession(data, meta, session.body.message = {}, session.body)
+  adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
 function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
@@ -223,7 +223,7 @@ export function adaptSession(bot: Bot, input: any) {
         }[type]
         session.guildId = input.target_id
         session.roleId = '' + body.role_id
-        session.body.role = decodeRole(body)
+        session.event.role = decodeRole(body)
         break
       case 'added_block_list':
       case 'deleted_block_list':

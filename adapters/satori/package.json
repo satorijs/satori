@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-satori",
   "description": "Satori Adapter for Satorijs",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
