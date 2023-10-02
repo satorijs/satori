@@ -3,6 +3,8 @@ import * as OneBot from '../utils'
 import { OneBotMessageEncoder } from './message'
 
 export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
+  static MessageEncoder = OneBotMessageEncoder
+
   public parent?: BaseBot
   public internal: OneBot.Internal
 
@@ -10,7 +12,7 @@ export class BaseBot<T extends BaseBot.Config = BaseBot.Config> extends Bot<T> {
     if (!this.parent && !channelId.startsWith('private:')) {
       guildId = channelId
     }
-    return new OneBotMessageEncoder(this, channelId, guildId, options).send(fragment)
+    return super.sendMessage(channelId, fragment, guildId, options)
   }
 
   async createDirectChannel(userId: string) {

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/protocol",
   "description": "Protocol types for Satori protocol",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
