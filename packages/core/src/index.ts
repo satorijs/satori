@@ -53,6 +53,7 @@ type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Se
 export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'internal/session'(session: Session): void
   'interaction/command'(session: Session): void
+  'interaction/button'(session: Session): void
   'message'(session: Session): void
   'message-created'(session: Session): void
   'message-deleted'(session: Session): void

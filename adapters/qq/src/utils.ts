@@ -110,7 +110,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   let session = bot.session()
 
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',
-    'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT'].includes(input.t)) {
+    'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT', 'INTERACTION_CREATE'].includes(input.t)) {
     session = bot.guildBot.session()
   }
 
@@ -187,6 +187,28 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
     session.timestamp = input.d.timestamp
     session.guildId = input.d.group_openid
     session.operatorId = input.d.op_member_openid
+  } else if (input.t === 'INTERACTION_CREATE') {
+    session.type = 'interaction/button'
+    session.userId = input.d.data.resolved.user_id
+    if (input.d.chat_type === QQ.ChatType.GROUP) {
+      session.guildId = input.d.group_open_id
+      session.channelId = session.guildId
+      session.isDirect = false
+    } else if (input.d.chat_type === QQ.ChatType.CHANNEL) {
+      session.channelId = session.userId
+      session.isDirect = true
+    }
+    session.event.button = {
+      id: input.d.data.resolved.button_id,
+    }
+    // session.messageId = input.d.id // event_id is not supported for sending message
+
+    // {message: 'get header appid failed', code: 630006}
+    try {
+      await bot.internal.acknowledgeInteraction(input.d.id, 0)
+    } catch (e) {
+      bot.ctx.logger('qq').warn(e)
+    }
   } else {
     return
   }

@@ -222,6 +222,10 @@ export interface Message {
   updatedAt?: number
 }
 
+export interface Button {
+  id: string
+}
+
 export interface Command {
   name: string
   aliases: string[]
@@ -289,6 +293,7 @@ export interface Event {
   operator?: User
   role?: GuildRole
   user?: User
+  button?: Button
   _type?: string
   _data?: any
   /** @deprecated */

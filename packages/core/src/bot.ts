@@ -1,4 +1,4 @@
-import { pick, remove } from 'cosmokit'
+import { Dict, pick, remove } from 'cosmokit'
 import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
@@ -26,6 +26,7 @@ export abstract class Bot<T = any> implements Login {
   public platform: string
   public adapter?: Adapter<this>
   public error?: Error
+  public callbacks: Dict<Function> = {}
 
   protected context: Context
   protected _status: Status = Status.OFFLINE
@@ -42,6 +43,11 @@ export abstract class Bot<T = any> implements Login {
     })
 
     ctx.on('dispose', () => this.dispose())
+
+    ctx.on('interaction/button', (session: Session) => {
+      const cb = this.callbacks[session.event.button.id]
+      if (cb) cb(session)
+    })
   }
 
   update(login: Login) {

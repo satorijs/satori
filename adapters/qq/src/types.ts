@@ -1173,8 +1173,10 @@ export interface SendMessageParams {
    * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
    */
   msg_type: MessageType
-  markdown?: object
-  keyboard?: object
+  markdown?: {
+    content: string
+  }
+  keyboard?: Partial<MessageKeyboard>
   ark?: object
   image?: unknown
   message_reference?: object
@@ -1209,6 +1211,12 @@ export interface UserMessage {
   attachments?: Attachment[] // not listed in document?
 }
 
+export enum ChatType {
+  GROUP = 1,
+  DIRECT = 2,
+  CHANNEL = 3
+}
+
 export interface Interaction {
   id: string
   type: 11
@@ -1217,7 +1225,7 @@ export interface Interaction {
   guild_id: string
   channel_id: string
   group_open_id: string
-  chat_type: number // @TODO enum
+  chat_type: ChatType
   data: {
     resolved: {
       button_data: string
@@ -1237,4 +1245,37 @@ export interface GroupEvent {
 export interface UserEvent {
   timestamp: number
   openid: string
+}
+
+export interface MessageKeyboard {
+  id: string
+  content: InlineKeyboard
+}
+
+export interface InlineKeyboard {
+  rows: InlineKeyboardRow[]
+}
+
+export interface InlineKeyboardRow {
+  buttons: Button[]
+}
+
+export interface Button {
+  id?: string
+  render_data: {
+    label: string
+    visited_label: string
+    style: number
+  }
+  action: {
+    type: number
+    permission: {
+      type: number
+      specify_role_ids?: string[]
+      specify_user_ids?: string
+    }
+    click_limit?: number
+    data: string
+    at_bot_show_channel_list?: string
+  }
 }

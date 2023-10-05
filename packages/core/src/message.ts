@@ -14,9 +14,9 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
   public results: Message[] = []
   public session: Session
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
+  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) { }
 
-  async prepare() {}
+  async prepare() { }
 
   abstract flush(): Promise<void>
   abstract visit(element: h): Promise<void>
@@ -40,6 +40,12 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
     })
     await this.prepare()
     this.session.elements = h.normalize(content)
+    const btns = h.select(this.session.elements, 'button').filter(v => v.attrs.type !== 'link' && !v.attrs.id)
+    for (const btn of btns) {
+      const r = (Math.random() + 1).toString(36).substring(7)
+      btn.attrs.id ||= r
+      if (typeof btn.attrs.action === 'function') this.bot.callbacks[btn.attrs.id] = btn.attrs.action
+    }
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
     const session = this.options.session ?? this.session
     await this.render(await session.transform(this.session.elements))

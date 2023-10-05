@@ -5,6 +5,10 @@ import FormData from 'form-data'
 import { escape } from '@satorijs/element'
 import { QQGuildBot } from './bot/guild'
 
+export const escapeMarkdown = (val: string) =>
+  val
+    .replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
+
 export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private content: string = ''
   private file: Buffer
@@ -24,34 +28,39 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     const useFormData = Boolean(this.file)
     let r: QQ.Message
     this.bot.ctx.logger('qq').debug('use form data %s', useFormData)
-    if (useFormData) {
-      const form = new FormData()
-      form.append('content', this.content)
-      if (this.options?.session) {
-        form.append('msg_id', this.options?.session?.messageId)
-      }
-      if (this.file) {
-        form.append('file_image', this.file, this.filename)
-      }
-      // if (this.fileUrl) {
-      //   form.append('image', this.fileUrl)
-      // }
-      r = await this.bot.http.post<QQ.Message>(endpoint, form, {
-        headers: form.getHeaders(),
-      })
-    } else {
-      r = await this.bot.http.post<QQ.Message>(endpoint, {
-        ...{
-          content: this.content,
-          msg_id: this.options?.session?.messageId ?? this.options?.session?.id,
-          image: this.fileUrl,
-        },
-        ...(this.reference ? {
-          messageReference: {
-            message_id: this.reference,
+    try {
+      if (useFormData) {
+        const form = new FormData()
+        form.append('content', this.content)
+        if (this.options?.session) {
+          form.append('msg_id', this.options?.session?.messageId)
+        }
+        if (this.file) {
+          form.append('file_image', this.file, this.filename)
+        }
+        // if (this.fileUrl) {
+        //   form.append('image', this.fileUrl)
+        // }
+        r = await this.bot.http.post<QQ.Message>(endpoint, form, {
+          headers: form.getHeaders(),
+        })
+      } else {
+        r = await this.bot.http.post<QQ.Message>(endpoint, {
+          ...{
+            content: this.content,
+            msg_id: this.options?.session?.messageId ?? this.options?.session?.id,
+            image: this.fileUrl,
           },
-        } : {}),
-      })
+          ...(this.reference ? {
+            messageReference: {
+              message_id: this.reference,
+            },
+          } : {}),
+        })
+      }
+    } catch (e) {
+      this.bot.ctx.logger('qq').error(e)
+      this.bot.ctx.logger('qq').error('[response] %o', e.response?.data)
     }
 
     this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
@@ -121,33 +130,58 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
 
 export class QQMessageEncoder extends MessageEncoder<QQBot> {
   private content: string = ''
+  private useMarkdown = false
+  private rows: QQ.InlineKeyboardRow[] = []
+  private buttonGroupState = false
   async flush() {
-    if (!this.content.trim()) return
+    if (!this.content.trim() && !this.rows.map(v => v.buttons).flat().length) return
     const data: QQ.SendMessageParams = {
       content: this.content,
       msg_type: 0,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id: this.options?.session?.messageId,
     }
+
+    if (this.useMarkdown) {
+      data.msg_type = 2
+      delete data.content
+      data.markdown = {
+        content: escapeMarkdown(this.content) || ' ',
+      }
+      if (this.rows.length) {
+        data.keyboard = {
+          content: {
+            rows: this.rows,
+          },
+        }
+      }
+    }
     const session = this.bot.session()
     session.type = 'send'
-    if (this.session.isDirect) {
-      const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-      session.messageId = msg_id
-    } else {
-      // FIXME: missing message id
-      await this.bot.internal.sendMessage(this.guildId, data)
+    try {
+      if (this.session.isDirect) {
+        const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
+        session.messageId = msg_id
+      } else {
+        // FIXME: missing message id
+        await this.bot.internal.sendMessage(this.guildId, data)
+      }
+    } catch (e) {
+      this.bot.ctx.logger('qq').error(e)
+      this.bot.ctx.logger('qq').error('[response] %o', e.response?.data)
     }
 
     // this.results.push(session.event.message)
     // session.app.emit(session, 'send', session)
     this.content = ''
+    this.rows = []
   }
 
   async sendFile(type: string, attrs: Dict) {
     if (!attrs.url.startsWith('http')) {
       return this.bot.ctx.logger('qq').warn('unsupported file url')
     }
+    await this.flush()
     let file_type = 0
     if (type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
@@ -164,6 +198,26 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
     }
   }
 
+  decodeButton(attrs: Dict, label: string) {
+    const result: QQ.Button = {
+      id: attrs.id,
+      render_data: {
+        label,
+        visited_label: label,
+        style: 0,
+      },
+      action: {
+        type: attrs.type === 'completion' ? 2
+          : (attrs.type === 'link' ? 0 : 1),
+        permission: {
+          type: 2,
+        },
+        data: attrs.data,
+      },
+    }
+    return result
+  }
+
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
@@ -172,6 +226,24 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       await this.sendFile(type, attrs)
     } else if (type === 'video' && attrs.url) {
       await this.sendFile(type, attrs)
+    } else if (type === 'button-group') {
+      this.useMarkdown = true
+      this.buttonGroupState = true
+      this.rows.push({ buttons: [] })
+      await this.render(children)
+      this.buttonGroupState = false
+    } else if (type === 'button') {
+      this.useMarkdown = true
+      if (this.buttonGroupState) {
+        const last = this.rows[this.rows.length - 1]
+        last.buttons.push(this.decodeButton(attrs, children.join('')))
+      } else {
+        this.rows.push({
+          buttons: [
+            this.decodeButton(attrs, children.join('')),
+          ],
+        })
+      }
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
