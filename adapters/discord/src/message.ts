@@ -1,7 +1,7 @@
 import { Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
-import { Channel, Message } from './types'
+import { ActionRow, Button, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
@@ -25,6 +25,8 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private figure: h = null
   private mode: RenderMode = 'default'
   private listType: 'ol' | 'ul' = null
+  private rows: ActionRow[] = []
+  private buttonGroupState = false
 
   private async getUrl() {
     const input = this.options?.session?.discord
@@ -151,9 +153,36 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   async flush() {
     const content = this.buffer.trim()
     if (!content) return
+    this.addition.components = this.rows
     await this.post({ ...this.addition, content })
     this.buffer = ''
     this.addition = {}
+    this.rows = []
+  }
+
+  decodeButton(attrs: Dict, label: string): Button {
+    if (attrs.type === 'link') {
+      return {
+        type: ComponentType.BUTTON,
+        url: attrs.href,
+        label,
+        style: 5,
+      }
+    } else if (attrs.type === 'action') {
+      return {
+        type: ComponentType.BUTTON,
+        custom_id: attrs.id,
+        label,
+        style: 1,
+      }
+    } else if (attrs.type === 'completion') {
+      return {
+        type: ComponentType.BUTTON,
+        custom_id: 'completion:' + attrs.text,
+        label,
+        style: 1,
+      }
+    }
   }
 
   async visit(element: h) {
@@ -327,6 +356,28 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
           this.stack[1].author = {}
         }
       }
+    } else if (type === 'button') {
+      if (this.buttonGroupState) {
+        const last = this.rows[this.rows.length - 1]
+        last.components.push(this.decodeButton(
+          attrs, children.join(''),
+        ))
+      } else {
+        this.rows.push({
+          type: ComponentType.ACTION_ROW,
+          components: [
+            this.decodeButton(attrs, children.join('')),
+          ],
+        })
+      }
+    } else if (type === 'button-group') {
+      this.buttonGroupState = true
+      this.rows.push({
+        type: ComponentType.ACTION_ROW,
+        components: [],
+      })
+      await this.render(children)
+      this.buttonGroupState = false
     } else if (type === 'message' && attrs.forward) {
       this.stack.unshift(new State('forward'))
       await this.render(children)

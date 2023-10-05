@@ -246,6 +246,57 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.messageId = input.d.id
     session.content = ''
     session.event.argv = decodeArgv(data, command)
+  } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MODAL_SUBMIT) {
+    const data = input.d.data as Discord.InteractionData.ModalSubmit
+    if (!data.custom_id.startsWith('completion:')) return
+    // @ts-ignore
+    const user_input = data.components[0].components[0].value
+    await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
+      type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+    })
+    session.type = 'interaction/command'
+    session.isDirect = !input.d.guild_id
+    session.subtype = input.d.guild_id ? 'group' : 'private'
+    session.channelId = input.d.channel_id
+    session.guildId = input.d.guild_id
+    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
+    session.messageId = input.d.id
+    session.content = user_input
+  } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MESSAGE_COMPONENT) {
+    const id = (input.d.data as Discord.InteractionData.MessageComponent).custom_id
+    if (id.startsWith('completion:')) {
+      await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
+        type: Discord.Interaction.CallbackType.MODAL,
+        data: {
+          custom_id: id,
+          title: 'title',
+          components: [{
+            type: Discord.ComponentType.ACTION_ROW,
+            components: [{
+              custom_id: id,
+              type: Discord.ComponentType.TEXT_INPUT,
+              label: 'auto complete',
+              value: id.slice('completion:'.length),
+              style: 1,
+            }],
+          }],
+        },
+      })
+    } else {
+      await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
+        type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+      })
+    }
+    session.type = 'interaction/button'
+    session.isDirect = !input.d.guild_id
+    session.channelId = input.d.channel_id
+    session.guildId = input.d.guild_id
+    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
+    session.messageId = input.d.id
+    session.content = ''
+    session.event.button = {
+      id,
+    }
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id
