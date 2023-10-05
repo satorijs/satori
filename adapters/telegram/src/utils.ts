@@ -25,7 +25,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   // Internal event: get update type from field name.
   const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
   if (subtype) {
-    this.bot.dispatch(this.bot.session({
+    bot.dispatch(bot.session({
       type: 'internal',
       _type: `telegram/${subtype.replace(/_/g, '-')}`,
       _data: update[subtype],

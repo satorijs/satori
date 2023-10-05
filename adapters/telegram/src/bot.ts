@@ -67,8 +67,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
-    const user = await this.getLoginInfo()
-    Object.assign(this, user)
+    await this.getLogin()
     await callback(this)
     logger.debug('connected to %c', 'telegram:' + this.selfId)
     this.online()
@@ -137,11 +136,12 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (!success) throw new Error(`handel guild member request field ${success}`)
   }
 
-  async getLoginInfo() {
+  async getLogin() {
     const data = await this.internal.getMe()
     const user = decodeUser(data)
     await this.setAvatarUrl(user)
-    return user
+    this.user = user
+    return this.toJSON()
   }
 
   async $getFile(filePath: string) {
