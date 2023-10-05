@@ -34,16 +34,21 @@ export class QQBot extends Bot<QQBot.Config> {
         'Authorization': `Bot ${this.config.id}.${this.config.token}`,
       },
     })
-    this.getAccessToken()
-    this.initialize()
-    this.internal = new GroupInternal(() => this.groupHttp)
-    ctx.plugin(WsClient, this)
-  }
 
-  initialize() {
     this.ctx.plugin(QQGuildBot, {
       parent: this,
     })
+    this.internal = new GroupInternal(() => this.groupHttp)
+    this.ctx.plugin(WsClient, this)
+  }
+
+  async initialize() {
+    try {
+      const user = await this.guildBot.internal.getMe()
+      Object.assign(this.user, user)
+    } catch (e) {
+      this.ctx.logger('qq').error(e)
+    }
   }
 
   async stop() {

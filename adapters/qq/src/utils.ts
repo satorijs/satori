@@ -116,7 +116,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
 
   session.setInternal('qq', input)
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
-    if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE') return
+    if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE' && bot.config.intents & QQ.Intents.GUILD_MESSAGES) return
     session.type = 'message'
     await decodeMessage(bot, input.d, session.event.message = {}, session.event)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
@@ -143,7 +143,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
     }[input.t]
     session.event.guild = decodeGuild(input.d)
   } else if (input.t === 'DIRECT_MESSAGE_DELETE' || input.t === 'MESSAGE_DELETE' || input.t === 'PUBLIC_MESSAGE_DELETE') {
-    if (bot.config.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE') return
+    if (bot.config.type === 'private' && input.t === 'PUBLIC_MESSAGE_DELETE' && bot.config.intents & QQ.Intents.GUILD_MESSAGES) return
     session.type = 'message-deleted'
     session.userId = input.d.message.author.id
     session.operatorId = input.d.op_user.id

@@ -71,6 +71,7 @@ export class WsClient extends Adapter.WsClient<QQBot> {
           this._sessionId = parsed.d.session_id
           this.bot.user = decodeUser(parsed.d.user)
           this.bot.guildBot.user = this.bot.user
+          await this.bot.initialize()
           return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
