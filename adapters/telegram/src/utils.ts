@@ -76,6 +76,34 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
         session.type = 'group-added'
       }
     }
+  } else if (update.callback_query) {
+    session.type = 'interaction/button'
+    session.userId = update.callback_query.from.id.toString()
+    session.messageId = update.callback_query.id.toString()
+    session.event.button = {
+      id: update.callback_query.data,
+    }
+    const data = update.callback_query.message
+    if (data.chat.type === 'private') {
+      session.event.channel = {
+        id: data.chat.id.toString(),
+        type: Universal.Channel.Type.DIRECT,
+      }
+    } else {
+      session.event.guild = {
+        id: data.chat.id.toString(),
+        name: data.chat.title,
+      }
+      session.event.channel = {
+        id: data.is_topic_message
+          ? data.message_thread_id.toString()
+          : data.chat.id.toString(),
+        type: Universal.Channel.Type.TEXT,
+      }
+    }
+    await bot.internal.answerCallbackQuery({
+      callback_query_id: update.callback_query.id,
+    })
   }
 
   bot.dispatch(session)

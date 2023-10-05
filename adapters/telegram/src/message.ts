@@ -33,6 +33,8 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'
+  private rows: Telegram.InlineKeyboardButton[][] = []
+  private buttonGroupState = false
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: Universal.SendOptions) {
     super(bot, channelId, guildId, options)
@@ -53,6 +55,9 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     for (const key in this.payload) {
       form.append(key, this.payload[key].toString())
     }
+    form.append('reply_markup', JSON.stringify({
+      inline_keyboard: this.rows,
+    }))
     const method = await appendAsset(this.bot, form, this.asset)
     const result = await this.bot.internal[method](form as any)
     await this.addResult(result)
@@ -73,10 +78,33 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
         reply_to_message_id: this.payload.reply_to_message_id,
         message_thread_id: this.payload.message_thread_id,
         disable_web_page_preview: !this.options.linkPreview,
+        reply_markup: {
+          inline_keyboard: this.rows,
+        },
       })
       await this.addResult(result)
       delete this.payload.reply_to_message_id
       this.payload.caption = ''
+      this.rows = []
+    }
+  }
+
+  decodeButton(attrs: Dict, label: string): Telegram.InlineKeyboardButton {
+    if (attrs.type === 'link') {
+      return {
+        text: label,
+        url: attrs.href,
+      }
+    } else if (attrs.type === 'action') {
+      return {
+        text: label,
+        callback_data: attrs.id,
+      }
+    } else if (attrs.type === 'completion') {
+      return {
+        text: label,
+        switch_inline_query_current_chat: attrs.text,
+      }
     }
   }
 
@@ -117,6 +145,20 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     } else if (type === 'quote') {
       await this.flush()
       this.payload.reply_to_message_id = attrs.id
+    } else if (type === 'button' && attrs.type) {
+      if (this.buttonGroupState) {
+        const last = this.rows[this.rows.length - 1]
+        last.push(this.decodeButton(
+          attrs, children.join(''),
+        ))
+      } else {
+        this.rows.push([this.decodeButton(attrs, children.join(''))])
+      }
+    } else if (type === 'button-group') {
+      this.buttonGroupState = true
+      this.rows.push([])
+      await this.render(children)
+      this.buttonGroupState = false
     } else if (type === 'message') {
       if (this.mode === 'figure') {
         await this.render(children)
