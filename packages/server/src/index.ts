@@ -120,7 +120,7 @@ export function apply(ctx: Context, config: Config) {
         socket.send(JSON.stringify({
           op: Universal.Opcode.READY,
           body: {
-            logins: ctx.bots.map(bot => bot.toJSON()),
+            logins: transformKey(ctx.bots.map(bot => bot.toJSON()), snakeCase),
           },
         }))
         if (!payload.body?.sequence) return
