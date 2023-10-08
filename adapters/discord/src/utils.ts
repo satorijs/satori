@@ -248,7 +248,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.event.argv = decodeArgv(data, command)
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MODAL_SUBMIT) {
     const data = input.d.data as Discord.InteractionData.ModalSubmit
-    if (!data.custom_id.startsWith('completion:')) return
+    if (!data.custom_id.startsWith('input:')) return
     // @ts-ignore
     const user_input = data.components[0].components[0].value
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
@@ -264,7 +264,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.content = user_input
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MESSAGE_COMPONENT) {
     const id = (input.d.data as Discord.InteractionData.MessageComponent).custom_id
-    if (id.startsWith('completion:')) {
+    if (id.startsWith('input:')) {
       await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
         type: Discord.Interaction.CallbackType.MODAL,
         data: {
@@ -276,7 +276,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
               custom_id: id,
               type: Discord.ComponentType.TEXT_INPUT,
               label: 'auto complete',
-              value: id.slice('completion:'.length),
+              value: id.slice('input:'.length),
               style: 1,
             }],
           }],

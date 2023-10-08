@@ -100,7 +100,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
         text: label,
         callback_data: attrs.id,
       }
-    } else if (attrs.type === 'completion') {
+    } else if (attrs.type === 'input') {
       return {
         text: label,
         switch_inline_query_current_chat: attrs.text,

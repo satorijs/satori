@@ -129,8 +129,8 @@ export abstract class Bot<T = any> implements Login {
     return `${this.platform}:${this.selfId}`
   }
 
-  session(body: Partial<Event> = {}) {
-    return new Session(this, body)
+  session(event: Partial<Event> = {}) {
+    return new Session(this, event)
   }
 
   dispatch(session: Session) {

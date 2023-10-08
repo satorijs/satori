@@ -175,10 +175,10 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
         label,
         style: 1,
       }
-    } else if (attrs.type === 'completion') {
+    } else if (attrs.type === 'input') {
       return {
         type: ComponentType.BUTTON,
-        custom_id: 'completion:' + attrs.text,
+        custom_id: 'input:' + attrs.text,
         label,
         style: 1,
       }

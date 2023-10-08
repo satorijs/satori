@@ -207,7 +207,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
         style: 0,
       },
       action: {
-        type: attrs.type === 'completion' ? 2
+        type: attrs.type === 'input' ? 2
           : (attrs.type === 'link' ? 0 : 1),
         permission: {
           type: 2,
