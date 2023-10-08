@@ -116,7 +116,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       return this.post({ ...addition, content: attrs.url })
     }
 
-    if (this.bot.http.isPrivate(attrs.url)) {
+    if (await this.bot.http.isPrivate(attrs.url)) {
       return await this.sendEmbed(attrs, addition)
     }
 

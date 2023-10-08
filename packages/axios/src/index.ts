@@ -128,7 +128,7 @@ export class Quester {
   }
 
   async toPublic(url: string) {
-    if (!this.isPrivate(url)) return url
+    if (!await this.isPrivate(url)) return url
     const { headers, data } = await this.axios(url, {
       method: 'GET',
       responseType: 'arraybuffer',
