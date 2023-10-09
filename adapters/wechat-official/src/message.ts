@@ -15,7 +15,6 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     session.isDirect = true
     session.userId = this.bot.selfId
     session.timestamp = new Date().valueOf()
-    // FIXME: missing message.id
     // session.app.emit(session, 'send', session)
     // this.results.push(session.event.message)
   }
