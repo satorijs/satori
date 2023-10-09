@@ -1,55 +1,5 @@
 import * as Line from './definition'
 
-export type GetNarrowcastProgressParams = {
-  requestId: string
-}
-
-export type GetNumberOfSentReplyMessagesParams = {
-  date: string
-}
-
-export type GetNumberOfSentPushMessagesParams = {
-  date: string
-}
-
-export type GetNumberOfSentMulticastMessagesParams = {
-  date: string
-}
-
-export type GetNumberOfSentBroadcastMessagesParams = {
-  date: string
-}
-
-export type GetAggregationUnitNameListParams = {
-  limit?: string
-  start?: string
-}
-
-export type GetFollowersParams = {
-  start?: string
-  limit?: number
-}
-
-export type GetGroupMembersIdsParams = {
-  start?: string
-}
-
-export type GetRoomMembersIdsParams = {
-  start?: string
-}
-
-export type GetRichMenuBatchProgressParams = {
-  requestId: string
-}
-
-export type GetPNPMessageStatisticsParams = {
-  date: string
-}
-
-export type GetAdPhoneMessageStatisticsParams = {
-  date: string
-}
-
 declare module './internal' {
   interface Internal {
     /**
@@ -61,12 +11,12 @@ declare module './internal' {
      * Set webhook endpoint URL
      * @see https://developers.line.biz/en/reference/messaging-api/#set-webhook-endpoint-url
      */
-    setWebhookEndpoint(params: Line.SetWebhookEndpointRequest): Promise<unknown>
+    setWebhookEndpoint(body: Line.SetWebhookEndpointRequest): Promise<unknown>
     /**
      * Test webhook endpoint
      * @see https://developers.line.biz/en/reference/messaging-api/#test-webhook-endpoint
      */
-    testWebhookEndpoint(params: Line.TestWebhookEndpointRequest): Promise<Line.TestWebhookEndpointResponse>
+    testWebhookEndpoint(body: Line.TestWebhookEndpointRequest): Promise<Line.TestWebhookEndpointResponse>
     /**
      * Download image, video, and audio data sent from users.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-content
@@ -86,27 +36,27 @@ declare module './internal' {
      * Send reply message
      * @see https://developers.line.biz/en/reference/messaging-api/#send-reply-message
      */
-    replyMessage(params: Line.ReplyMessageRequest): Promise<unknown>
+    replyMessage(body: Line.ReplyMessageRequest): Promise<Line.ReplyMessageResponse>
     /**
      * Sends a message to a user, group chat, or multi-person chat at any time.
      * @see https://developers.line.biz/en/reference/messaging-api/#send-push-message
      */
-    pushMessage(params: Line.PushMessageRequest): Promise<unknown>
+    pushMessage(body: Line.PushMessageRequest): Promise<Line.PushMessageResponse>
     /**
      * An API that efficiently sends the same message to multiple user IDs. You can't send messages to group chats or multi-person chats.
      * @see https://developers.line.biz/en/reference/messaging-api/#send-multicast-message
      */
-    multicast(params: Line.MulticastRequest): Promise<unknown>
+    multicast(body: Line.MulticastRequest): Promise<Line.MulticastResponse>
     /**
      * Gets the status of a narrowcast message.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-narrowcast-progress-status
      */
-    getNarrowcastProgress(params: GetNarrowcastProgressParams): Promise<Line.NarrowcastProgressResponse>
+    getNarrowcastProgress(query?: Line.GetNarrowcastProgressQuery): Promise<Line.NarrowcastProgressResponse>
     /**
      * Sends a message to multiple users at any time.
      * @see https://developers.line.biz/en/reference/messaging-api/#send-broadcast-message
      */
-    broadcast(params: Line.BroadcastRequest): Promise<unknown>
+    broadcast(body: Line.BroadcastRequest): Promise<Line.BroadcastResponse>
     /**
      * Gets the target limit for sending messages in the current month. The total number of the free messages and the additional messages is returned.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-quota
@@ -121,47 +71,47 @@ declare module './internal' {
      * Get number of sent reply messages
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-reply-messages
      */
-    getNumberOfSentReplyMessages(params: GetNumberOfSentReplyMessagesParams): Promise<Line.NumberOfMessagesResponse>
+    getNumberOfSentReplyMessages(query?: Line.GetNumberOfSentReplyMessagesQuery): Promise<Line.NumberOfMessagesResponse>
     /**
      * Get number of sent push messages
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-push-messages
      */
-    getNumberOfSentPushMessages(params: GetNumberOfSentPushMessagesParams): Promise<Line.NumberOfMessagesResponse>
+    getNumberOfSentPushMessages(query?: Line.GetNumberOfSentPushMessagesQuery): Promise<Line.NumberOfMessagesResponse>
     /**
      * Get number of sent multicast messages
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-multicast-messages
      */
-    getNumberOfSentMulticastMessages(params: GetNumberOfSentMulticastMessagesParams): Promise<Line.NumberOfMessagesResponse>
+    getNumberOfSentMulticastMessages(query?: Line.GetNumberOfSentMulticastMessagesQuery): Promise<Line.NumberOfMessagesResponse>
     /**
      * Get number of sent broadcast messages
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-broadcast-messages
      */
-    getNumberOfSentBroadcastMessages(params: GetNumberOfSentBroadcastMessagesParams): Promise<Line.NumberOfMessagesResponse>
+    getNumberOfSentBroadcastMessages(query?: Line.GetNumberOfSentBroadcastMessagesQuery): Promise<Line.NumberOfMessagesResponse>
     /**
      * Validate message objects of a reply message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-reply-message
      */
-    validateReply(params: Line.ValidateMessageRequest): Promise<unknown>
+    validateReply(body: Line.ValidateMessageRequest): Promise<unknown>
     /**
      * Validate message objects of a push message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-push-message
      */
-    validatePush(params: Line.ValidateMessageRequest): Promise<unknown>
+    validatePush(body: Line.ValidateMessageRequest): Promise<unknown>
     /**
      * Validate message objects of a multicast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-multicast-message
      */
-    validateMulticast(params: Line.ValidateMessageRequest): Promise<unknown>
+    validateMulticast(body: Line.ValidateMessageRequest): Promise<unknown>
     /**
      * Validate message objects of a narrowcast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-narrowcast-message
      */
-    validateNarrowcast(params: Line.ValidateMessageRequest): Promise<unknown>
+    validateNarrowcast(body: Line.ValidateMessageRequest): Promise<unknown>
     /**
      * Validate message objects of a broadcast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-broadcast-message
      */
-    validateBroadcast(params: Line.ValidateMessageRequest): Promise<unknown>
+    validateBroadcast(body: Line.ValidateMessageRequest): Promise<unknown>
     /**
      * Get number of units used this month
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-units-used-this-month
@@ -171,7 +121,7 @@ declare module './internal' {
      * Get name list of units used this month
      * @see https://developers.line.biz/en/reference/messaging-api/#get-name-list-of-units-used-this-month
      */
-    getAggregationUnitNameList(params: GetAggregationUnitNameListParams): Promise<Line.GetAggregationUnitNameListResponse>
+    getAggregationUnitNameList(query?: Line.GetAggregationUnitNameListQuery): Promise<Line.GetAggregationUnitNameListResponse>
     /**
      * Get profile
      * @see https://developers.line.biz/en/reference/messaging-api/#get-profile
@@ -181,7 +131,7 @@ declare module './internal' {
      * Get a list of users who added your LINE Official Account as a friend
      * @see https://developers.line.biz/en/reference/messaging-api/#get-follower-ids
      */
-    getFollowers(params: GetFollowersParams): Promise<Line.GetFollowersResponse>
+    getFollowers(query?: Line.GetFollowersQuery): Promise<Line.GetFollowersResponse>
     /**
      * Get bot info
      * @see https://developers.line.biz/en/reference/messaging-api/#get-bot-info
@@ -201,12 +151,12 @@ declare module './internal' {
      * Get group chat member user IDs
      * @see https://developers.line.biz/en/reference/messaging-api/#get-group-member-user-ids
      */
-    getGroupMembersIds(groupId: string, params: GetGroupMembersIdsParams): Promise<Line.MembersIdsResponse>
+    getGroupMembersIds(groupId: string, query?: Line.GetGroupMembersIdsQuery): Promise<Line.MembersIdsResponse>
     /**
      * Get multi-person chat member user IDs
      * @see https://developers.line.biz/en/reference/messaging-api/#get-room-member-user-ids
      */
-    getRoomMembersIds(roomId: string, params: GetRoomMembersIdsParams): Promise<Line.MembersIdsResponse>
+    getRoomMembersIds(roomId: string, query?: Line.GetRoomMembersIdsQuery): Promise<Line.MembersIdsResponse>
     /**
      * Leave group chat
      * @see https://developers.line.biz/en/reference/messaging-api/#leave-group
@@ -236,12 +186,12 @@ declare module './internal' {
      * Create rich menu
      * @see https://developers.line.biz/en/reference/messaging-api/#create-rich-menu
      */
-    createRichMenu(params: Line.RichMenuRequest): Promise<Line.RichMenuIdResponse>
+    createRichMenu(body: Line.RichMenuRequest): Promise<Line.RichMenuIdResponse>
     /**
      * Validate rich menu object
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-rich-menu-object
      */
-    validateRichMenuObject(params: Line.RichMenuRequest): Promise<unknown>
+    validateRichMenuObject(body: Line.RichMenuRequest): Promise<unknown>
     /**
      * Download rich menu image.
      * @see https://developers.line.biz/en/reference/messaging-api/#download-rich-menu-image
@@ -251,17 +201,17 @@ declare module './internal' {
      * Upload rich menu image
      * @see https://developers.line.biz/en/reference/messaging-api/#upload-rich-menu-image
      */
-    setRichMenuImage(richMenuId: string): Promise<unknown>
+    setRichMenuImage(richMenuId: string, body: any): Promise<unknown>
     /**
      * Gets a rich menu via a rich menu ID.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu
      */
-    getRichMenu(richMenuId: string): Promise<Line.RichMenuResponse>
+    getRichMenu(): Promise<Line.RichMenuResponse>
     /**
      * Deletes a rich menu.
      * @see https://developers.line.biz/en/reference/messaging-api/#delete-rich-menu
      */
-    deleteRichMenu(richMenuId: string): Promise<unknown>
+    deleteRichMenu(): Promise<unknown>
     /**
      * Get rich menu list
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-list
@@ -286,7 +236,7 @@ declare module './internal' {
      * Create rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#create-rich-menu-alias
      */
-    createRichMenuAlias(params: Line.CreateRichMenuAliasRequest): Promise<unknown>
+    createRichMenuAlias(body: Line.CreateRichMenuAliasRequest): Promise<unknown>
     /**
      * Get rich menu alias information
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-alias-by-id
@@ -296,7 +246,7 @@ declare module './internal' {
      * Update rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#update-rich-menu-alias
      */
-    updateRichMenuAlias(richMenuAliasId: string, params: Line.UpdateRichMenuAliasRequest): Promise<unknown>
+    updateRichMenuAlias(richMenuAliasId: string, body: Line.UpdateRichMenuAliasRequest): Promise<unknown>
     /**
      * Delete rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#delete-rich-menu-alias
@@ -311,12 +261,12 @@ declare module './internal' {
      * Get rich menu ID of user
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-id-of-user
      */
-    getRichMenuIdOfUser(userId: string): Promise<Line.RichMenuIdResponse>
+    getRichMenuIdOfUser(): Promise<Line.RichMenuIdResponse>
     /**
      * Unlink rich menu from user
      * @see https://developers.line.biz/en/reference/messaging-api/#unlink-rich-menu-from-user
      */
-    unlinkRichMenuIdFromUser(userId: string): Promise<unknown>
+    unlinkRichMenuIdFromUser(): Promise<unknown>
     /**
      * Link rich menu to user.
      * @see https://developers.line.biz/en/reference/messaging-api/#link-rich-menu-to-user
@@ -326,12 +276,12 @@ declare module './internal' {
      * Validate a request body of the Replace or unlink the linked rich menus in batches endpoint.
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-batch-control-rich-menus-request
      */
-    validateRichMenuBatchRequest(params: Line.RichMenuBatchRequest): Promise<unknown>
+    validateRichMenuBatchRequest(body: Line.RichMenuBatchRequest): Promise<unknown>
     /**
      * Get the status of Replace or unlink a linked rich menus in batches.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-batch-control-rich-menus-progress-status
      */
-    getRichMenuBatchProgress(params: GetRichMenuBatchProgressParams): Promise<Line.RichMenuBatchProgressResponse>
+    getRichMenuBatchProgress(query?: Line.GetRichMenuBatchProgressQuery): Promise<Line.RichMenuBatchProgressResponse>
     /**
      * Issue link token
      * @see https://developers.line.biz/en/reference/messaging-api/#issue-link-token
@@ -341,26 +291,26 @@ declare module './internal' {
      * Mark messages from users as read
      * @see https://developers.line.biz/en/reference/partner-docs/#mark-messages-from-users-as-read
      */
-    markMessagesAsRead(params: Line.MarkMessagesAsReadRequest): Promise<unknown>
+    markMessagesAsRead(body: Line.MarkMessagesAsReadRequest): Promise<unknown>
     /**
      * Send LINE notification message
      * @see https://developers.line.biz/en/reference/partner-docs/#send-line-notification-message
      */
-    pushMessagesByPhone(params: Line.PnpMessagesRequest): Promise<unknown>
+    pushMessagesByPhone(body: Line.PnpMessagesRequest): Promise<unknown>
     /**
      * Send a message using phone number
      * @see https://developers.line.biz/en/reference/partner-docs/#phone-audience-match
      */
-    audienceMatch(params: Line.AudienceMatchMessagesRequest): Promise<unknown>
+    audienceMatch(body: Line.AudienceMatchMessagesRequest): Promise<unknown>
     /**
      * Get number of sent LINE notification messages
      * @see https://developers.line.biz/en/reference/partner-docs/#get-number-of-sent-line-notification-messages
      */
-    getPNPMessageStatistics(params: GetPNPMessageStatisticsParams): Promise<Line.NumberOfMessagesResponse>
+    getPNPMessageStatistics(query?: Line.GetPNPMessageStatisticsQuery): Promise<Line.NumberOfMessagesResponse>
     /**
      * Get result of message delivery using phone number
      * @see https://developers.line.biz/en/reference/partner-docs/#get-phone-audience-match
      */
-    getAdPhoneMessageStatistics(params: GetAdPhoneMessageStatisticsParams): Promise<Line.NumberOfMessagesResponse>
+    getAdPhoneMessageStatistics(query?: Line.GetAdPhoneMessageStatisticsQuery): Promise<Line.NumberOfMessagesResponse>
   }
 }

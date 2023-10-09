@@ -21,10 +21,16 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
     await this.insertBlock()
     // https://developers.line.biz/en/reference/messaging-api/#send-push-message
     for (let i = 0; i < this.blocks.length; i += 5) {
-      await this.bot.internal.pushMessage({
+      const { sentMessages } = await this.bot.internal.pushMessage({
         to: this.channelId,
         messages: this.blocks.slice(i, i + 5),
       })
+      for (const sent of sentMessages) {
+        const session = this.bot.session(this.session.event)
+        session.messageId = sent.id
+        this.results.push(session.event.message)
+        session.app.emit(session, 'send', session)
+      }
     }
   }
 
