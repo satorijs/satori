@@ -3,6 +3,7 @@ import { Bot, Context, h, Logger, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
 import { Internal } from './types'
+import * as Utils from './utils'
 
 const logger = new Logger('lark')
 
@@ -76,6 +77,17 @@ export class LarkBot extends Bot<LarkBot.Config> {
 
   async deleteMessage(channelId: string, messageId: string) {
     await this.internal.deleteMessage(messageId)
+  }
+
+  async getMessage(channelId: string, messageId: string) {
+    const data = await this.internal.getMessage(messageId)
+    return await Utils.decodeMessage(this, data.data)
+  }
+
+  async getMessageList(channelId: string, before?: string) {
+    const { data: messages } = await this.internal.getMessageList({ container_id_type: 'chat', container_id: channelId, page_token: before })
+    const data = await Promise.all(messages.items.reverse().map(data => Utils.decodeMessage(this, data)))
+    return { data, next: data[0]?.id }
   }
 }
 
