@@ -59,8 +59,8 @@ export function apply(ctx: Context, config: Config) {
     }
 
     const json = koa.request.body
-    const selfId = koa.request.headers['X-Self-ID']
-    const platform = koa.request.headers['X-Platform']
+    const selfId = koa.request.headers['x-self-id']
+    const platform = koa.request.headers['x-platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (!bot) {
       koa.body = 'bot not found'
@@ -139,8 +139,8 @@ export function apply(ctx: Context, config: Config) {
 
   function dispatch(socket: WebSocket, session: Session) {
     socket.send(JSON.stringify({
-      op: 'event',
-      body: transformKey(session.event, snakeCase),
+      op: Universal.Opcode.EVENT,
+      body: transformKey(session.toJSON(), snakeCase),
     }))
   }
 
