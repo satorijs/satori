@@ -67,6 +67,7 @@ Internal.define({
     POST: 'multicast',
   },
   '/v2/bot/message/narrowcast': {
+    POST: 'narrowcast',
   },
   '/v2/bot/message/progress/narrowcast': {
     GET: 'getNarrowcastProgress',
@@ -192,10 +193,13 @@ Internal.define({
     POST: 'linkRichMenuIdToUser',
   },
   '/v2/bot/richmenu/bulk/link': {
+    POST: 'linkRichMenuIdToUsers',
   },
   '/v2/bot/richmenu/bulk/unlink': {
+    POST: 'unlinkRichMenuIdFromUsers',
   },
   '/v2/bot/richmenu/batch': {
+    POST: 'richMenuBatch',
   },
   '/v2/bot/richmenu/validate/batch': {
     POST: 'validateRichMenuBatchRequest',

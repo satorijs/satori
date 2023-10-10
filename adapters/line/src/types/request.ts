@@ -11,7 +11,7 @@ declare module './internal' {
      * Set webhook endpoint URL
      * @see https://developers.line.biz/en/reference/messaging-api/#set-webhook-endpoint-url
      */
-    setWebhookEndpoint(body: Line.SetWebhookEndpointRequest): Promise<unknown>
+    setWebhookEndpoint(body: Line.SetWebhookEndpointRequest): Promise<{}>
     /**
      * Test webhook endpoint
      * @see https://developers.line.biz/en/reference/messaging-api/#test-webhook-endpoint
@@ -47,6 +47,11 @@ declare module './internal' {
      * @see https://developers.line.biz/en/reference/messaging-api/#send-multicast-message
      */
     multicast(body: Line.MulticastRequest): Promise<Line.MulticastResponse>
+    /**
+     * Send narrowcast message
+     * @see https://developers.line.biz/en/reference/messaging-api/#send-narrowcast-message
+     */
+    narrowcast(body: Line.NarrowcastRequest): Promise<{}>
     /**
      * Gets the status of a narrowcast message.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-narrowcast-progress-status
@@ -91,27 +96,27 @@ declare module './internal' {
      * Validate message objects of a reply message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-reply-message
      */
-    validateReply(body: Line.ValidateMessageRequest): Promise<unknown>
+    validateReply(body: Line.ValidateMessageRequest): Promise<{}>
     /**
      * Validate message objects of a push message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-push-message
      */
-    validatePush(body: Line.ValidateMessageRequest): Promise<unknown>
+    validatePush(body: Line.ValidateMessageRequest): Promise<{}>
     /**
      * Validate message objects of a multicast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-multicast-message
      */
-    validateMulticast(body: Line.ValidateMessageRequest): Promise<unknown>
+    validateMulticast(body: Line.ValidateMessageRequest): Promise<{}>
     /**
      * Validate message objects of a narrowcast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-narrowcast-message
      */
-    validateNarrowcast(body: Line.ValidateMessageRequest): Promise<unknown>
+    validateNarrowcast(body: Line.ValidateMessageRequest): Promise<{}>
     /**
      * Validate message objects of a broadcast message
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-message-objects-of-broadcast-message
      */
-    validateBroadcast(body: Line.ValidateMessageRequest): Promise<unknown>
+    validateBroadcast(body: Line.ValidateMessageRequest): Promise<{}>
     /**
      * Get number of units used this month
      * @see https://developers.line.biz/en/reference/messaging-api/#get-number-of-units-used-this-month
@@ -161,12 +166,12 @@ declare module './internal' {
      * Leave group chat
      * @see https://developers.line.biz/en/reference/messaging-api/#leave-group
      */
-    leaveGroup(groupId: string): Promise<unknown>
+    leaveGroup(groupId: string): Promise<{}>
     /**
      * Leave multi-person chat
      * @see https://developers.line.biz/en/reference/messaging-api/#leave-room
      */
-    leaveRoom(roomId: string): Promise<unknown>
+    leaveRoom(roomId: string): Promise<{}>
     /**
      * Get group chat summary
      * @see https://developers.line.biz/en/reference/messaging-api/#get-group-summary
@@ -191,7 +196,7 @@ declare module './internal' {
      * Validate rich menu object
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-rich-menu-object
      */
-    validateRichMenuObject(body: Line.RichMenuRequest): Promise<unknown>
+    validateRichMenuObject(body: Line.RichMenuRequest): Promise<{}>
     /**
      * Download rich menu image.
      * @see https://developers.line.biz/en/reference/messaging-api/#download-rich-menu-image
@@ -201,7 +206,7 @@ declare module './internal' {
      * Upload rich menu image
      * @see https://developers.line.biz/en/reference/messaging-api/#upload-rich-menu-image
      */
-    setRichMenuImage(richMenuId: string, body: any): Promise<unknown>
+    setRichMenuImage(richMenuId: string, body: any): Promise<{}>
     /**
      * Gets a rich menu via a rich menu ID.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu
@@ -211,7 +216,7 @@ declare module './internal' {
      * Deletes a rich menu.
      * @see https://developers.line.biz/en/reference/messaging-api/#delete-rich-menu
      */
-    deleteRichMenu(): Promise<unknown>
+    deleteRichMenu(): Promise<{}>
     /**
      * Get rich menu list
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-list
@@ -221,7 +226,7 @@ declare module './internal' {
      * Set default rich menu
      * @see https://developers.line.biz/en/reference/messaging-api/#set-default-rich-menu
      */
-    setDefaultRichMenu(richMenuId: string): Promise<unknown>
+    setDefaultRichMenu(richMenuId: string): Promise<{}>
     /**
      * Gets the ID of the default rich menu set with the Messaging API.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-default-rich-menu-id
@@ -231,12 +236,12 @@ declare module './internal' {
      * Cancel default rich menu
      * @see https://developers.line.biz/en/reference/messaging-api/#cancel-default-rich-menu
      */
-    cancelDefaultRichMenu(): Promise<unknown>
+    cancelDefaultRichMenu(): Promise<{}>
     /**
      * Create rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#create-rich-menu-alias
      */
-    createRichMenuAlias(body: Line.CreateRichMenuAliasRequest): Promise<unknown>
+    createRichMenuAlias(body: Line.CreateRichMenuAliasRequest): Promise<{}>
     /**
      * Get rich menu alias information
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-alias-by-id
@@ -246,12 +251,12 @@ declare module './internal' {
      * Update rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#update-rich-menu-alias
      */
-    updateRichMenuAlias(richMenuAliasId: string, body: Line.UpdateRichMenuAliasRequest): Promise<unknown>
+    updateRichMenuAlias(richMenuAliasId: string, body: Line.UpdateRichMenuAliasRequest): Promise<{}>
     /**
      * Delete rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#delete-rich-menu-alias
      */
-    deleteRichMenuAlias(richMenuAliasId: string): Promise<unknown>
+    deleteRichMenuAlias(richMenuAliasId: string): Promise<{}>
     /**
      * Get list of rich menu alias
      * @see https://developers.line.biz/en/reference/messaging-api/#get-rich-menu-alias-list
@@ -266,17 +271,37 @@ declare module './internal' {
      * Unlink rich menu from user
      * @see https://developers.line.biz/en/reference/messaging-api/#unlink-rich-menu-from-user
      */
-    unlinkRichMenuIdFromUser(): Promise<unknown>
+    unlinkRichMenuIdFromUser(): Promise<{}>
     /**
      * Link rich menu to user.
      * @see https://developers.line.biz/en/reference/messaging-api/#link-rich-menu-to-user
      */
-    linkRichMenuIdToUser(userId: string, richMenuId: string): Promise<unknown>
+    linkRichMenuIdToUser(userId: string, richMenuId: string): Promise<{}>
+    /**
+     * Link rich menu to multiple users
+     * @see https://developers.line.biz/en/reference/messaging-api/#link-rich-menu-to-users
+     */
+    linkRichMenuIdToUsers(body: Line.RichMenuBulkLinkRequest): Promise<{}>
+    /**
+     * Unlink rich menus from multiple users
+     * @see https://developers.line.biz/en/reference/messaging-api/#unlink-rich-menu-from-users
+     */
+    unlinkRichMenuIdFromUsers(body: Line.RichMenuBulkUnlinkRequest): Promise<{}>
+    /**
+     * You can use this endpoint to batch control the rich menu linked to the users using the endpoint such as Link rich menu to user.
+     * The following operations are available:
+     *
+     * 1. Replace a rich menu with another rich menu for all users linked to a specific rich menu
+     * 2. Unlink a rich menu for all users linked to a specific rich menu
+     * 3. Unlink a rich menu for all users linked the rich menu
+     * @see https://developers.line.biz/en/reference/messaging-api/#batch-control-rich-menus-of-users
+     */
+    richMenuBatch(body: Line.RichMenuBatchRequest): Promise<{}>
     /**
      * Validate a request body of the Replace or unlink the linked rich menus in batches endpoint.
      * @see https://developers.line.biz/en/reference/messaging-api/#validate-batch-control-rich-menus-request
      */
-    validateRichMenuBatchRequest(body: Line.RichMenuBatchRequest): Promise<unknown>
+    validateRichMenuBatchRequest(body: Line.RichMenuBatchRequest): Promise<{}>
     /**
      * Get the status of Replace or unlink a linked rich menus in batches.
      * @see https://developers.line.biz/en/reference/messaging-api/#get-batch-control-rich-menus-progress-status
@@ -291,17 +316,17 @@ declare module './internal' {
      * Mark messages from users as read
      * @see https://developers.line.biz/en/reference/partner-docs/#mark-messages-from-users-as-read
      */
-    markMessagesAsRead(body: Line.MarkMessagesAsReadRequest): Promise<unknown>
+    markMessagesAsRead(body: Line.MarkMessagesAsReadRequest): Promise<{}>
     /**
      * Send LINE notification message
      * @see https://developers.line.biz/en/reference/partner-docs/#send-line-notification-message
      */
-    pushMessagesByPhone(body: Line.PnpMessagesRequest): Promise<unknown>
+    pushMessagesByPhone(body: Line.PnpMessagesRequest): Promise<{}>
     /**
      * Send a message using phone number
      * @see https://developers.line.biz/en/reference/partner-docs/#phone-audience-match
      */
-    audienceMatch(body: Line.AudienceMatchMessagesRequest): Promise<unknown>
+    audienceMatch(body: Line.AudienceMatchMessagesRequest): Promise<{}>
     /**
      * Get number of sent LINE notification messages
      * @see https://developers.line.biz/en/reference/partner-docs/#get-number-of-sent-line-notification-messages

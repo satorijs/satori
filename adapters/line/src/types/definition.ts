@@ -1,31 +1,31 @@
 export type GetWebhookEndpointResponse = {
   /** Webhook URL */
-  endpoint: string;
+  endpoint: string
   /** Webhook usage status. Send a webhook event from the LINE Platform to the webhook URL only if enabled.
 
   `true`: Webhook usage is enabled.
   `false`: Webhook usage is disabled. */
-  active: boolean;
+  active: boolean
 }
 export type SetWebhookEndpointRequest = {
   /** A valid webhook URL. */
-  endpoint: string;
+  endpoint: string
 }
 export type TestWebhookEndpointRequest = {
   /** A webhook URL to be validated. */
-  endpoint?: string;
+  endpoint?: string
 }
 export type TestWebhookEndpointResponse = {
   /** Result of the communication from the LINE platform to the webhook URL. */
-  success?: boolean;
+  success?: boolean
   /** Time of the event in milliseconds. Even in the case of a redelivered webhook, it represents the time the event occurred, not the time it was redelivered. */
-  timestamp: string;
+  timestamp: string
   /** The HTTP status code. If the webhook response isn't received, the status code is set to zero or a negative number. */
-  statusCode: number;
+  statusCode: number
   /** Reason for the response. */
-  reason: string;
+  reason: string
   /** Details of the response. */
-  detail: string;
+  detail: string
 }
 /** Transcoding response */
 export type GetMessageContentTranscodingResponse = {
@@ -34,34 +34,34 @@ export type GetMessageContentTranscodingResponse = {
   `processing`: Preparing to get content.
   `succeeded`: Ready to get the content. You can get the content sent by users.
   `failed`: Failed to prepare to get the content. */
-  status: string;
+  status: string
 }
 export type ReplyMessageRequest = {
   /** replyToken received via webhook. */
-  replyToken: string;
+  replyToken: string
   /** List of messages. */
-  messages: Message[];
-  notificationDisabled?: NotificationDisabled;
+  messages: Message[]
+  notificationDisabled?: NotificationDisabled
 }
 export type ReplyMessageResponse = {
   /** Array of sent messages. */
-  sentMessages: SentMessage[];
+  sentMessages: SentMessage[]
 }
 export type SentMessage = {
   /** ID of the sent message. */
-  id: string;
+  id: string
   /** Quote token of the message. Only included when a message object that can be specified as a quote target was sent as a push or reply message. */
-  quoteToken?: string;
+  quoteToken?: string
 }
 export type PushMessageRequest = {
   /** ID of the receiver. */
-  to: string;
+  to: string
   /** List of Message objects. */
-  messages: Message[];
-  notificationDisabled?: NotificationDisabled;
+  messages: Message[]
+  notificationDisabled?: NotificationDisabled
   /** List of aggregation unit name. Case-sensitive.
   This functions can only be used by corporate users who have submitted the required applications. */
-  customAggregationUnits?: string[];
+  customAggregationUnits?: string[]
 }
 /** `true`: The user doesn’t receive a push notification when a message is sent.
 `false`: The user receives a push notification when the message is sent (unless they have disabled push notifications in LINE and/or their device).
@@ -69,96 +69,96 @@ The default value is false. */
 export type NotificationDisabled = boolean
 export type PushMessageResponse = {
   /** Array of sent messages. */
-  sentMessages: SentMessage[];
+  sentMessages: SentMessage[]
 }
 export type MulticastRequest = {
   /** Messages to send */
-  messages: Message[];
+  messages: Message[]
   /** Array of user IDs. Use userId values which are returned in webhook event objects. Do not use LINE IDs found on LINE. */
-  to: string[];
-  notificationDisabled?: NotificationDisabled;
+  to: string[]
+  notificationDisabled?: NotificationDisabled
   /** Name of aggregation unit. Case-sensitive. */
-  customAggregationUnits?: string[];
+  customAggregationUnits?: string[]
 }
 export type MulticastResponse = {
 }
 export type NarrowcastRequest = {
   /** List of Message objects. */
-  messages: Message[];
-  recipient?: Recipient;
-  filter?: Filter;
-  limit?: Limit;
-  notificationDisabled?: NotificationDisabled;
+  messages: Message[]
+  recipient?: Recipient
+  filter?: Filter
+  limit?: Limit
+  notificationDisabled?: NotificationDisabled
 }
 export type NarrowcastResponse = {
 }
 /** Recipient */
 export type BaseRecipient = {
   /** Type of recipient */
-  type?: string;
+  type?: string
 }
 export type Recipient = OperatorRecipient | AudienceRecipient | RedeliveryRecipient
 export type OperatorRecipient = (BaseRecipient & {
-  type: "operator"
+  type: 'operator'
 } & ({
   and?: Recipient[]
   or?: Recipient[]
   not?: Recipient
 }))
 export type AudienceRecipient = (BaseRecipient & {
-  type: "audience"
+  type: 'audience'
 } & ({
   audienceGroupId?: number
 }))
 export type RedeliveryRecipient = (BaseRecipient & {
-  type: "redelivery"
+  type: 'redelivery'
 } & ({
   requestId?: string
 }))
 /** Filter for narrowcast */
 export type Filter = {
-  demographic?: DemographicFilter;
+  demographic?: DemographicFilter
 }
 /** Demographic filter */
 export type BaseDemographicFilter = {
   /** Type of demographic filter */
-  type?: string;
+  type?: string
 }
 export type DemographicFilter = AgeDemographicFilter | AppTypeDemographicFilter | AreaDemographicFilter | GenderDemographicFilter | OperatorDemographicFilter | SubscriptionPeriodDemographicFilter
 export type AgeDemographicFilter = (BaseDemographicFilter & {
-  type: "age"
+  type: 'age'
 } & ({
   gte?: AgeDemographic
   lt?: AgeDemographic
 }))
 export type AgeDemographic = string
 export type AppTypeDemographicFilter = (BaseDemographicFilter & {
-  type: "appType"
+  type: 'appType'
 } & ({
   oneOf?: AppTypeDemographic[]
 }))
 export type AppTypeDemographic = string
 export type AreaDemographicFilter = (BaseDemographicFilter & {
-  type: "area"
+  type: 'area'
 } & ({
   oneOf?: AreaDemographic[]
 }))
 export type AreaDemographic = string
 export type GenderDemographicFilter = (BaseDemographicFilter & {
-  type: "gender"
+  type: 'gender'
 } & ({
   oneOf?: GenderDemographic[]
 }))
 export type GenderDemographic = string
 export type OperatorDemographicFilter = (BaseDemographicFilter & {
-  type: "operator"
+  type: 'operator'
 } & ({
   and?: DemographicFilter[]
   or?: DemographicFilter[]
   not?: DemographicFilter
 }))
 export type SubscriptionPeriodDemographicFilter = (BaseDemographicFilter & {
-  type: "subscriptionPeriod"
+  type: 'subscriptionPeriod'
 } & ({
   gte?: SubscriptionPeriodDemographic
   lt?: SubscriptionPeriodDemographic
@@ -169,11 +169,11 @@ export type Limit = {
   /** The maximum number of narrowcast messages to send.
   Use this parameter to limit the number of narrowcast messages sent.
   The recipients will be chosen at random. */
-  max?: number;
+  max?: number
   /** If true, the message will be sent within the maximum number of deliverable messages. The default value is `false`.
 
   Targets will be selected at random. */
-  upToRemainingQuota?: boolean;
+  upToRemainingQuota?: boolean
 }
 export type NarrowcastProgressResponse = {
   /** The current status. One of:
@@ -182,50 +182,50 @@ export type NarrowcastProgressResponse = {
   `sending`: Messages are currently being sent.
   `succeeded`: Messages were sent successfully. This may not mean the messages were successfully received.
   `failed`: Messages failed to be sent. Use the failedDescription property to find the cause of the failure. */
-  phase: string;
+  phase: string
   /** The number of users who successfully received the message. */
-  successCount?: number;
+  successCount?: number
   /** The number of users who failed to send the message. */
-  failureCount?: number;
+  failureCount?: number
   /** The number of intended recipients of the message. */
-  targetCount?: number;
+  targetCount?: number
   /** The reason the message failed to be sent. This is only included with a `phase` property value of `failed`. */
-  failedDescription?: string;
+  failedDescription?: string
   /** Error summary. This is only included with a phase property value of failed.
   One of:
 
   `1`: An internal error occurred.
   `2`: An error occurred because there weren't enough recipients.
   `3`: A conflict error of requests occurs because a request that has already been accepted is retried. */
-  errorCode?: number;
+  errorCode?: number
   /** Narrowcast message request accepted time in milliseconds.
 
   Format: ISO 8601 (e.g. 2020-12-03T10:15:30.121Z)
   Timezone: UTC */
-  acceptedTime: string;
+  acceptedTime: string
   /** Processing of narrowcast message request completion time in milliseconds. Returned when the phase property is succeeded or failed.
 
   Format: ISO 8601 (e.g. 2020-12-03T10:15:30.121Z)
   Timezone: UTC */
-  completedTime?: string;
+  completedTime?: string
 }
 export type BroadcastRequest = {
   /** List of Message objects. */
-  messages: Message[];
-  notificationDisabled?: NotificationDisabled;
+  messages: Message[]
+  notificationDisabled?: NotificationDisabled
 }
 export type BroadcastResponse = {
 }
 export type MessageQuotaResponse = {
-  type: QuotaType;
+  type: QuotaType
   /** The target limit for sending messages in the current month. This property is returned when the `type` property has a value of `limited`. */
-  value?: number;
+  value?: number
 }
 /** One of the following values to indicate whether a target limit is set or not. */
 export type QuotaType = string
 export type QuotaConsumptionResponse = {
   /** The number of sent messages in the current month */
-  totalUsage: number;
+  totalUsage: number
 }
 export type NumberOfMessagesResponse = {
   /** Aggregation process status. One of:
@@ -234,234 +234,234 @@ export type NumberOfMessagesResponse = {
   `unready`: We haven't finished calculating the number of sent messages for the specified in date. For example, this property is returned when the delivery date or a future date is specified. Calculation usually takes about a day.
   `unavailable_for_privacy`: The total number of messages on the specified day is less than 20.
   `out_of_service`: The specified date is earlier than the date on which we first started calculating sent messages (March 31, 2018). */
-  status: string;
+  status: string
   /** The number of messages delivered using the phone number on the date specified in `date`.
   The response has this property only when the value of `status` is `ready`. */
-  success?: number;
+  success?: number
 }
 export type ValidateMessageRequest = {
   /** Array of message objects to validate */
-  messages: Message[];
+  messages: Message[]
 }
 export type GetAggregationUnitUsageResponse = {
   /** Number of aggregation units used this month. */
-  numOfCustomAggregationUnits: number;
+  numOfCustomAggregationUnits: number
 }
 export type GetAggregationUnitNameListResponse = {
   /** An array of strings indicating the names of aggregation units used this month. */
-  customAggregationUnits: string[];
+  customAggregationUnits: string[]
   /** A continuation token to get the next array of unit names.
   Returned only when there are remaining aggregation units that weren't returned in customAggregationUnits in the original request. */
-  next?: string;
+  next?: string
 }
 export type UserProfileResponse = {
   /** User's display name */
-  displayName: string;
+  displayName: string
   /** User ID */
-  userId: string;
+  userId: string
   /** Profile image URL. `https` image URL. Not included in the response if the user doesn't have a profile image. */
-  pictureUrl?: string;
+  pictureUrl?: string
   /** User's status message. Not included in the response if the user doesn't have a status message. */
-  statusMessage?: string;
+  statusMessage?: string
   /** User's language, as a BCP 47 language tag. Not included in the response if the user hasn't yet consented to the LINE Privacy Policy. */
-  language?: string;
+  language?: string
 }
 export type GetFollowersResponse = {
   /** An array of strings indicating user IDs of users that have added the LINE Official Account as a friend.
   Only users of LINE for iOS and LINE for Android are included in `userIds`. */
-  userIds: string[];
+  userIds: string[]
   /** A continuation token to get the next array of user IDs.
   Returned only when there are remaining user IDs that weren't returned in `userIds` in the original request.
   The number of user IDs in the `userIds` element doesn't have to reach the maximum number specified by `limit` for the `next` property to be included in the response. */
-  next?: string;
+  next?: string
 }
 export type BotInfoResponse = {
   /** Bot's user ID */
-  userId: string;
+  userId: string
   /** Bot's basic ID */
-  basicId: string;
+  basicId: string
   /** Bot's premium ID. Not included in the response if the premium ID isn't set. */
-  premiumId?: string;
+  premiumId?: string
   /** Bot's display name */
-  displayName: string;
+  displayName: string
   /** Profile image URL. `https` image URL. Not included in the response if the bot doesn't have a profile image. */
-  pictureUrl?: string;
+  pictureUrl?: string
   /** Chat settings set in the LINE Official Account Manager. One of:
 
   `chat`: Chat is set to "On".
   `bot`: Chat is set to "Off". */
-  chatMode: string;
+  chatMode: string
   /** Automatic read setting for messages. If the chat is set to "Off", auto is returned. If the chat is set to "On", manual is returned.
 
   `auto`: Auto read setting is enabled.
   `manual`: Auto read setting is disabled. */
-  markAsReadMode: string;
+  markAsReadMode: string
 }
 export type GroupUserProfileResponse = {
   /** User's display name */
-  displayName: string;
+  displayName: string
   /** User ID */
-  userId: string;
+  userId: string
   /** Profile image URL. `https` image URL. Not included in the response if the user doesn't have a profile image. */
-  pictureUrl?: string;
+  pictureUrl?: string
 }
 export type RoomUserProfileResponse = {
   /** User's display name */
-  displayName: string;
+  displayName: string
   /** User ID */
-  userId: string;
+  userId: string
   /** Profile image URL. `https` image URL. Not included in the response if the user doesn't have a profile image. */
-  pictureUrl?: string;
+  pictureUrl?: string
 }
 export type MembersIdsResponse = {
   /** List of user IDs of members in the group chat. Only users of LINE for iOS and LINE for Android are included in `memberIds`. */
-  memberIds: string[];
+  memberIds: string[]
   /** A continuation token to get the next array of user IDs of the members in the group chat.
   Returned only when there are remaining user IDs that were not returned in `memberIds` in the original request. */
-  next?: string;
+  next?: string
 }
 export type GroupSummaryResponse = {
   /** Group ID */
-  groupId: string;
+  groupId: string
   /** Group name */
-  groupName: string;
+  groupName: string
   /** Group icon URL. Not included in the response if the user doesn't set a group profile icon. */
-  pictureUrl?: string;
+  pictureUrl?: string
 }
 export type GroupMemberCountResponse = {
   /** The count of members in the group chat. The number returned excludes the LINE Official Account. */
-  count: number;
+  count: number
 }
 export type RoomMemberCountResponse = {
   /** The count of members in the multi-person chat. The number returned excludes the LINE Official Account. */
-  count: number;
+  count: number
 }
 export type RichMenuRequest = {
-  size?: RichMenuSize;
+  size?: RichMenuSize
   /** `true` to display the rich menu by default. Otherwise, `false`. */
-  selected?: boolean;
+  selected?: boolean
   /** Name of the rich menu. This value can be used to help manage your rich menus and is not displayed to users. */
-  name?: string;
+  name?: string
   /** Text displayed in the chat bar */
-  chatBarText?: string;
+  chatBarText?: string
   /** Array of area objects which define the coordinates and size of tappable areas */
-  areas?: RichMenuArea[];
+  areas?: RichMenuArea[]
 }
 /** Rich menu size */
 export type RichMenuSize = {
   /** width */
-  width?: number;
+  width?: number
   /** height */
-  height?: number;
+  height?: number
 }
 /** Rich menu area */
 export type RichMenuArea = {
-  bounds?: RichMenuBounds;
-  action?: Action;
+  bounds?: RichMenuBounds
+  action?: Action
 }
 /** Rich menu bounds */
 export type RichMenuBounds = {
   /** Horizontal position relative to the top-left corner of the area. */
-  x?: number;
+  x?: number
   /** Vertical position relative to the top-left corner of the area. */
-  y?: number;
+  y?: number
   /** Width of the area. */
-  width?: number;
+  width?: number
   /** Height of the area. */
-  height?: number;
+  height?: number
 }
 export type RichMenuIdResponse = {
   /** Rich menu ID */
-  richMenuId: string;
+  richMenuId: string
 }
 export type RichMenuResponse = {
   /** ID of a rich menu */
-  richMenuId: string;
-  size: RichMenuSize;
+  richMenuId: string
+  size: RichMenuSize
   /** `true` to display the rich menu by default. Otherwise, `false`. */
-  selected: boolean;
+  selected: boolean
   /** Name of the rich menu. This value can be used to help manage your rich menus and is not displayed to users. */
-  name: string;
+  name: string
   /** Text displayed in the chat bar */
-  chatBarText: string;
+  chatBarText: string
   /** Array of area objects which define the coordinates and size of tappable areas */
-  areas: RichMenuArea[];
+  areas: RichMenuArea[]
 }
 export type RichMenuListResponse = {
   /** Rich menus */
-  richmenus: RichMenuResponse[];
+  richmenus: RichMenuResponse[]
 }
 export type CreateRichMenuAliasRequest = {
   /** Rich menu alias ID, which can be any ID, unique for each channel. */
-  richMenuAliasId: string;
+  richMenuAliasId: string
   /** The rich menu ID to be associated with the rich menu alias. */
-  richMenuId: string;
+  richMenuId: string
 }
 export type RichMenuAliasResponse = {
   /** Rich menu alias ID. */
-  richMenuAliasId: string;
+  richMenuAliasId: string
   /** The rich menu ID associated with the rich menu alias. */
-  richMenuId: string;
+  richMenuId: string
 }
 export type UpdateRichMenuAliasRequest = {
   /** The rich menu ID to be associated with the rich menu alias. */
-  richMenuId: string;
+  richMenuId: string
 }
 export type RichMenuAliasListResponse = {
   /** Rich menu aliases. */
-  aliases: RichMenuAliasResponse[];
+  aliases: RichMenuAliasResponse[]
 }
 export type RichMenuBulkLinkRequest = {
   /** ID of a rich menu */
-  richMenuId: string;
+  richMenuId: string
   /** Array of user IDs. Found in the `source` object of webhook event objects. Do not use the LINE ID used in LINE. */
-  userIds: string[];
+  userIds: string[]
 }
 export type RichMenuBulkUnlinkRequest = {
   /** Array of user IDs. Found in the `source` object of webhook event objects. Do not use the LINE ID used in LINE. */
-  userIds: string[];
+  userIds: string[]
 }
 export type RichMenuBatchRequest = {
   /** Array of Rich menu operation object... */
-  operations: RichMenuBatchOperation[];
+  operations: RichMenuBatchOperation[]
   /** Key for retry. Key value is a string matching the regular expression pattern */
-  resumeRequestKey?: string;
+  resumeRequestKey?: string
 }
 /** Rich menu operation object represents the batch operation to the rich menu linked to the user. */
 export type BaseRichMenuBatchOperation = {
   /** The type of operation to the rich menu linked to the user. One of link, unlink, or unlinkAll. */
-  type: string;
+  type: string
 }
 export type RichMenuBatchOperation = RichMenuBatchLinkOperation | RichMenuBatchUnlinkOperation | RichMenuBatchUnlinkAllOperation
 /** Replace the rich menu with the rich menu specified in the `to` property for all users linked to the rich menu specified in the `from` property. */
 export type RichMenuBatchLinkOperation = (BaseRichMenuBatchOperation & {
-  type: "link"
+  type: 'link'
 } & ({
   from?: string
   to?: string
 }))
 /** Unlink the rich menu for all users linked to the rich menu specified in the `from` property. */
 export type RichMenuBatchUnlinkOperation = (BaseRichMenuBatchOperation & {
-  type: "unlink"
+  type: 'unlink'
 } & ({
   from?: string
 }))
 /** Unlink the rich menu from all users linked to the rich menu. */
 export type RichMenuBatchUnlinkAllOperation = (BaseRichMenuBatchOperation & {
-  type: "unlinkAll"
+  type: 'unlinkAll'
 })
 export type RichMenuBatchProgressResponse = {
-  phase: RichMenuBatchProgressPhase;
+  phase: RichMenuBatchProgressPhase
   /** The accepted time in milliseconds of the request of batch control the rich menu.
 
   Format: ISO 8601 (e.g. 2023-06-08T10:15:30.121Z)
   Timezone: UTC */
-  acceptedTime: string;
+  acceptedTime: string
   /** The completed time in milliseconds of rich menu batch control. Returned when the phase property is succeeded or failed.
 
   Format: ISO 8601 (e.g. 2023-06-08T10:15:30.121Z)
   Timezone: UTC */
-  completedTime?: string;
+  completedTime?: string
 }
 /** The current status. One of:
 
@@ -474,96 +474,96 @@ export type RichMenuBatchProgressPhase = string
 export type IssueLinkTokenResponse = {
   /** Link token.
   Link tokens are valid for 10 minutes and can only be used once. */
-  linkToken: string;
+  linkToken: string
 }
 export type MarkMessagesAsReadRequest = {
-  chat: ChatReference;
+  chat: ChatReference
 }
 /** Chat reference */
 export type ChatReference = {
   /** The target user ID */
-  userId: string;
+  userId: string
 }
 export type PnpMessagesRequest = {
   /** Message to be sent. */
-  messages: Message[];
+  messages: Message[]
   /** Message destination. Specify a phone number that has been normalized to E.164 format and hashed with SHA256. */
-  to: string;
-  notificationDisabled?: NotificationDisabled;
+  to: string
+  notificationDisabled?: NotificationDisabled
 }
 export type AudienceMatchMessagesRequest = {
   /** Destination of the message (A value obtained by hashing the telephone number, which is another value normalized to E.164 format, with SHA256). */
-  messages: Message[];
+  messages: Message[]
   /** Message to send. */
-  to: string[];
-  notificationDisabled?: NotificationDisabled;
+  to: string[]
+  notificationDisabled?: NotificationDisabled
 }
 export type BaseMessage = {
   /** Type of message */
-  type: string;
-  quickReply?: QuickReply;
-  sender?: Sender;
+  type: string
+  quickReply?: QuickReply
+  sender?: Sender
 }
 export type Message = TextMessage | StickerMessage | ImageMessage | VideoMessage | AudioMessage | LocationMessage | ImagemapMessage | TemplateMessage | FlexMessage
 /** Quick reply */
 export type QuickReply = {
   /** Quick reply button objects. */
-  items?: QuickReplyItem[];
+  items?: QuickReplyItem[]
 }
 export type QuickReplyItem = {
   /** URL of the icon that is displayed at the beginning of the button */
-  imageUrl?: string;
-  action?: Action;
+  imageUrl?: string
+  action?: Action
   /** `action` */
-  type?: string;
+  type?: string
 }
 /** Change icon and display name */
 export type Sender = {
   /** Display name. Certain words such as `LINE` may not be used. */
-  name?: string;
+  name?: string
   /** URL of the image to display as an icon when sending a message */
-  iconUrl?: string;
+  iconUrl?: string
 }
 export type TextMessage = (BaseMessage & {
-  type: "text"
+  type: 'text'
 } & ({
   text?: string
   emojis?: Emoji[]
   quoteToken?: string
 }))
 export type Emoji = {
-  index?: number;
-  productId?: string;
-  emojiId?: string;
+  index?: number
+  productId?: string
+  emojiId?: string
 }
 export type StickerMessage = (BaseMessage & {
-  type: "sticker"
+  type: 'sticker'
 } & ({
   packageId?: string
   stickerId?: string
   quoteToken?: string
 }))
 export type ImageMessage = (BaseMessage & {
-  type: "image"
+  type: 'image'
 } & ({
   originalContentUrl?: string
   previewImageUrl?: string
 }))
 export type VideoMessage = (BaseMessage & {
-  type: "video"
+  type: 'video'
 } & ({
   originalContentUrl?: string
   previewImageUrl?: string
   trackingId?: string
 }))
 export type AudioMessage = (BaseMessage & {
-  type: "audio"
+  type: 'audio'
 } & ({
   originalContentUrl?: string
   duration?: number
 }))
 export type LocationMessage = (BaseMessage & {
-  type: "location"
+  type: 'location'
 } & ({
   title?: string
   address?: string
@@ -571,7 +571,7 @@ export type LocationMessage = (BaseMessage & {
   longitude?: unknown
 }))
 export type ImagemapMessage = (BaseMessage & {
-  type: "imagemap"
+  type: 'imagemap'
 } & ({
   baseUrl?: string
   altText?: string
@@ -580,54 +580,54 @@ export type ImagemapMessage = (BaseMessage & {
   video?: ImagemapVideo
 }))
 export type ImagemapBaseSize = {
-  height?: number;
-  width?: number;
+  height?: number
+  width?: number
 }
 export type BaseImagemapAction = {
-  type: string;
-  area?: ImagemapArea;
+  type: string
+  area?: ImagemapArea
 }
 export type ImagemapAction = MessageImagemapAction | URIImagemapAction
 export type MessageImagemapAction = (BaseImagemapAction & {
-  type: "message"
+  type: 'message'
 } & ({
   text?: string
   label?: string
 }))
 export type URIImagemapAction = (BaseImagemapAction & {
-  type: "uri"
+  type: 'uri'
 } & ({
   linkUri?: string
   label?: string
 }))
 export type ImagemapArea = {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
+  x?: number
+  y?: number
+  width?: number
+  height?: number
 }
 export type ImagemapVideo = {
-  originalContentUrl?: string;
-  previewImageUrl?: string;
-  area?: ImagemapArea;
-  externalLink?: ImagemapExternalLink;
+  originalContentUrl?: string
+  previewImageUrl?: string
+  area?: ImagemapArea
+  externalLink?: ImagemapExternalLink
 }
 export type ImagemapExternalLink = {
-  linkUri?: string;
-  label?: string;
+  linkUri?: string
+  label?: string
 }
 export type TemplateMessage = (BaseMessage & {
-  type: "template"
+  type: 'template'
 } & ({
   altText?: string
   template?: Template
 }))
 export type BaseTemplate = {
-  type: string;
+  type: string
 }
 export type Template = ButtonsTemplate | ConfirmTemplate | CarouselTemplate | ImageCarouselTemplate
 export type ButtonsTemplate = (BaseTemplate & {
-  type: "buttons"
+  type: 'buttons'
 } & ({
   thumbnailImageUrl?: string
   imageAspectRatio?: string
@@ -639,13 +639,13 @@ export type ButtonsTemplate = (BaseTemplate & {
   actions?: Action[]
 }))
 export type ConfirmTemplate = (BaseTemplate & {
-  type: "confirm"
+  type: 'confirm'
 } & ({
   text?: string
   actions?: Action[]
 }))
 export type CarouselTemplate = (BaseTemplate & {
-  type: "carousel"
+  type: 'carousel'
 } & ({
   columns?: CarouselColumn[]
   imageAspectRatio?: string
@@ -653,34 +653,34 @@ export type CarouselTemplate = (BaseTemplate & {
 }))
 /** Column object for carousel template. */
 export type CarouselColumn = {
-  thumbnailImageUrl?: string;
-  imageBackgroundColor?: string;
-  title?: string;
-  text?: string;
-  defaultAction?: Action;
-  actions?: Action[];
+  thumbnailImageUrl?: string
+  imageBackgroundColor?: string
+  title?: string
+  text?: string
+  defaultAction?: Action
+  actions?: Action[]
 }
 export type ImageCarouselTemplate = (BaseTemplate & {
-  type: "image_carousel"
+  type: 'image_carousel'
 } & ({
   columns?: ImageCarouselColumn[]
 }))
 export type ImageCarouselColumn = {
-  imageUrl?: string;
-  action?: Action;
+  imageUrl?: string
+  action?: Action
 }
 export type FlexMessage = (BaseMessage & {
-  type: "flex"
+  type: 'flex'
 } & ({
   altText?: string
   contents?: FlexContainer
 }))
 export type BaseFlexContainer = {
-  type: string;
+  type: string
 }
 export type FlexContainer = FlexBubble | FlexCarousel
 export type FlexBubble = (BaseFlexContainer & {
-  type: "bubble"
+  type: 'bubble'
 } & ({
   direction?: string
   styles?: FlexBubbleStyles
@@ -692,27 +692,27 @@ export type FlexBubble = (BaseFlexContainer & {
   action?: Action
 }))
 export type FlexCarousel = (BaseFlexContainer & {
-  type: "carousel"
+  type: 'carousel'
 } & ({
   contents?: FlexBubble[]
 }))
 export type FlexBubbleStyles = {
-  header?: FlexBlockStyle;
-  hero?: FlexBlockStyle;
-  body?: FlexBlockStyle;
-  footer?: FlexBlockStyle;
+  header?: FlexBlockStyle
+  hero?: FlexBlockStyle
+  body?: FlexBlockStyle
+  footer?: FlexBlockStyle
 }
 export type FlexBlockStyle = {
-  backgroundColor?: string;
-  separator?: boolean;
-  separatorColor?: string;
+  backgroundColor?: string
+  separator?: boolean
+  separatorColor?: string
 }
 export type BaseFlexComponent = {
-  type: string;
+  type: string
 }
 export type FlexComponent = FlexBox | FlexButton | FlexImage | FlexVideo | FlexIcon | FlexText | FlexSpan | FlexSeparator | FlexFiller
 export type FlexBox = (BaseFlexComponent & {
-  type: "box"
+  type: 'box'
 } & ({
   layout?: string
   flex?: number
@@ -743,7 +743,7 @@ export type FlexBox = (BaseFlexComponent & {
   background?: FlexBoxBackground
 }))
 export type FlexButton = (BaseFlexComponent & {
-  type: "button"
+  type: 'button'
 } & ({
   flex?: number
   color?: string
@@ -761,7 +761,7 @@ export type FlexButton = (BaseFlexComponent & {
   scaling?: boolean
 }))
 export type FlexImage = (BaseFlexComponent & {
-  type: "image"
+  type: 'image'
 } & ({
   url?: string
   flex?: number
@@ -781,7 +781,7 @@ export type FlexImage = (BaseFlexComponent & {
   animated?: boolean
 }))
 export type FlexVideo = (BaseFlexComponent & {
-  type: "video"
+  type: 'video'
 } & ({
   url?: string
   previewUrl?: string
@@ -790,7 +790,7 @@ export type FlexVideo = (BaseFlexComponent & {
   action?: Action
 }))
 export type FlexIcon = (BaseFlexComponent & {
-  type: "icon"
+  type: 'icon'
 } & ({
   url?: string
   size?: string
@@ -804,7 +804,7 @@ export type FlexIcon = (BaseFlexComponent & {
   scaling?: boolean
 }))
 export type FlexText = (BaseFlexComponent & {
-  type: "text"
+  type: 'text'
 } & ({
   flex?: number
   text?: string
@@ -830,7 +830,7 @@ export type FlexText = (BaseFlexComponent & {
   scaling?: boolean
 }))
 export type FlexSpan = (BaseFlexComponent & {
-  type: "span"
+  type: 'span'
 } & ({
   text?: string
   size?: string
@@ -840,22 +840,22 @@ export type FlexSpan = (BaseFlexComponent & {
   decoration?: string
 }))
 export type FlexSeparator = (BaseFlexComponent & {
-  type: "separator"
+  type: 'separator'
 } & ({
   margin?: string
   color?: string
 }))
 export type FlexFiller = (BaseFlexComponent & {
-  type: "filler"
+  type: 'filler'
 } & ({
   flex?: number
 }))
 export type BaseFlexBoxBackground = {
-  type: string;
+  type: string
 }
 export type FlexBoxBackground = FlexBoxLinearGradient
 export type FlexBoxLinearGradient = (BaseFlexBoxBackground & {
-  type: "linearGradient"
+  type: 'linearGradient'
 } & ({
   angle?: string
   startColor?: string
@@ -866,19 +866,19 @@ export type FlexBoxLinearGradient = (BaseFlexBoxBackground & {
 /** Action */
 export type BaseAction = {
   /** Type of action */
-  type?: string;
+  type?: string
   /** Label for the action. */
-  label?: string;
+  label?: string
 }
 export type Action = CameraAction | CameraRollAction | DatetimePickerAction | LocationAction | MessageAction | PostbackAction | RichMenuSwitchAction | URIAction
 export type CameraAction = (BaseAction & {
-  type: "camera"
+  type: 'camera'
 })
 export type CameraRollAction = (BaseAction & {
-  type: "cameraRoll"
+  type: 'cameraRoll'
 })
 export type DatetimePickerAction = (BaseAction & {
-  type: "datetimepicker"
+  type: 'datetimepicker'
 } & ({
   data?: string
   mode?: string
@@ -887,15 +887,15 @@ export type DatetimePickerAction = (BaseAction & {
   min?: string
 }))
 export type LocationAction = (BaseAction & {
-  type: "location"
+  type: 'location'
 })
 export type MessageAction = (BaseAction & {
-  type: "message"
+  type: 'message'
 } & ({
   text?: string
 }))
 export type PostbackAction = (BaseAction & {
-  type: "postback"
+  type: 'postback'
 } & ({
   data?: string
   displayText?: string
@@ -904,33 +904,33 @@ export type PostbackAction = (BaseAction & {
   fillInText?: string
 }))
 export type RichMenuSwitchAction = (BaseAction & {
-  type: "richmenuswitch"
+  type: 'richmenuswitch'
 } & ({
   data?: string
   richMenuAliasId?: string
 }))
 export type URIAction = (BaseAction & {
-  type: "uri"
+  type: 'uri'
 } & ({
   uri?: string
   altUri?: AltUri
 }))
 export type AltUri = {
-  desktop?: string;
+  desktop?: string
 }
 export type ErrorResponse = {
   /** Message containing information about the error. */
-  message: string;
+  message: string
   /** An array of error details. If the array is empty, this property will not be included in the response. */
-  details?: ErrorDetail[];
+  details?: ErrorDetail[]
   /** Array of sent messages. */
-  sentMessages?: SentMessage[];
+  sentMessages?: SentMessage[]
 }
 export type ErrorDetail = {
   /** Details of the error. Not included in the response under certain situations. */
-  message?: string;
+  message?: string
   /** Location of where the error occurred. Returns the JSON field name or query parameter name of the request. Not included in the response under certain situations. */
-  property?: string;
+  property?: string
 }
 export interface GetNarrowcastProgressQuery {
   /** The narrowcast message's request ID. Each Messaging API request has a request ID. */
