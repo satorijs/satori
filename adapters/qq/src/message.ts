@@ -15,7 +15,8 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private filename: string
   fileUrl: string
   reference: string
-
+  private retry = false
+  private resource: Dict
   // 先文后图
   async flush() {
     if (!this.content.trim().length && !this.file && !this.fileUrl) {
@@ -61,6 +62,12 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     } catch (e) {
       this.bot.ctx.logger('qq').error(e)
       this.bot.ctx.logger('qq').error('[response] %o', e.response?.data)
+      if ((e.repsonse?.data?.code === 40004 || e.response?.data?.code === 102) && !this.retry && this.fileUrl) {
+        this.bot.ctx.logger('qq').warn('retry image sending')
+        this.retry = true
+        await this.resolveFile(null, true)
+        await this.flush()
+      }
     }
 
     this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
@@ -80,15 +87,19 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     this.file = null
     this.filename = null
     this.fileUrl = null
+    this.resource = null
+    this.retry = false
   }
 
-  async resolveFile(attrs: Dict) {
-    if (attrs.url.startsWith('http')) {
-      return this.fileUrl = attrs.url
+  async resolveFile(attrs: Dict, download = false) {
+    if (attrs) this.resource = attrs
+    if (this.resource.url.startsWith('http') && !download) {
+      return this.fileUrl = this.resource.url
     }
-    const { data, filename } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { data, filename } = await this.bot.ctx.http.file(this.resource.url, this.resource)
     this.file = Buffer.from(data)
     this.filename = filename
+    this.fileUrl = null
   }
 
   async visit(element: h) {
