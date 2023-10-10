@@ -116,6 +116,13 @@ export async function adaptSessions(bot: LineBot, body: WebhookEvent) {
     session.type = 'guild-added'
   } else if (body.type === 'leave') {
     session.type = 'guild-deleted'
+  } else if (body.type === 'postback') {
+    session.type = 'interaction/button'
+    // @ts-ignore
+    session.messageId = body.webhookEventId
+    session.event.button = {
+      id: body.postback.data,
+    }
   }
   if (session.type) result.push(session)
   return result

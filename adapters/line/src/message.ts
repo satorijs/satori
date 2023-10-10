@@ -1,4 +1,4 @@
-import { h, MessageEncoder } from '@satorijs/satori'
+import { Dict, h, MessageEncoder } from '@satorijs/satori'
 import { LineBot } from './bot'
 import * as Line from './types'
 
@@ -13,12 +13,23 @@ export const unescape = (val: string) =>
 export class LineMessageEncoder extends MessageEncoder<LineBot> {
   buffer = ''
   blocks: Line.Message[] = []
-  block: Line.Message = null
   sender: Line.Sender = {}
   emojis: Line.Emoji[] = []
+  buttons: Line.Action[] = []
 
   async flush(): Promise<void> {
     await this.insertBlock()
+    for (let i = 0; i < this.buttons.length; i += 4) {
+      this.blocks.push({
+        type: 'template',
+        altText: 'Buttons',
+        template: {
+          type: 'buttons',
+          text: 'Please select',
+          actions: this.buttons.slice(i, i + 4),
+        },
+      })
+    }
     // https://developers.line.biz/en/reference/messaging-api/#send-push-message
     for (let i = 0; i < this.blocks.length; i += 5) {
       const { sentMessages } = await this.bot.internal.pushMessage({
@@ -46,6 +57,28 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
       })
       this.buffer = ''
       this.emojis = []
+    }
+  }
+
+  decodeButton(attrs: Dict, label: string): Line.Action {
+    if (attrs.type === 'input') {
+      return {
+        type: 'message',
+        text: attrs.text,
+        label,
+      }
+    } else if (attrs.type === 'link') {
+      return {
+        type: 'uri',
+        label,
+        uri: attrs.href,
+      }
+    } else {
+      return {
+        type: 'postback',
+        label,
+        data: attrs.id,
+      }
     }
   }
 
@@ -102,6 +135,10 @@ export class LineMessageEncoder extends MessageEncoder<LineBot> {
     } else if (type === 'author') {
       this.sender.name = attrs.nickname
       this.sender.iconUrl = attrs.avatar
+    } else if (type === 'button-group') {
+      await this.render(children)
+    } else if (type === 'button') {
+      this.buttons.push(this.decodeButton(attrs, children.join('')))
     } else if (type === 'message') {
       // let childAuthor = h.select(children, 'author')
       const sender = { ...this.sender }

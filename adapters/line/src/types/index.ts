@@ -36,6 +36,7 @@ export type WebhookEvent =
   | LeaveEvent
   | MemberJoinEvent
   | MemberLeaveEvent
+  | PostbackEvent
 
 export type EventBase = {
   /**
@@ -166,6 +167,56 @@ export type MemberLeaveEvent = {
    */
   left: { members: User[] }
 } & EventBase
+
+/**
+ * Event object for when a user performs an action on a
+ * [template message](https://developers.line.biz/en/reference/messaging-api/#template-messages).
+ */
+export type PostbackEvent = {
+  type: 'postback'
+  postback: Postback
+} & ReplyableEvent
+
+export type Postback = {
+  data: string
+  params?: DateTimePostback | RichMenuSwitchPostback
+}
+
+/**
+ * Object with the date and time selected by a user through a
+ * [datetime picker action](https://developers.line.biz/en/reference/messaging-api/#datetime-picker-action).
+ * Only returned for postback actions via a
+ * [datetime picker action](https://developers.line.biz/en/reference/messaging-api/#datetime-picker-action).
+ * The `full-date`, `time-hour`, and `time-minute` formats follow the
+ * [RFC3339 protocol](https://www.ietf.org/rfc/rfc3339.txt).
+ */
+type DateTimePostback = {
+  /**
+   * Date selected by user. Only included in the `date` mode.
+   */
+  date?: string
+  /**
+   * Time selected by the user. Only included in the `time` mode.
+   */
+  time?: string
+  /**
+   * Date and time selected by the user. Only included in the `datetime` mode.
+   */
+  datetime?: string
+}
+
+/**
+ * Object with rich menu alias ID selected by user via rich menu switch action.
+ * https://developers.line.biz/en/reference/messaging-api/#postback-params-object-for-richmenu-switch-action
+ */
+type RichMenuSwitchPostback = {
+  newRichMenuAliasId: string
+  status:
+    | 'SUCCESS'
+    | 'RICHMENU_ALIAS_ID_NOTFOUND'
+    | 'RICHMENU_NOTFOUND'
+    | 'FAILED'
+}
 
 export type EventMessage =
   | TextEventMessage
