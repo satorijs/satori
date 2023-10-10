@@ -167,6 +167,32 @@ export interface ReadUser {
   tenant_key: string
 }
 
+export interface GetMessageListParams {
+  /**
+   * Currently there is only 'chat' available
+   * @see https://open.larksuite.com/document/server-docs/im-v1/message/list
+   */
+  container_id_type: 'p2p' | 'chat'
+  /**
+   * Should be in the format like `oc_234jsi43d3ssi993d43545f`
+   */
+  container_id: string
+  /** Timestamp in seconds */
+  start_time?: string | number
+  /** Timestamp in seconds */
+  end_time?: string | number
+  /** @default 'ByCreateTimeAsc' */
+  sort_type?: 'ByCreateTimeAsc' | 'ByCreateTimeDesc'
+  /** Range from 1 to 50 */
+  page_size?: number
+  /**
+   * If the current page is the first page, this field should be omitted.
+   * Otherwise you could use the `page_token` from the previous response to
+   * get the next page.
+   */
+  page_token?: string
+}
+
 declare module '../internal' {
   export interface Internal {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create */
@@ -181,10 +207,15 @@ declare module '../internal' {
     deleteMessage(message_id: string): Promise<BaseResponse>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users */
     getMessageReadUsers(message_id: string, params: Pagination<{ user_id_type: Lark.UserIdType }>): Promise<BaseResponse & { data: Paginated<ReadUser> }>
+    /** @see https://open.larksuite.com/document/server-docs/im-v1/message/list */
+    getMessageList(params: GetMessageListParams): Promise<BaseResponse & { data: Paginated<Message> }>
   }
 }
 
 Internal.define({
+  '/im/v1/messages': {
+    GET: 'getMessageList',
+  },
   '/im/v1/messages?receive_id_type={receive_id_type}': {
     POST: 'sendMessage',
   },

@@ -1,7 +1,8 @@
 import crypto from 'crypto'
+import { Message } from '@satorijs/protocol'
 import { h, Session, trimSlash } from '@satorijs/satori'
-import { FeishuBot } from './bot'
-import { AllEvents, Events, Lark, MessageContentType, MessageType } from './types'
+import { FeishuBot, LarkBot } from './bot'
+import { AllEvents, Events, Lark, Message as LarkMessage, MessageContentType, MessageType } from './types'
 
 export type Sender =
   | {
@@ -82,6 +83,55 @@ export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
       break
   }
   return session
+}
+
+// TODO: This function has many duplicated code with `adaptMessage`, should refactor them
+export async function decodeMessage(bot: LarkBot, body: LarkMessage): Promise<Message> {
+  const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
+  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.root.config.selfUrl) + bot.config.path + '/assets'
+  const content: h[] = []
+  switch (body.msg_type) {
+    case 'text': {
+      const text = json.text as string
+      if (!body.mentions?.length) {
+        content.push(h.text(text))
+        break
+      }
+
+      // Lark's `at` Element would be `@user_id` in text
+      text.split(' ').forEach((word) => {
+        if (word.startsWith('@')) {
+          const mention = body.mentions.find((mention) => mention.key === word)
+          content.push(h.at(mention.id, { name: mention.name }))
+        } else {
+          content.push(h.text(word))
+        }
+      })
+      break
+    }
+    case 'image':
+      content.push(h.image(`${assetEndpoint}/image/${body.message_id}/${json.image_key}?self_id=${bot.selfId}`))
+      break
+    case 'audio':
+      content.push(h.audio(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      break
+    case 'media':
+      content.push(h.video(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`, json.image_key))
+      break
+    case 'file':
+      content.push(h.file(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      break
+  }
+
+  return {
+    timestamp: +body.update_time,
+    createdAt: +body.create_time,
+    updatedAt: +body.update_time,
+    id: body.message_id,
+    content: content.map((c) => c.toString()).join(' '),
+    elements: content,
+    quote: body.upper_message_id ? await bot.getMessage(body.chat_id, body.upper_message_id) : undefined,
+  }
 }
 
 /**
