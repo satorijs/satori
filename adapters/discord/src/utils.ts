@@ -181,7 +181,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
         const webhook = await bot.ensureWebhook(input.d.channel_id)
         // koishi's webhook
         if (webhook.id === input.d.webhook_id) return
-      } catch (e) {}
+      } catch (e) { }
     }
     session.type = 'message'
     await decodeMessage(bot, input.d, session.event.message = {}, session.event)
@@ -248,11 +248,11 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.event.argv = decodeArgv(data, command)
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MODAL_SUBMIT) {
     const data = input.d.data as Discord.InteractionData.ModalSubmit
-    if (!data.custom_id.startsWith('input:')) return
+    if (!data.custom_id.startsWith('input') && !data.custom_id.includes(':')) return
     // @ts-ignore
     const user_input = data.components[0].components[0].value
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
-      type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+      type: Discord.Interaction.CallbackType.DEFERRED_UPDATE_MESSAGE,
     })
     session.type = 'interaction/command'
     session.isDirect = !input.d.guild_id
@@ -264,19 +264,19 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     session.content = user_input
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MESSAGE_COMPONENT) {
     const id = (input.d.data as Discord.InteractionData.MessageComponent).custom_id
-    if (id.startsWith('input:')) {
+    if (id.startsWith('input') && id.includes(':')) {
       await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
         type: Discord.Interaction.CallbackType.MODAL,
         data: {
           custom_id: id,
-          title: 'title',
+          title: 'Input',
           components: [{
             type: Discord.ComponentType.ACTION_ROW,
             components: [{
               custom_id: id,
               type: Discord.ComponentType.TEXT_INPUT,
-              label: 'auto complete',
-              value: id.slice('input:'.length),
+              label: 'Command',
+              value: id.slice(id.indexOf(':') + 1),
               style: 1,
             }],
           }],
@@ -284,7 +284,7 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
       })
     } else {
       await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
-        type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        type: Discord.Interaction.CallbackType.DEFERRED_UPDATE_MESSAGE,
       })
     }
     session.type = 'interaction/button'

@@ -34,7 +34,6 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private payload: Dict
   private mode: RenderMode = 'default'
   private rows: Telegram.InlineKeyboardButton[][] = []
-  private buttonGroupState = false
 
   constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: Universal.SendOptions) {
     super(bot, channelId, guildId, options)
@@ -71,6 +70,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
       // send previous asset if there is any
       await this.sendAsset()
     } else if (this.payload.caption) {
+      this.trimButtons()
       const result = await this.bot.internal.sendMessage({
         chat_id: this.payload.chat_id,
         text: this.payload.caption,
@@ -95,17 +95,31 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
         text: label,
         url: attrs.href,
       }
-    } else if (attrs.type === 'action') {
-      return {
-        text: label,
-        callback_data: attrs.id,
-      }
     } else if (attrs.type === 'input') {
       return {
         text: label,
         switch_inline_query_current_chat: attrs.text,
       }
+    } else {
+      return {
+        text: label,
+        callback_data: attrs.id,
+      }
     }
+  }
+
+  lastRow() {
+    if (!this.rows.length) this.rows.push([])
+    let last = this.rows[this.rows.length - 1]
+    if (last.length >= 5) {
+      this.rows.push([])
+      last = this.rows[this.rows.length - 1]
+    }
+    return last
+  }
+
+  trimButtons() {
+    if (this.rows.length && this.rows[this.rows.length - 1].length === 0) this.rows.pop()
   }
 
   async visit(element: h) {
@@ -145,20 +159,15 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     } else if (type === 'quote') {
       await this.flush()
       this.payload.reply_to_message_id = attrs.id
-    } else if (type === 'button' && attrs.type) {
-      if (this.buttonGroupState) {
-        const last = this.rows[this.rows.length - 1]
-        last.push(this.decodeButton(
-          attrs, children.join(''),
-        ))
-      } else {
-        this.rows.push([this.decodeButton(attrs, children.join(''))])
-      }
+    } else if (type === 'button') {
+      const last = this.lastRow()
+      last.push(this.decodeButton(
+        attrs, children.join(''),
+      ))
     } else if (type === 'button-group') {
-      this.buttonGroupState = true
       this.rows.push([])
       await this.render(children)
-      this.buttonGroupState = false
+      this.rows.push([])
     } else if (type === 'message') {
       if (this.mode === 'figure') {
         await this.render(children)
