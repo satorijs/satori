@@ -100,6 +100,10 @@ export class LarkBot extends Bot<LarkBot.Config> {
     return Utils.decodeChannel(data)
   }
 
+  async getChannelList(guildId: string) {
+    return { data: [await this.getChannel(guildId)] }
+  }
+
   async getGuild(guildId: string) {
     const { data } = await this.internal.getGuildInfo(guildId)
     return Utils.decodeGuild(data)
