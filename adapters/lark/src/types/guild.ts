@@ -17,6 +17,7 @@ declare module '.' {
       edit_permission: string
       owner_id_type: string
       owner_id: string
+      chat_id: string
       chat_mode: string
       chat_type: string
       chat_tag: string

@@ -95,6 +95,11 @@ export class LarkBot extends Bot<LarkBot.Config> {
     return Utils.decodeUser(data.data)
   }
 
+  async getGuildList(after?: string) {
+    const { data: guilds } = await this.internal.getCurrentUserGuilds({ page_token: after })
+    return { data: guilds.items.map(Utils.decodeGuild), next: guilds.page_token }
+  }
+
   async getGuildMemberList(guildId: string, after?: string) {
     const { data: users } = await this.internal.getGuildMembers(guildId, { page_token: after })
     const data = users.items.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
