@@ -70,7 +70,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
       }
     }
 
-    this.bot.ctx.logger('qq').debug(require('util').inspect(r, false, null, true))
+    this.bot.ctx.logger('qq').debug(r)
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)

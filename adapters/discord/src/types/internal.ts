@@ -1,4 +1,6 @@
-import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
+
+const logger = new Logger('discord')
 
 export class Internal {
   constructor(private http: Quester) {}
@@ -28,6 +30,7 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             try {
+              logger.debug(`${method} ${url}`, config)
               return await this.http(method, url, config)
             } catch (error) {
               if (!Quester.isAxiosError(error) || !error.response) throw error

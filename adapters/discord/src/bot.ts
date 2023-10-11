@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, isNullable, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Logger, Quester, Schema, Universal } from '@satorijs/satori'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'

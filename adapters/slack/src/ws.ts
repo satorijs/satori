@@ -17,7 +17,7 @@ export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & Ws
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: SocketEvent = JSON.parse(data.toString())
-      logger.debug(require('util').inspect(parsed, false, null, true))
+      logger.debug(parsed)
       const { type } = parsed
       if (type === 'hello') {
         // @ts-ignore
@@ -32,7 +32,7 @@ export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & Ws
 
         if (session) {
           this.bot.dispatch(session)
-          logger.debug(require('util').inspect(session, false, null, true))
+          logger.debug(session)
         }
       }
     })

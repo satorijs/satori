@@ -40,9 +40,9 @@ export class HttpServer extends Adapter<SlackBot> {
         ctx.status = 200
         ctx.body = 'ok'
         const payload: EnvelopedEvent<SlackEvent> = ctx.request.body
-        this.logger.debug(require('util').inspect(payload, false, null, true))
+        this.logger.debug(payload)
         const session = await adaptSession(bot, payload)
-        this.logger.debug(require('util').inspect(session, false, null, true))
+        this.logger.debug(session)
         if (session) bot.dispatch(session)
       }
     })
