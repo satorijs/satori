@@ -49,16 +49,16 @@ export class HttpServer extends Adapter<WecomBot> {
         const { xml: data2 } = await xml2js.parseStringPromise(message, {
           explicitArray: false,
         })
-        bot.logger.debug('decrypted %c', require('util').inspect(data2, false, null, true))
+        bot.logger.debug('decrypted %c', data2)
         data = data2
       }
 
-      bot.logger.debug('%c', require('util').inspect(ctx.request.rawBody, false, null, true))
+      bot.logger.debug('%c', ctx.request.rawBody)
 
       const session = await decodeMessage(localBot, data)
       if (session) {
         localBot.dispatch(session)
-        localBot.logger.debug(require('util').inspect(session, false, null, true))
+        localBot.logger.debug(session)
       }
       ctx.status = 200
       ctx.body = 'success'

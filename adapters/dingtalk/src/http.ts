@@ -31,9 +31,9 @@ export class HttpServer extends Adapter<DingtalkBot> {
 
       if (computedSign !== sign) return ctx.status = 403
       const body = ctx.request.body as Message
-      this.logger.debug(require('util').inspect(body, false, null, true))
+      this.logger.debug(body)
       const session = await decodeMessage(bot, body)
-      this.logger.debug(require('util').inspect(session, false, null, true))
+      this.logger.debug(session)
       if (session) bot.dispatch(session)
     })
   }

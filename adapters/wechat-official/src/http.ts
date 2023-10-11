@@ -49,11 +49,11 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
         const { xml: data2 } = await xml2js.parseStringPromise(message, {
           explicitArray: false,
         })
-        bot.logger.debug('decrypted %c', require('util').inspect(data2, false, null, true))
+        bot.logger.debug('decrypted %c', data2)
         data = data2
       }
 
-      bot.logger.debug('%c', require('util').inspect(ctx.request.rawBody, false, null, true))
+      bot.logger.debug('%c', ctx.request.rawBody)
 
       const session = await decodeMessage(localBot, data)
 
@@ -73,7 +73,7 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
       if (session) {
         session.wechatOfficialResolve = resolveFunction
         localBot.dispatch(session)
-        // localBot.logger.debug(require('util').inspect(session, false, null, true))
+        // localBot.logger.debug(session)
       }
       try {
         const result: any = await promise

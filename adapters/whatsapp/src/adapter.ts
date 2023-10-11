@@ -28,7 +28,7 @@ class HttpServer {
       if (!adapters.length) return ctx.status = 403
 
       const parsed = ctx.request.body as WebhookBody
-      this.logger.debug(require('util').inspect(parsed, false, null, true))
+      this.logger.debug(parsed)
       ctx.body = 'ok'
       ctx.status = 200
       if (parsed.object !== 'whatsapp_business_account') return
@@ -38,12 +38,12 @@ class HttpServer {
         const session = await decodeMessage(bot, entry)
         if (session.length) session.forEach(bot.dispatch.bind(bot))
         this.logger.debug('handling bot: %s', bot.sid)
-        this.logger.debug(require('util').inspect(session, false, null, true))
+        this.logger.debug(session)
       }
     })
 
     ctx.router.get('/whatsapp', async (ctx) => {
-      this.logger.debug(require('util').inspect(ctx.query, false, null, true))
+      this.logger.debug(ctx.query)
       const verifyToken = ctx.query['hub.verify_token']
       const challenge = ctx.query['hub.challenge']
       for (const adapter of this.adapters) {

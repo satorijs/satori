@@ -23,11 +23,11 @@ export class HttpServer extends Adapter<LineBot> {
       if (hash !== sign) {
         return ctx.status = 403
       }
-      this.logger.debug(require('util').inspect(parsed, false, null, true))
+      this.logger.debug(parsed)
       for (const event of parsed.events) {
         const sessions = await adaptSessions(bot, event)
         if (sessions.length) sessions.forEach(bot.dispatch.bind(bot))
-        this.logger.debug(require('util').inspect(sessions, false, null, true))
+        this.logger.debug(sessions)
       }
       ctx.status = 200
       ctx.body = 'ok'

@@ -27,7 +27,7 @@ export class WsClient extends Adapter.WsClient<QQBot> {
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
-      logger.debug(require('util').inspect(parsed, false, null, true))
+      logger.debug(parsed)
       if (parsed.op === Opcode.HELLO) {
         const token = await this.bot.getAccessToken()
         if (this._sessionId) {
@@ -79,7 +79,7 @@ export class WsClient extends Adapter.WsClient<QQBot> {
         }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
-        logger.debug(require('util').inspect(session, false, null, true))
+        logger.debug(session)
       }
     })
 
