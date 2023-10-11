@@ -89,6 +89,11 @@ export class LarkBot extends Bot<LarkBot.Config> {
     const data = await Promise.all(messages.items.reverse().map(data => Utils.decodeMessage(this, data)))
     return { data, next: data[0]?.id }
   }
+
+  async getUser(userId: string, guildId?: string) {
+    const data = await this.internal.getUserInfo(userId)
+    return Utils.decodeUser(data.data)
+  }
 }
 
 export namespace LarkBot {

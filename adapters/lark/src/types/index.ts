@@ -34,6 +34,8 @@ export namespace Lark {
    * @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create
    */
   export type ReceiveIdType = UserIdType | 'email' | 'chat_id'
+
+  export type DepartmentIdType = 'department_id' | 'open_department_id'
 }
 
 export { Lark as Feishu }
