@@ -13,9 +13,14 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
   private sequence?: number
   private timeout?: NodeJS.Timeout
 
-  constructor(public ctx: Context, config: SatoriAdapter.Config) {
+  constructor(public ctx: Context, public config: SatoriAdapter.Config) {
     super(ctx, config)
-    this.http = ctx.http.extend(config)
+    this.http = ctx.http.extend({
+      endpoint: config.endpoint,
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+      },
+    })
     ctx.on('ready', () => this.start())
     ctx.on('dispose', () => this.stop())
   }
@@ -56,6 +61,7 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
     this.socket.send(JSON.stringify({
       op: Universal.Opcode.IDENTIFY,
       body: {
+        token: this.config.token,
         sequence: this.sequence,
       },
     }))
@@ -111,11 +117,13 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
 export namespace SatoriAdapter {
   export interface Config extends Adapter.WsClientConfig {
     endpoint: string
+    token?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       endpoint: Schema.string().description('API 终结点。').required(),
+      token: Schema.string().description('API 访问令牌。'),
     }),
     Adapter.WsClientConfig,
   ] as const)
