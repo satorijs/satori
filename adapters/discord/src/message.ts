@@ -1,7 +1,7 @@
 import { Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
-import { ActionRow, Button, Channel, ComponentType, Message } from './types'
+import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
@@ -26,8 +26,6 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private mode: RenderMode = 'default'
   private listType: 'ol' | 'ul' = null
   private rows: ActionRow[] = []
-  private buttonGroupState = false
-
   private async getUrl() {
     const input = this.options?.session?.discord
     if (input?.t === 'INTERACTION_CREATE') {
@@ -152,7 +150,8 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
 
   async flush() {
     const content = this.buffer.trim()
-    if (!content) return
+    this.trimButtons()
+    if (!content && !this.rows.length) return
     this.addition.components = this.rows
     await this.post({ ...this.addition, content })
     this.buffer = ''
@@ -161,28 +160,54 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   }
 
   decodeButton(attrs: Dict, label: string): Button {
+    let style = ButtonStyles.PRIMARY
+    if (attrs.class === 'secondary') style = ButtonStyles.SECONDARY
+    if (attrs.class === 'danger') style = ButtonStyles.DANGER
+    if (attrs.class === 'success') style = ButtonStyles.SUCCESS
     if (attrs.type === 'link') {
       return {
         type: ComponentType.BUTTON,
         url: attrs.href,
         label,
-        style: 5,
-      }
-    } else if (attrs.type === 'action') {
-      return {
-        type: ComponentType.BUTTON,
-        custom_id: attrs.id,
-        label,
-        style: 1,
+        style: ButtonStyles.LINK,
       }
     } else if (attrs.type === 'input') {
       return {
         type: ComponentType.BUTTON,
-        custom_id: 'input:' + attrs.text,
+        custom_id: `input${attrs.id}:${attrs.text}`,
         label,
-        style: 1,
+        style,
+      }
+    } else {
+      return {
+        type: ComponentType.BUTTON,
+        custom_id: attrs.id,
+        label,
+        style,
       }
     }
+  }
+
+  lastRow() {
+    if (!this.rows.length) {
+      this.rows.push({
+        type: ComponentType.ACTION_ROW,
+        components: [],
+      })
+    }
+    let last = this.rows[this.rows.length - 1]
+    if (last.components.length >= 5) {
+      this.rows.push({
+        type: ComponentType.ACTION_ROW,
+        components: [],
+      })
+      last = this.rows[this.rows.length - 1]
+    }
+    return last
+  }
+
+  trimButtons() {
+    if (this.rows.length && this.rows[this.rows.length - 1].components.length === 0) this.rows.pop()
   }
 
   async visit(element: h) {
@@ -357,27 +382,20 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
         }
       }
     } else if (type === 'button') {
-      if (this.buttonGroupState) {
-        const last = this.rows[this.rows.length - 1]
-        last.components.push(this.decodeButton(
-          attrs, children.join(''),
-        ))
-      } else {
-        this.rows.push({
-          type: ComponentType.ACTION_ROW,
-          components: [
-            this.decodeButton(attrs, children.join('')),
-          ],
-        })
-      }
+      const last = this.lastRow()
+      last.components.push(this.decodeButton(
+        attrs, children.join(''),
+      ))
     } else if (type === 'button-group') {
-      this.buttonGroupState = true
       this.rows.push({
         type: ComponentType.ACTION_ROW,
         components: [],
       })
       await this.render(children)
-      this.buttonGroupState = false
+      this.rows.push({
+        type: ComponentType.ACTION_ROW,
+        components: [],
+      })
     } else if (type === 'message' && attrs.forward) {
       this.stack.unshift(new State('forward'))
       await this.render(children)

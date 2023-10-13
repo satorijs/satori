@@ -142,10 +142,10 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
 export class QQMessageEncoder extends MessageEncoder<QQBot> {
   private content: string = ''
   private useMarkdown = false
-  private rows: QQ.InlineKeyboardRow[] = []
-  private buttonGroupState = false
+  private rows: QQ.Button[][] = []
   async flush() {
-    if (!this.content.trim() && !this.rows.map(v => v.buttons).flat().length) return
+    if (!this.content.trim() && !this.rows.flat().length) return
+    this.trimButtons()
     const data: QQ.SendMessageParams = {
       content: this.content,
       msg_type: 0,
@@ -162,7 +162,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       if (this.rows.length) {
         data.keyboard = {
           content: {
-            rows: this.rows,
+            rows: this.exportButtons(),
           },
         }
       }
@@ -215,7 +215,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       render_data: {
         label,
         visited_label: label,
-        style: 0,
+        style: attrs.class === 'primary' ? 1 : 0,
       },
       action: {
         type: attrs.type === 'input' ? 2
@@ -223,10 +223,32 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
         permission: {
           type: 2,
         },
-        data: attrs.data,
+        data: attrs.type === 'input'
+          ? attrs.text : attrs.type === 'link'
+            ? attrs.href : attrs.id,
       },
     }
     return result
+  }
+
+  lastRow() {
+    if (!this.rows.length) this.rows.push([])
+    let last = this.rows[this.rows.length - 1]
+    if (last.length >= 5) {
+      this.rows.push([])
+      last = this.rows[this.rows.length - 1]
+    }
+    return last
+  }
+
+  trimButtons() {
+    if (this.rows.length && this.rows[this.rows.length - 1].length === 0) this.rows.pop()
+  }
+
+  exportButtons() {
+    return this.rows.map(v => ({
+      buttons: v,
+    })) as QQ.InlineKeyboardRow[]
   }
 
   async visit(element: h) {
@@ -239,22 +261,13 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       await this.sendFile(type, attrs)
     } else if (type === 'button-group') {
       this.useMarkdown = true
-      this.buttonGroupState = true
-      this.rows.push({ buttons: [] })
+      this.rows.push([])
       await this.render(children)
-      this.buttonGroupState = false
+      this.rows.push([])
     } else if (type === 'button') {
       this.useMarkdown = true
-      if (this.buttonGroupState) {
-        const last = this.rows[this.rows.length - 1]
-        last.buttons.push(this.decodeButton(attrs, children.join('')))
-      } else {
-        this.rows.push({
-          buttons: [
-            this.decodeButton(attrs, children.join('')),
-          ],
-        })
-      }
+      const last = this.lastRow()
+      last.push(this.decodeButton(attrs, children.join('')))
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)

@@ -192,11 +192,14 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
     session.userId = input.d.data.resolved.user_id
     if (input.d.chat_type === QQ.ChatType.GROUP) {
       session.guildId = input.d.group_open_id
-      session.channelId = session.guildId
+      session.channelId = input.d.group_open_id
       session.isDirect = false
     } else if (input.d.chat_type === QQ.ChatType.CHANNEL) {
-      session.channelId = session.userId
+      session.channelId = input.d.channel_id
+      session.isDirect = false // ?
+    } else if (input.d.chat_type === QQ.ChatType.DIRECT) {
       session.isDirect = true
+      session.channelId = session.userId
     }
     session.event.button = {
       id: input.d.data.resolved.button_id,
