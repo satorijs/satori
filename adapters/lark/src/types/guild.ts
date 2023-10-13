@@ -17,6 +17,7 @@ declare module '.' {
       edit_permission: string
       owner_id_type: string
       owner_id: string
+      chat_id: string
       chat_mode: string
       chat_type: string
       chat_tag: string
@@ -42,11 +43,11 @@ export interface GuildMember {
 declare module './internal' {
   export interface Internal {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/list */
-    getCurrentUserGuilds(params: Pagination<{ user_id_type: Lark.UserIdType }>): Promise<{ data: Paginated<Lark.Guild> }>
+    getCurrentUserGuilds(params?: Pagination<{ user_id_type?: Lark.UserIdType }>): Promise<{ data: Paginated<Lark.Guild> }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/get */
-    getGuildInfo(chat_id: string, params: { user_id_type: string }): Promise<BaseResponse & { data: Lark.Guild }>
+    getGuildInfo(chat_id: string, params?: { user_id_type?: string }): Promise<BaseResponse & { data: Lark.Guild }>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-members/get */
-    getGuildMembers(chat_id: string, params: Pagination<{ member_id_type: Lark.UserIdType }>): Promise<{ data: Paginated<GuildMember> }>
+    getGuildMembers(chat_id: string, params?: Pagination<{ member_id_type?: Lark.UserIdType }>): Promise<{ data: Paginated<GuildMember> }>
   }
 }
 

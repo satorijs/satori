@@ -129,6 +129,9 @@ function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: P
     session.channelId = meta.code
   }
   session.event.channel.name = meta.channel_name
+  session.event.member = decodeGuildMember(data.extra.author)
+  session.event.user = session.event.member.user
+  delete session.event.member.user
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 

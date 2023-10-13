@@ -47,6 +47,7 @@ export class WsClient extends Adapter.WsClient<KookBot<KookBot.BaseConfig & WsCl
         return logger.warn('cannot parse message', data)
       }
 
+      logger.debug('[receive] %o', parsed)
       if (parsed.s === Signal.event) {
         this._sn = Math.max(this._sn, parsed.sn)
         const session = adaptSession(this.bot, parsed.d)

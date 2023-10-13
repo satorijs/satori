@@ -139,6 +139,9 @@ export function defineAccessor(prototype: {}, name: string, keys: string[]) {
       return keys.reduce((data, key) => data?.[key], this)
     },
     set(value) {
+      // Do not set undefined value
+      // See https://github.com/satorijs/satori/issues/166
+      if (value === undefined) return
       const _keys = keys.slice()
       const last = _keys.pop()
       const data = _keys.reduce((data, key) => data[key] ??= {}, this)

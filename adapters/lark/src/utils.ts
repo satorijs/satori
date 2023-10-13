@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Message, User } from '@satorijs/protocol'
+import { Channel, Guild, Message, User } from '@satorijs/protocol'
 import { h, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot, LarkBot } from './bot'
 import { AllEvents, Events, Lark, Message as LarkMessage, MessageContentType, MessageType } from './types'
@@ -144,6 +144,23 @@ export function extractIdType(id: string): Lark.ReceiveIdType {
   if (id.startsWith('oc')) return 'chat_id'
   if (id.includes('@')) return 'email'
   return 'user_id'
+}
+
+export function decodeChannel(guild: Lark.Guild): Channel {
+  return {
+    id: guild.chat_id,
+    type: Channel.Type.TEXT,
+    name: guild.name,
+    parentId: guild.chat_id,
+  }
+}
+
+export function decodeGuild(guild: Lark.Guild): Guild {
+  return {
+    id: guild.chat_id,
+    name: guild.name,
+    avatar: guild.avatar,
+  }
 }
 
 export function decodeUser(user: Lark.User): User {
