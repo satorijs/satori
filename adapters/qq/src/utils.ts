@@ -163,6 +163,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
     session.guildId = session.event.message.guild.id
     session.channelId = session.guildId
     session.userId = session.event.message.user.id
+    session.elements.unshift(h.at(session.selfId))
   } else if (input.t === 'C2C_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = true

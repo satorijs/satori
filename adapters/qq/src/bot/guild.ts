@@ -21,7 +21,7 @@ export class QQGuildBot extends Bot {
     super(ctx, config)
     this.parent = config.parent
     this.parent.guildBot = this
-    this.platform = 'qq'
+    this.platform = 'qqguild'
     this.internal = new GuildInternal(() => config.parent.guildHttp)
     this.http = config.parent.guildHttp
   }
@@ -112,7 +112,7 @@ export class QQGuildBot extends Bot {
 
   async createDirectChannel(id: string, guild_id?: string) {
     let input_guild_id = guild_id
-    if (guild_id.includes('_')) input_guild_id = guild_id.split('_')[0] // call sendPM directly from DM channel
+    if (guild_id?.includes('_')) input_guild_id = guild_id.split('_')[0] // call sendPM directly from DM channel
     const dms = await this.internal.createDMS(id, input_guild_id)
     return { id: `${dms.guild_id}_${input_guild_id}`, type: Universal.Channel.Type.DIRECT }
   }
