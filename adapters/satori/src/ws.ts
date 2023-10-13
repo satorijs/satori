@@ -11,11 +11,13 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
 
   private isActive = true
   private sequence?: number
+  private token?: string
   private timeout?: NodeJS.Timeout
 
   constructor(public ctx: Context, config: SatoriAdapter.Config) {
     super(ctx, config)
     this.http = ctx.http.extend(config)
+    this.token = config.token
     ctx.on('ready', () => this.start())
     ctx.on('dispose', () => this.stop())
   }
@@ -57,6 +59,7 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
       op: Universal.Opcode.IDENTIFY,
       body: {
         sequence: this.sequence,
+        token: this.token,
       },
     }))
 
@@ -110,12 +113,14 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
 
 export namespace SatoriAdapter {
   export interface Config extends Adapter.WsClientConfig {
-    endpoint: string
+    endpoint: string,
+    token: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       endpoint: Schema.string().description('API 终结点。').required(),
+      token: Schema.string().description('鉴权令牌。'),
     }),
     Adapter.WsClientConfig,
   ] as const)
