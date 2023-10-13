@@ -62,6 +62,8 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
       })
       const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
       return url
+    } else {
+      return attrs.url
     }
   }
 
