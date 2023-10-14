@@ -75,7 +75,7 @@ export interface List<T> {
 export interface Methods {
   // message
   sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
-  sendPrivateMessage(userId: string, content: Element.Fragment, options?: SendOptions): Promise<string[]>
+  sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
   getMessageList(channelId: string, next?: string): Promise<List<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
@@ -228,22 +228,14 @@ export interface Button {
 
 export interface Command {
   name: string
-  aliases: string[]
   description: Dict<string>
-  arguments: Command.Argument[]
-  options: Command.Option[]
+  arguments: Command.Declaration[]
+  options: Command.Declaration[]
   children: Command[]
 }
 
 export namespace Command {
-  export interface Argument {
-    name: string
-    description: Dict<string>
-    type: string
-    required: boolean
-  }
-
-  export interface Option {
+  export interface Declaration {
     name: string
     description: Dict<string>
     type: string

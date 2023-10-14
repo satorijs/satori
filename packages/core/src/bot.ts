@@ -156,8 +156,8 @@ export abstract class Bot<T = any> implements Login {
     return messages.map(message => message.id)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, options?: SendOptions) {
-    const { id } = await this.createDirectChannel(userId, options?.session?.guildId)
+  async sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+    const { id } = await this.createDirectChannel(userId, guildId ?? options?.session?.guildId)
     return this.sendMessage(id, content, null, options)
   }
 
