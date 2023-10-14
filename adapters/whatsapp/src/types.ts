@@ -77,7 +77,24 @@ export interface MessageBodyLocation extends MessageBodyBase {
   }
 }
 
-export type MessageBody = MessageBodyText | MessageBodyMedia | MessageBodySticker | MessageBodyLocation
+export interface MessageBodyInteractive extends MessageBodyBase {
+  type: 'interactive'
+  interactive: {
+    type: 'button_reply'
+    button_reply: {
+      id: string
+      title: string
+    }
+  } | {
+    type: 'list_reply'
+    list_reply: {
+      id: string
+      title: string
+    }
+  }
+}
+
+export type MessageBody = MessageBodyText | MessageBodyMedia | MessageBodySticker | MessageBodyLocation | MessageBodyInteractive
 
 export interface SendMessageBase {
   messaging_product: 'whatsapp'
@@ -91,7 +108,8 @@ export type SendMessage =
   SendMediaMessage<'audio'> |
   SendMediaMessage<'video'> |
   SendMediaMessage<'document'> |
-  SendMediaMessage<'sticker'>
+  SendMediaMessage<'sticker'> |
+  SendButtonMessage
 
 export interface SendTextMessage extends SendMessageBase {
   type: 'text'
@@ -99,6 +117,28 @@ export interface SendTextMessage extends SendMessageBase {
     body: string
   }
 }
+
+export interface Button {
+  type: "reply"
+  title: string
+  id: string
+}
+
+/** https://developers.facebook.com/docs/whatsapp/on-premises/reference/messages#interactive-object */
+export interface SendButtonMessage extends SendMessageBase {
+  type: 'button'
+  header?: object
+  body: {
+    text: string
+  }
+  footer?: {
+    text: string
+  }
+  action: {
+    buttons: Button[]
+  }
+}
+
 export type MediaType = 'image' | 'audio' | 'video' | 'document' | 'sticker'
 
 type MediaDetail = { id?: string; link?: string }

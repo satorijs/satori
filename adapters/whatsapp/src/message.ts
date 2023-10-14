@@ -1,7 +1,7 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
 import FormData from 'form-data'
-import { SendMessage } from './types'
+import { Button, SendMessage } from './types'
 
 const SUPPORTED_MEDIA = [
   'audio/aac',
@@ -28,14 +28,27 @@ const SUPPORTED_MEDIA = [
 export class WhatsAppMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WhatsAppBot<C>> {
   private buffer = ''
   quoteId: string = null
+  private buttons: Button[] = []
 
   async flush(): Promise<void> {
+    if (this.buttons.length) await this.flushButton()
     await this.flushTextMessage()
   }
 
   async flushTextMessage() {
     await this.sendMessage('text', { body: this.buffer, preview_url: this.options.linkPreview })
     this.buffer = ''
+  }
+
+  async flushButton() {
+    for (let i = 0; i < this.buttons.length; i += 3) {
+      await this.sendMessage('button', {
+        body: { text: this.buffer || ' ' },
+        action: { buttons: this.buttons.slice(i, i + 3) },
+      })
+      this.buffer = ''
+    }
+    this.buttons = []
   }
 
   async sendMessage<T extends SendMessage['type']>(type: T, data: Dict) {
@@ -89,6 +102,14 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
     return r.id
   }
 
+  decodeButton(attrs: Dict, label: string): Button {
+    return {
+      id: attrs.id,
+      type: 'reply',
+      title: label,
+    }
+  }
+
   async visit(element: h): Promise<void> {
     const { type, attrs, children } = element
     if (type === 'text') {
@@ -123,6 +144,10 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
       if (attrs.id) {
         this.buffer += `@${attrs.id}`
       }
+    } else if (type === 'button') {
+      this.buttons.push(this.decodeButton(attrs, children.join('')))
+    } else if (type === 'button-group') {
+      await this.render(children)
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
