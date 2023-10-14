@@ -116,6 +116,10 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
         bot.selfId = item.id
         bot.adapter = this
         bot.internal = internal
+        bot.user = {
+          id: item.id,
+          name: item.display_phone_number,
+        }
         this.bots.push(bot)
         bot.online()
       }
