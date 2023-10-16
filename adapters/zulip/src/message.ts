@@ -15,12 +15,14 @@ export const unescape = (val: string) =>
 
 export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
   buffer: string = ''
+
   async flush() {
     if (!this.buffer.length) return
     const form = new FormData()
     form.append('type', this.session.isDirect ? 'private' : 'stream')
     form.append('to', this.session.isDirect
-      ? `[${this.options.session.userId}]` : this.session.guildId)
+      ? `[${this.options.session.userId}]`
+      : this.session.guildId)
     form.append('content', this.buffer)
     if (!this.session.isDirect) form.append('topic', this.session.channelId)
 
@@ -33,9 +35,8 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
     session.channelId = this.session.channelId
     session.guildId = this.session.guildId
     session.isDirect = this.session.isDirect
-    session.author = this.bot
     session.app.emit(session, 'send', session)
-    this.results.push(session)
+    this.results.push(session.event.message)
   }
 
   async uploadMedia(element: h) {

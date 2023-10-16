@@ -129,7 +129,7 @@ export async function adaptMessage(
   }
 }
 
-export function adaptMessageDeleted(bot: SlackBot, event: MessageDeletedEvent, session: Partial<Session> = {}) {
+export function adaptMessageDeleted(bot: SlackBot, event: MessageDeletedEvent, session: Session) {
   session.isDirect = event.channel_type === 'im'
   session.channelId = event.channel
   session.guildId = event.previous_message.team
@@ -151,7 +151,7 @@ export function adaptSentAsset(file: File, session: Session) {
   session.userId = file.user
 }
 
-function setupReaction(session: Partial<Session>, data: EnvelopedEvent<ReactionAddedEvent> | EnvelopedEvent<ReactionRemovedEvent>) {
+function setupReaction(session: Session, data: EnvelopedEvent<ReactionAddedEvent> | EnvelopedEvent<ReactionRemovedEvent>) {
   session.guildId = data.team_id
   session.channelId = data.event.item.channel
   session.messageId = data.event.item.ts

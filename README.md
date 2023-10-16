@@ -19,13 +19,14 @@
   - [x] Line
   - [x] Mail
   - [x] Matrix
-  - [x] OneBot (v11，可用于 QQ)
+  - [x] OneBot
   - [x] QQ Guild
   - [x] Slack
   - [x] Telegram
   - [x] WhatsApp
   - [x] WeCom (企业微信)
   - [x] Wechat Official (微信公众号)
+  - [x] Zulip
 
 ## Examples
 

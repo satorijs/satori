@@ -119,7 +119,7 @@ function adaptMessageSession(
   return message
 }
 
-function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: Partial<Session>) {
+function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: Session) {
   session.guildId = meta.guild_id
   if (data.channel_type === 'GROUP') {
     session.isDirect = false
@@ -140,7 +140,7 @@ function adaptMessageModify(data: Kook.Data, meta: Kook.NoticeBody, session: Ses
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
-function adaptReaction(body: Kook.NoticeBody, session: Partial<Session>) {
+function adaptReaction(body: Kook.NoticeBody, session: Session) {
   session.channelId = body.channel_id
   session.messageId = body.msg_id
   session.userId = body.user_id

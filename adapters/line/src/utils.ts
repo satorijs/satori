@@ -62,7 +62,7 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
 }
 
 export async function adaptSessions(bot: LineBot, body: WebhookEvent) {
-  const result: Partial<Session>[] = [bot.session({
+  const result: Session[] = [bot.session({
     type: 'internal',
     _type: `line/${hyphenate(body.type)}`,
     _data: body,

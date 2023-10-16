@@ -1,11 +1,14 @@
-import { Adapter, Quester, Schema, Time } from '@satorijs/satori'
+import { Adapter, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 
-export class HttpPolling extends Adapter.Client<ZulipBot> {
+export class HttpPolling extends Adapter<ZulipBot> {
+  static reusable = true
+
   private timeout: NodeJS.Timeout
-  async start(bot: ZulipBot) {
-    await bot.initliaze()
+
+  async connect(bot: ZulipBot) {
+    await bot.getLogin()
     const r = await bot.internal.registerQueue({
       // event_types: `["message"]`,
     })
@@ -19,19 +22,19 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
           queue_id: r.queue_id,
           last_event_id: last,
         })
-        if (bot.status === 'disconnect') {
+        if (!bot.isActive) {
           return bot.offline()
         }
         bot.online()
         _retryCount = 0
         for (const e of updates.events) {
-          bot.logger.debug(require('util').inspect(e, false, null, true))
+          bot.logger.debug('[receive] %o', e)
 
           last = Math.max(last, e.id)
           const session = await adaptSession(bot, e)
 
           if (session) bot.dispatch(session)
-          bot.logger.debug(require('util').inspect(session, false, null, true))
+          bot.logger.debug('[session] %o', session)
         }
         setTimeout(polling, 0)
       } catch (e) {
@@ -42,10 +45,10 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
         }
         if (_retryCount > retryTimes) {
           bot.error = e
-          return bot.status = 'offline'
+          return bot.status = Universal.Status.OFFLINE
         }
         _retryCount++
-        bot.status = 'reconnect'
+        bot.status = Universal.Status.RECONNECT
         this.timeout = setTimeout(() => polling(), retryInterval)
       }
     }
@@ -53,7 +56,7 @@ export class HttpPolling extends Adapter.Client<ZulipBot> {
     bot.logger.debug('listening updates %c', bot.sid)
   }
 
-  async stop(bot: ZulipBot) {
+  async disconnect(bot: ZulipBot) {
     clearTimeout(this.timeout)
   }
 }

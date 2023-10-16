@@ -4,10 +4,11 @@ import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
 // @ts-ignore
 import { version } from '../package.json'
-import { decodeGuild, decodeMember, decodeMessage } from './utils'
+import { decodeGuild, decodeMessage, decodeUser } from './utils'
 
 export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
+
   public http: Quester
   public logger: Logger
   public internal: Internal
@@ -31,16 +32,9 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
     ctx.plugin(HttpPolling, this)
   }
 
-  async initliaze() {
-    const { avatar, userId, username } = await this.getSelf()
-    this.selfId = userId
-    this.username = username
-    this.avatar = avatar
-  }
-
   async getGuildList() {
     const { streams } = await this.internal.getStreams()
-    return streams.map(decodeGuild)
+    return { data: streams.map(decodeGuild) }
   }
 
   async getGuild(guildId: string) {
@@ -50,12 +44,12 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 
   async getChannelList(guildId: string) {
     const { topics } = await this.internal.getStreamTopics(guildId)
-    return topics.map(({ name }) => ({ channelId: name }))
+    return { data: topics.map(({ name }) => ({ id: name, type: Universal.Channel.Type.TEXT })) }
   }
 
   async getGuildMember(guildId: string, userId: string) {
     const { user } = await this.internal.getUser(userId)
-    return decodeMember(user)
+    return decodeUser(user)
   }
 
   getUser(userId: string, guildId?: string) {
@@ -64,18 +58,18 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 
   async getGuildMemberList(guildId: string) {
     const { members } = await this.internal.getUsers()
-    return members.map(decodeMember)
+    return { data: members.map(m => ({ user: decodeUser(m) })) }
   }
 
   async getMessage(channelId: string, messageId: string) {
     const { message } = await this.internal.getMessage(messageId)
-    const msg = await decodeMessage(this, message)
-    return msg
+    return await decodeMessage(this, message)
   }
 
-  async getSelf() {
+  async getLogin() {
     const self = await this.internal.getOwnUser()
-    return decodeMember(self)
+    this.user = decodeUser(self)
+    return this.toJSON()
   }
 
   async getMessageList(channelId: string, before?: string) {
@@ -88,15 +82,13 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
       anchor: before ?? 'newest',
       apply_markdown: false,
     })
-    return await Promise.all(messages.map(data => decodeMessage(this, data)))
+    const data = await Promise.all(messages.map(data => decodeMessage(this, data)))
+    return { data, next: data[0].id }
   }
 
-  async getReactions(channelId: string, messageId: string, emoji: string): Promise<Universal.User[]> {
+  async getReactions(channelId: string, messageId: string, emoji: string) {
     const { message } = await this.internal.getMessage(messageId)
-    return message.reactions.map(v => ({
-      userId: v.user_id.toString(),
-      username: v.user.full_name,
-    }))
+    return message.reactions.map(v => decodeUser(v.user))
   }
 
   async createReaction(channelId: string, messageId: string, emoji: string) {
@@ -113,7 +105,7 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 }
 
 export namespace ZulipBot {
-  export interface Config extends Bot.Config, Quester.Config, HttpPolling.Config {
+  export interface Config extends Quester.Config, HttpPolling.Config {
     email: string
     key: string
   }

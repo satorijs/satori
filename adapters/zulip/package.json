@@ -31,7 +31,7 @@
     "@satorijs/satori": "^3.0.0-rc.1"
   },
   "dependencies": {
-    "marked": "^7.0.3"
+    "marked": "^9.1.2"
   },
   "devDependencies": {}
 }

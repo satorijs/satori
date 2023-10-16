@@ -146,7 +146,7 @@ export async function decodeMessage(
   return message
 }
 
-export function setupMessageGuildId(session: Partial<Session>, guildId: string) {
+export function setupMessageGuildId(session: Session, guildId: string) {
   session.guildId = guildId
   session.isDirect = !guildId
   session.subtype = guildId ? 'group' : 'private'
@@ -158,7 +158,7 @@ type ReactionEvent = Partial<
   & Discord.Reaction.Event.RemoveAll
   & Discord.Reaction.Event.RemoveEmoji>
 
-function setupReaction(session: Partial<Session>, data: ReactionEvent) {
+function setupReaction(session: Session, data: ReactionEvent) {
   session.userId = data.user_id
   session.messageId = data.message_id
   session.guildId = data.guild_id

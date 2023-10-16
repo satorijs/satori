@@ -95,7 +95,7 @@ export async function decodeMessage(
   return message
 }
 
-export function setupReaction(session: Partial<Session>, data: QQ.MessageReaction) {
+export function setupReaction(session: Session, data: QQ.MessageReaction) {
   session.userId = data.user_id
   session.guildId = data.guild_id
   session.channelId = data.channel_id
