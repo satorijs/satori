@@ -151,6 +151,7 @@ export async function decodeMessage(
   // topic messages are reply chains, if a message is forum_topic_created, the session shoudn't have a quote.
   if (data.reply_to_message && !(data.is_topic_message && data.reply_to_message.forum_topic_created)) {
     await decodeMessage(bot, data.reply_to_message, message.quote = {}, null)
+    message.quote.user = decodeUser(data.reply_to_message.from)
   }
 
   // make sure text comes first so that commands can be triggered
