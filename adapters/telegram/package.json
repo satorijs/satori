@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-telegram",
   "description": "Telegram Adapter for Satorijs",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -27,7 +27,9 @@
     "bot",
     "telegram",
     "chatbot",
-    "satori"
+    "satori",
+    "im",
+    "chat"
   ],
   "peerDependencies": {
     "@satorijs/satori": "^3.0.0-rc.1"

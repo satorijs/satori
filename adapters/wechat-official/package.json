@@ -20,9 +20,12 @@
   "homepage": "https://koishi.chat/plugins/adapter/wechat-official.html",
   "keywords": [
     "bot",
-    "wechatofficial",
+    "wechat",
+    "official",
     "chatbot",
-    "satori"
+    "satori",
+    "im",
+    "chat"
   ],
   "peerDependencies": {
     "@satorijs/satori": "^3.0.0-rc.1"

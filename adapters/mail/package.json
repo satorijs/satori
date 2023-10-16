@@ -21,8 +21,13 @@
   "keywords": [
     "bot",
     "mail",
+    "email",
+    "imap",
+    "smtp",
     "chatbot",
-    "satori"
+    "satori",
+    "im",
+    "chat"
   ],
   "peerDependencies": {
     "@satorijs/satori": "^3.0.0-rc.1"

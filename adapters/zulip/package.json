@@ -23,10 +23,12 @@
     "zulip",
     "adapter",
     "chatbot",
-    "satori"
+    "satori",
+    "im",
+    "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^2.4.0"
+    "@satorijs/satori": "^3.0.0-rc.1"
   },
   "dependencies": {
     "marked": "^7.0.3"

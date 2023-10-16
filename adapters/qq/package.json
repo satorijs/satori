@@ -1,6 +1,6 @@
 {
   "name": "@satorijs/adapter-qq",
-  "description": "QQ Guild Adapter for Satorijs",
+  "description": "QQ Adapter for Satorijs",
   "version": "4.1.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -24,7 +24,9 @@
     "qqbot",
     "qqguild",
     "chatbot",
-    "satori"
+    "satori",
+    "im",
+    "chat"
   ],
   "peerDependencies": {
     "@satorijs/satori": "^3.0.0-rc.1"
