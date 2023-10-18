@@ -28,7 +28,7 @@ export interface Config {
 }
 
 export const Config: Schema<Config> = Schema.object({
-  path: Schema.string().default(''),
+  path: Schema.string().default('/satori'),
   api: Schema.object({
     // enabled: Schema.boolean().default(true),
   }),
@@ -51,6 +51,11 @@ function transformKey(source: any, callback: (key: string) => string) {
 }
 
 export function apply(ctx: Context, config: Config) {
+  ctx.router.get(config.path + '/v1(/.+)*', async (koa) => {
+    koa.body = 'Please use POST method to send requests.'
+    koa.status = 405
+  })
+
   ctx.router.post(config.path + '/v1/:name', async (koa) => {
     const method = Universal.Methods[koa.params.name]
     if (!method) {
