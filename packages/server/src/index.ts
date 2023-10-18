@@ -22,6 +22,7 @@ export interface WebhookConfig {
 
 export interface Config {
   path?: string
+  token?: string
   api?: ApiConfig
   websocket?: WebSocketConfig
   webhook?: WebhookConfig
@@ -29,6 +30,7 @@ export interface Config {
 
 export const Config: Schema<Config> = Schema.object({
   path: Schema.string().default('/satori'),
+  token: Schema.string().experimental(),
   api: Schema.object({
     // enabled: Schema.boolean().default(true),
   }),
@@ -61,6 +63,13 @@ export function apply(ctx: Context, config: Config) {
     if (!method) {
       koa.body = 'method not found'
       return koa.status = 404
+    }
+
+    if (config.token) {
+      if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
+        koa.body = 'invalid token'
+        return koa.status = 403
+      }
     }
 
     const json = koa.request.body
@@ -121,6 +130,12 @@ export function apply(ctx: Context, config: Config) {
       }
 
       if (payload.op === Universal.Opcode.IDENTIFY) {
+        if (config.token) {
+          if (payload.body?.token !== config.token) {
+            return socket.close(4004, 'invalid token')
+          }
+        }
+
         client.authorized = true
         socket.send(JSON.stringify({
           op: Universal.Opcode.READY,
