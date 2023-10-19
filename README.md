@@ -19,7 +19,6 @@
   - [x] Line
   - [x] Mail
   - [x] Matrix
-  - [x] OneBot
   - [x] QQ Guild
   - [x] Slack
   - [x] Telegram
