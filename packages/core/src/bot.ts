@@ -150,9 +150,13 @@ export abstract class Bot<T = any> implements Login {
     }
   }
 
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async createMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
-    const messages = await new MessageEncoder(this, channelId, guildId, options).send(content)
+    return new MessageEncoder(this, channelId, guildId, options).send(content)
+  }
+
+  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+    const messages = await this.createMessage(channelId, content, guildId, options)
     return messages.map(message => message.id)
   }
 

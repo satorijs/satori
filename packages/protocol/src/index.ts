@@ -30,7 +30,7 @@ export const Methods: Dict<Method> = {
   'channel.delete': Method('deleteChannel', ['channel_id']),
   'channel.mute': Method('muteChannel', ['channel_id', 'guild_id', 'enable']),
 
-  'message.create': Method('sendMessage', ['channel_id', 'content']),
+  'message.create': Method('createMessage', ['channel_id', 'content']),
   'message.update': Method('editMessage', ['channel_id', 'message_id', 'content']),
   'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
@@ -74,6 +74,7 @@ export interface List<T> {
 
 export interface Methods {
   // message
+  createMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
   sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
