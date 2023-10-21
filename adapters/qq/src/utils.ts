@@ -24,7 +24,7 @@ export const decodeUser = (user: QQ.User): Universal.User => ({
 
 export const decodeGuildMember = (member: QQ.Member): Universal.GuildMember => ({
   user: decodeUser(member.user),
-  name: member.nick,
+  nick: member.nick,
   roles: member.roles,
 })
 

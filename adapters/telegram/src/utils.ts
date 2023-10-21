@@ -9,10 +9,8 @@ const logger = new Logger('telegram')
 export const decodeUser = (data: Telegram.User): Universal.User => ({
   id: data.id.toString(),
   name: data.username,
-  nickname: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
+  nick: data.first_name + (data.last_name ? ' ' + data.last_name : ''),
   isBot: data.is_bot,
-  userId: data.id.toString(),
-  username: data.username,
 })
 
 export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMember => ({

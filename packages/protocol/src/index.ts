@@ -172,6 +172,7 @@ export interface GuildRole {
 export interface User {
   id: string
   name?: string
+  nick?: string
   /** @deprecated */
   userId?: string
   /** @deprecated */
@@ -186,6 +187,7 @@ export interface User {
 export interface GuildMember {
   user?: User
   name?: string
+  nick?: string
   avatar?: string
   title?: string
   roles?: string[]

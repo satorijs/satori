@@ -38,6 +38,10 @@ export abstract class MessageEncoder<B extends Bot = Bot> {
       guild: { id: this.guildId },
       subtype: isDirect ? 'private' : 'group',
     })
+    for (const key in this.options.session || {}) {
+      if (key in this.session) continue
+      this.session[key] = this.options.session[key]
+    }
     await this.prepare()
     this.session.elements = h.normalize(content)
     const btns = h.select(this.session.elements, 'button').filter(v => v.attrs.type !== 'link' && !v.attrs.id)
