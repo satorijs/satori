@@ -27,14 +27,19 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     let endpoint = `/channels/${this.channelId}/messages`
     if (isDirect) endpoint = `/dms/${this.channelId.split('_')[0]}/messages`
     const useFormData = Boolean(this.file)
+    let msg_id = this.options?.session?.messageId ?? this.options?.session?.id
+    if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
+      msg_id = null
+    }
+
     let r: QQ.Message
     this.bot.ctx.logger('qq').debug('use form data %s', useFormData)
     try {
       if (useFormData) {
         const form = new FormData()
         form.append('content', this.content)
-        if (this.options?.session) {
-          form.append('msg_id', this.options?.session?.messageId)
+        if (this.options?.session && msg_id) {
+          form.append('msg_id', msg_id)
         }
         if (this.file) {
           form.append('file_image', this.file, this.filename)
@@ -49,7 +54,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
         r = await this.bot.http.post<QQ.Message>(endpoint, {
           ...{
             content: this.content,
-            msg_id: this.options?.session?.messageId ?? this.options?.session?.id,
+            msg_id,
             image: this.fileUrl,
           },
           ...(this.reference ? {
@@ -139,6 +144,8 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   }
 }
 
+const MSG_TIMEOUT = 5 * 60 * 1000 - 2000// 5 mins
+
 export class QQMessageEncoder extends MessageEncoder<QQBot> {
   private content: string = ''
   private useMarkdown = false
@@ -146,11 +153,15 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length) return
     this.trimButtons()
+    let msg_id = this.options?.session?.messageId
+    if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
+      msg_id = null
+    }
     const data: QQ.SendMessageParams = {
       content: this.content,
       msg_type: 0,
       timestamp: Math.floor(Date.now() / 1000),
-      msg_id: this.options?.session?.messageId,
+      msg_id,
     }
 
     if (this.useMarkdown) {
