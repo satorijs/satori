@@ -1,5 +1,7 @@
-import { camelCase, Context, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import { camelCase, Context, Logger, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
 import WebSocket from 'ws'
+
+const logger = new Logger('server')
 
 const kClient = Symbol('state')
 
@@ -16,16 +18,24 @@ export interface WebSocketConfig {
   resumeTimeout?: number
 }
 
-export interface WebhookConfig {
+export interface Webhook {
   enabled?: boolean
+  endpoint: string
+  token?: string
 }
+
+export const Webhook: Schema<Webhook> = Schema.object({
+  enabled: Schema.boolean().default(true),
+  endpoint: Schema.string(),
+  token: Schema.string(),
+})
 
 export interface Config {
   path?: string
   token?: string
   api?: ApiConfig
   websocket?: WebSocketConfig
-  webhook?: WebhookConfig
+  webhooks: Webhook[]
 }
 
 export const Config: Schema<Config> = Schema.object({
@@ -38,9 +48,7 @@ export const Config: Schema<Config> = Schema.object({
     // enabled: Schema.boolean().default(true),
     resumeTimeout: Schema.number().default(Time.minute * 5),
   }),
-  webhook: Schema.object({
-    // enabled: Schema.boolean().default(true),
-  }),
+  webhooks: Schema.array(Webhook),
 })
 
 function transformKey(source: any, callback: (key: string) => string) {
@@ -146,7 +154,7 @@ export function apply(ctx: Context, config: Config) {
         if (!payload.body?.sequence) return
         for (const session of buffer) {
           if (session.id <= payload.body.sequence) continue
-          dispatch(socket, session)
+          dispatch(socket, transformKey(session.toJSON(), snakeCase))
         }
       } else if (payload.op === Universal.Opcode.PING) {
         socket.send(JSON.stringify({
@@ -157,17 +165,26 @@ export function apply(ctx: Context, config: Config) {
     })
   })
 
-  function dispatch(socket: WebSocket, session: Session) {
+  function dispatch(socket: WebSocket, body: any) {
     socket.send(JSON.stringify({
       op: Universal.Opcode.EVENT,
-      body: transformKey(session.toJSON(), snakeCase),
+      body,
     }))
   }
 
   ctx.on('internal/session', (session) => {
+    const body = transformKey(session.toJSON(), snakeCase)
     for (const socket of layer.clients) {
       if (!socket[kClient]?.authorized) continue
-      dispatch(socket, session)
+      dispatch(socket, body)
+    }
+    for (const webhook of config.webhooks) {
+      if (!webhook.enabled) continue
+      ctx.http.post(webhook.endpoint, body, {
+        headers: webhook.token ? {
+          Authorization: `Bearer ${webhook.token}`,
+        } : {},
+      }).catch(logger.warn)
     }
   })
 }
