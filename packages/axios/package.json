@@ -1,7 +1,7 @@
 {
   "name": "cordis-axios",
   "description": "Axios service for cordis",
-  "version": "3.3.2",
+  "version": "4.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
@@ -33,9 +33,6 @@
     "request",
     "service"
   ],
-  "peerDependencies": {
-    "cordis": "^2.9.2"
-  },
   "devDependencies": {
     "@types/mime-db": "^1.43.1",
     "@types/ws": "^8.5.6",

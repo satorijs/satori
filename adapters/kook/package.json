@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "KOOK (开黑啦) Adapter for Satorijs",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -28,7 +28,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0-rc.1"
+    "@satorijs/satori": "^3.0.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"
