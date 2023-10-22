@@ -14,7 +14,7 @@ export interface Quester {
 }
 
 export class Quester {
-  constructor(config: Quester.Config) {
+  constructor(config: Quester.Config = {}) {
     const request = async (config: AxiosRequestConfig = {}) => {
       const options = http.prepare()
       const error = new Error() as Axios.AxiosError

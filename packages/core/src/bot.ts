@@ -37,7 +37,8 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
 
-    ctx.on('ready', () => {
+    ctx.on('ready', async () => {
+      await Promise.resolve()
       this.dispatchLoginEvent('login-added')
       return this.start()
     })
