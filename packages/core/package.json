@@ -35,12 +35,12 @@
   },
   "dependencies": {
     "@satorijs/element": "^2.5.1",
-    "@satorijs/protocol": "^1.0.2",
-    "cordis": "^2.9.2",
-    "cordis-axios": "^3.3.2",
+    "@satorijs/protocol": "^1.1.0",
+    "cordis": "^2.10.0",
+    "cordis-axios": "^4.0.0",
     "cosmokit": "^1.5.1",
     "ws": "^8.14.2",
     "reggol": "^1.5.2",
-    "schemastery": "^3.13.1"
+    "schemastery": "^3.14.0"
   }
 }

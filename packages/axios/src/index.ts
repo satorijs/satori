@@ -1,4 +1,3 @@
-import { Context } from 'cordis'
 import { Agent } from 'agent-base'
 import { arrayBufferToBase64, base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
@@ -6,18 +5,6 @@ import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as Axios from 'axios'
 import { isPrivate } from './ip'
-
-declare module 'cordis' {
-  interface Context {
-    http: Quester
-  }
-
-  namespace Context {
-    interface Config {
-      request?: Quester.Config
-    }
-  }
-}
 
 export interface Quester {
   <T = any>(method: Method, url: string, config?: AxiosRequestConfig): Promise<T>
@@ -27,12 +14,50 @@ export interface Quester {
 }
 
 export class Quester {
-  constructor(ctx: Context, config: Context.Config) {
-    return Quester.create(config.request)
+  constructor(config: Quester.Config) {
+    const request = async (config: AxiosRequestConfig = {}) => {
+      const options = http.prepare()
+      const error = new Error() as Axios.AxiosError
+      return axios({
+        ...options,
+        ...config,
+        url: http.resolve(config.url!),
+        headers: {
+          ...options.headers,
+          ...config.headers,
+        },
+      }).catch((cause) => {
+        if (!axios.isAxiosError(cause)) throw cause
+        Object.assign(error, cause)
+        error.isAxiosError = true
+        error.cause = cause
+        throw error
+      })
+    }
+
+    const http = (async (method, url, config) => {
+      const response = await request({ url, ...config, method })
+      return response.data
+    }) as Quester
+
+    Object.setPrototypeOf(http, Object.getPrototypeOf(this))
+    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head', 'ws']) {
+      http[key] = this[key].bind(http)
+    }
+
+    http.config = config
+    http.axios = (...args: any[]) => {
+      if (typeof args[0] === 'string') {
+        return request({ url: args[0], ...args[1] })
+      } else {
+        return request(args[0])
+      }
+    }
+    return http
   }
 
   extend(newConfig: Quester.Config): Quester {
-    return Quester.create({
+    return new Quester({
       ...this.config,
       ...newConfig,
       headers: {
@@ -171,50 +196,6 @@ export namespace Quester {
     timeout?: number
     proxyAgent?: string
   }
-
-  export function create(this: typeof Quester, config: Quester.Config = {}) {
-    const request = async (config: AxiosRequestConfig = {}) => {
-      const options = http.prepare()
-      const error = new Error() as Axios.AxiosError
-      return axios({
-        ...options,
-        ...config,
-        url: http.resolve(config.url!),
-        headers: {
-          ...options.headers,
-          ...config.headers,
-        },
-      }).catch((cause) => {
-        if (!axios.isAxiosError(cause)) throw cause
-        Object.assign(error, cause)
-        error.isAxiosError = true
-        error.cause = cause
-        throw error
-      })
-    }
-
-    const http = (async (method, url, config) => {
-      const response = await request({ url, ...config, method })
-      return response.data
-    }) as Quester
-
-    Object.setPrototypeOf(http, this.prototype)
-    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head', 'ws']) {
-      http[key] = this.prototype[key].bind(http)
-    }
-
-    http.config = config
-    http.axios = (...args: any[]) => {
-      if (typeof args[0] === 'string') {
-        return request({ url: args[0], ...args[1] })
-      } else {
-        return request(args[0])
-      }
-    }
-    return http
-  }
 }
-
-Context.service('http', Quester)
 
 export default Quester

@@ -33,7 +33,7 @@ export class LarkBot extends Bot<LarkBot.Config> {
         'Content-Type': 'application/json; charset=utf-8',
       },
     })
-    this.assetsQuester = Quester.create()
+    this.assetsQuester = ctx.http
 
     this.internal = new Internal(this.http)
 

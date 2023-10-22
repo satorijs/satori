@@ -6,7 +6,6 @@ import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
 import { SendOptions } from '@satorijs/protocol'
-import { Internal } from './internal'
 import h from '@satorijs/element'
 
 h.warn = new Logger('element').warn
@@ -23,7 +22,6 @@ export * as Universal from '@satorijs/protocol'
 
 export * from './bot'
 export * from './adapter'
-export * from './internal'
 export * from './message'
 export * from './session'
 
@@ -46,6 +44,14 @@ Quester.createConfig = function createConfig(this, endpoint) {
     headers: Schema.dict(String).role('table').description('要附加的额外请求头。'),
     ...this.Config.dict,
   }).description('请求设置')
+}
+
+export type Component = h.Render<Awaitable<h.Fragment>, Session>
+
+export namespace Component {
+  export interface Options {
+    session?: boolean
+  }
 }
 
 type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T
@@ -92,14 +98,34 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
-  bots: Bot[] & Dict<Bot>
+  http: Quester
 }
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
 
-  constructor(options?: Context.Config) {
-    super(options)
+  public bots = new Proxy([] as Bot[] & Dict<Bot>, {
+    get(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.get(target, prop)
+      }
+      return target.find(bot => bot.sid === prop)
+    },
+    deleteProperty(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.deleteProperty(target, prop)
+      }
+      const bot = target.findIndex(bot => bot.sid === prop)
+      if (bot < 0) return true
+      target.splice(bot, 1)
+      return true
+    },
+  })
+
+  constructor(config: Context.Config = {}) {
+    super(config)
+
+    this.http = new Quester(config.request)
 
     this.on('internal/warning', (format, ...args) => {
       this.logger('app').warn(format, ...args)
@@ -109,10 +135,29 @@ export class Context extends cordis.Context {
   logger(name: string) {
     return new Logger(name)
   }
+
+  component(name: string, component: Component, options: Component.Options = {}) {
+    const render: Component = async (attrs, children, session) => {
+      if (options.session && session.type === 'send') {
+        throw new Error('interactive components is not available outside sessions')
+      }
+      const result = await component(attrs, children, session)
+      return session.transform(h.normalize(result))
+    }
+    const service = 'component:' + name
+    this.root.provide(service)
+    this[service] = render
+    return this.collect('component', () => {
+      this[service] = null
+      return true
+    })
+  }
 }
 
 export namespace Context {
-  export interface Config extends cordis.Context.Config {}
+  export interface Config extends cordis.Context.Config {
+    request?: Quester.Config
+  }
 
   export const Config: Config.Static = Schema.intersect([
     Schema.object({}),
@@ -122,28 +167,3 @@ export namespace Context {
     export interface Static extends Schema<Config> {}
   }
 }
-
-Context.service('internal', Internal)
-
-Context.service('bots', class {
-  constructor(root: Context) {
-    const list: Bot[] = []
-    return new Proxy(list, {
-      get(target, prop) {
-        if (prop in target || typeof prop === 'symbol') {
-          return target[prop]
-        }
-        return list.find(bot => bot.sid === prop)
-      },
-      deleteProperty(target, prop) {
-        if (prop in target || typeof prop === 'symbol') {
-          return delete target[prop]
-        }
-        const bot = target.findIndex(bot => bot.sid === prop)
-        if (bot < 0) return true
-        target.splice(bot, 1)
-        return true
-      },
-    })
-  }
-})
