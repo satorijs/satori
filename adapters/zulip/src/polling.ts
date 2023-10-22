@@ -1,8 +1,8 @@
-import { Adapter, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 
-export class HttpPolling extends Adapter<ZulipBot> {
+export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBot<C>> {
   static reusable = true
 
   private timeout: NodeJS.Timeout

@@ -1,4 +1,4 @@
-import { Element, h, Session, Universal } from '@satorijs/satori'
+import { Context, Element, h, Session, Universal } from '@satorijs/satori'
 import { SlackBot } from './bot'
 // eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
@@ -160,7 +160,7 @@ function setupReaction(session: Session, data: EnvelopedEvent<ReactionAddedEvent
   session.content = data.event.reaction
 }
 
-export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackEvent>) {
+export async function adaptSession<C extends Context = Context>(bot: SlackBot<C>, payload: EnvelopedEvent<SlackEvent>) {
   const session = bot.session()
   // https://api.slack.com/events
   if (payload.event.type === 'message') {

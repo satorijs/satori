@@ -1,34 +1,44 @@
 import NodeIMAP from 'node-imap'
 import { createTransport, Transporter } from 'nodemailer'
-import { ParsedMail, simpleParser } from 'mailparser'
+import { simpleParser } from 'mailparser'
 import { MailBot } from './bot'
+import { Adapter, Context, Logger, Universal } from '@satorijs/satori'
+import { dispatchSession } from './utils'
 
-export class IMAP {
+const logger = new Logger('mail')
+
+export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
+  static reusable = true
+
   imap: NodeIMAP
 
-  constructor(
-    public config: MailBot.Config,
-    public onReady: () => void,
-    public onClose: () => void,
-    public onMail: (mail: ParsedMail) => void,
-    public onError: (error: Error) => void,
-  ) {
-    this.connect()
+  constructor(ctx: C, public bot: MailBot<C>) {
+    super()
+    this.imap = new NodeIMAP({
+      user: bot.config.username,
+      password: bot.config.password,
+      host: bot.config.imap.host,
+      port: bot.config.imap.port,
+      tls: bot.config.imap.tls,
+    })
+    this.imap.on('error', (error) => {
+      logger.error(error)
+    })
   }
 
-  connect() {
-    this.imap = new NodeIMAP({
-      user: this.config.username,
-      password: this.config.password,
-      host: this.config.imap.host,
-      port: this.config.imap.port,
-      tls: this.config.imap.tls,
-    })
+  async connect(bot: MailBot<C>) {
     this.imap.on('ready', () => {
       this.imap.openBox('INBOX', false, this.inbox.bind(this))
     })
-    this.imap.on('error', this.onError)
-    this.imap.on('close', this.onClose)
+    this.imap.on('close', () => {
+      if (!bot.isActive) return
+      logger.info('IMAP disconnected, will reconnect in 3s...')
+      bot.status = Universal.Status.RECONNECT
+      setTimeout(() => {
+        if (!bot.isActive) return
+        this.imap.connect()
+      }, 3000)
+    })
     this.imap.connect()
   }
 
@@ -38,10 +48,10 @@ export class IMAP {
 
   inbox(error: Error) {
     if (error) {
-      this.onError(error)
+      logger.error(error)
       return
     }
-    this.onReady()
+    this.bot.online()
     this.scan()
     this.imap.on('mail', this.scan.bind(this))
   }
@@ -49,13 +59,13 @@ export class IMAP {
   scan() {
     this.imap.search(['UNSEEN'], (error, uids) => {
       if (error) {
-        this.onError(error)
+        logger.error(error)
         return
       }
       if (uids.length === 0) return
 
       this.imap.setFlags(uids, ['\\SEEN'], (error) => {
-        if (error) this.onError(error)
+        if (error) logger.error(error)
       })
 
       // markSeen doesn't work
@@ -64,10 +74,10 @@ export class IMAP {
         message.once('body', (stream) => {
           simpleParser(stream, (error, mail) => {
             if (error) {
-              this.onError(error)
+              logger.error(error)
               return
             }
-            this.onMail(mail)
+            dispatchSession(this.bot, mail)
           })
         })
       })

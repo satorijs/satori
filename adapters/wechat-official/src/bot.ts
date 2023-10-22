@@ -3,13 +3,14 @@ import { HttpServer } from './http'
 import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
 
-export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
+export class WechatOfficialBot<C extends Context = Context> extends Bot<C, WechatOfficialBot.Config> {
   static MessageEncoder = WechatOfficialMessageEncoder
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
   logger = new Logger('wo')
-  constructor(ctx: Context, config: WechatOfficialBot.Config) {
+
+  constructor(ctx: C, config: WechatOfficialBot.Config) {
     super(ctx, config)
     this.platform = 'wechat-official'
     this.selfId = config.account

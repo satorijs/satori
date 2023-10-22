@@ -1,4 +1,4 @@
-import { Element, MessageEncoder } from '@satorijs/satori'
+import { Context, Element, MessageEncoder } from '@satorijs/satori'
 import { MailBot } from './bot'
 import { Attachment } from './mail'
 
@@ -8,7 +8,7 @@ export function randomId() {
   return Array(8).fill(0).map(() => letters[Math.floor(Math.random() * letters.length)]).join('')
 }
 
-export class MailMessageEncoder extends MessageEncoder<MailBot> {
+export class MailMessageEncoder<C extends Context = Context> extends MessageEncoder<C, MailBot<C>> {
   buffer = ''
   reply: string
   attachments: Attachment[] = []
@@ -16,7 +16,7 @@ export class MailMessageEncoder extends MessageEncoder<MailBot> {
 
   async flush() {
     if (!this.buffer && this.attachments.length === 0) return
-    const messageId = await this.bot.smtp.send({
+    const messageId = await this.bot.internal.send({
       to: this.session.channelId,
       html: `<pre>${this.buffer}</pre>`,
       attachments: this.attachments,

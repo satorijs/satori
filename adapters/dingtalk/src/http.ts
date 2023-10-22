@@ -4,14 +4,10 @@ import crypto from 'node:crypto'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 
-export class HttpServer extends Adapter<DingtalkBot> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, DingtalkBot<C>> {
   logger = new Logger('dingtalk')
 
-  constructor(ctx: Context, bot: DingtalkBot) {
-    super()
-  }
-
-  async connect(bot: DingtalkBot) {
+  async connect(bot: DingtalkBot<C>) {
     await bot.refreshToken()
     await bot.getLogin()
 

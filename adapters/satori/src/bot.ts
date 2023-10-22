@@ -23,11 +23,11 @@ function createInternal(bot: SatoriBot, prefix = '') {
   })
 }
 
-export class SatoriBot extends Bot<Universal.Login> {
+export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Login> {
   public http: Quester
   public internal = createInternal(this)
 
-  constructor(ctx: Context, config: Universal.Login) {
+  constructor(ctx: C, config: Universal.Login) {
     super(ctx, config)
     Object.assign(this, config)
   }

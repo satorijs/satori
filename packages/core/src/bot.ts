@@ -2,7 +2,7 @@ import { Dict, pick, remove } from 'cosmokit'
 import { Context, Fragment } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
-import { defineAccessor, Session } from './session'
+import { defineAccessor } from './session'
 import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
 
 const eventAliases = [
@@ -15,23 +15,23 @@ export interface Bot extends Methods {
   internal: any
 }
 
-export abstract class Bot<T = any> implements Login {
+export abstract class Bot<C extends Context = Context, T = any> implements Login {
   static reusable = true
-  static filter = false
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
 
   public user = {} as User
   public isBot = true
   public hidden = false
   public platform: string
-  public adapter?: Adapter<this>
+  public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
 
+  // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
-  constructor(public ctx: Context, public config: T) {
+  constructor(public ctx: C, public config: T) {
     this.internal = null
     this.context = ctx
     ctx.bots.push(this)
@@ -44,7 +44,7 @@ export abstract class Bot<T = any> implements Login {
 
     ctx.on('dispose', () => this.dispose())
 
-    ctx.on('interaction/button', (session: Session) => {
+    ctx.on('interaction/button', (session: C[typeof Context.session]) => {
       const cb = this.callbacks[session.event.button.id]
       if (cb) cb(session)
     })
@@ -129,11 +129,12 @@ export abstract class Bot<T = any> implements Login {
     return `${this.platform}:${this.selfId}`
   }
 
-  session(event: Partial<Event> = {}) {
+  session(event: Partial<Event> = {}): C[typeof Context.session] {
+    const { Session } = this.ctx.constructor as typeof Context
     return new Session(this, event)
   }
 
-  dispatch(session: Session) {
+  dispatch(session: C[typeof Context.session]) {
     if (!this.ctx.lifecycle.isActive) return
     let events = [session.type]
     for (const aliases of eventAliases) {
@@ -165,11 +166,11 @@ export abstract class Bot<T = any> implements Login {
     return this.sendMessage(id, content, null, options)
   }
 
-  async supports(name: string, session: Partial<Session> = {}) {
+  async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
     return !!this[Methods[name]?.name]
   }
 
-  async checkPermission(name: string, session: Partial<Session>) {
+  async checkPermission(name: string, session: Partial<C[typeof Context.session]>) {
     if (name.startsWith('bot.')) {
       return this.supports(name.slice(4), session)
     }

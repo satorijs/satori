@@ -7,7 +7,7 @@ import * as Utils from './utils'
 
 const logger = new Logger('lark')
 
-export class LarkBot extends Bot<LarkBot.Config> {
+export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
   static MessageEncoder = LarkMessageEncoder
 
   _token?: string
@@ -16,7 +16,7 @@ export class LarkBot extends Bot<LarkBot.Config> {
   assetsQuester: Quester
   internal: Internal
 
-  constructor(ctx: Context, config: LarkBot.Config) {
+  constructor(ctx: C, config: LarkBot.Config) {
     super(ctx, config)
 
     // lark bot needs config.selfUrl to be set as it should be serve on a public url

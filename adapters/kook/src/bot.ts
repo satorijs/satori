@@ -6,13 +6,13 @@ import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
 
-export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
+export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   static MessageEncoder = KookMessageEncoder
 
   http: Quester
   internal: Kook.Internal
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.platform = 'kook'
     this.http = ctx.http.extend({

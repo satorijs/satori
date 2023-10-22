@@ -1,4 +1,4 @@
-import { Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { LineBot } from './bot'
 import * as Line from './types'
 
@@ -10,7 +10,7 @@ export const unescape = (val: string) =>
   val
     .replace(/\u200b([\*_~`])/g, '$1')
 
-export class LineMessageEncoder extends MessageEncoder<LineBot> {
+export class LineMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LineBot<C>> {
   buffer = ''
   blocks: Line.Message[] = []
   sender: Line.Sender = {}

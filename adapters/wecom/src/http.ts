@@ -1,11 +1,11 @@
-import { Adapter } from '@satorijs/satori'
+import { Adapter, Context } from '@satorijs/satori'
 import { WecomBot } from './bot'
 import xml2js from 'xml2js'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 import { decrypt, getSignature } from '@wecom/crypto'
 
-export class HttpServer extends Adapter<WecomBot> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot<C>> {
   constructor() {
     super()
   }

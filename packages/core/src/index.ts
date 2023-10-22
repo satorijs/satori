@@ -5,7 +5,7 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import Logger from 'reggol'
 import Quester from 'cordis-axios'
-import { SendOptions } from '@satorijs/protocol'
+import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
 h.warn = new Logger('element').warn
@@ -46,7 +46,7 @@ Quester.createConfig = function createConfig(this, endpoint) {
   }).description('请求设置')
 }
 
-export type Component = h.Render<Awaitable<h.Fragment>, Session>
+export type Component<S extends Session = Session> = h.Render<Awaitable<h.Fragment>, S>
 
 export namespace Component {
   export interface Options {
@@ -54,37 +54,37 @@ export namespace Component {
   }
 }
 
-type EventCallback<T = void, R extends any[] = []> = (this: Session, session: Session, ...args: R) => T
+export type GetSession<C extends Context> = C[typeof Context.session]
 
 export interface Events<C extends Context = Context> extends cordis.Events<C> {
-  'internal/session'(session: Session): void
-  'interaction/command'(session: Session): void
-  'interaction/button'(session: Session): void
-  'message'(session: Session): void
-  'message-created'(session: Session): void
-  'message-deleted'(session: Session): void
-  'message-updated'(session: Session): void
-  'message-pinned'(session: Session): void
-  'message-unpinned'(session: Session): void
-  'guild-added'(session: Session): void
-  'guild-removed'(session: Session): void
-  'guild-updated'(session: Session): void
-  'guild-member-added'(session: Session): void
-  'guild-member-removed'(session: Session): void
-  'guild-member-updated'(session: Session): void
-  'guild-role-created'(session: Session): void
-  'guild-role-deleted'(session: Session): void
-  'guild-role-updated'(session: Session): void
-  'reaction-added'(session: Session): void
-  'reaction-removed'(session: Session): void
-  'login-added'(session: Session): void
-  'login-removed'(session: Session): void
-  'login-updated'(session: Session): void
-  'friend-request'(session: Session): void
-  'guild-request'(session: Session): void
-  'guild-member-request'(session: Session): void
-  'before-send': EventCallback<Awaitable<void | boolean>, [SendOptions]>
-  'send'(session: Session): void
+  'internal/session'(session: GetSession<C>): void
+  'interaction/command'(session: GetSession<C>): void
+  'interaction/button'(session: GetSession<C>): void
+  'message'(session: GetSession<C>): void
+  'message-created'(session: GetSession<C>): void
+  'message-deleted'(session: GetSession<C>): void
+  'message-updated'(session: GetSession<C>): void
+  'message-pinned'(session: GetSession<C>): void
+  'message-unpinned'(session: GetSession<C>): void
+  'guild-added'(session: GetSession<C>): void
+  'guild-removed'(session: GetSession<C>): void
+  'guild-updated'(session: GetSession<C>): void
+  'guild-member-added'(session: GetSession<C>): void
+  'guild-member-removed'(session: GetSession<C>): void
+  'guild-member-updated'(session: GetSession<C>): void
+  'guild-role-created'(session: GetSession<C>): void
+  'guild-role-deleted'(session: GetSession<C>): void
+  'guild-role-updated'(session: GetSession<C>): void
+  'reaction-added'(session: GetSession<C>): void
+  'reaction-removed'(session: GetSession<C>): void
+  'login-added'(session: GetSession<C>): void
+  'login-removed'(session: GetSession<C>): void
+  'login-updated'(session: GetSession<C>): void
+  'friend-request'(session: GetSession<C>): void
+  'guild-request'(session: GetSession<C>): void
+  'guild-member-request'(session: GetSession<C>): void
+  'before-send'(session: GetSession<C>, options: SendOptions): Awaitable<void | boolean>
+  'send'(session: GetSession<C>): void
   /** @deprecated use `login-added` instead */
   'bot-added'(client: Bot): void
   /** @deprecated use `login-removed` instead */
@@ -98,11 +98,14 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
+  [Context.session]: Session<this>
   http: Quester
 }
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
+  // remove generic type to loosen the constraint
+  static readonly Session = Session as new (bot: Bot, event: Partial<Event>) => Session
 
   public bots = new Proxy([] as Bot[] & Dict<Bot>, {
     get(target, prop) {
@@ -136,7 +139,7 @@ export class Context extends cordis.Context {
     return new Logger(name)
   }
 
-  component(name: string, component: Component, options: Component.Options = {}) {
+  component(name: string, component: Component<this[typeof Context.session]>, options: Component.Options = {}) {
     const render: Component = async (attrs, children, session) => {
       if (options.session && session.type === 'send') {
         throw new Error('interactive components is not available outside sessions')

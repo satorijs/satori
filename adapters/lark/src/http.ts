@@ -8,10 +8,10 @@ import { adaptSession, Cipher } from './utils'
 
 const logger = new Logger('lark')
 
-export class HttpServer extends Adapter<FeishuBot> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
   private ciphers: Record<string, Cipher> = {}
 
-  fork(ctx: Context, bot: FeishuBot) {
+  fork(ctx: C, bot: FeishuBot<C>) {
     super.fork(ctx, bot)
 
     this._refreshCipher()

@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { Channel, Guild, Message, User } from '@satorijs/protocol'
-import { h, Session, trimSlash } from '@satorijs/satori'
+import { Context, h, Session, trimSlash } from '@satorijs/satori'
 import { FeishuBot, LarkBot } from './bot'
 import { AllEvents, Events, Lark, Message as LarkMessage, MessageContentType, MessageType } from './types'
 
@@ -68,7 +68,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
   return session
 }
 
-export function adaptSession(bot: FeishuBot, body: AllEvents): Session {
+export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEvents) {
   const session = bot.session()
   session.setInternal('lark', body)
 

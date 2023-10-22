@@ -1,4 +1,4 @@
-import { Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
 import FormData from 'form-data'
 import { SendMessage } from './types'
@@ -25,7 +25,7 @@ const SUPPORTED_MEDIA = [
   'video/3gpp',
 ]
 
-export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
+export class WhatsAppMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WhatsAppBot<C>> {
   private buffer = ''
   quoteId: string = null
 

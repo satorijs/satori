@@ -9,7 +9,7 @@ import { version } from '../package.json'
 
 const logger = new Logger('discord')
 
-export class DiscordBot extends Bot<DiscordBot.Config> {
+export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
 
   public http: Quester
@@ -18,7 +18,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   public webhookLock: Record<string, Promise<Webhook>> = {}
   public commands: Universal.Command[] = []
 
-  constructor(ctx: Context, config: DiscordBot.Config) {
+  constructor(ctx: C, config: DiscordBot.Config) {
     super(ctx, config)
     this.platform = 'discord'
     this.http = ctx.http.extend({

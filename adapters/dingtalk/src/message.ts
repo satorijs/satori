@@ -1,4 +1,4 @@
-import { Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
 import FormData from 'form-data'
 import { SendMessageData } from './types'
@@ -14,7 +14,7 @@ export const unescape = (val: string) =>
   val
     .replace(/\u200b([\*_~`])/g, '$1')
 
-export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
+export class DingtalkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, DingtalkBot<C>> {
   buffer = ''
 
   /**

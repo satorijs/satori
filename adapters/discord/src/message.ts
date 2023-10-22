@@ -1,4 +1,4 @@
-import { Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
+import { Context, Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
@@ -18,7 +18,7 @@ class State {
   constructor(public type: 'message' | 'forward') { }
 }
 
-export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
+export class DiscordMessageEncoder<C extends Context = Context> extends MessageEncoder<C, DiscordBot<C>> {
   private stack: State[] = [new State('message')]
   private buffer: string = ''
   private addition: Dict = {}

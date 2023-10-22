@@ -1,12 +1,12 @@
-import { Adapter, Logger, sanitize, Schema, trimSlash } from '@satorijs/satori'
+import { Adapter, Context, Logger, sanitize, Schema, trimSlash } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
 
 const logger = new Logger('telegram')
 
-export class HttpServer extends Adapter<TelegramBot> {
-  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Config>) {
+export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
+  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Config>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {

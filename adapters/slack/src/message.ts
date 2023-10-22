@@ -1,4 +1,4 @@
-import { h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import FormData from 'form-data'
 import { adaptMessage, adaptSentAsset } from './utils'
@@ -21,7 +21,7 @@ export const unescape = (val: string) =>
     .replace(/@\u200Beveryone/g, () => '@everyone')
     .replace(/@\u200Bhere/g, () => '@here')
 
-export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
+export class SlackMessageEncoder<C extends Context = Context> extends MessageEncoder<C, SlackBot<C>> {
   buffer = ''
   thread_ts = null
   elements: any[] = []

@@ -1,7 +1,7 @@
 import { createReadStream } from 'fs'
 import internal from 'stream'
 
-import { h, MessageEncoder, Quester } from '@satorijs/satori'
+import { Context, h, MessageEncoder, Quester } from '@satorijs/satori'
 import FormData from 'form-data'
 
 import { LarkBot } from './bot'
@@ -13,7 +13,7 @@ export interface Addition {
   type: MessageType
 }
 
-export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
+export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
   private quote: string | undefined
   private content = ''
   private addition: Addition

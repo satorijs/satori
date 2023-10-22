@@ -1,4 +1,4 @@
-import { Dict, h, pick, Session, Universal, valueMap } from '@satorijs/satori'
+import { Context, Dict, h, pick, Session, Universal, valueMap } from '@satorijs/satori'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -170,7 +170,7 @@ function setupReaction(session: Session, data: ReactionEvent) {
   session.content = id ? `${name}:${id}` : name
 }
 
-export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
+export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input: Discord.Gateway.Payload) {
   const session = bot.session()
   session.setInternal('discord', input)
   if (input.t === 'MESSAGE_CREATE') {

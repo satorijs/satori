@@ -7,12 +7,12 @@ import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types
 import FormData from 'form-data'
 import { Internal, Token } from './types/internal'
 
-export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
+export class SlackBot<C extends Context = Context, T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
   static MessageEncoder = SlackMessageEncoder
   public http: Quester
   public internal: Internal
 
-  constructor(ctx: Context, config: T) {
+  constructor(ctx: C, config: T) {
     super(ctx, config)
     this.platform = 'slack'
     this.http = ctx.http.extend(config)

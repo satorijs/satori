@@ -1,4 +1,4 @@
-import { Bot, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
+import { Bot, Context, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export * from './types'
@@ -147,7 +147,7 @@ function adaptReaction(body: Kook.NoticeBody, session: Session) {
   session['emoji'] = body.emoji.id
 }
 
-export function adaptSession(bot: Bot, input: any) {
+export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
   const session = bot.session()
   session.setInternal('kook', input)
   if (input.type === Kook.Type.system) {

@@ -3,7 +3,7 @@ import { SatoriBot, transformKey } from './bot'
 
 const logger = new Logger('satori')
 
-export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
+export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
   static schema = true
   static reusable = true
 
@@ -13,7 +13,7 @@ export class SatoriAdapter extends Adapter.WsClientBase<SatoriBot> {
   private sequence?: number
   private timeout?: NodeJS.Timeout
 
-  constructor(public ctx: Context, public config: SatoriAdapter.Config) {
+  constructor(public ctx: C, public config: SatoriAdapter.Config) {
     super(ctx, config)
     this.http = ctx.http.extend({
       endpoint: config.endpoint,

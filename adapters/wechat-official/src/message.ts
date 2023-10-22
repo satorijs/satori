@@ -1,11 +1,11 @@
-import { h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { WechatOfficialBot } from './bot'
 import FormData from 'form-data'
 import xml2js from 'xml2js'
 import { SendMessage } from './types'
 
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
-export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialBot> {
+export class WechatOfficialMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WechatOfficialBot<C>> {
   buffer = ''
   sent = false
 

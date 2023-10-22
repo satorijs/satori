@@ -1,4 +1,4 @@
-import { Bot, h, Session, Universal } from '@satorijs/satori'
+import { Bot, Context, h, Session, Universal } from '@satorijs/satori'
 import * as QQ from './types'
 import { QQBot } from './bot'
 import { unescape } from '@satorijs/element'
@@ -106,7 +106,7 @@ export function setupReaction(session: Session, data: QQ.MessageReaction) {
   return session
 }
 
-export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
+export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, input: QQ.DispatchPayload) {
   let session = bot.session()
 
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',

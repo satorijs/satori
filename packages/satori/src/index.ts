@@ -1,6 +1,5 @@
-import { Context, Logger, Quester, Schema } from '@satorijs/core'
-import { defineProperty, trimSlash } from 'cosmokit'
-import { listen } from './listen'
+import { Context, Quester, Schema } from '@satorijs/core'
+import { defineProperty } from 'cosmokit'
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
@@ -37,29 +36,3 @@ Context.Config.list.unshift(Context.Config.Network)
 Context.Config.list.push(Schema.object({
   request: Quester.Config,
 }))
-
-const logger = new Logger('app')
-
-const start = Context.prototype.start
-Context.prototype.start = async function (this: Context, ...args) {
-  if (this.root.config.selfUrl) {
-    this.root.config.selfUrl = trimSlash(this.root.config.selfUrl)
-  }
-
-  if (this.root.config.port) {
-    const { host } = this.root.config
-    this.router.host = host
-    this.router.port = await listen(this.root.config)
-    this.router._http.listen(this.router.port, host)
-    logger.info('server listening at %c', this.router.selfUrl)
-    this.on('dispose', () => {
-      logger.info('http server closing')
-      this.router._ws?.close()
-      this.router._http?.close()
-    })
-  }
-
-  this.decline(['selfUrl', 'host', 'port', 'maxPort'])
-
-  return start.call(this, ...args)
-}

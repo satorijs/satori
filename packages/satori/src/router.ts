@@ -1,11 +1,14 @@
-import { Context } from '@satorijs/core'
-import { MaybeArray, remove } from 'cosmokit'
+import { Context, Logger } from '@satorijs/core'
+import { MaybeArray, remove, trimSlash } from 'cosmokit'
 import { createServer, IncomingMessage, Server } from 'http'
 import { pathToRegexp } from 'path-to-regexp'
 import parseUrl from 'parseurl'
 import WebSocket from 'ws'
 import KoaRouter from '@koa/router'
 import Koa from 'koa'
+import { listen } from './listen'
+
+const logger = new Logger('app')
 
 declare module 'koa' {
   // koa-bodyparser
@@ -79,6 +82,26 @@ export class Router extends KoaRouter {
       }
       socket.close()
     })
+
+    ctx.root.decline(['selfUrl', 'host', 'port', 'maxPort'])
+
+    if (ctx.root.config.selfUrl) {
+      ctx.root.config.selfUrl = trimSlash(ctx.root.config.selfUrl)
+    }
+
+    ctx.on('ready', async () => {
+      const { host, port } = ctx.root.config
+      if (!port) return
+      ctx.router.host = host
+      ctx.router.port = await listen(ctx.root.config)
+      ctx.router._http.listen(ctx.router.port, host)
+      logger.info('server listening at %c', ctx.router.selfUrl)
+      ctx.on('dispose', () => {
+        logger.info('http server closing')
+        ctx.router._ws?.close()
+        ctx.router._http?.close()
+      })
+    }, true)
   }
 
   get selfUrl() {

@@ -1,8 +1,8 @@
-import { h, Session } from '@satorijs/satori'
+import { Context, h } from '@satorijs/satori'
 import { Message } from './types'
 import { DingtalkBot } from './bot'
 
-export async function decodeMessage(bot: DingtalkBot, body: Message): Promise<Session> {
+export async function decodeMessage<C extends Context>(bot: DingtalkBot<C>, body: Message) {
   const session = bot.session()
   session.type = 'message'
   session.messageId = body.msgId

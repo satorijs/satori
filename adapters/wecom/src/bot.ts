@@ -2,7 +2,7 @@ import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/sato
 import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 
-export class WecomBot extends Bot<WecomBot.Config> {
+export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Config> {
   static MessageEncoder = WecomMessageEncoder
 
   http: Quester
@@ -10,7 +10,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
   refreshTokenTimer: NodeJS.Timeout
   logger = new Logger('wecom')
 
-  constructor(ctx: Context, config: WecomBot.Config) {
+  constructor(ctx: C, config: WecomBot.Config) {
     super(ctx, config)
     this.selfId = config.agentId
     this.platform = 'wecom'

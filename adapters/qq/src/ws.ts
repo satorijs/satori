@@ -1,11 +1,11 @@
-import { Adapter, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 
 const logger = new Logger('qq')
 
-export class WsClient extends Adapter.WsClient<QQBot> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, QQBot<C>> {
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout

@@ -1,4 +1,4 @@
-import { h, MessageEncoder, Schema } from '@satorijs/satori'
+import { Context, h, MessageEncoder, Schema } from '@satorijs/satori'
 import FormData from 'form-data'
 import { KookBot } from './bot'
 import * as Kook from './types'
@@ -10,7 +10,7 @@ export function isDirectChannel(channelId: string) {
   return channelId.length > 30
 }
 
-export class KookMessageEncoder extends MessageEncoder<KookBot> {
+export class KookMessageEncoder<C extends Context = Context> extends MessageEncoder<C, KookBot<C>> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>

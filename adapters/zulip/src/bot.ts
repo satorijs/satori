@@ -6,13 +6,13 @@ import { ZulipMessageEncoder } from './message'
 import { version } from '../package.json'
 import { decodeGuild, decodeMessage, decodeUser } from './utils'
 
-export class ZulipBot extends Bot<ZulipBot.Config> {
+export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
 
   public http: Quester
   public logger: Logger
   public internal: Internal
-  constructor(ctx: Context, config: ZulipBot.Config) {
+  constructor(ctx: C, config: ZulipBot.Config) {
     super(ctx, config)
 
     this.platform = 'zulip'

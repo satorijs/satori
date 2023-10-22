@@ -1,8 +1,8 @@
-import { Adapter, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
 
-export class WsClient extends Adapter.WsClient<DingtalkBot> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DingtalkBot<C>> {
   async prepare() {
     await this.bot.refreshToken()
     await this.bot.getLogin()

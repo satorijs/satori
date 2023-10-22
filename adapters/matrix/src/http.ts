@@ -6,10 +6,10 @@ import { ClientEvent, M_ROOM_MEMBER } from './types'
 
 const logger = new Logger('matrix')
 
-export class HttpAdapter extends Adapter<MatrixBot> {
+export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixBot<C>> {
   private txnId: string = null
 
-  public constructor(ctx: Context) {
+  public constructor(ctx: C) {
     super()
     ctx.router.all('/(.*)', (koaCtx, next) => {
       const match = this.bots.filter(bot => koaCtx.path.startsWith(bot.config.path + '/'))

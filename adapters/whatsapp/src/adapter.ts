@@ -92,13 +92,11 @@ class HttpServer {
   }
 }
 
-export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
+export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, WhatsAppBot<C>> {
   static schema = true
   static reusable = true
 
-  public bots: WhatsAppBot[] = []
-
-  constructor(ctx: Context, public config: WhatsAppAdapter.Config) {
+  constructor(ctx: C, public config: WhatsAppAdapter.Config) {
     super()
     ctx.plugin(HttpServer, this)
 

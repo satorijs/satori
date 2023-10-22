@@ -27,23 +27,23 @@ export interface Session {
   quote: Message
 }
 
-export class Session {
+export class Session<C extends Context = Context> {
   static counter = 0
 
   public id: number
-  public bot: Bot
-  public app: Context['root']
+  public bot: Bot<C>
+  public app: C['root']
   public event: Event
   public locales: string[] = []
 
-  constructor(bot: Bot, payload: Partial<Event>) {
-    payload.selfId ??= bot.selfId
-    payload.platform ??= bot.platform
-    payload.timestamp ??= Date.now()
-    this.event = payload as Event
+  constructor(bot: Bot<C>, event: Partial<Event>) {
+    event.selfId ??= bot.selfId
+    event.platform ??= bot.platform
+    event.timestamp ??= Date.now()
+    this.event = event as Event
     this.id = ++Session.counter
-    Object.assign(this, payload)
-    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(payload))) {
+    Object.assign(this, event)
+    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(event))) {
       if (descriptor.enumerable) continue
       Object.defineProperty(this, key, descriptor)
     }

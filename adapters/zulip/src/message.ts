@@ -1,4 +1,4 @@
-import { h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { ZulipBot } from './bot'
 import FormData from 'form-data'
 import { by_stream_topic_url, encodeHashComponent } from './utils'
@@ -13,7 +13,7 @@ export const unescape = (val: string) =>
     .replace(/^(&nbsp;)+/g, (match) => Array(match.length + 1).join(' '))
     .replace(/\u200b([\*_~`\->[\](#!@])/g, '$1')
 
-export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
+export class ZulipMessageEncoder<C extends Context = Context> extends MessageEncoder<C, ZulipBot<C>> {
   buffer: string = ''
 
   async flush() {

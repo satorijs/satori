@@ -1,4 +1,4 @@
-import { Adapter, Logger, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema, Time, Universal } from '@satorijs/satori'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
@@ -7,7 +7,7 @@ const logger = new Logger('kook')
 
 const heartbeatIntervals = [6, 2, 4]
 
-export class WsClient extends Adapter.WsClient<KookBot<KookBot.BaseConfig & WsClient.Config>> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, KookBot<C, KookBot.BaseConfig & WsClient.Config>> {
   _sn = 0
   _ping: NodeJS.Timeout
   _heartbeat: NodeJS.Timeout

@@ -4,7 +4,7 @@ import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
 import { adaptMessage, decodeUser, dispatchSession } from './utils'
 
-export class MatrixBot extends Bot<MatrixBot.Config> {
+export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
 
   http: Quester
@@ -13,7 +13,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   rooms: string[] = []
   internal: Matrix.Internal
 
-  constructor(ctx: Context, config: MatrixBot.Config) {
+  constructor(ctx: C, config: MatrixBot.Config) {
     super(ctx, config)
     this.id = config.id
     this.platform = 'matrix'

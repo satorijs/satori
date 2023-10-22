@@ -1,7 +1,7 @@
 import { Bot } from './bot'
 import { Channel, Message, SendOptions } from '@satorijs/protocol'
-import { Session } from './session'
 import h from '@satorijs/element'
+import { Context } from '.'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -9,10 +9,10 @@ class AggregateError extends Error {
   }
 }
 
-export abstract class MessageEncoder<B extends Bot = Bot> {
+export abstract class MessageEncoder<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   public errors: Error[] = []
   public results: Message[] = []
-  public session: Session
+  public session: C[typeof Context.session]
 
   constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) { }
 

@@ -1,5 +1,5 @@
 import * as QQ from './types'
-import { Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { QQBot } from './bot'
 import FormData from 'form-data'
 import { escape } from '@satorijs/element'
@@ -9,7 +9,7 @@ export const escapeMarkdown = (val: string) =>
   val
     .replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
 
-export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
+export class QQGuildMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQGuildBot<C>> {
   private content: string = ''
   private file: Buffer
   private filename: string
@@ -146,7 +146,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
 
 const MSG_TIMEOUT = 5 * 60 * 1000 - 2000// 5 mins
 
-export class QQMessageEncoder extends MessageEncoder<QQBot> {
+export class QQMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQBot<C>> {
   private content: string = ''
   private useMarkdown = false
   private rows: QQ.Button[][] = []

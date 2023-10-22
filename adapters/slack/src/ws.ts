@@ -1,11 +1,11 @@
-import { Adapter, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
 
 const logger = new Logger('slack')
 
-export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & WsClient.Config>> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Config>> {
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)

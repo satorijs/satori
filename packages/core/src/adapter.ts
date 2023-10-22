@@ -7,15 +7,15 @@ import Logger from 'reggol'
 
 const logger = new Logger('adapter')
 
-export abstract class Adapter<T extends Bot = Bot> {
+export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   static schema = false
 
-  public bots: T[] = []
+  public bots: B[] = []
 
-  async connect(bot: T) {}
-  async disconnect(bot: T) {}
+  async connect(bot: B) {}
+  async disconnect(bot: B) {}
 
-  fork(ctx: Context, bot: T) {
+  fork(ctx: Context, bot: B) {
     bot.adapter = this
     this.bots.push(bot)
     ctx.on('dispose', () => {
@@ -37,7 +37,7 @@ export namespace Adapter {
     retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
   }).description('连接设置')
 
-  export abstract class WsClientBase<T extends Bot = Bot> extends Adapter<T> {
+  export abstract class WsClientBase<C extends Context, B extends Bot<C>> extends Adapter<C, B> {
     protected socket: WebSocket
 
     protected abstract prepare(): Awaitable<WebSocket>
@@ -102,11 +102,11 @@ export namespace Adapter {
     }
   }
 
-  export abstract class WsClient<T extends Bot<WsClientConfig>> extends WsClientBase<T> {
+  export abstract class WsClient<C extends Context, B extends Bot<C, WsClientConfig>> extends WsClientBase<C, B> {
     static reusable = true
     static Config = WsClientConfig
 
-    constructor(ctx: Context, public bot: T) {
+    constructor(ctx: Context, public bot: B) {
       super(ctx, bot.config)
       bot.adapter = this
     }
@@ -120,11 +120,11 @@ export namespace Adapter {
       this.bot.error = error
     }
 
-    async connect(bot: T) {
+    async connect(bot: B) {
       this.start()
     }
 
-    async disconnect(bot: T) {
+    async disconnect(bot: B) {
       this.stop()
     }
   }

@@ -1,4 +1,4 @@
-import { Dict, h, MessageEncoder, Universal } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
@@ -29,13 +29,13 @@ async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promis
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
+export class TelegramMessageEncoder<C extends Context = Context> extends MessageEncoder<C, TelegramBot<C>> {
   private asset: h = null
   private payload: Dict
   private mode: RenderMode = 'default'
   private rows: Telegram.InlineKeyboardButton[][] = []
 
-  constructor(bot: TelegramBot, channelId: string, guildId?: string, options?: Universal.SendOptions) {
+  constructor(bot: TelegramBot<C>, channelId: string, guildId?: string, options?: Universal.SendOptions) {
     super(bot, channelId, guildId, options)
     const chat_id = guildId || channelId
     this.payload = { chat_id, parse_mode: 'html', caption: '' }

@@ -1,16 +1,16 @@
-import { Adapter, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 
 const logger = new Logger('telegram')
 
-export class HttpPolling extends Adapter<TelegramBot> {
+export class HttpPolling<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
   static reusable = true
 
   private offset = 0
   private timeout: NodeJS.Timeout
 
-  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Config>) {
+  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpPolling.Config>) {
     bot.initialize(async () => {
       let _retryCount = 0
       let _initial = true

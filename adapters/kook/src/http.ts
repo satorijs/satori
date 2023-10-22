@@ -4,8 +4,8 @@ import { adaptSession } from './utils'
 
 const logger = new Logger('kook')
 
-export class HttpServer extends Adapter<KookBot<KookBot.BaseConfig & HttpServer.Config>> {
-  constructor(ctx: Context, bot: KookBot) {
+export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Config>> {
+  constructor(ctx: C, bot: KookBot<C>) {
     super()
     let { path } = bot.config as HttpServer.Config
     path = sanitize(path)

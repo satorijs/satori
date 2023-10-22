@@ -1,11 +1,11 @@
-import { Adapter, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
 
 const logger = new Logger('discord')
 
-export class WsClient extends Adapter.WsClient<DiscordBot> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DiscordBot<C>> {
   _d = 0
   _ping: NodeJS.Timeout
   _sessionId = ''

@@ -7,7 +7,7 @@ import { Internal } from './internal'
 const logger = new Logger('dingtalk')
 
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
-export class DingtalkBot extends Bot<DingtalkBot.Config> {
+export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
 
   public oldHttp: Quester
@@ -15,7 +15,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public internal: Internal
   private refreshTokenTimer: NodeJS.Timeout
 
-  constructor(ctx: Context, config: DingtalkBot.Config) {
+  constructor(ctx: C, config: DingtalkBot.Config) {
     super(ctx, config)
     this.platform = 'dingtalk'
     this.selfId = config.appkey

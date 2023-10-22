@@ -1,13 +1,13 @@
-import { Adapter, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 
-export class HttpServer extends Adapter<SlackBot> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
   logger = new Logger('slack')
 
-  async connect(bot: SlackBot<SlackBot.Config & HttpServer.Config>) {
+  async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {
     const { signing } = bot.config
     await bot.getLogin()
     bot.ctx.router.post('/slack', async (ctx) => {

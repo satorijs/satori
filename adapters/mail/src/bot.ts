@@ -1,57 +1,19 @@
-import { Bot, Context, Logger, Schema, Universal } from '@satorijs/satori'
-import { ParsedMail } from 'mailparser'
+import { Bot, Context, Schema } from '@satorijs/satori'
 import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
-import { dispatchSession } from './utils'
 
-const logger = new Logger('adapter-mail')
-
-export class MailBot extends Bot<MailBot.Config> {
+export class MailBot<C extends Context = Context> extends Bot<C, MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
 
-  imap: IMAP
-  smtp: SMTP
+  internal: SMTP
 
-  constructor(ctx: Context, config: MailBot.Config) {
+  constructor(ctx: C, config: MailBot.Config) {
     super(ctx, config)
     this.selfId = config.selfId || config.username
     this.platform = 'mail'
-  }
-
-  async start() {
     this.user.name = this.config.username
-    await super.start()
-    this.imap = new IMAP(
-      this.config,
-      this.online.bind(this),
-      this.onClose.bind(this),
-      this.onMail.bind(this),
-      this.onError.bind(this),
-    )
-    this.smtp = new SMTP(this.config)
-  }
-
-  async stop() {
-    await super.stop()
-    this.imap.stop()
-  }
-
-  onError(error: Error) {
-    logger.error(error)
-  }
-
-  onMail(mail: ParsedMail) {
-    dispatchSession(this, mail)
-  }
-
-  onClose() {
-    if (!this.isActive) return
-    logger.info('IMAP disconnected, will reconnect in 3s...')
-    this.status = Universal.Status.RECONNECT
-    setTimeout(() => {
-      if (!this.isActive) return
-      this.imap.connect()
-    }, 3000)
+    this.internal = new SMTP(this.config)
+    this.ctx.plugin(IMAP)
   }
 }
 
