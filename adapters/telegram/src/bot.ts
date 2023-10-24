@@ -58,7 +58,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (config.files.server ?? selfUrl) {
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route
-      ctx.router.get(route + '/:file+', async ctx => {
+      ctx.get('router').get(route + '/:file+', async ctx => {
         const { data, mime } = await this.$getFile(ctx.params.file)
         ctx.set('content-type', mime)
         ctx.body = data

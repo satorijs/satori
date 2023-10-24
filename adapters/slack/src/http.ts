@@ -5,6 +5,8 @@ import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
+  static inject = ['router']
+
   logger = new Logger('slack')
 
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {

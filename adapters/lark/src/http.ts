@@ -9,6 +9,8 @@ import { adaptSession, Cipher } from './utils'
 const logger = new Logger('lark')
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
+  static inject = ['router']
+
   private ciphers: Record<string, Cipher> = {}
 
   fork(ctx: C, bot: FeishuBot<C>) {

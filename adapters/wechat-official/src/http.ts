@@ -6,6 +6,8 @@ import { decodeMessage } from './utils'
 import { decrypt, encrypt, getSignature } from '@wecom/crypto'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOfficialBot<C>> {
+  static inject = ['router']
+
   constructor() {
     super()
   }

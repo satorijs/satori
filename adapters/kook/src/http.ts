@@ -5,6 +5,8 @@ import { adaptSession } from './utils'
 const logger = new Logger('kook')
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Config>> {
+  static inject = ['router']
+
   constructor(ctx: C, bot: KookBot<C>) {
     super()
     let { path } = bot.config as HttpServer.Config

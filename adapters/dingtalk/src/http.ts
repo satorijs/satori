@@ -5,6 +5,8 @@ import { Message } from './types'
 import { decodeMessage } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, DingtalkBot<C>> {
+  static inject = ['router']
+
   logger = new Logger('dingtalk')
 
   async connect(bot: DingtalkBot<C>) {

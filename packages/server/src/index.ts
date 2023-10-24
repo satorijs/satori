@@ -3,6 +3,9 @@ import WebSocket from 'ws'
 
 const logger = new Logger('server')
 
+export const name = 'server'
+export const inject = ['router']
+
 const kClient = Symbol('state')
 
 class Client {

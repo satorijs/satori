@@ -6,6 +6,8 @@ import * as Telegram from './types'
 const logger = new Logger('telegram')
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
+  static inject = ['router']
+
   async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Config>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')

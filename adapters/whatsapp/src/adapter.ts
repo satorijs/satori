@@ -7,6 +7,8 @@ import internal from 'stream'
 import crypto from 'crypto'
 
 class HttpServer {
+  static inject = ['router']
+
   private logger = new Logger('whatsapp')
   private adapters: WhatsAppAdapter[] = []
 

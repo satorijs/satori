@@ -6,6 +6,8 @@ import { adaptSessions } from './utils'
 import internal from 'stream'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<C>> {
+  static inject = ['router']
+
   logger = new Logger('line')
 
   constructor(ctx: C, bot: LineBot) {

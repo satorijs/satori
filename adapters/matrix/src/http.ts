@@ -7,6 +7,8 @@ import { ClientEvent, M_ROOM_MEMBER } from './types'
 const logger = new Logger('matrix')
 
 export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixBot<C>> {
+  static inject = ['router']
+
   private txnId: string = null
 
   public constructor(ctx: C) {
