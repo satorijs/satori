@@ -136,7 +136,7 @@ export class Context extends cordis.Context {
   }
 
   logger(name: string) {
-    return new Logger(name)
+    return new Logger(name, { [Context.current]: this })
   }
 
   component(name: string, component: Component<this[typeof Context.session]>, options: Component.Options = {}) {
