@@ -1,4 +1,5 @@
 import { camelCase, Context, Logger, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import {} from '@satorijs/router'
 import WebSocket from 'ws'
 
 const logger = new Logger('server')

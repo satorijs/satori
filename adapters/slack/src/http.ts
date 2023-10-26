@@ -1,4 +1,5 @@
 import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import {} from '@satorijs/router'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'

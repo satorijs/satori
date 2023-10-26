@@ -1,4 +1,4 @@
-import { Context, Logger } from '@satorijs/core'
+import { Context, Logger, Schema } from '@satorijs/core'
 import { MaybeArray, remove, trimSlash } from 'cosmokit'
 import { createServer, IncomingMessage, Server } from 'http'
 import { pathToRegexp } from 'path-to-regexp'
@@ -35,7 +35,7 @@ export class WebSocketLayer {
   }
 
   accept(socket: WebSocket, request: IncomingMessage) {
-    if (!this.regexp.test(parseUrl(request).pathname)) return
+    if (!this.regexp.test(parseUrl(request)!.pathname!)) return
     this.clients.add(socket)
     socket.addEventListener('close', () => {
       this.clients.delete(socket)
@@ -53,14 +53,14 @@ export class WebSocketLayer {
 }
 
 export class Router extends KoaRouter {
-  public _http?: Server
-  public _ws?: WebSocket.Server
+  public _http: Server
+  public _ws: WebSocket.Server
   public wsStack: WebSocketLayer[] = []
 
-  public host: string
-  public port: number
+  public host!: string
+  public port!: number
 
-  constructor(ctx: Context) {
+  constructor(ctx: Context, public config: Router.Config) {
     super()
 
     // create server
@@ -83,25 +83,26 @@ export class Router extends KoaRouter {
       socket.close()
     })
 
-    ctx.root.decline(['selfUrl', 'host', 'port', 'maxPort'])
+    ctx.decline(['selfUrl', 'host', 'port', 'maxPort'])
 
-    if (ctx.root.config.selfUrl) {
-      ctx.root.config.selfUrl = trimSlash(ctx.root.config.selfUrl)
+    if (config.selfUrl) {
+      config.selfUrl = trimSlash(config.selfUrl)
     }
 
     ctx.on('ready', async () => {
-      const { host, port } = ctx.root.config
+      const { host = '127.0.0.1', port } = config
       if (!port) return
-      ctx.router.host = host
-      ctx.router.port = await listen(ctx.root.config)
-      ctx.router._http.listen(ctx.router.port, host)
-      logger.info('server listening at %c', ctx.router.selfUrl)
-      ctx.on('dispose', () => {
-        logger.info('http server closing')
-        ctx.router._ws?.close()
-        ctx.router._http?.close()
-      })
+      this.host = host
+      this.port = await listen(config)
+      this._http.listen(this.port, host)
+      logger.info('server listening at %c', this.selfUrl)
     }, true)
+
+    ctx.on('dispose', () => {
+      logger.info('http server closing')
+      this._ws?.close()
+      this._http?.close()
+    })
   }
 
   get selfUrl() {
@@ -131,4 +132,20 @@ export class Router extends KoaRouter {
   }
 }
 
-Context.service('router', Router)
+export namespace Router {
+  export interface Config {
+    host: string
+    port: number
+    maxPort?: number
+    selfUrl?: string
+  }
+
+  export const Config: Schema<Config> = Schema.object({
+    host: Schema.string().default('127.0.0.1').description('要监听的 IP 地址。如果将此设置为 `0.0.0.0` 将监听所有地址，包括局域网和公网地址。'),
+    port: Schema.natural().max(65535).description('要监听的初始端口号。'),
+    maxPort: Schema.natural().max(65535).description('允许监听的最大端口号。'),
+    selfUrl: Schema.string().role('link').description('应用暴露在公网的地址。'),
+  })
+}
+
+export default Router

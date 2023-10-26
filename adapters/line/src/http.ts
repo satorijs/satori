@@ -1,6 +1,7 @@
 import { Adapter, Context, Logger } from '@satorijs/satori'
-import { LineBot } from './bot'
+import {} from '@satorijs/router'
 import crypto from 'node:crypto'
+import { LineBot } from './bot'
 import { WebhookRequestBody } from './types'
 import { adaptSessions } from './utils'
 import internal from 'stream'
@@ -50,7 +51,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
     })
     await bot.getLogin()
     await bot.internal.setWebhookEndpoint({
-      endpoint: bot.ctx.root.config.selfUrl + '/line',
+      endpoint: bot.ctx.router.config.selfUrl + '/line',
     })
     this.logger.debug('listening updates %c', 'line:' + bot.selfId)
     bot.online()

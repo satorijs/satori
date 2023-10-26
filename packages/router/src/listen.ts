@@ -1,8 +1,8 @@
 import net from 'net'
 
 export interface ListenOptions {
-  host?: string
-  port?: number
+  host: string
+  port: number
   maxPort?: number
 }
 

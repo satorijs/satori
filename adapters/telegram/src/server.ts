@@ -1,4 +1,5 @@
 import { Adapter, Context, Logger, sanitize, Schema, trimSlash } from '@satorijs/satori'
+import {} from '@satorijs/router'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
@@ -14,7 +15,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
     if (selfUrl) {
       selfUrl = trimSlash(selfUrl)
     } else {
-      selfUrl = bot.ctx.root.config.selfUrl
+      selfUrl = bot.ctx.router.config.selfUrl
     }
 
     bot.ctx.router.post(path, async (ctx) => {

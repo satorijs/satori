@@ -1,5 +1,6 @@
 import { Adapter, Context, Logger } from '@satorijs/satori'
 import { Context as KoaContext } from 'koa'
+import {} from '@satorijs/router'
 import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'

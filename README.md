@@ -55,12 +55,19 @@ await ctx.start()
 ### Specifying protocol
 
 ```ts
+import { Context } from '@satorijs/satori'
+import router from '@satorijs/router'
+import telegram from '@satorijs/adapter-telegram'
+
 // your application will be listening http://localhost:8080
 // and be available at https://example.com
 const ctx = new Context({
   port: 8080,
   selfUrl: 'https://example.com',
 })
+
+// you need a router plugin to handle http requests
+ctx.plugin(router)
 
 ctx.plugin(telegram, {
   // telegram supports two ways of connection: server and polling
