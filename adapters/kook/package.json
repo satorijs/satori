@@ -1,11 +1,12 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "KOOK (开黑啦) Adapter for Satorijs",
-  "version": "4.0.6",
+  "version": "4.0.7",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -27,8 +28,11 @@
     "im",
     "chat"
   ],
+  "devDependencies": {
+    "@satorijs/router": "^1.0.1"
+  },
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0"
+    "@satorijs/satori": "^4.0.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"

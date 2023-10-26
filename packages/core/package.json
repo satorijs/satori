@@ -1,12 +1,13 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -26,8 +27,8 @@
     "utilities"
   ],
   "scripts": {
-    "compile:cjs": "esbuild src/index.ts --outfile=lib/index.cjs --bundle --sourcemap --platform=node --external:cosmokit --external:cordis --target=es2019",
-    "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --platform=neutral --external:cosmokit --external:cordis --target=esnext",
+    "compile:cjs": "esbuild src/index.ts --outfile=lib/index.cjs --bundle --sourcemap --sources-content=false --platform=node --external:cosmokit --external:cordis --target=es2019",
+    "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --sources-content=false --platform=neutral --external:cosmokit --external:cordis --target=esnext",
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "devDependencies": {
@@ -40,7 +41,7 @@
     "cordis-axios": "^4.0.1",
     "cosmokit": "^1.5.1",
     "ws": "^8.14.2",
-    "reggol": "^1.5.2",
+    "reggol": "^1.6.0",
     "schemastery": "^3.14.0"
   }
 }

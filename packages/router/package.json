@@ -51,6 +51,6 @@
     "ws": "^8.14.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.2"
+    "@satorijs/satori": "^4.0.0"
   }
 }

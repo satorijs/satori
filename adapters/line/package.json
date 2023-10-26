@@ -1,11 +1,12 @@
 {
   "name": "@satorijs/adapter-line",
   "description": "Line Adapter for Satorijs",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "author": "LittleC <i@ltlec.com>",
   "license": "MIT",
@@ -27,7 +28,10 @@
     "im",
     "chat"
   ],
+  "devDependencies": {
+    "@satorijs/router": "^1.0.1"
+  },
   "peerDependencies": {
-    "@satorijs/satori": "^3.0.0"
+    "@satorijs/satori": "^4.0.0"
   }
 }

@@ -25,6 +25,7 @@
   },
   "files": [
     "lib",
+    "src",
     "jsx-runtime.d.ts",
     "jsx-dev-runtime.d.ts"
   ],

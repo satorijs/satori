@@ -1,11 +1,12 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
-    "lib"
+    "lib",
+    "src"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -29,7 +30,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "3.0.0",
+    "@satorijs/core": "4.0.0",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.6",
