@@ -8,6 +8,7 @@ import * as Utils from './utils'
 const logger = new Logger('lark')
 
 export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
+  static inject = ['router']
   static MessageEncoder = LarkMessageEncoder
 
   _token?: string
@@ -20,7 +21,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     super(ctx, config)
 
     // lark bot needs config.selfUrl to be set as it should be serve on a public url
-    if (!config.selfUrl && !ctx.root.config.selfUrl) {
+    if (!config.selfUrl && !ctx.router.config.selfUrl) {
       logger.warn('selfUrl is not set, some features may not work')
     }
 

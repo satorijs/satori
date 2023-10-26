@@ -96,6 +96,7 @@ class HttpServer {
 }
 
 export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, WhatsAppBot<C>> {
+  static inject = ['router']
   static schema = true
   static reusable = true
 

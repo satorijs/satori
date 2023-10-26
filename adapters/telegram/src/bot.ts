@@ -54,7 +54,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     } else if (config.protocol === 'polling') {
       ctx.plugin(HttpPolling, this)
     }
-    const selfUrl: string = config['selfUrl'] || ctx.root.config.selfUrl
+    const selfUrl: string = config['selfUrl'] || ctx.get('router').config.selfUrl
     if (config.files.server ?? selfUrl) {
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route

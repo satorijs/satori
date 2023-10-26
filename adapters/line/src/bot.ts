@@ -6,14 +6,16 @@ import { LineMessageEncoder } from './message'
 const logger = new Logger('line')
 
 export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
+  static inject = ['router']
   static MessageEncoder = LineMessageEncoder
+
   public http: Quester
   public contentHttp: Quester
   public internal: Internal
 
   constructor(ctx: C, config: LineBot.Config) {
     super(ctx, config)
-    if (!ctx.root.config.selfUrl) {
+    if (!ctx.router.config.selfUrl) {
       logger.warn('selfUrl is not set, some features may not work')
     }
 

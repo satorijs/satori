@@ -4,7 +4,9 @@ import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
 
 export class WechatOfficialBot<C extends Context = Context> extends Bot<C, WechatOfficialBot.Config> {
+  static inject = ['router']
   static MessageEncoder = WechatOfficialMessageEncoder
+
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout

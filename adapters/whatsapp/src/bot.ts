@@ -3,6 +3,7 @@ import { WhatsAppMessageEncoder } from './message'
 import { Internal } from './internal'
 
 export class WhatsAppBot<C extends Context = Context> extends Bot<C> {
+  static inject = ['router']
   static MessageEncoder = WhatsAppMessageEncoder
 
   public internal: Internal

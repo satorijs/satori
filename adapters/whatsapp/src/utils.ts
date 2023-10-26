@@ -36,14 +36,14 @@ export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
         if (message.type === 'document') type = 'file'
         const resource = message[message.type]
         if (resource.caption) elements.push(h.text(message[message.type].caption))
-        elements.push(h[type](`${bot.ctx.root.config.selfUrl}/whatsapp/assets/${bot.selfId}/${resource.id}`))
+        elements.push(h[type](`${bot.ctx.router.config.selfUrl}/whatsapp/assets/${bot.selfId}/${resource.id}`))
         session.elements = elements
       } else if (message.type === 'sticker') {
         session.elements = [h('face', {
           id: /* (message.sticker.animated ? 'a:' : '') + */message.sticker.id,
           platform: 'whatsapp',
         }, [
-          h.image(`${bot.ctx.root.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
+          h.image(`${bot.ctx.router.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
         ])]
       } else if (message.type === 'location') {
         session.elements = [h('whatsapp:location', {
