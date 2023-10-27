@@ -53,7 +53,7 @@ export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
       } else if (message.type === 'interactive' && message.interactive.type === 'button_reply') {
         session.type = 'interaction/button'
         session.event.button = {
-          id: message.interactive.button_reply.id
+          id: message.interactive.button_reply.id,
         }
       } else {
         continue

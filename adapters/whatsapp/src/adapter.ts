@@ -10,10 +10,11 @@ import crypto from 'crypto'
 class HttpServer {
   static inject = ['router']
 
-  private logger = new Logger('whatsapp')
+  private logger: Logger
   private adapters: WhatsAppAdapter[] = []
 
   constructor(private ctx: Context) {
+    this.logger = ctx.logger('whatsapp')
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
     ctx.router.post('/whatsapp', async (ctx) => {
@@ -97,7 +98,7 @@ class HttpServer {
 
 export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, WhatsAppBot<C>> {
   static inject = ['router']
-  static schema = true
+  static schema = true as any
   static reusable = true
 
   constructor(ctx: C, public config: WhatsAppAdapter.Config) {

@@ -119,7 +119,7 @@ export interface SendTextMessage extends SendMessageBase {
 }
 
 export interface Button {
-  type: "reply"
+  type: 'reply'
   title: string
   id: string
 }

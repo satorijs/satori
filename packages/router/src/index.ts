@@ -8,8 +8,6 @@ import KoaRouter from '@koa/router'
 import Koa from 'koa'
 import { listen } from './listen'
 
-const logger = new Logger('app')
-
 declare module 'koa' {
   // koa-bodyparser
   interface Request {
@@ -60,8 +58,11 @@ export class Router extends KoaRouter {
   public host!: string
   public port!: number
 
+  private logger: Logger
+
   constructor(ctx: Context, public config: Router.Config) {
     super()
+    this.logger = ctx.logger('router')
 
     // create server
     const koa = new Koa()
@@ -95,11 +96,13 @@ export class Router extends KoaRouter {
       this.host = host
       this.port = await listen(config)
       this._http.listen(this.port, host)
-      logger.info('server listening at %c', this.selfUrl)
+      this.logger.info('server listening at %c', this.selfUrl)
     }, true)
 
     ctx.on('dispose', () => {
-      logger.info('http server closing')
+      if (config.port) {
+        this.logger.info('http server closing')
+      }
       this._ws?.close()
       this._http?.close()
     })

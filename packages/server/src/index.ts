@@ -1,8 +1,6 @@
-import { camelCase, Context, Logger, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import { camelCase, Context, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import WebSocket from 'ws'
-
-const logger = new Logger('server')
 
 export const name = 'server'
 export const inject = ['router']
@@ -65,6 +63,8 @@ function transformKey(source: any, callback: (key: string) => string) {
 }
 
 export function apply(ctx: Context, config: Config) {
+  const logger = ctx.logger('server')
+
   ctx.router.get(config.path + '/v1(/.+)*', async (koa) => {
     koa.body = 'Please use POST method to send requests.'
     koa.status = 405

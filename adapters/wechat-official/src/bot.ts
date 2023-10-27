@@ -10,10 +10,11 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
-  logger = new Logger('wo')
+  logger: Logger
 
   constructor(ctx: C, config: WechatOfficialBot.Config) {
     super(ctx, config)
+    this.logger = ctx.logger('wechat-official')
     this.platform = 'wechat-official'
     this.selfId = config.account
     this.http = ctx.http.extend(config)

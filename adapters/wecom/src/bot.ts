@@ -9,10 +9,11 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
-  logger = new Logger('wecom')
+  logger: Logger
 
   constructor(ctx: C, config: WecomBot.Config) {
     super(ctx, config)
+    this.logger = ctx.logger('wecom')
     this.selfId = config.agentId
     this.platform = 'wecom'
     this.http = ctx.http.extend(config)
