@@ -39,7 +39,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
       subtype: isDirect ? 'private' : 'group',
     })
     for (const key in this.options.session || {}) {
-      if (key in this.session) continue
+      if (key === 'id' || key === 'event') continue
       this.session[key] = this.options.session[key]
     }
     await this.prepare()

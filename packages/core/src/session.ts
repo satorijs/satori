@@ -42,17 +42,9 @@ export class Session<C extends Context = Context> {
     event.timestamp ??= Date.now()
     this.event = event as Event
     this.id = ++Session.counter
-    Object.assign(this, event)
-    for (const [key, descriptor] of Object.entries(Object.getOwnPropertyDescriptors(event))) {
-      if (descriptor.enumerable) continue
-      Object.defineProperty(this, key, descriptor)
-    }
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
-    this.initialize()
   }
-
-  initialize() {}
 
   /** @deprecated */
   get data() {
