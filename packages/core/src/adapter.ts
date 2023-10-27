@@ -3,12 +3,9 @@ import { Status, WebSocket } from '@satorijs/protocol'
 import { Context } from '.'
 import { Bot } from './bot'
 import Schema from 'schemastery'
-import Logger from 'reggol'
-
-const logger = new Logger('adapter')
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
-  static schema = false
+  static schema = false as const
 
   public bots: B[] = []
 
@@ -51,6 +48,7 @@ export namespace Adapter {
 
     async start() {
       let _retryCount = 0
+      const logger = this.ctx.logger('adapter')
       const { retryTimes, retryInterval, retryLazy } = this.config
 
       const reconnect = async (initial = false) => {

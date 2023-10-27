@@ -86,13 +86,13 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'before-send'(session: GetSession<C>, options: SendOptions): Awaitable<void | boolean>
   'send'(session: GetSession<C>): void
   /** @deprecated use `login-added` instead */
-  'bot-added'(client: Bot): void
+  'bot-added'(client: Bot<C>): void
   /** @deprecated use `login-removed` instead */
-  'bot-removed'(client: Bot): void
+  'bot-removed'(client: Bot<C>): void
   /** @deprecated use `login-updated` instead */
-  'bot-status-updated'(client: Bot): void
-  'bot-connect'(client: Bot): Awaitable<void>
-  'bot-disconnect'(client: Bot): Awaitable<void>
+  'bot-status-updated'(client: Bot<C>): void
+  'bot-connect'(client: Bot<C>): Awaitable<void>
+  'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
 export interface Context {
@@ -107,7 +107,7 @@ export class Context extends cordis.Context {
   // remove generic type to loosen the constraint
   static readonly Session = Session as new (bot: Bot, event: Partial<Event>) => Session
 
-  public bots = new Proxy([] as Bot[] & Dict<Bot>, {
+  public bots = new Proxy([] as Bot<this>[] & Dict<Bot<this>>, {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop)
@@ -130,7 +130,7 @@ export class Context extends cordis.Context {
 
     this.http = new Quester(config.request)
 
-    this.on('internal/warning', (format, ...args) => {
+    this.on('internal/warning', function (format, ...args) {
       this.logger('app').warn(format, ...args)
     })
   }
