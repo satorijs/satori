@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "4.0.0",
+  "version": "3.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.1",
-    "@satorijs/core": "4.0.0",
+    "@satorijs/core": "3.1.0",
     "@types/koa": "*",
     "@types/koa__router": "*",
     "@types/ws": "^8.5.6",

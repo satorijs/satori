@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-lark",
   "description": "Lark (飞书) Adapter for Satorijs",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -33,10 +33,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/router": "^1.0.1"
+    "@satorijs/router": "^1.0.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^4.0.0"
+    "@satorijs/satori": "^3.1.0"
   },
   "dependencies": {
     "form-data": "^4.0.0"
