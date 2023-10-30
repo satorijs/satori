@@ -68,6 +68,10 @@ export class Router extends KoaRouter {
     const koa = new Koa()
     koa.use(require('koa-bodyparser')({
       enableTypes: ['json', 'form', 'xml'],
+      jsonLimit: '10mb',
+      formLimit: '10mb',
+      textLimit: '10mb',
+      xmlLimit: '10mb',
     }))
     koa.use(this.routes())
     koa.use(this.allowedMethods())

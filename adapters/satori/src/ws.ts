@@ -4,7 +4,7 @@ import { SatoriBot, transformKey } from './bot'
 const logger = new Logger('satori')
 
 export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
-  static schema = true
+  static schema = true as any
   static reusable = true
 
   public http: Quester
