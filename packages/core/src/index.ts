@@ -34,6 +34,7 @@ declare module 'cordis-axios' {
 
 defineProperty(Quester, 'Config', Schema.object({
   timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
+  proxyAgent: Schema.string().description('使用的代理服务器地址。'),
 }).description('请求设置'))
 
 Quester.createConfig = function createConfig(this, endpoint) {
@@ -107,7 +108,7 @@ export class Context extends cordis.Context {
   // remove generic type to loosen the constraint
   static readonly Session = Session as new (bot: Bot, event: Partial<Event>) => Session
 
-  public bots = new Proxy([] as Bot<this>[] & Dict<Bot<this>>, {
+  public bots = new Proxy([], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop)
@@ -123,7 +124,7 @@ export class Context extends cordis.Context {
       target.splice(bot, 1)
       return true
     },
-  })
+  }) as Bot<this>[] & Dict<Bot<this>>
 
   constructor(config: Context.Config = {}) {
     super(config)

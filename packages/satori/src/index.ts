@@ -1,5 +1,5 @@
-import { Quester, Schema } from '@satorijs/core'
-import { base64ToArrayBuffer, defineProperty } from 'cosmokit'
+import { Quester } from '@satorijs/core'
+import { base64ToArrayBuffer } from 'cosmokit'
 import { ClientRequestArgs } from 'http'
 import { WebSocket } from 'ws'
 import { basename } from 'path'
@@ -49,11 +49,6 @@ Quester.prototype.prepare = function prepare(this: Quester) {
   options.httpsAgent = this.agent(this.config.proxyAgent)
   return options
 }
-
-defineProperty(Quester, 'Config', Schema.object({
-  ...Quester.Config.dict,
-  proxyAgent: Schema.string().description('使用的代理服务器地址。'),
-}).description('请求设置'))
 
 Quester.defineAgent(['http'], createHttpProxyAgent)
 Quester.defineAgent(['https'], createHttpsProxyAgent)
