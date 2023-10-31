@@ -13,7 +13,7 @@ export class MailBot<C extends Context = Context> extends Bot<C, MailBot.Config>
     this.platform = 'mail'
     this.user.name = this.config.username
     this.internal = new SMTP(this.config)
-    this.ctx.plugin(IMAP)
+    this.ctx.plugin(IMAP, this)
   }
 }
 
