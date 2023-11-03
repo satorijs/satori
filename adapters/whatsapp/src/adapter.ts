@@ -3,7 +3,7 @@ import {} from '@satorijs/router'
 import { Internal } from './internal'
 import { WhatsAppBot } from './bot'
 import { WebhookBody } from './types'
-import { decodeMessage } from './utils'
+import { decodeSession } from './utils'
 import internal from 'stream'
 import crypto from 'crypto'
 
@@ -39,7 +39,7 @@ class HttpServer {
       for (const entry of parsed.entry) {
         const phone_number_id = entry.changes[0].value.metadata.phone_number_id
         const bot = this.getBot(phone_number_id)
-        const session = await decodeMessage(bot, entry)
+        const session = await decodeSession(bot, entry)
         if (session.length) session.forEach(bot.dispatch.bind(bot))
         this.logger.debug('handling bot: %s', bot.sid)
         this.logger.debug(session)

@@ -2,12 +2,18 @@ import { h, Session, Universal } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
 import { Entry } from './types'
 
-export async function decodeMessage(bot: WhatsAppBot, entry: Entry) {
+export async function decodeSession(bot: WhatsAppBot, entry: Entry) {
   const result: Session[] = []
   for (const change of entry.changes) {
+    bot.dispatch(bot.session({
+      type: 'internal',
+      _type: 'whatsapp/' + change.field,
+      _data: change.value,
+    }))
     if (change.field === 'messages' && change.value.messages?.length) {
       const session = bot.session()
       session.type = 'message'
+      session.setInternal('whatsapp', change.value)
       session.isDirect = true
       const message = change.value.messages[0]
       session.channelId = message.from
