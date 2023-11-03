@@ -146,7 +146,10 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
       }
     }
     this.context.emit('internal/session', session)
-    if (session.type === 'internal') return
+    if (session.type === 'internal') {
+      this.context.emit(session.event._type, session.event._data)
+      return
+    }
     for (const event of events) {
       this.context.emit(session, event as any, session)
     }

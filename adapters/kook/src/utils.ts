@@ -155,7 +155,7 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
     bot.dispatch(bot.session({
       type: 'internal',
       _type: 'kook/' + type.replace(/_/g, '-'),
-      _data: input.body,
+      _data: body,
     }))
     switch (type) {
       case 'updated_message':
