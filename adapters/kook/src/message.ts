@@ -14,7 +14,8 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
-  private buffer: string = ''
+  private textBuffer: string = ''
+  private cardBuffer: Kook.Card.Module[] = []
 
   async prepare() {
     if (isDirectChannel(this.session.channelId)) {
@@ -30,6 +31,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     try {
       const params = { ...this.params, ...this.additional, type, content }
       const result = await this.bot.request('POST', this.path, params)
+      if (!result.msg_id) return
       const session = this.bot.session()
       session.type = 'send'
       session.messageId = result.msg_id
@@ -127,11 +129,33 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     await this.post(Kook.Type.card, JSON.stringify(output))
   }
 
-  async flush() {
-    const content = this.buffer.trim()
+  flushText() {
+    const content = this.textBuffer.trim()
     if (!content) return
-    await this.post(Kook.Type.kmarkdown, content)
-    this.buffer = ''
+    this.textBuffer = ''
+    this.cardBuffer.push({
+      type: 'section',
+      text: {
+        type: 'kmarkdown',
+        content,
+      },
+    })
+  }
+
+  async flush() {
+    if (this.cardBuffer.length) {
+      this.flushText()
+      await this.post(Kook.Type.card, JSON.stringify([{
+        type: 'card',
+        modules: this.cardBuffer,
+      }]))
+      this.cardBuffer = []
+    } else {
+      const content = this.textBuffer.trim()
+      if (!content) return
+      this.textBuffer = ''
+      await this.post(Kook.Type.kmarkdown, content)
+    }
     this.additional = {}
   }
 
@@ -139,59 +163,73 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     const { type, attrs, children } = element
     if (type === 'text') {
       // https://github.com/satorijs/satori/issues/51
-      this.buffer += attrs.content.replace(/[\\*`~()]/g, '\\$&')
+      this.textBuffer += attrs.content.replace(/[\\*`~()]/g, '\\$&')
     } else if (type === 'b' || type === 'strong') {
-      this.buffer += '**'
+      this.textBuffer += '**'
       await this.render(children)
-      this.buffer += '**'
+      this.textBuffer += '**'
     } else if (type === 'i' || type === 'em') {
-      this.buffer += '*'
+      this.textBuffer += '*'
       await this.render(children)
-      this.buffer += '*'
+      this.textBuffer += '*'
     } else if (type === 'u' || type === 'ins') {
-      this.buffer += '(ins)'
+      this.textBuffer += '(ins)'
       await this.render(children)
-      this.buffer += '(ins)'
+      this.textBuffer += '(ins)'
     } else if (type === 's' || type === 'del') {
-      this.buffer += '~~'
+      this.textBuffer += '~~'
       await this.render(children)
-      this.buffer += '~~'
+      this.textBuffer += '~~'
     } else if (type === 'spl') {
-      this.buffer += '(spl)'
+      this.textBuffer += '(spl)'
       await this.render(children)
-      this.buffer += '(spl)'
+      this.textBuffer += '(spl)'
     } else if (type === 'code') {
-      this.buffer += '`'
+      this.textBuffer += '`'
       await this.render(children)
-      this.buffer += '`'
+      this.textBuffer += '`'
     } else if (type === 'a') {
-      this.buffer += `[`
+      this.textBuffer += `[`
       await this.render(children)
-      this.buffer += `](${attrs.href})`
+      this.textBuffer += `](${attrs.href})`
     } else if (type === 'br') {
-      this.buffer += '\n'
+      this.textBuffer += '\n'
     } else if (type === 'p') {
-      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      if (!this.textBuffer.endsWith('\n')) this.textBuffer += '\n'
       await this.render(children)
-      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
+      if (!this.textBuffer.endsWith('\n')) this.textBuffer += '\n'
     } else if (type === 'at') {
       if (attrs.id) {
-        this.buffer += `(met)${attrs.id}(met)`
+        this.textBuffer += `(met)${attrs.id}(met)`
       } else if (attrs.type === 'all') {
-        this.buffer += `(met)all(met)`
+        this.textBuffer += `(met)all(met)`
       } else if (attrs.type === 'here') {
-        this.buffer += `(met)here(met)`
+        this.textBuffer += `(met)here(met)`
       } else if (attrs.role) {
-        this.buffer += `(rol)${attrs.role}(rol)`
+        this.textBuffer += `(rol)${attrs.role}(rol)`
       }
     } else if (type === 'code') {
-      this.buffer += `\`${element.toString(true)}\``
+      this.textBuffer += `\`${element.toString(true)}\``
     } else if (type === 'sharp') {
-      this.buffer += `(chn)${attrs.id}(chn)`
+      this.textBuffer += `(chn)${attrs.id}(chn)`
     } else if (['image', 'video', 'audio', 'file'].includes(type)) {
-      await this.flush()
+      this.flushText()
       const url = await this.transformUrl(element)
-      await this.post(Kook.Type[type], url)
+      if (type === 'image') {
+        this.cardBuffer.push({
+          type: 'container',
+          elements: [{
+            type: 'image',
+            src: url,
+          }],
+        })
+      } else {
+        this.cardBuffer.push({
+          type: type as never,
+          src: url,
+          title: attrs.title,
+        })
+      }
     } else if (type === 'quote') {
       await this.flush()
       this.additional.quote = attrs.id

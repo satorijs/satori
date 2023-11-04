@@ -145,7 +145,7 @@ export interface Card {
 
 export namespace Card {
   export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info'
-  export type Module = Section | ImageGroup | Header | Divider | File | Countdown | Context
+  export type Module = Section | Container | ImageGroup | Header | Divider | File | Countdown | Context
 
   export interface Text {
     type: 'plain-text' | 'kmarkdown'
@@ -167,6 +167,11 @@ export namespace Card {
     accessory?: Image | Button
   }
 
+  export interface Container {
+    type: 'container'
+    elements: Image[]
+  }
+
   export interface Image {
     type: 'image'
     size?: 'lg' | 'sm'
@@ -186,6 +191,11 @@ export namespace Card {
   export interface ImageGroup {
     type: 'image-group'
     elements: Image[]
+  }
+
+  export interface ActionGroup {
+    type: 'action-group'
+    elements: Button[]
   }
 
   export interface Header {

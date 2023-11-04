@@ -1,4 +1,4 @@
-import { Bot, Context, h, hyphenate, isNullable, Session, Universal } from '@satorijs/satori'
+import { Bot, Context, h, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
 
 export * from './types'
@@ -210,12 +210,6 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
         session.guildId = input.target_id
         session.userId = body.user_id || bot.selfId
         break
-      case 'guild_member_online':
-      case 'guild_member_offline':
-        session.type = 'kook'
-        session.subtype = hyphenate(type)
-        session.userId = body.user_id
-        break
       case 'added_role':
       case 'deleted_role':
       case 'updated_role':
@@ -227,35 +221,6 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
         session.guildId = input.target_id
         session.roleId = '' + body.role_id
         session.event.role = decodeRole(body)
-        break
-      case 'added_block_list':
-      case 'deleted_block_list':
-      case 'added_emoji':
-      case 'updated_emoji':
-        session.type = 'kook'
-        session.subtype = hyphenate(type)
-        session.guildId = input.target_id
-        break
-      case 'joined_channel':
-      case 'exited_channel':
-        session.type = 'kook'
-        session.subtype = hyphenate(type)
-        session.guildId = input.target_id
-        session.channelId = body.channel_id
-        session.userId = body.user_id
-        break
-      case 'user_updated':
-        session.type = 'kook'
-        session.subtype = hyphenate(type)
-        session.userId = body.user_id
-        break
-      case 'message_btn_click':
-        session.type = 'kook'
-        session.subtype = hyphenate(type)
-        session.messageId = body.msg_id
-        session.userId = body.user_id
-        session.content = body.value
-        session['targetId'] = body.target_id
         break
       default: return
     }
