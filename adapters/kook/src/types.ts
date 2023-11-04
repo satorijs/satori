@@ -155,7 +155,6 @@ export namespace Card {
 
   export interface Paragraph {
     type: 'paragraph'
-    content: string
     cols: number
     fields: Text[]
   }
@@ -292,6 +291,7 @@ export interface Channel {
   id: string
   name: string
   user_id: string
+  user_info?: User
   guild_id: string
   is_category: boolean
   parent_id: string
@@ -312,6 +312,8 @@ export interface Channel {
 export interface NoticeBody extends Channel, MessageMeta, GuildRole {
   value: string
   msg_id: string
+  channel_type: 'GROUP' | 'PERSON'
+  author_id: string
   target_id: string
   channel_id: string
   operator_id: string

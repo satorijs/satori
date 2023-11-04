@@ -50,7 +50,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
       logger.debug('[receive] %o', parsed)
       if (parsed.s === Signal.event) {
         this._sn = Math.max(this._sn, parsed.sn)
-        const session = adaptSession(this.bot, parsed.d)
+        const session = await adaptSession(this.bot, parsed.d)
         if (session) this.bot.dispatch(session)
       } else if (parsed.s === Signal.hello) {
         this._heartbeat = setInterval(() => this.heartbeat(), Time.minute * 0.5)

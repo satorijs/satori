@@ -238,10 +238,13 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       })
     } else if (type === 'button-group') {
       this.flushText()
-      this.cardBuffer.push({
-        type: 'action-group',
-        elements: element.children.map(encodeButton),
-      })
+      const elements = element.children.map(encodeButton)
+      while (elements.length) {
+        this.cardBuffer.push({
+          type: 'action-group',
+          elements: elements.splice(0, 4),
+        })
+      }
     } else if (type === 'hr') {
       this.flushText()
       this.cardBuffer.push({

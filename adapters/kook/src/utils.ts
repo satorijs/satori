@@ -1,5 +1,6 @@
-import { Bot, Context, h, isNullable, Session, Universal } from '@satorijs/satori'
+import { Context, h, isNullable, Session, Universal } from '@satorijs/satori'
 import * as Kook from './types'
+import { KookBot } from './bot'
 
 export * from './types'
 
@@ -135,8 +136,25 @@ function adaptMessageCreate(data: Kook.Data, meta: Kook.MessageExtra, session: S
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
-function adaptMessageModify(data: Kook.Data, meta: Kook.NoticeBody, session: Session) {
-  session.channelId = meta.channel_id
+async function adaptMessageModify(bot: KookBot, data: Kook.Data, meta: Kook.NoticeBody, session: Session) {
+  session.guildId = meta.guild_id
+  // updated_private_message 事件会有两个不同的 author_id
+  // 这里优先使用 meta.user_info，当不存在时使用 meta.author_id
+  session.event.user = meta.user_info && adaptUser(meta.user_info)
+  session.userId = meta.author_id
+  // message_btn_click 事件会有两个不同的 channel_type
+  // 其中 data.channel_type 永远是 PERSON (即使是群聊环境)
+  // 但其他任何事件都未出现 meta.channel_type，因此这里做了 fallback
+  if ((meta.channel_type || data.channel_type) === 'GROUP') {
+    session.isDirect = false
+    // updated_message 事件使用 meta.channel_id
+    // message_btn_click 事件使用 meta.target_id
+    session.channelId = meta.channel_id || meta.target_id
+  } else {
+    session.isDirect = true
+    // 私聊环境的 message_btn_click 事件中拿不到 channel_id
+    session.channelId = meta.chat_code || (await bot.createDirectChannel(session.userId)).id
+  }
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
@@ -147,7 +165,7 @@ function adaptReaction(body: Kook.NoticeBody, session: Session) {
   session['emoji'] = body.emoji.id
 }
 
-export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
+export async function adaptSession<C extends Context>(bot: KookBot<C>, input: any) {
   const session = bot.session()
   session.setInternal('kook', input)
   if (input.type === Kook.Type.system) {
@@ -160,7 +178,7 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
     switch (type) {
       case 'message_btn_click':
         session.type = 'interaction/button'
-        adaptMessageModify(input, body, session)
+        await adaptMessageModify(bot, input, body, session)
         session.event.button = {
           id: body.value,
         }
@@ -168,12 +186,12 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
       case 'updated_message':
       case 'updated_private_message':
         session.type = 'message-updated'
-        adaptMessageModify(input, body, session)
+        await adaptMessageModify(bot, input, body, session)
         break
       case 'deleted_message':
       case 'deleted_private_message':
         session.type = 'message-deleted'
-        adaptMessageModify(input, body, session)
+        await adaptMessageModify(bot, input, body, session)
         break
       case 'added_reaction':
       case 'private_added_reaction':

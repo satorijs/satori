@@ -12,7 +12,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<
     super()
     let { path } = bot.config as HttpServer.Config
     path = sanitize(path)
-    ctx.router.post(path, (ctx) => {
+    ctx.router.post(path, async (ctx) => {
       const { body } = ctx.request
       logger.debug('receive %o', body)
 
@@ -27,7 +27,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<
       if (!bot) return
 
       // dispatch events
-      const session = adaptSession(bot, body.d)
+      const session = await adaptSession(bot, body.d)
       if (session) bot.dispatch(session)
     })
   }
