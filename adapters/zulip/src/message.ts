@@ -66,9 +66,9 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
     if (type === 'text') {
       this.buffer += escape(attrs.content)
     } else if (type === 'p') {
-      this.buffer += '\n'
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
-      this.buffer += '\n'
+      if (!this.buffer.endsWith('\n')) this.buffer += '\n'
     } else if (type === 'b' || type === 'strong') {
       this.buffer += ` **`
       await this.render(children)
