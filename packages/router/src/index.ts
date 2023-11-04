@@ -116,7 +116,7 @@ export class Router extends KoaRouter {
       this._http?.close()
     })
 
-    ctx.on('event/router/ready', (ctx, listener) => {
+    ctx.on<any>('event/router/ready', (ctx: Context, listener: Function) => {
       if (!this[Context.filter](ctx) || !this.port) return
       ctx.scope.ensure(async () => listener())
       return () => false

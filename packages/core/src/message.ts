@@ -46,7 +46,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
     this.session.elements = h.normalize(content)
     const btns = h.select(this.session.elements, 'button').filter(v => v.attrs.type !== 'link' && !v.attrs.id)
     for (const btn of btns) {
-      const r = (Math.random() + 1).toString(36).substring(7)
+      const r = Math.random().toString(36).slice(2)
       btn.attrs.id ||= r
       if (typeof btn.attrs.action === 'function') this.bot.callbacks[btn.attrs.id] = btn.attrs.action
     }

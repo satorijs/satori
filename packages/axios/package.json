@@ -35,12 +35,12 @@
     "service"
   ],
   "devDependencies": {
-    "@types/mime-db": "^1.43.1",
-    "@types/ws": "^8.5.6",
+    "@types/mime-db": "^1.43.3",
+    "@types/ws": "^8.5.8",
     "agent-base": "^6.0.2"
   },
   "dependencies": {
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "cosmokit": "^1.5.1",
     "mime-db": "^1.52.0"
   }

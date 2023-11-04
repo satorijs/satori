@@ -30,9 +30,9 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/router": "^1.0.2"
+    "@satorijs/router": "^1.1.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.1.0"
+    "@satorijs/satori": "^3.1.4"
   }
 }

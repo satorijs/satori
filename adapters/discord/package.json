@@ -32,7 +32,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.1.0"
+    "@satorijs/satori": "^3.1.4"
   },
   "dependencies": {
     "form-data": "^4.0.0"
