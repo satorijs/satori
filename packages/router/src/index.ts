@@ -20,6 +20,10 @@ declare module '@satorijs/core' {
   interface Context {
     router: Router
   }
+
+  interface Events {
+    'router/ready'(this: Router): void
+  }
 }
 
 type WebSocketCallback = (socket: WebSocket, request: IncomingMessage) => void
@@ -60,7 +64,7 @@ export class Router extends KoaRouter {
 
   private logger: Logger
 
-  constructor(ctx: Context, public config: Router.Config) {
+  constructor(protected ctx: Context, public config: Router.Config) {
     super()
     this.logger = ctx.logger('router')
 
@@ -101,6 +105,7 @@ export class Router extends KoaRouter {
       this.port = await listen(config)
       this._http.listen(this.port, host)
       this.logger.info('server listening at %c', this.selfUrl)
+      ctx.emit(this, 'router/ready')
     }, true)
 
     ctx.on('dispose', () => {
@@ -110,6 +115,16 @@ export class Router extends KoaRouter {
       this._ws?.close()
       this._http?.close()
     })
+
+    ctx.on('event/router/ready', (ctx, listener) => {
+      if (!this[Context.filter](ctx) || !this.port) return
+      ctx.scope.ensure(async () => listener())
+      return () => false
+    })
+  }
+
+  [Context.filter](ctx: Context) {
+    return ctx[Context.shadow].router === this.ctx[Context.shadow].router
   }
 
   get selfUrl() {
