@@ -158,6 +158,13 @@ export function adaptSession<C extends Context>(bot: Bot<C>, input: any) {
       _data: body,
     }))
     switch (type) {
+      case 'message_btn_click':
+        session.type = 'interaction/button'
+        adaptMessageModify(input, body, session)
+        session.event.button = {
+          id: body.value,
+        }
+        break
       case 'updated_message':
       case 'updated_private_message':
         session.type = 'message-updated'

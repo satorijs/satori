@@ -230,6 +230,37 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
           title: attrs.title,
         })
       }
+    } else if (type === 'button') {
+      this.flushText()
+      this.cardBuffer.push({
+        type: 'action-group',
+        elements: [encodeButton(element)],
+      })
+    } else if (type === 'button-group') {
+      this.flushText()
+      this.cardBuffer.push({
+        type: 'action-group',
+        elements: element.children.map(encodeButton),
+      })
+    } else if (type === 'hr') {
+      this.flushText()
+      this.cardBuffer.push({
+        type: 'divider',
+      })
+    } else if (type === 'kook:countdown') {
+      this.flushText()
+      this.cardBuffer.push({
+        type: 'countdown',
+        startTime: attrs.startTime,
+        endTime: attrs.endTime,
+        mode: attrs.mode,
+      })
+    } else if (type === 'kook:invite') {
+      this.flushText()
+      this.cardBuffer.push({
+        type: 'invite',
+        code: attrs.code,
+      })
     } else if (type === 'quote') {
       await this.flush()
       this.additional.quote = attrs.id
@@ -257,4 +288,22 @@ export namespace KookMessageEncoder {
       Schema.const('mixed').description('使用混合模式发送内容'),
     ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
   }).description('发送设置')
+}
+
+function encodeButton({ attrs, children }: h): Kook.Card.Button {
+  let theme: Kook.Card.Button.Theme = 'primary'
+  if (attrs.class === 'secondary') theme = 'info'
+  if (attrs.class === 'warning') theme = 'warning'
+  if (attrs.class === 'danger') theme = 'danger'
+  if (attrs.class === 'success') theme = 'success'
+  return {
+    type: 'button',
+    theme,
+    value: attrs.id,
+    click: attrs.type === 'link' ? 'link' : 'return-val',
+    text: {
+      type: 'plain-text',
+      content: children.join(''),
+    },
+  }
 }

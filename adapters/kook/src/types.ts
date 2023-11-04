@@ -144,8 +144,8 @@ export interface Card {
 }
 
 export namespace Card {
-  export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info'
-  export type Module = Section | Container | ImageGroup | Header | Divider | File | Countdown | Context
+  export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info' | 'none' | 'success'
+  export type Module = Section | Container | ImageGroup | ActionGroup | Header | Divider | Invite | File | Countdown | Context
 
   export interface Text {
     type: 'plain-text' | 'kmarkdown'
@@ -182,20 +182,19 @@ export namespace Card {
 
   export interface Button {
     type: 'button'
-    theme?: Theme
-    value: string
+    theme?: Button.Theme
+    value?: string
     text: Text
     click?: string
+  }
+
+  export namespace Button {
+    export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info' | 'success'
   }
 
   export interface ImageGroup {
     type: 'image-group'
     elements: Image[]
-  }
-
-  export interface ActionGroup {
-    type: 'action-group'
-    elements: Button[]
   }
 
   export interface Header {
@@ -205,6 +204,11 @@ export namespace Card {
 
   export interface Divider {
     type: 'divider'
+  }
+
+  export interface Invite {
+    type: 'invite'
+    code: string
   }
 
   export interface ActionGroup {
@@ -226,8 +230,8 @@ export namespace Card {
 
   export interface Countdown {
     type: 'countdown'
-    end_time: string
-    start_time: string
+    endTime: string
+    startTime: string
     mode: 'day' | 'hour' | 'second'
   }
 }
