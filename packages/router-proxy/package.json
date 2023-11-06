@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/proxy",
+  "name": "@satorijs/router-proxy",
   "description": "Proxy plugin for cordis",
   "version": "1.0.0",
   "main": "lib/index.js",
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "packages/proxy"
+    "directory": "packages/router-proxy"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
