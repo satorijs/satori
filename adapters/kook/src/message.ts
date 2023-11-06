@@ -4,8 +4,6 @@ import { KookBot } from './bot'
 import * as Kook from './types'
 import internal from 'stream'
 
-const attachmentTypes = ['image', 'video', 'audio', 'file']
-
 export function isDirectChannel(channelId: string) {
   return channelId.length > 30
 }
@@ -15,7 +13,10 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>
   private textBuffer: string = ''
-  private cardBuffer: Kook.Card.Module[] = []
+  private cardBuffer: Kook.Card = {
+    type: 'card',
+    modules: [],
+  }
 
   async prepare() {
     if (isDirectChannel(this.session.channelId)) {
@@ -69,71 +70,11 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     }
   }
 
-  private async _sendCard(chain: h[], useMarkdown: boolean) {
-    const type = useMarkdown ? 'kmarkdown' : 'plain-text'
-    let text: Kook.Card.Text = { type, content: '' }
-    let card: Kook.Card = { type: 'card', modules: [] }
-    const output: Kook.Card[] = []
-    const flushText = () => {
-      text.content = text.content.trim()
-      if (!text.content) return
-      card.modules.push({ type: 'section', text })
-      text = { type, content: '' }
-    }
-    const flushCard = () => {
-      flushText()
-      if (!card.modules.length) return
-      output.push(card)
-      card = { type: 'card', modules: [] }
-    }
-
-    for (const element of chain) {
-      const { type, attrs } = element
-      if (type === 'text') {
-        text.content += attrs.content
-      } else if (type === 'at') {
-        if (attrs.id) {
-          text.content += `@user#${attrs.id}`
-        } else if (attrs.type === 'all') {
-          text.content += '@全体成员'
-        } else if (attrs.type === 'here') {
-          text.content += '@在线成员'
-        } else if (attrs.role) {
-          text.content += `@role:${attrs.role};`
-        }
-      } else if (type === 'sharp') {
-        text.content += `#channel:${attrs.id};`
-      } else if (attachmentTypes.includes(type)) {
-        flushText()
-        await this.transformUrl(element)
-        if (type === 'image') {
-          card.modules.push({
-            type: 'image-group',
-            elements: [{
-              type: 'image',
-              src: attrs.url,
-            }],
-          })
-        } else {
-          card.modules.push({
-            type: type as never,
-            src: attrs.url,
-          })
-        }
-      } else if (type === 'card') {
-        flushCard()
-        output.push(JSON.parse(attrs.content))
-      }
-    }
-    flushCard()
-    await this.post(Kook.Type.card, JSON.stringify(output))
-  }
-
   flushText() {
     const content = this.textBuffer.trim()
     if (!content) return
     this.textBuffer = ''
-    this.cardBuffer.push({
+    this.cardBuffer.modules.push({
       type: 'section',
       text: {
         type: 'kmarkdown',
@@ -143,13 +84,13 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
   }
 
   async flush() {
-    if (this.cardBuffer.length) {
+    if (this.cardBuffer.modules.length) {
       this.flushText()
-      await this.post(Kook.Type.card, JSON.stringify([{
+      await this.post(Kook.Type.card, JSON.stringify([this.cardBuffer]))
+      this.cardBuffer = {
         type: 'card',
-        modules: this.cardBuffer,
-      }]))
-      this.cardBuffer = []
+        modules: [],
+      }
     } else {
       const content = this.textBuffer.trim()
       if (!content) return
@@ -212,47 +153,67 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       this.textBuffer += `\`${element.toString(true)}\``
     } else if (type === 'sharp') {
       this.textBuffer += `(chn)${attrs.id}(chn)`
-    } else if (['image', 'video', 'audio', 'file'].includes(type)) {
+    } else if (['video', 'audio', 'file', 'kook:video', 'kook:audio', 'kook:file'].includes(type)) {
       this.flushText()
-      const url = await this.transformUrl(element)
-      if (type === 'image') {
-        this.cardBuffer.push({
-          type: 'container',
-          elements: [{
-            type: 'image',
-            src: url,
-          }],
-        })
-      } else {
-        this.cardBuffer.push({
-          type: type as never,
-          src: url,
-          title: attrs.title,
+      this.cardBuffer.modules.push({
+        type: (type.startsWith('kook:') ? type.slice(5) : type) as never,
+        src: await this.transformUrl(element),
+        title: attrs.title,
+      })
+    } else if (type === 'image' || type === 'kook:image') {
+      this.flushText()
+      this.cardBuffer.modules.push({
+        type: 'container',
+        elements: [{
+          type: 'image',
+          src: await this.transformUrl(element),
+        }],
+      })
+    } else if (type === 'kook:image-group') {
+      this.flushText()
+      const elements = await Promise.all(element.children.map<Promise<Kook.Card.Image>>(async (child: h) => ({
+        type: 'image',
+        src: await this.transformUrl(child),
+        title: child.attrs.title,
+      })))
+      while (elements.length) {
+        this.cardBuffer.modules.push({
+          type: 'image-group',
+          elements: elements.splice(0, 9),
         })
       }
-    } else if (type === 'button') {
+    } else if (type === 'button' || type === 'kook:button') {
       this.flushText()
-      this.cardBuffer.push({
+      this.cardBuffer.modules.push({
         type: 'action-group',
         elements: [encodeButton(element)],
       })
-    } else if (type === 'button-group') {
+    } else if (type === 'button-group' || type === 'kook:action-group') {
       this.flushText()
       const elements = element.children.map(encodeButton)
       while (elements.length) {
-        this.cardBuffer.push({
+        this.cardBuffer.modules.push({
           type: 'action-group',
           elements: elements.splice(0, 4),
         })
       }
-    } else if (type === 'hr') {
+    } else if (type === 'hr' || type === 'kook:divider') {
       this.flushText()
-      this.cardBuffer.push({
+      this.cardBuffer.modules.push({
         type: 'divider',
+      })
+    } else if (type === 'kook:header') {
+      this.flushText()
+      this.cardBuffer.modules.push({
+        type: 'header',
+        text: {
+          type: 'plain-text',
+          content: attrs.content,
+        },
       })
     } else if (type === 'kook:countdown') {
       this.flushText()
-      this.cardBuffer.push({
+      this.cardBuffer.modules.push({
         type: 'countdown',
         startTime: attrs.startTime,
         endTime: attrs.endTime,
@@ -260,10 +221,16 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       })
     } else if (type === 'kook:invite') {
       this.flushText()
-      this.cardBuffer.push({
+      this.cardBuffer.modules.push({
         type: 'invite',
         code: attrs.code,
       })
+    } else if (type === 'kook:card') {
+      await this.flush()
+      this.cardBuffer.theme = attrs['kook:theme'] ?? (Kook.Card.Theme.includes(attrs.class) ? attrs.class : 'primary')
+      this.cardBuffer.size = attrs['kook:size']
+      await this.render(children)
+      await this.flush()
     } else if (type === 'quote') {
       await this.flush()
       this.additional.quote = attrs.id

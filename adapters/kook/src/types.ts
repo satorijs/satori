@@ -139,12 +139,12 @@ export interface Card {
   type: 'card'
   theme?: Card.Theme
   size?: 'lg' | 'sm'
-  color?: string
   modules: Card.Module[]
 }
 
 export namespace Card {
-  export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info' | 'none' | 'success'
+  export const Theme = ['primary', 'secondary', 'warning', 'danger', 'info', 'none', 'success'] as const
+  export type Theme = typeof Theme[number]
   export type Module = Section | Container | ImageGroup | ActionGroup | Header | Divider | Invite | File | Countdown | Context
 
   export interface Text {
@@ -188,7 +188,8 @@ export namespace Card {
   }
 
   export namespace Button {
-    export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info' | 'success'
+    export const Theme = ['primary', 'secondary', 'warning', 'danger', 'info', 'none', 'success'] as const
+    export type Theme = typeof Theme[number]
   }
 
   export interface ImageGroup {
