@@ -72,24 +72,45 @@ function adaptMessageMeta(
     message.elements = data.map(transformCardElement)
     message.content = message.elements.join('')
   } else if (base.type === Kook.Type.kmarkdown) {
-    message.content = base.content
-      .replace(/\(met\)all\(met\)/g, () => h('at', { type: 'all' }).toString())
-      .replace(/\(met\)here\(met\)/g, () => h('at', { type: 'here' }).toString())
-      .replace(/\(chn\)(\d+)\(chn\)/g, (_, id) => h.sharp(id).toString())
-    for (const mention of data.kmarkdown.mention_part) {
-      message.content = message.content
-        .replace(`(met)${mention.id}(met)`, h.at(mention.id, { name: mention.username }).toString())
+    let content = base.content
+    let buffer = ''
+    let cap: RegExpExecArray
+    const elements: h[] = []
+    const flushText = () => {
+      if (!buffer) return
+      // https://github.com/koishijs/koishi/issues/1050
+      // https://github.com/koishijs/koishi/issues/1227
+      elements.push(h.text(buffer.replace(/\\(.)/g, (_, char) => char)))
+      buffer = ''
     }
-    for (const mention of data.kmarkdown.mention_role_part) {
-      const element = h('at', { role: mention.role_id, name: mention.name })
-      message.content = message.content.replace(`(rol)${mention.role_id}(rol)`, element.toString())
+    while (content) {
+      if (content.startsWith('\\') && content.length > 1) {
+        buffer += content[1]
+        content = content.slice(2)
+      } else if ((cap = /^(\((met|chn|rol)\))(\w+)\1/.exec(content))) {
+        content = content.slice(cap[0].length)
+        flushText()
+        if (cap[2] === 'met') {
+          if (cap[3] === 'all' || cap[3] === 'here') {
+            elements.push(h('at', { type: cap[3] }))
+          } else {
+            const name = data.kmarkdown.mention_part.find(mention => mention.id === cap[3])?.username
+            elements.push(h('at', { id: cap[3], name }))
+          }
+        } else if (cap[2] === 'chn') {
+          elements.push(h.sharp(cap[3]))
+        } else if (cap[2] === 'rol') {
+          const name = data.kmarkdown.mention_role_part.find(mention => mention.role_id + '' === cap[3])?.name
+          elements.push(h('at', { role: cap[3], name }))
+        }
+      } else {
+        buffer += content[0]
+        content = content.slice(1)
+      }
     }
-    message.content = message.content
-      .replace(/\\\*/g, () => '*')
-      .replace(/\\\\/g, () => '\\')
-      .replace(/\\\(/g, () => '(')
-      .replace(/\\\)/g, () => ')')
-    message.elements = h.parse(message.content)
+    flushText()
+    message.content = elements.join('')
+    message.elements = elements
   }
   if (data.author) {
     payload.user = adaptUser(data.author)
