@@ -78,7 +78,9 @@ export async function decodeMessage(
   })
 
   if (data.message_reference) {
-    message.quote = await bot.getMessage(data.channel_id, data.message_reference.message_id)
+    message.quote = bot.getMessage
+      ? await bot.getMessage(data.channel_id, data.message_reference.message_id)
+      : { id: data.message_reference.message_id }
   }
 
   if (!payload) return message
