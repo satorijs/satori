@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpPolling } from './polling'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
@@ -10,12 +10,10 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
   static MessageEncoder = ZulipMessageEncoder
 
   public http: Quester
-  public logger: Logger
   public internal: Internal
-  constructor(ctx: C, config: ZulipBot.Config) {
-    super(ctx, config)
 
-    this.platform = 'zulip'
+  constructor(ctx: C, config: ZulipBot.Config) {
+    super(ctx, config, 'zulip')
     this.http = ctx.http.extend({
       headers: {
         Authorization: `Basic ${Buffer.from(`${config.email}:${config.key}`).toString('base64')}`,
@@ -27,7 +25,6 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
       endpoint: config.endpoint + '/api/v1',
     })
     this.internal = new Internal(this.http)
-    this.logger = ctx.logger('zulip')
 
     ctx.plugin(HttpPolling, this)
   }

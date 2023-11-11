@@ -12,4 +12,5 @@ export * from './http'
 export * from './message'
 export * from './types'
 export * from './utils'
+
 export default MatrixBot

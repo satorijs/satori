@@ -1,9 +1,8 @@
 import FormData from 'form-data'
-import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
+import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { LarkBot } from '../bot'
 
 export interface Internal {}
-
-const logger = new Logger('lark')
 
 export interface BaseResponse {
   /** error code. would be 0 if success, and non-0 if failed. */
@@ -15,14 +14,14 @@ export interface BaseResponse {
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 export class Internal {
-  constructor(private http: Quester) {}
+  constructor(private bot: LarkBot) {}
 
   private processReponse(response: any): BaseResponse {
     const { code, msg } = response
     if (code === 0) {
       return response
     } else {
-      logger.debug('response: %o', response)
+      this.bot.logger.debug('response: %o', response)
       throw new Error(`HTTP response with non-zero status (${code}) with message "${msg}"`)
     }
   }
@@ -54,7 +53,7 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            return this.processReponse(await this.http(method, url, config))
+            return this.processReponse(await this.bot.http(method, url, config))
           }
         }
       }

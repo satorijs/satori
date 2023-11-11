@@ -1,8 +1,6 @@
-import { Adapter, Context, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
-
-const logger = new Logger('telegram')
 
 export class HttpPolling<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
   static reusable = true
@@ -17,7 +15,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, Telegra
       const { retryTimes, retryInterval } = bot.config
       const { url } = await bot.internal.getWebhookInfo()
       if (url) {
-        logger.warn('Bot currently has a webhook set up, trying to remove it...')
+        bot.logger.warn('Bot currently has a webhook set up, trying to remove it...')
         await bot.internal.setWebhook({ url: '' })
       }
 
@@ -49,11 +47,11 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, Telegra
         } catch (e) {
           if (!Quester.isAxiosError(e) || !e.response?.data) {
             // Other error
-            logger.warn('failed to get updates. reason: %s', e.message)
+            bot.logger.warn('failed to get updates. reason: %s', e.message)
           } else {
             // Telegram error
             const { error_code, description } = e.response.data as any
-            logger.warn('failed to get updates: %c %s', error_code, description)
+            bot.logger.warn('failed to get updates: %c %s', error_code, description)
           }
 
           if (_initial && _retryCount > retryTimes) {
@@ -67,7 +65,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, Telegra
         }
       }
       polling()
-      logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
+      bot.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
   }
 

@@ -1,10 +1,8 @@
-import { Dict, h, Logger, Universal } from '@satorijs/satori'
+import { Dict, h, Universal } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
 export * from './types'
-
-const logger = new Logger('telegram')
 
 export const decodeUser = (data: Telegram.User): Universal.User => ({
   id: data.id.toString(),
@@ -19,7 +17,7 @@ export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMem
 })
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
-  logger.debug('receive %s', JSON.stringify(update))
+  bot.logger.debug('receive %s', JSON.stringify(update))
   // Internal event: get update type from field name.
   const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
   if (subtype) {
@@ -185,7 +183,7 @@ export async function decodeMessage(
       }
       segments.push(h('image', await bot.$getFileFromPath(file.file_path)))
     } catch (e) {
-      logger.warn('get file error', e)
+      bot.logger.warn('get file error', e)
       segments.push(h('text', { content: `[${data.sticker.set_name || 'sticker'} ${data.sticker.emoji || ''}]` }))
     }
   } else if (data.voice) {

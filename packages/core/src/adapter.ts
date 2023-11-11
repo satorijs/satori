@@ -9,6 +9,7 @@ export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bo
 
   public bots: B[] = []
 
+  constructor(protected ctx: C) {}
   async connect(bot: B) {}
   async disconnect(bot: B) {}
 
@@ -42,8 +43,8 @@ export namespace Adapter {
     protected abstract getActive(): boolean
     protected abstract setStatus(status: Status, error?: Error): void
 
-    constructor(public ctx: Context, public config: WsClientConfig) {
-      super()
+    constructor(ctx: C, public config: WsClientConfig) {
+      super(ctx)
     }
 
     async start() {
@@ -104,7 +105,7 @@ export namespace Adapter {
     static reusable = true
     static Config = WsClientConfig
 
-    constructor(ctx: Context, public bot: B) {
+    constructor(ctx: C, public bot: B) {
       super(ctx, bot.config)
       bot.adapter = this
     }

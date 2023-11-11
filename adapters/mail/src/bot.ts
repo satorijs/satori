@@ -8,9 +8,8 @@ export class MailBot<C extends Context = Context> extends Bot<C, MailBot.Config>
   internal: SMTP
 
   constructor(ctx: C, config: MailBot.Config) {
-    super(ctx, config)
+    super(ctx, config, 'mail')
     this.selfId = config.selfId || config.username
-    this.platform = 'mail'
     this.user.name = this.config.username
     this.internal = new SMTP(this.config)
     this.ctx.plugin(IMAP, this)

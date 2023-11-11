@@ -22,8 +22,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   private _timer: NodeJS.Timeout
 
   constructor(ctx: C, config: QQBot.Config) {
-    super(ctx, config)
-    this.platform = 'qq'
+    super(ctx, config, 'qq')
     let endpoint = config.endpoint
     if (config.sandbox) {
       endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
@@ -47,7 +46,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
       const user = await this.guildBot.internal.getMe()
       Object.assign(this.user, user)
     } catch (e) {
-      this.ctx.logger('qq').error(e)
+      this.logger.error(e)
     }
   }
 

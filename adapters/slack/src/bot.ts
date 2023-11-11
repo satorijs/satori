@@ -13,8 +13,7 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
   public internal: Internal
 
   constructor(ctx: C, config: T) {
-    super(ctx, config)
-    this.platform = 'slack'
+    super(ctx, config, 'slack')
     this.http = ctx.http.extend(config)
     this.internal = new Internal(this, this.http)
 

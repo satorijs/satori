@@ -1,9 +1,7 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/satori'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
-
-const logger = new Logger('qq')
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, QQBot<C>> {
   _sessionId = ''
@@ -13,7 +11,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   async prepare() {
     await this.bot.getAccessToken()
     const { url } = await this.bot.groupHttp.get(`/gateway`)
-    logger.debug('url: %s', url)
+    this.bot.logger.debug('url: %s', url)
     return this.bot.groupHttp.ws(url)
   }
 
@@ -27,7 +25,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
-      logger.debug(parsed)
+      this.bot.logger.debug(parsed)
       if (parsed.op === Opcode.HELLO) {
         const token = await this.bot.getAccessToken()
         if (this._sessionId) {
@@ -55,10 +53,10 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
       } else if (parsed.op === Opcode.INVALID_SESSION) {
         this._sessionId = ''
         this._s = null
-        logger.warn('offline: invalid session')
+        this.bot.logger.warn('offline: invalid session')
         this.socket?.close()
       } else if (parsed.op === Opcode.RECONNECT) {
-        logger.warn('offline: server request reconnect')
+        this.bot.logger.warn('offline: server request reconnect')
         this.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
@@ -79,7 +77,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
         }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
-        logger.debug(session)
+        this.bot.logger.debug(session)
       }
     })
 

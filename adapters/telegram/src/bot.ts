@@ -1,12 +1,10 @@
-import { arrayBufferToBase64, Bot, Context, Dict, h, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, h, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import * as Telegram from './types'
 import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import FileType from 'file-type'
-
-const logger = new Logger('telegram')
 
 export class SenderError extends Error {
   constructor(args: Dict<any>, url: string, retcode: number, selfId: string) {
@@ -36,8 +34,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   server?: string
 
   constructor(ctx: C, config: T) {
-    super(ctx, config)
-    this.platform = 'telegram'
+    super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
     this.http = this.ctx.http.extend({
@@ -48,7 +45,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       ...config,
       endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
     })
-    this.internal = new Telegram.Internal(this.http)
+    this.internal = new Telegram.Internal(this)
     if (config.protocol === 'server') {
       ctx.plugin(HttpServer, this)
     } else if (config.protocol === 'polling') {
@@ -69,7 +66,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   async initialize(callback: (bot: this) => Promise<void>) {
     await this.getLogin()
     await callback(this)
-    logger.debug('connected to %c', 'telegram:' + this.selfId)
+    this.logger.debug('connected to %c', 'telegram:' + this.selfId)
     this.online()
   }
 
@@ -157,7 +154,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       const file = await this.internal.getFile({ file_id })
       return await this.$getFileFromPath(file.file_path)
     } catch (e) {
-      logger.warn('get file error', e)
+      this.logger.warn('get file error', e)
     }
   }
 

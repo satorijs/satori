@@ -1,9 +1,7 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/satori'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
-
-const logger = new Logger('discord')
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DiscordBot<C>> {
   _d = 0
@@ -20,7 +18,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
   }
 
   heartbeat() {
-    logger.debug(`heartbeat d ${this._d}`)
+    this.bot.logger.debug(`heartbeat d ${this._d}`)
     this.socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
       d: this._d,
@@ -33,9 +31,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       try {
         parsed = JSON.parse(data.toString())
       } catch (error) {
-        return logger.warn('cannot parse message', data)
+        return this.bot.logger.warn('cannot parse message', data)
       }
-      logger.debug(parsed)
+      this.bot.logger.debug(parsed)
       if (parsed.s) {
         this._d = parsed.s
       }
@@ -44,7 +42,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       if (parsed.op === Gateway.Opcode.HELLO) {
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) {
-          logger.debug('resuming')
+          this.bot.logger.debug('resuming')
           this.socket.send(JSON.stringify({
             op: Gateway.Opcode.RESUME,
             d: {
@@ -69,7 +67,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       if (parsed.op === Gateway.Opcode.INVALID_SESSION) {
         if (parsed.d) return
         this._sessionId = ''
-        logger.warn('offline: invalid session')
+        this.bot.logger.warn('offline: invalid session')
         this.socket?.close()
       }
 
@@ -83,7 +81,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
           this._sessionId = parsed.d.session_id
           this._resumeUrl = parsed.d.resume_gateway_url
           this.bot.user = decodeUser(parsed.d.user)
-          logger.debug('session_id ' + this._sessionId)
+          this.bot.logger.debug('session_id ' + this._sessionId)
           return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
@@ -94,7 +92,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       }
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
-        logger.warn('offline: discord request reconnect')
+        this.bot.logger.warn('offline: discord request reconnect')
         this.socket?.close()
       }
     })

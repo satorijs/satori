@@ -26,7 +26,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
     this.bot.online()
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed = JSON.parse(data.toString())
-      this.ctx.logger('dingtalk').debug(parsed)
+      this.bot.logger.debug(parsed)
       if (parsed.type === 'SYSTEM') {
         if (parsed.headers.topic === 'ping') {
           this.socket.send(JSON.stringify({
@@ -37,10 +37,10 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
           }))
         }
       } else if (parsed.type === 'CALLBACK') {
-        this.ctx.logger('dingtalk').debug(JSON.parse(parsed.data))
+        this.bot.logger.debug(JSON.parse(parsed.data))
         const session = await decodeMessage(this.bot, JSON.parse(parsed.data))
         if (session) this.bot.dispatch(session)
-        this.ctx.logger('dingtalk').debug(session)
+        this.bot.logger.debug(session)
       }
     })
   }

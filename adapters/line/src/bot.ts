@@ -1,9 +1,7 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
-
-const logger = new Logger('line')
 
 export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
   static inject = ['router']
@@ -14,12 +12,11 @@ export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config>
   public internal: Internal
 
   constructor(ctx: C, config: LineBot.Config) {
-    super(ctx, config)
+    super(ctx, config, 'line')
     if (!ctx.router.config.selfUrl) {
-      logger.warn('selfUrl is not set, some features may not work')
+      this.logger.warn('selfUrl is not set, some features may not work')
     }
 
-    this.platform = 'line'
     this.http = ctx.http.extend({
       ...config.api,
       headers: {

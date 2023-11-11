@@ -1,5 +1,5 @@
-import { Dict, pick, remove } from 'cosmokit'
-import { Context, Fragment } from '.'
+import { clone, Dict, pick, remove } from 'cosmokit'
+import { Context, Fragment, Logger } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor } from './session'
@@ -26,16 +26,21 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
+  public logger: Logger
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
-  constructor(public ctx: C, public config: T) {
+  constructor(public ctx: C, public config: T, platform?: string) {
     this.internal = null
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
+    if (platform) {
+      this.logger = ctx.logger(platform)
+      this.platform = platform
+    }
 
     ctx.on('ready', async () => {
       await Promise.resolve()
@@ -181,7 +186,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   toJSON(): Login {
-    return pick(this, ['platform', 'selfId', 'status', 'user'])
+    return clone(pick(this, ['platform', 'selfId', 'status', 'user']))
   }
 
   async getLogin() {

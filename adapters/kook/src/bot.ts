@@ -13,8 +13,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   internal: Kook.Internal
 
   constructor(ctx: C, config: T) {
-    super(ctx, config)
-    this.platform = 'kook'
+    super(ctx, config, 'kook')
     this.http = ctx.http.extend({
       headers: {
         'Authorization': `Bot ${config.token}`,

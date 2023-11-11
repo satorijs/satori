@@ -14,9 +14,8 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
   internal: Matrix.Internal
 
   constructor(ctx: C, config: MatrixBot.Config) {
-    super(ctx, config)
+    super(ctx, config, 'matrix')
     this.id = config.id
-    this.platform = 'matrix'
     this.user.id = `@${this.id}:${this.config.host}`
     this.user.name = config.name || this.id
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'

@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
@@ -7,8 +7,6 @@ import { adaptSession } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
   static inject = ['router']
-
-  logger = new Logger('slack')
 
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {
     const { signing } = bot.config
@@ -43,9 +41,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot
         ctx.status = 200
         ctx.body = 'ok'
         const payload: EnvelopedEvent<SlackEvent> = ctx.request.body
-        this.logger.debug(payload)
+        bot.logger.debug(payload)
         const session = await adaptSession(bot, payload)
-        this.logger.debug(session)
+        bot.logger.debug(session)
         if (session) bot.dispatch(session)
       }
     })

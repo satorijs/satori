@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger } from '@satorijs/satori'
+import { Adapter, Context } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import crypto from 'node:crypto'
 import { LineBot } from './bot'
@@ -8,12 +8,6 @@ import internal from 'stream'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<C>> {
   static inject = ['router']
-
-  logger = new Logger('line')
-
-  constructor(ctx: C, bot: LineBot) {
-    super()
-  }
 
   async connect(bot: LineBot<C>) {
     bot.ctx.router.post('/line', async (ctx) => {
@@ -26,11 +20,11 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
       if (hash !== sign) {
         return ctx.status = 403
       }
-      this.logger.debug(parsed)
+      bot.logger.debug(parsed)
       for (const event of parsed.events) {
         const sessions = await adaptSessions(bot, event)
         if (sessions.length) sessions.forEach(bot.dispatch.bind(bot))
-        this.logger.debug(sessions)
+        bot.logger.debug(sessions)
       }
       ctx.status = 200
       ctx.body = 'ok'
@@ -53,7 +47,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
     await bot.internal.setWebhookEndpoint({
       endpoint: bot.ctx.router.config.selfUrl + '/line',
     })
-    this.logger.debug('listening updates %c', 'line:' + bot.selfId)
+    bot.logger.debug('listening updates %c', 'line:' + bot.selfId)
     bot.online()
   }
 }

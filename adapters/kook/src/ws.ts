@@ -1,9 +1,7 @@
-import { Adapter, Context, Logger, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Schema, Time, Universal } from '@satorijs/satori'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
-
-const logger = new Logger('kook')
 
 const heartbeatIntervals = [6, 2, 4]
 
@@ -44,10 +42,10 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
       try {
         parsed = JSON.parse(data.toString())
       } catch (error) {
-        return logger.warn('cannot parse message', data)
+        return this.bot.logger.warn('cannot parse message', data)
       }
 
-      logger.debug('[receive] %o', parsed)
+      this.bot.logger.debug('[receive] %o', parsed)
       if (parsed.s === Signal.event) {
         this._sn = Math.max(this._sn, parsed.sn)
         const session = await adaptSession(this.bot, parsed.d)

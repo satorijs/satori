@@ -1,11 +1,9 @@
-import { Bot, Context, h, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, h, Quester, Schema } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
 import { Internal } from './types'
 import * as Utils from './utils'
-
-const logger = new Logger('lark')
 
 export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
   static inject = ['router']
@@ -18,16 +16,14 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   internal: Internal
 
   constructor(ctx: C, config: LarkBot.Config) {
-    super(ctx, config)
+    super(ctx, config, 'lark')
 
     // lark bot needs config.selfUrl to be set as it should be serve on a public url
     if (!config.selfUrl && !ctx.router.config.selfUrl) {
-      logger.warn('selfUrl is not set, some features may not work')
+      this.logger.warn('selfUrl is not set, some features may not work')
     }
 
-    this.platform = 'lark'
     this.selfId = config.appId
-
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
       headers: {
@@ -35,8 +31,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
       },
     })
     this.assetsQuester = ctx.http
-
-    this.internal = new Internal(this.http)
+    this.internal = new Internal(this)
 
     ctx.plugin(HttpServer, this)
   }
@@ -51,7 +46,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
       app_id: this.config.appId,
       app_secret: this.config.appSecret,
     })
-    logger.debug('refreshed token %s', token)
+    this.logger.debug('refreshed token %s', token)
     this.token = token
     // Token would be expired in 2 hours, refresh it every 1 hour
     // see https://open.larksuite.com/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal

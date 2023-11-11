@@ -9,10 +9,6 @@ import { decrypt, getSignature } from '@wecom/crypto'
 export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot<C>> {
   static inject = ['router']
 
-  constructor() {
-    super()
-  }
-
   async connect(bot: WecomBot) {
     await bot.refreshToken()
     await bot.getLogin()

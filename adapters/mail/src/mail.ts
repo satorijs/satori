@@ -2,10 +2,8 @@ import NodeIMAP from 'node-imap'
 import { createTransport, Transporter } from 'nodemailer'
 import { simpleParser } from 'mailparser'
 import { MailBot } from './bot'
-import { Adapter, Context, Logger, Universal } from '@satorijs/satori'
+import { Adapter, Context, Universal } from '@satorijs/satori'
 import { dispatchSession } from './utils'
-
-const logger = new Logger('mail')
 
 export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
   static reusable = true
@@ -13,7 +11,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
   imap: NodeIMAP
 
   constructor(ctx: C, public bot: MailBot<C>) {
-    super()
+    super(ctx)
     this.imap = new NodeIMAP({
       user: bot.config.username,
       password: bot.config.password,
@@ -22,7 +20,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
       tls: bot.config.imap.tls,
     })
     this.imap.on('error', (error) => {
-      logger.error(error)
+      bot.logger.error(error)
     })
   }
 
@@ -32,7 +30,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
     })
     this.imap.on('close', () => {
       if (!bot.isActive) return
-      logger.info('IMAP disconnected, will reconnect in 3s...')
+      bot.logger.info('IMAP disconnected, will reconnect in 3s...')
       bot.status = Universal.Status.RECONNECT
       setTimeout(() => {
         if (!bot.isActive) return
@@ -48,7 +46,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
 
   inbox(error: Error) {
     if (error) {
-      logger.error(error)
+      this.bot.logger.error(error)
       return
     }
     this.bot.online()
@@ -59,13 +57,13 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
   scan() {
     this.imap.search(['UNSEEN'], (error, uids) => {
       if (error) {
-        logger.error(error)
+        this.bot.logger.error(error)
         return
       }
       if (uids.length === 0) return
 
       this.imap.setFlags(uids, ['\\SEEN'], (error) => {
-        if (error) logger.error(error)
+        if (error) this.bot.logger.error(error)
       })
 
       // markSeen doesn't work
@@ -74,7 +72,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
         message.once('body', (stream) => {
           simpleParser(stream, (error, mail) => {
             if (error) {
-              logger.error(error)
+              this.bot.logger.error(error)
               return
             }
             dispatchSession(this.bot, mail)

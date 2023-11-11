@@ -1,10 +1,8 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
 import { Internal } from './internal'
-
-const logger = new Logger('dingtalk')
 
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
 export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot.Config> {
@@ -16,8 +14,7 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
   private refreshTokenTimer: NodeJS.Timeout
 
   constructor(ctx: C, config: DingtalkBot.Config) {
-    super(ctx, config)
-    this.platform = 'dingtalk'
+    super(ctx, config, 'dingtalk')
     this.selfId = config.appkey
     this.http = ctx.http.extend(config.api)
     this.oldHttp = ctx.http.extend(config.oldApi)
@@ -50,7 +47,7 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
       appKey: this.config.appkey,
       appSecret: this.config.secret,
     })
-    logger.debug('gettoken result: %o', data)
+    this.logger.debug('gettoken result: %o', data)
     this.token = data.accessToken
     // https://open.dingtalk.com/document/orgapp/authorization-overview
     this.http = this.http.extend({

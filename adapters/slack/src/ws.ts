@@ -1,23 +1,21 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/satori'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
-
-const logger = new Logger('slack')
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Config>> {
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)
     const { url } = data
-    logger.debug('ws url: %s', url)
+    this.bot.logger.debug('ws url: %s', url)
     return this.bot.ctx.http.ws(url)
   }
 
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: SocketEvent = JSON.parse(data.toString())
-      logger.debug(parsed)
+      this.bot.logger.debug(parsed)
       const { type } = parsed
       if (type === 'hello') {
         // @ts-ignore
@@ -32,7 +30,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, S
 
         if (session) {
           this.bot.dispatch(session)
-          logger.debug(session)
+          this.bot.logger.debug(session)
         }
       }
     })

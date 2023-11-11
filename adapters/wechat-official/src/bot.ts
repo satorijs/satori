@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
@@ -10,12 +10,9 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
-  logger: Logger
 
   constructor(ctx: C, config: WechatOfficialBot.Config) {
-    super(ctx, config)
-    this.logger = ctx.logger('wechat-official')
-    this.platform = 'wechat-official'
+    super(ctx, config, 'wechat-official')
     this.selfId = config.account
     this.http = ctx.http.extend(config)
     // this.internal = new Internal(this.http, this)

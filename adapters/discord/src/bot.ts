@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -6,8 +6,6 @@ import { WsClient } from './ws'
 
 // @ts-ignore
 import { version } from '../package.json'
-
-const logger = new Logger('discord')
 
 export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
@@ -19,8 +17,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   public commands: Universal.Command[] = []
 
   constructor(ctx: C, config: DiscordBot.Config) {
-    super(ctx, config)
-    this.platform = 'discord'
+    super(ctx, config, 'discord')
     this.http = ctx.http.extend({
       ...config,
       headers: {
@@ -29,7 +26,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
         ...config.headers,
       },
     })
-    this.internal = new Internal(this.http)
+    this.internal = new Internal(this)
     ctx.plugin(WsClient, this)
   }
 
@@ -195,7 +192,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     this.commands = commands
     const updates = commands.map(Discord.encodeCommand)
     if (updates.length) {
-      logger.debug('update %d command(s)', updates.length)
+      this.logger.debug('update %d command(s)', updates.length)
       await this.internal.bulkOverwriteGlobalApplicationCommands(this.selfId, updates)
     }
   }

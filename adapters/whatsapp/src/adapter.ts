@@ -102,7 +102,7 @@ export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, Wha
   static reusable = true
 
   constructor(ctx: C, public config: WhatsAppAdapter.Config) {
-    super()
+    super(ctx)
     ctx.plugin(HttpServer, this)
 
     const http = ctx.http.extend({

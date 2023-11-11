@@ -1,9 +1,8 @@
-import { Dict, Logger, makeArray, Quester } from '@satorijs/satori'
-
-const logger = new Logger('discord')
+import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { DiscordBot } from '../bot'
 
 export class Internal {
-  constructor(private http: Quester) {}
+  constructor(private bot: DiscordBot) {}
 
   static define(routes: Dict<Partial<Record<Quester.Method, string | string[]>>>) {
     for (const path in routes) {
@@ -30,8 +29,8 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             try {
-              logger.debug(`${method} ${url}`, config)
-              return await this.http(method, url, config)
+              this.bot.logger.debug(`${method} ${url}`, config)
+              return await this.bot.http(method, url, config)
             } catch (error) {
               if (!Quester.isAxiosError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)

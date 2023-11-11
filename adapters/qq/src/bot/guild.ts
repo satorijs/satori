@@ -18,7 +18,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
   static MessageEncoder = QQGuildMessageEncoder
 
   constructor(ctx: C, config: QQGuildBot.Config) {
-    super(ctx, config)
+    super(ctx, config, 'qq')
     this.parent = config.parent
     this.parent.guildBot = this
     this.platform = 'qqguild'

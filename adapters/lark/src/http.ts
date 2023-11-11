@@ -6,12 +6,16 @@ import { FeishuBot } from './bot'
 import { AllEvents } from './types'
 import { adaptSession, Cipher } from './utils'
 
-const logger = new Logger('lark')
-
 export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
   static inject = ['router']
 
+  private logger: Logger
   private ciphers: Record<string, Cipher> = {}
+
+  constructor(ctx: C, bot: FeishuBot<C>) {
+    super(ctx)
+    this.logger = ctx.logger('lark')
+  }
 
   fork(ctx: C, bot: FeishuBot<C>) {
     super.fork(ctx, bot)
@@ -66,7 +70,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
       }
 
       // dispatch message
-      logger.debug('received decryped event: %o', body)
+      bot.logger.debug('received decryped event: %o', body)
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
@@ -114,11 +118,11 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
           return JSON.parse(cipher.decrypt(body.encrypt))
         } catch {}
       }
-      logger.warn('failed to decrypt message: %o', body)
+      this.logger.warn('failed to decrypt message: %o', body)
     }
 
     if (typeof body.encrypt === 'string' && !ciphers.length) {
-      logger.warn('encryptKey is not set, but received encrypted message: %o', body)
+      this.logger.warn('encryptKey is not set, but received encrypted message: %o', body)
     }
 
     return body

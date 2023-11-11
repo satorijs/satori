@@ -1,19 +1,17 @@
-import { Adapter, Context, Logger } from '@satorijs/satori'
+import { Adapter, Context } from '@satorijs/satori'
 import { Context as KoaContext } from 'koa'
 import {} from '@satorijs/router'
 import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'
 
-const logger = new Logger('matrix')
-
 export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixBot<C>> {
   static inject = ['router']
 
   private txnId: string = null
 
-  public constructor(ctx: C) {
-    super()
+  constructor(ctx: C) {
+    super(ctx)
     ctx.router.all('/(.*)', (koaCtx, next) => {
       const match = this.bots.filter(bot => koaCtx.path.startsWith(bot.config.path + '/'))
       if (match.length === 0) return next()
@@ -48,7 +46,7 @@ export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixB
       await bot.initialize()
       bot.online()
     } catch (e) {
-      logger.error('failed to initialize', e)
+      bot.logger.error('failed to initialize', e)
       throw e
     }
   }

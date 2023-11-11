@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 
@@ -9,13 +9,10 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
   http: Quester
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
-  logger: Logger
 
   constructor(ctx: C, config: WecomBot.Config) {
-    super(ctx, config)
-    this.logger = ctx.logger('wecom')
+    super(ctx, config, 'wecom')
     this.selfId = config.agentId
-    this.platform = 'wecom'
     this.http = ctx.http.extend(config)
     // this.internal = new Internal(this.http, this)
 

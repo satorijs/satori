@@ -1,10 +1,8 @@
-import { Adapter, Context, Logger, sanitize, Schema, trimSlash } from '@satorijs/satori'
+import { Adapter, Context, sanitize, Schema, trimSlash } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
-
-const logger = new Logger('telegram')
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
   static inject = ['router']
@@ -15,10 +13,10 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
     if (selfUrl) {
       selfUrl = trimSlash(selfUrl)
     } else {
-      selfUrl = bot.ctx.router.config.selfUrl
+      selfUrl = this.ctx.router.config.selfUrl
     }
 
-    bot.ctx.router.post(path, async (ctx) => {
+    this.ctx.router.post(path, async (ctx) => {
       const payload: Telegram.Update = ctx.request.body
       const token = ctx.request.query.token as string
       const [selfId] = token.split(':')
@@ -34,7 +32,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
         drop_pending_updates: true,
       })
       if (!info) throw new Error('Set webhook failed')
-      logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
+      bot.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
   }
 }

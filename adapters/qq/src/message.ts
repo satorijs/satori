@@ -33,7 +33,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     }
 
     let r: QQ.Message
-    this.bot.ctx.logger('qq').debug('use form data %s', useFormData)
+    this.bot.logger.debug('use form data %s', useFormData)
     try {
       if (useFormData) {
         const form = new FormData()
@@ -65,17 +65,17 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
         })
       }
     } catch (e) {
-      this.bot.ctx.logger('qq').error(e)
-      this.bot.ctx.logger('qq').error('[response] %o', e.response?.data)
+      this.bot.logger.error(e)
+      this.bot.logger.error('[response] %o', e.response?.data)
       if ((e.repsonse?.data?.code === 40004 || e.response?.data?.code === 102) && !this.retry && this.fileUrl) {
-        this.bot.ctx.logger('qq').warn('retry image sending')
+        this.bot.logger.warn('retry image sending')
         this.retry = true
         await this.resolveFile(null, true)
         await this.flush()
       }
     }
 
-    this.bot.ctx.logger('qq').debug(r)
+    this.bot.logger.debug(r)
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
@@ -189,8 +189,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         await this.bot.internal.sendMessage(this.guildId, data)
       }
     } catch (e) {
-      this.bot.ctx.logger('qq').error(e)
-      this.bot.ctx.logger('qq').error('[response] %o', e.response?.data)
+      this.bot.logger.error(e)
+      this.bot.logger.error('[response] %o', e.response?.data)
     }
 
     // this.results.push(session.event.message)
@@ -201,7 +201,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
 
   async sendFile(type: string, attrs: Dict) {
     if (!attrs.url.startsWith('http')) {
-      return this.bot.ctx.logger('qq').warn('unsupported file url')
+      return this.bot.logger.warn('unsupported file url')
     }
     await this.flush()
     let file_type = 0

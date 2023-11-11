@@ -213,7 +213,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     try {
       await bot.internal.acknowledgeInteraction(input.d.id, 0)
     } catch (e) {
-      bot.ctx.logger('qq').warn(e)
+      bot.logger.warn(e)
     }
   } else {
     return

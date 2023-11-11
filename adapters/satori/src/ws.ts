@@ -1,13 +1,12 @@
 import { Adapter, camelize, Context, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
 import { SatoriBot, transformKey } from './bot'
 
-const logger = new Logger('satori')
-
 export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
   static schema = true as any
   static reusable = true
 
   public http: Quester
+  public logger: Logger
 
   private isActive = true
   private sequence?: number
@@ -15,6 +14,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
 
   constructor(public ctx: C, public config: SatoriAdapter.Config) {
     super(ctx, config)
+    this.logger = ctx.logger('satori')
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
       headers: {
@@ -48,7 +48,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     // Do not dispatch event from outside adapters.
     if (bot) return this.bots.includes(bot) ? bot : undefined
     if (!login) {
-      logger.error('cannot find bot for', platform, selfId)
+      this.logger.error('cannot find bot for', platform, selfId)
       return
     }
     bot = new SatoriBot(this.ctx, login)
@@ -78,11 +78,11 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
       try {
         parsed = transformKey(JSON.parse(data.toString()), camelize)
       } catch (error) {
-        return logger.warn('cannot parse message', data)
+        return this.logger.warn('cannot parse message', data)
       }
 
       if (parsed.op === Universal.Opcode.READY) {
-        logger.debug('ready')
+        this.logger.debug('ready')
         for (const login of parsed.body.logins) {
           this.getBot(login.platform, login.selfId, login)
         }

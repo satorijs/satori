@@ -8,7 +8,12 @@ import { decodeMessage } from './utils'
 export class HttpServer<C extends Context = Context> extends Adapter<C, DingtalkBot<C>> {
   static inject = ['router']
 
-  logger = new Logger('dingtalk')
+  private logger: Logger
+
+  constructor(ctx: C, bot: DingtalkBot<C>) {
+    super(ctx)
+    this.logger = ctx.logger('dingtalk')
+  }
 
   async connect(bot: DingtalkBot<C>) {
     await bot.refreshToken()

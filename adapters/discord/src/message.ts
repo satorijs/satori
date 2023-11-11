@@ -1,12 +1,10 @@
-import { Context, Dict, h, Logger, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
 import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize } from './utils'
 
 type RenderMode = 'default' | 'figure'
-
-const logger = new Logger('discord')
 
 class State {
   author: Partial<Universal.User> = {}
@@ -75,7 +73,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     } catch (e) {
       if (Quester.isAxiosError(e) && e.response) {
         if (e.response.data?.code === 10015) {
-          logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
+          this.bot.logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
           if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
           await this.ensureWebhook()
           return this.post(data, headers)
