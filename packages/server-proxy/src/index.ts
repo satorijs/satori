@@ -4,7 +4,7 @@ import internal from 'stream'
 
 declare module '@satorijs/core' {
   interface Context {
-    'router.proxy': ProxyService
+    'server\.proxy': ProxyService
   }
 }
 
@@ -26,7 +26,7 @@ class ProxyService {
       }
     })
 
-    ctx.root.provide('router.proxy', this)
+    ctx.root.provide('server\.proxy', this)
   }
 }
 

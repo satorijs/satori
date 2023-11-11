@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/server",
+  "name": "@satorijs/server-satori",
   "description": "Basic API server for Satori protocol",
   "version": "2.2.2",
   "main": "lib/index.js",
@@ -21,7 +21,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "packages/server"
+    "directory": "packages/server-satori"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
@@ -38,6 +38,6 @@
     "@satorijs/router": "^1.1.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.1.4"
+    "@satorijs/satori": "^3.1.5"
   }
 }

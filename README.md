@@ -9,8 +9,7 @@
   - [x] @satorijs/core
   - [x] @satorijs/element
   - [x] @satorijs/satori
-  - [ ] @satorijs/database
-  - [x] @satorijs/server
+  - [x] @satorijs/server-satori
 - Ecosystem
   - [x] DingTalk (钉钉)
   - [x] Discord
