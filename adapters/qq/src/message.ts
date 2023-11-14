@@ -4,6 +4,7 @@ import { QQBot } from './bot'
 import FormData from 'form-data'
 import { escape } from '@satorijs/element'
 import { QQGuildBot } from './bot/guild'
+import { Entry } from '@satorijs/server-temp'
 
 export const escapeMarkdown = (val: string) =>
   val
@@ -98,7 +99,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
 
   async resolveFile(attrs: Dict, download = false) {
     if (attrs) this.resource = attrs
-    if (this.resource.url.startsWith('http') && !download) {
+    if (!download && !await this.bot.ctx.http.isPrivate(this.resource.url)) {
       return this.fileUrl = this.resource.url
     }
     const { data, filename } = await this.bot.ctx.http.file(this.resource.url, this.resource)
@@ -200,8 +201,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   }
 
   async sendFile(type: string, attrs: Dict) {
-    if (!attrs.url.startsWith('http')) {
-      return this.bot.logger.warn('unsupported file url')
+    let url = attrs.url, entry: Entry | undefined
+    if (await this.bot.ctx.http.isPrivate(url)) {
+      const temp = this.bot.ctx.get('server.temp')
+      if (!temp) {
+        return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')
+      }
+      entry = await temp.create(url)
+      url = entry.url
     }
     await this.flush()
     let file_type = 0
@@ -210,7 +217,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     else return
     const data: QQ.SendFileParams = {
       file_type,
-      url: attrs.url,
+      url,
       srv_send_msg: true,
     }
     if (this.session.isDirect) {
@@ -218,6 +225,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     } else {
       await this.bot.internal.sendFileGuild(this.session.guildId, data)
     }
+    entry?.dispose?.()
   }
 
   decodeButton(attrs: Dict, label: string) {

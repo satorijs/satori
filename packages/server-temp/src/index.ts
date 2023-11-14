@@ -1,6 +1,7 @@
 import { Context, Dict, Schema, Time } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import { createReadStream } from 'fs'
+import { fileURLToPath } from 'url'
 import { mkdir, rm, writeFile } from 'fs/promises'
 import internal from 'stream'
 
@@ -10,7 +11,7 @@ declare module '@satorijs/core' {
   }
 }
 
-interface Entry {
+export interface Entry {
   path: string
   url: string
   dispose?: () => void
@@ -24,6 +25,10 @@ class TempServer {
 
   constructor(protected ctx: Context, public config: TempServer.Config) {
     const logger = ctx.logger('temp')
+
+    if (!ctx.router.config.selfUrl) {
+      logger.warn('missing configuration router.config.selfUrl')
+    }
 
     ctx.router.get(config.path + '/:name', async (koa) => {
       logger.debug(koa.params.name)
@@ -46,12 +51,18 @@ class TempServer {
     await rm(this.baseDir, { recursive: true })
   }
 
-  async create(data: string | Buffer | internal.Readable) {
+  async create(data: string | Buffer | internal.Readable): Promise<Entry> {
     const name = Math.random().toString(36).slice(2)
-    const url = this.ctx.router.selfUrl + this.config.path + '/' + name
+    const url = this.ctx.router.config.selfUrl! + this.config.path + '/' + name
     let path: string
     if (typeof data === 'string') {
-      path = data
+      if (new URL(data).protocol === 'file:') {
+        path = fileURLToPath(data)
+      } else {
+        data = await this.ctx.http.get(data, { responseType: 'stream' })
+        path = this.baseDir + name
+        await writeFile(path, data)
+      }
     } else {
       path = this.baseDir + name
       await writeFile(path, data)
