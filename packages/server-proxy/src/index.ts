@@ -1,17 +1,17 @@
-import { Context, Quester, Schema } from '@satorijs/core'
+import { Context, Quester, Schema } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import internal from 'stream'
 
 declare module '@satorijs/core' {
   interface Context {
-    'server\.proxy': ProxyService
+    'server.proxy': ProxyServer
   }
 }
 
-class ProxyService {
+class ProxyServer {
   static inject = ['router']
 
-  constructor(protected ctx: Context, public config: ProxyService.Config) {
+  constructor(protected ctx: Context, public config: ProxyServer.Config) {
     const logger = ctx.logger('proxy')
 
     ctx.router.get(config.path + '/:url(.*)', async (koa) => {
@@ -26,11 +26,11 @@ class ProxyService {
       }
     })
 
-    ctx.root.provide('server\.proxy', this)
+    ctx.root.provide('server.proxy', this)
   }
 }
 
-namespace ProxyService {
+namespace ProxyServer {
   export interface Config {
     path?: string
   }
@@ -40,4 +40,4 @@ namespace ProxyService {
   })
 }
 
-export default ProxyService
+export default ProxyServer

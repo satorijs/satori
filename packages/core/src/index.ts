@@ -100,6 +100,7 @@ export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
   [Context.session]: Session<this>
+  baseDir: string
   http: Quester
 }
 
@@ -129,6 +130,7 @@ export class Context extends cordis.Context {
   constructor(config: Context.Config = {}) {
     super(config)
 
+    this.baseDir = globalThis.process?.cwd() || ''
     this.http = new Quester(config.request)
 
     this.on('internal/warning', function (format, ...args) {

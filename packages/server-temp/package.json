@@ -1,0 +1,33 @@
+{
+  "name": "@satorijs/server-temp",
+  "description": "Temp server plugin for cordis",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "packages/server-temp"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://github.com/satorijs/satori/tree/master/packages/temp",
+  "keywords": [
+    "cordis",
+    "router",
+    "http",
+    "temporary",
+    "server",
+    "service"
+  ],
+  "peerDependencies": {
+    "@satorijs/satori": "^3.2.0"
+  }
+}
