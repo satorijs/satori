@@ -20,14 +20,16 @@ export interface Entry {
 class TempServer {
   static inject = ['router']
 
+  public selfUrl!: string
   public baseDir!: string
   public entries: Dict<Entry> = Object.create(null)
 
   constructor(protected ctx: Context, public config: TempServer.Config) {
     const logger = ctx.logger('temp')
 
-    if (!ctx.router.config.selfUrl) {
-      logger.warn('missing configuration router.config.selfUrl')
+    this.selfUrl = config.selfUrl || ctx.router.config.selfUrl!
+    if (!this.selfUrl) {
+      logger.warn('missing selfUrl configuration')
     }
 
     ctx.router.get(config.path + '/:name', async (koa) => {
@@ -53,7 +55,7 @@ class TempServer {
 
   async create(data: string | Buffer | internal.Readable): Promise<Entry> {
     const name = Math.random().toString(36).slice(2)
-    const url = this.ctx.router.config.selfUrl! + this.config.path + '/' + name
+    const url = this.selfUrl! + this.config.path + '/' + name
     let path: string
     if (typeof data === 'string') {
       if (new URL(data).protocol === 'file:') {
@@ -80,12 +82,14 @@ class TempServer {
 namespace TempServer {
   export interface Config {
     path?: string
+    selfUrl?: string
     maxAge?: number
   }
 
   export const Config: Schema<Config> = Schema.object({
     path: Schema.string().default('/temp'),
-    maxAge: Schema.number().default(Time.minute * 5),
+    selfUrl: Schema.string().role('link').description('此服务暴露在公网的地址。缺省时将使用全局配置。'),
+    maxAge: Schema.number().default(Time.minute * 5).description('临时文件的默认最大存活时间。'),
   })
 }
 
