@@ -1182,6 +1182,7 @@ export interface SendMessageParams {
   message_reference?: object
   event_id?: string
   msg_id?: string
+  msg_seq?: number
   // @TODO merge?
   timestamp: number
 }

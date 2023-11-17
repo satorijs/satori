@@ -154,15 +154,18 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length) return
     this.trimButtons()
-    let msg_id = this.options?.session?.messageId
+    let msg_id = this.options?.session?.messageId, msg_seq: number
     if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
       msg_id = null
+      this.options.session['seq'] ||= 0
+      msg_seq = ++this.options.session['seq']
     }
     const data: QQ.SendMessageParams = {
       content: this.content,
       msg_type: 0,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id,
+      msg_seq,
     }
 
     if (this.useMarkdown) {
