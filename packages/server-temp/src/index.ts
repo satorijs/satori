@@ -1,4 +1,4 @@
-import { Context, Dict, Schema, Time } from '@satorijs/satori'
+import { Context, Dict, sanitize, Schema, Time } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
@@ -20,6 +20,7 @@ export interface Entry {
 class TempServer {
   static inject = ['router']
 
+  public path: string
   public selfUrl!: string
   public baseDir!: string
   public entries: Dict<Entry> = Object.create(null)
@@ -27,12 +28,13 @@ class TempServer {
   constructor(protected ctx: Context, public config: TempServer.Config) {
     const logger = ctx.logger('temp')
 
+    this.path = sanitize(config.path)
     this.selfUrl = config.selfUrl || ctx.router.config.selfUrl!
     if (!this.selfUrl) {
       logger.warn('missing selfUrl configuration')
     }
 
-    ctx.router.get(config.path + '/:name', async (koa) => {
+    ctx.router.get(this.path + '/:name', async (koa) => {
       logger.debug(koa.params.name)
       const entry = this.entries[koa.params.name]
       if (!entry) return koa.status = 404
@@ -46,7 +48,7 @@ class TempServer {
   async start() {
     this.baseDir = this.ctx.baseDir + '/temp/' + Math.random().toString(36).slice(2) + '/'
     await mkdir(this.baseDir, { recursive: true })
-    this.ctx.root.provide('server.temp', this)
+    this.ctx.provide('server.temp', this)
   }
 
   async stop() {
@@ -55,7 +57,7 @@ class TempServer {
 
   async create(data: string | Buffer | internal.Readable): Promise<Entry> {
     const name = Math.random().toString(36).slice(2)
-    const url = this.selfUrl! + this.config.path + '/' + name
+    const url = this.selfUrl! + this.path + '/' + name
     let path: string
     if (typeof data === 'string') {
       if (new URL(data).protocol === 'file:') {
@@ -81,7 +83,7 @@ class TempServer {
 
 namespace TempServer {
   export interface Config {
-    path?: string
+    path: string
     selfUrl?: string
     maxAge?: number
   }

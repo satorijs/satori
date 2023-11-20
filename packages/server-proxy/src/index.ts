@@ -1,4 +1,4 @@
-import { Context, Quester, Schema } from '@satorijs/satori'
+import { Context, Quester, sanitize, Schema } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import internal from 'stream'
 
@@ -11,10 +11,14 @@ declare module '@satorijs/core' {
 class ProxyServer {
   static inject = ['router']
 
+  public path: string
+
   constructor(protected ctx: Context, public config: ProxyServer.Config) {
     const logger = ctx.logger('proxy')
 
-    ctx.router.get(config.path + '/:url(.*)', async (koa) => {
+    this.path = sanitize(config.path)
+
+    ctx.router.get(this.path + '/:url(.*)', async (koa) => {
       logger.debug(koa.params.url)
       koa.header['Access-Control-Allow-Origin'] = ctx.router.config.selfUrl || '*'
       try {
@@ -26,13 +30,13 @@ class ProxyServer {
       }
     })
 
-    ctx.root.provide('server.proxy', this)
+    ctx.provide('server.proxy', this)
   }
 }
 
 namespace ProxyServer {
   export interface Config {
-    path?: string
+    path: string
   }
 
   export const Config: Schema<Config> = Schema.object({

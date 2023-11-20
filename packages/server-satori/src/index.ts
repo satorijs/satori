@@ -1,4 +1,4 @@
-import { camelCase, Context, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
 import {} from '@satorijs/router'
 import WebSocket from 'ws'
 
@@ -33,7 +33,7 @@ export const Webhook: Schema<Webhook> = Schema.object({
 })
 
 export interface Config {
-  path?: string
+  path: string
   token?: string
   api?: ApiConfig
   websocket?: WebSocketConfig
@@ -64,13 +64,14 @@ function transformKey(source: any, callback: (key: string) => string) {
 
 export function apply(ctx: Context, config: Config) {
   const logger = ctx.logger('server')
+  const path = sanitize(config.path)
 
-  ctx.router.get(config.path + '/v1(/.+)*', async (koa) => {
+  ctx.router.get(path + '/v1(/.+)*', async (koa) => {
     koa.body = 'Please use POST method to send requests.'
     koa.status = 405
   })
 
-  ctx.router.post(config.path + '/v1/:name', async (koa) => {
+  ctx.router.post(path + '/v1/:name', async (koa) => {
     const method = Universal.Methods[koa.params.name]
     if (!method) {
       koa.body = 'method not found'
@@ -101,7 +102,7 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
-  ctx.router.post(config.path + '/v1/internal/:name', async (koa) => {
+  ctx.router.post(path + '/v1/internal/:name', async (koa) => {
     const selfId = koa.request.headers['X-Self-ID']
     const platform = koa.request.headers['X-Platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
@@ -130,7 +131,7 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.on('dispose', () => clearInterval(timeout))
 
-  const layer = ctx.router.ws(config.path + '/v1/events', (socket) => {
+  const layer = ctx.router.ws(path + '/v1/events', (socket) => {
     const client = socket[kClient] = new Client()
 
     socket.addEventListener('message', (event) => {
