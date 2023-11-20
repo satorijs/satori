@@ -196,9 +196,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         }
       }
     } catch (e) {
+      if (!Quester.isAxiosError(e)) throw e
       this.errors.push(e)
-      this.bot.logger.warn(e)
-      Quester.isAxiosError(e) && this.bot.logger.error('[response] %o', e.response?.data)
+      this.bot.logger.warn('[response] %s %o', e.response?.status, e.response?.data)
     }
 
     // this.results.push(session.event.message)
@@ -234,8 +234,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         await this.bot.internal.sendFileGuild(this.session.guildId, data)
       }
     } catch (e) {
-      Quester.isAxiosError(e) && this.bot.logger.warn(e.response?.data)
+      if (!Quester.isAxiosError(e)) throw e
       this.errors.push(e)
+      this.bot.logger.warn('[response] %s %o', e.response?.status, e.response?.data)
     }
     entry?.dispose?.()
   }
