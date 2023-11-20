@@ -1,5 +1,5 @@
 import * as QQ from './types'
-import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQBot } from './bot'
 import FormData from 'form-data'
 import { escape } from '@satorijs/element'
@@ -154,11 +154,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length) return
     this.trimButtons()
-    let msg_id = this.options?.session?.messageId, msg_seq: number
+    this.options.session['seq'] ||= 0
+    let msg_id = this.options?.session?.messageId, msg_seq: number = ++this.options.session['seq']
     if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
       msg_id = null
-      this.options.session['seq'] ||= 0
-      msg_seq = ++this.options.session['seq']
+      msg_seq = null
     }
     const data: QQ.SendMessageParams = {
       content: this.content,
@@ -190,11 +190,15 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         session.messageId = msg_id
       } else {
         // FIXME: missing message id
-        await this.bot.internal.sendMessage(this.guildId, data)
+        const resp = await this.bot.internal.sendMessage(this.guildId, data)
+        if (resp.msg !== 'success') {
+          this.bot.logger.warn(resp)
+        }
       }
     } catch (e) {
-      this.bot.logger.error(e)
-      this.bot.logger.error('[response] %o', e.response?.data)
+      this.errors.push(e)
+      this.bot.logger.warn(e)
+      Quester.isAxiosError(e) && this.bot.logger.error('[response] %o', e.response?.data)
     }
 
     // this.results.push(session.event.message)
@@ -223,10 +227,15 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       url,
       srv_send_msg: true,
     }
-    if (this.session.isDirect) {
-      await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
-    } else {
-      await this.bot.internal.sendFileGuild(this.session.guildId, data)
+    try {
+      if (this.session.isDirect) {
+        await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
+      } else {
+        await this.bot.internal.sendFileGuild(this.session.guildId, data)
+      }
+    } catch (e) {
+      Quester.isAxiosError(e) && this.bot.logger.warn(e.response?.data)
+      this.errors.push(e)
     }
     entry?.dispose?.()
   }
