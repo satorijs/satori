@@ -10,10 +10,12 @@ export async function decodeMessage<C extends Context>(bot: DingtalkBot<C>, body
 
   if (body.conversationType === '1') {
     session.channelId = session.userId
+    session.isDirect = true
   } else {
     const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => h.at(v.staffId))
-    session.elements = [h.at(body.robotCode), ...atUsers, ...session.elements]
+    session.elements = [h.at(body.robotCode), ...atUsers]
     session.channelId = body.conversationId
+    session.isDirect = false
   }
   if (body.conversationTitle) {
     session.event.channel.name = body.conversationTitle

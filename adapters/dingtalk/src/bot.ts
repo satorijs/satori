@@ -28,10 +28,28 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
   }
 
   async getLogin() {
-    const { appList } = await this.internal.oapiMicroappList()
-    const self = appList.find(v => v.agentId === this.config.agentId)
-    this.user.name = self.name
-    this.user.avatar = self.appIcon
+    try {
+      const { appList } = await this.internal.listAllInnerApps()
+      const self = appList.find(v => v.agentId === this.config.agentId)
+      if (self) {
+        this.user.name = self.name
+        this.user.avatar = self.icon
+        return this.toJSON()
+      }
+    } catch (e) {
+      this.logger.warn(e)
+    }
+
+    const data = await this.internal.oapiMicroappList()
+    if (!data.appList) {
+      this.logger.error('getLogin failed: %o', data)
+      return this.toJSON()
+    }
+    const self = data.appList.find(v => v.agentId === this.config.agentId)
+    if (self) {
+      this.user.name = self.name
+      this.user.avatar = self.appIcon
+    }
     return this.toJSON()
   }
 
@@ -88,7 +106,7 @@ export namespace DingtalkBot {
     secret: string
     protocol: string
     appkey: string
-    agentId: number
+    agentId?: number
     api: Quester.Config
     oldApi: Quester.Config
   }
@@ -101,7 +119,7 @@ export namespace DingtalkBot {
     }),
     Schema.object({
       secret: Schema.string().required().description('机器人密钥。'),
-      agentId: Schema.number().required().description('AgentId'),
+      agentId: Schema.number().description('AgentId'),
       appkey: Schema.string().required(),
       api: Quester.createConfig('https://api.dingtalk.com/v1.0/'),
       oldApi: Quester.createConfig('https://oapi.dingtalk.com/'),
