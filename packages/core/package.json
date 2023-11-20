@@ -37,7 +37,7 @@
   "dependencies": {
     "@satorijs/element": "^2.5.1",
     "@satorijs/protocol": "^1.1.1",
-    "cordis": "^3.2.4",
+    "cordis": "^3.3.1",
     "cordis-axios": "^4.0.1",
     "cosmokit": "^1.5.1",
     "reggol": "^1.6.3",

@@ -96,6 +96,17 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
+export interface Service extends Context.Associate<'service'> {}
+
+export class Service<C extends Context = Context> extends cordis.Service<C> {
+  public logger: Logger
+
+  constructor(ctx: C, name: string, immediate?: boolean) {
+    super(ctx, name, immediate)
+    this.logger = ctx.logger(name)
+  }
+}
+
 export interface Context {
   [Context.config]: Context.Config
   [Context.events]: Events<this>
@@ -172,4 +183,6 @@ export namespace Context {
   namespace Config {
     export interface Static extends Schema<Config> {}
   }
+
+  export type Associate<P extends string, C extends Context = Context> = cordis.Context.Associate<P, C>
 }

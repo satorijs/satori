@@ -27,6 +27,8 @@ export interface Session {
   quote: Message
 }
 
+export interface Session extends Context.Associate<'session'> {}
+
 export class Session<C extends Context = Context> {
   static counter = 0
 
@@ -44,6 +46,8 @@ export class Session<C extends Context = Context> {
     this.id = ++Session.counter
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
+    defineProperty(this, Context.current, bot.ctx)
+    return Context.associate(this, 'session')
   }
 
   /** @deprecated */
