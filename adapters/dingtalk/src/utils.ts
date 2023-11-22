@@ -7,6 +7,10 @@ export async function decodeMessage<C extends Context>(bot: DingtalkBot<C>, body
   session.type = 'message'
   session.messageId = body.msgId
   session.guildId = body.chatbotCorpId
+  session.event.user = {
+    id: body.senderStaffId,
+    name: body.senderNick,
+  }
 
   if (body.conversationType === '1') {
     session.channelId = session.userId
@@ -21,10 +25,6 @@ export async function decodeMessage<C extends Context>(bot: DingtalkBot<C>, body
     session.event.channel.name = body.conversationTitle
   }
 
-  session.event.user = {
-    id: body.senderStaffId,
-    name: body.senderNick,
-  }
   session.event.member = {
     roles: body.isAdmin ? ['admin'] : [],
   }
