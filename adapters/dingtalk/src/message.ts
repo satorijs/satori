@@ -2,6 +2,7 @@ import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
 import FormData from 'form-data'
 import { SendMessageData } from './types'
+import { Entry } from '@satorijs/server-temp'
 
 export const escape = (val: string) =>
   val
@@ -93,7 +94,16 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
       // await this.sendMessage('sampleImageMsg', {
       //   photoURL: attrs.url
       // })
-      this.buffer += `![${attrs.alt}](${attrs.url})`
+      if (await this.bot.http.isPrivate(attrs.url)) {
+        const temp = this.bot.ctx.get('server.temp')
+        if (!temp) {
+          return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')
+        }
+        const entry: Entry | undefined = await temp.create(attrs.url)
+        this.buffer += `![${attrs.alt ?? ''}](${entry.url})`
+      } else {
+        this.buffer += `![${attrs.alt ?? ''}](${attrs.url})`
+      }
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
