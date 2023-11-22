@@ -151,8 +151,10 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private useMarkdown = false
   private rows: QQ.Button[][] = []
+  private attachedFile: QQ.SendFileResponse;
+  // 先图后文
   async flush() {
-    if (!this.content.trim() && !this.rows.flat().length) return
+    if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
     this.options.session['seq'] ||= 0
     let msg_id = this.options?.session?.messageId, msg_seq: number = ++this.options.session['seq']
@@ -162,14 +164,19 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     const data: QQ.SendMessageParams = {
       content: this.content,
-      msg_type: 0,
+      msg_type: QQ.MessageType.TEXT,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id,
-      msg_seq,
+      msg_seq
+    }
+    if (this.attachedFile) {
+      if (!data.content.length) data.content = ' '
+      data.media = this.attachedFile
+      data.msg_type = QQ.MessageType.MEDIA
     }
 
     if (this.useMarkdown) {
-      data.msg_type = 2
+      data.msg_type = QQ.MessageType.MARKDOWN
       delete data.content
       data.markdown = {
         content: escapeMarkdown(this.content) || ' ',
@@ -204,6 +211,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     // this.results.push(session.event.message)
     // session.app.emit(session, 'send', session)
     this.content = ''
+    this.attachedFile = null
     this.rows = []
   }
 
@@ -225,13 +233,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     const data: QQ.SendFileParams = {
       file_type,
       url,
-      srv_send_msg: true,
+      srv_send_msg: false,
     }
+    let res: QQ.SendFileResponse
     try {
       if (this.session.isDirect) {
-        await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
+        res = await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
       } else {
-        await this.bot.internal.sendFileGuild(this.session.guildId, data)
+        res = await this.bot.internal.sendFileGuild(this.session.guildId, data)
       }
     } catch (e) {
       if (!Quester.isAxiosError(e)) throw e
@@ -239,6 +248,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       this.bot.logger.warn('[response] %s %o', e.response?.status, e.response?.data)
     }
     entry?.dispose?.()
+    return res
   }
 
   decodeButton(attrs: Dict, label: string) {
@@ -288,9 +298,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'text') {
       this.content += escape(attrs.content)
     } else if (type === 'image' && attrs.url) {
-      await this.sendFile(type, attrs)
+      await this.flush()
+      const data = await this.sendFile(type, attrs)
+      if (data) this.attachedFile = data
     } else if (type === 'video' && attrs.url) {
-      await this.sendFile(type, attrs)
+      await this.flush()
+      const data = await this.sendFile(type, attrs)
+      if (data) this.attachedFile = data
+      await this.flush() // text can't send with video
     } else if (type === 'button-group') {
       this.useMarkdown = true
       this.rows.push([])

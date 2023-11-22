@@ -27,18 +27,11 @@ export class GroupInternal {
 
   // /v2/channels/{channel_id}/messages new api?
   async sendFilePrivate(openid: string, data: QQ.SendFileParams) {
-    return this.http().post<{
-      // id: string
-      // timestamp: number
-      file_uuid: string
-    }>(`/v2/users/${openid}/files`, data)
+    return this.http().post<QQ.SendFileResponse>(`/v2/users/${openid}/files`, data)
   }
 
   async sendFileGuild(group_openid: string, data: QQ.SendFileParams) {
-    return this.http().post<{
-      id: string
-      timestamp: number
-    }>(`/v2/groups/${group_openid}/files`, data)
+    return this.http().post<QQ.SendFileResponse>(`/v2/groups/${group_openid}/files`, data)
   }
 
   // @TODO enum

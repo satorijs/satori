@@ -1164,6 +1164,7 @@ export enum MessageType {
   EMBED = 4,
   // @TODO merge?
   AT = 5,
+  MEDIA = 7,
 }
 
 export interface SendMessageParams {
@@ -1185,6 +1186,7 @@ export interface SendMessageParams {
   msg_seq?: number
   // @TODO merge?
   timestamp: number
+  media?: Partial<SendFileResponse>
 }
 
 export enum FileType {
@@ -1197,8 +1199,14 @@ export enum FileType {
 export interface SendFileParams {
   file_type: FileType
   url: string
-  srv_send_msg: true
+  srv_send_msg: boolean
   file_data?: unknown
+}
+
+export interface SendFileResponse {
+  file_uuid: string
+  file_info: string
+  ttl: number
 }
 
 export interface UserMessage {
