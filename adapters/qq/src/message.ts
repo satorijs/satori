@@ -151,23 +151,24 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private useMarkdown = false
   private rows: QQ.Button[][] = []
-  private attachedFile: QQ.SendFileResponse;
+  private attachedFile: QQ.SendFileResponse
+
   // 先图后文
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
-    this.options.session['seq'] ||= 0
-    let msg_id = this.options?.session?.messageId, msg_seq: number = ++this.options.session['seq']
-    if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
-      msg_id = null
-      msg_seq = null
+    let msg_id: string, msg_seq: number
+    if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+      this.options.session['seq'] ||= 0
+      msg_id = this.options.session.messageId
+      msg_seq = ++this.options.session['seq']
     }
     const data: QQ.SendMessageParams = {
       content: this.content,
       msg_type: QQ.MessageType.TEXT,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id,
-      msg_seq
+      msg_seq,
     }
     if (this.attachedFile) {
       if (!data.content.length) data.content = ' '

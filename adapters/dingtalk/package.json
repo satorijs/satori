@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-dingtalk",
   "description": "DingTalk (钉钉) Adapter for Satorijs",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
