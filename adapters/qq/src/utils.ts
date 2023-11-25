@@ -192,10 +192,10 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     session.operatorId = input.d.op_member_openid
   } else if (input.t === 'INTERACTION_CREATE') {
     session.type = 'interaction/button'
-    session.userId = input.d.data.resolved.user_id
+    session.userId = input.d.group_member_openid ?? input.d.data.resolved.user_id
     if (input.d.chat_type === QQ.ChatType.GROUP) {
-      session.guildId = input.d.group_open_id
-      session.channelId = input.d.group_open_id
+      session.guildId = input.d.group_openid
+      session.channelId = input.d.group_openid
       session.isDirect = false
     } else if (input.d.chat_type === QQ.ChatType.CHANNEL) {
       session.channelId = input.d.channel_id

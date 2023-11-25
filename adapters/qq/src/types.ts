@@ -1233,13 +1233,14 @@ export interface Interaction {
   timestamp: string
   guild_id: string
   channel_id: string
-  group_open_id: string
+  group_openid: string
+  group_member_openid: string
   chat_type: ChatType
   data: {
     resolved: {
       button_data: string
       button_id: string
-      user_id: string
+      user_id?: string
     }
   }
   version: 1
