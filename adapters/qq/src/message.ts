@@ -305,6 +305,12 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
       await this.flush() // text can't send with video
+    } else if (type === 'br') {
+      this.content += '\n'
+    } else if (type === 'p') {
+      if (!this.content.endsWith('\n')) this.content += '\n'
+      await this.render(children)
+      if (!this.content.endsWith('\n')) this.content += '\n'
     } else if (type === 'button-group') {
       this.useMarkdown = true
       this.rows.push([])
