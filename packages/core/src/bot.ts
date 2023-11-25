@@ -57,9 +57,11 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   update(login: Login) {
-    this._status = login.status
-    this.user = login.user
-    this.dispatchUpdate()
+    // make sure `status` is the last property to be assigned
+    // so that `login-updated` event can be dispatched after all properties are updated
+    const { status, ...rest } = login
+    Object.assign(this, rest)
+    this.status = status
   }
 
   dispose() {
@@ -76,10 +78,6 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     this.dispatch(session)
   }
 
-  dispatchUpdate() {
-    this.dispatchLoginEvent('login-updated')
-  }
-
   get status() {
     return this._status
   }
@@ -89,7 +87,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     this._status = value
     if (this.ctx.bots.includes(this)) {
       this.context.emit('bot-status-updated', this)
-      this.dispatchUpdate()
+      this.dispatchLoginEvent('login-updated')
     }
   }
 
@@ -186,7 +184,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   toJSON(): Login {
-    return clone(pick(this, ['platform', 'selfId', 'status', 'user']))
+    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden']))
   }
 
   async getLogin() {

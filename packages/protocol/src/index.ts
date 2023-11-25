@@ -198,6 +198,7 @@ export interface Login {
   user?: User
   platform?: string
   selfId?: string
+  hidden?: boolean
   status: Status
 }
 
