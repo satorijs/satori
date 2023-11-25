@@ -2,7 +2,6 @@ import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQBot } from './bot'
 import FormData from 'form-data'
-import { escape } from '@satorijs/element'
 import { QQGuildBot } from './bot/guild'
 import { Entry } from '@satorijs/server-temp'
 
@@ -111,7 +110,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.content += escape(attrs.content)
+      this.content += attrs.content
     } else if (type === 'at') {
       switch (attrs.type) {
         case 'all':
@@ -296,7 +295,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.content += escape(attrs.content)
+      this.content += attrs.content
     } else if (type === 'image' && attrs.url) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
