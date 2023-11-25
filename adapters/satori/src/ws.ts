@@ -8,7 +8,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   public http: Quester
   public logger: Logger
 
-  private isActive = true
+  private _status = Universal.Status.OFFLINE
   private sequence?: number
   private timeout?: NodeJS.Timeout
 
@@ -26,13 +26,12 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   }
 
   getActive() {
-    return this.isActive
+    return this._status !== Universal.Status.OFFLINE && this._status !== Universal.Status.DISCONNECT
   }
 
   setStatus(status: Universal.Status, error?: Error): void {
-    if (status === Universal.Status.OFFLINE) {
-      this.isActive = false
-    }
+    this._status = status
+    if (status === Universal.Status.ONLINE) return
     for (const bot of this.bots) {
       bot.status = status
       bot.error = error
@@ -44,9 +43,13 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   }
 
   getBot(platform: string, selfId: string, login: Universal.Login) {
-    let bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     // Do not dispatch event from outside adapters.
-    if (bot) return this.bots.includes(bot) ? bot : undefined
+    let bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+    if (bot) {
+      bot.update(login)
+      return this.bots.includes(bot) ? bot : undefined
+    }
+
     if (!login) {
       this.logger.error('cannot find bot for', platform, selfId)
       return
@@ -111,6 +114,16 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     this.socket.addEventListener('close', () => {
       clearInterval(this.timeout)
     })
+  }
+
+  async start() {
+    this.setStatus(Universal.Status.CONNECT)
+    await super.start()
+  }
+
+  async stop() {
+    this.setStatus(Universal.Status.DISCONNECT)
+    await super.stop()
   }
 }
 
