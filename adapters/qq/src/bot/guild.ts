@@ -26,6 +26,14 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     this.http = config.parent.guildHttp
   }
 
+  get status() {
+    return this.parent.status
+  }
+
+  set status(status) {
+    this.parent.status = status
+  }
+
   async getUser(userId: string, guildId?: string): Promise<Universal.User> {
     const { user } = await this.getGuildMember(guildId, userId)
     return user
