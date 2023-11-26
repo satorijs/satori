@@ -86,7 +86,7 @@ export async function decodeMessage(
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
   if (data.attachments?.length) {
-    if (message.content) message.content += ' '
+    if (!/\s$/.test(message.content)) message.content += ' '
     message.content += data.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
         return h('image', {

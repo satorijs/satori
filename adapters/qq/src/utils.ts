@@ -69,6 +69,7 @@ export async function decodeMessage(
     .replace(/<@!(\d+)>/g, (_, $1) => h.at($1).toString())
   // .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString()) // not used?
   const { attachments = [] } = data
+  if (attachments.length && !/\s$/.test(message.content)) message.content += ' '
   message.content = attachments
     .filter(({ content_type }) => content_type.startsWith('image'))
     .reduce((content, attachment) => content + h.image('https://' + attachment.url), message.content)
