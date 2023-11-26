@@ -63,9 +63,13 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
       appId: this.config.id,
       clientSecret: this.config.secret,
     })
+    let endpoint = this.config.endpoint
+    if (this.config.sandbox) {
+      endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
+    }
     this._token = result.access_token
     this.groupHttp = this.ctx.http.extend({
-      endpoint: this.config.endpoint,
+      endpoint,
       headers: {
         'Authorization': `QQBot ${this._token}`,
         'X-Union-Appid': this.config.id,
