@@ -193,7 +193,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     session.operatorId = input.d.op_member_openid
   } else if (input.t === 'INTERACTION_CREATE') {
     session.type = 'interaction/button'
-    session.userId = input.d.group_member_openid ?? input.d.data.resolved.user_id
+    session.userId = input.d.group_member_openid ?? input.d.user_openid ?? input.d.data.resolved.user_id
     if (input.d.chat_type === QQ.ChatType.GROUP) {
       session.guildId = input.d.group_openid
       session.channelId = input.d.group_openid
@@ -211,11 +211,23 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     // session.messageId = input.d.id // event_id is not supported for sending message
 
     // {message: 'get header appid failed', code: 630006}
+    // {"message":"check app privilege not pass","code":11253
     try {
       await bot.internal.acknowledgeInteraction(input.d.id, 0)
     } catch (e) {
       bot.logger.warn(e)
     }
+  } else if (input.t === 'GUILD_MEMBER_ADD' || input.t === 'GUILD_MEMBER_DELETE' || input.t === 'GUILD_MEMBER_UPDATE') {
+    session.type = {
+      GUILD_MEMBER_ADD: 'guild-member-added',
+      GUILD_MEMBER_UPDATE: 'guild-member-updated',
+      GUILD_MEMBER_DELETE: 'guild-member-removed',
+    }[input.t]
+    session.guildId = input.d.guild_id
+    session.operatorId = input.d.op_user_id
+    // session.timestamp = new Date(input.d.joined_at).valueOf()
+    session.timestamp = Date.now()
+    session.event.user = decodeUser(input.d.user)
   } else {
     return
   }
