@@ -143,6 +143,14 @@ export class GuildInternal {
     return message
   }
 
+  async sendMessage(channelId: string, data: QQ.Message.ChannelRequest) {
+    return this.http().post<QQ.Message>(`/channels/${channelId}/messages`, data)
+  }
+
+  async sendDM(guildId: string, data: QQ.Message.ChannelRequest) {
+    return this.http().post<QQ.Message>(`/dms/${guildId}/messages`, data)
+  }
+
   async deleteMessage(channel_id: string, message_id: string, hidetip = false) {
     return this.http().delete(`/channels/${channel_id}/messages/${message_id}?hidetip=${hidetip.toString()}`)
   }
@@ -258,7 +266,7 @@ export class GuildInternal {
     }>(`/channels/${channel_id}/threads/${thread_id}`)
   }
 
-  async createPost(channel_id: string, data: QQ.CreatePostRequest) {
+  async createPost(channel_id: string, data: QQ.Forum.CreatePostRequest) {
     return this.http().put<{
       task_id: string
       create_time: string

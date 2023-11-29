@@ -32,7 +32,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
       msg_id = null
     }
 
-    let r: QQ.Message
+    let r: Partial<QQ.Message.Response>
     this.bot.logger.debug('use form data %s', useFormData)
     try {
       if (useFormData) {
@@ -58,7 +58,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
             image: this.fileUrl,
           },
           ...(this.reference ? {
-            messageReference: {
+            message_reference: {
               message_id: this.reference,
             },
           } : {}),
@@ -150,7 +150,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private useMarkdown = false
   private rows: QQ.Button[][] = []
-  private attachedFile: QQ.SendFileResponse
+  private attachedFile: QQ.Message.File.Response
 
   // 先图后文
   async flush() {
@@ -162,9 +162,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
     }
-    const data: QQ.SendMessageParams = {
+    const data: QQ.Message.Request = {
       content: this.content,
-      msg_type: QQ.MessageType.TEXT,
+      msg_type: QQ.Message.Type.TEXT,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id,
       msg_seq,
@@ -172,11 +172,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (this.attachedFile) {
       if (!data.content.length) data.content = ' '
       data.media = this.attachedFile
-      data.msg_type = QQ.MessageType.MEDIA
+      data.msg_type = QQ.Message.Type.MEDIA
     }
 
     if (this.useMarkdown) {
-      data.msg_type = QQ.MessageType.MARKDOWN
+      data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
         content: escapeMarkdown(this.content) || ' ',
@@ -230,12 +230,12 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
     else return
-    const data: QQ.SendFileParams = {
+    const data: QQ.Message.File.Request = {
       file_type,
       url,
       srv_send_msg: false,
     }
-    let res: QQ.SendFileResponse
+    let res: QQ.Message.File.Response
     try {
       if (this.session.isDirect) {
         res = await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
