@@ -2,29 +2,6 @@ import { arrayBufferToBase64, Awaitable, camelize, defineProperty, Dict, hyphena
 
 const kElement = Symbol.for('satori.element')
 
-function isElement(source: any): source is Element {
-  return source && typeof source === 'object' && source[kElement]
-}
-
-function toElement(content: string | Element) {
-  if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') {
-    content = '' + content
-    if (content) return Element('text', { content })
-  } else if (isElement(content)) {
-    return content
-  } else if (!isNullable(content)) {
-    throw new TypeError(`Invalid content: ${content}`)
-  }
-}
-
-function toElementArray(content: Element.Fragment) {
-  if (Array.isArray(content)) {
-    return content.map(toElement).filter(x => x)
-  } else {
-    return [toElement(content)].filter(x => x)
-  }
-}
-
 interface Element {
   [kElement]: true
   type: string
@@ -84,7 +61,7 @@ function Element(type: string | RenderFunction, attrs: Dict, ...children: Elemen
 function Element(type: string | RenderFunction, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   const attrs: Dict = {}, children: Element[] = []
-  if (args[0] && typeof args[0] === 'object' && !isElement(args[0]) && !Array.isArray(args[0])) {
+  if (args[0] && typeof args[0] === 'object' && !Element.isElement(args[0]) && !Array.isArray(args[0])) {
     const props = args.shift()
     for (const [key, value] of Object.entries(props)) {
       if (isNullable(value)) continue
@@ -97,7 +74,7 @@ function Element(type: string | RenderFunction, ...args: any[]) {
     }
   }
   for (const child of args) {
-    children.push(...toElementArray(child))
+    children.push(...Element.toElementArray(child))
   }
   if (typeof type === 'function') {
     attrs.is = type
@@ -130,9 +107,31 @@ namespace Element {
   type SyncVisitor<S> = Dict<SyncTransformer<S>> | Visit<boolean | Fragment, S>
   type Visitor<S> = Dict<Transformer<S>> | Visit<Awaitable<boolean | Fragment>, S>
 
+  export function isElement(source: any): source is Element {
+    return source && typeof source === 'object' && source[kElement]
+  }
+
+  export function toElement(content: string | Element) {
+    if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') {
+      content = '' + content
+      if (content) return Element('text', { content })
+    } else if (isElement(content)) {
+      return content
+    } else if (!isNullable(content)) {
+      throw new TypeError(`Invalid content: ${content}`)
+    }
+  }
+
+  export function toElementArray(content: Element.Fragment) {
+    if (Array.isArray(content)) {
+      return content.map(toElement).filter(x => x)
+    } else {
+      return [toElement(content)].filter(x => x)
+    }
+  }
+
   export function normalize(source: Fragment, context?: any) {
-    if (typeof source !== 'string') return toElementArray(source)
-    return Element.parse(source, context)
+    return typeof source === 'string' ? parse(source, context) : toElementArray(source)
   }
 
   export function escape(source: string, inline = false) {
@@ -242,13 +241,14 @@ namespace Element {
     return value ?? ''
   }
 
-  const tagRegExp = /<!--[\s\S]*?-->|<(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>/
-  const attrRegExp1 = /([^\s=]+)(?:="([^"]*)"|='([^']*)')?/g
-  const attrRegExp2 = /([^\s=]+)(?:="([^"]*)"|='([^']*)'|=\{([^}]+)\})?/g
-  const interpRegExp = /\{([^}]*)\}/
+  const tagRegExp1 = /(?<comment><!--[\s\S]*?-->)|(?<tag><(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>)/
+  const tagRegExp2 = /(?<comment><!--[\s\S]*?-->)|(?<tag><(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>)|(?<curly>\{[\s\S]*?\})/
+  const attrRegExp1 = /([^\s=]+)(?:="(?<value1>[^"]*)"|='(?<value2>[^']*)')?/g
+  const attrRegExp2 = /([^\s=]+)(?:="(?<value1>[^"]*)"|='(?<value2>[^']*)'|=(?<curly>\{([^}]+)\}))?/g
 
   interface Token {
-    type: string
+    type: 'angle' | 'curly'
+    name: string
     close: string
     empty: string
     attrs: Dict
@@ -256,53 +256,65 @@ namespace Element {
   }
 
   export function parse(source: string, context?: any) {
-    const tokens: (Element | Token)[] = []
+    const tokens: (string | Token)[] = []
     function pushText(content: string) {
-      if (content) tokens.push(Element('text', { content }))
+      if (content) tokens.push(content)
     }
 
+    const tagRegExp = context ? tagRegExp2 : tagRegExp1
     const attrRegExp = context ? attrRegExp2 : attrRegExp1
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
       parseContent(source.slice(0, tagCap.index))
-      const [_, close, type, attrs, empty] = tagCap
-      source = source.slice(tagCap.index + _.length)
-      if (_.startsWith('<!')) continue
-      const token: Token = { source: _, type: type || Fragment, close, empty, attrs: {} }
+      source = source.slice(tagCap.index + tagCap[0].length)
+      const [_, , , close, type, inner, empty] = tagCap
+      if (tagCap.groups.comment) continue
+      if (tagCap.groups.curly) {
+        tokens.push({
+          type: 'curly',
+          name: '',
+          source: tagCap.groups.curly,
+          empty: '/',
+          close: '',
+          attrs: {},
+        })
+        continue
+      }
+      const attrs = {}
       let attrCap: RegExpExecArray
-      while ((attrCap = attrRegExp.exec(attrs))) {
+      while ((attrCap = attrRegExp.exec(inner))) {
         const [, key, v1, v2 = v1, v3] = attrCap
         if (v3) {
-          token.attrs[key] = interpolate(v3, context)
+          attrs[key] = interpolate(v3, context)
         } else if (!isNullable(v2)) {
-          token.attrs[key] = unescape(v2)
+          attrs[key] = unescape(v2)
         } else if (key.startsWith('no-')) {
-          token.attrs[key.slice(3)] = false
+          attrs[key.slice(3)] = false
         } else {
-          token.attrs[key] = true
+          attrs[key] = true
         }
       }
-      tokens.push(token)
+      tokens.push({
+        type: 'angle',
+        source: _,
+        name: type || Fragment,
+        close,
+        empty,
+        attrs,
+      })
     }
 
     parseContent(source)
     function parseContent(source: string) {
-      source = source
+      pushText(unescape(source
         .replace(/^\s*\n\s*/, '')
-        .replace(/\s*\n\s*$/, '')
-      if (context) {
-        let interpCap: RegExpExecArray
-        while ((interpCap = interpRegExp.exec(source))) {
-          const [_, expr] = interpCap
-          pushText(unescape(source.slice(0, interpCap.index)))
-          source = source.slice(interpCap.index + _.length)
-          const content = interpolate(expr, context)
-          tokens.push(...toElementArray(content))
-        }
-      }
-      pushText(unescape(source))
+        .replace(/\s*\n\s*$/, '')))
     }
 
+    return parseTokens(tokens, context)
+  }
+
+  export function parseTokens(tokens: (string | Token)[], context?: any) {
     const stack = [Element(Fragment)]
     function rollback(index: number) {
       for (; index > 0; index--) {
@@ -314,11 +326,13 @@ namespace Element {
     }
 
     for (const token of tokens) {
-      if (isElement(token)) {
-        stack[0].children.push(token)
-      } else if (token.close) {
+      if (typeof token === 'string') {
+        stack[0].children.push(Element('text', { content: token }))
+        continue
+      }
+      if (token.close) {
         let index = 0
-        while (index < stack.length && stack[index].type !== token.type) index++
+        while (index < stack.length && stack[index].type !== token.name) index++
         if (index === stack.length) {
           // no matching open tag
           stack[0].children.push(Element('text', { content: token.source }))
@@ -328,11 +342,15 @@ namespace Element {
           delete element.source
         }
       } else {
-        const element = Element(token.type, token.attrs)
-        stack[0].children.push(element)
-        if (!token.empty) {
-          element.source = token.source
-          stack.unshift(element)
+        if (token.type === 'angle') {
+          const element = Element(token.name, token.attrs)
+          stack[0].children.push(element)
+          if (!token.empty) {
+            element.source = token.source
+            stack.unshift(element)
+          }
+        } else {
+          stack[0].children.push(...Element.toElementArray(interpolate(token.source.slice(1, -1), context)))
         }
       }
     }
