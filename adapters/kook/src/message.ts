@@ -207,7 +207,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       this.cardBuffer.modules.push({
         type: 'header',
         text: {
-          type: 'plain-text',
+          type: attrs.type,
           content: attrs.content,
         },
       })
@@ -215,8 +215,8 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       this.flushText()
       this.cardBuffer.modules.push({
         type: 'countdown',
-        startTime: attrs.startTime,
-        endTime: attrs.endTime,
+        startTime: +attrs.startTime,
+        endTime: +attrs.endTime,
         mode: attrs.mode,
       })
     } else if (type === 'kook:invite') {
@@ -269,11 +269,36 @@ function encodeButton({ attrs, children }: h): Kook.Card.Button {
   return {
     type: 'button',
     theme,
-    value: attrs.id,
+    value: attrs.type === 'link' ? attrs.href : attrs.id,
     click: attrs.type === 'link' ? 'link' : 'return-val',
     text: {
-      type: 'plain-text',
-      content: children.join(''),
+      type: 'kmarkdown',
+      content: encodeMarkdown(children),
     },
   }
+}
+
+function encodeMarkdown(children: h[]): string {
+  let content = ''
+  for (const element of children) {
+    const { type, attrs, children } = element
+    if (type === 'text') {
+      content += attrs.content.replace(/[\\*`~()]/g, '\\$&')
+    } else if (type === 'b' || type === 'strong') {
+      content += '**' + encodeMarkdown(children) + '**'
+    } else if (type === 'i' || type === 'em') {
+      content += '*' + encodeMarkdown(children) + '*'
+    } else if (type === 'u' || type === 'ins') {
+      content += '(ins)' + encodeMarkdown(children) + '(ins)'
+    } else if (type === 's' || type === 'del') {
+      content += '~~' + encodeMarkdown(children) + '~~'
+    } else if (type === 'spl') {
+      content += '(spl)' + encodeMarkdown(children) + '(spl)'
+    } else if (type === 'code') {
+      content += '`' + element.toString(true) + '`'
+    } else if (type === 'a') {
+      content += `[${encodeMarkdown(children)}](${attrs.href})`
+    }
+  }
+  return content
 }

@@ -230,8 +230,8 @@ export namespace Card {
 
   export interface Countdown {
     type: 'countdown'
-    endTime: string
-    startTime: string
+    endTime: number
+    startTime: number
     mode: 'day' | 'hour' | 'second'
   }
 }
