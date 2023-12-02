@@ -43,7 +43,8 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
       this.session[key] = this.options.session[key]
     }
     await this.prepare()
-    this.session.elements = h.normalize(content)
+    const session = this.options.session ?? this.session
+    this.session.elements = await session.transform(h.normalize(content))
     const btns = h.select(this.session.elements, 'button').filter(v => v.attrs.type !== 'link' && !v.attrs.id)
     for (const btn of btns) {
       const r = Math.random().toString(36).slice(2)
@@ -51,8 +52,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
       if (typeof btn.attrs.action === 'function') this.bot.callbacks[btn.attrs.id] = btn.attrs.action
     }
     if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
-    const session = this.options.session ?? this.session
-    await this.render(await session.transform(this.session.elements))
+    await this.render(this.session.elements)
     await this.flush()
     if (this.errors.length) {
       throw new AggregateError(this.errors)
