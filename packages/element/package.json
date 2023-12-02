@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/element",
   "description": "Element Manipulation",
-  "version": "2.5.1",
+  "version": "2.6.0",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
@@ -39,7 +39,7 @@
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://satori.js.org/",
+  "homepage": "https://satori.chat/",
   "keywords": [
     "satori",
     "element",

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/server-temp",
   "description": "Temp server plugin for cordis",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -28,6 +28,6 @@
     "service"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.2.1"
+    "@satorijs/satori": "^3.2.3"
   }
 }

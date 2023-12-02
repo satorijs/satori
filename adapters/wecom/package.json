@@ -33,7 +33,7 @@
     "@types/xml2js": "^0.4.13"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.2.1"
+    "@satorijs/satori": "^3.2.3"
   },
   "dependencies": {
     "@wecom/crypto": "^1.0.1",

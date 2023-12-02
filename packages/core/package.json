@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "3.2.1",
+  "version": "3.2.3",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://satori.js.org/",
+  "homepage": "https://satori.chat/",
   "keywords": [
     "satori",
     "element",
@@ -35,8 +35,8 @@
     "@types/ws": "^8.5.8"
   },
   "dependencies": {
-    "@satorijs/element": "^2.5.1",
-    "@satorijs/protocol": "^1.1.1",
+    "@satorijs/element": "^2.6.0",
+    "@satorijs/protocol": "^1.1.2",
     "cordis": "^3.3.1",
     "cordis-axios": "^4.0.1",
     "cosmokit": "^1.5.1",

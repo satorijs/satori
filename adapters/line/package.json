@@ -32,6 +32,6 @@
     "@satorijs/router": "^1.1.2"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.2.1"
+    "@satorijs/satori": "^3.2.3"
   }
 }
