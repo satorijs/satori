@@ -41,6 +41,13 @@ describe('Element API', () => {
         .to.deep.equal([Element('tag', '233', '2')])
     })
 
+    it('control flow', () => {
+      expect(Element.parse('{#if foo >= 0}{foo}{:else}<p>negative</p>{/if}', { foo: 233 }))
+        .to.deep.equal([Element.text('233')])
+      expect(Element.parse('{#if foo >= 0}{foo}{:else}<p>negative</p>{/if}', { foo: -233 }))
+        .to.deep.equal([Element('p', 'negative')])
+    })
+
     it('whitespace', () => {
       expect(Element.parse(`<>
         <foo> 1 </foo>

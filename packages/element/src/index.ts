@@ -242,17 +242,23 @@ namespace Element {
   }
 
   const tagRegExp1 = /(?<comment><!--[\s\S]*?-->)|(?<tag><(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>)/
-  const tagRegExp2 = /(?<comment><!--[\s\S]*?-->)|(?<tag><(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>)|(?<curly>\{[\s\S]*?\})/
+  const tagRegExp2 = /(?<comment><!--[\s\S]*?-->)|(?<tag><(\/?)([^!\s>/]*)([^>]*?)\s*(\/?)>)|(?<curly>\{(?<derivative>[@:/#][^\s}]*)?[\s\S]*?\})/
   const attrRegExp1 = /([^\s=]+)(?:="(?<value1>[^"]*)"|='(?<value2>[^']*)')?/g
   const attrRegExp2 = /([^\s=]+)(?:="(?<value1>[^"]*)"|='(?<value2>[^']*)'|=(?<curly>\{([^}]+)\}))?/g
+
+  const enum Position {
+    OPEN,
+    CLOSE,
+    EMPTY,
+    CONTINUE,
+  }
 
   interface Token {
     type: 'angle' | 'curly'
     name: string
-    close: string
-    empty: string
-    attrs: Dict
+    position: Position
     source: string
+    extra: string
   }
 
   export function parse(source: string, context?: any) {
@@ -262,45 +268,38 @@ namespace Element {
     }
 
     const tagRegExp = context ? tagRegExp2 : tagRegExp1
-    const attrRegExp = context ? attrRegExp2 : attrRegExp1
     let tagCap: RegExpExecArray
     while ((tagCap = tagRegExp.exec(source))) {
       parseContent(source.slice(0, tagCap.index))
       source = source.slice(tagCap.index + tagCap[0].length)
-      const [_, , , close, type, inner, empty] = tagCap
+      const [_, , , close, type, extra, empty] = tagCap
       if (tagCap.groups.comment) continue
       if (tagCap.groups.curly) {
+        let name = '', position = Position.EMPTY
+        if (tagCap.groups.derivative) {
+          name = tagCap.groups.derivative.slice(1)
+          position = {
+            '@': Position.EMPTY,
+            '#': Position.OPEN,
+            '/': Position.CLOSE,
+            ':': Position.CONTINUE,
+          }[tagCap.groups.derivative[0]]
+        }
         tokens.push({
           type: 'curly',
-          name: '',
+          name,
+          position,
           source: tagCap.groups.curly,
-          empty: '/',
-          close: '',
-          attrs: {},
+          extra: tagCap.groups.curly.slice(name.length + 2, -1),
         })
         continue
-      }
-      const attrs = {}
-      let attrCap: RegExpExecArray
-      while ((attrCap = attrRegExp.exec(inner))) {
-        const [, key, v1, v2 = v1, v3] = attrCap
-        if (v3) {
-          attrs[key] = interpolate(v3, context)
-        } else if (!isNullable(v2)) {
-          attrs[key] = unescape(v2)
-        } else if (key.startsWith('no-')) {
-          attrs[key.slice(3)] = false
-        } else {
-          attrs[key] = true
-        }
       }
       tokens.push({
         type: 'angle',
         source: _,
         name: type || Fragment,
-        close,
-        empty,
-        attrs,
+        position: close ? Position.CLOSE : empty ? Position.EMPTY : Position.OPEN,
+        extra,
       })
     }
 
@@ -316,41 +315,83 @@ namespace Element {
 
   export function parseTokens(tokens: (string | Token)[], context?: any) {
     const stack = [Element(Fragment)]
+
+    function pushElement(...element: Element[]) {
+      if (!stack[0].attrs.continuation) {
+        stack[0].children.push(...element)
+      } else {
+        stack[0].attrs[stack[0].attrs.continuation].push(...element)
+      }
+    }
+
     function rollback(index: number) {
       for (; index > 0; index--) {
         const { children } = stack.shift()
         const { source } = stack[0].children.pop()
-        stack[0].children.push(Element('text', { content: source }))
-        stack[0].children.push(...children)
+        pushElement(Element('text', { content: source }))
+        pushElement(...children)
       }
     }
 
     for (const token of tokens) {
       if (typeof token === 'string') {
-        stack[0].children.push(Element('text', { content: token }))
+        pushElement(Element('text', { content: token }))
         continue
       }
-      if (token.close) {
+      if (token.position === Position.CONTINUE) {
+        stack[0].attrs.continuation = token.name
+        stack[0].attrs[token.name] = []
+      } else if (token.position === Position.CLOSE) {
         let index = 0
         while (index < stack.length && stack[index].type !== token.name) index++
         if (index === stack.length) {
           // no matching open tag
-          stack[0].children.push(Element('text', { content: token.source }))
+          pushElement(Element('text', { content: token.source }))
         } else {
           rollback(index)
           const element = stack.shift()
           delete element.source
+          if (element.type === 'if') {
+            const { expr } = element.attrs
+            if (evaluate(expr, context)) {
+              pushElement(...element.children)
+            } else {
+              pushElement(...element.attrs.else ?? [])
+            }
+          }
         }
       } else {
+        // OPEN | EMPTY
+        const attrs = {}
+        const attrRegExp = context ? attrRegExp2 : attrRegExp1
+        let attrCap: RegExpExecArray
+        while ((attrCap = attrRegExp.exec(token.extra))) {
+          const [, key, v1, v2 = v1, v3] = attrCap
+          if (v3) {
+            attrs[key] = interpolate(v3, context)
+          } else if (!isNullable(v2)) {
+            attrs[key] = unescape(v2)
+          } else if (key.startsWith('no-')) {
+            attrs[key.slice(3)] = false
+          } else {
+            attrs[key] = true
+          }
+        }
         if (token.type === 'angle') {
-          const element = Element(token.name, token.attrs)
-          stack[0].children.push(element)
-          if (!token.empty) {
+          const element = Element(token.name, attrs)
+          pushElement(element)
+          if (token.position === Position.OPEN) {
             element.source = token.source
             stack.unshift(element)
           }
         } else {
-          stack[0].children.push(...Element.toElementArray(interpolate(token.source.slice(1, -1), context)))
+          if (token.name === '') {
+            pushElement(...Element.toElementArray(interpolate(token.source.slice(1, -1), context)))
+          } else if (token.name === 'if') {
+            const element = Element('if', { expr: token.extra })
+            element.source = token.source
+            stack.unshift(element)
+          }
         }
       }
     }
