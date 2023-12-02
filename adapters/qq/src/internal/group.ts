@@ -4,7 +4,7 @@ import * as QQ from '../types'
 export class GroupInternal {
   constructor(private http: () => Quester) { }
 
-  async sendPrivateMessage(openid: string, data: QQ.SendMessageParams) {
+  async sendPrivateMessage(openid: string, data: QQ.Message.Request) {
     return this.http().post<{
       sendResult: {
         msg_id: string
@@ -16,22 +16,23 @@ export class GroupInternal {
     }>(`/v2/users/${openid}/messages`, data)
   }
 
-  async sendMessage(group_openid: string, data: QQ.SendMessageParams) {
+  async sendMessage(group_openid: string, data: QQ.Message.Request) {
     return this.http().post<{
       group_code: string
       msg: string
-      // id: string
-      // timestamp: number
+    } & {
+      code: number
+      message: string
+      data: any
     }>(`/v2/groups/${group_openid}/messages`, data)
   }
 
-  // /v2/channels/{channel_id}/messages new api?
-  async sendFilePrivate(openid: string, data: QQ.SendFileParams) {
-    return this.http().post<QQ.SendFileResponse>(`/v2/users/${openid}/files`, data)
+  async sendFilePrivate(openid: string, data: QQ.Message.File.Request) {
+    return this.http().post<QQ.Message.File.Response>(`/v2/users/${openid}/files`, data)
   }
 
-  async sendFileGuild(group_openid: string, data: QQ.SendFileParams) {
-    return this.http().post<QQ.SendFileResponse>(`/v2/groups/${group_openid}/files`, data)
+  async sendFileGuild(group_openid: string, data: QQ.Message.File.Request) {
+    return this.http().post<QQ.Message.File.Response>(`/v2/groups/${group_openid}/files`, data)
   }
 
   // @TODO enum

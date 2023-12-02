@@ -174,7 +174,7 @@ export interface GatewayEvents {
   FRIEND_ADD: UserEvent
   FRIEND_DEL: UserEvent
   C2C_MSG_REJECT: UserEvent
-  C2C_MSG_RECEIVE: UserEvent // 文档写错了?
+  C2C_MSG_RECEIVE: UserEvent
 }
 
 export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
@@ -305,9 +305,21 @@ export interface Message {
   /** 用于私信场景下识别真实的来源频道id */
   src_guild_id?: string
   direct_message?: boolean
+  tts?: boolean
+  pinned?: boolean
+  type?: number
+  flags?: number
 }
 
 export namespace Message {
+  export enum Type {
+    TEXT = 0,
+    MIXED = 1,
+    MARKDOWN = 2,
+    ARK = 3,
+    EMBED = 4,
+    MEDIA = 7,
+  }
   export interface Ark {
     /** ark 模板 id（需要先申请） */
     template_id: number
@@ -366,36 +378,41 @@ export namespace Message {
     /** 是否忽略获取引用消息详情错误，默认否 */
     ignore_get_message_error?: boolean
   }
-  export interface Request {
-    /** 选填，消息内容，文本内容，支持内嵌格式 */
+  export interface ChannelRequest {
     content?: string
-    /** 选填，embed 消息，一种特殊的 ark */
-    embed?: Embed
-    /** 选填，ark 消息 */
+    embed?: object
     ark?: Ark
-    /**
-     * 选填，引用消息
-     *
-     * 传入值为 string 类型时默认为 msgId
-     */
-    messageReference?: string | Reference
-    /**
-     * 选填，图片 url 地址，平台会转存该图片，用于下发图片消息
-     *
-     * 该 url 必须为 https 链接
-     */
+    message_reference?: {
+      message_id: string
+      ignore_get_message_error?: boolean
+    }
     image?: string
-    /** 图片文件。form-data 支持直接通过文件上传的方式发送图片。 */
-    // @TODO fix type
-    // fileImage?: PathLike | ReadStream | Buffer
-    /** 选填，要回复的消息 id(Message.id), 在 AT_CREATE_MESSAGE 事件中获取。 */
-    msgId?: string
-    /** 选填，要回复的事件 id, 在各事件对象中获取。 */
-    eventId?: string
-    /** 选填，markdown 消息 */
-    markdown?: string | Markdown
+    msg_id?: string
+    markdown?: Markdown
   }
-  export interface Response extends Message {
+  export interface Request {
+    /** 文本内容 */
+    content?: string
+    /** 消息类型
+     * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
+     */
+    msg_type: Type
+    markdown?: Markdown
+    keyboard?: Partial<MessageKeyboard>
+    ark?: Ark
+    // image?: unknown
+    message_reference?: {
+      message_id: string
+      ignore_get_message_error?: boolean
+    }
+    event_id?: string
+    msg_id?: string
+    msg_seq?: number
+    timestamp: number
+    media?: Partial<File.Response>
+  }
+
+  export interface ResponseBase extends Message {
     tts: boolean
     type: number
     flags: number
@@ -404,9 +421,36 @@ export namespace Message {
     mentionEveryone: boolean
   }
 
+  export type Response = ResponseBase & {
+    code: number
+    message: string
+    data: any
+  }
+
   export interface DeletionPayload {
     message: Partial<Message>
     op_user: Pick<User, 'id'>
+  }
+  export namespace File {
+    export enum Type {
+      IMAGE = 1,
+      VIDEO = 2,
+      AUDIO = 3,
+      FILE = 4
+    }
+    export interface Request {
+      file_type: Type
+      url: string
+      srv_send_msg: boolean
+      file_data?: unknown
+    }
+
+    export interface Response {
+      file_uuid: string
+      file_info: string
+      ttl: number
+    }
+
   }
 }
 
@@ -1139,74 +1183,22 @@ export namespace Forum {
     /** 右对齐 */
     ALIGNMENT_RIGHT = 2
   }
-}
 
-export interface CreatePostRequest {
-  /** 帖子标题 */
-  title: string
-  /** 帖子内容 */
-  content: string
-  /** 帖子文本格式 */
-  format: PostFormat
-}
-export enum PostFormat {
-  FORMAT_TEXT = 1,
-  FORMAT_HTML = 2,
-  FORMAT_MARKDOWN = 3,
-  FORMAT_JSON = 4
-}
-
-export enum MessageType {
-  TEXT = 0,
-  MIXED = 1,
-  MARKDOWN = 2,
-  ARK = 3,
-  EMBED = 4,
-  // @TODO merge?
-  AT = 5,
-  MEDIA = 7,
-}
-
-export interface SendMessageParams {
-  /** 文本内容 */
-  content?: string
-  /** 消息类型
-   * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
-   */
-  msg_type: MessageType
-  markdown?: {
+  export interface CreatePostRequest {
+    /** 帖子标题 */
+    title: string
+    /** 帖子内容 */
     content: string
+    /** 帖子文本格式 */
+    format: PostFormat
   }
-  keyboard?: Partial<MessageKeyboard>
-  ark?: object
-  image?: unknown
-  message_reference?: object
-  event_id?: string
-  msg_id?: string
-  msg_seq?: number
-  // @TODO merge?
-  timestamp: number
-  media?: Partial<SendFileResponse>
-}
 
-export enum FileType {
-  IMAGE = 1,
-  VIDEO = 2,
-  AUDIO = 3,
-  FILE = 4
-}
-
-export interface SendFileParams {
-  file_type: FileType
-  url: string
-  srv_send_msg: boolean
-  file_data?: unknown
-}
-
-export interface SendFileResponse {
-  file_uuid: string
-  file_info: string
-  ttl: number
+  export enum PostFormat {
+    FORMAT_TEXT = 1,
+    FORMAT_HTML = 2,
+    FORMAT_MARKDOWN = 3,
+    FORMAT_JSON = 4
+  }
 }
 
 export interface UserMessage {
@@ -1227,22 +1219,34 @@ export enum ChatType {
 }
 
 export interface Interaction {
+  /** 平台方事件 ID，可以用于被动消息发送 */
   id: string
+  /** 按钮事件固定是 11 */
   type: 11
   // chat_type: number
+  /** 消息生产时间 */
   timestamp: string
+  /** 频道的 openid */
   guild_id: string
+  /** 文字子频道的 openid */
   channel_id: string
+  /** 群聊的 openid */
   group_openid: string
+  user_openid: string
   group_member_openid: string
+  /** 目前只有群和单聊有该字段，1 群聊，2 单聊，后续加入 3 频道 */
   chat_type: ChatType
   data: {
     resolved: {
+      /** 操作按钮的data字段值 */
       button_data: string
+      /** 操作按钮的id字段值 */
       button_id: string
+      /** 操作的用户 openid */
       user_id?: string
     }
   }
+  /** 默认 1 */
   version: 1
 }
 

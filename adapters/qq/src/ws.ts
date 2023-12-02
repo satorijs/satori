@@ -62,7 +62,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
         this.bot.dispatch(this.bot.session({
           type: 'internal',
           _type: 'qq/' + parsed.t.toLowerCase().replace(/_/g, '-'),
-          _data: parsed,
+          _data: parsed.d,
         }))
         this._s = parsed.s
         if (parsed.t === 'READY') {

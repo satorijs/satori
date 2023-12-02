@@ -32,7 +32,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
       msg_id = null
     }
 
-    let r: QQ.Message
+    let r: Partial<QQ.Message.Response>
     this.bot.logger.debug('use form data %s', useFormData)
     try {
       if (useFormData) {
@@ -58,7 +58,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
             image: this.fileUrl,
           },
           ...(this.reference ? {
-            messageReference: {
+            message_reference: {
               message_id: this.reference,
             },
           } : {}),
@@ -86,14 +86,49 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     }
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
-    // this.results.push(session.event.message)
-    // session.app.emit(session, 'send', session)
+    /**
+     * active msg, http 202: {"code":304023,"message":"push message is waiting for audit now","data":{"message_audit":{"audit_id":"xxx"}}}
+     * passive msg, http 200: Partial<QQ.Message>
+     */
+    if (r.id) {
+      session.messageId = r.id
+      session.app.emit(session, 'send', session)
+      this.results.push(session.event.message)
+    } else if (r.code === 304023 && this.bot.config.parent.intents & QQ.Intents.MESSAGE_AUDIT) {
+      try {
+        const auditData: QQ.MessageAudited = await this.audit(r.data.message_audit.audit_id)
+        session.messageId = auditData.message_id
+        session.app.emit(session, 'send', session)
+        this.results.push(session.event.message)
+      } catch (e) {
+        this.bot.logger.error(e)
+      }
+    }
     this.content = ''
     this.file = null
     this.filename = null
     this.fileUrl = null
     this.resource = null
     this.retry = false
+  }
+
+  async audit(audit_id: string): Promise<QQ.MessageAudited> {
+    return new Promise((resolve, reject) => {
+      const dispose = this.bot.ctx.on('qq/message-audit-pass', (data) => {
+        if (data.audit_id === audit_id) {
+          dispose()
+          dispose2()
+          resolve(data)
+        }
+      })
+      const dispose2 = this.bot.ctx.on('qq/message-audit-reject', (data) => {
+        if (data.audit_id === audit_id) {
+          dispose()
+          dispose2()
+          reject(data)
+        }
+      })
+    })
   }
 
   async resolveFile(attrs: Dict, download = false) {
@@ -150,7 +185,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private useMarkdown = false
   private rows: QQ.Button[][] = []
-  private attachedFile: QQ.SendFileResponse
+  private attachedFile: QQ.Message.File.Response
 
   // 先图后文
   async flush() {
@@ -162,9 +197,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
     }
-    const data: QQ.SendMessageParams = {
+    const data: QQ.Message.Request = {
       content: this.content,
-      msg_type: QQ.MessageType.TEXT,
+      msg_type: QQ.Message.Type.TEXT,
       timestamp: Math.floor(Date.now() / 1000),
       msg_id,
       msg_seq,
@@ -172,11 +207,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (this.attachedFile) {
       if (!data.content.length) data.content = ' '
       data.media = this.attachedFile
-      data.msg_type = QQ.MessageType.MEDIA
+      data.msg_type = QQ.Message.Type.MEDIA
     }
 
     if (this.useMarkdown) {
-      data.msg_type = QQ.MessageType.MARKDOWN
+      data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
         content: escapeMarkdown(this.content) || ' ',
@@ -201,6 +236,16 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         if (resp.msg !== 'success') {
           this.bot.logger.warn(resp)
         }
+        if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+          try {
+            const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
+            session.messageId = auditData.message_id
+            session.app.emit(session, 'send', session)
+            this.results.push(session.event.message)
+          } catch (e) {
+            this.bot.logger.error(e)
+          }
+        }
       }
     } catch (e) {
       if (!Quester.isAxiosError(e)) throw e
@@ -213,6 +258,25 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     this.content = ''
     this.attachedFile = null
     this.rows = []
+  }
+
+  async audit(audit_id: string): Promise<QQ.MessageAudited> {
+    return new Promise((resolve, reject) => {
+      const dispose = this.bot.ctx.on('qq/message-audit-pass', (data) => {
+        if (data.audit_id === audit_id) {
+          dispose()
+          dispose2()
+          resolve(data)
+        }
+      })
+      const dispose2 = this.bot.ctx.on('qq/message-audit-reject', (data) => {
+        if (data.audit_id === audit_id) {
+          dispose()
+          dispose2()
+          reject(data)
+        }
+      })
+    })
   }
 
   async sendFile(type: string, attrs: Dict) {
@@ -230,12 +294,12 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
     else return
-    const data: QQ.SendFileParams = {
+    const data: QQ.Message.File.Request = {
       file_type,
       url,
       srv_send_msg: false,
     }
-    let res: QQ.SendFileResponse
+    let res: QQ.Message.File.Response
     try {
       if (this.session.isDirect) {
         res = await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)

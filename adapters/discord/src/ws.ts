@@ -75,7 +75,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
         this.bot.dispatch(this.bot.session({
           type: 'internal',
           _type: 'discord/' + parsed.t.toLowerCase().replace(/_/g, '-'),
-          _data: parsed,
+          _data: parsed.d,
         }))
         if (parsed.t === 'READY') {
           this._sessionId = parsed.d.session_id
