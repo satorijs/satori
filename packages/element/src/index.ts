@@ -259,6 +259,7 @@ namespace Element {
     position: Position
     source: string
     extra: string
+    children?: Dict<(string | Token)[]>
   }
 
   export function parse(source: string, context?: any) {
@@ -290,7 +291,7 @@ namespace Element {
           name,
           position,
           source: tagCap.groups.curly,
-          extra: tagCap.groups.curly.slice(name.length + 2, -1),
+          extra: tagCap.groups.curly.slice(1 + (tagCap.groups.derivative ?? '').length, -1),
         })
         continue
       }
@@ -310,58 +311,55 @@ namespace Element {
         .replace(/\s*\n\s*$/, '')))
     }
 
-    return parseTokens(tokens, context)
+    return parseTokens(foldTokens(tokens), context)
   }
 
-  export function parseTokens(tokens: (string | Token)[], context?: any) {
-    const stack = [Element(Fragment)]
+  function foldTokens(tokens: (string | Token)[]) {
+    const stack: [Token, string][] = [[{
+      type: 'angle',
+      name: Fragment,
+      position: Position.OPEN,
+      source: '',
+      extra: '',
+      children: { default: [] },
+    }, 'default']]
 
-    function pushElement(...element: Element[]) {
-      if (!stack[0].attrs.continuation) {
-        stack[0].children.push(...element)
-      } else {
-        stack[0].attrs[stack[0].attrs.continuation].push(...element)
-      }
-    }
-
-    function rollback(index: number) {
-      for (; index > 0; index--) {
-        const { children } = stack.shift()
-        const { source } = stack[0].children.pop()
-        pushElement(Element('text', { content: source }))
-        pushElement(...children)
-      }
+    function pushToken(...tokens: (string | Token)[]) {
+      const [token, slot] = stack[0]
+      token.children[slot].push(...tokens)
     }
 
     for (const token of tokens) {
       if (typeof token === 'string') {
-        pushElement(Element('text', { content: token }))
+        pushToken(token)
         continue
       }
-      if (token.position === Position.CONTINUE) {
-        stack[0].attrs.continuation = token.name
-        stack[0].attrs[token.name] = []
-      } else if (token.position === Position.CLOSE) {
-        let index = 0
-        while (index < stack.length && stack[index].type !== token.name) index++
-        if (index === stack.length) {
-          // no matching open tag
-          pushElement(Element('text', { content: token.source }))
-        } else {
-          rollback(index)
-          const element = stack.shift()
-          delete element.source
-          if (element.type === 'if') {
-            const { expr } = element.attrs
-            if (evaluate(expr, context)) {
-              pushElement(...element.children)
-            } else {
-              pushElement(...element.attrs.else ?? [])
-            }
-          }
+      const { name, position } = token
+      if (position === Position.CLOSE) {
+        if (stack[0][0].name === name) {
+          stack.shift()
         }
+      } else if (position === Position.CONTINUE) {
+        stack[0][0].children[name] = []
+        stack[0][1] = name
+      } else if (position === Position.OPEN) {
+        pushToken(token)
+        token.children = { default: [] }
+        stack.unshift([token, 'default'])
       } else {
-        // OPEN | EMPTY
+        pushToken(token)
+      }
+    }
+
+    return stack[stack.length - 1][0].children.default
+  }
+
+  function parseTokens(tokens: (string | Token)[], context?: any) {
+    const result: Element[] = []
+    for (const token of tokens) {
+      if (typeof token === 'string') {
+        result.push(Element('text', { content: token }))
+      } else if (token.type === 'angle') {
         const attrs = {}
         const attrRegExp = context ? attrRegExp2 : attrRegExp1
         let attrCap: RegExpExecArray
@@ -377,26 +375,25 @@ namespace Element {
             attrs[key] = true
           }
         }
-        if (token.type === 'angle') {
-          const element = Element(token.name, attrs)
-          pushElement(element)
-          if (token.position === Position.OPEN) {
-            element.source = token.source
-            stack.unshift(element)
-          }
+        result.push(Element(token.name, attrs, token.children && parseTokens(token.children.default, context)))
+      } else if (!token.name) {
+        result.push(...toElementArray(interpolate(token.extra, context)))
+      } else if (token.name === 'if') {
+        if (evaluate(token.extra, context)) {
+          result.push(...parseTokens(token.children.default, context))
         } else {
-          if (token.name === '') {
-            pushElement(...Element.toElementArray(interpolate(token.source.slice(1, -1), context)))
-          } else if (token.name === 'if') {
-            const element = Element('if', { expr: token.extra })
-            element.source = token.source
-            stack.unshift(element)
-          }
+          result.push(...parseTokens(token.children.else || [], context))
+        }
+      } else if (token.name === 'each') {
+        const [expr, ident] = token.extra.split(/\s+as\s+/)
+        const items = interpolate(expr, context)
+        if (!items || !items[Symbol.iterator]) continue
+        for (const item of items) {
+          result.push(...parseTokens(token.children.default, { ...context, [ident]: item }))
         }
       }
     }
-    rollback(stack.length - 1)
-    return stack[0].children
+    return result
   }
 
   function visit<S>(element: Element, rules: Visitor<S>, session: S) {

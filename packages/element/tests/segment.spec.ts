@@ -26,12 +26,21 @@ describe('Element API', () => {
     })
 
     it('mismatched tags', () => {
-      expect(Element.parse('1<foo>2<bar attr>3').join('')).to.equal('1&lt;foo&gt;2&lt;bar attr&gt;3')
-      expect(Element.parse('1<foo>2<bar>3</foo>4').join('')).to.equal('1<foo>2&lt;bar&gt;3</foo>4')
+      expect(Element.parse('1<foo>2<bar attr>3').join('')).to.equal('1<foo>2<bar attr>3</bar></foo>')
       expect(Element.parse('1<foo/>4').join('')).to.equal('1<foo/>4')
-      expect(Element.parse('1</foo>4').join('')).to.equal('1&lt;/foo&gt;4')
+      expect(Element.parse('1</foo>4').join('')).to.equal('14')
     })
 
+    it('whitespace', () => {
+      expect(Element.parse(`<>
+        <foo> 1 </foo>
+        <!-- comment -->
+        2
+      </>`).join('')).to.equal('<template><foo> 1 </foo>2</template>')
+    })
+  })
+
+  describe('Interpolation', () => {
     it('interpolate', () => {
       expect(Element.parse('<tag bar={bar}>1{foo}1</tag>', { foo: 233, bar: 666 }))
         .to.deep.equal([Element('tag', { bar: 666 }, '1', '233', '1')])
@@ -48,12 +57,9 @@ describe('Element API', () => {
         .to.deep.equal([Element('p', 'negative')])
     })
 
-    it('whitespace', () => {
-      expect(Element.parse(`<>
-        <foo> 1 </foo>
-        <!-- comment -->
-        2
-      </>`).join('')).to.equal('<template><foo> 1 </foo>2</template>')
+    it('#each', () => {
+      expect(Element.parse('{#each arr as i}{i ** 2}{/each}', { arr: [1, 2, 3] }))
+        .to.deep.equal([Element.text('1'), Element.text('4'), Element.text('9')])
     })
   })
 
