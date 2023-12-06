@@ -270,8 +270,11 @@ namespace Element {
 
     const tagRegExp = context ? tagRegExp2 : tagRegExp1
     let tagCap: RegExpExecArray
+    let trimStart = true
     while ((tagCap = tagRegExp.exec(source))) {
-      parseContent(source.slice(0, tagCap.index))
+      const trimEnd = !tagCap.groups.curly
+      parseContent(source.slice(0, tagCap.index), trimStart, trimEnd)
+      trimStart = trimEnd
       source = source.slice(tagCap.index + tagCap[0].length)
       const [_, , , close, type, extra, empty] = tagCap
       if (tagCap.groups.comment) continue
@@ -304,11 +307,12 @@ namespace Element {
       })
     }
 
-    parseContent(source)
-    function parseContent(source: string) {
-      pushText(unescape(source
-        .replace(/^\s*\n\s*/, '')
-        .replace(/\s*\n\s*$/, '')))
+    parseContent(source, trimStart, true)
+    function parseContent(source: string, trimStart: boolean, trimEnd: boolean) {
+      source = unescape(source)
+      if (trimStart) source = source.replace(/^\s*\n\s*/, '')
+      if (trimEnd) source = source.replace(/\s*\n\s*$/, '')
+      pushText(source)
     }
 
     return parseTokens(foldTokens(tokens), context)

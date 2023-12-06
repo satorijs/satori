@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/element",
   "description": "Element Manipulation",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
