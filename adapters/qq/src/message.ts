@@ -232,7 +232,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         session.messageId = msg_id
       } else {
         // FIXME: missing message id
-        const resp = await this.bot.internal.sendMessage(this.guildId, data)
+        const resp = await this.bot.internal.sendMessage(this.session.channelId, data)
         if (resp.msg !== 'success') {
           this.bot.logger.warn(resp)
         }
