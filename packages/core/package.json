@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "3.2.3",
+  "version": "3.3.0",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "typings": "lib/index.d.ts",
@@ -32,11 +32,11 @@
     "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.8"
+    "@types/ws": "^8.5.10"
   },
   "dependencies": {
-    "@satorijs/element": "^2.6.0",
     "@cordisjs/logger": "^0.1.2",
+    "@satorijs/element": "^2.6.1",
     "@satorijs/protocol": "^1.1.2",
     "cordis": "^3.4.0",
     "cordis-axios": "^4.0.1",

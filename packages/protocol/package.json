@@ -35,7 +35,7 @@
     "api"
   ],
   "dependencies": {
-    "@satorijs/element": "^2.6.0",
+    "@satorijs/element": "^2.6.1",
     "cosmokit": "^1.5.1"
   }
 }
