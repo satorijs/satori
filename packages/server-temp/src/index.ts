@@ -1,5 +1,5 @@
 import { Context, Dict, sanitize, Schema, Time } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import { createReadStream } from 'fs'
 import { fileURLToPath } from 'url'
 import { mkdir, rm, writeFile } from 'fs/promises'

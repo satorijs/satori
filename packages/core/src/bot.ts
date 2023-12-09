@@ -123,7 +123,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
       await this.context.parallel('bot-disconnect', this)
       await this.adapter?.disconnect(this)
     } catch (error) {
-      this.context.emit('internal/warning', error)
+      this.context.emit('internal/error', error)
     } finally {
       this.offline()
     }

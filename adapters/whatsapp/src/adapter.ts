@@ -1,5 +1,5 @@
 import { Adapter, Context, Logger, Quester, remove, Schema } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import { Internal } from './internal'
 import { WhatsAppBot } from './bot'
 import { WebhookBody } from './types'

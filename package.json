@@ -22,8 +22,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@koishijs/eslint-config": "^1.0.4",
     "@types/chai": "^4.3.9",
+    "@cordisjs/eslint-config": "^1.0.4",
     "@types/mocha": "^9.1.1",
     "@types/node": "^20.8.9",
     "c8": "^7.14.0",

@@ -3,19 +3,21 @@ import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import Schema from 'schemastery'
-import Logger from 'reggol'
 import Quester from 'cordis-axios'
+import * as logger from '@cordisjs/logger'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
-h.warn = new Logger('element').warn
+h.warn = new logger.Logger('element').warn
 
 // do not remove the `type` modifier
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
 
+export { Logger } from '@cordisjs/logger'
+
 export { h, h as Element, h as segment }
-export { Schema, Schema as z, Logger, Quester }
+export { Schema, Schema as z, Quester }
 
 export * as Satori from '@satorijs/protocol'
 export * as Universal from '@satorijs/protocol'
@@ -99,7 +101,7 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
 export interface Service extends Context.Associate<'service'> {}
 
 export class Service<C extends Context = Context> extends cordis.Service<C> {
-  public logger: Logger
+  public logger: logger.Logger
 
   constructor(ctx: C, name: string, immediate?: boolean) {
     super(ctx, name, immediate)
@@ -140,17 +142,8 @@ export class Context extends cordis.Context {
 
   constructor(config: Context.Config = {}) {
     super(config)
-
-    this.baseDir = globalThis.process?.cwd() || ''
+    this.plugin(logger)
     this.http = new Quester(config.request)
-
-    this.on('internal/warning', function (format, ...args) {
-      this.logger('app').warn(format, ...args)
-    })
-  }
-
-  logger(name: string) {
-    return new Logger(name, { [Context.current]: this })
   }
 
   component(name: string, component: Component<this[typeof Context.session]>, options: Component.Options = {}) {

@@ -1,5 +1,5 @@
 import { Adapter, Context, Logger } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import { DingtalkBot } from './bot'
 import crypto from 'node:crypto'
 import { Message } from './types'

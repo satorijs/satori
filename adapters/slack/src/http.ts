@@ -1,5 +1,5 @@
 import { Adapter, Context, Schema } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'

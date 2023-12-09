@@ -27,7 +27,7 @@
     "satori"
   ],
   "devDependencies": {
-    "@satorijs/router": "^1.1.2"
+    "@cordisjs/server": "^0.1.3"
   },
   "peerDependencies": {
     "@satorijs/satori": "^3.2.3"

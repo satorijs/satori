@@ -1,5 +1,5 @@
 import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import WebSocket from 'ws'
 
 export const name = 'server'

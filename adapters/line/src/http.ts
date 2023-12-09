@@ -1,5 +1,5 @@
 import { Adapter, Context } from '@satorijs/satori'
-import {} from '@satorijs/router'
+import {} from '@cordisjs/server'
 import crypto from 'node:crypto'
 import { LineBot } from './bot'
 import { WebhookRequestBody } from './types'
@@ -7,10 +7,10 @@ import { adaptSessions } from './utils'
 import internal from 'stream'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   async connect(bot: LineBot<C>) {
-    bot.ctx.router.post('/line', async (ctx) => {
+    bot.ctx.server.post('/line', async (ctx) => {
       const sign = ctx.headers['x-line-signature']?.toString()
       const parsed = ctx.request.body as WebhookRequestBody
       const { destination } = parsed
@@ -29,7 +29,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
       ctx.status = 200
       ctx.body = 'ok'
     })
-    bot.ctx.router.get('/line/assets/:self_id/:message_id', async (ctx) => {
+    bot.ctx.server.get('/line/assets/:self_id/:message_id', async (ctx) => {
       const messageId = ctx.params.message_id
       const selfId = ctx.params.self_id
       const bot = this.bots.find((bot) => bot.selfId === selfId)
@@ -45,7 +45,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
     })
     await bot.getLogin()
     await bot.internal.setWebhookEndpoint({
-      endpoint: bot.ctx.router.config.selfUrl + '/line',
+      endpoint: bot.ctx.server.config.selfUrl + '/line',
     })
     bot.logger.debug('listening updates %c', 'line:' + bot.selfId)
     bot.online()
