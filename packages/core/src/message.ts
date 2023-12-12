@@ -31,7 +31,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   }
 
   async send(content: h.Fragment) {
-    const isDirect = this.options.session?.isDirect ?? !this.guildId
+    const isDirect = this.options.session?.isDirect
     this.session = this.bot.session({
       type: 'send',
       channel: { id: this.channelId, type: isDirect ? Channel.Type.DIRECT : Channel.Type.TEXT },
