@@ -6,13 +6,13 @@ import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'
 
 export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   private txnId: string = null
 
   constructor(ctx: C) {
     super(ctx)
-    ctx.router.all('/(.*)', (koaCtx, next) => {
+    ctx.server.all('/(.*)', (koaCtx, next) => {
       const match = this.bots.filter(bot => koaCtx.path.startsWith(bot.config.path + '/'))
       if (match.length === 0) return next()
       //                                            Bearer

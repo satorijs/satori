@@ -7,14 +7,14 @@ import { decodeMessage } from './utils'
 import { decrypt, encrypt, getSignature } from '@wecom/crypto'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOfficialBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   async connect(bot: WechatOfficialBot) {
     await bot.refreshToken()
     await bot.ensureCustom()
 
     // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
-    bot.ctx.router.get('/wechat-official', async (ctx) => {
+    bot.ctx.server.get('/wechat-official', async (ctx) => {
       let success = false
       const { signature, timestamp, nonce, echostr } = ctx.request.query
 
@@ -30,7 +30,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
       ctx.body = echostr
     })
 
-    bot.ctx.router.post('/wechat-official', async (ctx) => {
+    bot.ctx.server.post('/wechat-official', async (ctx) => {
       const { timestamp, nonce, msg_signature } = ctx.request.query
       let { xml: data }: {
         xml: Message
@@ -103,7 +103,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
       }
     })
 
-    bot.ctx.router.get('/wechat-official/assets/:self_id/:media_id', async (ctx) => {
+    bot.ctx.server.get('/wechat-official/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
       const selfId = ctx.params.self_id
       const localBot = this.bots.find((bot) => bot.selfId === selfId)

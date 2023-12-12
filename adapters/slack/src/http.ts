@@ -6,12 +6,12 @@ import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {
     const { signing } = bot.config
     await bot.getLogin()
-    bot.ctx.router.post('/slack', async (ctx) => {
+    bot.ctx.server.post('/slack', async (ctx) => {
       const timestamp = ctx.request.header['x-slack-request-timestamp'].toString()
       const signature = ctx.request.header['x-slack-signature'].toString()
       const requestBody = ctx.request.rawBody

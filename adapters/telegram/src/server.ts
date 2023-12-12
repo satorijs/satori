@@ -5,7 +5,7 @@ import { handleUpdate } from './utils'
 import * as Telegram from './types'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Config>) {
     let { token, path, selfUrl } = bot.config
@@ -13,10 +13,10 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
     if (selfUrl) {
       selfUrl = trimSlash(selfUrl)
     } else {
-      selfUrl = this.ctx.router.config.selfUrl
+      selfUrl = this.ctx.server.config.selfUrl
     }
 
-    this.ctx.router.post(path, async (ctx) => {
+    this.ctx.server.post(path, async (ctx) => {
       const payload: Telegram.Update = ctx.request.body
       const token = ctx.request.query.token as string
       const [selfId] = token.split(':')

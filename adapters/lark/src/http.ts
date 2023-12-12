@@ -7,7 +7,7 @@ import { AllEvents } from './types'
 import { adaptSession, Cipher } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   private logger: Logger
   private ciphers: Record<string, Cipher> = {}
@@ -26,7 +26,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
 
   async connect(bot: FeishuBot) {
     const { path } = bot.config
-    bot.ctx.router.post(path, (ctx) => {
+    bot.ctx.server.post(path, (ctx) => {
       this._refreshCipher()
 
       // compare signature if encryptKey is set
@@ -77,7 +77,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
       return ctx.status = 200
     })
 
-    bot.ctx.router.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
+    bot.ctx.server.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
       const type = ctx.params.type === 'image' ? 'image' : 'file'
       const key = ctx.params.key
       const messageId = ctx.params.message_id

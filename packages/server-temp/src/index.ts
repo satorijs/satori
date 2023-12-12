@@ -18,7 +18,7 @@ export interface Entry {
 }
 
 class TempServer {
-  static inject = ['router']
+  static inject = ['server']
 
   public path: string
   public selfUrl!: string
@@ -29,12 +29,12 @@ class TempServer {
     const logger = ctx.logger('temp')
 
     this.path = sanitize(config.path)
-    this.selfUrl = config.selfUrl || ctx.router.config.selfUrl!
+    this.selfUrl = config.selfUrl || ctx.server.config.selfUrl!
     if (!this.selfUrl) {
       logger.warn('missing selfUrl configuration')
     }
 
-    ctx.router.get(this.path + '/:name', async (koa) => {
+    ctx.server.get(this.path + '/:name', async (koa) => {
       logger.debug(koa.params.name)
       const entry = this.entries[koa.params.name]
       if (!entry) return koa.status = 404

@@ -25,7 +25,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
 
 export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
-  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.router.config.selfUrl) + bot.config.path + '/assets'
+  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
   switch (data.message.message_type) {
     case 'text': {
@@ -88,7 +88,7 @@ export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEven
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
 export async function decodeMessage(bot: LarkBot, body: LarkMessage): Promise<Message> {
   const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
-  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.router.config.selfUrl) + bot.config.path + '/assets'
+  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
   switch (body.msg_type) {
     case 'text': {

@@ -7,14 +7,14 @@ import { decodeMessage } from './utils'
 import { decrypt, getSignature } from '@wecom/crypto'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   async connect(bot: WecomBot) {
     await bot.refreshToken()
     await bot.getLogin()
 
     // https://developer.work.weixin.qq.com/document/10514
-    bot.ctx.router.get('/wecom', async (ctx) => {
+    bot.ctx.server.get('/wecom', async (ctx) => {
       let success = false
       const { msg_signature, timestamp, nonce, echostr } = ctx.request.query
 
@@ -30,7 +30,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot
       ctx.status = 200
     })
 
-    bot.ctx.router.post('/wecom', async (ctx) => {
+    bot.ctx.server.post('/wecom', async (ctx) => {
       const { timestamp, nonce, msg_signature } = ctx.request.query
       let { xml: data }: {
         xml: Message
@@ -64,7 +64,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot
     })
 
     /** https://developer.work.weixin.qq.com/document/path/90254 */
-    bot.ctx.router.get('/wecom/assets/:self_id/:media_id', async (ctx) => {
+    bot.ctx.server.get('/wecom/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
       const selfId = ctx.params.self_id
       const localBot = this.bots.find((bot) => bot.selfId === selfId)

@@ -6,7 +6,7 @@ import { Internal } from './types'
 import * as Utils from './utils'
 
 export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
-  static inject = ['router']
+  static inject = ['server']
   static MessageEncoder = LarkMessageEncoder
 
   _token?: string
@@ -19,7 +19,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     super(ctx, config, 'lark')
 
     // lark bot needs config.selfUrl to be set as it should be serve on a public url
-    if (!config.selfUrl && !ctx.router.config.selfUrl) {
+    if (!config.selfUrl && !ctx.server.config.selfUrl) {
       this.logger.warn('selfUrl is not set, some features may not work')
     }
 

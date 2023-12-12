@@ -4,7 +4,7 @@ import { KookBot } from './bot'
 import { adaptSession } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Config>> {
-  static inject = ['router']
+  static inject = ['server']
 
   private logger: Logger
 
@@ -13,7 +13,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<
     this.logger = ctx.logger('kook')
     let { path } = bot.config as HttpServer.Config
     path = sanitize(path)
-    ctx.router.post(path, async (ctx) => {
+    ctx.server.post(path, async (ctx) => {
       const { body } = ctx.request
       this.logger.debug('receive %o', body)
 

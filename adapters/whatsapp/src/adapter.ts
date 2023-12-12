@@ -8,7 +8,7 @@ import internal from 'stream'
 import crypto from 'crypto'
 
 class HttpServer {
-  static inject = ['router']
+  static inject = ['server']
 
   private logger: Logger
   private adapters: WhatsAppAdapter[] = []
@@ -17,7 +17,7 @@ class HttpServer {
     this.logger = ctx.logger('whatsapp')
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
-    ctx.router.post('/whatsapp', async (ctx) => {
+    ctx.server.post('/whatsapp', async (ctx) => {
       const received = ctx.get('X-Hub-Signature-256').split('sha256=')[1]
       if (!received) return ctx.status = 403
 
@@ -46,7 +46,7 @@ class HttpServer {
       }
     })
 
-    ctx.router.get('/whatsapp', async (ctx) => {
+    ctx.server.get('/whatsapp', async (ctx) => {
       this.logger.debug(ctx.query)
       const verifyToken = ctx.query['hub.verify_token']
       const challenge = ctx.query['hub.challenge']
@@ -60,7 +60,7 @@ class HttpServer {
       return ctx.status = 403
     })
 
-    ctx.router.get('/whatsapp/assets/:self_id/:media_id', async (ctx) => {
+    ctx.server.get('/whatsapp/assets/:self_id/:media_id', async (ctx) => {
       const mediaId = ctx.params.media_id
       const selfId = ctx.params.self_id
       const bot = this.getBot(selfId)
@@ -97,7 +97,7 @@ class HttpServer {
 }
 
 export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, WhatsAppBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
   static schema = true as any
   static reusable = true
 

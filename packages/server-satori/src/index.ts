@@ -3,7 +3,7 @@ import {} from '@cordisjs/server'
 import WebSocket from 'ws'
 
 export const name = 'server'
-export const inject = ['router']
+export const inject = ['server']
 
 const kClient = Symbol('state')
 
@@ -66,12 +66,12 @@ export function apply(ctx: Context, config: Config) {
   const logger = ctx.logger('server')
   const path = sanitize(config.path)
 
-  ctx.router.get(path + '/v1(/.+)*', async (koa) => {
+  ctx.server.get(path + '/v1(/.+)*', async (koa) => {
     koa.body = 'Please use POST method to send requests.'
     koa.status = 405
   })
 
-  ctx.router.post(path + '/v1/:name', async (koa) => {
+  ctx.server.post(path + '/v1/:name', async (koa) => {
     const method = Universal.Methods[koa.params.name]
     if (!method) {
       koa.body = 'method not found'
@@ -102,7 +102,7 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
-  ctx.router.post(path + '/v1/internal/:name', async (koa) => {
+  ctx.server.post(path + '/v1/internal/:name', async (koa) => {
     const selfId = koa.request.headers['X-Self-ID']
     const platform = koa.request.headers['X-Platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
@@ -131,7 +131,7 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.on('dispose', () => clearInterval(timeout))
 
-  const layer = ctx.router.ws(path + '/v1/events', (socket) => {
+  const layer = ctx.server.ws(path + '/v1/events', (socket) => {
     const client = socket[kClient] = new Client()
 
     socket.addEventListener('message', (event) => {

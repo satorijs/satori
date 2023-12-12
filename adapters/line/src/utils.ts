@@ -43,20 +43,20 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
     } while (nowPos !== finalLen)
   } else if (message.type === 'image') {
     if (message.contentProvider.type === 'line') {
-      return [h.image(`${bot.ctx.router.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [h.image(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
     } else {
       return [h.image(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'video') {
     if (message.contentProvider.type === 'line') {
-      return [h.video(`${bot.ctx.router.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [h.video(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
     } else {
       return [h.video(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'sticker') {
     return [h('face', { type: 'sticker', id: `s:${message.packageId}:${message.stickerId}`, platform: bot.platform })]
   } else if (message.type === 'file') {
-    return [h.file(`${bot.ctx.router.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+    return [h.file(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
   }
   return result
 }

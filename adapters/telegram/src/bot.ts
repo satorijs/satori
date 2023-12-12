@@ -51,11 +51,11 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     } else if (config.protocol === 'polling') {
       ctx.plugin(HttpPolling, this)
     }
-    const selfUrl: string = config['selfUrl'] || ctx.get('router').config.selfUrl
+    const selfUrl: string = config['selfUrl'] || ctx.get('server')?.config.selfUrl
     if (config.files.server ?? selfUrl) {
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route
-      ctx.get('router').get(route + '/:file+', async ctx => {
+      ctx.get('server').get(route + '/:file+', async ctx => {
         const { data, mime } = await this.$getFile(ctx.params.file)
         ctx.set('content-type', mime)
         ctx.body = data

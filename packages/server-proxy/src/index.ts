@@ -9,7 +9,7 @@ declare module '@satorijs/core' {
 }
 
 class ProxyServer {
-  static inject = ['router']
+  static inject = ['server']
 
   public path: string
 
@@ -18,9 +18,9 @@ class ProxyServer {
 
     this.path = sanitize(config.path)
 
-    ctx.router.get(this.path + '/:url(.*)', async (koa) => {
+    ctx.server.get(this.path + '/:url(.*)', async (koa) => {
       logger.debug(koa.params.url)
-      koa.header['Access-Control-Allow-Origin'] = ctx.router.config.selfUrl || '*'
+      koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
       try {
         koa.body = await ctx.http.get<internal.Readable>(koa.params.url, { responseType: 'stream' })
       } catch (error) {

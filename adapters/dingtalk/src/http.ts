@@ -6,7 +6,7 @@ import { Message } from './types'
 import { decodeMessage } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, DingtalkBot<C>> {
-  static inject = ['router']
+  static inject = ['server']
 
   private logger: Logger
 
@@ -20,7 +20,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Dingtalk
     await bot.getLogin()
 
     // https://open.dingtalk.com/document/orgapp/receive-message
-    bot.ctx.router.post('/dingtalk', async (ctx) => {
+    bot.ctx.server.post('/dingtalk', async (ctx) => {
       const timestamp = ctx.get('timestamp')
       const sign = ctx.get('sign')
 

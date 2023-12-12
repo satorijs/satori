@@ -3,7 +3,7 @@ import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 
 export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Config> {
-  static inject = ['router']
+  static inject = ['server']
   static MessageEncoder = WecomMessageEncoder
 
   http: Quester

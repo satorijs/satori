@@ -24,13 +24,13 @@ export async function decodeMessage<C extends Context>(bot: WechatOfficialBot<C>
   } else if (message.MsgType === 'voice') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.audio(`${bot.ctx.router.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.audio(`${bot.ctx.server.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
     // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/Get_temporary_materials.html
     return session
   } else if (message.MsgType === 'video') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.video(`${bot.ctx.router.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.video(`${bot.ctx.server.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
     // const { video_url } = await bot.getMedia(message.MediaId)
     // session.elements = [h.video(video_url)]
     return session

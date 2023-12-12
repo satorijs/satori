@@ -4,7 +4,7 @@ import { Internal } from './types'
 import { LineMessageEncoder } from './message'
 
 export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
-  static inject = ['router']
+  static inject = ['server']
   static MessageEncoder = LineMessageEncoder
 
   public http: Quester
@@ -13,7 +13,7 @@ export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config>
 
   constructor(ctx: C, config: LineBot.Config) {
     super(ctx, config, 'line')
-    if (!ctx.router.config.selfUrl) {
+    if (!ctx.server.config.selfUrl) {
       this.logger.warn('selfUrl is not set, some features may not work')
     }
 
