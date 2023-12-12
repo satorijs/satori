@@ -3,18 +3,13 @@ root: true
 env:
   browser: true
   node: true
-  mocha: true
   es2020: true
 
 globals:
   NodeJS: true
-  KOISHI_CONFIG: true
 
 extends:
   - '@cordisjs/eslint-config'
-
-plugins:
-  - mocha
 
 rules:
   '@typescript-eslint/naming-convention': off
