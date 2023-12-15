@@ -79,6 +79,10 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
       },
     })
   }
+
+  $toMediaUrl(mediaId: string) {
+    return `${this.ctx.server.config.selfUrl}/wechat-official/assets/${this.selfId}/${mediaId}`
+  }
 }
 
 export namespace WechatOfficialBot {

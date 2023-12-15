@@ -8,7 +8,7 @@ export async function decodeMessage<C extends Context>(bot: WechatOfficialBot<C>
   session.timestamp = message.CreateTime * 1000
   session.wechatOfficial = message
   session.userId = message.FromUserName
-  // session.channelId = session.userId
+  session.channelId = session.userId
   // session.guildId = session.userId
   session.messageId = message.MsgId
   if (message.MsgType === 'text') {
@@ -24,13 +24,13 @@ export async function decodeMessage<C extends Context>(bot: WechatOfficialBot<C>
   } else if (message.MsgType === 'voice') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.audio(`${bot.ctx.server.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.audio(bot.$toMediaUrl(message.MediaId))]
     // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/Get_temporary_materials.html
     return session
   } else if (message.MsgType === 'video') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.video(`${bot.ctx.server.config.selfUrl}/wechat-official/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.video(bot.$toMediaUrl(message.MediaId))]
     // const { video_url } = await bot.getMedia(message.MediaId)
     // session.elements = [h.video(video_url)]
     return session

@@ -56,6 +56,10 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
     })
   }
 
+  $toMediaUrl(mediaId: string) {
+    return `${this.ctx.server.config.selfUrl}/wecom/assets/${this.selfId}/${mediaId}`
+  }
+
   /** https://developer.work.weixin.qq.com/document/path/90196 */
   async getUser(userId: string, guildId?: string): Promise<Universal.User> {
     const data = await this.http.get('/cgi-bin/user/get', {

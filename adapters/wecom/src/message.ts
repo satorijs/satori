@@ -6,13 +6,19 @@ import FormData from 'form-data'
 
 export class WecomMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WecomBot<C>> {
   buffer = ''
-  upsertSend(msgId: string) {
+
+  upsertSend(msgId: string, payload: any) {
     const session = this.bot.session()
     session.type = 'message'
     session.messageId = msgId
     session.isDirect = true
     session.userId = this.bot.selfId
     session.timestamp = new Date().valueOf()
+    session.elements = payload.msgtype === 'text'
+      ? [h.text(payload.text.content)]
+      : [h(payload.msgtype === 'voice' ? 'audio' : payload.msgtype, {
+        src: this.bot.$toMediaUrl(payload[payload.msgtype].media_id),
+      })]
     session.app.emit(session, 'send', session)
     this.results.push(session.event.message)
   }
@@ -29,7 +35,7 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
       params: { access_token: this.bot.token },
     })
 
-    this.upsertSend(msgid)
+    this.upsertSend(msgid, payload)
   }
 
   async flushMedia(element: h) {

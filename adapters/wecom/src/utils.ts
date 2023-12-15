@@ -8,7 +8,7 @@ export async function decodeMessage<C extends Context>(bot: WecomBot<C>, message
   // session.wechatOfficial = message
   session.guildId = bot.config.corpId
   session.userId = message.FromUserName
-  // session.channelId = session.userId
+  session.channelId = session.userId
   // session.guildId = session.userId
   session.messageId = message.MsgId
   if (message.MsgType === 'text') {
@@ -24,13 +24,13 @@ export async function decodeMessage<C extends Context>(bot: WecomBot<C>, message
   } else if (message.MsgType === 'voice') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.audio(`${bot.ctx.server.config.selfUrl}/wecom/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.audio(bot.$toMediaUrl(message.MediaId))]
     // https://developer.work.weixin.qq.com/document/path/90254
     return session
   } else if (message.MsgType === 'video') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.video(`${bot.ctx.server.config.selfUrl}/wecom/assets/${bot.selfId}/${message.MediaId}`)]
+    session.elements = [h.video(bot.$toMediaUrl(message.MediaId))]
     return session
   } else if (message.MsgType === 'location') {
     session.isDirect = true
