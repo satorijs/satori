@@ -408,7 +408,6 @@ export namespace Message {
     event_id?: string
     msg_id?: string
     msg_seq?: number
-    timestamp: number
     media?: Partial<File.Response>
   }
 
