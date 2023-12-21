@@ -110,7 +110,6 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     this.file = null
     this.filename = null
     this.fileUrl = null
-    this.passiveId = null
     this.resource = null
     this.retry = false
   }
@@ -265,8 +264,6 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     // this.results.push(session.event.message)
     // session.app.emit(session, 'send', session)
     this.content = ''
-    this.passiveId = null
-    this.passiveSeq = null
     this.attachedFile = null
     this.rows = []
   }
