@@ -42,7 +42,7 @@ class TempServer {
     })
 
     ctx.on('ready', () => this.start())
-    ctx.on('dispose', () => this.start())
+    ctx.on('dispose', () => this.stop())
   }
 
   async start() {
