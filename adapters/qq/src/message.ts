@@ -14,6 +14,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   private file: Buffer
   private filename: string
   fileUrl: string
+  private passiveId: string
   reference: string
   private retry = false
   private resource: Dict
@@ -31,6 +32,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
       msg_id = null
     }
+    if (this.passiveId) msg_id = this.passiveId
 
     let r: Partial<QQ.Message.Response>
     this.bot.logger.debug('use form data %s', useFormData)
@@ -165,6 +167,8 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     } else if (type === 'quote') {
       this.reference = attrs.id
       await this.flush()
+    } else if (type === 'passive') {
+      this.passiveId = attrs.id
     } else if (type === 'image' && attrs.url) {
       await this.flush()
       await this.resolveFile(attrs)
@@ -183,6 +187,8 @@ const MSG_TIMEOUT = 5 * 60 * 1000 - 2000// 5 mins
 
 export class QQMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQBot<C>> {
   private content: string = ''
+  private passiveId: string
+  private passiveSeq: number
   private useMarkdown = false
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
@@ -197,6 +203,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
     }
+    if (this.passiveId) msg_id = this.passiveId
+    if (this.passiveSeq) msg_seq = this.passiveSeq
     const data: QQ.Message.Request = {
       content: this.content,
       msg_type: QQ.Message.Type.TEXT,
@@ -360,6 +368,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     const { type, attrs, children } = element
     if (type === 'text') {
       this.content += attrs.content
+    } else if (type === 'passive') {
+      this.passiveId = attrs.id
+      this.passiveSeq = Number(attrs.seq)
     } else if (type === 'image' && attrs.url) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
