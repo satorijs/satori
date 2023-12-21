@@ -200,7 +200,6 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     const data: QQ.Message.Request = {
       content: this.content,
       msg_type: QQ.Message.Type.TEXT,
-      timestamp: Math.floor(Date.now() / 1000),
       msg_id,
       msg_seq,
     }
