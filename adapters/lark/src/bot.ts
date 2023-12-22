@@ -87,7 +87,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async getUser(userId: string, guildId?: string) {
-    const data = await this.internal.getUserInfo(userId)
+    const data = await this.internal.getContactUser(userId)
     return Utils.decodeUser(data.data)
   }
 
