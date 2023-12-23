@@ -35,6 +35,9 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       if (!result.msg_id) return
       const session = this.bot.session()
       session.type = 'send'
+      // https://github.com/satorijs/satori/issues/202
+      // KOOK does not return the message content in the response
+      session.content = ''
       session.messageId = result.msg_id
       session.timestamp = result.timestamp
       this.results.push(session.event.message)

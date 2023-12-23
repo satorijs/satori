@@ -30,6 +30,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
       headers: form.getHeaders(),
     })
     const session = this.bot.session()
+    session.content = this.buffer
     session.messageId = id.toString()
     session.userId = this.bot.selfId
     session.channelId = this.session.channelId
