@@ -80,12 +80,12 @@ export interface GuildMember {
 declare module './internal' {
   export interface Internal {
     /** @see https://open.larksuite.com/document/server-docs/contact-v3/user/get */
-    getUserInfo(user_id: string, user_id_type?: Lark.UserIdType, department_id_type?: Lark.DepartmentIdType): Promise<BaseResponse & { data: Lark.User }>
+    getContactUser(user_id: string, user_id_type?: Lark.UserIdType, department_id_type?: Lark.DepartmentIdType): Promise<BaseResponse & { data: Lark.User }>
   }
 }
 
 Internal.define({
   'contact/v3/users/{user_id}': {
-    GET: 'getUserInfo',
+    GET: 'getContactUser',
   },
 })
