@@ -214,8 +214,8 @@ declare module '../internal' {
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/merge_forward */
     mergeForwardMessage(
       receive_id_type: Lark.ReceiveIdType,
-      data: { receive_id: string, message_id_list: string[] },
-    ): Promise<BaseResponse & { data: { message: Message, invalid_message_id_list: string[] }}>
+      data: { receive_id: string; message_id_list: string[] },
+    ): Promise<BaseResponse & { data: { message: Message; invalid_message_id_list: string[] }}>
     /** @see https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users */
     getMessageReadUsers(message_id: string, params: Pagination<{ user_id_type: Lark.UserIdType }>): Promise<BaseResponse & { data: Paginated<ReadUser> }>
     /** @see https://open.larksuite.com/document/server-docs/im-v1/message/list */
