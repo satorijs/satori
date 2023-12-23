@@ -379,7 +379,7 @@ export namespace WebSocket {
 export interface WebSocket {
   readonly url?: string
   readonly protocol?: string
-  readonly readyState?: WebSocket.ReadyState
+  readonly readyState?: number
   close(code?: number, reason?: string): void
   send(data: string): void
   dispatchEvent?(event: any): boolean
