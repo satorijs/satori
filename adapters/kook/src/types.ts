@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import { Quester } from '@satorijs/satori'
+import { KookBot } from './bot'
 
 export enum Signal {
   event,
@@ -625,38 +626,38 @@ export interface Internal {
 }
 
 export interface Events {
-  'kook/updated-message'(input: any): void
-  'kook/updated-private-message'(input: any): void
-  'kook/deleted-message'(input: any): void
-  'kook/deleted-private-message'(input: any): void
-  'kook/added-reaction'(input: any): void
-  'kook/private-added-reaction'(input: any): void
-  'kook/deleted-reaction'(input: any): void
-  'kook/private-deleted-reaction'(input: any): void
-  'kook/updated-channel'(input: any): void
-  'kook/deleted-channel'(input: any): void
-  'kook/pinned-message'(input: any): void
-  'kook/unpinned-message'(input: any): void
-  'kook/joined-guild'(input: any): void
-  'kook/exited-guild'(input: any): void
-  'kook/updated-guild'(input: any): void
-  'kook/deleted-guild'(input: any): void
-  'kook/self-joined-guild'(input: any): void
-  'kook/self-exited-guild'(input: any): void
-  'kook/update-guild-member'(input: any): void
-  'kook/guild-member-online'(input: any): void
-  'kook/guild-member-offline'(input: any): void
-  'kook/added-role'(input: any): void
-  'kook/deleted-role'(input: any): void
-  'kook/updated-role'(input: any): void
-  'kook/added-block-list'(input: any): void
-  'kook/deleted-block-list'(input: any): void
-  'kook/added-emoji'(input: any): void
-  'kook/updated-emoji'(input: any): void
-  'kook/joined-channel'(input: any): void
-  'kook/exited-channel'(input: any): void
-  'kook/user-updated'(input: any): void
-  'kook/message-btn-click'(input: any): void
+  'kook/updated-message'(input: any, bot: KookBot): void
+  'kook/updated-private-message'(input: any, bot: KookBot): void
+  'kook/deleted-message'(input: any, bot: KookBot): void
+  'kook/deleted-private-message'(input: any, bot: KookBot): void
+  'kook/added-reaction'(input: any, bot: KookBot): void
+  'kook/private-added-reaction'(input: any, bot: KookBot): void
+  'kook/deleted-reaction'(input: any, bot: KookBot): void
+  'kook/private-deleted-reaction'(input: any, bot: KookBot): void
+  'kook/updated-channel'(input: any, bot: KookBot): void
+  'kook/deleted-channel'(input: any, bot: KookBot): void
+  'kook/pinned-message'(input: any, bot: KookBot): void
+  'kook/unpinned-message'(input: any, bot: KookBot): void
+  'kook/joined-guild'(input: any, bot: KookBot): void
+  'kook/exited-guild'(input: any, bot: KookBot): void
+  'kook/updated-guild'(input: any, bot: KookBot): void
+  'kook/deleted-guild'(input: any, bot: KookBot): void
+  'kook/self-joined-guild'(input: any, bot: KookBot): void
+  'kook/self-exited-guild'(input: any, bot: KookBot): void
+  'kook/update-guild-member'(input: any, bot: KookBot): void
+  'kook/guild-member-online'(input: any, bot: KookBot): void
+  'kook/guild-member-offline'(input: any, bot: KookBot): void
+  'kook/added-role'(input: any, bot: KookBot): void
+  'kook/deleted-role'(input: any, bot: KookBot): void
+  'kook/updated-role'(input: any, bot: KookBot): void
+  'kook/added-block-list'(input: any, bot: KookBot): void
+  'kook/deleted-block-list'(input: any, bot: KookBot): void
+  'kook/added-emoji'(input: any, bot: KookBot): void
+  'kook/updated-emoji'(input: any, bot: KookBot): void
+  'kook/joined-channel'(input: any, bot: KookBot): void
+  'kook/exited-channel'(input: any, bot: KookBot): void
+  'kook/user-updated'(input: any, bot: KookBot): void
+  'kook/message-btn-click'(input: any, bot: KookBot): void
 }
 
 export class Internal {

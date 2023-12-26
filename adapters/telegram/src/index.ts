@@ -17,7 +17,7 @@ type ParamCase<S extends string> =
   : S
 
 type TelegramEvents = {
-  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: Telegram.Update[T]) => void
+  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: Telegram.Update[T], bot: TelegramBot) => void
 }
 
 declare module '@satorijs/core' {

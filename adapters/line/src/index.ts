@@ -10,7 +10,7 @@ export * from './http'
 export * from './message'
 
 type LineEvents = {
-  [P in hyphenate<Line.WebhookEvent['type']>]: Line.WebhookEvent & { type: P }
+  [P in Line.WebhookEvent['type'] as `line/${hyphenate<P>}`]: (data: Line.WebhookEvent & { type: P }, bot: LineBot) => void
 }
 
 declare module '@satorijs/core' {

@@ -15,7 +15,7 @@ type ParamCase<S extends string> =
   : S
 
 type DiscordEvents = {
-  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T]) => void
+  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T], bot: DiscordBot) => void
 }
 
 declare module '@satorijs/core' {
