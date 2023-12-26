@@ -86,8 +86,8 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     })
   }
 
-  async flush() {
-    if (this.cardBuffer.modules.length) {
+  async flush(forceCard = false) {
+    if (this.cardBuffer.modules.length || forceCard) {
       this.flushText()
       await this.post(Kook.Type.card, JSON.stringify([this.cardBuffer]))
       this.cardBuffer = {
@@ -233,7 +233,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       this.cardBuffer.theme = attrs['kook:theme'] ?? (Kook.Card.Theme.includes(attrs.class) ? attrs.class : 'primary')
       this.cardBuffer.size = attrs['kook:size']
       await this.render(children)
-      await this.flush()
+      await this.flush(true)
     } else if (type === 'quote') {
       await this.flush()
       this.additional.quote = attrs.id
