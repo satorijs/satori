@@ -15,6 +15,6 @@ declare module '@satorijs/core' {
   interface Events extends Kook.Events {}
 
   interface Session {
-    kook?: Kook.Payload & Kook.Internal
+    kook?: Kook.Data & Kook.Internal
   }
 }
