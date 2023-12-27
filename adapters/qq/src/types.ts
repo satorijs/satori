@@ -360,7 +360,7 @@ export namespace Message {
   }
   export interface Markdown {
     /** markdown 模板 id */
-    custom_template_id?: number
+    custom_template_id?: string
     /** markdown 模板模板参数 */
     params?: MarkdownParams
     /** 原生 markdown 内容，与 template_id 和 params 参数互斥，参数都传值将报错。 */
