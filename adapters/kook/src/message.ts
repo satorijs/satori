@@ -20,9 +20,11 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async prepare() {
     if (isDirectChannel(this.session.channelId)) {
+      this.session.isDirect = true
       this.params.chat_code = this.session.channelId
       this.path = '/user-chat/create-msg'
     } else {
+      this.session.isDirect = false
       this.params.target_id = this.session.channelId
       this.path = '/message/create'
     }
