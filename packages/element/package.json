@@ -52,6 +52,6 @@
     "chai-shape": "^1.0.0"
   },
   "dependencies": {
-    "cosmokit": "^1.5.1"
+    "cosmokit": "^1.5.2"
   }
 }

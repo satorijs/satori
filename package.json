@@ -1,6 +1,7 @@
 {
   "name": "@root/satori",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "packageManager": "yarn@1.22.19",
   "workspaces": [
@@ -32,7 +33,7 @@
     "eslint": "^8.55.0",
     "shx": "^0.3.4",
     "typescript": "^5.3.2",
-    "yakumo": "^1.0.0-alpha.8",
+    "yakumo": "^1.0.0-alpha.9",
     "yakumo-esbuild": "^1.0.0-alpha.2",
     "yakumo-publish-sync": "^1.0.0-alpha.1",
     "yakumo-tsc": "^1.0.0-alpha.2"

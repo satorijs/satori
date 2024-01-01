@@ -30,7 +30,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.3.2"
+    "@satorijs/satori": "^3.3.4"
   },
   "dependencies": {
     "qface": "^1.4.1"
