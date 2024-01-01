@@ -7,6 +7,7 @@ import { Internal } from './internal'
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
 export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
+  static inject = ['http']
 
   public oldHttp: Quester
   public http: Quester

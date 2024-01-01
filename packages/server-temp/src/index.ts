@@ -18,7 +18,7 @@ export interface Entry {
 }
 
 class TempServer {
-  static inject = ['server']
+  static inject = ['server', 'http']
 
   public path: string
   public selfUrl!: string

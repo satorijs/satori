@@ -9,6 +9,8 @@ import { Internal, Token } from './types/internal'
 
 export class SlackBot<C extends Context = Context, T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
   static MessageEncoder = SlackMessageEncoder
+  static inject = ['http']
+
   public http: Quester
   public internal: Internal
 

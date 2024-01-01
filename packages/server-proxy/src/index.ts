@@ -9,7 +9,7 @@ declare module '@satorijs/core' {
 }
 
 class ProxyServer {
-  static inject = ['server']
+  static inject = ['server', 'http']
 
   public path: string
 

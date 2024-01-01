@@ -8,6 +8,7 @@ import { decodeGuild, decodeMessage, decodeUser } from './utils'
 
 export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
+  static inject = ['http']
 
   public http: Quester
   public internal: Internal

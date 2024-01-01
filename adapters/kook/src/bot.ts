@@ -8,6 +8,7 @@ import { isDirectChannel, KookMessageEncoder } from './message'
 
 export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   static MessageEncoder = KookMessageEncoder
+  static inject = ['http']
 
   http: Quester
   internal: Kook.Internal

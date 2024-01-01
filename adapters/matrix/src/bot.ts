@@ -6,6 +6,7 @@ import { adaptMessage, decodeUser, dispatchSession } from './utils'
 
 export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
+  static inject = ['http']
 
   http: Quester
   id: string

@@ -9,6 +9,7 @@ import { version } from '../package.json'
 
 export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
+  static inject = ['http']
 
   public http: Quester
   public internal: Internal

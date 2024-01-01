@@ -4,7 +4,7 @@ import { Internal } from './types'
 import { LineMessageEncoder } from './message'
 
 export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
-  static inject = ['server']
+  static inject = ['server', 'http']
   static MessageEncoder = LineMessageEncoder
 
   public http: Quester

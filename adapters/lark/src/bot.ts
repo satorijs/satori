@@ -6,7 +6,7 @@ import { Internal } from './types'
 import * as Utils from './utils'
 
 export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
-  static inject = ['server']
+  static inject = ['server', 'http']
   static MessageEncoder = LarkMessageEncoder
 
   _token?: string

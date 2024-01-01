@@ -4,6 +4,7 @@ import { MailMessageEncoder } from './message'
 
 export class MailBot<C extends Context = Context> extends Bot<C, MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
+  static inject = ['http']
 
   internal: SMTP
 

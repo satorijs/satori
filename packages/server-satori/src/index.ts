@@ -3,7 +3,7 @@ import {} from '@cordisjs/server'
 import WebSocket from 'ws'
 
 export const name = 'server'
-export const inject = ['server']
+export const inject = ['server', 'http']
 
 const kClient = Symbol('state')
 

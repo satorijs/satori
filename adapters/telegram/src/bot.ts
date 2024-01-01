@@ -26,6 +26,7 @@ export interface TelegramResponse {
 
 export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
   static MessageEncoder = TelegramMessageEncoder
+  static inject = ['http']
 
   http: Quester
   file: Quester
