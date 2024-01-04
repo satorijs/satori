@@ -334,10 +334,17 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
           // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
           replyId = this.stack[0].fakeMessageMap[attrs.id][0].id
-          guildId = this.stack[0].fakeMessageMap[attrs.id][0].guild.id
           channelId = this.stack[0].fakeMessageMap[attrs.id][0].channel.id
         }
         const quote = await this.bot.getMessage(channelId, replyId)
+        if (!guildId) {
+          let c = await this.bot.internal.getChannel(channelId)
+          if (c.guild_id) guildId = c.guild_id
+        }
+        if (!guildId) {
+          this.bot.logger.warn('skip <quote> due to missing guild id')
+          return
+        }
         this.addition.embeds = [{
           description: [
             sanitize(parse(quote.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
