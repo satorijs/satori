@@ -308,9 +308,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       })
       this.buffer = ''
     } else if (type === 'author') {
-      const { avatar, nickname } = attrs
+      const { avatar, name } = attrs
       if (avatar) this.addition.avatar_url = avatar
-      if (nickname) this.addition.username = nickname
+      if (name) this.addition.username = name
       if (this.stack[0].type === 'message') {
         this.stack[0].author = attrs
       }
