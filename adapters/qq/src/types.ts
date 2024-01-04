@@ -360,13 +360,13 @@ export namespace Message {
   }
   export interface Markdown {
     /** markdown 模板 id */
-    custom_template_id?: number
+    custom_template_id?: string
     /** markdown 模板模板参数 */
-    params?: MarkdownParams
+    params?: MarkdownParam[]
     /** 原生 markdown 内容，与 template_id 和 params 参数互斥，参数都传值将报错。 */
     content?: string
   }
-  export interface MarkdownParams {
+  export interface MarkdownParam {
     /** markdown 模版 key */
     key: string
     /** markdown 模版 key 对应的 values ，列表长度大小为 1 代表单 value 值，长度大于1则为列表类型的参数 values 传参数 */
@@ -1277,18 +1277,18 @@ export interface Button {
   id?: string
   render_data: {
     label: string
-    visited_label: string
-    style: number
+    visited_label?: string
+    style?: number
   }
   action: {
     type: number
     permission: {
       type: number
       specify_role_ids?: string[]
-      specify_user_ids?: string
+      specify_user_ids?: string[]
     }
     click_limit?: number
     data: string
-    at_bot_show_channel_list?: string
+    at_bot_show_channel_list?: boolean
   }
 }
