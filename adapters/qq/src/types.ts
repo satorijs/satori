@@ -1285,7 +1285,7 @@ export interface Button {
     permission: {
       type: number
       specify_role_ids?: string[]
-      specify_user_ids?: string
+      specify_user_ids?: string[]
     }
     click_limit?: number
     data: string
