@@ -129,13 +129,13 @@ export class Quester {
       const name = 'file' + (ext ? '.' + ext : '')
       return { mime, filename: name, data: base64ToArrayBuffer(base64) }
     }
-    let [, name] = this.resolve(url).match(/.+\/([^/?]*)(?=\?)?/)!
-    const { headers, data } = await this.axios(url, {
+    const { headers, data, request } = await this.axios(url, {
       method: 'GET',
       responseType: 'arraybuffer',
       timeout: +options.timeout! || undefined,
     })
     const mime = headers['content-type']
+    let [, name] = this.resolve(request.res.responseUrl).match(/.+\/([^/?]*)(?=\?)?/)!
     if (!name.includes('.')) {
       const ext = mimedb[mime]?.extensions?.[0]
       name += ext ? '.' + ext : ''
