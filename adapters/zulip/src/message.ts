@@ -88,7 +88,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
     } else if (type === 'quote') {
       const quoteMsg = await this.bot.internal.getMessage(attrs.id)
       const suffix = '/near/' + encodeHashComponent(attrs.id)
-      const path = by_stream_topic_url(Number(this.guildId), this.channelId) + suffix
+      const path = by_stream_topic_url(+this.session.guildId, this.channelId) + suffix
 
       this.buffer = `@_**${quoteMsg.message.sender_full_name}|${quoteMsg.message.sender_id}** [Said](${path}):\n`
         + '```quote\n' + quoteMsg.raw_content + '\n```\n\n' + this.buffer

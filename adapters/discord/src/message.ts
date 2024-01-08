@@ -308,9 +308,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       })
       this.buffer = ''
     } else if (type === 'author') {
-      const { avatar, nickname } = attrs
+      const { avatar, name } = attrs
       if (avatar) this.addition.avatar_url = avatar
-      if (nickname) this.addition.username = nickname
+      if (name) this.addition.username = name
       if (this.stack[0].type === 'message') {
         this.stack[0].author = attrs
       }
@@ -330,17 +330,25 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         }
       } else {
         // quote
-        let replyId = attrs.id, channelId = this.channelId
+        let replyId = attrs.id, guildId = this.session.guildId, channelId = this.channelId
         if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
           // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
           replyId = this.stack[0].fakeMessageMap[attrs.id][0].id
           channelId = this.stack[0].fakeMessageMap[attrs.id][0].channel.id
         }
         const quote = await this.bot.getMessage(channelId, replyId)
+        if (!guildId) {
+          let c = await this.bot.internal.getChannel(channelId)
+          if (c.guild_id) guildId = c.guild_id
+        }
+        if (!guildId) {
+          this.bot.logger.warn('skip <quote> due to missing guild id')
+          return
+        }
         this.addition.embeds = [{
           description: [
             sanitize(parse(quote.elements.filter(v => v.type === 'text').join('')).slice(0, 30)),
-            `<t:${Math.ceil(quote.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${this.guildId}/${channelId}/${replyId})`,
+            `<t:${Math.ceil(quote.timestamp / 1000)}:R> [[ ↑ ]](https://discord.com/channels/${guildId}/${channelId}/${replyId})`,
           ].join('\n\n'),
           author: {
             name: quote.user.name,

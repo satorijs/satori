@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder, Universal } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
@@ -35,11 +35,12 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
   private mode: RenderMode = 'default'
   private rows: Telegram.InlineKeyboardButton[][] = []
 
-  constructor(bot: TelegramBot<C>, channelId: string, guildId?: string, options?: Universal.SendOptions) {
-    super(bot, channelId, guildId, options)
-    const chat_id = guildId || channelId
+  async prepare() {
+    const chat_id = this.session.guildId || this.channelId
     this.payload = { chat_id, parse_mode: 'html', caption: '' }
-    if (guildId && channelId !== guildId) this.payload.message_thread_id = +channelId
+    if (this.session.guildId && this.channelId !== this.session.guildId) {
+      this.payload.message_thread_id = +this.channelId
+    }
   }
 
   async addResult(result: Telegram.Message) {

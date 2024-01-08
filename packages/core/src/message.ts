@@ -1,5 +1,5 @@
 import { Bot } from './bot'
-import { Channel, Message, SendOptions } from '@satorijs/protocol'
+import { Message, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 import { Context } from '.'
 
@@ -14,9 +14,9 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   public results: Message[] = []
   public session: C[typeof Context.session]
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) { }
+  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
 
-  async prepare() { }
+  async prepare() {}
 
   abstract flush(): Promise<void>
   abstract visit(element: h): Promise<void>
@@ -31,12 +31,10 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   }
 
   async send(content: h.Fragment) {
-    const isDirect = this.options.session?.isDirect ?? !this.guildId
     this.session = this.bot.session({
       type: 'send',
-      channel: { id: this.channelId, type: isDirect ? Channel.Type.DIRECT : Channel.Type.TEXT },
-      guild: { id: this.guildId },
-      subtype: isDirect ? 'private' : 'group',
+      channel: { id: this.channelId, ...this.options.session?.event.channel },
+      guild: this.options.session?.event.guild,
     })
     for (const key in this.options.session || {}) {
       if (key === 'id' || key === 'event') continue
