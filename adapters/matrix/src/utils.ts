@@ -32,9 +32,9 @@ export async function adaptMessage(
     case 'm.file':
     case 'm.audio':
     case 'm.video': {
-      const url = bot.internal.getAssetUrl((content as any).url)
+      const src = bot.internal.getAssetUrl((content as any).url)
       const type = content.msgtype.substring(2)
-      message.content = segment(type === 'audio' ? 'record' : type, { url }).toString()
+      message.content = segment(type === 'audio' ? 'record' : type === 'image' ? 'img' : type, { src }).toString()
       break
     }
     default:

@@ -171,7 +171,7 @@ export async function decodeMessage(
     segments.push(h('location', { lat: data.location.latitude, lon: data.location.longitude }))
   } else if (data.photo) {
     const photo = data.photo.sort((s1, s2) => s2.file_size - s1.file_size)[0]
-    segments.push(h('image', await bot.$getFileFromId(photo.file_id)))
+    segments.push(h('img', await bot.$getFileFromId(photo.file_id)))
   } else if (data.sticker) {
     // TODO: Convert tgs to gif
     // https://github.com/ed-asriyan/tgs-to-gif
@@ -181,7 +181,7 @@ export async function decodeMessage(
       if (file.file_path.endsWith('.tgs')) {
         throw new Error('tgs is not supported now')
       }
-      segments.push(h('image', await bot.$getFileFromPath(file.file_path)))
+      segments.push(h('img', await bot.$getFileFromPath(file.file_path)))
     } catch (e) {
       bot.logger.warn('get file error', e)
       segments.push(h('text', { content: `[${data.sticker.set_name || 'sticker'} ${data.sticker.emoji || ''}]` }))
@@ -189,7 +189,7 @@ export async function decodeMessage(
   } else if (data.voice) {
     await addResource('audio', data.voice)
   } else if (data.animation) {
-    await addResource('image', data.animation)
+    await addResource('img', data.animation)
   } else if (data.video) {
     await addResource('video', data.video)
   } else if (data.document) {

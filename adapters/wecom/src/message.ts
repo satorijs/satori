@@ -39,9 +39,10 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
   }
 
   async flushMedia(element: h) {
-    if (!['audio', 'video', 'image', 'file'].includes(element.type)) return
+    if (!['audio', 'video', 'image', 'file', 'img'].includes(element.type)) return
     let type = element.type
     if (type === 'audio') type = 'voice'
+    if (type === 'img') type = 'image'
     const [media] = await this.uploadMedia(element)
 
     await this.sendByCustom({
@@ -68,7 +69,7 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
     const uploadType = type === 'audio' ? 'voice' : type
     const form = new FormData()
 
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const value = process.env.KOISHI_ENV === 'browser'
       ? new Blob([data], { type: mime })
       : Buffer.from(data)
@@ -104,7 +105,7 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
-    } else if (type === 'image' || type === 'audio' || type === 'video' || type === 'file') {
+    } else if (type === 'img' || type === 'image' || type === 'audio' || type === 'video' || type === 'file') {
       await this.flushMedia(element)
     } else if (type === 'a' && attrs.href) {
       await this.render(children)

@@ -61,9 +61,10 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
   }
 
   async flushMedia(element: h) {
-    if (!['audio', 'video', 'image'].includes(element.type)) return
+    if (!['audio', 'video', 'image', 'img'].includes(element.type)) return
     let type = element.type
     if (type === 'audio') type = 'voice'
+    if (type === 'img') type = 'image'
     const [media] = await this.uploadMedia(element)
 
     if (this.options.session.wechatOfficialResolve && !this.bot.config.customerService) {
@@ -109,7 +110,7 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
     const uploadType = type === 'audio' ? 'voice' : type
     const form = new FormData()
 
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const value = process.env.KOISHI_ENV === 'browser'
       ? new Blob([data], { type: mime })
       : Buffer.from(data)
@@ -144,7 +145,7 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
-    } else if (type === 'image' || type === 'audio' || type === 'video') {
+    } else if (type === 'img' || type === 'image' || type === 'audio' || type === 'video') {
       await this.flushMedia(element)
     } else if (type === 'message') {
       await this.flush()

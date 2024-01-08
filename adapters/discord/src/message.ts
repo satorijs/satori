@@ -86,7 +86,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
   }
 
   async sendEmbed(attrs: Dict, payload: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     // https://github.com/form-data/form-data/issues/468
     const value = process.env.KOISHI_ENV === 'browser'
@@ -109,10 +109,10 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       if (addition.content) {
         await this.post(addition)
       }
-      return this.post({ ...addition, content: attrs.url })
+      return this.post({ ...addition, content: attrs.src || attrs.url })
     }
 
-    if (await this.bot.http.isPrivate(attrs.url)) {
+    if (await this.bot.http.isPrivate(attrs.src || attrs.url)) {
       return await this.sendEmbed(attrs, addition)
     }
 
@@ -124,7 +124,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     }
 
     // auto mode
-    if (await this.checkMediaType(attrs.url, type)) {
+    if (await this.checkMediaType(attrs.src || attrs.url, type)) {
       return sendDirect()
     } else {
       return this.sendEmbed(attrs, addition)
@@ -285,7 +285,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       } else {
         this.buffer += `<${attrs.animated ? 'a' : ''}:${attrs.name}:${attrs.id}>`
       }
-    } else if ((type === 'image' || type === 'video') && attrs.url) {
+    } else if ((type === 'img' || type === 'image' || type === 'video') && (attrs.src || attrs.url)) {
       if (this.mode === 'figure') {
         this.figure = element
       } else {

@@ -75,10 +75,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     this.richText = undefined
   }
 
-  async sendFile(type: 'image' | 'video' | 'audio' | 'file', url: string): Promise<Addition> {
+  async sendFile(type: 'img' | 'image' | 'video' | 'audio' | 'file', url: string): Promise<Addition> {
     const payload = new FormData()
 
-    const assetKey = type === 'image' ? 'image' : 'file'
+    const assetKey = type === 'img' || type === 'image' ? 'image' : 'file'
     const [schema, file] = url.split('://')
     const filename = schema === 'base64' ? 'unknown' : new URL(url).pathname.split('/').pop()
     if (schema === 'file') {
@@ -90,7 +90,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       payload.append(assetKey, resp)
     }
 
-    if (type === 'image') {
+    if (type === 'img' || type === 'image') {
       payload.append('image_type', 'message')
       const { data } = await this.bot.internal.uploadImage(payload)
       return {
@@ -162,13 +162,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         await this.flush()
         this.quote = attrs.id
         break
+      case 'img':
       case 'image':
       case 'video':
       case 'audio':
       case 'file':
-        if (attrs.url) {
+        if (attrs.src || attrs.url) {
           await this.flush()
-          this.addition = await this.sendFile(type, attrs.url)
+          this.addition = await this.sendFile(type, attrs.src || attrs.url)
         }
         break
       case 'figure': // FIXME: treat as message element for now

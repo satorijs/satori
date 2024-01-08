@@ -93,28 +93,28 @@ export class LineMessageEncoder<C extends Context = Context> extends MessageEnco
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       await this.render(children)
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
-    } else if (type === 'image' && attrs.url) {
+    } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.insertBlock()
       this.blocks.push({
         type: 'image',
-        originalContentUrl: attrs.url,
-        previewImageUrl: attrs.url,
+        originalContentUrl: attrs.src || attrs.url,
+        previewImageUrl: attrs.src || attrs.url,
       })
-    } else if (type === 'video' && attrs.url) {
+    } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.insertBlock()
       this.blocks.push({
         type: 'video',
-        originalContentUrl: attrs.url,
-        previewImageUrl: attrs.url,
+        originalContentUrl: attrs.src || attrs.url,
+        previewImageUrl: attrs.src || attrs.url,
       })
-    } else if (type === 'audio' && attrs.url) {
+    } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.insertBlock()
       this.blocks.push({
         type: 'audio',
-        originalContentUrl: attrs.url,
+        originalContentUrl: attrs.src || attrs.url,
         duration: 1145,
       })
-    } else if (type === 'face' && attrs.id) {
+    } else if (type === 'face') {
       if (attrs.id.startsWith('s')) {
         // https://developers.line.biz/en/reference/messaging-api/#sticker-message
         await this.insertBlock()

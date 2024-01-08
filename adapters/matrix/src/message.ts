@@ -81,10 +81,10 @@ export class MatrixMessageEncoder<C extends Context = Context> extends MessageEn
       }
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += ` #${attrs.id} `
-    } else if ((type === 'image' || type === 'video' || type === 'record' || type === 'file') && attrs.url) {
+    } else if ((type === 'image' || type === 'img' || type === 'video' || type === 'record' || type === 'file') && (attrs.src || attrs.url)) {
       await this.flush()
-      const matrixType = type === 'record' ? 'audio' : type
-      await this.sendMedia(attrs.url, matrixType)
+      const matrixType = type === 'record' ? 'audio' : type === 'img' ? 'image' : type
+      await this.sendMedia(attrs.src || attrs.url, matrixType)
     } else if (type === 'quote') {
       this.reply = await this.bot.getMessage(this.channelId, attrs.id)
     } else if (type === 'message') {
