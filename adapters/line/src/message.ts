@@ -98,21 +98,21 @@ export class LineMessageEncoder<C extends Context = Context> extends MessageEnco
       this.blocks.push({
         type: 'image',
         originalContentUrl: attrs.src || attrs.url,
-        previewImageUrl: attrs.src || attrs.url,
+        previewImageUrl: attrs.poster,
       })
     } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.insertBlock()
       this.blocks.push({
         type: 'video',
         originalContentUrl: attrs.src || attrs.url,
-        previewImageUrl: attrs.src || attrs.url,
+        previewImageUrl: attrs.poster,
       })
     } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.insertBlock()
       this.blocks.push({
         type: 'audio',
         originalContentUrl: attrs.src || attrs.url,
-        duration: 1145,
+        duration: attrs.duration,
       })
     } else if (type === 'face') {
       if (attrs.id.startsWith('s')) {
