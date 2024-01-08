@@ -55,13 +55,11 @@ export class MailMessageEncoder<C extends Context = Context> extends MessageEnco
       }
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += ` #${attrs.id} `
-    } else if (['image', 'audio', 'video', 'file'].includes(type) && attrs.url) {
-      let url: string
-      if (attrs.url.match(/^https?:/)) {
-        url = attrs.url
-      } else {
+    } else if (['image', 'audio', 'video', 'file'].includes(type) && (attrs.src || attrs.url)) {
+      let url: string = attrs.src || attrs.url
+      if (!url.match(/^https?:/)) {
         const cid = randomId()
-        const { filename, mime, data } = await this.bot.ctx.http.file(attrs.url)
+        const { filename, mime, data } = await this.bot.ctx.http.file(url)
         this.attachments.push({
           cid,
           filename,

@@ -48,16 +48,17 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
   }
 
   private async transformUrl({ type, attrs }: h) {
-    if (await this.bot.http.isPrivate(attrs.url)) {
+    const src = attrs.src || attrs.url
+    if (await this.bot.http.isPrivate(src)) {
       const payload = new FormData()
-      const result = await this.bot.ctx.http.file(attrs.url, attrs)
+      const result = await this.bot.ctx.http.file(src, attrs)
       payload.append('file', Buffer.from(result.data), {
         filename: attrs.file || result.filename,
       })
       const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
       return url
-    } else if (!attrs.url.includes('kookapp.cn')) {
-      const res = await this.bot.ctx.http.get<internal.Readable>(attrs.url, {
+    } else if (!src.includes('kookapp.cn')) {
+      const res = await this.bot.ctx.http.get<internal.Readable>(src, {
         headers: { accept: type + '/*' },
         responseType: 'stream',
         timeout: +attrs.timeout || undefined,
@@ -69,7 +70,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
       const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
       return url
     } else {
-      return attrs.url
+      return src
     }
   }
 
@@ -162,8 +163,9 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
         type: (type.startsWith('kook:') ? type.slice(5) : type) as never,
         src: await this.transformUrl(element),
         title: attrs.title,
+        cover: attrs.poster,
       })
-    } else if (type === 'image' || type === 'kook:image') {
+    } else if (type === 'img' || type === 'image' || type === 'kook:image') {
       this.flushText()
       this.cardBuffer.modules.push({
         type: 'container',

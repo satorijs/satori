@@ -64,7 +64,7 @@ function adaptMessageMeta(
       .replace(/#channel:(\d+);/, (_, id) => h.sharp(id).toString())
     message.elements = h.parse(message.content)
   } else if (base.type === Kook.Type.image) {
-    const element = h('image', { url: base.content, file: data.attachments?.name })
+    const element = h('img', { src: base.content, file: data.attachments?.name })
     message.elements = [element]
     message.content = element.toString()
   } else if (base.type === Kook.Type.card) {

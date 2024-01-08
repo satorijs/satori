@@ -83,7 +83,7 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
 
   // https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#upload-media
   async uploadMedia(attrs: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
 
     if (!SUPPORTED_MEDIA.includes(mime)) {
       this.bot.ctx.logger('whatsapp').warn(`Unsupported media type: ${mime}`)
@@ -114,13 +114,11 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content
-    } else if ((
-      type === 'image' || type === 'audio' || type === 'video'
-    ) && attrs.url) {
+    } else if ((type === 'image' || type === 'img' || type === 'audio' || type === 'video') && (attrs.src || attrs.url)) {
       // https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#supported-media-types
       const id = await this.uploadMedia(attrs)
       if (!id) return
-      await this.sendMessage(type, { id })
+      await this.sendMessage(type === 'img' ? 'image' : type, { id })
     } else if (type === 'file') {
       const id = await this.uploadMedia(attrs)
       if (!id) return

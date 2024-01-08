@@ -84,7 +84,7 @@ export async function adaptMessage(
                 break
               }
               if (src.match(/^(data|https?):/)) {
-                content += `<image url="${src}"/>`
+                content += `<img src="${src}"/>`
                 break
               }
               break

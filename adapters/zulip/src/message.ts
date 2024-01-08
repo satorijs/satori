@@ -42,7 +42,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
 
   async uploadMedia(element: h) {
     const { attrs } = element
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     // https://github.com/form-data/form-data/issues/468
     const value = process.env.KOISHI_ENV === 'browser'
@@ -82,7 +82,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
       this.buffer += `[`
       await this.render(children)
       this.buffer += `](${encodeURI(attrs.href)})`
-    } else if (['audio', 'video', 'file', 'image'].includes(type)) {
+    } else if (['audio', 'video', 'file', 'image', 'img'].includes(type)) {
       const [uri, filename] = await this.uploadMedia(element)
       this.buffer += `[${filename}](${encodeURI(uri)})\n`
     } else if (type === 'quote') {

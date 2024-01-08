@@ -161,14 +161,14 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   async $getFileFromPath(filePath: string) {
     if (this.server) {
-      return { url: `${this.server}/${filePath}` }
+      return { src: `${this.server}/${filePath}` }
     }
     let { mime, data } = await this.$getFile(filePath)
     if (mime === 'application/octet-stream') {
       mime = (await FileType.fromBuffer(data))?.mime
     }
     const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
-    return { url: base64 }
+    return { src: base64 }
   }
 
   private async setAvatarUrl(user: Universal.User) {
@@ -187,10 +187,10 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   async getUser(userId: string, guildId?: string) {
     const data = await this.internal.getChat({ chat_id: userId })
     if (!data.photo?.big_file_id && !data.photo?.small_file_id) return decodeUser(data)
-    const { url } = await this.$getFileFromId(data.photo?.big_file_id || data.photo?.small_file_id)
+    const { src } = await this.$getFileFromId(data.photo?.big_file_id || data.photo?.small_file_id)
     return {
       ...decodeUser(data),
-      avatar: url,
+      avatar: src,
     }
   }
 

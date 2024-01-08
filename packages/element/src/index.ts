@@ -469,20 +469,20 @@ namespace Element {
   export let warn: (message: string) => void = () => {}
 
   function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer, type: string]> {
-    return (url, ...args) => {
+    return (src, ...args) => {
       let prefix = 'base64://'
       if (typeof args[0] === 'string') {
         prefix = `data:${args.shift()};base64,`
       }
-      if (is('Buffer', url)) {
-        url = prefix + url.toString('base64')
-      } else if (is('ArrayBuffer', url)) {
-        url = prefix + arrayBufferToBase64(url)
+      if (is('Buffer', src)) {
+        src = prefix + src.toString('base64')
+      } else if (is('ArrayBuffer', src)) {
+        src = prefix + arrayBufferToBase64(src)
       }
-      if (url.startsWith('base64://')) {
+      if (src.startsWith('base64://')) {
         warn(`protocol "base64:" is deprecated and will be removed in the future, please use "data:" instead`)
       }
-      return Element(type, { ...args[0] as {}, url })
+      return Element(type, { ...args[0] as {}, src })
     }
   }
 
@@ -490,7 +490,8 @@ namespace Element {
   export const at = createFactory<[id: any]>('at', 'id')
   export const sharp = createFactory<[id: any]>('sharp', 'id')
   export const quote = createFactory<[id: any]>('quote', 'id')
-  export const image = createAssetFactory('image')
+  export const image = createAssetFactory('img')
+  export const img = createAssetFactory('img')
   export const video = createAssetFactory('video')
   export const audio = createAssetFactory('audio')
   export const file = createAssetFactory('file')

@@ -92,26 +92,26 @@ export async function decodeMessage(
     if (!/\s$/.test(message.content)) message.content += ' '
     message.content += data.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
-        return h('image', {
-          url: v.url,
+        return h('img', {
+          src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else if (v.height && v.width && v.content_type?.startsWith('video/')) {
         return h('video', {
-          url: v.url,
+          src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else if (v.content_type?.startsWith('audio/')) {
         return h('record', {
-          url: v.url,
+          src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
       } else {
         return h('file', {
-          url: v.url,
+          src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
         })
@@ -122,13 +122,13 @@ export async function decodeMessage(
     // not using embed types
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-types
     if (embed.image) {
-      message.content += h('image', { url: embed.image.url, proxy_url: embed.image.proxy_url })
+      message.content += h('img', { src: embed.image.url, proxy_url: embed.image.proxy_url })
     }
     if (embed.thumbnail) {
-      message.content += h('image', { url: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
+      message.content += h('img', { src: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
     }
     if (embed.video) {
-      message.content += h('video', { url: embed.video.url, proxy_url: embed.video.proxy_url })
+      message.content += h('video', { src: embed.video.url, proxy_url: embed.video.proxy_url })
     }
   }
   message.elements = h.parse(message.content)

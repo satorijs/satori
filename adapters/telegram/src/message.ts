@@ -9,8 +9,8 @@ type AssetMethod = 'sendPhoto' | 'sendAudio' | 'sendDocument' | 'sendVideo' | 's
 
 async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promise<AssetMethod> {
   let method: AssetMethod
-  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.url, element.attrs)
-  if (element.type === 'image') {
+  const { filename, data, mime } = await bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
+  if (element.type === 'img' || element.type === 'image') {
     method = mime === 'image/gif' ? 'sendAnimation' : 'sendPhoto'
   } else if (element.type === 'file') {
     method = 'sendDocument'
@@ -145,7 +145,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
       if (attrs.id) {
         this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`
       }
-    } else if (['image', 'audio', 'video', 'file'].includes(type)) {
+    } else if (['img', 'image', 'audio', 'video', 'file'].includes(type)) {
       if (this.mode === 'default') {
         await this.flush()
       }

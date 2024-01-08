@@ -17,7 +17,6 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   private passiveId: string
   reference: string
   private retry = false
-  private resource: Dict
   // 先文后图
   async flush() {
     if (!this.content.trim().length && !this.file && !this.fileUrl) {
@@ -110,7 +109,6 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     this.file = null
     this.filename = null
     this.fileUrl = null
-    this.resource = null
     this.retry = false
   }
 
@@ -134,11 +132,10 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   }
 
   async resolveFile(attrs: Dict, download = false) {
-    if (attrs) this.resource = attrs
-    if (!download && !await this.bot.ctx.http.isPrivate(this.resource.url)) {
-      return this.fileUrl = this.resource.url
+    if (!download && !await this.bot.ctx.http.isPrivate(attrs.src || attrs.url)) {
+      return this.fileUrl = attrs.src || attrs.url
     }
-    const { data, filename } = await this.bot.ctx.http.file(this.resource.url, this.resource)
+    const { data, filename } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     this.file = Buffer.from(data)
     this.filename = filename
     this.fileUrl = null
@@ -169,7 +166,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
       await this.flush()
     } else if (type === 'passive') {
       this.passiveId = attrs.id
-    } else if (type === 'image' && attrs.url) {
+    } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
       await this.resolveFile(attrs)
       await this.flush()
@@ -287,7 +284,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   }
 
   async sendFile(type: string, attrs: Dict) {
-    let url = attrs.url, entry: Entry | undefined
+    let url = attrs.src || attrs.url, entry: Entry | undefined
     if (await this.bot.ctx.http.isPrivate(url)) {
       const temp = this.bot.ctx.get('server.temp')
       if (!temp) {
@@ -298,7 +295,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     await this.flush()
     let file_type = 0
-    if (type === 'image') file_type = 1
+    if (type === 'img' || type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
     else return
     const data: QQ.Message.File.Request = {
@@ -371,11 +368,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     } else if (type === 'passive') {
       this.passiveId = attrs.id
       this.passiveSeq = Number(attrs.seq)
-    } else if (type === 'image' && attrs.url) {
+    } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
-    } else if (type === 'video' && attrs.url) {
+    } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data

@@ -61,7 +61,7 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
 
   // https://open.dingtalk.com/document/orgapp/upload-media-files?spm=ding_open_doc.document.0.0.3b166172ERBuHw
   async uploadMedia(attrs: Dict) {
-    const { data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     // https://github.com/form-data/form-data/issues/468
     const value = process.env.KOISHI_ENV === 'browser'
@@ -89,20 +89,21 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += escape(attrs.content)
-    } else if (type === 'image' && attrs.url) {
+    } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
+      const src = attrs.src || attrs.url
       // await this.flush()
       // await this.sendMessage('sampleImageMsg', {
-      //   photoURL: attrs.url
+      //   photoURL: src,
       // })
-      if (await this.bot.http.isPrivate(attrs.url)) {
+      if (await this.bot.http.isPrivate(src)) {
         const temp = this.bot.ctx.get('server.temp')
         if (!temp) {
           return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')
         }
-        const entry: Entry | undefined = await temp.create(attrs.url)
+        const entry: Entry | undefined = await temp.create(src)
         this.buffer += `![${attrs.alt ?? ''}](${entry.url})`
       } else {
-        this.buffer += `![${attrs.alt ?? ''}](${attrs.url})`
+        this.buffer += `![${attrs.alt ?? ''}](${src})`
       }
     } else if (type === 'message') {
       await this.flush()

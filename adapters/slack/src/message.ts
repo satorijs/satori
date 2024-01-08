@@ -47,7 +47,7 @@ export class SlackMessageEncoder<C extends Context = Context> extends MessageEnc
   async sendAsset(element: h) {
     if (this.buffer.length) await this.flush()
     const { attrs } = element
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.url, attrs)
+    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     // https://github.com/form-data/form-data/issues/468
     const value = process.env.KOISHI_ENV === 'browser'
@@ -72,7 +72,7 @@ export class SlackMessageEncoder<C extends Context = Context> extends MessageEnc
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += escape(attrs.content)
-    } else if (type === 'image' && attrs.url) {
+    } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.sendAsset(element)
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += `<#${attrs.id}>`

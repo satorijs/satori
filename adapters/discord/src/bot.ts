@@ -71,7 +71,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   async editMessage(channelId: string, messageId: string, content: Fragment) {
     const elements = h.normalize(content)
     content = elements.toString()
-    const image = elements.find(v => v.type === 'image')
+    const image = elements.find(v => v.type === 'img' || v.type === 'image')
     if (image) {
       throw new Error("You can't include embed object(s) while editing message.")
     }
