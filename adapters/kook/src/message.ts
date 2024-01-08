@@ -163,6 +163,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
         type: (type.startsWith('kook:') ? type.slice(5) : type) as never,
         src: await this.transformUrl(element),
         title: attrs.title,
+        cover: attrs.poster,
       })
     } else if (type === 'img' || type === 'image' || type === 'kook:image') {
       this.flushText()
