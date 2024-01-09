@@ -212,10 +212,10 @@ function parsseContent(bot: MatrixBot, content: Matrix.M_ROOM_MESSAGE) {
               break
             }
             if (src.match(/^(data|https?):/)) {
-              result += `<image url="${src}"/>`
+              result += `<img src="${src}"/>`
               break
             } else if (src.startsWith('mxc://')) {
-              result += `<image url="${bot.internal.getAssetUrl(src)}">`
+              result += `<img src="${bot.internal.getAssetUrl(src)}">`
               break
             }
             break

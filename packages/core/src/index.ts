@@ -1,3 +1,5 @@
+/// <reference types="@cordisjs/timer" />
+
 import * as cordis from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
@@ -5,6 +7,7 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import Quester from 'cordis-axios'
 import * as logger from '@cordisjs/logger'
+import timer from '@cordisjs/timer'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
@@ -142,7 +145,11 @@ export class Context extends cordis.Context {
 
   constructor(config: Context.Config = {}) {
     super(config)
+    this.provide('logger', undefined, true)
+    this.provide('timer', undefined, true)
+    this.provide('http', undefined, true)
     this.plugin(logger)
+    this.plugin(timer)
     this.http = new Quester(config.request)
   }
 
