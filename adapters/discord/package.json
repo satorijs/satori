@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "4.1.10",
+  "version": "4.2.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -32,7 +32,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.3.4"
+    "@satorijs/satori": "^3.4.1"
   },
   "dependencies": {
     "form-data": "^4.0.0"

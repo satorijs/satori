@@ -29,6 +29,6 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.3.4"
+    "@satorijs/satori": "^3.4.1"
   }
 }
