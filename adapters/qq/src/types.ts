@@ -1274,7 +1274,7 @@ export interface InlineKeyboardRow {
 }
 
 export interface Button {
-  /** 按钮ID：在一个keyboard消息内设置唯一 */
+  /** 按钮 ID：在一个 keyboard 消息内设置唯一 */
   id?: string
   render_data: {
     /** 按钮上的文字 */
@@ -1311,11 +1311,11 @@ export interface Button {
      * （仅支持手机端版本 8983+ 的单聊场景，桌面端不支持）
      */
     anchor?: number
-    /** 【已弃用】可操作点击的次数，默认不限 */
+    /** @deprecated */
     click_limit?: number
-    /** 【已弃用】指令按钮可用，弹出子频道选择器，默认 false */
+    /** @deprecated */
     at_bot_show_channel_list?: boolean
-    /** 客户端不支持本action的时候，弹出的toast文案 */
+    /** 客户端不支持本 action 的时候，弹出的 toast 文案 */
     unsupport_tips?: string
   }
 }
