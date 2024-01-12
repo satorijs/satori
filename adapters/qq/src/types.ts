@@ -1288,7 +1288,7 @@ export interface Button {
     /**
      * 设置 0 跳转按钮：http 或 小程序 客户端识别 scheme，
      * 设置 1 回调按钮：回调后台接口, data 传给后台，
-     * 设置 2 指令按钮：自动在输入框插入 &#64bot data
+     * 设置 2 指令按钮：自动在输入框插入 &#64;bot data
      */
     type: number
     permission: {
