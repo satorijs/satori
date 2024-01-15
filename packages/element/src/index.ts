@@ -468,7 +468,7 @@ namespace Element {
   // eslint-disable-next-line prefer-const
   export let warn: (message: string) => void = () => {}
 
-  function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer, type: string]> {
+  function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer | ArrayBufferView, type: string]> {
     return (src, ...args) => {
       let prefix = 'base64://'
       if (typeof args[0] === 'string') {
@@ -478,6 +478,8 @@ namespace Element {
         src = prefix + src.toString('base64')
       } else if (is('ArrayBuffer', src)) {
         src = prefix + arrayBufferToBase64(src)
+      } else if (ArrayBuffer.isView(src)) {
+        src = prefix + arrayBufferToBase64(src.buffer)
       }
       if (src.startsWith('base64://')) {
         warn(`protocol "base64:" is deprecated and will be removed in the future, please use "data:" instead`)
