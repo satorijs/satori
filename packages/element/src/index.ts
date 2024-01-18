@@ -24,6 +24,19 @@ declare global {
         name?: string
         avatar?: string
       }
+      img: ResourceElement
+      audio: ResourceElement
+      video: ResourceElement
+      file: ResourceElement
+    }
+
+    interface ResourceElement {
+      src?: string
+      title?: string
+      width?: string | number
+      height?: string | number
+      duration?: string | number
+      poster?: string
     }
   }
 }
