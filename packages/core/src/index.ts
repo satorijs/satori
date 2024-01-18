@@ -1,5 +1,3 @@
-/// <reference types="@cordisjs/timer" />
-
 import * as cordis from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
@@ -7,7 +5,7 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import Quester from 'cordis-axios'
 import * as logger from '@cordisjs/logger'
-import timer from '@cordisjs/timer'
+import TimerService from '@cordisjs/timer'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
@@ -118,6 +116,7 @@ export interface Context {
   [Context.session]: Session<this>
   baseDir: string
   http: Quester
+  timer: TimerService
 }
 
 export class Context extends cordis.Context {
@@ -149,7 +148,7 @@ export class Context extends cordis.Context {
     this.provide('timer', undefined, true)
     this.provide('http', undefined, true)
     this.plugin(logger)
-    this.plugin(timer)
+    this.plugin(TimerService)
     this.http = new Quester(config.request)
   }
 
@@ -162,11 +161,10 @@ export class Context extends cordis.Context {
       return session.transform(h.normalize(result))
     }
     const service = 'component:' + name
-    this.root.provide(service)
-    this[service] = render
-    return this.collect('component', () => {
-      this[service] = null
-      return true
+    this.provide(service)
+    return this.effect(() => {
+      this[service] = render
+      return () => this[service] = null
     })
   }
 }
