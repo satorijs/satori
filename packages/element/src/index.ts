@@ -1,5 +1,33 @@
 import { arrayBufferToBase64, Awaitable, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      message: {
+        id?: string
+        forward?: boolean
+      }
+      quote: {
+        id?: string
+        name?: string
+        avatar?: string
+      }
+      at: {
+        id?: string
+        name?: string
+        avatar?: string
+        role?: string
+        type?: string
+      }
+      sharp: {
+        id?: string
+        name?: string
+        avatar?: string
+      }
+    }
+  }
+}
+
 const kElement = Symbol.for('satori.element')
 
 interface Element {

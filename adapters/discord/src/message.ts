@@ -338,7 +338,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         }
         const quote = await this.bot.getMessage(channelId, replyId)
         if (!guildId) {
-          let c = await this.bot.internal.getChannel(channelId)
+          const c = await this.bot.internal.getChannel(channelId)
           if (c.guild_id) guildId = c.guild_id
         }
         if (!guildId) {
