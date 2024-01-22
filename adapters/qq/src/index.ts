@@ -1,7 +1,6 @@
 import * as QQ from './types'
 import { QQBot } from './bot'
-import { GroupInternal } from './internal/group'
-import { GuildInternal } from './internal/guild'
+import { GroupInternal, GuildInternal } from './internal'
 
 export { QQ }
 
@@ -27,5 +26,5 @@ declare module '@satorijs/core' {
     qqguild?: QQ.Payload & GuildInternal
   }
 
-  interface Events extends QQEvents {}
+  interface Events extends QQEvents { }
 }

@@ -83,6 +83,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
     })
 
     this.socket.addEventListener('close', (e) => {
+      this.bot.logger.debug('websocket closed, code %o, reason: %s', e.code, e.reason)
       clearInterval(this._ping)
     })
   }

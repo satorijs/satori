@@ -1,7 +1,7 @@
 import * as QQ from '../types'
 import { GuildInternal } from './internal'
 
-declare module './index' {
+declare module './internal' {
   interface GuildInternal {
     sendMessage(channelId: string, data: QQ.Message.ChannelRequest): Promise<QQ.Message>
 

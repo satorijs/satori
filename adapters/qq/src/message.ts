@@ -233,7 +233,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     const session = this.bot.session()
     session.type = 'send'
-    const send = (async () => {
+    const send = async () => {
       try {
         if (this.session.isDirect) {
           const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
@@ -265,7 +265,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           await send()
         }
       }
-    }).bind(this)
+    }
     await send()
     this.content = ''
     this.attachedFile = null
