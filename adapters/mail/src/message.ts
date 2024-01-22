@@ -17,7 +17,7 @@ export class MailMessageEncoder<C extends Context = Context> extends MessageEnco
   async flush() {
     if (!this.buffer && this.attachments.length === 0) return
     const messageId = await this.bot.internal.send({
-      to: this.session.channelId,
+      to: this.session.channelId.substring(8),
       html: `<pre>${this.buffer}</pre>`,
       attachments: this.attachments,
       inReplyTo: this.reply,
