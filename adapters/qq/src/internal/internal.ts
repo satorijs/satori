@@ -34,7 +34,8 @@ export class Internal {
               return response.data
             } catch (error) {
               if (!Quester.isAxiosError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
+              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers['x-tps-trace-id'])
+              throw error
             }
           }
         }

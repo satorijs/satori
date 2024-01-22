@@ -68,17 +68,17 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
         else r = await this.bot.internal.sendMessage(this.channelId, payload)
       }
     } catch (e) {
-      this.bot.logger.error(e)
-      this.bot.logger.error('[response] %o', e.response?.data)
-      if ((e.repsonse?.data?.code === 40004 || e.response?.data?.code === 102) && !this.retry && this.fileUrl) {
-        this.bot.logger.warn('retry image sending')
-        this.retry = true
-        await this.resolveFile(null, true)
-        await this.flush()
+      if (Quester.isAxiosError(e)) {
+        if (this.bot.parent.config.retryWhen.includes(e.response.data.code) && !this.retry && this.fileUrl) {
+          this.bot.logger.warn('retry image sending')
+          this.retry = true
+          await this.resolveFile(null, true)
+          await this.flush()
+        }
       }
     }
 
-    this.bot.logger.debug(r)
+    // this.bot.logger.debug(r)
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
@@ -93,11 +93,11 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
      * active msg, http 202: {"code":304023,"message":"push message is waiting for audit now","data":{"message_audit":{"audit_id":"xxx"}}}
      * passive msg, http 200: Partial<QQ.Message>
      */
-    if (r.id) {
+    if (r?.id) {
       session.messageId = r.id
       session.app.emit(session, 'send', session)
       this.results.push(session.event.message)
-    } else if (r.code === 304023 && this.bot.config.parent.intents & QQ.Intents.MESSAGE_AUDIT) {
+    } else if (r?.code === 304023 && this.bot.config.parent.intents & QQ.Intents.MESSAGE_AUDIT) {
       try {
         const auditData: QQ.MessageAudited = await this.audit(r.data.message_audit.audit_id)
         session.messageId = auditData.message_id
@@ -137,7 +137,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     if (!download && !await this.bot.ctx.http.isPrivate(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
-    const { data, filename } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { data, filename } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
     this.file = Buffer.from(data)
     this.filename = filename
     this.fileUrl = null
@@ -191,6 +191,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private useMarkdown = false
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
+  private retry = false
 
   // 先图后文
   async flush() {
@@ -232,38 +233,44 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     const session = this.bot.session()
     session.type = 'send'
-    try {
-      if (this.session.isDirect) {
-        const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-        session.messageId = msg_id
-      } else {
-        // FIXME: missing message id
-        const resp = await this.bot.internal.sendMessage(this.session.channelId, data)
-        if (resp.msg !== 'success') {
-          this.bot.logger.warn(resp)
-        }
-        if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
-          try {
-            const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
-            session.messageId = auditData.message_id
+    const send = (async () => {
+      try {
+        if (this.session.isDirect) {
+          const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
+          session.messageId = msg_id
+        } else {
+          const resp = await this.bot.internal.sendMessage(this.session.channelId, data)
+          if (resp.id) {
+            session.messageId = resp.id
+            session.timestamp = new Date(resp.timestamp).valueOf()
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
-          } catch (e) {
-            this.bot.logger.error(e)
+          } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+            try {
+              const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
+              session.messageId = auditData.message_id
+              session.app.emit(session, 'send', session)
+              this.results.push(session.event.message)
+            } catch (e) {
+              this.bot.logger.error(e)
+            }
           }
         }
+      } catch (e) {
+        if (!Quester.isAxiosError(e)) throw e
+        this.errors.push(e)
+        if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
+          this.bot.logger.warn(this.session.fid + ' retry message sending')
+          this.retry = true
+          await send()
+        }
       }
-    } catch (e) {
-      if (!Quester.isAxiosError(e)) throw e
-      this.errors.push(e)
-      this.bot.logger.warn('[response] %s %o', e.response?.status, e.response?.data)
-    }
-
-    // this.results.push(session.event.message)
-    // session.app.emit(session, 'send', session)
+    }).bind(this)
+    await send()
     this.content = ''
     this.attachedFile = null
     this.rows = []
+    this.retry = false
   }
 
   async audit(audit_id: string): Promise<QQ.MessageAudited> {
@@ -315,9 +322,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     } catch (e) {
       if (!Quester.isAxiosError(e)) throw e
       this.errors.push(e)
-      this.bot.logger.warn('[response] %s %o', e.response?.status, e.response?.data)
+      if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
+        this.bot.logger.warn(this.session.fid + 'retry file sending')
+        this.retry = true
+        await this.sendFile(type, attrs)
+      }
     }
     entry?.dispose?.()
+    this.retry = false
     return res
   }
 
