@@ -306,6 +306,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     let file_type = 0
     if (type === 'img' || type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
+    else if (type === 'audio') file_type = 3
     else return
     const data: QQ.Message.File.Request = {
       file_type,
@@ -386,7 +387,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
-    } else if (type === 'video' && (attrs.src || attrs.url)) {
+    } else if ((type === 'video' || type === 'audio') && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
