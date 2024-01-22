@@ -26,7 +26,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
-      this.bot.logger.debug(parsed)
+      this.bot.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
         const token = await this.bot.getAccessToken()
         if (this._sessionId) {
@@ -78,7 +78,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
         }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
-        this.bot.logger.debug(session)
+        // this.bot.logger.debug(session)
       }
     })
 

@@ -2,8 +2,8 @@ import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
-import { GroupInternal } from '../internal/group'
 import { QQMessageEncoder } from '../message'
+import { GroupInternal } from '../internal'
 
 interface GetAppAccessTokenResult {
   access_token: string
@@ -39,7 +39,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     this.ctx.plugin(QQGuildBot, {
       parent: this,
     })
-    this.internal = new GroupInternal(() => this.groupHttp)
+    this.internal = new GroupInternal(this, () => this.groupHttp)
     this.ctx.plugin(WsClient, this)
   }
 

@@ -52,7 +52,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
           headers: form.getHeaders(),
         })
       } else {
-        r = await this.bot.http.post<QQ.Message>(endpoint, {
+        const payload: QQ.Message.ChannelRequest = {
           ...{
             content: this.content,
             msg_id,
@@ -63,7 +63,9 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
               message_id: this.reference,
             },
           } : {}),
-        })
+        }
+        if (isDirect) r = await this.bot.internal.sendDM(this.channelId.split('_')[0], payload)
+        else r = await this.bot.internal.sendMessage(this.channelId, payload)
       }
     } catch (e) {
       this.bot.logger.error(e)
