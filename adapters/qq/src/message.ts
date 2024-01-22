@@ -27,7 +27,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     let endpoint = `/channels/${this.channelId}/messages`
     if (isDirect) endpoint = `/dms/${this.channelId.split('_')[0]}/messages`
     const useFormData = Boolean(this.file)
-    let msg_id = this.options?.session?.messageId ?? this.options?.session?.id
+    let msg_id = this.options?.session?.messageId
     if (this.options?.session && (Date.now() - this.options?.session?.timestamp) > MSG_TIMEOUT) {
       msg_id = null
     }
