@@ -116,7 +116,7 @@ export namespace QQBot {
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
-      retryWhen: Schema.array(Schema.number()).description('发送消息遇到平台错误码时重试').default([]),
+      retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
     }),
     WsClient.Config,
   ] as const)
