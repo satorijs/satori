@@ -260,7 +260,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         if (!Quester.isAxiosError(e)) throw e
         this.errors.push(e)
         if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-          this.bot.logger.warn(this.session.fid + ' retry message sending')
+          this.bot.logger.warn('%s retry message sending', this.session.cid)
           this.retry = true
           await send()
         }
@@ -324,7 +324,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       if (!Quester.isAxiosError(e)) throw e
       this.errors.push(e)
       if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-        this.bot.logger.warn(this.session.fid + 'retry file sending')
+        this.bot.logger.warn('%s retry message sending', this.session.cid)
         this.retry = true
         await this.sendFile(type, attrs)
       }
