@@ -1,7 +1,7 @@
 import { Bot, Context, Quester, Universal } from '@satorijs/satori'
 import { QQBot } from '.'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from '../utils'
-import { GuildInternal } from '../internal/guild'
+import { GuildInternal } from '../internal'
 import { QQGuildMessageEncoder } from '../message'
 
 export namespace QQGuildBot {
@@ -22,7 +22,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     this.parent = config.parent
     this.parent.guildBot = this
     this.platform = 'qqguild'
-    this.internal = new GuildInternal(() => config.parent.guildHttp)
+    this.internal = new GuildInternal(this, () => config.parent.guildHttp)
     this.http = config.parent.guildHttp
   }
 
@@ -77,7 +77,9 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
   }
 
   async muteGuildMember(guildId: string, userId: string, duration: number) {
-    await this.internal.muteGuildMember(guildId, userId, duration)
+    await this.internal.muteGuildMember(guildId, userId, {
+      mute_seconds: Math.floor(duration / 1000),
+    })
   }
 
   async getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<Universal.List<Universal.User>> {
@@ -121,7 +123,10 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
   async createDirectChannel(id: string, guild_id?: string) {
     let input_guild_id = guild_id
     if (guild_id?.includes('_')) input_guild_id = guild_id.split('_')[0] // call sendPM directly from DM channel
-    const dms = await this.internal.createDMS(id, input_guild_id)
+    const dms = await this.internal.createDMS({
+      recipient_id: id,
+      source_guild_id: input_guild_id,
+    })
     return { id: `${dms.guild_id}_${input_guild_id}`, type: Universal.Channel.Type.DIRECT }
   }
 }

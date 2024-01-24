@@ -2,8 +2,8 @@ import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
-import { GroupInternal } from '../internal/group'
 import { QQMessageEncoder } from '../message'
+import { GroupInternal } from '../internal'
 
 interface GetAppAccessTokenResult {
   access_token: string
@@ -39,7 +39,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     this.ctx.plugin(QQGuildBot, {
       parent: this,
     })
-    this.internal = new GroupInternal(() => this.groupHttp)
+    this.internal = new GroupInternal(this, () => this.groupHttp)
     this.ctx.plugin(WsClient, this)
   }
 
@@ -103,6 +103,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
 export namespace QQBot {
   export interface Config extends QQ.Options, WsClient.Config {
     intents?: number
+    retryWhen: number[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -115,6 +116,7 @@ export namespace QQBot {
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
+      retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
     }),
     WsClient.Config,
   ] as const)
