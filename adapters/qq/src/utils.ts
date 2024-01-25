@@ -115,9 +115,11 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',
     'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT', 'INTERACTION_CREATE'].includes(input.t)) {
     session = bot.guildBot.session()
+    session.setInternal(bot.guildBot.platform, input)
+  } else {
+    session.setInternal(bot.platform, input)
   }
 
-  session.setInternal(bot.platform, input)
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE' && bot.config.intents & QQ.Intents.GUILD_MESSAGES) return
     session.type = 'message'
