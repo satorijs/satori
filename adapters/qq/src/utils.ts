@@ -214,7 +214,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
 
     // {message: 'get header appid failed', code: 630006}
     // {"message":"check app privilege not pass","code":11253
-    bot.internal.acknowledgeInteraction(input.d.id, 0).catch(() => {})
+    bot.internal.acknowledgeInteraction(input.d.id, { code: 0 }).catch(() => { })
   } else if (input.t === 'GUILD_MEMBER_ADD' || input.t === 'GUILD_MEMBER_DELETE' || input.t === 'GUILD_MEMBER_UPDATE') {
     session.type = {
       GUILD_MEMBER_ADD: 'guild-member-added',

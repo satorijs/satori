@@ -14,7 +14,9 @@ declare module './internal' {
     sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<any>
     sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<any>
     sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<any>
-    acknowledgeInteraction(interaction_id: string, code: number): Promise<any>
+    acknowledgeInteraction(interaction_id: string, data: {
+      code: number
+    }): Promise<any>
   }
 }
 
@@ -31,7 +33,7 @@ GroupInternal.define(false, {
   '/v2/groups/{channel.id}/files': {
     POST: 'sendFileGuild',
   },
-  '/interactions/{interaction.id}/{interaction.token}/callback': {
-    POST: 'acknowledgeInteraction',
+  '/interactions/{interaction.id}': {
+    PUT: 'acknowledgeInteraction',
   },
 })
