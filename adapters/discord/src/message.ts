@@ -166,21 +166,21 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       return {
         type: ComponentType.BUTTON,
         url: attrs.href,
-        label,
+        label: label || 'Link',
         style: ButtonStyles.LINK,
       }
     } else if (attrs.type === 'input') {
       return {
         type: ComponentType.BUTTON,
-        custom_id: `input${attrs.id}:${attrs.text}`,
-        label,
+        custom_id: `input${attrs.id}:${attrs.text ?? ''}`,
+        label: label || 'Input',
         style,
       }
     } else {
       return {
         type: ComponentType.BUTTON,
         custom_id: attrs.id,
-        label,
+        label: label || 'Button',
         style,
       }
     }
@@ -394,10 +394,13 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         attrs, children.join(''),
       ))
     } else if (type === 'button-group') {
-      this.rows.push({
-        type: ComponentType.ACTION_ROW,
-        components: [],
-      })
+      if (this.rows.length && this.rows[this.rows.length - 1].components.length) {
+        // eg. two <button-group>
+        this.rows.push({
+          type: ComponentType.ACTION_ROW,
+          components: [],
+        })
+      }
       await this.render(children)
       this.rows.push({
         type: ComponentType.ACTION_ROW,
