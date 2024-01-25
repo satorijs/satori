@@ -15,6 +15,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   private filename: string
   fileUrl: string
   private passiveId: string
+  private passiveEventId: string
   reference: string
   private retry = false
   // 先文后图
@@ -42,6 +43,9 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
         if (this.options?.session && msg_id) {
           form.append('msg_id', msg_id)
         }
+        if (this.passiveEventId) {
+          form.append('event_id', this.passiveEventId)
+        }
         if (this.file) {
           form.append('file_image', this.file, this.filename)
         }
@@ -57,11 +61,15 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
             content: this.content,
             msg_id,
             image: this.fileUrl,
+
           },
           ...(this.reference ? {
             message_reference: {
               message_id: this.reference,
             },
+          } : {}),
+          ...(this.passiveEventId ? {
+            event_id: this.passiveEventId,
           } : {}),
         }
         if (isDirect) r = await this.bot.internal.sendDM(this.channelId.split('_')[0], payload)
@@ -167,7 +175,8 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
       this.reference = attrs.id
       await this.flush()
     } else if (type === 'passive') {
-      this.passiveId = attrs.id
+      if (attrs.id) this.passiveId = attrs.id
+      if (attrs.eventId) this.passiveEventId = attrs.eventId
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
       await this.resolveFile(attrs)

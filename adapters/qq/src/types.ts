@@ -388,6 +388,7 @@ export namespace Message {
     }
     image?: string
     msg_id?: string
+    event_id?: string
     markdown?: Markdown
   }
   export interface Request {
