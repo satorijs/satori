@@ -3,6 +3,7 @@ import { arrayBufferToBase64, Awaitable, camelize, defineProperty, Dict, hyphena
 declare global {
   namespace JSX {
     interface IntrinsicElements {
+      [key: string]: any
       message: {
         id?: string
         forward?: boolean
@@ -31,6 +32,7 @@ declare global {
     }
 
     interface ResourceElement {
+      [key: string]: any
       src?: string
       title?: string
       width?: string | number
