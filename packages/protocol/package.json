@@ -2,12 +2,14 @@
   "name": "@satorijs/protocol",
   "description": "Protocol types for Satori protocol",
   "version": "1.2.0",
-  "main": "lib/index.js",
+  "type": "module",
+  "main": "lib/index.cjs",
+  "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
-      "node": "./lib/index.js",
-      "browser": "./lib/index.mjs",
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs",
       "types": "./lib/index.d.ts"
     },
     "./package.json": "./package.json"
