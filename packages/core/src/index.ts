@@ -5,7 +5,7 @@ import { Session } from './session'
 import Schema from 'schemastery'
 import { Quester } from 'cordis-axios'
 import * as logger from '@cordisjs/logger'
-import TimerService from '@cordisjs/timer'
+import { TimerService } from '@cordisjs/timer'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 

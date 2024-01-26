@@ -29,10 +29,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.3"
+    "@cordisjs/server": "^0.1.6"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.4.2"
+    "@satorijs/satori": "^3.4.5"
   },
   "dependencies": {
     "@slack/types": "^2.10.0",
