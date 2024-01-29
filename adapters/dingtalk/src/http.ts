@@ -20,7 +20,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Dingtalk
     await bot.getLogin()
 
     // https://open.dingtalk.com/document/orgapp/receive-message
-    bot.ctx.server.post('/dingtalk', async (ctx) => {
+    this.ctx.server.post('/dingtalk', async (ctx) => {
       const timestamp = ctx.get('timestamp')
       const sign = ctx.get('sign')
 

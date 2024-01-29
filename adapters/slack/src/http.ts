@@ -11,7 +11,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {
     const { signing } = bot.config
     await bot.getLogin()
-    bot.ctx.server.post('/slack', async (ctx) => {
+    this.ctx.server.post('/slack', async (ctx) => {
       const timestamp = ctx.request.header['x-slack-request-timestamp'].toString()
       const signature = ctx.request.header['x-slack-signature'].toString()
       const requestBody = ctx.request.rawBody
