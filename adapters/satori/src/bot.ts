@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, snakeCase, Universal } from '@satorijs/satori'
+import { Bot, Context, h, Quester, snakeCase, Universal } from '@satorijs/satori'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -28,17 +28,22 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
   public internal = createInternal(this)
 
   constructor(ctx: C, config: Universal.Login) {
-    super(ctx, config)
+    super(ctx, config, 'satori')
     Object.assign(this, config)
   }
 }
 
 for (const [key, method] of Object.entries(Universal.Methods)) {
-  SatoriBot.prototype[key] = function (this: SatoriBot, ...args: any[]) {
+  SatoriBot.prototype[method.name] = function (this: SatoriBot, ...args: any[]) {
     const payload = {}
     for (const { name } of method.fields) {
-      payload[name] = transformKey(args.shift(), snakeCase)
+      if (name === 'content') {
+        payload[name] = h.normalize(args.shift()).join('')
+      } else {
+        payload[name] = transformKey(args.shift(), snakeCase)
+      }
     }
-    return this.http.post('/' + key, payload)
+    this.logger.debug('[request]', key, payload)
+    return this.http.post('/v1/' + key, payload)
   }
 }
