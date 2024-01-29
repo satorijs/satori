@@ -61,7 +61,6 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
             content: this.content,
             msg_id,
             image: this.fileUrl,
-
           },
           ...(this.reference ? {
             message_reference: {
@@ -175,7 +174,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
       this.reference = attrs.id
       await this.flush()
     } else if (type === 'passive') {
-      if (attrs.id) this.passiveId = attrs.id
+      if (attrs.messageId) this.passiveId = attrs.messageId
       if (attrs.eventId) this.passiveEventId = attrs.eventId
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
@@ -390,7 +389,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'text') {
       this.content += attrs.content
     } else if (type === 'passive') {
-      this.passiveId = attrs.id
+      this.passiveId = attrs.messageId
       this.passiveSeq = Number(attrs.seq)
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
