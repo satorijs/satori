@@ -71,9 +71,9 @@ export class Quester {
     if (!url) return
     if (Quester.agents[url]) return Quester.agents[url]
     const { protocol } = new URL(url)
-    const callback = Quester.proxies[protocol.slice(0, -1)]
-    if (!callback) return
-    const agent = new callback(url, { keepAlive: this.config.keepAlive ?? false })
+    const Callback = Quester.proxies[protocol.slice(0, -1)]
+    if (!Callback) return
+    const agent = new Callback(url, { keepAlive: this.config.keepAlive ?? false })
     if (persist) Quester.agents[url] = agent
     return agent
   }
