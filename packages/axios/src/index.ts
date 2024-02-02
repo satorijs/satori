@@ -1,6 +1,6 @@
 import { Agent } from 'agent-base'
 import { arrayBufferToBase64, base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit'
-import { ClientRequestArgs } from 'http'
+import { AgentOptions, ClientRequestArgs } from 'http'
 import mimedb from 'mime-db'
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import * as Axios from 'axios'
@@ -71,9 +71,9 @@ export class Quester {
     if (!url) return
     if (Quester.agents[url]) return Quester.agents[url]
     const { protocol } = new URL(url)
-    const callback = Quester.proxies[protocol.slice(0, -1)]
-    if (!callback) return
-    const agent = callback(url)
+    const Callback = Quester.proxies[protocol.slice(0, -1)]
+    if (!Callback) return
+    const agent = new Callback(url, { keepAlive: this.config.keepAlive ?? false })
     if (persist) Quester.agents[url] = agent
     return agent
   }
@@ -167,7 +167,7 @@ export namespace Quester {
   export type Method = Axios.Method
   export type AxiosResponse = Axios.AxiosResponse
   export type AxiosRequestConfig = Axios.AxiosRequestConfig
-  export type CreateAgent = (opts: string) => Agent
+  export type CreateAgent = new (uri: string, opts: AgentOptions) => Agent
 
   export const agents: Dict<Agent> = Object.create(null)
   export const proxies: Dict<CreateAgent> = Object.create(null)
@@ -195,6 +195,7 @@ export namespace Quester {
     endpoint?: string
     timeout?: number
     proxyAgent?: string
+    keepAlive?: boolean
   }
 }
 

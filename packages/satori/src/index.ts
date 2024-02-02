@@ -6,9 +6,9 @@ import { basename } from 'path'
 import { promises as fs } from 'fs'
 import { fileURLToPath } from 'url'
 import FileType from 'file-type'
-import createHttpProxyAgent from 'http-proxy-agent'
-import createHttpsProxyAgent from 'https-proxy-agent'
-import createSocksProxyAgent from 'socks-proxy-agent'
+import { HttpProxyAgent } from 'http-proxy-agent'
+import { HttpsProxyAgent } from 'https-proxy-agent'
+import { SocksProxyAgent } from 'socks-proxy-agent'
 
 export * from '@satorijs/core'
 export * from 'cosmokit'
@@ -50,6 +50,6 @@ Quester.prototype.prepare = function prepare(this: Quester) {
   return options
 }
 
-Quester.defineAgent(['http'], createHttpProxyAgent)
-Quester.defineAgent(['https'], createHttpsProxyAgent)
-Quester.defineAgent(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], createSocksProxyAgent)
+Quester.defineAgent(['http'], HttpProxyAgent)
+Quester.defineAgent(['https'], HttpsProxyAgent)
+Quester.defineAgent(['socks', 'socks4', 'socks4a', 'socks5', 'socks5h'], SocksProxyAgent)

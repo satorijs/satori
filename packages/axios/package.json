@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/mime-db": "^1.43.5",
     "@types/ws": "^8.5.10",
-    "agent-base": "^6.0.2"
+    "agent-base": "^7.1.0"
   },
   "dependencies": {
     "axios": "^1.6.2",
