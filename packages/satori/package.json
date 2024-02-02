@@ -42,13 +42,13 @@
     "@satorijs/core": "3.4.5",
     "@types/ws": "^8.5.10",
     "file-type": "^16.5.4",
-    "http-proxy-agent": "^5.0.0",
-    "https-proxy-agent": "^5.0.1",
+    "http-proxy-agent": "^7.0.0",
+    "https-proxy-agent": "^7.0.2",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.1",
     "parseurl": "^1.3.3",
     "path-to-regexp": "^6.2.1",
-    "socks-proxy-agent": "^5.0.1",
+    "socks-proxy-agent": "^8.0.2",
     "ws": "^8.14.2"
   }
 }

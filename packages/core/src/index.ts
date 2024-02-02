@@ -38,6 +38,7 @@ declare module 'cordis-axios' {
 defineProperty(Quester, 'Config', Schema.object({
   timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
   proxyAgent: Schema.string().description('使用的代理服务器地址。'),
+  keepAlive: Schema.boolean().description('是否保持连接。'),
 }).description('请求设置'))
 
 Quester.createConfig = function createConfig(this, endpoint) {
