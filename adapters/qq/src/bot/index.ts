@@ -71,6 +71,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
         },
       })
       if (!result.data.access_token) {
+        this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, result.data, result.headers['x-tps-trace-id'])
         throw new Error('failed to refresh access token')
       }
       let endpoint = this.config.endpoint
@@ -91,6 +92,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
         this._ensureAccessToken()
       }, (result.data.expires_in - 40) * 1000)
     } catch (e) {
+      if (!Quester.isAxiosError(e) || !e.response) throw e
       this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, e.response.data, e.response.headers['x-tps-trace-id'])
       throw e
     }
