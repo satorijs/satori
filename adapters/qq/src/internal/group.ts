@@ -17,6 +17,9 @@ declare module './internal' {
     acknowledgeInteraction(interaction_id: string, data: {
       code: number
     }): Promise<any>
+    getGateway(): Promise<{
+      url: string
+    }>
   }
 }
 
@@ -35,5 +38,8 @@ GroupInternal.define(false, {
   },
   '/interactions/{interaction.id}': {
     PUT: 'acknowledgeInteraction',
+  },
+  '/gateway': {
+    GET: 'getGateway',
   },
 })
