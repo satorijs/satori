@@ -82,6 +82,9 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
           await this.resolveFile(null, true)
           await this.flush()
         }
+        if (useFormData) {
+          this.bot.logger.warn(`POST ${endpoint} response: %o, trace id: %s`, e.response.data, e.response.headers['x-tps-trace-id'])
+        }
       }
     }
 

@@ -61,27 +61,41 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   }
 
   async _ensureAccessToken() {
-    const result = await this.ctx.http.post<GetAppAccessTokenResult>('https://bots.qq.com/app/getAppAccessToken', {
-      appId: this.config.id,
-      clientSecret: this.config.secret,
-    })
-    let endpoint = this.config.endpoint
-    if (this.config.sandbox) {
-      endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
+    try {
+      const result = await this.ctx.http.axios<GetAppAccessTokenResult>({
+        url: 'https://bots.qq.com/app/getAppAccessToken',
+        method: 'post',
+        data: {
+          appId: this.config.id,
+          clientSecret: this.config.secret,
+        },
+      })
+      if (!result.data.access_token) {
+        this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, result.data, result.headers['x-tps-trace-id'])
+        throw new Error('failed to refresh access token')
+      }
+      let endpoint = this.config.endpoint
+      if (this.config.sandbox) {
+        endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
+      }
+      this._token = result.data.access_token
+      this.groupHttp = this.ctx.http.extend({
+        endpoint,
+        headers: {
+          'Authorization': `QQBot ${this._token}`,
+          'X-Union-Appid': this.config.id,
+        },
+      })
+      // 在上一个 access_token 接近过期的 60 秒内
+      // 重新请求可以获取到一个新的 access_token
+      this._timer = setTimeout(() => {
+        this._ensureAccessToken()
+      }, (result.data.expires_in - 40) * 1000)
+    } catch (e) {
+      if (!Quester.isAxiosError(e) || !e.response) throw e
+      this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, e.response.data, e.response.headers['x-tps-trace-id'])
+      throw e
     }
-    this._token = result.access_token
-    this.groupHttp = this.ctx.http.extend({
-      endpoint,
-      headers: {
-        'Authorization': `QQBot ${this._token}`,
-        'X-Union-Appid': this.config.id,
-      },
-    })
-    // 在上一个 access_token 接近过期的 60 秒内
-    // 重新请求可以获取到一个新的 access_token
-    this._timer = setTimeout(() => {
-      this._ensureAccessToken()
-    }, (result.expires_in - 40) * 1000)
   }
 
   async getAccessToken() {

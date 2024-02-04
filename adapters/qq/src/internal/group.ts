@@ -17,6 +17,8 @@ declare module './internal' {
     acknowledgeInteraction(interaction_id: string, data: {
       code: number
     }): Promise<any>
+    getGateway(): Promise<QQ.GetGatewayResponse>
+    getGatewayBot(): Promise<QQ.GetGatewayBotResponse>
   }
 }
 
@@ -35,5 +37,11 @@ GroupInternal.define(false, {
   },
   '/interactions/{interaction.id}': {
     PUT: 'acknowledgeInteraction',
+  },
+  '/gateway': {
+    GET: 'getGateway',
+  },
+  '/gateway/bot': {
+    GET: 'getGatewayBot',
   },
 })
