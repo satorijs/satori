@@ -177,6 +177,21 @@ export interface GatewayEvents {
   C2C_MSG_RECEIVE: UserEvent
 }
 
+export interface GetGatewayResponse {
+  url: string
+}
+
+export interface GetGatewayBotResponse {
+  url: string
+  shards: number
+  session_start_limit: {
+    total: number
+    remaining: number
+    reset_after: number
+    max_concurrency: number
+  }
+}
+
 export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
   /** opcode for the payload */
   op: O
