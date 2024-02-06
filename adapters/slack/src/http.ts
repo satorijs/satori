@@ -8,7 +8,7 @@ import { adaptSession } from './utils'
 export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
   static inject = ['server']
 
-  async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Config>) {
+  async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Options>) {
     const { signing } = bot.config
     await bot.getLogin()
     this.ctx.server.post('/slack', async (ctx) => {
@@ -51,12 +51,12 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot
 }
 
 export namespace HttpServer {
-  export interface Config {
+  export interface Options {
     protocol: 'http'
     signing: string
   }
 
-  export const Config: Schema<Config> = Schema.object({
+  export const Options: Schema<Options> = Schema.object({
     protocol: Schema.const('http').required(),
     signing: Schema.string().required(),
   })

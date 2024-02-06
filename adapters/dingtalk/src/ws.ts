@@ -47,9 +47,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClientConfig {}
+  export interface Options extends Adapter.WsClientConfig {}
 
-  export const Config: Schema<Config> = Schema.intersect([
+  export const Options: Schema<Options> = Schema.intersect([
     Adapter.WsClientConfig,
   ] as const)
 }

@@ -103,7 +103,7 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
 }
 
 export namespace DingtalkBot {
-  export interface Config extends WsClient.Config {
+  export interface Config extends WsClient.Options {
     secret: string
     protocol: string
     appkey: string
@@ -125,6 +125,6 @@ export namespace DingtalkBot {
       api: Quester.createConfig('https://api.dingtalk.com/v1.0/'),
       oldApi: Quester.createConfig('https://oapi.dingtalk.com/'),
     }),
-    WsClient.Config,
+    WsClient.Options,
   ])
 }

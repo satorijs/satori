@@ -103,7 +103,6 @@ export namespace Adapter {
 
   export abstract class WsClient<C extends Context, B extends Bot<C, WsClientConfig>> extends WsClientBase<C, B> {
     static reusable = true
-    static Config = WsClientConfig
 
     constructor(ctx: C, public bot: B) {
       super(ctx, bot.config)

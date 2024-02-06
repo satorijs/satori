@@ -200,7 +200,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 }
 
 export namespace DiscordBot {
-  export interface Config extends Quester.Config, DiscordMessageEncoder.Config, WsClient.Config {
+  export interface Config extends Quester.Config, DiscordMessageEncoder.Config, WsClient.Options {
     token: string
     slash?: boolean
   }
@@ -212,7 +212,7 @@ export namespace DiscordBot {
     Schema.object({
       slash: Schema.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
-    WsClient.Config,
+    WsClient.Options,
     DiscordMessageEncoder.Config,
     Quester.createConfig('https://discord.com/api/v10'),
   ])

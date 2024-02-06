@@ -115,7 +115,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
 }
 
 export namespace QQBot {
-  export interface Config extends QQ.Options, WsClient.Config {
+  export interface Config extends QQ.Options, WsClient.Options {
     intents?: number
     retryWhen: number[]
   }
@@ -132,6 +132,6 @@ export namespace QQBot {
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
     }),
-    WsClient.Config,
+    WsClient.Options,
   ] as const)
 }

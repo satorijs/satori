@@ -141,14 +141,14 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
 }
 
 export namespace HttpServer {
-  export interface Config {
+  export interface Options {
     selfUrl?: string
     path?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
 
-  export const createConfig = (path: string): Schema<Config> => Schema.object({
+  export const createConfig = (path: string): Schema<Options> => Schema.object({
     path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     verifyToken: Schema.boolean().description('是否验证令牌。'),

@@ -237,7 +237,7 @@ export namespace TelegramBot {
     slash?: boolean
   }
 
-  export type Config = BaseConfig & (HttpServer.Config | HttpPolling.Config)
+  export type Config = BaseConfig & (HttpServer.Options | HttpPolling.Options)
 
   export namespace Config {
     export interface Files {
@@ -255,8 +255,8 @@ export namespace TelegramBot {
         : Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
-      HttpServer.Config,
-      HttpPolling.Config,
+      HttpServer.Options,
+      HttpPolling.Options,
     ]).description('推送设置'),
     Schema.object({
       slash: Schema.boolean().description('是否启用斜线指令。').default(true),

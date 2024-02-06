@@ -118,7 +118,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 }
 
 export namespace LarkBot {
-  export interface Config extends HttpServer.Config, Quester.Config {
+  export interface Config extends HttpServer.Options, Quester.Config {
     appId: string
     appSecret: string
     encryptKey?: string

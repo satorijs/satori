@@ -3,7 +3,7 @@ import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Config>> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Options>> {
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)
@@ -38,11 +38,11 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, S
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClientConfig {
+  export interface Options extends Adapter.WsClientConfig {
     protocol: 'ws'
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
+  export const Options: Schema<Options> = Schema.intersect([
     Schema.object({
       protocol: Schema.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
     }),

@@ -5,7 +5,7 @@ import { Payload, Signal } from './types'
 
 const heartbeatIntervals = [6, 2, 4]
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, KookBot<C, KookBot.BaseConfig & WsClient.Config>> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, KookBot<C, KookBot.BaseConfig & WsClient.Options>> {
   _sn = 0
   _ping: NodeJS.Timeout
   _heartbeat: NodeJS.Timeout
@@ -64,12 +64,12 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
 }
 
 export namespace WsClient {
-  export interface Config extends Adapter.WsClientConfig {
+  export interface Options extends Adapter.WsClientConfig {
     protocol: 'ws'
     token: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
+  export const Options: Schema<Options> = Schema.intersect([
     Schema.object({
       protocol: Schema.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),

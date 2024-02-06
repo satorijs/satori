@@ -175,7 +175,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 export namespace KookBot {
   export interface BaseConfig extends Quester.Config, KookMessageEncoder.Config {}
 
-  export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
+  export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
@@ -184,8 +184,8 @@ export namespace KookBot {
         : Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
     }),
     Schema.union([
-      WsClient.Config,
-      HttpServer.Config,
+      WsClient.Options,
+      HttpServer.Options,
     ]),
     KookMessageEncoder.Config,
     Quester.createConfig('https://www.kookapp.cn/api/v3'),

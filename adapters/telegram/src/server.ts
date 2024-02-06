@@ -7,7 +7,7 @@ import * as Telegram from './types'
 export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
   static inject = ['server']
 
-  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Config>) {
+  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Options>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {
@@ -38,13 +38,13 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
 }
 
 export namespace HttpServer {
-  export interface Config {
+  export interface Options {
     protocol: 'server'
     path?: string
     selfUrl?: string
   }
 
-  export const Config: Schema<Config> = Schema.object({
+  export const Options: Schema<Options> = Schema.object({
     protocol: Schema.const('server').required(),
     path: Schema.string().description('服务器监听的路径。').default('/telegram'),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),

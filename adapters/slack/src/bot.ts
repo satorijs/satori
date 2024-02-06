@@ -191,7 +191,7 @@ export namespace SlackBot {
     botToken: string
   }
 
-  export type Config = BaseConfig & (HttpServer.Config | WsClient.Config)
+  export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
@@ -200,8 +200,8 @@ export namespace SlackBot {
       botToken: Schema.string().description('OAuth Token.').role('secret').required(),
     }),
     Schema.union([
-      WsClient.Config,
-      HttpServer.Config,
+      WsClient.Options,
+      HttpServer.Options,
     ]),
     Quester.createConfig('https://slack.com/api/'),
   ] as const)
