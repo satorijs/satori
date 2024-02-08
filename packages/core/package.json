@@ -44,14 +44,11 @@
     "@types/ws": "^8.5.10"
   },
   "dependencies": {
-    "@cordisjs/logger": "^0.1.4",
-    "@cordisjs/timer": "^0.2.3",
     "@satorijs/element": "^3.1.4",
     "@satorijs/protocol": "^1.2.1",
-    "cordis": "^3.7.1",
+    "cordis": "^3.9.0",
     "cordis-axios": "^4.1.0",
     "cosmokit": "^1.5.2",
-    "schemastery": "^3.14.3",
     "ws": "^8.14.2"
   }
 }

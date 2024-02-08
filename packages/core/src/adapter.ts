@@ -1,8 +1,7 @@
 import { Awaitable, remove, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
-import { Context } from '.'
+import { Context, Schema } from '.'
 import { Bot } from './bot'
-import Schema from 'schemastery'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   static schema = false as const

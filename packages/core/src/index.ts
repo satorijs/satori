@@ -2,23 +2,21 @@ import * as cordis from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
-import Schema from 'schemastery'
+import { Schema } from 'cordis'
 import { Quester } from 'cordis-axios'
-import * as logger from '@cordisjs/logger'
-import { TimerService } from '@cordisjs/timer'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
-h.warn = new logger.Logger('element').warn
+h.warn = new cordis.Logger('element').warn
 
 // do not remove the `type` modifier
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
 
-export { Logger } from '@cordisjs/logger'
+export { Logger, Schema, Schema as z } from 'cordis'
 
 export { h, h as Element, h as segment }
-export { Schema, Schema as z, Quester }
+export { Quester }
 
 export * as Satori from '@satorijs/protocol'
 export * as Universal from '@satorijs/protocol'
@@ -100,24 +98,18 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
-export interface Service extends Context.Associate<'service'> {}
+export type EffectScope<C extends Context = Context> = cordis.EffectScope<C>
+export type ForkScope<C extends Context = Context> = cordis.ForkScope<C>
+export type MainScope<C extends Context = Context> = cordis.MainScope<C>
 
-export class Service<C extends Context = Context> extends cordis.Service<C> {
-  public logger: logger.Logger
+export interface Events<C extends Context = Context> extends cordis.Events<C> {}
 
-  constructor(ctx: C, name: string, immediate?: boolean) {
-    super(ctx, name, immediate)
-    this.logger = ctx.logger(name)
-  }
-}
+export class Service<C extends Context = Context> extends cordis.Service<C> {}
 
 export interface Context {
-  [Context.config]: Context.Config
   [Context.events]: Events<this>
   [Context.session]: Session<this>
-  baseDir: string
   http: Quester
-  timer: TimerService
 }
 
 export class Context extends cordis.Context {
@@ -145,11 +137,7 @@ export class Context extends cordis.Context {
 
   constructor(config: Context.Config = {}) {
     super(config)
-    this.provide('logger', undefined, true)
-    this.provide('timer', undefined, true)
     this.provide('http', undefined, true)
-    this.plugin(logger)
-    this.plugin(TimerService)
     this.http = new Quester(config.request)
   }
 
@@ -171,7 +159,7 @@ export class Context extends cordis.Context {
 }
 
 export namespace Context {
-  export interface Config extends cordis.Context.Config {
+  export interface Config {
     request?: Quester.Config
   }
 
