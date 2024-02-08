@@ -80,9 +80,9 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
   }
 
-  async getMessage(channelId: string, messageId: string) {
+  async getMessage(channelId: string, messageId: string, recursive = true) {
     const data = await this.internal.getChannelMessage(channelId, messageId)
-    return await Discord.decodeMessage(this, data, {})
+    return await Discord.decodeMessage(this, data, {}, undefined, recursive)
   }
 
   async getMessageList(channelId: string, before?: string) {

@@ -135,7 +135,7 @@ export async function decodeMessage(
   // 遇到过 cross post 的消息在这里不会传消息 id
   if (details && data.message_reference) {
     const { message_id, channel_id } = data.message_reference
-    message.quote = await bot.getMessage(channel_id, message_id)
+    message.quote = await bot.getMessage(channel_id, message_id, false)
   }
 
   if (!payload) return message
