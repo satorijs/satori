@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-qq",
   "description": "QQ Adapter for Satorijs",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -30,7 +30,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.5.0"
+    "@satorijs/satori": "^3.5.3"
   },
   "dependencies": {
     "qface": "^1.4.1"

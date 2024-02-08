@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "3.5.0",
+  "version": "3.5.3",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -39,7 +39,7 @@
     "@types/parseurl": "^1.3.3"
   },
   "dependencies": {
-    "@satorijs/core": "3.5.0",
+    "@satorijs/core": "3.5.3",
     "@types/ws": "^8.5.10",
     "file-type": "^16.5.4",
     "http-proxy-agent": "^7.0.0",
