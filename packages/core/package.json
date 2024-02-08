@@ -46,7 +46,7 @@
   "dependencies": {
     "@satorijs/element": "^3.1.4",
     "@satorijs/protocol": "^1.2.1",
-    "cordis": "^3.9.0",
+    "cordis": "^3.9.1",
     "cordis-axios": "^4.1.0",
     "cosmokit": "^1.5.2",
     "ws": "^8.14.2"

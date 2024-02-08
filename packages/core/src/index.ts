@@ -2,7 +2,7 @@ import * as cordis from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
-import { Schema } from 'cordis'
+import { z } from 'cordis'
 import { Quester } from 'cordis-axios'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
@@ -13,10 +13,9 @@ h.warn = new cordis.Logger('element').warn
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
 
-export { Logger, Schema, Schema as z } from 'cordis'
+export { h, h as Element, h as segment, Quester }
 
-export { h, h as Element, h as segment }
-export { Quester }
+export * from 'cordis'
 
 export * as Satori from '@satorijs/protocol'
 export * as Universal from '@satorijs/protocol'
@@ -28,23 +27,23 @@ export * from './session'
 
 declare module 'cordis-axios' {
   namespace Quester {
-    export const Config: Schema<Config>
-    export function createConfig(this: typeof Quester, endpoint?: string | boolean): Schema<Config>
+    export const Config: z<Config>
+    export function createConfig(this: typeof Quester, endpoint?: string | boolean): z<Config>
   }
 }
 
-defineProperty(Quester, 'Config', Schema.object({
-  timeout: Schema.natural().role('ms').description('等待连接建立的最长时间。'),
-  proxyAgent: Schema.string().description('使用的代理服务器地址。'),
-  keepAlive: Schema.boolean().description('是否保持连接。'),
+defineProperty(Quester, 'Config', z.object({
+  timeout: z.natural().role('ms').description('等待连接建立的最长时间。'),
+  proxyAgent: z.string().description('使用的代理服务器地址。'),
+  keepAlive: z.boolean().description('是否保持连接。'),
 }).description('请求设置'))
 
 Quester.createConfig = function createConfig(this, endpoint) {
-  return Schema.object({
-    endpoint: Schema.string().role('link').description('要连接的服务器地址。')
+  return z.object({
+    endpoint: z.string().role('link').description('要连接的服务器地址。')
       .default(typeof endpoint === 'string' ? endpoint : null)
       .required(typeof endpoint === 'boolean' ? endpoint : false),
-    headers: Schema.dict(String).role('table').description('要附加的额外请求头。'),
+    headers: z.dict(String).role('table').description('要附加的额外请求头。'),
     ...this.Config.dict,
   }).description('请求设置')
 }
@@ -98,13 +97,11 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
-export type EffectScope<C extends Context = Context> = cordis.EffectScope<C>
-export type ForkScope<C extends Context = Context> = cordis.ForkScope<C>
-export type MainScope<C extends Context = Context> = cordis.MainScope<C>
+export interface EffectScope<C extends Context = Context> extends cordis.EffectScope<C> {}
+export interface ForkScope<C extends Context = Context> extends cordis.ForkScope<C> {}
+export interface MainScope<C extends Context = Context> extends cordis.MainScope<C> {}
 
 export interface Events<C extends Context = Context> extends cordis.Events<C> {}
-
-export class Service<C extends Context = Context> extends cordis.Service<C> {}
 
 export interface Context {
   [Context.events]: Events<this>
@@ -163,13 +160,17 @@ export namespace Context {
     request?: Quester.Config
   }
 
-  export const Config: Config.Static = Schema.intersect([
-    Schema.object({}),
+  export const Config: Config.Static = z.intersect([
+    z.object({}),
   ])
 
   namespace Config {
-    export interface Static extends Schema<Config> {}
+    export interface Static extends z<Config> {}
   }
 
   export type Associate<P extends string, C extends Context = Context> = cordis.Context.Associate<P, C>
+}
+
+export class Service<C extends Context = Context> extends cordis.Service<C> {
+  static Context = Context
 }

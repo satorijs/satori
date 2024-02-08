@@ -1,6 +1,7 @@
 import { Awaitable, remove, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
-import { Context, Schema } from '.'
+import { z } from 'cordis'
+import { Context } from '.'
 import { Bot } from './bot'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
@@ -28,10 +29,10 @@ export namespace Adapter {
     retryInterval?: number
   }
 
-  export const WsClientConfig: Schema<WsClientConfig> = Schema.object({
-    retryTimes: Schema.natural().description('初次连接时的最大重试次数。').default(6),
-    retryInterval: Schema.natural().role('ms').description('初次连接时的重试时间间隔。').default(5 * Time.second),
-    retryLazy: Schema.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
+  export const WsClientConfig: z<WsClientConfig> = z.object({
+    retryTimes: z.natural().description('初次连接时的最大重试次数。').default(6),
+    retryInterval: z.natural().role('ms').description('初次连接时的重试时间间隔。').default(5 * Time.second),
+    retryLazy: z.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
   }).description('连接设置')
 
   export abstract class WsClientBase<C extends Context, B extends Bot<C>> extends Adapter<C, B> {
