@@ -34,7 +34,7 @@
     "shx": "^0.3.4",
     "typescript": "^5.3.2",
     "yakumo": "^1.0.0-beta.6",
-    "yakumo-esbuild": "^1.0.0-beta.2",
+    "yakumo-esbuild": "^1.0.0-beta.3",
     "yakumo-tsc": "^1.0.0-beta.3"
   }
 }

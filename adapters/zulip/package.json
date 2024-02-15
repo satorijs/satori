@@ -29,9 +29,10 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.5.3"
+    "@satorijs/satori": "^3.6.0-alpha.0"
   },
   "dependencies": {
+    "form-data": "^4.0.0",
     "marked": "^9.1.6"
   }
 }
