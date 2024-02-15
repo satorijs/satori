@@ -3,7 +3,8 @@ import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import { z } from 'cordis'
-import { Quester } from 'cordis-axios'
+import { HTTP } from 'undios'
+import * as file from 'undios-file'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
@@ -13,7 +14,7 @@ h.warn = new cordis.Logger('element').warn
 // because `esModuleInterop` is not respected by esbuild
 export type { Fragment, Render } from '@satorijs/element'
 
-export { h, h as Element, h as segment, Quester }
+export { h, h as Element, h as segment, HTTP, HTTP as Quester }
 
 export * from 'cordis'
 
@@ -25,20 +26,20 @@ export * from './adapter'
 export * from './message'
 export * from './session'
 
-declare module 'cordis-axios' {
-  namespace Quester {
+declare module 'undios' {
+  namespace HTTP {
     export const Config: z<Config>
-    export function createConfig(this: typeof Quester, endpoint?: string | boolean): z<Config>
+    export function createConfig(this: typeof HTTP, endpoint?: string | boolean): z<Config>
   }
 }
 
-defineProperty(Quester, 'Config', z.object({
+defineProperty(HTTP, 'Config', z.object({
   timeout: z.natural().role('ms').description('等待连接建立的最长时间。'),
   proxyAgent: z.string().description('使用的代理服务器地址。'),
   keepAlive: z.boolean().description('是否保持连接。'),
 }).description('请求设置'))
 
-Quester.createConfig = function createConfig(this, endpoint) {
+HTTP.createConfig = function createConfig(this, endpoint) {
   return z.object({
     endpoint: z.string().role('link').description('要连接的服务器地址。')
       .default(typeof endpoint === 'string' ? endpoint : null)
@@ -97,16 +98,11 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
-export interface EffectScope<C extends Context = Context> extends cordis.EffectScope<C> {}
-export interface ForkScope<C extends Context = Context> extends cordis.ForkScope<C> {}
-export interface MainScope<C extends Context = Context> extends cordis.MainScope<C> {}
-
 export interface Events<C extends Context = Context> extends cordis.Events<C> {}
 
 export interface Context {
   [Context.events]: Events<this>
   [Context.session]: Session<this>
-  http: Quester
 }
 
 export class Context extends cordis.Context {
@@ -135,7 +131,8 @@ export class Context extends cordis.Context {
   constructor(config: Context.Config = {}) {
     super(config)
     this.provide('http', undefined, true)
-    this.http = new Quester(config.request)
+    this.plugin(HTTP, config.request)
+    this.plugin(file)
   }
 
   component(name: string, component: Component<this[typeof Context.session]>, options: Component.Options = {}) {
@@ -157,7 +154,7 @@ export class Context extends cordis.Context {
 
 export namespace Context {
   export interface Config {
-    request?: Quester.Config
+    request?: HTTP.Config
   }
 
   export const Config: Config.Static = z.intersect([

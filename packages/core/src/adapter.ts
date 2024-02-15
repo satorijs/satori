@@ -1,5 +1,6 @@
 import { Awaitable, remove, Time } from 'cosmokit'
-import { Status, WebSocket } from '@satorijs/protocol'
+import { Status } from '@satorijs/protocol'
+import { WebSocket } from 'undios'
 import { z } from 'cordis'
 import { Context } from '.'
 import { Bot } from './bot'
@@ -59,7 +60,7 @@ export namespace Adapter {
         const url = socket.url.replace(/\?.+/, '')
 
         socket.addEventListener('error', (event) => {
-          logger.debug(event)
+          if (event.message) logger.warn(event.message)
         })
 
         socket.addEventListener('close', ({ code, reason }) => {
