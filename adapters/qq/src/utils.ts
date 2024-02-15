@@ -1,7 +1,6 @@
 import { Bot, Context, h, Session, Universal } from '@satorijs/satori'
 import * as QQ from './types'
 import { QQBot } from './bot'
-import { unescape } from '@satorijs/element'
 
 export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
@@ -75,7 +74,7 @@ export async function decodeMessage(
     .reduce((content, attachment) => content + h.image('https://' + attachment.url), message.content)
   message.elements = h.parse(message.content)
   message.elements = h.transform(message.elements, {
-    text: (attrs) => unescape(attrs.content),
+    text: (attrs) => h.unescape(attrs.content),
   })
 
   if (data.message_reference) {

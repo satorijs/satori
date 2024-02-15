@@ -62,14 +62,14 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBo
 }
 
 export namespace HttpPolling {
-  export interface Config {
+  export interface Options {
     protocol: 'polling'
     // pollingTimeout?: number
     retryTimes?: number
     retryInterval?: number
   }
 
-  export const Config: Schema<Config> = Schema.object({
+  export const Options: Schema<Options> = Schema.object({
     protocol: Schema.const('polling').required(process.env.KOISHI_ENV !== 'browser'),
     // pollingTimeout: Schema.natural().role('ms').default(Time.second * 25).description('通过长轮询获取更新时请求的超时 (单位为毫秒)。'),
     retryTimes: Schema.natural().description('连接时的最大重试次数。').default(6),

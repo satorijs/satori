@@ -68,8 +68,7 @@ class HttpServer {
 
       const fetched = await bot.internal.getMedia(mediaId)
       this.logger.debug(fetched.url)
-      const resp = await bot.ctx.http.axios<internal.Readable>({
-        url: fetched.url,
+      const resp = await bot.ctx.http<internal.Readable>(fetched.url, {
         method: 'GET',
         responseType: 'stream',
       })

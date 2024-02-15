@@ -108,7 +108,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
       const selfId = ctx.params.self_id
       const localBot = this.bots.find((bot) => bot.selfId === selfId)
       if (!localBot) return ctx.status = 404
-      const resp = await localBot.http.axios<ReadableStream>(`/cgi-bin/media/get`, {
+      const resp = await localBot.http<ReadableStream>(`/cgi-bin/media/get`, {
         method: 'GET',
         responseType: 'stream',
         params: {

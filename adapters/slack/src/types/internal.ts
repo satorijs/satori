@@ -23,7 +23,7 @@ export class Internal {
         const method = key as Quester.Method
         for (const name of Object.keys(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
-            const config: Quester.AxiosRequestConfig = {
+            const config: Quester.RequestConfig = {
               headers: {},
             }
             let token = ''

@@ -112,7 +112,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       return this.post({ ...addition, content: attrs.src || attrs.url })
     }
 
-    if (await this.bot.http.isPrivate(attrs.src || attrs.url)) {
+    if (await this.bot.http.isLocal(attrs.src || attrs.url)) {
       return await this.sendEmbed(attrs, addition)
     }
 

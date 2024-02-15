@@ -29,14 +29,14 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
   async request<T = any>(method: Quester.Method, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
     headers['Authorization'] = `Bearer ${zap ? this.config.token : this.config.botToken}`
     if (method === 'GET') {
-      return (await this.http.get(path, { params: data, headers })).data
+      return await this.http.get(path, { params: data, headers })
     } else {
       if (!headers['content-type']) {
         data = data instanceof FormData ? data : JSON.stringify(data)
         const type = data instanceof FormData ? 'multipart/form-data' : 'application/json; charset=utf-8'
         headers['content-type'] = type
       }
-      return (await this.http(method, path, { data, headers }))
+      return (await this.http(method, path, { data, headers })).data
     }
   }
 

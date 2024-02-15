@@ -95,7 +95,7 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
       // await this.sendMessage('sampleImageMsg', {
       //   photoURL: src,
       // })
-      if (await this.bot.http.isPrivate(src)) {
+      if (await this.bot.http.isLocal(src)) {
         const temp = this.bot.ctx.get('server.temp')
         if (!temp) {
           return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')

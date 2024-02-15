@@ -144,7 +144,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
   }
 
   async resolveFile(attrs: Dict, download = false) {
-    if (!download && !await this.bot.ctx.http.isPrivate(attrs.src || attrs.url)) {
+    if (!download && !await this.bot.ctx.http.isLocal(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
     const { data, filename } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
@@ -305,7 +305,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
 
   async sendFile(type: string, attrs: Dict) {
     let url = attrs.src || attrs.url, entry: Entry | undefined
-    if (await this.bot.ctx.http.isPrivate(url)) {
+    if (await this.bot.ctx.http.isLocal(url)) {
       const temp = this.bot.ctx.get('server.temp')
       if (!temp) {
         return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')

@@ -51,7 +51,7 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
 
   private async transformUrl({ type, attrs }: h) {
     const src = attrs.src || attrs.url
-    if (await this.bot.http.isPrivate(src)) {
+    if (await this.bot.http.isLocal(src)) {
       const payload = new FormData()
       const result = await this.bot.ctx.http.file(src, attrs)
       payload.append('file', Buffer.from(result.data), {

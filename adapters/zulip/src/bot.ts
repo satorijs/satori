@@ -103,7 +103,7 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
 }
 
 export namespace ZulipBot {
-  export interface Config extends Quester.Config, HttpPolling.Config {
+  export interface Config extends Quester.Config, HttpPolling.Options {
     email: string
     key: string
   }
@@ -114,7 +114,7 @@ export namespace ZulipBot {
       key: Schema.string().required().role('secret').description('API Key'),
     }),
     Schema.union([
-      HttpPolling.Config,
+      HttpPolling.Options,
     ]).description('推送设置'),
     Quester.createConfig(),
   ])

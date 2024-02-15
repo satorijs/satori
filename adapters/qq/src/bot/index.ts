@@ -62,9 +62,8 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
 
   async _ensureAccessToken() {
     try {
-      const result = await this.ctx.http.axios<GetAppAccessTokenResult>({
-        url: 'https://bots.qq.com/app/getAppAccessToken',
-        method: 'post',
+      const result = await this.ctx.http<GetAppAccessTokenResult>('https://bots.qq.com/app/getAppAccessToken', {
+        method: 'POST',
         data: {
           appId: this.config.id,
           clientSecret: this.config.secret,

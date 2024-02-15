@@ -85,7 +85,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
       const bot = this.bots.find((bot) => bot.selfId === selfId)
       if (!bot) return ctx.status = 404
 
-      const resp = await bot.http.axios<internal.Readable>(`/im/v1/messages/${messageId}/resources/${key}`, {
+      const resp = await bot.http<internal.Readable>(`/im/v1/messages/${messageId}/resources/${key}`, {
         method: 'GET',
         params: { type },
         responseType: 'stream',

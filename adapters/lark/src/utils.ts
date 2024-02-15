@@ -1,6 +1,5 @@
 import crypto from 'crypto'
-import { Channel, Guild, Message, User } from '@satorijs/protocol'
-import { Context, h, Session, trimSlash } from '@satorijs/satori'
+import { Context, h, Session, trimSlash, Universal } from '@satorijs/satori'
 import { FeishuBot, LarkBot } from './bot'
 import { AllEvents, Events, Lark, Message as LarkMessage, MessageContentType, MessageType } from './types'
 
@@ -86,7 +85,7 @@ export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEven
 }
 
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
-export async function decodeMessage(bot: LarkBot, body: LarkMessage): Promise<Message> {
+export async function decodeMessage(bot: LarkBot, body: LarkMessage): Promise<Universal.Message> {
   const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
@@ -146,16 +145,16 @@ export function extractIdType(id: string): Lark.ReceiveIdType {
   return 'user_id'
 }
 
-export function decodeChannel(guild: Lark.Guild): Channel {
+export function decodeChannel(guild: Lark.Guild): Universal.Channel {
   return {
     id: guild.chat_id,
-    type: Channel.Type.TEXT,
+    type: Universal.Channel.Type.TEXT,
     name: guild.name,
     parentId: guild.chat_id,
   }
 }
 
-export function decodeGuild(guild: Lark.Guild): Guild {
+export function decodeGuild(guild: Lark.Guild): Universal.Guild {
   return {
     id: guild.chat_id,
     name: guild.name,
@@ -163,7 +162,7 @@ export function decodeGuild(guild: Lark.Guild): Guild {
   }
 }
 
-export function decodeUser(user: Lark.User): User {
+export function decodeUser(user: Lark.User): Universal.User {
   return {
     id: user.open_id,
     avatar: user.avatar?.avatar_origin,

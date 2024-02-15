@@ -665,15 +665,15 @@ export class Internal {
 
   static define(name: string, method: Quester.Method, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
-      const config: Quester.AxiosRequestConfig = {}
+      const config: Quester.RequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
         config.params = args[0]
       } else {
         config.data = args[0]
       }
-      const req = await this.http(method, path, config)
-      if (req?.code !== 0) throw new Error(req?.message || 'Unexpected Error')
-      return req?.data
+      const { data } = await this.http(method, path, config)
+      if (data?.code !== 0) throw new Error(data?.message || 'Unexpected Error')
+      return data?.data
     }
   }
 }

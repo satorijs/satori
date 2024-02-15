@@ -14,7 +14,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.AxiosRequestConfig = {}
+            const config: Quester.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
