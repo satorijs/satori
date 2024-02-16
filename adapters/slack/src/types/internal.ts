@@ -44,7 +44,7 @@ export class Internal {
               config.data = args[1]
             }
             try {
-              return await this.http(method, path, config)
+              return (await this.http(method, path, config)).data
             } catch (error) {
               if (!Quester.isAxiosError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)

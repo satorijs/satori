@@ -29,7 +29,7 @@ export class Internal {
             }
             try {
               this.bot.logger.debug(`${method} ${url} request: %o`, config)
-              const response = await this.http().axios(url, { ...config, method })
+              const response = await this.http()(url, { ...config, method })
               this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, response.data, response.headers['x-tps-trace-id'])
               return response.data
             } catch (error) {

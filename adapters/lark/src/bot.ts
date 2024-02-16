@@ -26,9 +26,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     this.selfId = config.appId
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
     })
     this.assetsQuester = ctx.http
     this.internal = new Internal(this)

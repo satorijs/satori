@@ -10,7 +10,7 @@ export class Internal {
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
-            const url = path.replace(/\{([^}]+)\}/g, () => {
+            const url = path.replace(/^\//, '').replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
@@ -28,7 +28,7 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             try {
-              return await this.http(method, url, config)
+              return (await this.http(method, url, config)).data
             } catch (error) {
               if (!Quester.isAxiosError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)

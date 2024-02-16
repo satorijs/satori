@@ -18,12 +18,11 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
     this.http = ctx.http.extend({
       headers: {
         Authorization: `Basic ${Buffer.from(`${config.email}:${config.key}`).toString('base64')}`,
-        'content-type': 'application/x-www-form-urlencoded',
         'user-agent': `Koishi/${version}`,
       },
     }).extend({
       ...config,
-      endpoint: config.endpoint + '/api/v1',
+      baseURL: config.endpoint + '/api/v1/',
     })
     this.internal = new Internal(this.http)
 

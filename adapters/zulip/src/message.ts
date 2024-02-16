@@ -25,7 +25,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
     form.append('content', this.buffer)
     if (!this.session.isDirect) form.append('topic', this.session.channelId)
 
-    const { id } = await this.bot.http.post('/messages', form)
+    const { id } = await this.bot.http.post('messages', form)
     const session = this.bot.session()
     session.content = this.buffer
     session.messageId = id.toString()

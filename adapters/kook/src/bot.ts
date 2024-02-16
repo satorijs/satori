@@ -17,7 +17,6 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     this.http = ctx.http.extend({
       headers: {
         'Authorization': `Bot ${config.token}`,
-        'Content-Type': 'application/json',
       },
     }).extend(config)
     this.internal = new Kook.Internal(this.http)
@@ -33,7 +32,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
-      return (await this.http(method, path, { data, headers })).data
+      return (await this.http(method, path, { data, headers })).data?.data
     }
   }
 

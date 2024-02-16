@@ -49,7 +49,7 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            return this.processReponse(await this.bot.http(method, url, config))
+            return this.processReponse((await this.bot.http(method, url, config)).data)
           }
         }
       }
