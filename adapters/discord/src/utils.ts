@@ -371,13 +371,12 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       description_localizations: pick(cmd.description, Discord.Locale),
     })))
   } else {
-    // `getGlobalApplicationCommands()` does not return `required` property.
     for (const arg of cmd.arguments) {
       result.push({
         ...encodeDescription(arg),
         name: arg.name.toLowerCase().replace(/[^a-z0-9]/g, ''),
         type: types[arg.type] ?? types.text,
-        // required: arg.required ?? false,
+        required: arg.required ?? false,
       })
     }
     for (const option of cmd.options) {
@@ -385,7 +384,7 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         ...encodeDescription(option),
         name: option.name.toLowerCase(),
         type: types[option.type] ?? types.text,
-        // required: option.required ?? false,
+        required: option.required ?? false,
         min_value: option.type === 'posint' ? 1 : undefined,
       })
     }
