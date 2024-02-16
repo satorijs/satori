@@ -1,7 +1,6 @@
 import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
 import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
-import FormData from 'form-data'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
@@ -34,7 +33,6 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
-      data = data instanceof FormData ? data : JSON.stringify(data)
       return (await this.http(method, path, { data, headers })).data
     }
   }

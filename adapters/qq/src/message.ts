@@ -1,7 +1,6 @@
 import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQBot } from './bot'
-import FormData from 'form-data'
 import { QQGuildBot } from './bot/guild'
 import { Entry } from '@satorijs/server-temp'
 
@@ -11,7 +10,7 @@ export const escapeMarkdown = (val: string) =>
 
 export class QQGuildMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQGuildBot<C>> {
   private content: string = ''
-  private file: Buffer
+  private file: Blob
   private filename: string
   fileUrl: string
   private passiveId: string
@@ -52,9 +51,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
         // if (this.fileUrl) {
         //   form.append('image', this.fileUrl)
         // }
-        r = await this.bot.http.post<QQ.Message>(endpoint, form, {
-          headers: form.getHeaders(),
-        })
+        r = await this.bot.http.post<QQ.Message>(endpoint, form)
       } else {
         const payload: QQ.Message.ChannelRequest = {
           ...{
@@ -147,8 +144,8 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     if (!download && !await this.bot.ctx.http.isLocal(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
-    const { data, filename } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
-    this.file = Buffer.from(data)
+    const { data, filename, mime } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
+    this.file = new Blob([data], { type: mime })
     this.filename = filename
     this.fileUrl = null
   }

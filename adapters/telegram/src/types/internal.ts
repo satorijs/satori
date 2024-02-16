@@ -1,4 +1,3 @@
-import FormData from 'form-data'
 import { TelegramBot } from '../bot'
 
 export interface Internal {}
@@ -10,14 +9,7 @@ export class Internal {
     Internal.prototype[method] = async function (this: Internal, data = {}) {
       this.bot.logger.debug('[request] %s %o', method, data)
       try {
-        let response: any
-        if (data instanceof FormData) {
-          response = await this.bot.http.post('/' + method, data, {
-            headers: data.getHeaders(),
-          })
-        } else {
-          response = await this.bot.http.post('/' + method, data)
-        }
+        const response = await this.bot.http.post('/' + method, data)
         this.bot.logger.debug('[response] %o', response)
         const { ok, result } = response
         if (ok) return result

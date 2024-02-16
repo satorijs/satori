@@ -1,6 +1,5 @@
 import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { SlackBot } from './bot'
-import FormData from 'form-data'
 import { adaptMessage, adaptSentAsset } from './utils'
 import { File } from './types'
 
@@ -49,17 +48,14 @@ export class SlackMessageEncoder<C extends Context = Context> extends MessageEnc
     const { attrs } = element
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    // https://github.com/form-data/form-data/issues/468
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
+    const value = new Blob([data], { type: mime })
     form.append('file', value, attrs.file || filename)
     form.append('channels', this.channelId)
     if (this.thread_ts) form.append('thread_ts', this.thread_ts)
     const sent = await this.bot.request<{
       ok: boolean
       file: File
-    }>('POST', '/files.upload', form, form.getHeaders())
+    }>('POST', '/files.upload', form)
     if (sent.ok) {
       const session = this.bot.session()
       adaptSentAsset(sent.file, session)

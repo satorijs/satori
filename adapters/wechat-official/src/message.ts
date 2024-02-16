@@ -1,6 +1,5 @@
 import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { WechatOfficialBot } from './bot'
-import FormData from 'form-data'
 import xml2js from 'xml2js'
 import { SendMessage } from './types'
 
@@ -111,10 +110,7 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
     const form = new FormData()
 
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
-
+    const value = new Blob([data], { type: mime })
     form.append('media', value, attrs.file || filename)
 
     const resp = await this.bot.http.post<{
@@ -128,7 +124,6 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
         access_token: this.bot.token,
         type: uploadType,
       },
-      headers: form.getHeaders(),
     })
     if (resp.media_id) {
       return [resp.media_id, uploadType]

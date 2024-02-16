@@ -1,5 +1,4 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
-import FormData from 'form-data'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
@@ -19,10 +18,7 @@ async function appendAsset(bot: TelegramBot, form: FormData, element: h): Promis
   } else if (element.type === 'audio') {
     method = element.attrs.type === 'voice' ? 'sendVoice' : 'sendAudio'
   }
-  // https://github.com/form-data/form-data/issues/468
-  const value = process.env.KOISHI_ENV === 'browser'
-    ? new Blob([data], { type: mime })
-    : Buffer.from(data)
+  const value = new Blob([data], { type: mime })
   form.append(method.slice(4).toLowerCase(), value, filename)
   return method
 }

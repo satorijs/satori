@@ -4,7 +4,6 @@ import { HttpServer } from './http'
 import { adaptMessage, decodeChannel, decodeGuild, decodeGuildMember, decodeUser } from './utils'
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
-import FormData from 'form-data'
 import { Internal, Token } from './types/internal'
 
 export class SlackBot<C extends Context = Context, T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
@@ -31,11 +30,6 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
     if (method === 'GET') {
       return await this.http.get(path, { params: data, headers })
     } else {
-      if (!headers['content-type']) {
-        data = data instanceof FormData ? data : JSON.stringify(data)
-        const type = data instanceof FormData ? 'multipart/form-data' : 'application/json; charset=utf-8'
-        headers['content-type'] = type
-      }
       return (await this.http(method, path, { data, headers })).data
     }
   }

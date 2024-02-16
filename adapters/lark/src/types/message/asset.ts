@@ -1,5 +1,3 @@
-import FormData from 'form-data'
-
 import { BaseResponse, Internal } from '..'
 
 export interface Asset<T> extends BaseResponse {

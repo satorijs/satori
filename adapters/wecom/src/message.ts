@@ -1,6 +1,5 @@
 import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { WecomBot } from './bot'
-import FormData from 'form-data'
 
 /** https://developer.work.weixin.qq.com/document/path/90236#%E6%94%AF%E6%8C%81%E7%9A%84markdown%E8%AF%AD%E6%B3%95 */
 
@@ -70,10 +69,7 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
     const form = new FormData()
 
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
-
+    const value = new Blob([data], { type: mime })
     form.append('media', value, attrs.file || filename)
 
     const resp = await this.bot.http.post<{
@@ -87,7 +83,6 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
         access_token: this.bot.token,
         type: uploadType,
       },
-      headers: form.getHeaders(),
     })
     if (resp.media_id) {
       return [resp.media_id, uploadType]

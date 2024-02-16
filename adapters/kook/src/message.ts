@@ -1,8 +1,6 @@
 import { Context, h, MessageEncoder, Schema } from '@satorijs/satori'
-import FormData from 'form-data'
 import { KookBot } from './bot'
 import * as Kook from './types'
-import internal from 'stream'
 
 export function isDirectChannel(channelId: string) {
   return channelId.length > 30
@@ -54,22 +52,18 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     if (await this.bot.http.isLocal(src)) {
       const payload = new FormData()
       const result = await this.bot.ctx.http.file(src, attrs)
-      payload.append('file', Buffer.from(result.data), {
-        filename: attrs.file || result.filename,
-      })
-      const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
+      payload.append('file', new Blob([result.data], { type: result.mime }), attrs.file || result.filename)
+      const { url } = await this.bot.request('POST', '/asset/create', payload)
       return url
     } else if (!src.includes('kookapp.cn')) {
-      const res = await this.bot.ctx.http.get<internal.Readable>(src, {
+      const { data, headers } = await this.bot.ctx.http<ArrayBuffer>('GET', src, {
         headers: { accept: type + '/*' },
-        responseType: 'stream',
+        responseType: 'arraybuffer',
         timeout: +attrs.timeout || undefined,
       })
       const payload = new FormData()
-      payload.append('file', res, {
-        filename: 'file',
-      })
-      const { url } = await this.bot.request('POST', '/asset/create', payload, payload.getHeaders())
+      payload.append('file', new Blob([data], { type: headers.get('Content-Type') }), 'file')
+      const { url } = await this.bot.request('POST', '/asset/create', payload)
       return url
     } else {
       return src

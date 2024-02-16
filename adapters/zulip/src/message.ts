@@ -1,6 +1,5 @@
 import { Context, h, MessageEncoder } from '@satorijs/satori'
 import { ZulipBot } from './bot'
-import FormData from 'form-data'
 import { by_stream_topic_url, encodeHashComponent } from './utils'
 
 export const escape = (val: string) =>
@@ -26,9 +25,7 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
     form.append('content', this.buffer)
     if (!this.session.isDirect) form.append('topic', this.session.channelId)
 
-    const { id } = await this.bot.http.post('/messages', form, {
-      headers: form.getHeaders(),
-    })
+    const { id } = await this.bot.http.post('/messages', form)
     const session = this.bot.session()
     session.content = this.buffer
     session.messageId = id.toString()
@@ -44,16 +41,9 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
     const { attrs } = element
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    // https://github.com/form-data/form-data/issues/468
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
+    const value = new Blob([data], { type: mime })
     form.append('file', value, attrs.file || filename)
-    const response = await this.bot.http.post<{
-      uri: string
-    }>('/user_uploads', form, {
-      headers: form.getHeaders(),
-    })
+    const response = await this.bot.http.post<{ uri: string }>('/user_uploads', form)
     return [response.uri, filename]
   }
 

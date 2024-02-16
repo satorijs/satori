@@ -1,6 +1,5 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { WhatsAppBot } from './bot'
-import FormData from 'form-data'
 import { Button, SendMessage } from './types'
 
 const SUPPORTED_MEDIA = [
@@ -91,9 +90,7 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
     }
 
     const form = new FormData()
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
+    const value = new Blob([data], { type: mime })
     form.append('file', value, attrs.file || filename)
     form.append('type', mime)
     form.append('messaging_product', 'whatsapp')

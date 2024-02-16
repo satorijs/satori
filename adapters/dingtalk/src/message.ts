@@ -1,6 +1,5 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
-import FormData from 'form-data'
 import { SendMessageData } from './types'
 import { Entry } from '@satorijs/server-temp'
 
@@ -63,10 +62,7 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
   async uploadMedia(attrs: Dict) {
     const { data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    // https://github.com/form-data/form-data/issues/468
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
+    const value = new Blob([data], { type: mime })
     let type: string
     if (mime.startsWith('image/') || mime.startsWith('video/')) {
       type = mime.split('/')[0]
@@ -77,9 +73,7 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
     }
     form.append('type', type)
     form.append('media', value)
-    const { media_id } = await this.bot.oldHttp.post('/media/upload', form, {
-      headers: form.getHeaders(),
-    })
+    const { media_id } = await this.bot.oldHttp.post('/media/upload', form)
     return media_id
   }
 

@@ -1,5 +1,4 @@
 import { Context, Dict, h, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
-import FormData from 'form-data'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize } from './utils'
@@ -88,13 +87,10 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
   async sendEmbed(attrs: Dict, payload: Dict) {
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    // https://github.com/form-data/form-data/issues/468
-    const value = process.env.KOISHI_ENV === 'browser'
-      ? new Blob([data], { type: mime })
-      : Buffer.from(data)
+    const value = new Blob([data], { type: mime })
     form.append('file', value, attrs.file || filename)
     form.append('payload_json', JSON.stringify(payload))
-    return this.post(form, form.getHeaders())
+    return this.post(form)
   }
 
   async sendAsset(type: string, attrs: Dict<string>, addition: Dict) {

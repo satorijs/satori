@@ -1,6 +1,5 @@
 import { Quester } from '@satorijs/satori'
 import { SendMessage } from './types'
-import FormData from 'form-data'
 
 interface PhoneNumber {
   verified_name: string
@@ -45,10 +44,6 @@ export class Internal {
   }
 
   uploadMedia(selfId: string, form: FormData) {
-    return this.http.post<{
-      id: string
-    }>(`/${selfId}/media`, form, {
-      headers: form.getHeaders(),
-    })
+    return this.http.post<{ id: string }>(`/${selfId}/media`, form)
   }
 }

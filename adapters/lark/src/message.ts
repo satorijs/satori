@@ -1,9 +1,4 @@
-import { createReadStream } from 'fs'
-import internal from 'stream'
-
 import { Context, h, MessageEncoder, Quester } from '@satorijs/satori'
-import FormData from 'form-data'
-
 import { LarkBot } from './bot'
 import { BaseResponse, Message, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
@@ -79,16 +74,8 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     const payload = new FormData()
 
     const assetKey = type === 'img' || type === 'image' ? 'image' : 'file'
-    const [schema, file] = url.split('://')
-    const filename = schema === 'base64' ? 'unknown' : new URL(url).pathname.split('/').pop()
-    if (schema === 'file') {
-      payload.append(assetKey, createReadStream(file))
-    } else if (schema === 'base64') {
-      payload.append(assetKey, Buffer.from(file, 'base64'))
-    } else {
-      const resp = await this.bot.assetsQuester.get<internal.Readable>(url, { responseType: 'stream' })
-      payload.append(assetKey, resp)
-    }
+    const { filename, mime, data } = await this.bot.assetsQuester.file(url)
+    payload.append(assetKey, new Blob([data], { type: mime }), filename)
 
     if (type === 'img' || type === 'image') {
       payload.append('image_type', 'message')

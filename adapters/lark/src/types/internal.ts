@@ -1,4 +1,3 @@
-import FormData from 'form-data'
 import { Dict, makeArray, Quester } from '@satorijs/satori'
 import { LarkBot } from '../bot'
 
@@ -42,9 +41,6 @@ export class Internal {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
               } else {
-                if (method === 'POST' && args[0] instanceof FormData) {
-                  config.headers = args[0].getHeaders()
-                }
                 config.data = args[0]
               }
             } else if (args.length === 2 && method !== 'GET' && method !== 'DELETE') {
