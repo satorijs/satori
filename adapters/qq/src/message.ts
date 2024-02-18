@@ -80,7 +80,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
           await this.flush()
         }
         if (useFormData) {
-          this.bot.logger.warn(`POST ${endpoint} response: %o, trace id: %s`, e.response.data, e.response.headers['x-tps-trace-id'])
+          this.bot.logger.warn(`POST ${endpoint} response: %o, trace id: %s`, e.response.data, e.response.headers.get('x-tps-trace-id'))
         }
       }
     }
