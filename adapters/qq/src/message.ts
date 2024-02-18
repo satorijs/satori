@@ -72,7 +72,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
         else r = await this.bot.internal.sendMessage(this.channelId, payload)
       }
     } catch (e) {
-      if (Quester.isAxiosError(e)) {
+      if (Quester.Error.is(e)) {
         if (this.bot.parent.config.retryWhen.includes(e.response.data.code) && !this.retry && this.fileUrl) {
           this.bot.logger.warn('retry image sending')
           this.retry = true
@@ -265,7 +265,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           }
         }
       } catch (e) {
-        if (!Quester.isAxiosError(e)) throw e
+        if (!Quester.Error.is(e)) throw e
         this.errors.push(e)
         if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
           this.bot.logger.warn('%s retry message sending', this.session.cid)
@@ -329,7 +329,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         res = await this.bot.internal.sendFileGuild(this.session.guildId, data)
       }
     } catch (e) {
-      if (!Quester.isAxiosError(e)) throw e
+      if (!Quester.Error.is(e)) throw e
       this.errors.push(e)
       if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
         this.bot.logger.warn('%s retry message sending', this.session.cid)

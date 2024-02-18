@@ -92,7 +92,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
       })
 
       ctx.status = 200
-      ctx.response.headers['Content-Type'] = resp.headers['content-type']
+      ctx.response.headers['Content-Type'] = resp.headers.get('content-type')
       ctx.response.body = resp.data
     })
   }

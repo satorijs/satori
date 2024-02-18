@@ -70,7 +70,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
 
       return message
     } catch (e) {
-      if (Quester.isAxiosError(e) && e.response) {
+      if (Quester.Error.is(e) && e.response) {
         if (e.response.data?.code === 10015) {
           this.bot.logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
           if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
@@ -133,7 +133,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       headers: { accept: type + '/*' },
       timeout: 1000,
     }).then(
-      (headers) => headers['content-type'].startsWith(type),
+      (headers) => headers.get('content-type').startsWith(type),
       () => false,
     )
   }

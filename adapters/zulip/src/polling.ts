@@ -38,7 +38,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBo
         }
         setTimeout(polling, 0)
       } catch (e) {
-        if (!Quester.isAxiosError(e) || !e.response?.data) {
+        if (!Quester.Error.is(e) || !e.response?.data) {
           bot.logger.warn('failed to get updates. reason: %s', e.stack)
         } else {
           bot.logger.error(e.stack)

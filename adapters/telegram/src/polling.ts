@@ -45,7 +45,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, Telegra
           }
           this.timeout = setTimeout(polling, 0)
         } catch (e) {
-          if (!Quester.isAxiosError(e) || !e.response?.data) {
+          if (!Quester.Error.is(e) || !e.response?.data) {
             // Other error
             bot.logger.warn('failed to get updates. reason: %s', e.message)
           } else {

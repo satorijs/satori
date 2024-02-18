@@ -36,7 +36,7 @@ export class Internal {
             try {
               return await quester(method, url, config)
             } catch (error) {
-              if (!Quester.isAxiosError(error) || !error.response) throw error
+              if (!Quester.Error.is(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
             }
           }

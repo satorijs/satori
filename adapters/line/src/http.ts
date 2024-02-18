@@ -38,8 +38,8 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
         method: 'GET',
         responseType: 'stream',
       })
-      ctx.type = resp.headers['content-type']
-      ctx.set('cache-control', resp.headers['cache-control'])
+      ctx.type = resp.headers.get('content-type')
+      ctx.set('cache-control', resp.headers.get('cache-control'))
       ctx.response.body = resp.data
       ctx.status = 200
     })

@@ -72,8 +72,8 @@ class HttpServer {
         method: 'GET',
         responseType: 'stream',
       })
-      ctx.type = resp.headers['content-type']
-      ctx.set('cache-control', resp.headers['cache-control'])
+      ctx.type = resp.headers.get('content-type')
+      ctx.set('cache-control', resp.headers.get('cache-control'))
       ctx.response.body = resp.data
       ctx.status = 200
     })

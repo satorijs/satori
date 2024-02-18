@@ -116,9 +116,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
           media_id: mediaId,
         },
       })
-      ctx.type = resp.headers['content-type']
-      ctx.set('date', resp.headers['date'])
-      ctx.set('cache-control', resp.headers['cache-control'])
+      ctx.type = resp.headers.get('content-type')
+      ctx.set('date', resp.headers.get('date'))
+      ctx.set('cache-control', resp.headers.get('cache-control'))
       ctx.response.body = resp.data
       ctx.status = 200
     })

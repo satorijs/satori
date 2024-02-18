@@ -24,7 +24,7 @@ class ProxyServer {
       try {
         koa.body = await ctx.http.get<internal.Readable>(koa.params.url, { responseType: 'stream' })
       } catch (error) {
-        if (!Quester.isAxiosError(error) || !error.response) throw error
+        if (!Quester.Error.is(error) || !error.response) throw error
         koa.status = error.response.status
         koa.body = error.response.data
       }

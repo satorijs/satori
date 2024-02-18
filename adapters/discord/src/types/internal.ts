@@ -32,7 +32,7 @@ export class Internal {
               this.bot.logger.debug(`${method} ${url}`, config)
               return (await this.bot.http(method, url, config)).data
             } catch (error) {
-              if (!Quester.isAxiosError(error) || !error.response) throw error
+              if (!Quester.Error.is(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
             }
           }
