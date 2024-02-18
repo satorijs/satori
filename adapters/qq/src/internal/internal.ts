@@ -30,12 +30,12 @@ export class Internal {
             try {
               this.bot.logger.debug(`${method} ${url} request: %o`, config)
               const response = await this.http()(url, { ...config, method })
-              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, response.data, response.headers['x-tps-trace-id'])
+              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, response.data, response.headers.get('x-tps-trace-id'))
               return response.data
             } catch (error) {
               this.bot.logger.warn(`${method} ${url} request: %o`, config)
-              if (!Quester.isAxiosError(error) || !error.response) throw error
-              this.bot.logger.warn(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers['x-tps-trace-id'])
+              if (!Quester.Error.is(error) || !error.response) throw error
+              this.bot.logger.warn(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers.get('x-tps-trace-id'))
               throw error
             }
           }
