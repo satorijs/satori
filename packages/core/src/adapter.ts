@@ -1,6 +1,5 @@
 import { Awaitable, remove, Time } from 'cosmokit'
-import { Status } from '@satorijs/protocol'
-import { WebSocket } from 'undios'
+import { Status, WebSocket } from '@satorijs/protocol'
 import { z } from 'cordis'
 import { Context } from '.'
 import { Bot } from './bot'

@@ -7,11 +7,13 @@ declare global {
       message: {
         id?: string
         forward?: boolean
+        children?: any[]
       }
       quote: {
         id?: string
         name?: string
         avatar?: string
+        children?: any[]
       }
       at: {
         id?: string
