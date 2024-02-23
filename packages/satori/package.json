@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "3.6.0-alpha.0",
+  "version": "3.6.1",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -36,7 +36,7 @@
     "utilities"
   ],
   "dependencies": {
-    "@satorijs/core": "3.6.0-alpha.0",
+    "@satorijs/core": "3.6.1",
     "cosmokit": "^1.5.2"
   }
 }

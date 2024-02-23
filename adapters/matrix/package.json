@@ -27,10 +27,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.7"
+    "@cordisjs/server": "^0.1.8"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.0-alpha.0"
+    "@satorijs/satori": "^3.6.1"
   },
   "dependencies": {
     "html5parser": "^2.0.2",

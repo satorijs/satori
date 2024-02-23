@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-zulip",
   "description": "Zulip Adapter for Satorijs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -29,10 +29,9 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.0-alpha.0"
+    "@satorijs/satori": "^3.6.1"
   },
   "dependencies": {
-    "form-data": "^4.0.0",
     "marked": "^9.1.6"
   }
 }

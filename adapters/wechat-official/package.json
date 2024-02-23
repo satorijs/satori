@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-wechat-official",
   "description": "Wechat Official Adapter for Satorijs",
-  "version": "2.3.0-alpha.0",
+  "version": "2.3.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -29,15 +29,14 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.7",
+    "@cordisjs/server": "^0.1.8",
     "@types/xml2js": "^0.4.14"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.0-alpha.0"
+    "@satorijs/satori": "^3.6.1"
   },
   "dependencies": {
     "@wecom/crypto": "^1.0.1",
-    "form-data": "^4.0.0",
     "xml2js": "^0.6.2"
   }
 }

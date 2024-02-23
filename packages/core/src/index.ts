@@ -17,8 +17,8 @@ export type { Fragment, Render } from '@satorijs/element'
 export { h, h as Element, h as segment, HTTP, HTTP as Quester }
 
 export * from 'cordis'
+export * as file from 'undios-file'
 
-export * as Satori from '@satorijs/protocol'
 export * as Universal from '@satorijs/protocol'
 
 export * from './bot'
@@ -168,6 +168,8 @@ export namespace Context {
   export type Associate<P extends string, C extends Context = Context> = cordis.Context.Associate<P, C>
 }
 
-export class Service<C extends Context = Context> extends cordis.Service<C> {
-  static Context = Context
+export abstract class Service<T = any, C extends Context = Context> extends cordis.Service<T, C> {
+  [cordis.Service.setup]() {
+    this.ctx = new Context() as C
+  }
 }

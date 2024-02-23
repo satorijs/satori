@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-whatsapp",
   "description": "WhatsApp Adapter for Satorijs",
-  "version": "2.4.0-alpha.0",
+  "version": "2.4.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -27,12 +27,9 @@
     "satori"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.7"
+    "@cordisjs/server": "^0.1.8"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.0-alpha.0"
-  },
-  "dependencies": {
-    "form-data": "^4.0.0"
+    "@satorijs/satori": "^3.6.1"
   }
 }
