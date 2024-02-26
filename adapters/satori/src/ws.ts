@@ -58,6 +58,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     bot = new SatoriBot(this.ctx, login)
     bot.adapter = this
     bot.http = this.http
+    bot.status = setStatus(Universal.Status.ONLINE)
     this.bots.push(bot)
   }
 
