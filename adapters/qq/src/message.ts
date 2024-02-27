@@ -395,11 +395,39 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
-    } else if ((type === 'video' || type === 'audio') && (attrs.src || attrs.url)) {
+    } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
       await this.flush() // text can't send with video
+    } else if (type === 'audio' && (attrs.src || attrs.url)) {
+      await this.flush()
+      const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+      if (data.slice(0, 7).toString().includes('#!SILK')) {
+        const onlineFile = await this.sendFile(type, {
+          src: `data:audio/amr;base64,` + Buffer.from(data).toString('base64'),
+        })
+        this.attachedFile = onlineFile
+      } else {
+        const silk = this.bot.ctx.get('silk')
+        if (!silk) return this.bot.logger.warn('missing silk service, cannot send non-silk audio')
+        if (silk.isWav(data)) {
+          const result = await silk.encode(data, 0)
+          const onlineFile = await this.sendFile(type, {
+            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+          })
+          if (onlineFile) this.attachedFile = onlineFile
+        } else {
+          if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except wav')
+          const wavBuf = await this.bot.ctx.get('ffmpeg').builder().input(data).outputOption('-ar', '24000', '-ac', '1', '-f', 's16le').run('buffer')
+          const result = await silk.encode(wavBuf, 24000)
+          const onlineFile = await this.sendFile(type, {
+            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+          })
+          if (onlineFile) this.attachedFile = onlineFile
+        }
+      }
+      await this.flush()
     } else if (type === 'br') {
       this.content += '\n'
     } else if (type === 'p') {
