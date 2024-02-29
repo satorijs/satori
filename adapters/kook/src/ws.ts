@@ -39,8 +39,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
 
     this.socket.addEventListener('message', async ({ data }) => {
       let parsed: Payload
+      data = data.toString()
       try {
-        parsed = JSON.parse(data.toString())
+        parsed = JSON.parse(data)
       } catch (error) {
         return this.bot.logger.warn('cannot parse message', data)
       }

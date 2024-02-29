@@ -79,8 +79,9 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
 
     this.socket.addEventListener('message', async ({ data }) => {
       let parsed: Universal.ServerPayload
+      data = data.toString()
       try {
-        parsed = transformKey(JSON.parse(data.toString()), camelize)
+        parsed = transformKey(JSON.parse(data), camelize)
       } catch (error) {
         return this.logger.warn('cannot parse message', data)
       }
