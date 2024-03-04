@@ -143,12 +143,7 @@ export class Context extends cordis.Context {
       const result = await component(attrs, children, session)
       return session.transform(h.normalize(result))
     }
-    const service = 'component:' + name
-    this.provide(service)
-    return this.effect(() => {
-      this[service] = render
-      return () => this[service] = null
-    })
+    return this.set('component:' + name, render)
   }
 }
 

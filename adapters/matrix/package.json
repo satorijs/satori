@@ -30,7 +30,7 @@
     "@cordisjs/server": "^0.1.8"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.1"
+    "@satorijs/satori": "^3.6.3"
   },
   "dependencies": {
     "html5parser": "^2.0.2",

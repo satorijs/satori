@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "3.6.1",
+  "version": "3.6.3",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -46,9 +46,9 @@
   "dependencies": {
     "@satorijs/element": "^3.1.5",
     "@satorijs/protocol": "^1.3.0-alpha.0",
-    "cordis": "^3.12.0",
+    "cordis": "^3.13.2",
     "cosmokit": "^1.5.2",
-    "undios": "^0.2.3",
+    "undios": "^0.3.0",
     "undios-file": "^0.1.2",
     "ws": "^8.14.2"
   }

@@ -1,5 +1,7 @@
 import { clone, Dict, pick, remove } from 'cosmokit'
-import { Context, Fragment, Logger } from '.'
+import * as cordis from 'cordis'
+import h from '@satorijs/element'
+import { Context } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor } from './session'
@@ -26,7 +28,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
-  public logger: Logger
+  public logger: cordis.Logger
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
@@ -158,17 +160,17 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     }
   }
 
-  async createMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async createMessage(channelId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
     return new MessageEncoder(this, channelId, guildId, options).send(content)
   }
 
-  async sendMessage(channelId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async sendMessage(channelId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
     const messages = await this.createMessage(channelId, content, guildId, options)
     return messages.map(message => message.id)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async sendPrivateMessage(userId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
     const { id } = await this.createDirectChannel(userId, guildId ?? options?.session?.guildId)
     return this.sendMessage(id, content, null, options)
   }
