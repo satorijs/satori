@@ -47,7 +47,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     // Do not dispatch event from outside adapters.
     let bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (bot) {
-      login && bot.update(login)
+      if (login) bot.update(login)
       return this.bots.includes(bot) ? bot : undefined
     }
 
