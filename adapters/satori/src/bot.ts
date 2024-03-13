@@ -12,7 +12,12 @@ export function transformKey(source: any, callback: (key: string) => string) {
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
-      return bot.http.post('/internal/' + snakeCase(prefix.slice(1)), args)
+      return bot.http.post('/internal/' + snakeCase(prefix.slice(1)), args, {
+        headers: {
+          'X-Platform': bot.platform,
+          'X-Self-ID': bot.selfId
+        }
+      })
     },
     get(target, key, receiver) {
       if (typeof key === 'symbol' || key in target) {
@@ -44,6 +49,11 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
       }
     }
     this.logger.debug('[request]', key, payload)
-    return this.http.post('/v1/' + key, payload)
+    return this.http.post('/v1/' + key, payload, {
+      headers: {
+        'X-Platform': this.platform,
+        'X-Self-ID': this.selfId
+      }
+    })
   }
 }
