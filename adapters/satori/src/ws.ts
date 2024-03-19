@@ -58,7 +58,12 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     bot = new SatoriBot(this.ctx, login)
     this.bots.push(bot)
     bot.adapter = this
-    bot.http = this.http
+    bot.http = this.http.extend({
+      headers: {
+        'X-Platform': platform,
+        'X-Self-ID': selfId,
+      },
+    })
     bot.status = login.status
   }
 
