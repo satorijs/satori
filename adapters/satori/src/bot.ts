@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, snakeCase, Universal } from '@satorijs/satori'
+import { Bot, Context, h, Quester, Session, snakeCase, Universal } from '@satorijs/satori'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -34,13 +34,18 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
 }
 
 for (const [key, method] of Object.entries(Universal.Methods)) {
-  SatoriBot.prototype[method.name] = function (this: SatoriBot, ...args: any[]) {
+  SatoriBot.prototype[method.name] = async function (this: SatoriBot, ...args: any[]) {
     const payload = {}
-    for (const { name } of method.fields) {
-      if (name === 'content') {
-        payload[name] = h.normalize(args.shift()).join('')
+    for (const [index, field] of method.fields.entries()) {
+      if (method.name === 'createMessage' && field.name === 'content') {
+        const session: Session = args[3]?.session ?? this.session({
+          type: 'send',
+          channel: { id: args[0], type: 0 },
+        })
+        const elements = await session.transform(h.normalize(args[index]))
+        payload[field.name] = elements.join('')
       } else {
-        payload[name] = transformKey(args.shift(), snakeCase)
+        payload[field.name] = transformKey(args[index], snakeCase)
       }
     }
     this.logger.debug('[request]', key, payload)

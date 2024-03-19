@@ -107,7 +107,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
           return bot.dispose()
         }
         const session = bot.session(parsed.body)
-        if (parsed.body.message?.content) {
+        if (typeof parsed.body.message?.content === 'string') {
           session.content = parsed.body.message.content
         }
         if (parsed.body._type && parsed.body.type !== 'internal') {
