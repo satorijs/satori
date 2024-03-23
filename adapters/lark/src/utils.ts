@@ -1,14 +1,14 @@
 import crypto from 'crypto'
 import { Context, h, Session, trimSlash, Universal } from '@satorijs/satori'
 import { FeishuBot, LarkBot } from './bot'
-import { AllEvents, Events, Lark, Message as LarkMessage, MessageContentType, MessageType } from './types'
+import { AllEvents, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
 
 export type Sender =
   | {
-      sender_id: Lark.UserIds
-      sender_type?: string
-      tenant_key: string
-    }
+    sender_id: Lark.UserIds
+    sender_type?: string
+    tenant_key: string
+  }
   | (Lark.UserIdentifiers & { sender_type?: string; tenant_key: string })
 
 export function adaptSender(sender: Sender, session: Session): Session {
@@ -62,6 +62,7 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
   session.timestamp = +data.message.create_time
   session.messageId = data.message.message_id
   session.channelId = data.message.chat_id
+  session.guildId = data.message.chat_id
   session.content = content.map((c) => c.toString()).join(' ')
 
   return session
@@ -74,7 +75,7 @@ export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEven
   switch (body.type) {
     case 'im.message.receive_v1':
       session.type = 'message'
-      session.subtype = body.event.message.chat_type
+      session.subtype = body.event.message.chat_id
       if (session.subtype === 'p2p') session.subtype = 'private'
       session.isDirect = session.subtype === 'private'
       adaptSender(body.event.sender, session)
@@ -85,7 +86,7 @@ export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEven
 }
 
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
-export async function decodeMessage(bot: LarkBot, body: LarkMessage): Promise<Universal.Message> {
+export async function decodeMessage(bot: LarkBot, body: Lark.Message): Promise<Universal.Message> {
   const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
@@ -145,16 +146,16 @@ export function extractIdType(id: string): Lark.ReceiveIdType {
   return 'user_id'
 }
 
-export function decodeChannel(guild: Lark.Guild): Universal.Channel {
+export function decodeChannel(channelId: string, guild: GetImChatResponse['data']): Universal.Channel {
   return {
-    id: guild.chat_id,
+    id: channelId,
     type: Universal.Channel.Type.TEXT,
     name: guild.name,
-    parentId: guild.chat_id,
+    parentId: channelId,
   }
 }
 
-export function decodeGuild(guild: Lark.Guild): Universal.Guild {
+export function decodeGuild(guild: Lark.ListChat): Universal.Guild {
   return {
     id: guild.chat_id,
     name: guild.name,

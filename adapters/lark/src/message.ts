@@ -1,6 +1,6 @@
 import { Context, h, MessageEncoder, Quester } from '@satorijs/satori'
 import { LarkBot } from './bot'
-import { BaseResponse, Message, MessageContent, MessageType } from './types'
+import { BaseResponse, Lark, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
 
 export interface Addition {
@@ -17,18 +17,21 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async post(data?: any) {
     try {
-      let resp: BaseResponse & { data: Message }
+      let resp: BaseResponse & { data?: Lark.Message }
       if (this.quote) {
-        resp = await this.bot.internal?.replyMessage(this.quote, data)
+        resp = await this.bot.internal.replyImMessage(this.quote, data)
       } else {
         data.receive_id = this.channelId
-        resp = await this.bot.internal?.sendMessage(extractIdType(this.channelId), data)
+        resp = await this.bot.internal?.createImMessage(data, {
+          receive_id_type: extractIdType(this.channelId),
+        })
       }
       const session = this.bot.session()
       session.messageId = resp.data.message_id
       session.timestamp = Number(resp.data.create_time) * 1000
       session.userId = resp.data.sender.id
       session.app.emit(session, 'send', session)
+      console.log(session)
       this.results.push(session.event.message)
     } catch (e) {
       // try to extract error message from Lark API
@@ -79,7 +82,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
     if (type === 'img' || type === 'image') {
       payload.append('image_type', 'message')
-      const { data } = await this.bot.internal.uploadImage(payload)
+      const { data } = await this.bot.internal.createImImage(payload)
       return {
         type: 'image',
         file: {
@@ -105,7 +108,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         }
       }
       payload.append('file_name', filename)
-      const { data } = await this.bot.internal.uploadFile(payload)
+      const { data } = await this.bot.internal.createImFile(payload)
       return {
         type: msgType,
         file: {
@@ -157,6 +160,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         if (attrs.src || attrs.url) {
           await this.flush()
           this.addition = await this.sendFile(type, attrs.src || attrs.url)
+          await this.flush()
         }
         break
       case 'figure': // FIXME: treat as message element for now
