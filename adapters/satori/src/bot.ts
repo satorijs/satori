@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, Session, snakeCase, Universal } from '@satorijs/satori'
+import { Bot, Context, h, Quester, snakeCase, Universal } from '@satorijs/satori'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -38,12 +38,14 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     const payload = {}
     for (const [index, field] of method.fields.entries()) {
       if (method.name === 'createMessage' && field.name === 'content') {
-        const session: Session = args[3]?.session ?? this.session({
+        const session = this.session({
           type: 'send',
           channel: { id: args[0], type: 0 },
+          ...args[3]?.session?.event,
         })
-        const elements = await session.transform(h.normalize(args[index]))
-        payload[field.name] = elements.join('')
+        session.elements = await session.transform(h.normalize(args[index]))
+        if (await session.app.serial(session, 'before-send', session, args[3] ?? {})) return
+        payload[field.name] = session.elements.join('')
       } else {
         payload[field.name] = transformKey(args[index], snakeCase)
       }
