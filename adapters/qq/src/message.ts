@@ -310,7 +310,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       file_type,
       srv_send_msg: false,
     }
-    let capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
+    const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
     if (capture?.[2]) {
       data.file_data = capture[2]
     } else if (await this.bot.ctx.http.isLocal(url)) {
