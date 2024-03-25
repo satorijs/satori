@@ -36,7 +36,7 @@
     "@cordisjs/server": "^0.1.8"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.3"
+    "@satorijs/satori": "^3.6.5"
   },
   "dependencies": {
     "file-type": "^16.5.4"
