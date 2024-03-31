@@ -88,11 +88,9 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
-    if (isDirect) {
-      session.guildId = this.session.guildId
-      session.channelId = this.channelId
-      session.isDirect = true
-    }
+    session.guildId = this.session.guildId
+    session.channelId = this.channelId
+    session.isDirect = isDirect
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
     /**
@@ -250,6 +248,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           if (resp.id) {
             session.messageId = resp.id
             session.timestamp = new Date(resp.timestamp).valueOf()
+            session.channelId = this.session.channelId
+            session.guildId = this.session.guildId
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
           } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
