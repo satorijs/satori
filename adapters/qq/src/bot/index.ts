@@ -111,6 +111,15 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   async createDirectChannel(id: string) {
     return { id, type: Universal.Channel.Type.DIRECT }
   }
+
+  async deleteMessage(channelId: string, messageId: string): Promise<void> {
+    // @TODO: need `private:`
+    try {
+      await this.internal.deleteMessage(channelId, messageId)
+    } catch (e) {
+      await this.internal.deletePrivateMessage(channelId, messageId)
+    }
+  }
 }
 
 export namespace QQBot {
