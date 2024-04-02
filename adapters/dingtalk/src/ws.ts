@@ -6,6 +6,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
   async prepare() {
     await this.bot.refreshToken()
     await this.bot.getLogin()
+    // Ref: https://open.dingtalk.com/document/direction/stream-mode-protocol-access-description
     const { endpoint, ticket } = await this.bot.http.post<{
       endpoint: string
       ticket: string
@@ -19,7 +20,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
         },
       ],
     })
-    return this.bot.http.ws(`${endpoint}?ticket=${ticket}`)
+    return this.bot.http.ws(`${endpoint}/connect?ticket=${ticket}`)
   }
 
   accept() {
