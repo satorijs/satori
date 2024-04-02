@@ -20,7 +20,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
         },
       ],
     })
-    return this.bot.http.ws(`${endpoint}/connect?ticket=${ticket}`)
+    return this.bot.http.ws(`${endpoint}?ticket=${ticket}`)
   }
 
   accept() {
