@@ -18,6 +18,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Dingtalk
   async connect(bot: DingtalkBot<C>) {
     await bot.refreshToken()
     await bot.getLogin()
+    bot.online()
 
     // https://open.dingtalk.com/document/orgapp/receive-message
     this.ctx.server.post('/dingtalk', async (ctx) => {

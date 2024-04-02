@@ -34,7 +34,7 @@ export class Internal {
               config.params = { ...config.params, access_token: this.bot.token }
             }
             try {
-              return await quester(method, url, config)
+              return (await quester(method, url, config)).data
             } catch (error) {
               if (!Quester.Error.is(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
