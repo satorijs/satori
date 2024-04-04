@@ -1,4 +1,5 @@
-import internal from 'stream'
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
 import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
 import {} from '@cordisjs/server'
 
@@ -85,7 +86,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
       const bot = this.bots.find((bot) => bot.selfId === selfId)
       if (!bot) return ctx.status = 404
 
-      const resp = await bot.http<internal.Readable>(`/im/v1/messages/${messageId}/resources/${key}`, {
+      const resp = await bot.http<ReadableStream>(`/im/v1/messages/${messageId}/resources/${key}`, {
         method: 'GET',
         params: { type },
         responseType: 'stream',
@@ -93,7 +94,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
 
       ctx.status = 200
       ctx.response.headers['Content-Type'] = resp.headers.get('content-type')
-      ctx.response.body = resp.data
+      ctx.response.body = Readable.fromWeb(resp.data)
     })
   }
 
