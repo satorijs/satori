@@ -49,7 +49,6 @@
     "cordis": "^3.13.4",
     "cosmokit": "^1.5.2",
     "undios": "^0.3.2",
-    "undios-file": "^0.1.2",
-    "ws": "^8.14.2"
+    "undios-file": "^0.1.2"
   }
 }
