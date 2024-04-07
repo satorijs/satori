@@ -103,8 +103,8 @@ export function apply(ctx: Context, config: Config) {
   })
 
   ctx.server.post(path + '/v1/internal/:name', async (koa) => {
-    const selfId = koa.request.headers['X-Self-ID']
-    const platform = koa.request.headers['X-Platform']
+    const selfId = koa.request.headers['x-self-id']
+    const platform = koa.request.headers['x-platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (!bot) {
       koa.body = 'bot not found'

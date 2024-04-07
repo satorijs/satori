@@ -12,7 +12,9 @@ export function transformKey(source: any, callback: (key: string) => string) {
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
-      return bot.http.post('/internal/' + snakeCase(prefix.slice(1)), args)
+      const key = snakeCase(prefix.slice(1))
+      bot.logger.debug("[request.internal]", key, args)
+      return bot.http.post('/v1/internal/' + key, args)
     },
     get(target, key, receiver) {
       if (typeof key === 'symbol' || key in target) {
