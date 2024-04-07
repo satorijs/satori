@@ -71,6 +71,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
 
       // dispatch message
       bot.logger.debug('received decryped event: %o', body)
+      // @TODO: need await?
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
@@ -97,13 +98,13 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
     })
   }
 
-  dispatchSession(body: AllEvents): void {
+  async dispatchSession(body: AllEvents) {
     const { header } = body
     if (!header) return
     const { app_id, event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
     const bot = this.bots.find((bot) => bot.selfId === app_id)
-    const session = adaptSession(bot, body)
+    const session = await adaptSession(bot, body)
     bot.dispatch(session)
   }
 

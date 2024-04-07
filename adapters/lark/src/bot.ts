@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, h, Quester, Schema, Universal } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
@@ -14,6 +14,8 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   http: Quester
   assetsQuester: Quester
   internal: Internal
+
+  public openId: string
 
   constructor(ctx: C, config: LarkBot.Config) {
     super(ctx, config, 'lark')
@@ -35,6 +37,18 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   async initialize() {
     await this.refreshToken()
+    const { bot } = await this.http.get<{
+      bot: {
+        activate_status: number
+        app_name: string
+        avatar_url: string
+        ip_white_list: any[]
+        open_id: string
+      }
+    }>('/bot/v3/info')
+    this.openId = bot.open_id
+    this.user.avatar = bot.avatar_url
+    this.user.name = bot.app_name
     this.online()
   }
 
@@ -72,9 +86,12 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     await this.internal.deleteImMessage(messageId)
   }
 
-  async getMessage(channelId: string, messageId: string) {
+  async getMessage(channelId: string, messageId: string, recursive = true) {
     const data = await this.internal.getImMessage(messageId)
-    return await Utils.decodeMessage(this, data.data.items[0])
+    const message = await Utils.decodeMessage(this, data.data.items[0], recursive)
+    const im = await this.internal.getImChat(channelId)
+    message.channel.type = im.data.chat_mode === 'p2p' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT
+    return message
   }
 
   async getMessageList(channelId: string, before?: string) {

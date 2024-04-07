@@ -31,8 +31,21 @@ declare module '../event' {
         sender_type?: string
         tenant_key: string
       }
-      message: Lark.Message & {
+      message: {
+        message_id: string
+        root_id: string
+        parent_id: string
+        create_time: string
+        chat_id: string
         chat_type: string
+        message_type: MessageType
+        content: string
+        mentions: {
+          key: string
+          id: Lark.UserIds
+          name: string
+          tenant_key: string
+        }[]
       }
     }>
     /**

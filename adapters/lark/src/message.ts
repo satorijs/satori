@@ -30,8 +30,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       session.messageId = resp.data.message_id
       session.timestamp = Number(resp.data.create_time) * 1000
       session.userId = resp.data.sender.id
+      session.channelId = this.channelId
+      session.guildId = this.guildId
       session.app.emit(session, 'send', session)
-      console.log(session)
       this.results.push(session.event.message)
     } catch (e) {
       // try to extract error message from Lark API

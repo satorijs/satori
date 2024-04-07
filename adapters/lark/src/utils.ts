@@ -22,7 +22,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
   return session
 }
 
-export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session): Session {
+export async function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session, details = true): Promise<Session> {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
@@ -38,7 +38,9 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)
-          content.push(h.at(mention.id.open_id, { name: mention.name }))
+          let id = mention.id.open_id
+          if (id === bot.openId) id = bot.selfId
+          content.push(h.at(id, { name: mention.name }))
         } else {
           content.push(word)
         }
@@ -65,10 +67,13 @@ export function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1
   session.guildId = data.message.chat_id
   session.content = content.map((c) => c.toString()).join(' ')
 
+  if (data.message.parent_id && details) {
+    session.quote = await bot.getMessage(session.channelId, data.message.parent_id, false)
+  }
   return session
 }
 
-export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEvents) {
+export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEvents) {
   const session = bot.session()
   session.setInternal('lark', body)
 
@@ -79,14 +84,14 @@ export function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEven
       if (session.subtype === 'p2p') session.subtype = 'private'
       session.isDirect = session.subtype === 'private'
       adaptSender(body.event.sender, session)
-      adaptMessage(bot, body.event, session)
+      await adaptMessage(bot, body.event, session)
       break
   }
   return session
 }
 
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
-export async function decodeMessage(bot: LarkBot, body: Lark.Message): Promise<Universal.Message> {
+export async function decodeMessage(bot: LarkBot, body: Lark.Message, details = true): Promise<Universal.Message> {
   const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
@@ -128,9 +133,17 @@ export async function decodeMessage(bot: LarkBot, body: Lark.Message): Promise<U
     createdAt: +body.create_time,
     updatedAt: +body.update_time,
     id: body.message_id,
+    messageId: body.message_id,
+    user: {
+      id: body.sender.id,
+    },
+    channel: {
+      id: body.chat_id,
+      type: Universal.Channel.Type.TEXT,
+    },
     content: content.map((c) => c.toString()).join(' '),
     elements: content,
-    quote: body.upper_message_id ? await bot.getMessage(body.chat_id, body.upper_message_id) : undefined,
+    quote: (body.upper_message_id && details) ? await bot.getMessage(body.chat_id, body.upper_message_id, false) : undefined,
   }
 }
 
