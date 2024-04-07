@@ -92,9 +92,8 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
         params: { type },
         responseType: 'stream',
       })
-
+      ctx.set('content-type', resp.headers.get('content-type'))
       ctx.status = 200
-      ctx.response.headers['Content-Type'] = resp.headers.get('content-type')
       ctx.response.body = Readable.fromWeb(resp.data)
     })
   }
@@ -104,7 +103,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
     if (!header) return
     const { app_id, event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
-    const bot = this.bots.find((bot) => bot.selfId === app_id)
+    const bot = this.bots.find((bot) => bot.appId === app_id)
     const session = await adaptSession(bot, body)
     bot.dispatch(session)
   }

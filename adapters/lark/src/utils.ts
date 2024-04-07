@@ -38,9 +38,7 @@ export async function adaptMessage(bot: FeishuBot, data: Events['im.message.rece
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)
-          let id = mention.id.open_id
-          if (id === bot.openId) id = bot.selfId
-          content.push(h.at(id, { name: mention.name }))
+          content.push(h.at(mention.id.open_id, { name: mention.name }))
         } else {
           content.push(word)
         }

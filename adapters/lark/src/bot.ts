@@ -15,8 +15,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   assetsQuester: Quester
   internal: Internal
 
-  public openId: string
-
   constructor(ctx: C, config: LarkBot.Config) {
     super(ctx, config, 'lark')
 
@@ -25,7 +23,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
       this.logger.warn('selfUrl is not set, some features may not work')
     }
 
-    this.selfId = config.appId
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
     })
@@ -33,6 +30,10 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     this.internal = new Internal(this)
 
     ctx.plugin(HttpServer, this)
+  }
+
+  get appId() {
+    return this.config.appId
   }
 
   async initialize() {
@@ -46,7 +47,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
         open_id: string
       }
     }>('/bot/v3/info')
-    this.openId = bot.open_id
+    this.selfId = bot.open_id
     this.user.avatar = bot.avatar_url
     this.user.name = bot.app_name
     this.online()
