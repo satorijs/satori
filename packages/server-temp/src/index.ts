@@ -63,9 +63,9 @@ class TempServer {
       if (new URL(data).protocol === 'file:') {
         path = fileURLToPath(data)
       } else {
-        data = await this.ctx.http.get(data, { responseType: 'stream' })
+        const stream = await this.ctx.http.get(data, { responseType: 'stream' })
         path = this.baseDir + name
-        await writeFile(path, data)
+        await writeFile(path, internal.Readable.fromWeb(stream as any))
       }
     } else {
       path = this.baseDir + name

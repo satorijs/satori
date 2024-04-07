@@ -455,7 +455,7 @@ export namespace Message {
     }
     export interface Request {
       file_type: Type
-      url: string
+      url?: string
       srv_send_msg: boolean
       file_data?: unknown
     }

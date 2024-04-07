@@ -2,7 +2,6 @@ import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder, Quester } from '@satorijs/satori'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
-import { Entry } from '@satorijs/server-temp'
 
 export const escapeMarkdown = (val: string) =>
   val
@@ -89,11 +88,9 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
-    if (isDirect) {
-      session.guildId = this.session.guildId
-      session.channelId = this.channelId
-      session.isDirect = true
-    }
+    session.guildId = this.session.guildId
+    session.channelId = this.channelId
+    session.isDirect = isDirect
 
     // https://bot.q.qq.com/wiki/develop/api/gateway/direct_message.html#%E6%B3%A8%E6%84%8F
     /**
@@ -251,6 +248,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           if (resp.id) {
             session.messageId = resp.id
             session.timestamp = new Date(resp.timestamp).valueOf()
+            session.channelId = this.session.channelId
+            session.guildId = this.session.guildId
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
           } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
@@ -301,16 +300,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   }
 
   async sendFile(type: string, attrs: Dict) {
-    let url = attrs.src || attrs.url, entry: Entry | undefined
-    if (await this.bot.ctx.http.isLocal(url)) {
-      const temp = this.bot.ctx.get('server.temp')
-      if (!temp) {
-        return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')
-      }
-      entry = await temp.create(url)
-      url = entry.url
-    }
-    await this.flush()
+    const url = attrs.src || attrs.url
     let file_type = 0
     if (type === 'img' || type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
@@ -318,8 +308,15 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     else return
     const data: QQ.Message.File.Request = {
       file_type,
-      url,
       srv_send_msg: false,
+    }
+    const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
+    if (capture?.[2]) {
+      data.file_data = capture[2]
+    } else if (await this.bot.ctx.http.isLocal(url)) {
+      data.file_data = Buffer.from((await this.bot.ctx.http.file(url)).data).toString('base64')
+    } else {
+      data.url = url
     }
     let res: QQ.Message.File.Response
     try {
@@ -337,7 +334,6 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         await this.sendFile(type, attrs)
       }
     }
-    entry?.dispose?.()
     this.retry = false
     return res
   }
@@ -395,11 +391,39 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
-    } else if ((type === 'video' || type === 'audio') && (attrs.src || attrs.url)) {
+    } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
       await this.flush() // text can't send with video
+    } else if (type === 'audio' && (attrs.src || attrs.url)) {
+      await this.flush()
+      const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+      if (data.slice(0, 7).toString().includes('#!SILK')) {
+        const onlineFile = await this.sendFile(type, {
+          src: `data:audio/amr;base64,` + Buffer.from(data).toString('base64'),
+        })
+        this.attachedFile = onlineFile
+      } else {
+        const silk = this.bot.ctx.get('silk')
+        if (!silk) return this.bot.logger.warn('missing silk service, cannot send non-silk audio')
+        if (silk.isWav(data)) {
+          const result = await silk.encode(data, 0)
+          const onlineFile = await this.sendFile(type, {
+            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+          })
+          if (onlineFile) this.attachedFile = onlineFile
+        } else {
+          if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except wav')
+          const wavBuf = await this.bot.ctx.get('ffmpeg').builder().input(Buffer.from(data)).outputOption('-ar', '24000', '-ac', '1', '-f', 's16le').run('buffer')
+          const result = await silk.encode(wavBuf, 24000)
+          const onlineFile = await this.sendFile(type, {
+            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+          })
+          if (onlineFile) this.attachedFile = onlineFile
+        }
+      }
+      await this.flush()
     } else if (type === 'br') {
       this.content += '\n'
     } else if (type === 'p') {

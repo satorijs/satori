@@ -119,6 +119,10 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
           session.setInternal(parsed.body._type, parsed.body._data)
         }
         bot.dispatch(session)
+        // temporary solution for `send` event
+        if (type === 'message-created' && session.userId === selfId) {
+          session.app.emit(session, 'send', session)
+        }
       }
     })
 

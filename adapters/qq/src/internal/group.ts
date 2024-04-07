@@ -19,6 +19,8 @@ declare module './internal' {
     }): Promise<any>
     getGateway(): Promise<QQ.GetGatewayResponse>
     getGatewayBot(): Promise<QQ.GetGatewayBotResponse>
+    deleteMessage(openid: string, message_id: string): Promise<any>
+    deletePrivateMessage(userid: string, message_id: string): Promise<any>
   }
 }
 
@@ -26,8 +28,14 @@ GroupInternal.define(false, {
   '/v2/groups/{channel.id}/messages': {
     POST: 'sendMessage',
   },
+  '/v2/groups/{channel.id}/messages/{message.id}': {
+    DELETE: 'deleteMessage',
+  },
   '/v2/users/{user.id}/messages': {
     POST: 'sendPrivateMessage',
+  },
+  '/v2/users/{user.id}/messages/{message.id}': {
+    DELETE: 'deletePrivateMessage',
   },
   '/v2/users/{user.id}/files': {
     POST: 'sendFilePrivate',
