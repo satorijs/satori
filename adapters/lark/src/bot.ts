@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, h, Quester, Schema, Universal } from '@satorijs/satori'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
@@ -23,7 +23,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
       this.logger.warn('selfUrl is not set, some features may not work')
     }
 
-    this.selfId = config.appId
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
     })
@@ -33,13 +32,29 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     ctx.plugin(HttpServer, this)
   }
 
+  get appId() {
+    return this.config.appId
+  }
+
   async initialize() {
     await this.refreshToken()
+    const { bot } = await this.http.get<{
+      bot: {
+        activate_status: number
+        app_name: string
+        avatar_url: string
+        ip_white_list: any[]
+        open_id: string
+      }
+    }>('/bot/v3/info')
+    this.selfId = bot.open_id
+    this.user.avatar = bot.avatar_url
+    this.user.name = bot.app_name
     this.online()
   }
 
   private async refreshToken() {
-    const { tenant_access_token: token } = await this.internal.getTenantAccessToken({
+    const { tenant_access_token: token } = await this.internal.tenantAccessTokenInternalAuth({
       app_id: this.config.appId,
       app_secret: this.config.appSecret,
     })
@@ -62,35 +77,38 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async editMessage(channelId: string, messageId: string, content: h.Fragment) {
-    await this.internal.updateMessage(messageId, {
+    await this.internal.updateImMessage(messageId, {
       content: h.normalize(content).join(''),
       msg_type: 'text',
     })
   }
 
   async deleteMessage(channelId: string, messageId: string) {
-    await this.internal.deleteMessage(messageId)
+    await this.internal.deleteImMessage(messageId)
   }
 
-  async getMessage(channelId: string, messageId: string) {
-    const data = await this.internal.getMessage(messageId)
-    return await Utils.decodeMessage(this, data.data)
+  async getMessage(channelId: string, messageId: string, recursive = true) {
+    const data = await this.internal.getImMessage(messageId)
+    const message = await Utils.decodeMessage(this, data.data.items[0], recursive)
+    const im = await this.internal.getImChat(channelId)
+    message.channel.type = im.data.chat_mode === 'p2p' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT
+    return message
   }
 
   async getMessageList(channelId: string, before?: string) {
-    const { data: messages } = await this.internal.getMessageList({ container_id_type: 'chat', container_id: channelId, page_token: before })
+    const { data: messages } = await this.internal.listImMessage({ container_id_type: 'chat', container_id: channelId, page_token: before })
     const data = await Promise.all(messages.items.reverse().map(data => Utils.decodeMessage(this, data)))
     return { data, next: data[0]?.id }
   }
 
   async getUser(userId: string, guildId?: string) {
     const data = await this.internal.getContactUser(userId)
-    return Utils.decodeUser(data.data)
+    return Utils.decodeUser(data.data.user)
   }
 
   async getChannel(channelId: string) {
-    const { data } = await this.internal.getGuildInfo(channelId)
-    return Utils.decodeChannel(data)
+    const { data } = await this.internal.getImChat(channelId)
+    return Utils.decodeChannel(channelId, data)
   }
 
   async getChannelList(guildId: string) {
@@ -98,17 +116,17 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async getGuild(guildId: string) {
-    const { data } = await this.internal.getGuildInfo(guildId)
+    const { data } = await this.internal.getImChat(guildId)
     return Utils.decodeGuild(data)
   }
 
   async getGuildList(after?: string) {
-    const { data: guilds } = await this.internal.getCurrentUserGuilds({ page_token: after })
+    const { data: guilds } = await this.internal.listImChat({ page_token: after })
     return { data: guilds.items.map(Utils.decodeGuild), next: guilds.page_token }
   }
 
   async getGuildMemberList(guildId: string, after?: string) {
-    const { data: users } = await this.internal.getGuildMembers(guildId, { page_token: after })
+    const { data: users } = await this.internal.getImChatMembers(guildId, { page_token: after })
     const data = users.items.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
     return { data, next: users.page_token }
   }
