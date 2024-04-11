@@ -1,7 +1,7 @@
 {
-  "name": "@satorijs/server-satori",
-  "description": "Basic API server for Satori protocol",
-  "version": "2.4.3",
+  "name": "@satorijs/database",
+  "description": "Database for Satori protocol",
+  "version": "0.1.0",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -23,23 +23,25 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "packages/server-satori"
+    "directory": "packages/database"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
   },
-  "homepage": "https://github.com/satorijs/satori/tree/master/packages/server-satori",
+  "homepage": "https://github.com/satorijs/satori/tree/master/packages/database",
   "keywords": [
     "satori",
     "protocol",
     "server",
     "basic",
-    "api"
+    "api",
+    "database"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.8"
+    "@satorijs/server-satori": "^2.4.3"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.6"
+    "@satorijs/satori": "^3.6.6",
+    "minato": "^3.1.1"
   }
 }
