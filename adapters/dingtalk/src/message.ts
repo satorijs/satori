@@ -1,7 +1,7 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
 import { DingtalkBot } from './bot'
 import { SendMessageData } from './types'
-import { Entry } from '@satorijs/server-temp'
+import { Entry } from '@cordisjs/server-temp'
 
 export const escape = (val: string) =>
   val

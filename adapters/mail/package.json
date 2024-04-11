@@ -31,14 +31,14 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.5"
+    "@satorijs/satori": "^3.6.6"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.4",
     "html5parser": "^2.0.2",
-    "mailparser": "^3.6.5",
+    "mailparser": "^3.6.9",
     "node-imap": "^0.9.6",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.13"
   },
   "devDependencies": {
     "@types/node-imap": "^0.9.3",

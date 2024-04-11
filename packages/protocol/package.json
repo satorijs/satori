@@ -39,6 +39,6 @@
   ],
   "dependencies": {
     "@satorijs/element": "^3.1.6",
-    "cosmokit": "^1.5.2"
+    "cosmokit": "^1.6.2"
   }
 }
