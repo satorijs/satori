@@ -13,7 +13,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
       const key = snakeCase(prefix.slice(1))
-      bot.logger.debug("[request.internal]", key, args)
+      bot.logger.debug('[request.internal]', key, args)
       return bot.http.post('/v1/internal/' + key, args)
     },
     get(target, key, receiver) {

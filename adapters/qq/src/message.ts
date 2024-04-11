@@ -415,7 +415,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           if (onlineFile) this.attachedFile = onlineFile
         } else {
           if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except wav')
-          const wavBuf = await this.bot.ctx.get('ffmpeg').builder().input(Buffer.from(data)).outputOption('-ar', '24000', '-ac', '1', '-f', 's16le').run('buffer')
+          const wavBuf = await this.bot.ctx.get('ffmpeg')
+            .builder()
+            .input(Buffer.from(data))
+            .outputOption('-ar', '24000', '-ac', '1', '-f', 's16le')
+            .run('buffer')
           const result = await silk.encode(wavBuf, 24000)
           const onlineFile = await this.sendFile(type, {
             src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
