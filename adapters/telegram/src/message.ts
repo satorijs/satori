@@ -23,7 +23,8 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
   async addResult(result: Telegram.Message) {
     const session = this.bot.session()
     await Telegram.decodeMessage(this.bot, result, session.event.message = {}, session.event)
-    session.event._data = result
+    session.event._data ??= {}
+    session.event._data.message = result
     this.results.push(session.event.message)
     session.app.emit(session, 'send', session)
   }
