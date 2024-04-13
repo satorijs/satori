@@ -5,6 +5,7 @@ import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import FileType from 'file-type'
+import { TelegramClient } from 'telegram'
 
 export class SenderError extends Error {
   constructor(args: Dict<any>, url: string, retcode: number, selfId: string) {
@@ -34,7 +35,10 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   local?: boolean
   server?: string
 
+  telegram: TelegramClient
+
   constructor(ctx: C, config: T) {
+    console.log(114514)
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local

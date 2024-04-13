@@ -39,6 +39,7 @@
     "@satorijs/satori": "^3.6.6"
   },
   "dependencies": {
-    "file-type": "^16.5.4"
+    "file-type": "^16.5.4",
+    "telegram": "^2.20.15"
   }
 }
