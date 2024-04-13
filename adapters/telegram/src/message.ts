@@ -1,4 +1,4 @@
-import { Context, Dict, file, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, Element, file, h, MessageEncoder } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
@@ -37,6 +37,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           data: ArrayBuffer
           mime: string
           type: string
+          element: Element
         }[] = []
 
         const typeMap = {
@@ -55,15 +56,19 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             data,
             mime,
             type: filename.endsWith('gif') ? 'animation' : typeMap[element.type] ?? element.type,
+            element
           })
         }
 
         // Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo
         const inputFiles: Telegram.InputFile[] = []
 
-        for (const { filename, data, mime, type } of files) {
+        for (const { filename, data, mime, type, element } of files) {
           const media = 'attach://' + filename
-          inputFiles.push({ media, type })
+          inputFiles.push({
+            media, type,
+            has_spoiler: element.attrs.spoiler
+          })
         }
 
         if (files.length > 1) {
@@ -134,6 +139,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           formData.append('parse_mode', this.payload.parse_mode)
           formData.append('reply_to_message_id', this.payload.reply_to_message_id)
           formData.append('message_thread_id', this.payload.message_thread_id)
+          formData.append('has_spoiler', files[0].element.attrs.spoiler ? 'true' : 'false')
           formData.append(dataKey, 'attach://' + files[0].filename)
           formData.append(files[0].filename, new Blob([files[0].data], { type: files[0].mime }), files[0].filename)
 
