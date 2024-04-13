@@ -75,6 +75,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
         session.event.message.elements = updates.reduce((acc, cur) => acc.concat(cur.elements), [])
         session.event.message.content = session.event.message.elements.join('')
         session.event.message.id = Math.min(...updates.map(e => e.id)).toString()
+        session.event._data.mediaGroup = updates.map(e => e.id)
       } else {
         // the media group is still updating
         return
