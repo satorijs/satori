@@ -144,35 +144,6 @@ export async function decodeMessage(
   payload: Universal.MessageLike = message,
 ) {
   const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
-    // console.log(entities)
-    // for (const e of entities) {
-    //   const eText = text.substr(e.offset, e.length)
-    //   if (e.type === 'mention') {
-    //     if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
-    //     const atName = eText.slice(1)
-    //     if (eText === '@' + bot.user.name) {
-    //       segs.push(h('at', { id: bot.user.id, name: atName }))
-    //     } else {
-    //       // TODO handle @others
-    //       segs.push(h('text', { content: eText }))
-    //     }
-    //   } else if (e.type === 'text_mention') {
-    //     segs.push(h('at', { id: e.user.id }))
-    //   } else {
-
-    //     // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
-    //     //       text_link, custom_emoji
-    //     segs.push(h('text', { content: eText }))
-    //   }
-    //   if (e.offset > curr) {
-    //     segs.splice(-1, 0, h('text', { content: text.slice(curr, e.offset) }))
-    //   }
-    //   curr = e.offset + e.length
-    // }
-    // if (curr < text?.length || 0) {
-    //   segs.push(h('text', { content: text.slice(curr) }))
-    // }
-
     const breakpoints = new Set<number>()
     for (const e of entities) {
       breakpoints.add(e.offset)
@@ -227,8 +198,6 @@ export async function decodeMessage(
       }
       start = bp
     }
-
-    console.log(segs)
 
     return segs
   }

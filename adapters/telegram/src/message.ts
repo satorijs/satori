@@ -66,7 +66,6 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
 
         inputFiles[0].caption = this.payload.caption
         inputFiles[0].parse_mode = this.payload.parse_mode
-        console.log(inputFiles)
 
         const form = new FormData()
 

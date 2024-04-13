@@ -38,7 +38,6 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   telegram: TelegramClient
 
   constructor(ctx: C, config: T) {
-    console.log(114514)
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
