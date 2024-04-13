@@ -54,7 +54,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     await decodeMessage(bot, message, session.event.message = {}, session.event)
     session.content = session.content.slice(1)
   } else if (message) {
-    if (update.message.media_group_id) {
+    if (update.message?.media_group_id) {
       if (!mediaGroupMap.has(update.message.media_group_id))
         mediaGroupMap.set(update.message.media_group_id, [new Date(), []])
 
