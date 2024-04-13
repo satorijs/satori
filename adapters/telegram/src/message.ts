@@ -28,7 +28,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
   }
 
   async flush() {
-    if (this.payload.caption) {
+    if (this.payload.caption || this.asset.length > 0) {
       this.trimButtons()
 
       if (this.asset.length > 0) {
@@ -64,53 +64,82 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           }
         }
 
-        inputFiles[0].caption = this.payload.caption
-        inputFiles[0].parse_mode = this.payload.parse_mode
+        if (files.length > 1) {
+          inputFiles[0].caption = this.payload.caption
+          inputFiles[0].parse_mode = this.payload.parse_mode
 
-        const form = new FormData()
+          const form = new FormData()
 
-        const data = {
-          chat_id: this.payload.chat_id,
-          reply_to_message_id: this.payload.reply_to_message_id,
-          message_thread_id: this.payload.message_thread_id,
-          media: JSON.stringify(inputFiles)
-        }
-        for (const key in data) {
-          form.append(key, data[key])
-        }
-
-        for (const { filename, data, mime } of files) {
-          form.append(filename, new Blob([data], { type: mime }), filename)
-        }
-
-        // @ts-ignore
-        const result = await this.bot.internal.sendMediaGroup(form)
-
-        for (const x of result)
-          await this.addResult(x)
-
-        if (this.rows.length > 0 && this.rows[0].length > 0) {
-          const result2 = await this.bot.internal.sendMessage({
+          const data = {
             chat_id: this.payload.chat_id,
-            text: this.payload.caption,
-            parse_mode: this.payload.parse_mode,
-            reply_to_message_id: result[0].message_id,
+            reply_to_message_id: this.payload.reply_to_message_id,
             message_thread_id: this.payload.message_thread_id,
-            disable_web_page_preview: !this.options.linkPreview,
-            reply_markup: {
-              inline_keyboard: this.rows,
-            },
-          })
+            media: JSON.stringify(inputFiles)
+          }
+          for (const key in data) {
+            form.append(key, data[key])
+          }
 
-          await this.addResult(result2)
+          for (const { filename, data, mime } of files) {
+            form.append(filename, new Blob([data], { type: mime }), filename)
+          }
+
+          // @ts-ignore
+          const result = await this.bot.internal.sendMediaGroup(form)
+
+          for (const x of result)
+            await this.addResult(x)
+
+          if (this.rows.length > 0 && this.rows[0].length > 0) {
+            const result2 = await this.bot.internal.sendMessage({
+              chat_id: this.payload.chat_id,
+              text: this.payload.caption,
+              parse_mode: this.payload.parse_mode,
+              reply_to_message_id: result[0].message_id,
+              message_thread_id: this.payload.message_thread_id,
+              disable_web_page_preview: !this.options.linkPreview,
+              reply_markup: {
+                inline_keyboard: this.rows,
+              },
+            })
+
+            await this.addResult(result2)
+            delete this.payload.reply_to_message_id
+            this.payload.caption = ''
+            this.rows = []
+          }
+
           delete this.payload.reply_to_message_id
           this.payload.caption = ''
           this.rows = []
-        }
+        } else {
+          const sendMap = [
+            ['audio', ['sendAudio', 'audio']],
+            ['video', ['sendVideo', 'video']],
+            ['animation', ['sendAnimation', 'animation']],
+            ['image/gif', ['sendAnimation', 'animation']],
+            ['image/', ['sendPhoto', 'photo']],
+            ['', ['sendDocument', 'document']],
+          ] as const
 
-        delete this.payload.reply_to_message_id
-        this.payload.caption = ''
-        this.rows = []
+          const [_, [method, dataKey]] = sendMap.find(([key]) => files[0].mime.startsWith(key)) || []
+
+          const formData = new FormData()
+          formData.append('chat_id', this.payload.chat_id)
+          formData.append('caption', this.payload.caption)
+          formData.append('parse_mode', this.payload.parse_mode)
+          formData.append('reply_to_message_id', this.payload.reply_to_message_id)
+          formData.append('message_thread_id', this.payload.message_thread_id)
+          formData.append(dataKey, 'attach://' + files[0].filename)
+          formData.append(files[0].filename, new Blob([files[0].data], { type: files[0].mime }), files[0].filename)
+
+          // @ts-ignore
+          const result = await this.bot.internal[method](formData)
+          await this.addResult(result)
+          this.payload.caption = ''
+          this.rows = []
+          delete this.payload.reply_to_message_id
+        }
       } else {
         const result = await this.bot.internal.sendMessage({
           chat_id: this.payload.chat_id,
