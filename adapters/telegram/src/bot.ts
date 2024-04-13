@@ -61,8 +61,9 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       this.server = selfUrl + route
       ctx.get('server').get(route + '/:file+', async ctx => {
         const { data, mime } = await this.$getFile(ctx.params.file)
+        console.log(ctx.params.file, data)
         ctx.set('content-type', mime)
-        ctx.body = data
+        ctx.body = Buffer.from(data)
       })
     }
   }
