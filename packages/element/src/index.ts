@@ -58,7 +58,7 @@ interface Element {
   toString(strip?: boolean): string
 }
 
-interface ElementConstructor extends Element {}
+interface ElementConstructor extends Element { }
 
 class ElementConstructor {
   get data() {
@@ -180,10 +180,10 @@ namespace Element {
   }
 
   export function escape(source: string, inline = false) {
-    const result = source
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
+    const result
+      = (source ?? '').replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
     return inline
       ? result.replace(/"/g, '&quot;')
       : result
@@ -511,7 +511,7 @@ namespace Element {
   }
 
   // eslint-disable-next-line prefer-const
-  export let warn: (message: string) => void = () => {}
+  export let warn: (message: string) => void = () => { }
 
   function createAssetFactory(type: string): Factory<[data: string] | [data: Buffer | ArrayBuffer | ArrayBufferView, type: string]> {
     return (src, ...args) => {
