@@ -254,6 +254,8 @@ export async function decodeMessage(
     await addResource('video', data.video)
   } else if (data.document) {
     await addResource('file', data.document)
+  } else if (data.audio) {
+    await addResource('audio', data.audio)
   }
 
   message.elements = segments
