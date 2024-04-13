@@ -5,7 +5,6 @@ import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import FileType from 'file-type'
-import { TelegramClient } from 'telegram'
 
 export class SenderError extends Error {
   constructor(args: Dict<any>, url: string, retcode: number, selfId: string) {
