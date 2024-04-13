@@ -36,7 +36,16 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           filename: string
           data: ArrayBuffer
           mime: string
+          type: string
         }[] = []
+
+        const typeMap = {
+          img: 'photo',
+          image: 'photo',
+          audio: 'audio',
+          video: 'video',
+          file: 'document',
+        }
 
         let i = 0;
         for (const element of this.asset) {
@@ -44,24 +53,17 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           files.push({
             filename: (i++) + filename,
             data,
-            mime
+            mime,
+            type: filename.endsWith('gif') ? 'animation' : typeMap[element.type] ?? element.type,
           })
         }
 
         // Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo
         const inputFiles: Telegram.InputFile[] = []
 
-        for (const { filename, data, mime } of files) {
+        for (const { filename, data, mime, type } of files) {
           const media = 'attach://' + filename
-          if (mime.startsWith('image/')) {
-            inputFiles.push({ type: 'photo', media })
-          } else if (mime.startsWith('audio/')) {
-            inputFiles.push({ type: 'audio', media })
-          } else if (mime.startsWith('video/')) {
-            inputFiles.push({ type: 'video', media })
-          } else {
-            inputFiles.push({ type: 'document', media })
-          }
+          inputFiles.push({ media, type })
         }
 
         if (files.length > 1) {
@@ -115,14 +117,16 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
         } else {
           const sendMap = [
             ['audio', ['sendAudio', 'audio']],
+            ['voice', ['sendAudio', 'audio']],
             ['video', ['sendVideo', 'video']],
             ['animation', ['sendAnimation', 'animation']],
-            ['image/gif', ['sendAnimation', 'animation']],
-            ['image/', ['sendPhoto', 'photo']],
+            ['image', ['sendPhoto', 'photo']],
+            ['photo', ['sendPhoto', 'photo']],
+            ['document', ['sendDocument', 'document']],
             ['', ['sendDocument', 'document']],
           ] as const
-
-          const [_, [method, dataKey]] = sendMap.find(([key]) => files[0].mime.startsWith(key)) || []
+          console.log(files[0].type)
+          const [_, [method, dataKey]] = sendMap.find(([key]) => files[0].type.startsWith(key)) || []
 
           const formData = new FormData()
           formData.append('chat_id', this.payload.chat_id)
