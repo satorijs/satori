@@ -34,6 +34,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   local?: boolean
   server?: string
 
+  telegram: TelegramClient
+
   constructor(ctx: C, config: T) {
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
@@ -59,7 +61,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       ctx.get('server').get(route + '/:file+', async ctx => {
         const { data, mime } = await this.$getFile(ctx.params.file)
         ctx.set('content-type', mime)
-        ctx.body = data
+        ctx.body = Buffer.from(data)
       })
     }
   }

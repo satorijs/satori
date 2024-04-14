@@ -16,6 +16,11 @@ export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMem
   title: data['custom_title'],
 })
 
+const mediaGroupMap = new Map<string, [Date, {
+  id: number,
+  elements: h[]
+}[]]>()
+
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   bot.logger.debug('receive %s', JSON.stringify(update))
   // Internal event: get update type from field name.
@@ -49,8 +54,36 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     await decodeMessage(bot, message, session.event.message = {}, session.event)
     session.content = session.content.slice(1)
   } else if (message) {
-    session.type = update.message || update.channel_post ? 'message' : 'message-updated'
-    await decodeMessage(bot, message, session.event.message = {}, session.event)
+    if (update.message?.media_group_id) {
+      if (!mediaGroupMap.has(update.message.media_group_id))
+        mediaGroupMap.set(update.message.media_group_id, [new Date(), []])
+
+      const [date, updates] = mediaGroupMap.get(update.message.media_group_id)
+      session.type = update.message || update.channel_post ? 'message' : 'message-updated'
+      await decodeMessage(bot, message, session.event.message = {}, session.event)
+      updates.push({
+        id: update.message.message_id,
+        elements: session.event.message.elements
+      })
+
+      let thisUpdateTime = new Date()
+      mediaGroupMap.set(update.message.media_group_id, [thisUpdateTime, updates])
+      await new Promise(r => setTimeout(r, 800))
+      if (mediaGroupMap.get(update.message.media_group_id)[0] === thisUpdateTime) {
+        mediaGroupMap.delete(update.message.media_group_id)
+        // merge all messages
+        session.event.message.elements = updates.reduce((acc, cur) => acc.concat(cur.elements), [])
+        session.event.message.content = session.event.message.elements.join('')
+        session.event.message.id = Math.min(...updates.map(e => e.id)).toString()
+        session.event._data.mediaGroup = updates.map(e => e.id)
+      } else {
+        // the media group is still updating
+        return
+      }
+    } else {
+      session.type = update.message || update.channel_post ? 'message' : 'message-updated'
+      await decodeMessage(bot, message, session.event.message = {}, session.event)
+    }
   } else if (update.chat_join_request) {
     session.timestamp = update.chat_join_request.date * 1000
     session.type = 'guild-member-request'
@@ -111,35 +144,63 @@ export async function decodeMessage(
   message: Universal.Message,
   payload: Universal.MessageLike = message,
 ) {
-  const parseText = (text: string, entities: Telegram.MessageEntity[]): h[] => {
-    let curr = 0
-    const segs: h[] = []
+  const parseText = (text: string | undefined, entities: Telegram.MessageEntity[]): h[] => {
+    if (!text) return []
+    const breakpoints = new Set<number>()
     for (const e of entities) {
-      const eText = text.substr(e.offset, e.length)
-      if (e.type === 'mention') {
-        if (eText[0] !== '@') throw new Error('Telegram mention does not start with @: ' + eText)
-        const atName = eText.slice(1)
-        if (eText === '@' + bot.user.name) {
-          segs.push(h('at', { id: bot.user.id, name: atName }))
-        } else {
-          // TODO handle @others
-          segs.push(h('text', { content: eText }))
+      breakpoints.add(e.offset)
+      breakpoints.add(e.offset + e.length)
+    }
+
+    breakpoints.add(text.length)
+
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === '\n') {
+        breakpoints.add(i)
+        breakpoints.add(i + 1)
+      }
+    }
+
+    const obtainAttributeAtBP = (bp: number) => {
+      const attr = []
+      let url = null, user = null
+      for (const e of entities) {
+        if (e.offset <= bp && e.offset + e.length > bp) {
+          attr.push(e.type)
+
+          if (e.type === 'text_link') {
+            url = e.url
+          } else if (e.type === 'mention') {
+            user = e.user
+          }
         }
-      } else if (e.type === 'text_mention') {
-        segs.push(h('at', { id: e.user.id }))
-      } else {
-        // TODO: bold, italic, underline, strikethrough, spoiler, code, pre,
-        //       text_link, custom_emoji
-        segs.push(h('text', { content: eText }))
       }
-      if (e.offset > curr) {
-        segs.splice(-1, 0, h('text', { content: text.slice(curr, e.offset) }))
+
+      return { attr, url, user }
+    }
+
+    const segs: h[] = []
+    let start = 0
+    for (const bp of Array.from(breakpoints).sort((a, b) => a - b)) {
+      if (start < bp) {
+        const { attr, url, user } = obtainAttributeAtBP(start)
+        const content = text.slice(start, bp)
+        let ele = h('text', { content })
+        if (attr.includes('bold')) ele = h('b', {}, ele)
+        if (attr.includes('italic')) ele = h('i', {}, ele)
+        if (attr.includes('underline')) ele = h('u', {}, ele)
+        if (attr.includes('strikethrough')) ele = h('s', {}, ele)
+        if (attr.includes('code')) ele = h('code', {}, ele)
+        if (attr.includes('pre')) ele = h('pre', {}, ele)
+        if (attr.includes('spoiler')) ele = h('spl', {}, ele)
+        if (url) ele = h('a', { href: url }, ele)
+        if (user) ele = h('at', { id: user.id }, ele)
+        if (content === '\n') ele = h('br')
+        segs.push(ele)
       }
-      curr = e.offset + e.length
+      start = bp
     }
-    if (curr < text?.length || 0) {
-      segs.push(h('text', { content: text.slice(curr) }))
-    }
+
     return segs
   }
 
@@ -152,7 +213,7 @@ export async function decodeMessage(
 
   // make sure text comes first so that commands can be triggered
   const msgText = data.text || data.caption
-  segments.push(...parseText(msgText, data.entities || []))
+  segments.push(...parseText(msgText, [...(data.entities ?? []), ...(data.caption_entities ?? [])]))
 
   if (data.caption) {
     // add a space to separate caption from media
@@ -194,6 +255,8 @@ export async function decodeMessage(
     await addResource('video', data.video)
   } else if (data.document) {
     await addResource('file', data.document)
+  } else if (data.audio) {
+    await addResource('audio', data.audio)
   }
 
   message.elements = segments
@@ -202,7 +265,7 @@ export async function decodeMessage(
 
   if (!payload) return
   payload.timestamp = data.date * 1000
-  payload.user = decodeUser(data.from)
+  payload.user = data.from ? decodeUser(data.from) : {} as any
   if (data.chat.type === 'private') {
     payload.channel = {
       id: data.chat.id.toString(),
