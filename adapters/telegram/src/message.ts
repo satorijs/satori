@@ -132,7 +132,6 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             ['document', ['sendDocument', 'document']],
             ['', ['sendDocument', 'document']],
           ] as const
-          console.log(files[0].type)
           const [_, [method, dataKey]] = sendMap.find(([key]) => files[0].type.startsWith(key)) || []
 
           const formData = new FormData()
