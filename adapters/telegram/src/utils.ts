@@ -145,7 +145,6 @@ export async function decodeMessage(
   payload: Universal.MessageLike = message,
 ) {
   const parseText = (text: string | undefined, entities: Telegram.MessageEntity[]): h[] => {
-    console.log(entities)
     if (!text) return []
     const breakpoints = new Set<number>()
     for (const e of entities) {
