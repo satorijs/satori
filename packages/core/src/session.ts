@@ -27,8 +27,6 @@ export interface Session {
   quote: Message
 }
 
-export interface Session extends Context.Associate<'session'> {}
-
 export class Session<C extends Context = Context> {
   static counter = 0
 

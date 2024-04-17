@@ -87,7 +87,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   set status(value) {
     if (value === this._status) return
     this._status = value
-    if (this.ctx.bots.includes(this)) {
+    if (this.ctx.bots?.includes(this)) {
       this.context.emit('bot-status-updated', this)
       this.dispatchLoginEvent('login-updated')
     }

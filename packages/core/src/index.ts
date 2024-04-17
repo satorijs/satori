@@ -98,17 +98,37 @@ export interface Events<C extends Context = Context> extends cordis.Events<C> {
   'bot-disconnect'(client: Bot<C>): Awaitable<void>
 }
 
-export interface Events<C extends Context = Context> extends cordis.Events<C> {}
-
 export interface Context {
   [Context.events]: Events<this>
   [Context.session]: Session<this>
+  satori: Satori<this>
+  bots: Bot<this>[] & Dict<Bot<this>>
+  component(name: string, component: Component<GetSession<this>>, options?: Component.Options): () => void
 }
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session')
   // remove generic type to loosen the constraint
   static readonly Session = Session as new (bot: Bot, event: Partial<Event>) => Session
+
+  constructor(config?: any) {
+    super(config)
+    this.provide('http', undefined, true)
+    this.provide('satori', undefined, true)
+    this.plugin(HTTP, config.request)
+    this.plugin(file)
+    this.plugin(Satori)
+  }
+}
+
+export class Satori<C extends Context> extends cordis.Service<unknown, C> {
+  static [cordis.Service.provide] = 'satori'
+  static [cordis.Service.immediate] = true
+
+  constructor(ctx?: C) {
+    super(ctx)
+    ctx.mixin('satori', ['bots', 'component'])
+  }
 
   public bots = new Proxy([], {
     get(target, prop) {
@@ -126,16 +146,9 @@ export class Context extends cordis.Context {
       target.splice(bot, 1)
       return true
     },
-  }) as Bot<this>[] & Dict<Bot<this>>
+  }) as Bot<C>[] & Dict<Bot<C>>
 
-  constructor(config: Context.Config = {}) {
-    super(config)
-    this.provide('http', undefined, true)
-    this.plugin(HTTP, config.request)
-    this.plugin(file)
-  }
-
-  component(name: string, component: Component<this[typeof Context.session]>, options: Component.Options = {}) {
+  component(name: string, component: Component<C[typeof Context.session]>, options: Component.Options = {}) {
     const render: Component = async (attrs, children, session) => {
       if (options.session && session.type === 'send') {
         throw new Error('interactive components is not available outside sessions')
@@ -143,28 +156,6 @@ export class Context extends cordis.Context {
       const result = await component(attrs, children, session)
       return session.transform(h.normalize(result))
     }
-    return this.set('component:' + name, render)
-  }
-}
-
-export namespace Context {
-  export interface Config {
-    request?: HTTP.Config
-  }
-
-  export const Config: Config.Static = z.intersect([
-    z.object({}),
-  ])
-
-  namespace Config {
-    export interface Static extends z<Config> {}
-  }
-
-  export type Associate<P extends string, C extends Context = Context> = cordis.Context.Associate<P, C>
-}
-
-export abstract class Service<T = any, C extends Context = Context> extends cordis.Service<T, C> {
-  [cordis.Service.setup]() {
-    this.ctx = new Context() as C
+    return this.ctx.set('component:' + name, render)
   }
 }
