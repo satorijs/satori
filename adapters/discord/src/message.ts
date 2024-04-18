@@ -301,7 +301,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     } else if (type === 'audio') {
       await this.sendAsset('file', attrs, {
         ...this.addition,
-        content: this.buffer.trim(),
+        content: '',
         attachments: [
           {
             waveform: '', // base64 encoded bytearray representing a sampled waveform
