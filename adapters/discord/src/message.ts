@@ -309,7 +309,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
             duration_secs: attrs.duration ?? 0,
           }
         ],
-        flags: 8192,
+        flags: 1 << 13, // https://discord.com/developers/docs/resources/channel#message-object-message-flags
       })
       this.buffer = ''
     } else if (type === 'author') {
