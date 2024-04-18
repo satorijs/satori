@@ -88,7 +88,8 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     const value = new Blob([data], { type: mime })
-    form.append('file', value, attrs.file || filename)
+    // https://discord.com/developers/docs/reference#uploading-files
+    form.append('files[0]', value, attrs.file || filename)
     form.append('payload_json', JSON.stringify(payload))
     return this.post(form)
   }
@@ -301,6 +302,14 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       await this.sendAsset('file', attrs, {
         ...this.addition,
         content: this.buffer.trim(),
+        attachments: [
+          {
+            waveform: '', // base64 encoded bytearray representing a sampled waveform
+            id: '0',
+            duration_secs: attrs.duration ?? 0,
+          }
+        ],
+        flags: 8192,
       })
       this.buffer = ''
     } else if (type === 'author') {
