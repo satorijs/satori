@@ -307,7 +307,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
             waveform: '', // base64 encoded bytearray representing a sampled waveform
             id: '0',
             duration_secs: attrs.duration ?? 0,
-          }
+          },
         ],
         flags: 1 << 13, // https://discord.com/developers/docs/resources/channel#message-object-message-flags
       })
