@@ -51,6 +51,7 @@ export function decodeGroupMessage(
       message.elements.push(h.video(attachment.url))
     }
   }
+  message.content = message.elements.join('')
 
   message.guild = { id: data.group_id }
   message.user = { id: data.author.id }
