@@ -68,11 +68,13 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
 
       let thisUpdateTime = new Date()
       mediaGroupMap.set(update.message.media_group_id, [thisUpdateTime, updates])
-      await new Promise(r => setTimeout(r, 800))
+      await new Promise(r => setTimeout(r, 1200))
       if (mediaGroupMap.get(update.message.media_group_id)[0] === thisUpdateTime) {
         mediaGroupMap.delete(update.message.media_group_id)
         // merge all messages
-        session.event.message.elements = updates.reduce((acc, cur) => acc.concat(cur.elements), [])
+        session.event.message.elements = updates
+          .sort((a, b) => a.id - b.id)
+          .reduce((acc, cur) => acc.concat(cur.elements), [])
         session.event.message.content = session.event.message.elements.join('')
         session.event.message.id = Math.min(...updates.map(e => e.id)).toString()
         session.event._data.mediaGroup = updates.map(e => e.id)
