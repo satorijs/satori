@@ -54,7 +54,14 @@ export namespace Adapter {
 
       const reconnect = async (initial = false) => {
         logger.debug('websocket client opening')
-        const socket = await this.prepare()
+        let socket: WebSocket
+        try {
+          socket = await this.prepare()
+        } catch (error) {
+          logger.warn(error)
+          return
+        }
+
         // remove query args to protect privacy
         const url = socket.url.replace(/\?.+/, '')
 
