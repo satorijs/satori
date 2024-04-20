@@ -17,7 +17,7 @@ export const decodeGuildMember = (data: Telegram.ChatMember): Universal.GuildMem
 })
 
 const mediaGroupMap = new Map<string, [Date, {
-  id: number,
+  id: number
   elements: h[]
 }[]]>()
 
@@ -55,20 +55,19 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     session.content = session.content.slice(1)
   } else if (message) {
     if (update.message?.media_group_id) {
-      if (!mediaGroupMap.has(update.message.media_group_id))
-        mediaGroupMap.set(update.message.media_group_id, [new Date(), []])
+      if (!mediaGroupMap.has(update.message.media_group_id)) { mediaGroupMap.set(update.message.media_group_id, [new Date(), []]) }
 
-      const [date, updates] = mediaGroupMap.get(update.message.media_group_id)
+      const [, updates] = mediaGroupMap.get(update.message.media_group_id)
       session.type = update.message || update.channel_post ? 'message' : 'message-updated'
       await decodeMessage(bot, message, session.event.message = {}, session.event)
       updates.push({
         id: update.message.message_id,
-        elements: session.event.message.elements
+        elements: session.event.message.elements,
       })
 
-      let thisUpdateTime = new Date()
+      const thisUpdateTime = new Date()
       mediaGroupMap.set(update.message.media_group_id, [thisUpdateTime, updates])
-      await new Promise(r => setTimeout(r, 1200))
+      await new Promise(resolve => setTimeout(resolve, 1200))
       if (mediaGroupMap.get(update.message.media_group_id)[0] === thisUpdateTime) {
         mediaGroupMap.delete(update.message.media_group_id)
         // merge all messages

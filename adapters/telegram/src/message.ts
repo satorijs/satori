@@ -1,4 +1,4 @@
-import { Context, Dict, Element, file, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, Element, h, MessageEncoder } from '@satorijs/satori'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
@@ -50,7 +50,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           file: 'document',
         }
 
-        let i = 0;
+        let i = 0
         for (const element of this.asset) {
           const { filename, data, mime } = await this.bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
           files.push({
@@ -58,18 +58,19 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             data,
             mime,
             type: filename.endsWith('gif') ? 'animation' : typeMap[element.type] ?? element.type,
-            element
+            element,
           })
         }
 
         // Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo
         const inputFiles: Telegram.InputFile[] = []
 
-        for (const { filename, data, mime, type, element } of files) {
+        for (const { filename, type, element } of files) {
           const media = 'attach://' + filename
           inputFiles.push({
-            media, type,
-            has_spoiler: element.attrs.spoiler
+            media,
+            type,
+            has_spoiler: element.attrs.spoiler,
           })
         }
 
@@ -83,7 +84,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             chat_id: this.payload.chat_id,
             reply_to_message_id: this.payload.reply_to_message_id,
             message_thread_id: this.payload.message_thread_id,
-            media: JSON.stringify(inputFiles)
+            media: JSON.stringify(inputFiles),
           }
           for (const key in data) {
             form.append(key, data[key])
@@ -96,8 +97,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           // @ts-ignore
           const result = await this.bot.internal.sendMediaGroup(form)
 
-          for (const x of result)
-            await this.addResult(x)
+          for (const x of result) { await this.addResult(x) }
 
           if (this.rows.length > 0 && this.rows[0].length > 0) {
             const result2 = await this.bot.internal.sendMessage({
@@ -132,7 +132,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             ['document', ['sendDocument', 'document']],
             ['', ['sendDocument', 'document']],
           ] as const
-          const [_, [method, dataKey]] = sendMap.find(([key]) => files[0].type.startsWith(key)) || []
+          const [, [method, dataKey]] = sendMap.find(([key]) => files[0].type.startsWith(key)) || []
 
           const formData = new FormData()
           formData.append('chat_id', this.payload.chat_id)

@@ -34,8 +34,6 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   local?: boolean
   server?: string
 
-  telegram: TelegramClient
-
   constructor(ctx: C, config: T) {
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
