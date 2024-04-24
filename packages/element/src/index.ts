@@ -413,7 +413,7 @@ namespace Element {
         const attrRegExp = context ? attrRegExp2 : attrRegExp1
         let attrCap: RegExpExecArray
         while ((attrCap = attrRegExp.exec(token.extra))) {
-          const [, key, v1, v2 = v1, v3] = attrCap
+          const [, key, v1, v2 = v1, , v3] = attrCap
           if (v3) {
             attrs[key] = interpolate(v3, context)
           } else if (!isNullable(v2)) {
