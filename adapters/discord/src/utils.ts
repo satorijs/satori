@@ -345,14 +345,27 @@ export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationComman
   options: encodeCommandOptions(cmd),
 })
 
-const decodeArgv = (data: Discord.InteractionData.ApplicationCommand, command: Universal.Command) => {
-  const result = { name: data.name, arguments: [], options: {} } as Universal.Argv
+const decodeArgv = (
+  data: Discord.InteractionData.ApplicationCommand | Discord.InteractionData.ApplicationCommand.Option,
+  command: Universal.Command,
+) => {
+  const result = { name: command.name, arguments: [], options: {} } as Universal.Argv
+  const options = data.options
+  if (!options) return result
+  const dataChild = options[0]
+  if (dataChild && (
+      dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND ||
+      dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
+  )) {
+    const commandChild = command.children.find(cmd => cmd.name.endsWith('.' + dataChild.name));
+    return commandChild ? decodeArgv(dataChild, commandChild) : result;
+  }
   for (const argument of command.arguments) {
-    const value = data.options?.find(opt => opt.name === argument.name)?.value
+    const value = options.find(opt => opt.name === argument.name)?.value
     if (value !== undefined) result.arguments.push(value)
   }
   for (const option of command.options) {
-    const value = data.options?.find(opt => opt.name === option.name)?.value
+    const value = options.find(opt => opt.name === option.name)?.value
     if (value !== undefined) result.options[option.name] = value
   }
   return result
