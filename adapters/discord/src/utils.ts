@@ -357,8 +357,8 @@ const decodeArgv = (
       dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND ||
       dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
   )) {
-    const commandChild = command.children.find(cmd => cmd.name.endsWith('.' + dataChild.name));
-    return commandChild ? decodeArgv(dataChild, commandChild) : result;
+    const commandChild = command.children.find(cmd => cmd.name.endsWith('.' + dataChild.name))
+    return commandChild ? decodeArgv(dataChild, commandChild) : result
   }
   for (const argument of command.arguments) {
     const value = options.find(opt => opt.name === argument.name)?.value
