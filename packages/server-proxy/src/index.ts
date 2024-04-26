@@ -1,5 +1,5 @@
 import { Context, Quester, sanitize, Schema } from '@satorijs/satori'
-import {} from '@cordisjs/server'
+import {} from '@cordisjs/plugin-server'
 import internal from 'stream'
 
 declare module '@satorijs/core' {

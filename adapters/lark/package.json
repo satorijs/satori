@@ -33,9 +33,9 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/server": "^0.1.8"
+    "@cordisjs/plugin-server": "^0.2.0"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.6"
+    "@satorijs/satori": "^3.7.0"
   }
 }

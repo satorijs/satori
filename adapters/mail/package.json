@@ -31,7 +31,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.6.6"
+    "@satorijs/satori": "^3.7.0"
   },
   "dependencies": {
     "@types/mailparser": "^3.4.4",

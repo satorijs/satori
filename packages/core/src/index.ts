@@ -3,8 +3,7 @@ import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import { z } from 'cordis'
-import { HTTP } from 'undios'
-import * as file from 'undios-file'
+import { HTTP } from '@cordisjs/plugin-http'
 import { Event, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
@@ -17,7 +16,6 @@ export type { Fragment, Render } from '@satorijs/element'
 export { h, h as Element, h as segment, HTTP, HTTP as Quester }
 
 export * from 'cordis'
-export * as file from 'undios-file'
 
 export * as Universal from '@satorijs/protocol'
 
@@ -26,7 +24,7 @@ export * from './adapter'
 export * from './message'
 export * from './session'
 
-declare module 'undios' {
+declare module '@cordisjs/plugin-http' {
   namespace HTTP {
     export const Config: z<Config>
     export function createConfig(this: typeof HTTP, endpoint?: string | boolean): z<Config>
@@ -116,7 +114,6 @@ export class Context extends cordis.Context {
     this.provide('http', undefined, true)
     this.provide('satori', undefined, true)
     this.plugin(HTTP, config.request)
-    this.plugin(file)
     this.plugin(Satori)
   }
 }

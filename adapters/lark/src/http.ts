@@ -1,7 +1,7 @@
 import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 import { Adapter, Context, Logger, Schema } from '@satorijs/satori'
-import {} from '@cordisjs/server'
+import {} from '@cordisjs/plugin-server'
 
 import { FeishuBot } from './bot'
 import { AllEvents } from './types'

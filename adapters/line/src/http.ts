@@ -1,5 +1,5 @@
 import { Adapter, Context } from '@satorijs/satori'
-import {} from '@cordisjs/server'
+import {} from '@cordisjs/plugin-server'
 import crypto from 'node:crypto'
 import { LineBot } from './bot'
 import { WebhookRequestBody } from './types'

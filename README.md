@@ -55,7 +55,7 @@ await ctx.start()
 
 ```ts
 import { Context } from '@satorijs/satori'
-import router from '@cordisjs/server'
+import router from '@cordisjs/plugin-server'
 import telegram from '@satorijs/adapter-telegram'
 
 // your application will be listening http://localhost:8080
