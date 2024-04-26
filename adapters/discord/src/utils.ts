@@ -380,8 +380,8 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         ? Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
         : Discord.ApplicationCommand.OptionType.SUB_COMMAND,
       options: encodeCommandOptions(child),
-      description: cmd.description[''] || child.name,
-      description_localizations: pick(cmd.description, Discord.Locale),
+      description: child.description[''] || child.name,
+      description_localizations: pick(child.description, Discord.Locale),
     })))
   } else {
     for (const arg of cmd.arguments) {
