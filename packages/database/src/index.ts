@@ -3,19 +3,19 @@ import { Context, Schema, Service } from '@satorijs/satori'
 import { Channel, Guild, Message, User } from '@satorijs/protocol'
 
 declare module 'minato' {
-  namespace Database {
-    export interface Tables {
-      'satori.message': Message & { platform: string }
-      'satori.user': User & { platform: string }
-      'satori.guild': Guild & { platform: string }
-      'satori.channel': Channel & { platform: string }
-    }
+  interface Tables {
+    'satori.message': SDBMessage
+    'satori.user': User & { platform: string }
+    'satori.guild': Guild & { platform: string }
+    'satori.channel': Channel & { platform: string }
   }
 }
 
 declare module '@satorijs/core' {
-  interface Context {
-    sdb: SDB
+  // https://github.com/typescript-eslint/typescript-eslint/issues/6720
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface Satori<C> {
+    database: SatoriDatabase
   }
 }
 
@@ -25,12 +25,26 @@ declare module '@satorijs/protocol' {
   }
 }
 
-class SDB extends Service<SDB.Config> {
-  [Service.provide] = 'sdb'
-  inject = ['database']
+interface SDBMessage extends Message {
+  platform: string
+  syncFlag: number
+  sendFlag: number
+  deleted: boolean
+  edited: boolean
+}
 
-  constructor(ctx: Context, config: SDB) {
-    super(ctx, config)
+class SatoriDatabase extends Service<SatoriDatabase.Config> {
+  inject = ['model', 'database']
+
+  constructor(ctx: Context, public config: SatoriDatabase.Config) {
+    super(ctx, 'satori.database', true)
+
+    // TODO bot mixin
+    // ctx.mixin('satori.database', {
+    //   'createMessage': 'bot.createMessage',
+    //   'getMessage': 'bot.getMessage',
+    //   'getMessageList': 'bot.getMessageList',
+    // })
 
     ctx.model.extend('satori.message', {
       'uid': 'unsigned(8)', // int64
@@ -43,6 +57,10 @@ class SDB extends Service<SDB.Config> {
       'content': 'text',
       'createdAt': 'unsigned(8)',
       'updatedAt': 'unsigned(8)',
+      'syncFlag': 'unsigned(1)',
+      'sendFlag': 'unsigned(1)',
+      'deleted': 'boolean',
+      'edited': 'boolean',
     }, {
       primary: 'uid',
     })
@@ -72,13 +90,29 @@ class SDB extends Service<SDB.Config> {
     }, {
       primary: ['id', 'platform'],
     })
+
+    ctx.on('login-updated', () => {
+      // TODO
+    })
+
+    ctx.on('message', () => {
+      // TODO
+    })
+
+    ctx.on('message-deleted', () => {
+      // TODO
+    })
+
+    ctx.on('message-updated', () => {
+      // TODO
+    })
   }
 }
 
-namespace SDB {
+namespace SatoriDatabase {
   export interface Config {}
 
   export const Config: Schema<Config> = Schema.object({})
 }
 
-export default SDB
+export default SatoriDatabase
