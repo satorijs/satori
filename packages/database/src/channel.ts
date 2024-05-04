@@ -1,4 +1,5 @@
-import { Context, Logger, pick, Session } from '@satorijs/satori'
+import { Context, Logger, Session, Universal } from '@satorijs/satori'
+import { Flatten, Query } from 'minato'
 import { Message, SyncFlag } from '.'
 
 const logger = new Logger('sync')
@@ -9,24 +10,32 @@ export enum SyncStatus {
   FAILED,
 }
 
-interface Interval {
-  front: bigint
-  back: bigint
+interface Span {
+  front: SpanID
+  back: SpanID
   queue?: boolean
 }
+
+type SpanID = [bigint, string]
 
 export class SyncChannel {
   public data: SyncChannel.Data
   /** 消息同步区间，倒序存放 */
-  public _spans: Interval[] = []
+  public _spans: Span[] = []
   public status = SyncStatus.INIT
 
   private _buffer: Message[] = []
   private _initTask?: Promise<void>
   private _queueTask = Promise.resolve()
 
+  private _baseQuery: Query.Expr<Flatten<Message>>
+
   constructor(private ctx: Context, platform: string, guildId: string, channelId: string) {
     this.data = { platform, guildId, channelId }
+    this._baseQuery = {
+      platform,
+      'channel.id': channelId,
+    }
   }
 
   private async init() {
@@ -34,21 +43,21 @@ export class SyncChannel {
     const data = await this.ctx.database
       .select('satori.message')
       .where({
-        'platform': this.data.platform,
-        'channel.id': this.data.channelId,
-        'syncFlag': { $gt: 0 },
+        ...this._baseQuery,
+        syncFlag: { $gt: 0 },
       })
       .orderBy('uid', 'asc')
-      .project(['uid', 'syncFlag'])
+      .project(['id', 'uid', 'syncFlag'])
       .execute()
     while (data.length) {
-      const { syncFlag, uid: front } = data.pop()!
+      const { syncFlag, id: frontId, uid: frontUid } = data.pop()!
+      const front: SpanID = [frontUid, frontId]
       if (syncFlag === SyncFlag.BOTH) {
         this._spans.push({ front, back: front })
       } else if (syncFlag === SyncFlag.FRONT) {
-        const { syncFlag, uid: back } = data.pop()!
+        const { syncFlag, id, uid } = data.pop()!
         if (syncFlag === SyncFlag.BACK) {
-          this._spans.push({ front, back })
+          this._spans.push({ front, back: [uid, id] })
         } else {
           throw new Error('malformed sync flag')
         }
@@ -98,7 +107,7 @@ export class SyncChannel {
           ...data,
           { ...last, syncFlag: SyncFlag.FRONT },
         ])
-        this._spans[0].front = last.uid
+        this._spans[0].front = [last.uid, last.id]
       } else {
         const last = data.pop()!
         const first = data.shift()
@@ -115,6 +124,91 @@ export class SyncChannel {
         }
       }
     }
+  }
+
+  async getMessageList(id: string, count: number, direction: Universal.Direction) {
+    if (this._buffer.some(message => message.id === id)) {
+      // TODO
+    } else {
+      const [message] = await this.ctx.database
+        .select('satori.message')
+        .where({ ...this._baseQuery, id })
+        .execute()
+      if (message) {
+        const span = this._spans.find(span => span.front[0] <= message.uid && message.uid <= span.back[0])
+        if (!span) throw new Error('malformed sync span')
+        const beforeTask = direction === 'after' ? Promise.resolve([]) : this.syncHistory(span, message, count, 'before')
+        const afterTask = direction === 'before' ? Promise.resolve([]) : this.syncHistory(span, message, count, 'after')
+        const [before, after] = await Promise.all([beforeTask, afterTask])
+        after.shift()
+        before.shift()
+        before.reverse()
+        if (direction === 'after') return after
+        if (direction === 'before') return before
+        return [...before, message, ...after]
+      }
+    }
+  }
+
+  private async syncHistory(span: Span, message: Message | { uid: bigint }, count: number, direction: 'before' | 'after') {
+    const buffer: Message[] = []
+    const { channelId, platform, assignee } = this.data
+    const bot = this.ctx.bots[`${platform}:${assignee}`]
+    const dir = ({
+      before: {
+        front: 'front',
+        back: 'back',
+        desc: 'desc',
+        $lte: '$lte',
+        $gte: '$gte',
+      },
+      after: {
+        front: 'back',
+        back: 'front',
+        desc: 'asc',
+        $lte: '$gte',
+        $gte: '$lte',
+      },
+    } as const)[direction]
+    outer: while (true) {
+      if ('id' in message && span[dir.front][0] === message.uid) {
+        buffer.push(message)
+      } else {
+        const before = await this.ctx.database
+          .select('satori.message')
+          .where({
+            ...this._baseQuery,
+            uid: {
+              [dir.$lte]: message.uid,
+              [dir.$gte]: span[dir.front][0],
+            },
+          })
+          .orderBy('uid', dir.desc)
+          .limit(count - buffer.length)
+          .execute()
+        buffer.push(...before)
+      }
+      if (buffer.length >= count) return buffer
+      let next = span[dir.front][1]
+      while (true) {
+        const result = await bot.getMessageList(channelId, next, direction)
+        next = result.next!
+        for (let index = result.data.length - 1; index >= 0; index--) {
+          const prevSpan = this._spans.find(span => span[dir.back][1] === result.data[index].id)
+          if (prevSpan) {
+            span = prevSpan
+            message = { uid: prevSpan[dir.back][0] }
+            continue outer
+          }
+          buffer.push(Message.from(result.data[index], platform))
+          if (buffer.length >= count) return buffer
+        }
+      }
+    }
+  }
+
+  toJSON(): SyncChannel.Data {
+    return this.data
   }
 }
 

@@ -34,7 +34,7 @@ export const Methods: Dict<Method> = {
   'message.update': Method('editMessage', ['channel_id', 'message_id', 'content']),
   'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
-  'message.list': Method('getMessageList', ['channel_id', 'next']),
+  'message.list': Method('getMessageList', ['channel_id', 'next', 'direction']),
 
   'reaction.create': Method('createReaction', ['channel_id', 'message_id', 'emoji']),
   'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji', 'user_id']),
@@ -72,13 +72,21 @@ export interface List<T> {
   next?: string
 }
 
+export interface TwoWayList<T> {
+  data: T[]
+  prev?: string
+  next?: string
+}
+
+export type Direction = 'before' | 'after' | 'around'
+
 export interface Methods {
   // message
   createMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
   sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
-  getMessageList(channelId: string, next?: string): Promise<List<Message>>
+  getMessageList(channelId: string, next?: string, direction?: Direction): Promise<TwoWayList<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
   editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>
@@ -211,7 +219,7 @@ export const enum Status {
 }
 
 export interface Message {
-  id?: string
+  id: string
   /** @deprecated */
   messageId?: string
   channel?: Channel
