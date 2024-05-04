@@ -1,13 +1,15 @@
 import {} from 'minato'
-import { Context, Schema, Service } from '@satorijs/satori'
-import { Channel, Guild, Message, User } from '@satorijs/protocol'
+import { Bot, Context, Dict, Schema, Service } from '@satorijs/satori'
+import * as Universal from '@satorijs/protocol'
+import { SyncChannel } from './channel'
+import { SyncGuild } from './guild'
 
 declare module 'minato' {
   interface Tables {
-    'satori.message': SDBMessage
-    'satori.user': User & { platform: string }
-    'satori.guild': Guild & { platform: string }
-    'satori.channel': Channel & { platform: string }
+    'satori.message': Message
+    'satori.user': Universal.User & { platform: string }
+    'satori.guild': Universal.Guild & { platform: string }
+    'satori.channel': Universal.Channel & { platform: string }
   }
 }
 
@@ -21,20 +23,48 @@ declare module '@satorijs/core' {
 
 declare module '@satorijs/protocol' {
   interface Message {
-    uid?: number
+    uid?: bigint
   }
 }
 
-interface SDBMessage extends Message {
+export enum SyncFlag {
+  NONE = 0,
+  FRONT = 1,
+  BACK = 2,
+  BOTH = 3,
+}
+
+export interface Message extends Universal.Message {
+  uid: bigint
   platform: string
-  syncFlag: number
+  syncFlag: SyncFlag
   sendFlag: number
   deleted: boolean
   edited: boolean
 }
 
-class SatoriDatabase extends Service<SatoriDatabase.Config> {
+export namespace Message {
+  export const from = (message: Universal.Message, platform: string) => ({
+    platform,
+    id: message.id,
+    content: message.content,
+    timestamp: message.timestamp,
+    channel: { id: message.channel?.id },
+    user: { id: message.user?.id },
+    guild: { id: message.guild?.id },
+    quote: { id: message.quote?.id },
+    createdAt: message.createdAt,
+    updatedAt: message.updatedAt,
+  } as Message)
+}
+
+class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
   inject = ['model', 'database']
+
+  _guilds: Dict<SyncGuild> = {}
+  _channels: Dict<SyncChannel> = {}
+
+  stopped = false
 
   constructor(ctx: Context, public config: SatoriDatabase.Config) {
     super(ctx, 'satori.database', true)
@@ -47,7 +77,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config> {
     // })
 
     ctx.model.extend('satori.message', {
-      'uid': 'unsigned(8)', // int64
+      'uid': 'bigint', // int64
       'id': 'char(255)',
       'platform': 'char(255)',
       'user.id': 'char(255)',
@@ -59,8 +89,8 @@ class SatoriDatabase extends Service<SatoriDatabase.Config> {
       'updatedAt': 'unsigned(8)',
       'syncFlag': 'unsigned(1)',
       'sendFlag': 'unsigned(1)',
-      'deleted': 'boolean',
-      'edited': 'boolean',
+      // 'deleted': 'boolean',
+      // 'edited': 'boolean',
     }, {
       primary: 'uid',
     })
@@ -90,22 +120,66 @@ class SatoriDatabase extends Service<SatoriDatabase.Config> {
     }, {
       primary: ['id', 'platform'],
     })
+  }
 
-    ctx.on('login-updated', () => {
-      // TODO
+  async start() {
+    this.ctx.on('message', (session) => {
+      const { platform, guildId, channelId } = session
+      if (session.bot.hidden) return
+      const key = platform + '/' + guildId + '/' + channelId
+      this._channels[key] ||= new SyncChannel(this.ctx, session.platform, session.guildId, session.channelId)
+      this._channels[key].queue(session)
     })
 
-    ctx.on('message', () => {
-      // TODO
+    this.ctx.on('message-deleted', async (session) => {
+      await this.ctx.database.set('satori.message', {
+        messageId: session.messageId,
+        platform: session.platform,
+      }, {
+        deleted: true,
+        updatedAt: +new Date(),
+      })
     })
 
-    ctx.on('message-deleted', () => {
-      // TODO
+    this.ctx.on('message-updated', async (session) => {
+      await this.ctx.database.set('satori.message', {
+        messageId: session.messageId,
+        platform: session.platform,
+      }, {
+        content: session.content,
+        updatedAt: +new Date(),
+      })
     })
 
-    ctx.on('message-updated', () => {
-      // TODO
+    this.ctx.on('bot-status-updated', async (bot) => {
+      this.onBotOnline(bot)
     })
+
+    this.ctx.bots.forEach(async (bot) => {
+      this.onBotOnline(bot)
+    })
+  }
+
+  async stop() {
+    this.stopped = true
+  }
+
+  private async onBotOnline(bot: Bot) {
+    if (bot.status !== Universal.Status.ONLINE || bot.hidden || !bot.getMessageList || !bot.getGuildList) return
+    const tasks: Promise<any>[] = []
+    for await (const guild of bot.getGuildIter()) {
+      const key = bot.platform + '/' + guild.id
+      this._guilds[key] ||= new SyncGuild(bot, guild)
+      tasks.push((async () => {
+        for await (const channel of bot.getChannelIter(guild.id)) {
+          const key = bot.platform + '/' + guild.id + '/' + channel.id
+          this._channels[key] ||= new SyncChannel(this.ctx, bot.platform, guild.id, channel.id)
+          this._channels[key].data.assignee = bot.selfId
+          this._channels[key].data.guildName = guild.name
+          this._channels[key].data.channelName = channel.name
+        }
+      })())
+    }
   }
 }
 
