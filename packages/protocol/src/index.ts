@@ -34,7 +34,7 @@ export const Methods: Dict<Method> = {
   'message.update': Method('editMessage', ['channel_id', 'message_id', 'content']),
   'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
-  'message.list': Method('getMessageList', ['channel_id', 'next', 'direction']),
+  'message.list': Method('getMessageList', ['channel_id', 'next', 'direction', 'limit', 'order']),
 
   'reaction.create': Method('createReaction', ['channel_id', 'message_id', 'emoji']),
   'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji', 'user_id']),
@@ -80,13 +80,15 @@ export interface TwoWayList<T> {
 
 export type Direction = 'before' | 'after' | 'around'
 
+export type Order = 'asc' | 'desc'
+
 export interface Methods {
   // message
   createMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
   sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
-  getMessageList(channelId: string, next?: string, direction?: Direction): Promise<TwoWayList<Message>>
+  getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<TwoWayList<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
   editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>
