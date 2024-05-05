@@ -127,7 +127,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       const { platform, guildId, channelId } = session
       if (session.bot.hidden) return
       const key = platform + '/' + guildId + '/' + channelId
-      this._channels[key] ||= new SyncChannel(this.ctx, session.platform, session.guildId, session.channelId)
+      this._channels[key] ||= new SyncChannel(this.ctx, session.bot, session.guildId, session.channelId)
       this._channels[key].queue(session)
     })
 
@@ -173,10 +173,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       tasks.push((async () => {
         for await (const channel of bot.getChannelIter(guild.id)) {
           const key = bot.platform + '/' + guild.id + '/' + channel.id
-          this._channels[key] ||= new SyncChannel(this.ctx, bot.platform, guild.id, channel.id)
-          this._channels[key].data.assignee = bot.selfId
-          this._channels[key].data.guildName = guild.name
-          this._channels[key].data.channelName = channel.name
+          this._channels[key] ||= new SyncChannel(this.ctx, bot, guild.id, channel.id)
         }
       })())
     }
