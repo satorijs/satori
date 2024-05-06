@@ -55,6 +55,7 @@ export namespace Message {
     quote: { id: message.quote?.id },
     createdAt: message.createdAt,
     updatedAt: message.updatedAt,
+    syncFlag: SyncFlag.NONE,
   } as Message)
 }
 
