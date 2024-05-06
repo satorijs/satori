@@ -78,12 +78,10 @@ export class SyncChannel {
   }
 
   async queue(session: Session) {
-    const message = Message.from(session.event.message!, session.platform)
+    const prev = this._hasLatest ? this._spans[0] : undefined
+    const message = Message.from(session.event.message!, session.platform, 'after', prev?.front[0])
     const span = this.insert([message], 0)
-    if (this._hasLatest) {
-      span.prev = this._spans[1]
-      span.prev.next = span
-    }
+    span.link('prev', prev)
     this._hasLatest = true
     span.flush()
   }
@@ -104,7 +102,7 @@ export class SyncChannel {
     return [...before, message, ...after]
   }
 
-  private async locate(id: string, direction: Universal.Direction, limit: number): Promise<[Span, MessageLike, boolean?]> {
+  private async locate(id: string, direction: Universal.Direction, limit?: number): Promise<[Span, MessageLike, boolean?]> {
     // condition 1: message in memory
     for (const span of this._spans) {
       const message = span.data?.find(message => message.id === id)
@@ -145,14 +143,15 @@ export class SyncChannel {
     for (let i = index - 1; i >= 0; i--) {
       prev = this._spans.find(span => span.front[1] === result.data[i].id)
       if (prev) break
-      data.unshift(Message.from(result.data[i], this.bot.platform))
+      // @ts-ignore
+      data.unshift(Message.from(result.data[i], this.bot.platform, 'before', data[0]?.sid))
     }
 
     let next: Span | undefined
     for (let i = index + 1; i < result.data.length; i++) {
       next = this._spans.find(span => span.back[1] === result.data[i].id)
       if (next) break
-      data.push(Message.from(result.data[i], this.bot.platform))
+      data.push(Message.from(result.data[i], this.bot.platform, 'after', data[data.length - 1]?.sid))
     }
 
     if (data.length) {
@@ -230,13 +229,15 @@ export class SyncChannel {
       span[dir.next] ??= await (span[`${dir.next}Task`] ??= (async (prev: Span) => {
         const data: Message[] = []
         const result = await this.bot.getMessageList(this.channelId, prev[dir.front][1], direction, limit - buffer.length, dir.asc)
-        let next: Span | undefined
+        let next: Span | undefined, last: Message | undefined
         for (const item of result.data) {
           next = this._spans.find(span => span[dir.back][1] === item.id)
           if (next) break
-          data.push(Message.from(item, this.bot.platform))
+          last = Message.from(item, this.bot.platform, direction, last?.sid)
+          data[dir.push](last)
         }
         if (data.length) {
+          // TODO sync new span
           const span = this.insert(data)
           span.link(dir.prev, prev)
           span.link(dir.next, next)

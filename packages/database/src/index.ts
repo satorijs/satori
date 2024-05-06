@@ -44,9 +44,21 @@ export interface Message extends Universal.Message {
 }
 
 export namespace Message {
-  export const from = (message: Universal.Message, platform: string) => ({
+  export type Ref = ['before' | 'after', bigint]
+
+  function sequence(ts: bigint, dir?: 'before' | 'after', ref?: bigint) {
+    if (!dir || !ref) return (ts << 12n) + 0x800n
+    if (ts === ref >> 12n) {
+      return ref + (dir === 'before' ? -1n : 1n)
+    } else {
+      return (ts << 12n) + (dir === 'before' ? 0xfffn : 0n)
+    }
+  }
+
+  export const from = (message: Universal.Message, platform: string, dir?: 'before' | 'after', ref?: bigint) => ({
     platform,
     id: message.id,
+    sid: sequence(BigInt(message.timestamp!), dir, ref),
     content: message.content,
     timestamp: message.timestamp,
     channel: { id: message.channel?.id },
