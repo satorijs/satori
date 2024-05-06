@@ -4,14 +4,7 @@ import * as Universal from '@satorijs/protocol'
 import { SyncChannel } from './channel'
 import { SyncGuild } from './guild'
 
-declare module 'minato' {
-  interface Tables {
-    'satori.message': Message
-    'satori.user': Universal.User & { platform: string }
-    'satori.guild': Universal.Guild & { platform: string }
-    'satori.channel': Universal.Channel & { platform: string }
-  }
-}
+export * from './types'
 
 declare module '@satorijs/core' {
   // https://github.com/typescript-eslint/typescript-eslint/issues/6720
@@ -19,56 +12,6 @@ declare module '@satorijs/core' {
   interface Satori<C> {
     database: SatoriDatabase
   }
-}
-
-declare module '@satorijs/protocol' {
-  interface Message {
-    sid?: bigint
-  }
-}
-
-export enum SyncFlag {
-  NONE = 0,
-  FRONT = 1,
-  BACK = 2,
-}
-
-export interface Message extends Universal.Message {
-  uid: number
-  sid: bigint
-  platform: string
-  syncFlag: SyncFlag
-  sendFlag: number
-  deleted: boolean
-  edited: boolean
-}
-
-export namespace Message {
-  export type Ref = ['before' | 'after', bigint]
-
-  function sequence(ts: bigint, dir?: 'before' | 'after', ref?: bigint) {
-    if (!dir || !ref) return (ts << 12n) + 0x800n
-    if (ts === ref >> 12n) {
-      return ref + (dir === 'before' ? -1n : 1n)
-    } else {
-      return (ts << 12n) + (dir === 'before' ? 0xfffn : 0n)
-    }
-  }
-
-  export const from = (message: Universal.Message, platform: string, dir?: 'before' | 'after', ref?: bigint) => ({
-    platform,
-    id: message.id,
-    sid: sequence(BigInt(message.timestamp!), dir, ref),
-    content: message.content,
-    timestamp: message.timestamp,
-    channel: { id: message.channel?.id },
-    user: { id: message.user?.id },
-    guild: { id: message.guild?.id },
-    quote: { id: message.quote?.id },
-    createdAt: message.createdAt,
-    updatedAt: message.updatedAt,
-    syncFlag: 0,
-  } as Message)
 }
 
 class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
@@ -102,7 +45,6 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       'createdAt': 'unsigned(8)',
       'updatedAt': 'unsigned(8)',
       'syncFlag': 'unsigned(1)',
-      'sendFlag': 'unsigned(1)',
       // 'deleted': 'boolean',
       // 'edited': 'boolean',
     }, {

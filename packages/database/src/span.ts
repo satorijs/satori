@@ -1,7 +1,7 @@
 import { clone, remove } from '@satorijs/satori'
-import { Message, SyncFlag } from '.'
-import { SyncChannel } from './channel'
 import { $, Update } from 'minato'
+import { Message } from './types'
+import { SyncChannel } from './channel'
 
 export class Span {
   prev?: Span
@@ -60,19 +60,19 @@ export class Span {
         data.push({
           ...this.channel._query,
           sid: this.next.back[0],
-          syncFlag: $.bitAnd(row.syncFlag, $.bitNot(SyncFlag.BACK)),
+          flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.BACK)),
         })
       } else {
-        data[data.length - 1].syncFlag |= SyncFlag.FRONT
+        data[data.length - 1].flag |= Message.Flag.FRONT
       }
       if (this.prev?.type === Span.Type.REMOTE) {
         data.unshift({
           ...this.channel._query,
           sid: this.prev.front[0],
-          syncFlag: $.bitAnd(row.syncFlag, $.bitNot(SyncFlag.FRONT)),
+          flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.FRONT)),
         })
       } else {
-        data[0].syncFlag |= SyncFlag.BACK
+        data[0].flag |= Message.Flag.BACK
       }
       return data
     }, ['sid', 'channel.id', 'platform'])

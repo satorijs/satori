@@ -1,5 +1,5 @@
 import { Bot, Context, Logger, Session, Universal } from '@satorijs/satori'
-import { Message, SyncFlag } from '.'
+import { Message } from './types'
 import { Span } from './span'
 
 const logger = new Logger('sync')
@@ -29,25 +29,25 @@ export class SyncChannel {
       .select('satori.message')
       .where({
         ...this._query,
-        syncFlag: { $bitsAnySet: SyncFlag.FRONT | SyncFlag.BACK },
+        flag: { $bitsAnySet: Message.Flag.FRONT | Message.Flag.BACK },
       })
       .orderBy('sid', 'asc')
-      .project(['id', 'sid', 'syncFlag'])
+      .project(['id', 'sid', 'flag'])
       .execute()
     while (data.length) {
-      const { syncFlag, id: frontId, sid: frontUid } = data.pop()!
+      const { flag, id: frontId, sid: frontUid } = data.pop()!
       const front: Span.Endpoint = [frontUid, frontId]
-      if (syncFlag === (SyncFlag.FRONT | SyncFlag.BACK)) {
+      if (!(flag & Message.Flag.FRONT)) {
+        throw new Error('malformed sync flag')
+      } else if (flag & Message.Flag.BACK) {
         this._spans.push(new Span(this, Span.Type.REMOTE, front, front))
-      } else if (syncFlag === SyncFlag.FRONT) {
-        const { syncFlag, id, sid } = data.pop()!
-        if (syncFlag === SyncFlag.BACK) {
+      } else {
+        const { flag, id, sid } = data.pop()!
+        if (flag & Message.Flag.BACK) {
           this._spans.push(new Span(this, Span.Type.REMOTE, front, [sid, id]))
         } else {
           throw new Error('malformed sync flag')
         }
-      } else {
-        throw new Error('malformed sync flag')
       }
     }
   }
