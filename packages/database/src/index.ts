@@ -132,6 +132,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     })
 
     this.ctx.on('message-deleted', async (session) => {
+      // TODO update local message
       await this.ctx.database.set('satori.message', {
         messageId: session.messageId,
         platform: session.platform,
@@ -142,6 +143,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     })
 
     this.ctx.on('message-updated', async (session) => {
+      // TODO update local message
       await this.ctx.database.set('satori.message', {
         messageId: session.messageId,
         platform: session.platform,
