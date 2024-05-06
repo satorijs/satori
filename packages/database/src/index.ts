@@ -23,7 +23,7 @@ declare module '@satorijs/core' {
 
 declare module '@satorijs/protocol' {
   interface Message {
-    uid?: bigint
+    sid?: bigint
   }
 }
 
@@ -31,11 +31,11 @@ export enum SyncFlag {
   NONE = 0,
   FRONT = 1,
   BACK = 2,
-  BOTH = 3,
 }
 
 export interface Message extends Universal.Message {
-  uid: bigint
+  uid: number
+  sid: bigint
   platform: string
   syncFlag: SyncFlag
   sendFlag: number
@@ -55,7 +55,7 @@ export namespace Message {
     quote: { id: message.quote?.id },
     createdAt: message.createdAt,
     updatedAt: message.updatedAt,
-    syncFlag: SyncFlag.NONE,
+    syncFlag: 0,
   } as Message)
 }
 
@@ -78,7 +78,8 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     // })
 
     ctx.model.extend('satori.message', {
-      'uid': 'bigint', // int64
+      'uid': 'unsigned(8)',
+      'sid': 'bigint', // int64
       'id': 'char(255)',
       'platform': 'char(255)',
       'user.id': 'char(255)',
@@ -94,6 +95,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       // 'edited': 'boolean',
     }, {
       primary: 'uid',
+      autoInc: true,
     })
 
     ctx.model.extend('satori.user', {

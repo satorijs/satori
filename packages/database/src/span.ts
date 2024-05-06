@@ -5,9 +5,9 @@ import { $, Update } from 'minato'
 
 export class Span {
   prev?: Span
-  prevTask?: Promise<void>
+  prevTask?: Promise<Span>
   next?: Span
-  nextTask?: Promise<void>
+  nextTask?: Promise<Span>
   syncTask?: Promise<void>
 
   constructor(
@@ -18,60 +18,64 @@ export class Span {
     public data?: Message[],
   ) {}
 
+  link(dir: 'prev' | 'next', span?: Span) {
+    this[dir] = span
+    if (span) span[dir === 'prev' ? 'next' : 'prev'] = this
+  }
+
   mergeNext() {
-    if (!this.next) return
-    if (this.next.type !== this.type) throw new Error('malformed span type')
-    remove(this.channel.spans, this.next)
+    if (this.next?.type !== this.type) return false
+    remove(this.channel._spans, this.next)
     this.data?.push(...this.next.data!)
     this.front = this.next.front
-    this.next = this.next.next
-    if (this.next) this.next.prev = this
+    this.nextTask = this.next.nextTask
+    this.link('next', this.next.next)
+    return true
   }
 
   mergePrev() {
-    if (!this.prev) return
-    if (this.prev.type !== this.type) throw new Error('malformed span type')
-    remove(this.channel.spans, this.prev)
+    if (this.prev?.type !== this.type) return false
+    remove(this.channel._spans, this.prev)
     this.data?.unshift(...this.prev.data!)
     this.back = this.prev.back
-    this.prev = this.prev.prev
-    if (this.prev) this.prev.next = this
+    this.prevTask = this.prev.prevTask
+    this.link('prev', this.prev.prev)
+    return true
   }
 
-  flush() {
+  async flush() {
     if (this.type !== Span.Type.LOCAL) throw new Error('expect local span')
-    while (this.next?.type === Span.Type.LOCAL) {
-      this.mergeNext()
-    }
-    while (this.prev?.type === Span.Type.LOCAL) {
-      this.mergePrev()
-    }
-    this.type = Span.Type.SYNC
+    while (this.mergeNext());
+    while (this.mergePrev());
+    await Promise.all([this.prev?.syncTask, this.next?.syncTask])
+    if (!this.channel._spans.includes(this)) return
     return this.syncTask ||= this.sync()
   }
 
   async sync() {
-    await Promise.all([this.prev?.syncTask, this.next?.syncTask])
+    this.type = Span.Type.SYNC
     await this.channel.ctx.database.upsert('satori.message', (row) => {
       const data: Update<Message>[] = clone(this.data!)
-      if (this.next) {
+      if (this.next?.type === Span.Type.REMOTE) {
         data.push({
-          uid: this.next.back[0],
+          ...this.channel._query,
+          sid: this.next.back[0],
           syncFlag: $.bitAnd(row.syncFlag, $.bitNot(SyncFlag.BACK)),
         })
       } else {
         data[data.length - 1].syncFlag |= SyncFlag.FRONT
       }
-      if (this.prev) {
+      if (this.prev?.type === Span.Type.REMOTE) {
         data.unshift({
-          uid: this.prev.front[0],
+          ...this.channel._query,
+          sid: this.prev.front[0],
           syncFlag: $.bitAnd(row.syncFlag, $.bitNot(SyncFlag.FRONT)),
         })
       } else {
         data[0].syncFlag |= SyncFlag.BACK
       }
       return data
-    })
+    }, ['sid', 'channel.id', 'platform'])
     this.type = Span.Type.REMOTE
     delete this.data
     this.mergeNext()
