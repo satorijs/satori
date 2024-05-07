@@ -6,10 +6,10 @@ import { SyncChannel } from './channel'
 export class Span {
   prev?: Span
   prevTask?: Promise<Span | undefined>
-  prevData?: [Universal.Message[], string?]
+  prevTemp?: Universal.TwoWayList<Universal.Message>
   next?: Span
   nextTask?: Promise<Span | undefined>
-  nextData?: [Universal.Message[], string?]
+  nextTemp?: Universal.TwoWayList<Universal.Message>
   syncTask?: Promise<void>
 
   constructor(
@@ -33,7 +33,7 @@ export class Span {
     remove(this.channel._spans, next)
     this.data?.[w.push](...next.data!)
     this[w.front] = next[w.front]
-    this[w.data] = next[w.data]
+    this[w.temp] = next[w.temp]
     this[w.task] = next[w.task]
     this.link(dir, next[w.next])
     return true
@@ -78,16 +78,42 @@ export class Span {
     this.merge('before')
   }
 
-  async extend(dir: Span.Direction, limit: number) {
+  async collect(message: Message | { sid: bigint }, dir: Span.Direction, limit: number) {
     const w = Span.words[dir]
-    const result = await this.channel.getMessageList(this[w.front][1], dir, limit)
+    if (this.data) {
+      const index = this.data.findIndex(item => item.sid === message.sid)
+      return w.slice(this.data, index)
+    } else if ('id' in message && this[w.front][0] === message.sid) {
+      return [message]
+    } else {
+      const data = await this.channel.ctx.database
+        .select('satori.message')
+        .where({
+          ...this.channel._query,
+          sid: {
+            [w.$gte]: message.sid,
+            [w.$lte]: this[w.front][0],
+          },
+        })
+        .orderBy('sid', w.order)
+        .limit(limit)
+        .execute()
+      if (dir === 'before') data.reverse()
+      return data
+    }
+  }
+
+  async extend(dir: Span.Direction, limit: number, result?: Universal.TwoWayList<Universal.Message>) {
+    const w = Span.words[dir]
+    result ??= await this.channel.getMessageList(this[w.front][1], dir, limit)
     const data: Message[] = []
-    const next = this.channel.collect(result, dir, data)
-    if (!next && dir === 'before' && !result.next) this.channel.hasEarliest = true
-    if (data.length || next) {
+    const { span, temp } = this.channel.collect(result, dir, data)
+    if (!span && dir === 'before' && !result[w.next]) this.channel.hasEarliest = true
+    if (data.length || span) {
       return this.channel.insert(data, {
         [w.prev]: this,
-        [w.next]: next,
+        [w.next]: span,
+        [w.temp]: temp,
       })
     }
   }
@@ -116,12 +142,13 @@ export namespace Span {
       front: 'back',
       back: 'front',
       task: 'prevTask',
-      data: 'prevData',
+      temp: 'prevTemp',
       order: 'desc',
       $lte: '$gte',
       $gte: '$lte',
       inc: -1,
       last: 0,
+      slice: <T>(arr: T[], index: number) => arr.slice(0, index + 1),
     },
     after: {
       prev: 'prev',
@@ -130,12 +157,13 @@ export namespace Span {
       front: 'front',
       back: 'back',
       task: 'nextTask',
-      data: 'nextData',
+      temp: 'nextTemp',
       order: 'asc',
       $lte: '$lte',
       $gte: '$gte',
       inc: 1,
       last: -1,
+      slice: <T>(arr: T[], index: number) => arr.slice(index),
     },
   } as const
 }
