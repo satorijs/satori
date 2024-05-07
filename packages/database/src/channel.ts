@@ -12,6 +12,13 @@ export enum SyncStatus {
 
 type MessageLike = Message | { sid: bigint }
 
+type LocateResult = [Span, MessageLike]
+
+interface CollectResult {
+  rest?: [Universal.Message[], string?]
+  span?: Span
+}
+
 export class SyncChannel {
   public _spans: Span[] = []
   public _query: { platform: string; 'channel.id': string }
@@ -72,8 +79,8 @@ export class SyncChannel {
     if (!data.length && !links.prev && !links.next) {
       throw new Error('unexpected empty span')
     }
-    const back: Span.Endpoint = [data[0].sid, data[0].id]
-    const front: Span.Endpoint = [data[data.length - 1].sid, data[data.length - 1].id]
+    const back: Span.Endpoint = [data.at(0)!.sid, data.at(0)!.id]
+    const front: Span.Endpoint = [data.at(-1)!.sid, data.at(-1)!.id]
     const span = new Span(this, Span.Type.LOCAL, front, back, data)
     const index = this.binarySearch(back[0])
     this._spans.splice(index, 0, span)
@@ -92,23 +99,44 @@ export class SyncChannel {
     this.insert([message], { prev }, { prev: true, next: true })
   }
 
-  // TODO handle default limit
-  async getMessageList(id: string, direction: Universal.Direction, limit: number) {
-    await (this._initTask ||= this.init())
-    const [span, message, exclusive] = await this.locate(id, direction, limit)
-    if (direction === 'around') limit = Math.floor(limit / 2)
-    if (!exclusive) limit++
-    const beforeTask = direction === 'after' ? Promise.resolve([]) : this.getHistory(span!, message, limit, 'before')
-    const afterTask = direction === 'before' ? Promise.resolve([]) : this.getHistory(span!, message, limit, 'after')
-    const [before, after] = await Promise.all([beforeTask, afterTask])
-    if (!exclusive) after.shift()
-    if (!exclusive) before.shift()
-    if (direction === 'after') return after
-    if (direction === 'before') return before
-    return [...before, message, ...after]
+  getMessageList(id: string, dir?: Universal.Direction, limit?: number) {
+    return this.bot.getMessageList(this.channelId, id, dir, limit, 'asc')
   }
 
-  private async locate(id: string, direction: Universal.Direction, limit?: number): Promise<[Span, MessageLike, boolean?]> {
+  // TODO handle default limit
+  async list(id: string, dir: Universal.Direction, limit: number) {
+    await (this._initTask ||= this.init())
+    const result = await this.locate(id, dir, limit)
+    if (!result) return []
+    const [span, message] = result
+    if (dir === 'around') limit = Math.floor(limit / 2) + 1
+    const beforeTask = dir === 'after' ? Promise.resolve([]) : this.getHistory(span, message, limit, 'before')
+    const afterTask = dir === 'before' ? Promise.resolve([]) : this.getHistory(span, message, limit, 'after')
+    const [before, after] = await Promise.all([beforeTask, afterTask])
+    before.reverse()
+    if (dir === 'after') return after
+    if (dir === 'before') return before
+    return [...before.slice(0, -1), message, ...after.slice(1)]
+  }
+
+  collect(result: Universal.TwoWayList<Universal.Message>, dir: Span.Direction, data: Message[], index?: number): CollectResult {
+    const w = Span.words[dir]
+    index ??= dir === 'after' ? -1 : result.data.length
+    for (let i = index + w.inc; i >= 0 && i < result.data.length; i += w.inc) {
+      const span = this._spans.find(span => span[w.back][1] === result.data[i].id)
+      if (span) {
+        const rest = dir === 'after'
+          ? result.data.slice(i + 1)
+          : result.data.slice(0, i).reverse()
+        span[w.data] = [rest, result[w.next]]
+        return { span }
+      }
+      data[w.push](Message.from(result.data[i], this.bot.platform, dir, data.at(w.last)?.sid))
+    }
+    return { rest: [[], result[w.next]] }
+  }
+
+  private async locate(id: string, dir: Universal.Direction, limit?: number): Promise<LocateResult | undefined> {
     // condition 1: message in memory
     for (const span of this._spans) {
       const message = span.data?.find(message => message.id === id)
@@ -130,50 +158,40 @@ export class SyncChannel {
     // condition 3: message not cached, request from adapter
     let span: Span
     let message: MessageLike
-    let exclusive = false
-    let index: number
+    let index: number | undefined
     // TODO handle special case
     // 1. data length = 0
     // 2. next undefined (final)
-    const result = await this.bot.getMessageList(this.channelId, id, direction, limit, 'asc')
-    if (direction === 'around') {
+    const result = await this.getMessageList(id, dir, limit)
+    if (dir === 'around') {
       index = result.data.findIndex(item => item.id === id)
       if (index === -1) throw new Error('malformed message list')
       message = Message.from(result.data[index], this.bot.platform)
       data.push(message as Message)
-    } else {
-      exclusive = true
-      index = direction === 'before' ? result.data.length : -1
     }
 
-    let prev: Span | undefined
-    for (let i = index - 1; i >= 0; i--) {
-      prev = this._spans.find(span => span.front[1] === result.data[i].id)
-      if (prev) break
-      // @ts-ignore
-      data.unshift(Message.from(result.data[i], this.bot.platform, 'before', data[0]?.sid))
-    }
+    const { span: prev, rest: prevData } = this.collect(result, 'before', data, index)
+    const { span: next, rest: nextData } = this.collect(result, 'after', data, index)
 
-    let next: Span | undefined
-    for (let i = index + 1; i < result.data.length; i++) {
-      next = this._spans.find(span => span.back[1] === result.data[i].id)
-      if (next) break
-      data.push(Message.from(result.data[i], this.bot.platform, 'after', data[data.length - 1]?.sid))
-    }
-
-    if (data.length) {
+    if (data.length || prev && next) {
       span = this.insert(data, { prev, next })
+    } else if (prev || next) {
+      span = prev || next!
     } else {
-      span = prev ?? next!
+      if (dir === 'before') this.hasEarliest = true
+      return
     }
 
-    if (direction === 'before') {
+    span.prevData = prevData
+    span.nextData = nextData
+
+    if (dir === 'before') {
       message = { sid: span.front[0] }
-    } else if (direction === 'after') {
+    } else if (dir === 'after') {
       message = { sid: span.back[0] }
     }
 
-    return [span, message!, exclusive]
+    return [span, message!]
   }
 
   private async getHistory(span: Span, message: MessageLike, limit: number, dir: Span.Direction) {

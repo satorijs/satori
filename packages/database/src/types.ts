@@ -1,4 +1,5 @@
 import { Universal } from '@satorijs/satori'
+import { Span } from './span'
 
 declare module 'minato' {
   interface Tables {
@@ -31,7 +32,7 @@ export namespace Message {
     FINAL = 4,
   }
 
-  function sequence(ts: bigint, dir?: 'before' | 'after', ref?: bigint) {
+  function sequence(ts: bigint, dir?: Span.Direction, ref?: bigint) {
     if (!dir || !ref) return (ts << 12n) + 0x800n
     if (ts === ref >> 12n) {
       return ref + (dir === 'before' ? -1n : 1n)
@@ -40,7 +41,7 @@ export namespace Message {
     }
   }
 
-  export const from = (message: Universal.Message, platform: string, dir?: 'before' | 'after', ref?: bigint) => ({
+  export const from = (message: Universal.Message, platform: string, dir?: Span.Direction, ref?: bigint) => ({
     platform,
     id: message.id,
     sid: sequence(BigInt(message.timestamp!), dir, ref),

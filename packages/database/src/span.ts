@@ -1,4 +1,4 @@
-import { clone, remove } from '@satorijs/satori'
+import { clone, remove, Universal } from '@satorijs/satori'
 import { $, Update } from 'minato'
 import { Message } from './types'
 import { SyncChannel } from './channel'
@@ -6,10 +6,10 @@ import { SyncChannel } from './channel'
 export class Span {
   prev?: Span
   prevTask?: Promise<Span | undefined>
-  prevData?: Message[]
+  prevData?: [Universal.Message[], string?]
   next?: Span
   nextTask?: Promise<Span | undefined>
-  nextData?: Message[]
+  nextData?: [Universal.Message[], string?]
   syncTask?: Promise<void>
 
   constructor(
@@ -33,6 +33,7 @@ export class Span {
     remove(this.channel._spans, next)
     this.data?.[w.push](...next.data!)
     this[w.front] = next[w.front]
+    this[w.data] = next[w.data]
     this[w.task] = next[w.task]
     this.link(dir, next[w.next])
     return true
@@ -79,16 +80,10 @@ export class Span {
 
   async extend(dir: Span.Direction, limit: number) {
     const w = Span.words[dir]
-    const result = await this.channel.bot.getMessageList(this.channel.channelId, this[w.front][1], dir, limit, w.order)
+    const result = await this.channel.getMessageList(this[w.front][1], dir, limit)
     const data: Message[] = []
-    let next: Span | undefined, last: Message | undefined
-    for (const item of result.data) {
-      next = this.channel._spans.find(span => span[w.back][1] === item.id)
-      if (next) break
-      last = Message.from(item, this.channel.bot.platform, dir, last?.sid)
-      data[w.push](last)
-    }
-    if (dir === 'before' && !result.next) this.channel.hasEarliest = true
+    const next = this.channel.collect(result, dir, data)
+    if (!next && dir === 'before' && !result.next) this.channel.hasEarliest = true
     if (data.length || next) {
       return this.channel.insert(data, {
         [w.prev]: this,
@@ -121,9 +116,12 @@ export namespace Span {
       front: 'back',
       back: 'front',
       task: 'prevTask',
+      data: 'prevData',
       order: 'desc',
       $lte: '$gte',
       $gte: '$lte',
+      inc: -1,
+      last: 0,
     },
     after: {
       prev: 'prev',
@@ -132,9 +130,12 @@ export namespace Span {
       front: 'front',
       back: 'back',
       task: 'nextTask',
+      data: 'nextData',
       order: 'asc',
       $lte: '$lte',
       $gte: '$gte',
+      inc: 1,
+      last: -1,
     },
   } as const
 }
