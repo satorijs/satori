@@ -16,8 +16,10 @@ export class SyncChannel {
   public _spans: Span[] = []
   public _query: { platform: string; 'channel.id': string }
 
+  public hasLatest = false
+  public hasEarliest = false
+
   private _initTask?: Promise<void>
-  private _hasLatest = false
 
   constructor(public ctx: Context, public bot: Bot, public guildId: string, public channelId: string) {
     this._query = { platform: bot.platform, 'channel.id': channelId }
@@ -57,33 +59,37 @@ export class SyncChannel {
     let right = this._spans.length
     while (left < right) {
       const mid = Math.floor((left + right) / 2)
-      if (this._spans[mid].front[0] < sid) {
+      if (this._spans[mid].back[0] <= sid) {
         right = mid
       } else {
-        left = mid
+        left = mid + 1
       }
     }
     return left
   }
 
-  private insert(data: Message[], index?: number) {
+  insert(data: Message[], links: Span.PrevNext<Span> = {}, forced: Span.PrevNext<boolean> = {}) {
+    if (!data.length && !links.prev && !links.next) {
+      throw new Error('unexpected empty span')
+    }
     const back: Span.Endpoint = [data[0].sid, data[0].id]
     const front: Span.Endpoint = [data[data.length - 1].sid, data[data.length - 1].id]
     const span = new Span(this, Span.Type.LOCAL, front, back, data)
-    if (typeof index !== 'number') {
-      index = this.binarySearch(front[0])
-    }
+    const index = this.binarySearch(back[0])
     this._spans.splice(index, 0, span)
+    span.link('before', links.prev)
+    span.merge('before')
+    span.link('after', links.next)
+    span.merge('after')
+    span.flush(forced)
     return span
   }
 
   async queue(session: Session) {
-    const prev = this._hasLatest ? this._spans[0] : undefined
+    const prev = this.hasLatest ? this._spans[0] : undefined
     const message = Message.from(session.event.message!, session.platform, 'after', prev?.front[0])
-    const span = this.insert([message], 0)
-    span.link('prev', prev)
-    this._hasLatest = true
-    span.flush()
+    this.hasLatest = true
+    this.insert([message], { prev }, { prev: true, next: true })
   }
 
   // TODO handle default limit
@@ -115,8 +121,9 @@ export class SyncChannel {
       .where({ ...this._query, id })
       .execute()
     if (data[0]) {
-      const span = this._spans.find(span => span.front[0] <= data[0].sid && data[0].sid <= span.back[0])
-      if (!span) throw new Error('malformed sync span')
+      const { sid } = data[0]
+      const span = this._spans[this.binarySearch(sid)]
+      if (!span || span.back[0] > sid || span.front[0] < sid) throw new Error('malformed sync span')
       return [span, data[0]]
     }
 
@@ -127,7 +134,7 @@ export class SyncChannel {
     let index: number
     // TODO handle special case
     // 1. data length = 0
-    // 2. next undefined
+    // 2. next undefined (final)
     const result = await this.bot.getMessageList(this.channelId, id, direction, limit, 'asc')
     if (direction === 'around') {
       index = result.data.findIndex(item => item.id === id)
@@ -155,11 +162,7 @@ export class SyncChannel {
     }
 
     if (data.length) {
-      span = this.insert(data)
-      span.prev = prev
-      if (span.prev) span.prev.next = span
-      span.next = next
-      if (span.next) span.next.prev = span
+      span = this.insert(data, { prev, next })
     } else {
       span = prev ?? next!
     }
@@ -173,87 +176,46 @@ export class SyncChannel {
     return [span, message!, exclusive]
   }
 
-  private async getHistory(span: Span, message: MessageLike, limit: number, direction: 'before' | 'after') {
+  private async getHistory(span: Span, message: MessageLike, limit: number, dir: Span.Direction) {
     const buffer: Message[] = []
-    const dir = ({
-      before: {
-        front: 'back',
-        back: 'front',
-        prev: 'next',
-        next: 'prev',
-        asc: 'desc',
-        push: 'unshift',
-        $lte: '$gte',
-        $gte: '$lte',
-      },
-      after: {
-        front: 'front',
-        back: 'back',
-        prev: 'prev',
-        next: 'next',
-        asc: 'asc',
-        push: 'push',
-        $lte: '$lte',
-        $gte: '$gte',
-      },
-    } as const)[direction]
+    const w = Span.words[dir]
 
     while (true) {
       if (span.data) {
         const index = span.data.findIndex(item => item.sid === message.sid)
-        if (direction === 'before') {
+        if (dir === 'before') {
           buffer.unshift(...span.data.slice(0, index + 1))
         } else {
           buffer.push(...span.data.slice(index))
         }
-      } else if ('id' in message && span[dir.front][0] === message.sid) {
-        buffer[dir.push](message)
+      } else if ('id' in message && span[w.front][0] === message.sid) {
+        buffer[w.push](message)
       } else {
         const before = await this.ctx.database
           .select('satori.message')
           .where({
             ...this._query,
             sid: {
-              [dir.$gte]: message.sid,
-              [dir.$lte]: span[dir.front][0],
+              [w.$gte]: message.sid,
+              [w.$lte]: span[w.front][0],
             },
           })
-          .orderBy('sid', dir.asc)
+          .orderBy('sid', w.order)
           .limit(limit - buffer.length)
           .execute()
-        if (direction === 'before') before.reverse()
-        buffer[dir.push](...before)
+        if (dir === 'before') before.reverse()
+        buffer[w.push](...before)
       }
       if (buffer.length >= limit) break
 
-      span[dir.next] ??= await (span[`${dir.next}Task`] ??= (async (prev: Span) => {
-        const data: Message[] = []
-        const result = await this.bot.getMessageList(this.channelId, prev[dir.front][1], direction, limit - buffer.length, dir.asc)
-        let next: Span | undefined, last: Message | undefined
-        for (const item of result.data) {
-          next = this._spans.find(span => span[dir.back][1] === item.id)
-          if (next) break
-          last = Message.from(item, this.bot.platform, direction, last?.sid)
-          data[dir.push](last)
-        }
-        if (data.length) {
-          // TODO sync new span
-          const span = this.insert(data)
-          span.link(dir.prev, prev)
-          span.link(dir.next, next)
-          return span
-        } else {
-          // FIXME sync edge case?
-          return next!
-        }
-      })(span))
+      const next = span[w.next] ?? await (span[`${w.next}Task`] ??= span.extend(dir, limit - buffer.length))
 
-      if (!span[dir.next]) break
-      span = span[dir.next]!
-      message = { sid: span[dir.back][0] }
+      if (!next) break
+      span = next
+      message = { sid: span[w.back][0] }
     }
 
-    if (direction === 'before') {
+    if (dir === 'before') {
       return buffer.slice(-limit)
     } else {
       return buffer.slice(0, limit)

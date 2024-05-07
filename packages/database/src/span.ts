@@ -5,9 +5,11 @@ import { SyncChannel } from './channel'
 
 export class Span {
   prev?: Span
-  prevTask?: Promise<Span>
+  prevTask?: Promise<Span | undefined>
+  prevData?: Message[]
   next?: Span
-  nextTask?: Promise<Span>
+  nextTask?: Promise<Span | undefined>
+  nextData?: Message[]
   syncTask?: Promise<void>
 
   constructor(
@@ -18,41 +20,34 @@ export class Span {
     public data?: Message[],
   ) {}
 
-  link(dir: 'prev' | 'next', span?: Span) {
-    this[dir] = span
-    if (span) span[dir === 'prev' ? 'next' : 'prev'] = this
+  link(dir: Span.Direction, span?: Span) {
+    const w = Span.words[dir]
+    this[w.next] = span
+    if (span) span[w.prev] = this
   }
 
-  mergeNext() {
-    if (this.next?.type !== this.type) return false
-    remove(this.channel._spans, this.next)
-    this.data?.push(...this.next.data!)
-    this.front = this.next.front
-    this.nextTask = this.next.nextTask
-    this.link('next', this.next.next)
+  merge(dir: Span.Direction) {
+    const w = Span.words[dir]
+    const next = this[w.next]
+    if (next?.type !== this.type) return false
+    remove(this.channel._spans, next)
+    this.data?.[w.push](...next.data!)
+    this[w.front] = next[w.front]
+    this[w.task] = next[w.task]
+    this.link(dir, next[w.next])
     return true
   }
 
-  mergePrev() {
-    if (this.prev?.type !== this.type) return false
-    remove(this.channel._spans, this.prev)
-    this.data?.unshift(...this.prev.data!)
-    this.back = this.prev.back
-    this.prevTask = this.prev.prevTask
-    this.link('prev', this.prev.prev)
-    return true
-  }
-
-  async flush() {
+  async flush(forced: Span.PrevNext<boolean> = {}) {
     if (this.type !== Span.Type.LOCAL) throw new Error('expect local span')
-    while (this.mergeNext());
-    while (this.mergePrev());
+    if (!forced.prev && !this.prev && !(this === this.channel._spans.at(0) && this.channel.hasEarliest)) return
+    if (!forced.next && !this.next && !(this === this.channel._spans.at(-1) && this.channel.hasLatest)) return
     await Promise.all([this.prev?.syncTask, this.next?.syncTask])
     if (!this.channel._spans.includes(this)) return
     return this.syncTask ||= this.sync()
   }
 
-  async sync() {
+  private async sync() {
     this.type = Span.Type.SYNC
     await this.channel.ctx.database.upsert('satori.message', (row) => {
       const data: Update<Message>[] = clone(this.data!)
@@ -63,7 +58,7 @@ export class Span {
           flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.BACK)),
         })
       } else {
-        data[data.length - 1].flag |= Message.Flag.FRONT
+        data.at(-1)!.flag |= Message.Flag.FRONT
       }
       if (this.prev?.type === Span.Type.REMOTE) {
         data.unshift({
@@ -72,18 +67,39 @@ export class Span {
           flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.FRONT)),
         })
       } else {
-        data[0].flag |= Message.Flag.BACK
+        data.at(0)!.flag |= Message.Flag.BACK
       }
       return data
     }, ['sid', 'channel.id', 'platform'])
     this.type = Span.Type.REMOTE
     delete this.data
-    this.mergeNext()
-    this.mergePrev()
+    this.merge('after')
+    this.merge('before')
+  }
+
+  async extend(dir: Span.Direction, limit: number) {
+    const w = Span.words[dir]
+    const result = await this.channel.bot.getMessageList(this.channel.channelId, this[w.front][1], dir, limit, w.order)
+    const data: Message[] = []
+    let next: Span | undefined, last: Message | undefined
+    for (const item of result.data) {
+      next = this.channel._spans.find(span => span[w.back][1] === item.id)
+      if (next) break
+      last = Message.from(item, this.channel.bot.platform, dir, last?.sid)
+      data[w.push](last)
+    }
+    if (dir === 'before' && !result.next) this.channel.hasEarliest = true
+    if (data.length || next) {
+      return this.channel.insert(data, {
+        [w.prev]: this,
+        [w.next]: next,
+      })
+    }
   }
 }
 
 export namespace Span {
+  export type Direction = 'before' | 'after'
   export type Endpoint = [bigint, string]
 
   export enum Type {
@@ -91,4 +107,34 @@ export namespace Span {
     SYNC,
     REMOTE,
   }
+
+  export interface PrevNext<T> {
+    prev?: T
+    next?: T
+  }
+
+  export const words = {
+    before: {
+      prev: 'next',
+      next: 'prev',
+      push: 'unshift',
+      front: 'back',
+      back: 'front',
+      task: 'prevTask',
+      order: 'desc',
+      $lte: '$gte',
+      $gte: '$lte',
+    },
+    after: {
+      prev: 'prev',
+      next: 'next',
+      push: 'push',
+      front: 'front',
+      back: 'back',
+      task: 'nextTask',
+      order: 'asc',
+      $lte: '$lte',
+      $gte: '$gte',
+    },
+  } as const
 }

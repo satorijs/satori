@@ -85,7 +85,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       if (session.bot.hidden) return
       const key = platform + '/' + guildId + '/' + channelId
       this._channels[key] ||= new SyncChannel(this.ctx, session.bot, session.guildId, session.channelId)
-      this._channels[key].queue(session)
+      if (this._channels[key].bot === session.bot) this._channels[key].queue(session)
     })
 
     this.ctx.on('message-deleted', async (session) => {
@@ -111,11 +111,11 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     })
 
     this.ctx.on('bot-status-updated', async (bot) => {
-      this.onBotOnline(bot)
+      this.updateBot(bot)
     })
 
     this.ctx.bots.forEach(async (bot) => {
-      this.onBotOnline(bot)
+      this.updateBot(bot)
     })
   }
 
@@ -123,8 +123,15 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     this.stopped = true
   }
 
-  private async onBotOnline(bot: Bot) {
-    if (bot.status !== Universal.Status.ONLINE || bot.hidden || !bot.getMessageList || !bot.getGuildList) return
+  private async updateBot(bot: Bot) {
+    if (bot.hidden || !await bot.supports('message.list') || !await bot.supports('guild.list')) return
+    if (bot.status !== Universal.Status.ONLINE) {
+      for (const channel of Object.values(this._channels)) {
+        if (channel.bot !== bot) continue
+        channel.hasLatest = false
+      }
+      return
+    }
     const tasks: Promise<any>[] = []
     for await (const guild of bot.getGuildIter()) {
       const key = bot.platform + '/' + guild.id
