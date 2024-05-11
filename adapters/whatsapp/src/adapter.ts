@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, Quester, remove, Schema } from '@satorijs/satori'
+import { Adapter, Context, HTTP, Logger, remove, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { Internal } from './internal'
 import { WhatsAppBot } from './bot'
@@ -130,7 +130,7 @@ export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, Wha
 }
 
 export namespace WhatsAppAdapter {
-  export interface Config extends Quester.Config {
+  export interface Config extends HTTP.Config {
     systemToken: string
     verifyToken: string
     id: string
@@ -144,6 +144,6 @@ export namespace WhatsAppAdapter {
       verifyToken: Schema.string().role('secret').description('Verify Token').required(),
       id: Schema.string().description('WhatsApp Business Account ID').required(),
     }),
-    Quester.createConfig('https://graph.facebook.com'),
+    HTTP.createConfig('https://graph.facebook.com'),
   ] as const)
 }

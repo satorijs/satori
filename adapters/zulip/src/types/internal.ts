@@ -1,12 +1,12 @@
-import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { Dict, HTTP, makeArray } from '@satorijs/core'
 
 export class Internal {
-  constructor(public http: Quester) { }
+  constructor(public http: HTTP) { }
 
-  static define(routes: Dict<Partial<Record<Quester.Method, string | string[]>>>) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as Quester.Method
+        const method = key as HTTP.Method
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
@@ -14,7 +14,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.RequestConfig = {}
+            const config: HTTP.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
@@ -30,7 +30,7 @@ export class Internal {
             try {
               return (await this.http(method, url, config)).data
             } catch (error) {
-              if (!Quester.Error.is(error) || !error.response) throw error
+              if (!this.http.isError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
             }
           }

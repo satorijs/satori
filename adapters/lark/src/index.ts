@@ -1,11 +1,11 @@
-import { FeishuBot } from './bot'
+import { LarkBot } from './bot'
 import * as Lark from './types'
 
 export * from './bot'
 
 export { Lark, Lark as Feishu }
 
-export default FeishuBot
+export default LarkBot
 
 declare module '@satorijs/core' {
   interface Session {

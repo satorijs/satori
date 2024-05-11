@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { WhatsAppBot } from './bot'
 import { Button, SendMessage } from './types'
 

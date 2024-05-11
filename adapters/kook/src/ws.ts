@@ -1,4 +1,4 @@
-import { Adapter, Context, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Schema, Time, Universal } from '@satorijs/core'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'

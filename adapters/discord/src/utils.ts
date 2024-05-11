@@ -1,4 +1,4 @@
-import { Context, Dict, h, pick, Session, Universal, valueMap } from '@satorijs/satori'
+import { Context, Dict, h, pick, Session, Universal, valueMap } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 

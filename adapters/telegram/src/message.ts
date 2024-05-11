@@ -1,4 +1,4 @@
-import { Context, Dict, Element, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, Element, h, MessageEncoder } from '@satorijs/core'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 

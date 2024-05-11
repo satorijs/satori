@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema } from '@satorijs/core'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
@@ -7,8 +7,8 @@ export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config>
   static inject = ['server', 'http']
   static MessageEncoder = LineMessageEncoder
 
-  public http: Quester
-  public contentHttp: Quester
+  public http: HTTP
+  public contentHttp: HTTP
   public internal: Internal
 
   constructor(ctx: C, config: LineBot.Config) {
@@ -83,8 +83,8 @@ export namespace LineBot {
   export interface Config {
     token: string
     secret: string
-    api: Quester.Config
-    content: Quester.Config
+    api: HTTP.Config
+    content: HTTP.Config
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -93,10 +93,10 @@ export namespace LineBot {
       secret: Schema.string().required().description('机器人密钥。'),
     }),
     Schema.object({
-      api: Quester.createConfig('https://api.line.me/'),
+      api: HTTP.createConfig('https://api.line.me/'),
     }),
     Schema.object({
-      content: Quester.createConfig('https://api-data.line.me/'),
+      content: HTTP.createConfig('https://api-data.line.me/'),
     }),
   ])
 }

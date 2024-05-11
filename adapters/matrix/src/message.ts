@@ -1,4 +1,4 @@
-import { Context, MessageEncoder, segment, Universal } from '@satorijs/satori'
+import { Context, MessageEncoder, segment, Universal } from '@satorijs/core'
 import { MatrixBot } from './bot'
 
 export class MatrixMessageEncoder<C extends Context = Context> extends MessageEncoder<C, MatrixBot<C>> {

@@ -1,4 +1,4 @@
-import { Adapter, camelize, Context, Logger, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, camelize, Context, HTTP, Logger, Schema, Time, Universal } from '@satorijs/core'
 import { SatoriBot, transformKey } from './bot'
 
 export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
@@ -6,7 +6,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   static reusable = true
   static inject = ['http']
 
-  public http: Quester
+  public http: HTTP
   public logger: Logger
 
   private _status = Universal.Status.OFFLINE

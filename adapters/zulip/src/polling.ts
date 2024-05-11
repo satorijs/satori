@@ -1,4 +1,4 @@
-import { Adapter, Context, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Schema, Time, Universal } from '@satorijs/core'
 import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 
@@ -38,7 +38,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBo
         }
         setTimeout(polling, 0)
       } catch (e) {
-        if (!Quester.Error.is(e) || !e.response?.data) {
+        if (!this.ctx.http.isError(e) || !e.response?.data) {
           bot.logger.warn('failed to get updates. reason: %s', e.stack)
         } else {
           bot.logger.error(e.stack)

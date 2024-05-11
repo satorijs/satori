@@ -1,4 +1,4 @@
-import { defineProperty, segment, Universal } from '@satorijs/satori'
+import { defineProperty, segment, Universal } from '@satorijs/core'
 import { ParsedMail } from 'mailparser'
 import { INode, parse, SyntaxKind } from 'html5parser'
 import { MailBot } from './bot'

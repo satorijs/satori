@@ -1,4 +1,4 @@
-import { Adapter, Context, sanitize, Schema, trimSlash } from '@satorijs/satori'
+import { Adapter, Context, sanitize, Schema, trimSlash } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'

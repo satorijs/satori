@@ -1,10 +1,5 @@
+import { WechatOfficialBot } from './bot'
 import { Message } from './types'
-
-export * from './bot'
-export * from './utils'
-export * from './types'
-export * from './http'
-export * from './message'
 
 declare module '@satorijs/core' {
   interface Session {
@@ -12,3 +7,11 @@ declare module '@satorijs/core' {
     wechatOfficialResolve?: (value?: any) => void
   }
 }
+
+export * from './bot'
+export * from './utils'
+export * from './types'
+export * from './http'
+export * from './message'
+
+export default WechatOfficialBot

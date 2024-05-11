@@ -1,4 +1,4 @@
-import { Dict, Quester } from '@satorijs/satori'
+import { Dict, HTTP } from '@satorijs/core'
 import { SlackBot } from '../bot'
 
 // https://api.slack.com/web#methods_supporting_json
@@ -14,16 +14,16 @@ export type TokenInput = string | Token
 
 // https://api.slack.com/web#basics
 export class Internal {
-  constructor(private bot: SlackBot, private http: Quester) { }
+  constructor(private bot: SlackBot, private http: HTTP) { }
 
   // route: content-type
-  static define(routes: Dict<Partial<Record<Quester.Method, Record<string, SupportPostJSON>>>>) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, Record<string, SupportPostJSON>>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as Quester.Method
+        const method = key as HTTP.Method
         for (const name of Object.keys(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
-            const config: Quester.RequestConfig = {
+            const config: HTTP.RequestConfig = {
               headers: {},
             }
             let token = ''
@@ -46,7 +46,7 @@ export class Internal {
             try {
               return (await this.http(method, path, config)).data
             } catch (error) {
-              if (!Quester.Error.is(error) || !error.response) throw error
+              if (!this.http.isError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
             }
           }

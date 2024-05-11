@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger } from '@satorijs/satori'
+import { Adapter, Context, Logger } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { DingtalkBot } from './bot'
 import crypto from 'node:crypto'

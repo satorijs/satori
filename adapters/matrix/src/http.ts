@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/satori'
+import { Adapter, Context } from '@satorijs/core'
 import { Context as KoaContext } from 'koa'
 import {} from '@cordisjs/plugin-server'
 import { MatrixBot } from './bot'

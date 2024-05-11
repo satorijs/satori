@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
 import { HttpPolling } from './polling'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
@@ -10,7 +10,7 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
   static MessageEncoder = ZulipMessageEncoder
   static inject = ['http']
 
-  public http: Quester
+  public http: HTTP
   public internal: Internal
 
   constructor(ctx: C, config: ZulipBot.Config) {
@@ -102,7 +102,7 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
 }
 
 export namespace ZulipBot {
-  export interface Config extends Quester.Config, HttpPolling.Options {
+  export interface Config extends HTTP.Config, HttpPolling.Options {
     email: string
     key: string
   }
@@ -115,6 +115,6 @@ export namespace ZulipBot {
     Schema.union([
       HttpPolling.Options,
     ]).description('推送设置'),
-    Quester.createConfig(),
+    HTTP.createConfig(),
   ])
 }

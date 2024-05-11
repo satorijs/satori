@@ -1,4 +1,4 @@
-import { Adapter, Context, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/core'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
@@ -13,7 +13,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
     let { url } = await this.bot.internal.getGateway()
     url = url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
     this.bot.logger.debug('url: %s', url)
-    return this.bot.groupHttp.ws(url)
+    return this.bot.http.ws(url)
   }
 
   heartbeat() {

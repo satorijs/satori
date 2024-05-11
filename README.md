@@ -31,7 +31,7 @@
 ### Basic usage
 
 ```ts
-import { Context } from '@satorijs/satori'
+import { Context } from '@satorijs/core'
 import discord from '@satorijs/adapter-discord'
 
 // create a new context
@@ -54,7 +54,7 @@ await ctx.start()
 ### Specifying protocol
 
 ```ts
-import { Context } from '@satorijs/satori'
+import { Context } from '@satorijs/core'
 import router from '@cordisjs/plugin-server'
 import telegram from '@satorijs/adapter-telegram'
 

@@ -1,4 +1,4 @@
-import { h, Session, Universal } from '@satorijs/satori'
+import { h, Session, Universal } from '@satorijs/core'
 import { WhatsAppBot } from './bot'
 import { Entry } from './types'
 

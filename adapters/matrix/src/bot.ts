@@ -1,4 +1,4 @@
-import { Bot, Context, omit, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, omit, Schema, Universal } from '@satorijs/core'
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
@@ -8,7 +8,7 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
   static MessageEncoder = MatrixMessageEncoder
   static inject = ['http']
 
-  http: Quester
+  http: HTTP
   id: string
   endpoint: string
   rooms: string[] = []
@@ -147,7 +147,7 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
 }
 
 export namespace MatrixBot {
-  export interface Config extends Quester.Config {
+  export interface Config extends HTTP.Config {
     name?: string
     avatar?: string
     id?: string
@@ -166,6 +166,6 @@ export namespace MatrixBot {
     asToken: Schema.string().description('as_token').role('secret').required(),
     endpoint: Schema.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
     path: Schema.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
-    ...omit(Quester.Config.dict, ['endpoint']),
+    ...omit(HTTP.Config.dict, ['endpoint']),
   })
 }

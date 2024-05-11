@@ -1,4 +1,4 @@
-import { Adapter, Context, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/core'
 import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
 

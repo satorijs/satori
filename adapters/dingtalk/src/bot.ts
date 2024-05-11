@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema } from '@satorijs/core'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -9,8 +9,8 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
   static MessageEncoder = DingtalkMessageEncoder
   static inject = ['http']
 
-  public oldHttp: Quester
-  public http: Quester
+  public oldHttp: HTTP
+  public http: HTTP
   public internal: Internal
   private refreshTokenTimer: NodeJS.Timeout
 
@@ -108,8 +108,8 @@ export namespace DingtalkBot {
     protocol: string
     appkey: string
     agentId?: number
-    api: Quester.Config
-    oldApi: Quester.Config
+    api: HTTP.Config
+    oldApi: HTTP.Config
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -122,8 +122,8 @@ export namespace DingtalkBot {
       secret: Schema.string().required().description('机器人密钥。'),
       agentId: Schema.number().description('AgentId'),
       appkey: Schema.string().required(),
-      api: Quester.createConfig('https://api.dingtalk.com/v1.0/'),
-      oldApi: Quester.createConfig('https://oapi.dingtalk.com/'),
+      api: HTTP.createConfig('https://api.dingtalk.com/v1.0/'),
+      oldApi: HTTP.createConfig('https://oapi.dingtalk.com/'),
     }),
     WsClient.Options,
   ])

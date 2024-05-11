@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Quester } from '@satorijs/satori'
+import { HTTP } from '@satorijs/core'
 import { KookBot } from './bot'
 
 export enum Signal {
@@ -661,11 +661,11 @@ export interface Events {
 }
 
 export class Internal {
-  constructor(private http: Quester) {}
+  constructor(private http: HTTP) {}
 
-  static define(name: string, method: Quester.Method, path: string) {
+  static define(name: string, method: HTTP.Method, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
-      const config: Quester.RequestConfig = {}
+      const config: HTTP.RequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
         config.params = args[0]
       } else {

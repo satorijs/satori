@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder, Quester, Schema, Universal } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder, Schema, Universal } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize } from './utils'
@@ -70,7 +70,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
 
       return message
     } catch (e) {
-      if (Quester.Error.is(e) && e.response) {
+      if (this.bot.http.isError(e) && e.response) {
         if (e.response.data?.code === 10015) {
           this.bot.logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
           if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null

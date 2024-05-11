@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, Universal } from '@satorijs/core'
 import { QQBot } from '.'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from '../utils'
 import { GuildInternal } from '../internal'
@@ -14,7 +14,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
   declare parent: QQBot
   hidden = true
   public internal: GuildInternal
-  public http: Quester
+  public http: HTTP
   static MessageEncoder = QQGuildMessageEncoder
 
   constructor(ctx: C, config: QQGuildBot.Config) {

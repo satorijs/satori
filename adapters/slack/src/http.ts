@@ -1,4 +1,4 @@
-import { Adapter, Context, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'

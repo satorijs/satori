@@ -1,6 +1,6 @@
 import { Message } from './types'
 import { WecomBot } from './bot'
-import { Context, h } from '@satorijs/satori'
+import { Context, h } from '@satorijs/core'
 
 export async function decodeMessage<C extends Context>(bot: WecomBot<C>, message: Message) {
   const session = bot.session()

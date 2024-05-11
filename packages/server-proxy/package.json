@@ -28,9 +28,9 @@
     "service"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.0"
+    "@cordisjs/plugin-server": "^0.2.1"
   },
   "peerDependencies": {
-    "@satorijs/satori": "^3.7.0"
+    "@satorijs/core": "^3.7.0"
   }
 }

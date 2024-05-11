@@ -1,4 +1,4 @@
-import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/satori'
+import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 

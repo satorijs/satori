@@ -1,4 +1,4 @@
-import { Dict, h, Universal } from '@satorijs/satori'
+import { Dict, h, Universal } from '@satorijs/core'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 

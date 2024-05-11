@@ -1,4 +1,4 @@
-import { hyphenate } from '@satorijs/satori'
+import { hyphenate } from '@satorijs/core'
 import { LineBot } from './bot'
 import * as Line from './types'
 

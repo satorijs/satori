@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
 import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import { WsClient } from './ws'
@@ -9,7 +9,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   static MessageEncoder = KookMessageEncoder
   static inject = ['http']
 
-  http: Quester
+  http: HTTP
   internal: Kook.Internal
 
   constructor(ctx: C, config: T) {
@@ -28,7 +28,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  async request<T = any>(method: Quester.Method, path: string, data = {}, headers: any = {}): Promise<T> {
+  async request<T = any>(method: HTTP.Method, path: string, data = {}, headers: any = {}): Promise<T> {
     if (method === 'GET') {
       return (await this.http.get(path, { params: data, headers })).data
     } else {
@@ -170,7 +170,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends Quester.Config, KookMessageEncoder.Config {}
+  export interface BaseConfig extends HTTP.Config, KookMessageEncoder.Config {}
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
@@ -185,6 +185,6 @@ export namespace KookBot {
       HttpServer.Options,
     ]),
     KookMessageEncoder.Config,
-    Quester.createConfig('https://www.kookapp.cn/api/v3'),
+    HTTP.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

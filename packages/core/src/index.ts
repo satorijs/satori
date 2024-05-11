@@ -16,6 +16,7 @@ export type { Fragment, Render } from '@satorijs/element'
 export { h, h as Element, h as segment, HTTP, HTTP as Quester }
 
 export * from 'cordis'
+export * from 'cosmokit'
 
 export * as Universal from '@satorijs/protocol'
 
@@ -118,7 +119,7 @@ export class Context extends cordis.Context {
   }
 }
 
-export class Satori<C extends Context> extends cordis.Service<unknown, C> {
+export default class Satori<C extends Context> extends cordis.Service<unknown, C> {
   static [cordis.Service.provide] = 'satori'
   static [cordis.Service.immediate] = true
 

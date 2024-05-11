@@ -1,4 +1,4 @@
-import { clone, remove, Universal } from '@satorijs/satori'
+import { clone, remove, Universal } from '@satorijs/core'
 import { $, Update } from 'minato'
 import { Message } from './types'
 import { SyncChannel } from './channel'

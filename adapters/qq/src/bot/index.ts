@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
@@ -17,8 +17,8 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   public guildBot: QQGuildBot<C>
 
   internal: GroupInternal
-  groupHttp: Quester
-  guildHttp: Quester
+  http: HTTP
+  guildHttp: HTTP
 
   private _token: string
   private _timer: NodeJS.Timeout
@@ -39,7 +39,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     this.ctx.plugin(QQGuildBot, {
       parent: this,
     })
-    this.internal = new GroupInternal(this, () => this.groupHttp)
+    this.internal = new GroupInternal(this, () => this.http)
     this.ctx.plugin(WsClient, this)
   }
 
@@ -78,7 +78,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
         endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
       }
       this._token = result.data.access_token
-      this.groupHttp = this.ctx.http.extend({
+      this.http = this.ctx.http.extend({
         endpoint,
         headers: {
           'Authorization': `QQBot ${this._token}`,
@@ -91,7 +91,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
         this._ensureAccessToken()
       }, (result.data.expires_in - 40) * 1000)
     } catch (e) {
-      if (!Quester.Error.is(e) || !e.response) throw e
+      if (!this.ctx.http.isError(e) || !e.response) throw e
       this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, e.response.data, e.response.headers.get('x-tps-trace-id'))
       throw e
     }

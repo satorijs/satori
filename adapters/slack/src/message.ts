@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/core'
 import { SlackBot } from './bot'
 import { adaptMessage, adaptSentAsset } from './utils'
 import { File } from './types'

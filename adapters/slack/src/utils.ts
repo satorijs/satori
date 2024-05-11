@@ -1,4 +1,4 @@
-import { Context, Element, h, Session, Universal } from '@satorijs/satori'
+import { Context, Element, h, Session, Universal } from '@satorijs/core'
 import { SlackBot } from './bot'
 // eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'

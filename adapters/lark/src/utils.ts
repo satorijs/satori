@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Context, h, Session, trimSlash, Universal } from '@satorijs/satori'
+import { Context, h, Session, trimSlash, Universal } from '@satorijs/core'
 import { FeishuBot, LarkBot } from './bot'
 import { AllEvents, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
 

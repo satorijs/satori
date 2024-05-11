@@ -1,4 +1,4 @@
-import { Context, h } from '@satorijs/satori'
+import { Context, h } from '@satorijs/core'
 import { Message } from './types'
 import { DingtalkBot } from './bot'
 

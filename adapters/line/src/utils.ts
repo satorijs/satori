@@ -1,4 +1,4 @@
-import { h, hyphenate, Session } from '@satorijs/satori'
+import { h, hyphenate, Session } from '@satorijs/core'
 import { LineBot } from './bot'
 import { EventMessage, WebhookEvent } from './types'
 // import jose from 'jose'

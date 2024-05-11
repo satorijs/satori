@@ -1,4 +1,4 @@
-import { Bot, Universal } from '@satorijs/satori'
+import { Bot, Universal } from '@satorijs/core'
 
 export class SyncGuild {
   public members?: Universal.List<Universal.GuildMember>

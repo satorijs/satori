@@ -1,4 +1,4 @@
-import { Bot, Context, Logger, Session, Universal } from '@satorijs/satori'
+import { Bot, Context, Logger, Session, Universal } from '@satorijs/core'
 import { Message } from './types'
 import { Span } from './span'
 

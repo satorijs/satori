@@ -1,4 +1,4 @@
-import { Dict, makeArray, Quester } from '@satorijs/satori'
+import { Dict, HTTP, makeArray } from '@satorijs/core'
 import { LarkBot } from '../bot'
 
 export interface Internal {}
@@ -36,7 +36,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.RequestConfig = {}
+            const config: HTTP.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

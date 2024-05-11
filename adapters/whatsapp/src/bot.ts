@@ -1,4 +1,4 @@
-import { Bot, Context, Quester } from '@satorijs/satori'
+import { Bot, Context, HTTP } from '@satorijs/core'
 import { WhatsAppMessageEncoder } from './message'
 import { Internal } from './internal'
 
@@ -7,7 +7,7 @@ export class WhatsAppBot<C extends Context = Context> extends Bot<C> {
   static MessageEncoder = WhatsAppMessageEncoder
 
   public internal: Internal
-  public http: Quester
+  public http: HTTP
   public platform = 'whatsapp'
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {

@@ -1,4 +1,4 @@
-import { Context, Quester, sanitize, Schema } from '@satorijs/satori'
+import { Context, sanitize, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import internal from 'stream'
 
@@ -24,7 +24,7 @@ class ProxyServer {
       try {
         koa.body = await ctx.http.get<internal.Readable>(koa.params.url, { responseType: 'stream' })
       } catch (error) {
-        if (!Quester.Error.is(error) || !error.response) throw error
+        if (!ctx.http.isError(error) || !error.response) throw error
         koa.status = error.response.status
         koa.body = error.response.data
       }

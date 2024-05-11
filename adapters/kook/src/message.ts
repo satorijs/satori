@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder, Schema } from '@satorijs/satori'
+import { Context, h, MessageEncoder, Schema } from '@satorijs/core'
 import { KookBot } from './bot'
 import * as Kook from './types'
 

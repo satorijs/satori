@@ -1,4 +1,4 @@
-import { Adapter, Context, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { Adapter, Context, Schema, Time, Universal } from '@satorijs/core'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 
@@ -45,7 +45,7 @@ export class HttpPolling<C extends Context = Context> extends Adapter<C, Telegra
           }
           this.timeout = setTimeout(polling, 0)
         } catch (e) {
-          if (!Quester.Error.is(e) || !e.response?.data) {
+          if (!bot.http.isError(e) || !e.response?.data) {
             // Other error
             bot.logger.warn('failed to get updates. reason: %s', e.message)
           } else {

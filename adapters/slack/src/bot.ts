@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptMessage, decodeChannel, decodeGuild, decodeGuildMember, decodeUser } from './utils'
@@ -10,7 +10,7 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
   static MessageEncoder = SlackMessageEncoder
   static inject = ['http']
 
-  public http: Quester
+  public http: HTTP
   public internal: Internal
 
   constructor(ctx: C, config: T) {
@@ -25,7 +25,7 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
     }
   }
 
-  async request<T = any>(method: Quester.Method, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
+  async request<T = any>(method: HTTP.Method, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
     headers['Authorization'] = `Bearer ${zap ? this.config.token : this.config.botToken}`
     if (method === 'GET') {
       return await this.http.get(path, { params: data, headers })
@@ -180,7 +180,7 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
 }
 
 export namespace SlackBot {
-  export interface BaseConfig extends Quester.Config {
+  export interface BaseConfig extends HTTP.Config {
     token: string
     botToken: string
   }
@@ -197,6 +197,6 @@ export namespace SlackBot {
       WsClient.Options,
       HttpServer.Options,
     ]),
-    Quester.createConfig('https://slack.com/api/'),
+    HTTP.createConfig('https://slack.com/api/'),
   ] as const)
 }

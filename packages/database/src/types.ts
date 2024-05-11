@@ -1,4 +1,4 @@
-import { Universal } from '@satorijs/satori'
+import { Universal } from '@satorijs/core'
 import { Span } from './span'
 
 declare module 'minato' {
@@ -17,6 +17,7 @@ declare module '@satorijs/protocol' {
 }
 
 export interface Message extends Universal.Message {
+  id: string
   uid: number
   sid: bigint
   platform: string

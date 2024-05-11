@@ -2,7 +2,7 @@ import NodeIMAP from 'node-imap'
 import { createTransport, Transporter } from 'nodemailer'
 import { simpleParser } from 'mailparser'
 import { MailBot } from './bot'
-import { Adapter, Context, Universal } from '@satorijs/satori'
+import { Adapter, Context, Universal } from '@satorijs/core'
 import { dispatchSession } from './utils'
 
 export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {

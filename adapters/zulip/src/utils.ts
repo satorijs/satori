@@ -1,4 +1,4 @@
-import { Dict, h, Session, Universal } from '@satorijs/satori'
+import { Dict, h, Session, Universal } from '@satorijs/core'
 import { ZulipBot } from './bot'
 import * as marked from 'marked'
 import * as Zulip from './types'

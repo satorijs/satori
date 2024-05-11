@@ -2,7 +2,8 @@
   "name": "@satorijs/adapter-satori",
   "description": "Satori Adapter for Satorijs",
   "version": "1.1.2",
-  "main": "lib/index.js",
+  "type": "module",
+  "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
@@ -29,6 +30,6 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/satori": "^3.7.0"
+    "@satorijs/core": "^3.7.0"
   }
 }

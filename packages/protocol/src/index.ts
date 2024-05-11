@@ -221,7 +221,7 @@ export const enum Status {
 }
 
 export interface Message {
-  id: string
+  id?: string
   /** @deprecated */
   messageId?: string
   channel?: Channel

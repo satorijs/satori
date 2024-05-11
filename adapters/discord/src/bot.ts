@@ -1,4 +1,4 @@
-import { Bot, Context, Fragment, h, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -11,7 +11,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   static MessageEncoder = DiscordMessageEncoder
   static inject = ['http']
 
-  public http: Quester
+  public http: HTTP
   public internal: Internal
   public webhooks: Record<string, Webhook> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
@@ -85,10 +85,22 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return await Discord.decodeMessage(this, data, {}, undefined, recursive)
   }
 
-  async getMessageList(channelId: string, before?: string) {
-    const messages = await this.internal.getChannelMessages(channelId, { before, limit: 100 })
+  async getMessageList(
+    channelId: string,
+    messageId?: string,
+    direction: Universal.Direction = 'before',
+    limit?: number,
+    order: Universal.Order = 'asc',
+  ) {
+    const messages = await this.internal.getChannelMessages(channelId, {
+      [direction]: messageId,
+      limit: limit && Math.min(limit, 100),
+    })
     const data = await Promise.all(messages.reverse().map(data => Discord.decodeMessage(this, data, {}, undefined, false)))
-    return { data, next: data[0]?.id }
+    const prev = data.at(direction === 'after' ? -1 : 0)?.id
+    const next = data.at(direction === 'before' ? 0 : -1)?.id
+    if (order === 'desc') data.reverse()
+    return { data, prev, next }
   }
 
   async getUser(userId: string) {
@@ -200,7 +212,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 }
 
 export namespace DiscordBot {
-  export interface Config extends Quester.Config, DiscordMessageEncoder.Config, WsClient.Options {
+  export interface Config extends HTTP.Config, DiscordMessageEncoder.Config, WsClient.Options {
     token: string
     slash?: boolean
   }
@@ -214,6 +226,6 @@ export namespace DiscordBot {
     }).description('功能设置'),
     WsClient.Options,
     DiscordMessageEncoder.Config,
-    Quester.createConfig('https://discord.com/api/v10'),
+    HTTP.createConfig('https://discord.com/api/v10'),
   ])
 }

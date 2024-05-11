@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/core'
 import { ZulipBot } from './bot'
 import { by_stream_topic_url, encodeHashComponent } from './utils'
 

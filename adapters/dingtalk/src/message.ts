@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/satori'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { DingtalkBot } from './bot'
 import { SendMessageData } from './types'
 import { Entry } from '@cordisjs/plugin-server-temp'

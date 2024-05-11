@@ -7,4 +7,9 @@ declare module '@satorijs/satori' {
   }
 }
 
-export { MailBot }
+export * from './bot'
+export * from './mail'
+export * from './message'
+export * from './utils'
+
+export default MailBot

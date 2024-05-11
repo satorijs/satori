@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder, Quester } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { BaseResponse, Lark, MessageContent, MessageType } from './types'
 import { extractIdType } from './utils'
@@ -36,7 +36,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       this.results.push(session.event.message)
     } catch (e) {
       // try to extract error message from Lark API
-      if (Quester.Error.is(e)) {
+      if (this.bot.http.isError(e)) {
         if (e.response?.data?.code) {
           const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
           e.message += ` (Lark error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`

@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, h, HTTP, Schema, Universal } from '@satorijs/core'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
@@ -11,8 +11,8 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   _token?: string
   _refresher?: NodeJS.Timeout
-  http: Quester
-  assetsQuester: Quester
+  http: HTTP
+  assetsQuester: HTTP
   internal: Internal
 
   constructor(ctx: C, config: LarkBot.Config) {
@@ -133,7 +133,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 }
 
 export namespace LarkBot {
-  export interface Config extends HttpServer.Options, Quester.Config {
+  export interface Config extends HttpServer.Options, HTTP.Config {
     appId: string
     appSecret: string
     encryptKey?: string
@@ -153,14 +153,14 @@ export namespace LarkBot {
         Schema.object({
           platform: Schema.const('feishu').required(),
         }),
-        Quester.createConfig('https://open.feishu.cn/open-apis/'),
+        HTTP.createConfig('https://open.feishu.cn/open-apis/'),
         HttpServer.createConfig('/feishu'),
       ]),
       Schema.intersect([
         Schema.object({
           platform: Schema.const('lark').required(),
         }),
-        Quester.createConfig('https://open.larksuite.com/open-apis/'),
+        HTTP.createConfig('https://open.larksuite.com/open-apis/'),
         HttpServer.createConfig('/lark'),
       ]),
     ]),

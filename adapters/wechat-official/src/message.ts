@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder } from '@satorijs/satori'
+import { Context, h, MessageEncoder } from '@satorijs/core'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'
 import { SendMessage } from './types'

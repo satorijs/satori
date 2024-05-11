@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema } from '@satorijs/core'
 import { HttpServer } from './http'
 import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
@@ -7,7 +7,7 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
   static inject = ['server', 'http']
   static MessageEncoder = WechatOfficialMessageEncoder
 
-  http: Quester
+  http: HTTP
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 
@@ -86,7 +86,7 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
 }
 
 export namespace WechatOfficialBot {
-  export interface Config extends Quester.Config {
+  export interface Config extends HTTP.Config {
     appid: string
     secret: string
     token: string
@@ -104,6 +104,6 @@ export namespace WechatOfficialBot {
       aesKey: Schema.string().role('secret').description('EncodingAESKey'),
       customerService: Schema.boolean().default(false).description('启用客服消息回复'),
     }),
-    Quester.createConfig('https://api.weixin.qq.com/'),
+    HTTP.createConfig('https://api.weixin.qq.com/'),
   ])
 }

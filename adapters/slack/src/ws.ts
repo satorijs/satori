@@ -1,4 +1,4 @@
-import { Adapter, Context, Schema } from '@satorijs/satori'
+import { Adapter, Context, Schema } from '@satorijs/core'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'

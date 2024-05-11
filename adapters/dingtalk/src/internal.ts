@@ -1,13 +1,13 @@
-import { Dict, Quester } from '@satorijs/satori'
+import { Dict, HTTP } from '@satorijs/core'
 import { DingtalkBot } from './bot'
 
 export class Internal {
   constructor(private bot: DingtalkBot) { }
 
-  static define(routes: Dict<Partial<Record<Quester.Method, Record<string, boolean>>>>) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, Record<string, boolean>>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as Quester.Method
+        const method = key as HTTP.Method
         for (const name of Object.keys(routes[path][method])) {
           const isOldApi = routes[path][method][name]
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
@@ -16,7 +16,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: Quester.RequestConfig = {}
+            const config: HTTP.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
@@ -36,7 +36,7 @@ export class Internal {
             try {
               return (await quester(method, url, config)).data
             } catch (error) {
-              if (!Quester.Error.is(error) || !error.response) throw error
+              if (!this.bot.http.isError(error) || !error.response) throw error
               throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
             }
           }

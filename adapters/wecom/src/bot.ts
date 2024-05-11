@@ -1,4 +1,4 @@
-import { Bot, Context, Quester, Schema, Universal } from '@satorijs/satori'
+import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
 import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 
@@ -6,7 +6,7 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
   static inject = ['server', 'http']
   static MessageEncoder = WecomMessageEncoder
 
-  http: Quester
+  http: HTTP
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 
@@ -119,7 +119,7 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
 }
 
 export namespace WecomBot {
-  export interface Config extends Quester.Config {
+  export interface Config extends HTTP.Config {
     corpId: string
     token: string
     aesKey: string
@@ -135,6 +135,6 @@ export namespace WecomBot {
       token: Schema.string().role('secret').description('Webhook Token').required(),
       aesKey: Schema.string().role('secret').description('EncodingAESKey'),
     }),
-    Quester.createConfig('https://qyapi.weixin.qq.com/'),
+    HTTP.createConfig('https://qyapi.weixin.qq.com/'),
   ])
 }

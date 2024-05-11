@@ -105,7 +105,8 @@ export class Session<C extends Context = Context> {
   }
 
   set content(value: string | undefined) {
-    (this.event.message ??= {}).elements = isNullable(value) ? value : h.parse(value)
+    this.event.message ??= {}
+    this.event.message.elements = isNullable(value) ? value : h.parse(value)
   }
 
   setInternal(type: string, data: any) {

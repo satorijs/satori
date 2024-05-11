@@ -1,4 +1,4 @@
-import { arrayBufferToBase64, Bot, Context, Dict, h, Quester, Schema, Time, Universal } from '@satorijs/satori'
+import { arrayBufferToBase64, Bot, Context, Dict, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
 import * as Telegram from './types'
 import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
@@ -28,8 +28,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   static MessageEncoder = TelegramMessageEncoder
   static inject = ['http']
 
-  http: Quester
-  file: Quester
+  http: HTTP
+  file: HTTP
   internal: Telegram.Internal
   local?: boolean
   server?: string
@@ -230,7 +230,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 }
 
 export namespace TelegramBot {
-  export interface BaseConfig extends Quester.Config {
+  export interface BaseConfig extends HTTP.Config {
     protocol: 'server' | 'polling'
     token: string
     files?: Config.Files
@@ -261,7 +261,7 @@ export namespace TelegramBot {
     Schema.object({
       slash: Schema.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
-    Quester.createConfig('https://api.telegram.org'),
+    HTTP.createConfig('https://api.telegram.org'),
     Schema.object({
       files: Schema.object({
         endpoint: Schema.string().description('文件请求的终结点。'),

@@ -34,8 +34,13 @@
     "satori",
     "element",
     "message",
-    "utilities"
+    "utilities",
+    "cordis",
+    "plugin"
   ],
+  "peerDependencies": {
+    "cordis": "^3.14.0"
+  },
   "dependencies": {
     "@satorijs/core": "3.7.0",
     "cosmokit": "^1.6.2"

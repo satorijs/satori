@@ -1,4 +1,4 @@
-import { segment, Session, Universal } from '@satorijs/satori'
+import { segment, Session, Universal } from '@satorijs/core'
 import { MatrixBot } from './bot'
 import * as Matrix from './types'
 import { INode, ITag, parse, SyntaxKind } from 'html5parser'

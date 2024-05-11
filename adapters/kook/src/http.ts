@@ -1,4 +1,4 @@
-import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/satori'
+import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'

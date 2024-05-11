@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/satori'
+import { Adapter, Context } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'

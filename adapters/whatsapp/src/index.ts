@@ -11,10 +11,10 @@ declare module '@satorijs/core' {
   }
 }
 
-export default WhatsAppAdapter
-
 export * from './adapter'
 export * from './bot'
 export * from './types'
 export * from './utils'
 export * from './message'
+
+export default WhatsAppAdapter

@@ -1,4 +1,4 @@
-import { Context, h, isNullable, Session, Universal } from '@satorijs/satori'
+import { Context, h, isNullable, Session, Universal } from '@satorijs/core'
 import * as Kook from './types'
 import { KookBot } from './bot'
 

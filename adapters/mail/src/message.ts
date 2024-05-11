@@ -1,4 +1,4 @@
-import { Context, Element, MessageEncoder } from '@satorijs/satori'
+import { Context, Element, MessageEncoder } from '@satorijs/core'
 import { MailBot } from './bot'
 import { Attachment } from './mail'
 

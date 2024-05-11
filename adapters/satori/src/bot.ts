@@ -1,4 +1,4 @@
-import { Bot, Context, h, Quester, snakeCase, Universal } from '@satorijs/satori'
+import { Bot, Context, h, HTTP, snakeCase, Universal } from '@satorijs/core'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -26,7 +26,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
 }
 
 export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Login> {
-  public http: Quester
+  public http: HTTP
   public internal = createInternal(this)
 
   constructor(ctx: C, config: Universal.Login) {

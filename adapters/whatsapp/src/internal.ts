@@ -1,4 +1,4 @@
-import { Quester } from '@satorijs/satori'
+import { HTTP } from '@satorijs/core'
 import { SendMessage } from './types'
 
 interface PhoneNumber {
@@ -10,7 +10,7 @@ interface PhoneNumber {
 }
 
 export class Internal {
-  constructor(public http: Quester) { }
+  constructor(public http: HTTP) { }
 
   async getPhoneNumbers(id: string) {
     // https://developers.facebook.com/docs/whatsapp/business-management-api/manage-phone-numbers#all-phone-numbers

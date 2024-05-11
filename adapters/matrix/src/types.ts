@@ -1,5 +1,5 @@
 import imageSize from 'image-size'
-import { Dict } from '@satorijs/satori'
+import { Dict } from '@satorijs/core'
 import { MatrixBot } from './bot'
 
 export interface Transaction {

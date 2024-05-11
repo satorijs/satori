@@ -1,4 +1,4 @@
-import { Bot, Context, Schema } from '@satorijs/satori'
+import { Bot, Context, Schema } from '@satorijs/core'
 import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
 
