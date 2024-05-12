@@ -1,7 +1,7 @@
 import { MatrixBot } from './bot'
 import * as Matrix from './types'
 
-declare module '@satorijs/satori' {
+declare module '@satorijs/core' {
   interface Session {
       matrix: Matrix.Internal & Matrix.ClientEvent
   }

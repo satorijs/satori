@@ -1,7 +1,7 @@
 import { ParsedMail } from 'mailparser'
 import { MailBot } from './bot'
 
-declare module '@satorijs/satori' {
+declare module '@satorijs/core' {
   interface Session {
     mail: ParsedMail
   }

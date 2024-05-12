@@ -1,5 +1,5 @@
 {
-  "name": "@satorijs/database",
+  "name": "@satorijs/plugin-database",
   "description": "Database for Satori protocol",
   "version": "0.1.0",
   "type": "module",
@@ -37,13 +37,23 @@
     "api",
     "database"
   ],
+  "cordis": {
+    "service": {
+      "required": [
+        "database"
+      ],
+      "implements": [
+        "satori.database"
+      ]
+    }
+  },
   "devDependencies": {
-    "@satorijs/server-satori": "^2.4.3",
-    "minato": "^3.2.0"
+    "@satorijs/plugin-server": "^2.5.0",
+    "minato": "^3.3.0"
   },
   "peerDependencies": {
-    "@satorijs/core": "^3.7.0",
-    "minato": "^3.2.0"
+    "@satorijs/core": "^4.0.0",
+    "minato": "^3.3.0"
   },
   "dependencies": {
     "cosmokit": "^1.6.2"
