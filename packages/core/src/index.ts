@@ -112,14 +112,12 @@ export class Context extends cordis.Context {
 
   constructor(config?: any) {
     super(config)
-    this.provide('http', undefined, true)
     this.provide('satori', undefined, true)
-    this.plugin(HTTP, config.request)
     this.plugin(Satori)
   }
 }
 
-export default class Satori<C extends Context> extends cordis.Service<unknown, C> {
+export class Satori<C extends Context = Context> extends cordis.Service<unknown, C> {
   static [cordis.Service.provide] = 'satori'
   static [cordis.Service.immediate] = true
 
@@ -157,3 +155,5 @@ export default class Satori<C extends Context> extends cordis.Service<unknown, C
     return this.ctx.set('component:' + name, render)
   }
 }
+
+export default Satori

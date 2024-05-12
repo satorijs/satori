@@ -4,7 +4,7 @@ import h from '@satorijs/element'
 import { Context } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
-import { defineAccessor } from './session'
+import { defineAccessor, Session } from './session'
 import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
 
 const eventAliases = [
@@ -37,25 +37,29 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   constructor(public ctx: C, public config: T, platform?: string) {
     this.internal = null
     this.context = ctx
-    ctx.bots.push(this)
-    this.context.emit('bot-added', this)
+    this[Context.current] = ctx
+    const self = Context.associate(this, 'bot')
+    ctx.bots.push(self)
+    self.context.emit('bot-added', self)
     if (platform) {
-      this.logger = ctx.logger(platform)
-      this.platform = platform
+      self.logger = ctx.logger(platform)
+      self.platform = platform
     }
 
     ctx.on('ready', async () => {
       await Promise.resolve()
-      this.dispatchLoginEvent('login-added')
-      return this.start()
+      self.dispatchLoginEvent('login-added')
+      return self.start()
     })
 
-    ctx.on('dispose', () => this.dispose())
+    ctx.on('dispose', () => self.dispose())
 
-    ctx.on('interaction/button', (session: C[typeof Context.session]) => {
+    ctx.on('interaction/button', (session) => {
       const cb = this.callbacks[session.event.button.id]
       if (cb) cb(session)
     })
+
+    return self
   }
 
   update(login: Login) {
@@ -136,7 +140,6 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   session(event: Partial<Event> = {}): C[typeof Context.session] {
-    const { Session } = this.ctx.constructor as typeof Context
     return new Session(this, event)
   }
 
