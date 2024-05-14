@@ -384,7 +384,7 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         ...encodeDescription(option),
         name: option.name.toLowerCase(),
         type: types[option.type] ?? types.text,
-        required: option.required ?? false,
+        required: false,
         min_value: option.type === 'posint' ? 1 : undefined,
       })
     }
