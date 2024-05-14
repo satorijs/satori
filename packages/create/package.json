@@ -1,0 +1,32 @@
+{
+  "name": "create-satori",
+  "description": "Setup a Satori application",
+  "version": "0.1.1",
+  "type": "module",
+  "bin": "lib/bin.js",
+  "files": [
+    "lib"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "packages/create"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "keywords": [
+    "satori",
+    "application",
+    "create",
+    "scaffold",
+    "template",
+    "generator",
+    "boilerplate"
+  ],
+  "dependencies": {
+    "create-cordis": "^0.1.4"
+  }
+}
