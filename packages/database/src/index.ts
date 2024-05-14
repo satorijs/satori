@@ -1,21 +1,22 @@
 import {} from 'minato'
-import { Bot, Context, Dict, Schema, Service } from '@satorijs/satori'
-import * as Universal from '@satorijs/protocol'
+import { Bot, Context, Dict, Schema, Service, Universal } from '@satorijs/core'
 import { SyncChannel } from './channel'
 import { SyncGuild } from './guild'
 
 export * from './types'
 
 declare module '@satorijs/core' {
-  // https://github.com/typescript-eslint/typescript-eslint/issues/6720
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface Satori<C> {
+  interface Satori {
     database: SatoriDatabase
+  }
+
+  interface Events {
+    'satori/database/update'(): void
   }
 }
 
 class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
-  inject = ['model', 'database']
+  static inject = ['model', 'database']
 
   _guilds: Dict<SyncGuild> = {}
   _channels: Dict<SyncChannel> = {}
@@ -84,7 +85,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       const { platform, guildId, channelId } = session
       if (session.bot.hidden) return
       const key = platform + '/' + guildId + '/' + channelId
-      this._channels[key] ||= new SyncChannel(this.ctx, session.bot, session.guildId, session.channelId)
+      this._channels[key] ||= new SyncChannel(this.ctx, session.bot, session.guildId, session.event.channel!)
       if (this._channels[key].bot === session.bot) this._channels[key].queue(session)
     })
 
@@ -139,10 +140,11 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       tasks.push((async () => {
         for await (const channel of bot.getChannelIter(guild.id)) {
           const key = bot.platform + '/' + guild.id + '/' + channel.id
-          this._channels[key] ||= new SyncChannel(this.ctx, bot, guild.id, channel.id)
+          this._channels[key] ||= new SyncChannel(this.ctx, bot, guild.id, channel)
         }
       })())
     }
+    await Promise.all(tasks)
   }
 }
 

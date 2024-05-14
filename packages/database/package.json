@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/plugin-database",
   "description": "Database for Satori protocol",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",

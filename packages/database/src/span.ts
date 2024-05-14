@@ -56,7 +56,7 @@ export class Span {
         data.push({
           ...this.channel._query,
           sid: this.next.back[0],
-          flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.BACK)),
+          flag: $.and(row.flag, $.not(Message.Flag.BACK)),
         })
       } else {
         data.at(-1)!.flag |= Message.Flag.FRONT
@@ -65,7 +65,7 @@ export class Span {
         data.unshift({
           ...this.channel._query,
           sid: this.prev.front[0],
-          flag: $.bitAnd(row.flag, $.bitNot(Message.Flag.FRONT)),
+          flag: $.and(row.flag, $.not(Message.Flag.FRONT)),
         })
       } else {
         data.at(0)!.flag |= Message.Flag.BACK

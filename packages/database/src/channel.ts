@@ -28,12 +28,13 @@ export class SyncChannel {
 
   private _initTask?: Promise<void>
 
-  constructor(public ctx: Context, public bot: Bot, public guildId: string, public channelId: string) {
-    this._query = { platform: bot.platform, 'channel.id': channelId }
+  constructor(public ctx: Context, public bot: Bot, public guildId: string, public data: Universal.Channel) {
+    this._query = { platform: bot.platform, 'channel.id': data.id }
+    bot.ctx.emit('satori/database/update')
   }
 
   private async init() {
-    logger.debug('init channel %s %s %s', this.bot.platform, this.guildId, this.channelId)
+    logger.debug('init channel %s %s %s', this.bot.platform, this.guildId, this.data.id)
     const data = await this.ctx.database
       .select('satori.message')
       .where({
@@ -102,7 +103,7 @@ export class SyncChannel {
   }
 
   getMessageList(id: string, dir?: Universal.Direction, limit?: number) {
-    return this.bot.getMessageList(this.channelId, id, dir, limit, 'asc')
+    return this.bot.getMessageList(this.data.id, id, dir, limit, 'asc')
   }
 
   // TODO handle default limit
