@@ -1,7 +1,7 @@
+import { Context } from 'cordis'
 import { Bot } from './bot'
 import { Message, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
-import { Context } from '.'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {

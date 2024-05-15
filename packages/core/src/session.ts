@@ -1,7 +1,7 @@
-import { defineProperty, isNullable } from 'cosmokit'
-import { Context } from '.'
-import { Bot } from './bot'
 import { Channel, Event, GuildMember, Message, User } from '@satorijs/protocol'
+import { defineProperty, isNullable } from 'cosmokit'
+import { Context } from 'cordis'
+import { Bot } from './bot'
 import h from '@satorijs/element'
 
 declare module '@satorijs/protocol' {

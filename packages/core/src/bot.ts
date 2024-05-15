@@ -1,7 +1,6 @@
 import { clone, Dict, pick, remove } from 'cosmokit'
-import * as cordis from 'cordis'
+import { Context, Logger } from 'cordis'
 import h from '@satorijs/element'
-import { Context } from '.'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
@@ -9,6 +8,8 @@ import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorij
 
 const eventAliases = [
   ['message-created', 'message'],
+  ['guild-removed', 'guild-deleted'],
+  ['guild-member-removed', 'guild-member-deleted'],
 ]
 
 export interface Bot extends Methods {
@@ -21,6 +22,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   static reusable = true
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
 
+  public self = this
   public user = {} as User
   public isBot = true
   public hidden = false
@@ -28,7 +30,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
-  public logger: cordis.Logger
+  public logger: Logger
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context

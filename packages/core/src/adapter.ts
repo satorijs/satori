@@ -1,7 +1,6 @@
 import { Awaitable, remove, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
-import { z } from 'cordis'
-import { Context } from '.'
+import { Context, z } from 'cordis'
 import { Bot } from './bot'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
