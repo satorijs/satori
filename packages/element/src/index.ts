@@ -1,4 +1,4 @@
-import { arrayBufferToBase64, Awaitable, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
+import { Awaitable, Binary, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
 
 declare global {
   namespace JSX {
@@ -522,9 +522,9 @@ namespace Element {
       if (is('Buffer', src)) {
         src = prefix + src.toString('base64')
       } else if (is('ArrayBuffer', src)) {
-        src = prefix + arrayBufferToBase64(src)
+        src = prefix + Binary.toBase64(src)
       } else if (ArrayBuffer.isView(src)) {
-        src = prefix + arrayBufferToBase64(src.buffer)
+        src = prefix + Binary.toBase64(src.buffer)
       }
       if (src.startsWith('base64://')) {
         warn(`protocol "base64:" is deprecated and will be removed in the future, please use "data:" instead`)

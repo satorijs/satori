@@ -1,4 +1,4 @@
-import { arrayBufferToBase64, Bot, Context, Dict, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
+import { Binary, Bot, Context, Dict, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
 import * as Telegram from './types'
 import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
@@ -167,7 +167,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (mime === 'application/octet-stream') {
       mime = (await FileType.fromBuffer(data))?.mime
     }
-    const base64 = `data:${mime};base64,` + arrayBufferToBase64(data)
+    const base64 = `data:${mime};base64,` + Binary.toBase64(data)
     return { src: base64 }
   }
 
