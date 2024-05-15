@@ -9,7 +9,7 @@
   - [x] @satorijs/core
   - [x] @satorijs/element
   - [x] @satorijs/satori
-  - [x] @satorijs/plugin-database
+  - [x] @satorijs/protocol
   - [x] @satorijs/plugin-server
 - Ecosystem
   - [x] DingTalk (钉钉)
