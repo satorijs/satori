@@ -45,9 +45,8 @@ export namespace Message {
   export const from = (message: Universal.Message, platform: string, dir?: Span.Direction, ref?: bigint) => ({
     platform,
     id: message.id,
-    sid: sequence(BigInt(message.timestamp!), dir, ref),
+    sid: sequence(BigInt(message.createdAt!), dir, ref),
     content: message.content,
-    timestamp: message.timestamp,
     channel: { id: message.channel?.id },
     user: { id: message.user?.id },
     guild: { id: message.guild?.id },

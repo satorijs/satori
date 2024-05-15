@@ -9,7 +9,9 @@ declare module '@satorijs/core' {
   interface Satori {
     database: SatoriDatabase
   }
+}
 
+declare module 'cordis' {
   interface Events {
     'satori/database/update'(): void
   }
@@ -22,6 +24,8 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
   _channels: Dict<SyncChannel> = {}
 
   stopped = false
+
+  private _botTasks = new WeakMap<Bot, Promise<void>>()
 
   constructor(ctx: Context, public config: SatoriDatabase.Config) {
     super(ctx, 'satori.database', true)
@@ -45,9 +49,9 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       'content': 'text',
       'createdAt': 'unsigned(8)',
       'updatedAt': 'unsigned(8)',
-      'syncFlag': 'unsigned(1)',
-      // 'deleted': 'boolean',
-      // 'edited': 'boolean',
+      'flag': 'unsigned(1)',
+      'deleted': 'boolean',
+      'edited': 'boolean',
     }, {
       primary: 'uid',
       autoInc: true,
@@ -86,13 +90,15 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
       if (session.bot.hidden) return
       const key = platform + '/' + guildId + '/' + channelId
       this._channels[key] ||= new SyncChannel(this.ctx, session.bot, session.guildId, session.event.channel!)
-      if (this._channels[key].bot === session.bot) this._channels[key].queue(session)
+      if (this._channels[key].bot === session.bot) {
+        this._channels[key].queue(session)
+      }
     })
 
     this.ctx.on('message-deleted', async (session) => {
       // TODO update local message
       await this.ctx.database.set('satori.message', {
-        messageId: session.messageId,
+        id: session.messageId,
         platform: session.platform,
       }, {
         deleted: true,
@@ -103,7 +109,7 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
     this.ctx.on('message-updated', async (session) => {
       // TODO update local message
       await this.ctx.database.set('satori.message', {
-        messageId: session.messageId,
+        id: session.messageId,
         platform: session.platform,
       }, {
         content: session.content,
@@ -125,26 +131,34 @@ class SatoriDatabase extends Service<SatoriDatabase.Config, Context> {
   }
 
   private async updateBot(bot: Bot) {
-    if (bot.hidden || !await bot.supports('message.list') || !await bot.supports('guild.list')) return
+    if (bot.hidden) return
+    if (!await bot.supports('message.list') || !await bot.supports('guild.list')) return
     if (bot.status !== Universal.Status.ONLINE) {
+      this._botTasks.delete(bot)
       for (const channel of Object.values(this._channels)) {
         if (channel.bot !== bot) continue
         channel.hasLatest = false
       }
       return
     }
-    const tasks: Promise<any>[] = []
-    for await (const guild of bot.getGuildIter()) {
-      const key = bot.platform + '/' + guild.id
-      this._guilds[key] ||= new SyncGuild(bot, guild)
-      tasks.push((async () => {
-        for await (const channel of bot.getChannelIter(guild.id)) {
-          const key = bot.platform + '/' + guild.id + '/' + channel.id
-          this._channels[key] ||= new SyncChannel(this.ctx, bot, guild.id, channel)
-        }
-      })())
-    }
-    await Promise.all(tasks)
+    this._botTasks.has(bot) || this._botTasks.set(bot, (async () => {
+      for await (const guild of bot.getGuildIter()) {
+        const key = bot.platform + '/' + guild.id
+        this._guilds[key] ||= new SyncGuild(bot, guild)
+      }
+    })())
+    // const tasks: Promise<any>[] = []
+    // for await (const guild of bot.getGuildIter()) {
+    //   const key = bot.platform + '/' + guild.id
+    //   this._guilds[key] ||= new SyncGuild(bot, guild)
+    //   tasks.push((async () => {
+    //     for await (const channel of bot.getChannelIter(guild.id)) {
+    //       const key = bot.platform + '/' + guild.id + '/' + channel.id
+    //       this._channels[key] ||= new SyncChannel(this.ctx, bot, guild.id, channel)
+    //     }
+    //   })())
+    // }
+    // await Promise.all(tasks)
   }
 }
 
