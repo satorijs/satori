@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@satorijs/adapter-*": ["adapters/*/src"],
+      "@satorijs/plugin-*": ["packages/*/src"],
       "@satorijs/*": ["packages/*/src"],
     },
   },
