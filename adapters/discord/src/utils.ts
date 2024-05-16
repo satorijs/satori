@@ -30,6 +30,7 @@ export const decodeGuildMember = (member: Partial<Discord.GuildMember>): Univers
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
   id: data.id,
   name: data.name,
+  avatar: data.icon && `https://cdn.discordapp.com/icons/${data.id}/${data.icon}.webp?size=240`,
 })
 
 export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
@@ -76,7 +77,7 @@ export async function decodeMessage(
       .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
         const animated = _[1] === 'a'
         return h('face', { id, name, animated, platform }, [
-          h.image(`https://cdn.discordapp.com/emojis/${id}.gif?quality=lossless`),
+          h.image(`https://cdn.discordapp.com/emojis/${id}.webp?quality=lossless`),
         ]).toString()
       })
       .replace(/@everyone/g, () => h('at', { type: 'all' }).toString())
@@ -96,24 +97,35 @@ export async function decodeMessage(
           src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
+          type: v.content_type,
+          width: v.width,
+          height: v.height,
         })
       } else if (v.height && v.width && v.content_type?.startsWith('video/')) {
         return h('video', {
           src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
+          type: v.content_type,
+          width: v.width,
+          height: v.height,
+          size: v.size,
         })
       } else if (v.content_type?.startsWith('audio/')) {
         return h('record', {
           src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
+          type: v.content_type,
+          size: v.size,
         })
       } else {
         return h('file', {
           src: v.url,
           proxy_url: v.proxy_url,
           file: v.filename,
+          type: v.content_type,
+          size: v.size,
         })
       }
     }).join('')
@@ -138,6 +150,8 @@ export async function decodeMessage(
     message.quote = await bot.getMessage(channel_id, message_id, false)
   }
 
+  message.createdAt = new Date(data.timestamp).valueOf()
+  message.updatedAt = data.edited_timestamp && new Date(data.edited_timestamp).valueOf()
   if (!payload) return message
   payload.channel = {
     id: data.channel_id,
@@ -145,7 +159,7 @@ export async function decodeMessage(
   }
   payload.user = decodeUser(data.author)
   payload.member = data.member && decodeGuildMember(data.member)
-  payload.timestamp = new Date(data.timestamp).valueOf() || Date.now()
+  payload.timestamp = new Date(data.timestamp).valueOf()
   return message
 }
 
