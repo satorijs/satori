@@ -25,7 +25,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
     const send = () => {
       if (!this.socket) return
       if (trials >= 2) {
-        return this.socket.close(1013)
+        return this.socket.close(1000)
       }
       this.socket.send(JSON.stringify({ s: Signal.ping, sn: this._sn }))
       this._ping = setTimeout(send, heartbeatIntervals[trials++] * Time.second)
@@ -58,7 +58,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, K
       } else if (parsed.s === Signal.pong) {
         clearTimeout(this._ping)
       } else if (parsed.s === Signal.resume) {
-        this.socket.close(1013)
+        this.socket.close(1000)
       }
     })
   }
