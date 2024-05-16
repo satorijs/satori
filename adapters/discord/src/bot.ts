@@ -22,8 +22,8 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     this.http = ctx.http.extend({
       ...config,
       headers: {
-        Authorization: `Bot ${config.token}`,
-        'User-Agent': `Koishi (https://koishi.chat/, ${version})`,
+        Authorization: config.type === 'user' ? config.token : `Bot ${config.token}`,
+        'User-Agent': `Satori (https://koishi.chat/, ${version})`,
         ...config.headers,
       },
     })
@@ -80,8 +80,18 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     })
   }
 
+  async _getMessage(channelId: string, messageId: string) {
+    if (this.config.type === 'user') {
+      // code 20002: only bots can use this endpoint
+      const data = await this.internal.getChannelMessages(channelId, { around: messageId, limit: 1 })
+      return data[0]
+    } else {
+      return await this.internal.getChannelMessage(channelId, messageId)
+    }
+  }
+
   async getMessage(channelId: string, messageId: string, recursive = true) {
-    const data = await this.internal.getChannelMessage(channelId, messageId)
+    const data = await this._getMessage(channelId, messageId)
     return await Discord.decodeMessage(this, data, {}, undefined, recursive)
   }
 
@@ -213,19 +223,30 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
 
 export namespace DiscordBot {
   export interface Config extends HTTP.Config, DiscordMessageEncoder.Config, WsClient.Options {
+    type: 'bot' | 'user'
     token: string
     slash?: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+      type: Schema.union(['bot', 'user']).default('bot').description('登录方式'),
     }),
+    Schema.union([
+      Schema.object({
+        type: Schema.const('bot'),
+        token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+      }),
+      Schema.object({
+        type: Schema.const('user'),
+        token: Schema.string().description('从网页端获取的用户令牌。').role('secret').required(),
+      }),
+    ]),
     Schema.object({
       slash: Schema.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
     WsClient.Options,
     DiscordMessageEncoder.Config,
     HTTP.createConfig('https://discord.com/api/v10'),
-  ])
+  ]) as any
 }

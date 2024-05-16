@@ -192,7 +192,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
-    const message = await bot.internal.getChannelMessage(input.d.channel_id, input.d.id)
+    const message = await bot._getMessage(input.d.channel_id, input.d.id)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
     await decodeMessage(bot, message, session.event.message = {}, session.event)
