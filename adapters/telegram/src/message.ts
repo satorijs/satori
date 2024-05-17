@@ -66,7 +66,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
             const hash = url.slice(url.lastIndexOf('#') + 1)
             const fileid = /^fileid="(.*?)"$/.exec(hash)?.[1] || /\/tg\-fileid\/(.*)/.exec(url)?.[1]
             if (fileid) {
-              this.session.bot.logger.debug('try to reuse fileid', fileid)
+              this.session.bot.logger.debug('trying to reuse fileid', fileid)
               files.push({
                 filename: (i++).toString(),
                 data: null,
