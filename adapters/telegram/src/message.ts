@@ -30,8 +30,16 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
   }
 
   async flush() {
-    if (this.payload.caption || this.asset.length > 0) {
+    const send = async ({
+      reuseFileId
+    }) => {
+      const results = []
+      const payload = JSON.parse(JSON.stringify(this.payload))
+      let rows = this.rows
+
+
       this.trimButtons()
+
 
       if (this.asset.length > 0) {
         const files: {
@@ -40,6 +48,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           mime: string
           type: string
           element: Element
+          fileid?: string
         }[] = []
 
         const typeMap = {
@@ -52,6 +61,23 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
 
         let i = 0
         for (const element of this.asset) {
+          if (reuseFileId) {
+            const url = element.attrs.src || element.attrs.url
+            const hash = url.slice(url.lastIndexOf('#') + 1)
+            const fileid = /^fileid="(.*?)"$/.exec(hash)?.[1] || /\/tg\-fileid\/(.*)/.exec(url)?.[1]
+            if (fileid) {
+              this.session.bot.logger.debug('try to reuse fileid', fileid)
+              files.push({
+                filename: (i++).toString(),
+                data: null,
+                mime: 'application/octet-stream',
+                type: typeMap[element.type] ?? element.type,
+                fileid,
+                element
+              })
+              continue
+            }
+          }
           const { filename, data, mime } = await this.bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
           files.push({
             filename: (i++) + filename,
@@ -75,8 +101,8 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
         }
 
         if (files.length > 1) {
-          inputFiles[0].caption = this.payload.caption
-          inputFiles[0].parse_mode = this.payload.parse_mode
+          inputFiles[0].caption = payload.caption
+          inputFiles[0].parse_mode = payload.parse_mode
 
           const form = new FormData()
 
@@ -91,7 +117,8 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           }
 
           for (const { filename, data, mime } of files) {
-            form.append(filename, new Blob([data], { type: mime }), filename)
+            if (data)
+              form.append(filename, new Blob([data], { type: mime }), filename)
           }
 
           // @ts-ignore
@@ -99,28 +126,28 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
 
           for (const x of result) { await this.addResult(x) }
 
-          if (this.rows.length > 0 && this.rows[0].length > 0) {
+          if (rows.length > 0 && rows[0].length > 0) {
             const result2 = await this.bot.internal.sendMessage({
-              chat_id: this.payload.chat_id,
-              text: this.payload.caption,
-              parse_mode: this.payload.parse_mode,
+              chat_id: payload.chat_id,
+              text: payload.caption,
+              parse_mode: payload.parse_mode,
               reply_to_message_id: result[0].message_id,
-              message_thread_id: this.payload.message_thread_id,
+              message_thread_id: payload.message_thread_id,
               disable_web_page_preview: !this.options.linkPreview,
               reply_markup: {
-                inline_keyboard: this.rows,
+                inline_keyboard: rows,
               },
             })
 
-            await this.addResult(result2)
-            delete this.payload.reply_to_message_id
-            this.payload.caption = ''
-            this.rows = []
+            results.push(result2)
+            delete payload.reply_to_message_id
+            payload.caption = ''
+            rows = []
           }
 
-          delete this.payload.reply_to_message_id
-          this.payload.caption = ''
-          this.rows = []
+          delete payload.reply_to_message_id
+          payload.caption = ''
+          rows = []
         } else {
           const sendMap = [
             ['audio', ['sendAudio', 'audio']],
@@ -135,38 +162,69 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           const [, [method, dataKey]] = sendMap.find(([key]) => files[0].type.startsWith(key)) || []
 
           const formData = new FormData()
-          formData.append('chat_id', this.payload.chat_id)
-          formData.append('caption', this.payload.caption)
-          formData.append('parse_mode', this.payload.parse_mode)
-          formData.append('reply_to_message_id', this.payload.reply_to_message_id)
-          formData.append('message_thread_id', this.payload.message_thread_id)
+          formData.append('chat_id', payload.chat_id)
+          formData.append('caption', payload.caption)
+          formData.append('parse_mode', payload.parse_mode)
+          formData.append('reply_to_message_id', payload.reply_to_message_id)
+          formData.append('message_thread_id', payload.message_thread_id)
           formData.append('has_spoiler', files[0].element.attrs.spoiler ? 'true' : 'false')
-          formData.append(dataKey, 'attach://' + files[0].filename)
-          formData.append(files[0].filename, new Blob([files[0].data], { type: files[0].mime }), files[0].filename)
+          formData.append(dataKey, files[0].fileid ? files[0].fileid : 'attach://' + files[0].filename)
+          if (files[0].data)
+            formData.append(files[0].filename, new Blob([files[0].data], { type: files[0].mime }), files[0].filename)
 
           // @ts-ignore
           const result = await this.bot.internal[method](formData)
-          await this.addResult(result)
-          this.payload.caption = ''
-          this.rows = []
-          delete this.payload.reply_to_message_id
+          results.push(result)
+          payload.caption = ''
+          rows = []
+          delete payload.reply_to_message_id
         }
       } else {
         const result = await this.bot.internal.sendMessage({
-          chat_id: this.payload.chat_id,
-          text: this.payload.caption,
-          parse_mode: this.payload.parse_mode,
-          reply_to_message_id: this.payload.reply_to_message_id,
-          message_thread_id: this.payload.message_thread_id,
+          chat_id: payload.chat_id,
+          text: payload.caption,
+          parse_mode: payload.parse_mode,
+          reply_to_message_id: payload.reply_to_message_id,
+          message_thread_id: payload.message_thread_id,
           disable_web_page_preview: !this.options.linkPreview,
           reply_markup: {
-            inline_keyboard: this.rows,
+            inline_keyboard: rows,
           },
         })
+        results.push(result)
+        delete payload.reply_to_message_id
+        payload.caption = ''
+        rows = []
+      }
+
+      delete this.payload.reply_to_message_id
+      this.payload.caption = ''
+      this.rows = []
+      this.asset = []
+
+      return results
+    }
+
+    if (this.payload.caption || this.asset.length > 0) {
+      let res: unknown[]
+
+      if (this.session.bot.config.files.reuseFileId) {
+        try {
+          res = await send({ reuseFileId: true })
+        } catch (e) {
+          if (e.message.includes('Telegram API error 400.')) {
+            res = await send({ reuseFileId: false })
+          }
+          else {
+            throw e
+          }
+        }
+      } else {
+        res = await send({ reuseFileId: false })
+      }
+
+      for (const result of res) {
         await this.addResult(result)
-        delete this.payload.reply_to_message_id
-        this.payload.caption = ''
-        this.rows = []
       }
     }
   }
