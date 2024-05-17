@@ -207,8 +207,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
 
     if (this.payload.caption || this.asset.length > 0) {
       let res: unknown[]
-
-      if (this.session.bot.config.files.reuseFileId) {
+      if (this.session.bot.config.files.reuseFileid) {
         try {
           res = await send({ reuseFileId: true })
         } catch (e) {
