@@ -1,4 +1,4 @@
-import { Bot, Context, h, HTTP, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, h, HTTP, snakeCase, Universal } from '@satorijs/core'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -53,6 +53,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
       }
     }
     this.logger.debug('[request]', key, payload)
-    return this.http.post('/v1/' + key, payload)
+    const result = await this.http.post('/v1/' + key, payload)
+    return transformKey(result, camelCase)
   }
 }
