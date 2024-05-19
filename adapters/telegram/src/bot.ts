@@ -56,11 +56,19 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (config.files.server ?? selfUrl) {
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route
-      ctx.get('server').get(route + '/:file+', async ctx => {
-        const { data, mime } = await this.$getFile(ctx.params.file)
-        ctx.set('content-type', mime)
-        ctx.body = Buffer.from(data)
-      })
+      ctx.get('server')
+        .get(route + '/tg-fileid/:file+', async ctx => {
+          const file = await this.internal.getFile({ file_id: ctx.params.file })
+          const { data, mime } = await this.$getFile(file.file_path)
+          ctx.set('content-type', mime)
+          ctx.set('content-disposition', `inline; filename="${file.file_path}"`)
+          ctx.body = Buffer.from(data)
+        })
+        .get(route + '/:file+', async ctx => {
+          const { data, mime } = await this.$getFile(ctx.params.file)
+          ctx.set('content-type', mime)
+          ctx.body = Buffer.from(data)
+        })
     }
   }
 
@@ -152,8 +160,16 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   async $getFileFromId(file_id: string) {
     try {
+      if(this.server) {
+        return {
+          src: `${this.server}/tg-fileid/${file_id}`
+        }
+      }
       const file = await this.internal.getFile({ file_id })
-      return await this.$getFileFromPath(file.file_path)
+      const { src } = await this.$getFileFromPath(file.file_path)
+      return {
+        src: src + '#fileid="' + file_id + '"'
+      }
     } catch (e) {
       this.logger.warn('get file error', e)
     }
@@ -264,6 +280,7 @@ export namespace TelegramBot {
     HTTP.createConfig('https://api.telegram.org'),
     Schema.object({
       files: Schema.object({
+        reuseFileid: Schema.boolean().description('是否尝试复用文件 ID。').default(true),
         endpoint: Schema.string().description('文件请求的终结点。'),
         local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
         server: Schema.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
