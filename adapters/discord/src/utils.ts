@@ -40,6 +40,8 @@ export const decodeChannel = (data: Discord.Channel): Universal.Channel => ({
     : data.type === Discord.Channel.Type.GUILD_VOICE ? Universal.Channel.Type.VOICE
       : data.type === Discord.Channel.Type.GUILD_CATEGORY ? Universal.Channel.Type.CATEGORY
         : Universal.Channel.Type.TEXT,
+  parentId: data.parent_id,
+  position: data.position,
 })
 
 export const decodeRole = (role: Discord.Role): Universal.GuildRole => ({

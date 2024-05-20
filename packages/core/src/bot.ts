@@ -5,6 +5,7 @@ import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
 import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
+import { Universal } from '.'
 
 const eventAliases = [
   ['message-created', 'message'],
@@ -27,6 +28,8 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public isBot = true
   public hidden = false
   public platform: string
+  public features: string[]
+  public resourceUrls: string[] = []
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
@@ -47,6 +50,10 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
       self.logger = ctx.logger(platform)
       self.platform = platform
     }
+
+    this.features = Object.entries(Universal.Methods)
+      .filter(([, value]) => this[value.name])
+      .map(([key]) => key)
 
     ctx.on('ready', async () => {
       await Promise.resolve()
@@ -191,7 +198,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   toJSON(): Login {
-    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden']))
+    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden', 'features', 'resourceUrls']))
   }
 
   async getLogin() {
@@ -221,6 +228,8 @@ for (const name of iterableMethods) {
     if (!this[name + 'List']) throw new Error(`not implemented: ${name}List`)
     const getList = async () => {
       list = await this[name + 'List'](...args, list?.next)
+      // `bot.getMessageList()` returns messages in ascending order
+      if (name === 'getMessage') list.data.reverse()
     }
     return {
       async next() {

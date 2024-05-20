@@ -152,6 +152,7 @@ export interface Channel {
   type: Channel.Type
   name?: string
   parentId?: string
+  position?: number
 }
 
 export namespace Channel {
@@ -210,6 +211,8 @@ export interface Login {
   selfId?: string
   hidden?: boolean
   status: Status
+  features?: string[]
+  resourceUrls?: string[]
 }
 
 export const enum Status {
