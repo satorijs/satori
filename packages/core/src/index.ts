@@ -1,5 +1,6 @@
 import { Context, Logger, Service, z } from 'cordis'
-import { Awaitable, defineProperty, Dict } from 'cosmokit'
+import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
+import { ReadableStream } from 'node:stream/web'
 import { Bot } from './bot'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
@@ -124,13 +125,35 @@ class SatoriContext extends Context {
 
 export { SatoriContext as Context }
 
+export interface UploadResult {
+  status: number
+  data?: ArrayBuffer | ReadableStream
+  type?: string
+  name?: string
+  url?: string
+}
+
+export interface UploadRoute {
+  path: string | string[] | (() => string | string[])
+  callback: (path: string) => Promise<UploadResult>
+}
+
 export class Satori<C extends Context = Context> extends Service<unknown, C> {
   static [Service.provide] = 'satori'
   static [Service.immediate] = true
 
+  public uid = Math.random().toString(36).slice(2)
+
+  _uploadRoutes: UploadRoute[] = []
+  _tempStore: Dict<UploadResult> = Object.create(null)
+
   constructor(ctx?: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
+    this.upload(`/temp/${this.uid}/`, async (path) => {
+      const id = path.split('/').pop()
+      return this._tempStore[id] ?? { status: 404 }
+    })
   }
 
   public bots = new Proxy([], {
@@ -160,6 +183,28 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       return session.transform(h.normalize(result))
     }
     return this.ctx.set('component:' + name, render)
+  }
+
+  upload(path: UploadRoute['path'], callback: UploadRoute['callback'], resourceUrls: UploadRoute['path'][] = []) {
+    return this[Context.current].effect(() => {
+      const route: UploadRoute = { path, callback }
+      this._uploadRoutes.push(route)
+      resourceUrls.push(path)
+      return () => {
+        remove(this._uploadRoutes, route)
+        remove(resourceUrls, path)
+      }
+    })
+  }
+
+  async download(path: string) {
+    for (const route of this._uploadRoutes) {
+      const paths = makeArray(typeof route.path === 'function' ? route.path() : route.path)
+      if (paths.some(prefix => path.startsWith(prefix))) {
+        return route.callback(path)
+      }
+    }
+    return { status: 404 }
   }
 }
 

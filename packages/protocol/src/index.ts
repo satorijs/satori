@@ -16,10 +16,11 @@ function Field(name: string): Field {
 export interface Method {
   name: string
   fields: Field[]
+  isForm: boolean
 }
 
-function Method(name: string, fields: string[]): Method {
-  return { name, fields: fields.map(Field) }
+function Method(name: string, fields: string[], isForm = false): Method {
+  return { name, fields: fields.map(Field), isForm }
 }
 
 export const Methods: Dict<Method> = {
@@ -40,6 +41,8 @@ export const Methods: Dict<Method> = {
   'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji', 'user_id']),
   'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji']),
   'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji', 'next']),
+
+  'upload.create': Method('createUpload', ['data', 'type', 'name'], true),
 
   'guild.get': Method('getGuild', ['guild_id']),
   'guild.list': Method('getGuildList', ['next']),
@@ -99,6 +102,9 @@ export interface Methods {
   clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void>
   getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<List<User>>
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
+
+  // upload
+  createUpload(data: ArrayBuffer, type: string, name?: string): Promise<Upload>
 
   // user
   getLogin(): Promise<Login>
@@ -221,6 +227,10 @@ export const enum Status {
   CONNECT = 2,
   DISCONNECT = 3,
   RECONNECT = 4,
+}
+
+export interface Upload {
+  url: string
 }
 
 export interface Message {

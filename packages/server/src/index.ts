@@ -1,6 +1,8 @@
 import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
+import { Readable } from 'stream'
+import { ReadableStream } from 'stream/web'
 
 export const name = 'server'
 export const inject = ['server', 'http']
@@ -85,7 +87,6 @@ export function apply(ctx: Context, config: Config) {
       }
     }
 
-    const json = koa.request.body
     const selfId = koa.request.headers['x-self-id']
     const platform = koa.request.headers['x-platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
@@ -94,6 +95,7 @@ export function apply(ctx: Context, config: Config) {
       return koa.status = 403
     }
 
+    const json = koa.request.body
     const args = method.fields.map(({ name }) => {
       return transformKey(json[name], camelCase)
     })
@@ -119,6 +121,17 @@ export function apply(ctx: Context, config: Config) {
     const result = await bot.internal[name](...koa.request.body)
     koa.body = result
     koa.status = 200
+  })
+
+  ctx.server.get(path + '/v1/upload/:name(.+)', async (koa) => {
+    const result = await ctx.satori.download(koa.params.name)
+    koa.status = result.status
+    if (result.status >= 300 && result.status < 400) {
+      koa.set('Location', result.url!)
+    } else if (result.status >= 200 && result.status < 300) {
+      koa.body = result.data instanceof ReadableStream ? Readable.fromWeb(result.data) : result.data
+      koa.type = result.type!
+    }
   })
 
   const buffer: Session[] = []
