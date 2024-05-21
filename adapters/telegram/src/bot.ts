@@ -57,8 +57,8 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
       const route = `/telegram/${this.selfId}`
       this.server = selfUrl + route
       ctx.get('server').get(route + '/:file+', async ctx => {
-        const { data, mime } = await this.$getFile(ctx.params.file)
-        ctx.set('content-type', mime)
+        const { data, type } = await this.$getFile(ctx.params.file)
+        ctx.set('content-type', type)
         ctx.body = Buffer.from(data)
       })
     }
@@ -163,11 +163,11 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     if (this.server) {
       return { src: `${this.server}/${filePath}` }
     }
-    let { mime, data } = await this.$getFile(filePath)
-    if (mime === 'application/octet-stream') {
-      mime = (await FileType.fromBuffer(data))?.mime
+    let { type, data } = await this.$getFile(filePath)
+    if (type === 'application/octet-stream') {
+      type = (await FileType.fromBuffer(data))?.mime
     }
-    const base64 = `data:${mime};base64,` + Binary.toBase64(data)
+    const base64 = `data:${type};base64,` + Binary.toBase64(data)
     return { src: base64 }
   }
 

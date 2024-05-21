@@ -85,9 +85,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
   }
 
   async sendEmbed(attrs: Dict, payload: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    const value = new Blob([data], { type: mime })
+    const value = new Blob([data], { type })
     // https://discord.com/developers/docs/reference#uploading-files
     form.append('files[0]', value, attrs.file || filename)
     form.append('payload_json', JSON.stringify(payload))

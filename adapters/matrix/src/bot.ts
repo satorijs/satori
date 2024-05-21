@@ -43,8 +43,8 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
       await this.internal.setDisplayName(this.userId, this.config.name)
     }
     if (this.config.avatar) {
-      const { data, mime } = await this.http.file(this.config.avatar)
-      await this.internal.setAvatar(this.userId, Buffer.from(data), mime)
+      const { data, type } = await this.http.file(this.config.avatar)
+      await this.internal.setAvatar(this.userId, Buffer.from(data), type)
     }
     await this.getLogin()
     const sync = await this.syncRooms()

@@ -105,12 +105,12 @@ export class WechatOfficialMessageEncoder<C extends Context = Context> extends M
 
   // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/New_temporary_materials.html
   async uploadMedia(element: h) {
-    const { type, attrs } = element
-    const uploadType = type === 'audio' ? 'voice' : type
+    const { attrs } = element
+    const uploadType = element.type === 'audio' ? 'voice' : element.type
     const form = new FormData()
 
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-    const value = new Blob([data], { type: mime })
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const value = new Blob([data], { type })
     form.append('media', value, attrs.file || filename)
 
     const resp = await this.bot.http.post<{

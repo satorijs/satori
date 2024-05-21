@@ -59,12 +59,12 @@ export class MailMessageEncoder<C extends Context = Context> extends MessageEnco
       let url: string = attrs.src || attrs.url
       if (!url.match(/^https?:/)) {
         const cid = randomId()
-        const { filename, mime, data } = await this.bot.ctx.http.file(url)
+        const { filename, type, data } = await this.bot.ctx.http.file(url)
         this.attachments.push({
           cid,
           filename,
           content: Buffer.from(data),
-          contentType: mime,
+          contentType: type,
         })
         url = `cid:${cid}`
       }

@@ -60,18 +60,18 @@ export class DingtalkMessageEncoder<C extends Context = Context> extends Message
 
   // https://open.dingtalk.com/document/orgapp/upload-media-files?spm=ding_open_doc.document.0.0.3b166172ERBuHw
   async uploadMedia(attrs: Dict) {
-    const { data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    const value = new Blob([data], { type: mime })
-    let type: string
-    if (mime.startsWith('image/') || mime.startsWith('video/')) {
-      type = mime.split('/')[0]
-    } else if (mime.startsWith('audio/')) {
-      type = 'voice'
+    const value = new Blob([data], { type })
+    let mediaType: string
+    if (type.startsWith('image/') || type.startsWith('video/')) {
+      mediaType = type.split('/')[0]
+    } else if (type.startsWith('audio/')) {
+      mediaType = 'voice'
     } else {
-      type = 'file'
+      mediaType = 'file'
     }
-    form.append('type', type)
+    form.append('type', mediaType)
     form.append('media', value)
     const { media_id } = await this.bot.oldHttp.post('/media/upload', form)
     return media_id

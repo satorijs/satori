@@ -5,12 +5,12 @@ export class MatrixMessageEncoder<C extends Context = Context> extends MessageEn
   private buffer: string = ''
   private reply: Universal.Message = null
 
-  async sendMedia(url: string, type: 'file' | 'image' | 'video' | 'audio') {
+  async sendMedia(url: string, mediaType: 'file' | 'image' | 'video' | 'audio') {
     try {
       const session = this.bot.session(this.session)
-      const { data, filename, mime } = await this.bot.ctx.http.file(url)
+      const { data, filename, type } = await this.bot.ctx.http.file(url)
       const id = await this.bot.internal.sendMediaMessage(
-        this.channelId, type, Buffer.from(data), this.reply?.id, mime, filename,
+        this.channelId, mediaType, Buffer.from(data), this.reply?.id, type, filename,
       )
       session.messageId = id
       this.results.push(session.event.message)

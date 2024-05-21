@@ -82,17 +82,17 @@ export class WhatsAppMessageEncoder<C extends Context = Context> extends Message
 
   // https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#upload-media
   async uploadMedia(attrs: Dict) {
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
 
-    if (!SUPPORTED_MEDIA.includes(mime)) {
-      this.bot.ctx.logger('whatsapp').warn(`Unsupported media type: ${mime}`)
+    if (!SUPPORTED_MEDIA.includes(type)) {
+      this.bot.ctx.logger('whatsapp').warn(`Unsupported media type: ${type}`)
       return
     }
 
     const form = new FormData()
-    const value = new Blob([data], { type: mime })
+    const value = new Blob([data], { type })
     form.append('file', value, attrs.file || filename)
-    form.append('type', mime)
+    form.append('type', type)
     form.append('messaging_product', 'whatsapp')
 
     const r = await this.bot.internal.uploadMedia(this.bot.selfId, form)

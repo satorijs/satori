@@ -141,8 +141,8 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
     if (!download && !await this.bot.ctx.http.isLocal(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
-    const { data, filename, mime } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
-    this.file = new Blob([data], { type: mime })
+    const { data, filename, type } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
+    this.file = new Blob([data], { type })
     this.filename = filename
     this.fileUrl = null
   }

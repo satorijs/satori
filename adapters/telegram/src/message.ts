@@ -52,7 +52,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
 
         let i = 0
         for (const element of this.asset) {
-          const { filename, data, mime } = await this.bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
+          const { filename, data, type: mime } = await this.bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
           files.push({
             filename: (i++) + filename,
             data,

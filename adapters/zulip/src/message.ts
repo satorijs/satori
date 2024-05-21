@@ -39,9 +39,9 @@ export class ZulipMessageEncoder<C extends Context = Context> extends MessageEnc
 
   async uploadMedia(element: h) {
     const { attrs } = element
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    const value = new Blob([data], { type: mime })
+    const value = new Blob([data], { type })
     form.append('file', value, attrs.file || filename)
     const response = await this.bot.http.post<{ uri: string }>('/user_uploads', form)
     return [response.uri, filename]

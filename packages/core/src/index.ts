@@ -156,9 +156,9 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
         const location = headers?.get('location')
         return this.file(location, options)
       }
-      const mime = headers?.get('content-type')
+      const type = headers?.get('content-type')
       const filename = headers?.get('content-disposition')?.split('filename=')[1]
-      return { data, filename, mime }
+      return { data, filename, type, mime: type }
     })
   }
 

@@ -51,8 +51,8 @@ export class KookMessageEncoder<C extends Context = Context> extends MessageEnco
     const src = attrs.src || attrs.url
     if (await this.bot.http.isLocal(src)) {
       const payload = new FormData()
-      const result = await this.bot.http.file(src, attrs)
-      payload.append('file', new Blob([result.data], { type: result.mime }), attrs.file || result.filename)
+      const { data, type, filename } = await this.bot.http.file(src, attrs)
+      payload.append('file', new Blob([data], { type }), attrs.file || filename)
       const { data: { url } } = await this.bot.http.post('/asset/create', payload)
       return url
     } else if (!src.includes('kookapp.cn')) {

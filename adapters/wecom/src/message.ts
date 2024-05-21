@@ -64,12 +64,12 @@ export class WecomMessageEncoder<C extends Context = Context> extends MessageEnc
 
   /** https://developer.work.weixin.qq.com/document/path/90253 */
   async uploadMedia(element: h) {
-    const { type, attrs } = element
-    const uploadType = type === 'audio' ? 'voice' : type
+    const { attrs } = element
+    const uploadType = element.type === 'audio' ? 'voice' : element.type
     const form = new FormData()
 
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-    const value = new Blob([data], { type: mime })
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const value = new Blob([data], { type })
     form.append('media', value, attrs.file || filename)
 
     const resp = await this.bot.http.post<{

@@ -46,9 +46,9 @@ export class SlackMessageEncoder<C extends Context = Context> extends MessageEnc
   async sendAsset(element: h) {
     if (this.buffer.length) await this.flush()
     const { attrs } = element
-    const { filename, data, mime } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
-    const value = new Blob([data], { type: mime })
+    const value = new Blob([data], { type })
     form.append('file', value, attrs.file || filename)
     form.append('channels', this.channelId)
     if (this.thread_ts) form.append('thread_ts', this.thread_ts)
