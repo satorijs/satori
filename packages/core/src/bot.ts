@@ -28,7 +28,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public hidden = false
   public platform: string
   public features: string[]
-  public resourceUrls: string[]
+  public proxyUrls: string[]
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
@@ -51,7 +51,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
       self.platform = platform
     }
 
-    this.resourceUrls = [`upload://temp/${ctx.satori.uid}/`]
+    this.proxyUrls = [`upload://temp/${ctx.satori.uid}/`]
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
@@ -73,7 +73,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   registerUpload(path: string, callback: (path: string) => Promise<Response>) {
-    this.ctx.satori.upload(path, callback, this.resourceUrls)
+    this.ctx.satori.upload(path, callback, this.proxyUrls)
   }
 
   update(login: Login) {
@@ -192,18 +192,32 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     return this.sendMessage(id, content, null, options)
   }
 
-  async createUpload(data: ArrayBuffer, type: string | null, name?: string): Promise<Upload> {
-    const result = { status: 200, data, type, name }
-    const id = Math.random().toString(36).slice(2)
-    this.ctx.satori._tempStore[id] = result
+  async createUpload(...uploads: Upload[]): Promise<string[]> {
+    const ids: string[] = []
+    for (const upload of uploads) {
+      const id = Math.random().toString(36).slice(2)
+      const headers = new Headers()
+      headers.set('content-type', upload.type)
+      if (upload.filename) {
+        headers.set('content-disposition', `attachment; filename="${upload.filename}"`)
+      }
+      this.ctx.satori._tempStore[id] = {
+        status: 200,
+        data: upload.data,
+        headers,
+      }
+      ids.push(id)
+    }
     const timer = setTimeout(() => dispose(), 600000)
     const dispose = () => {
       _dispose()
       clearTimeout(timer)
-      delete this.ctx.satori._tempStore[id]
+      for (const id of ids) {
+        delete this.ctx.satori._tempStore[id]
+      }
     }
     const _dispose = this[Context.current].on('dispose', dispose)
-    return { url: `upload://temp/${this.ctx.satori.uid}/${id}` }
+    return ids.map(id => `upload://temp/${this.ctx.satori.uid}/${id}`)
   }
 
   async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
@@ -217,7 +231,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   toJSON(): Login {
-    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden', 'features', 'resourceUrls']))
+    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden', 'features', 'proxyUrls']))
   }
 
   async getLogin() {

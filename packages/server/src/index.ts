@@ -1,4 +1,4 @@
-import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/core'
+import { Binary, camelCase, Context, makeArray, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
@@ -97,15 +97,20 @@ export function apply(ctx: Context, config: Config) {
     }
 
     if (method.name === 'createUpload') {
-      const [file] = Object.values(koa.request.files ?? {}).flat()
-      if (!file) {
-        koa.body = 'file not provided'
-        return koa.status = 400
-      }
-      const data = await readFile(file.filepath)
-      const result = await bot.createUpload(data, file.mimetype, file.newFilename)
-      koa.body = result
-      return koa.status = 201
+      const entries = Object.entries(koa.request.files ?? {}).map(([key, value]) => {
+        return [key, makeArray(value)[0]] as const
+      })
+      const uploads = await Promise.all(entries.map<Promise<Universal.Upload>>(async ([, file]) => {
+        const buffer = await readFile(file.filepath)
+        return {
+          data: Binary.fromSource(buffer),
+          type: file.mimetype,
+          filename: file.newFilename,
+        }
+      }))
+      const result = await bot.createUpload(...uploads)
+      koa.body = Object.fromEntries(entries.map(([key], index) => [key, result[index]]))
+      return koa.status = 200
     }
 
     const json = koa.request.body
@@ -136,16 +141,28 @@ export function apply(ctx: Context, config: Config) {
     koa.status = 200
   })
 
-  ctx.server.get(path + '/v1/upload/:name(.+)', async (koa) => {
-    const { status, statusText, data, headers } = await ctx.satori.download(koa.params.name)
-    koa.status = status
-    for (const [key, value] of headers || new Headers()) {
-      koa.set(key, value)
-    }
-    if (status >= 200 && status < 300) {
-      koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data
+  ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
+    const url = koa.params.url
+    koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
+    if (url.startsWith('upload://')) {
+      const { status, statusText, data, headers } = await ctx.satori.download(url.slice(9))
+      koa.status = status
+      for (const [key, value] of headers || new Headers()) {
+        koa.set(key, value)
+      }
+      if (status >= 200 && status < 300) {
+        koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data
+      } else {
+        koa.body = statusText
+      }
     } else {
-      koa.body = statusText
+      try {
+        koa.body = Readable.fromWeb(await ctx.http.get(koa.params.url, { responseType: 'stream' }))
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        koa.status = error.response.status
+        koa.body = error.response.data
+      }
     }
   })
 

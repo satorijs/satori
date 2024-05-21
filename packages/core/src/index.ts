@@ -191,14 +191,14 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  upload(path: UploadRoute['path'], callback: UploadRoute['callback'], resourceUrls: UploadRoute['path'][] = []) {
+  upload(path: UploadRoute['path'], callback: UploadRoute['callback'], proxyUrls: UploadRoute['path'][] = []) {
     return this[Context.current].effect(() => {
       const route: UploadRoute = { path, callback }
       this._uploadRoutes.push(route)
-      resourceUrls.push(path)
+      proxyUrls.push(path)
       return () => {
         remove(this._uploadRoutes, route)
-        remove(resourceUrls, path)
+        remove(proxyUrls, path)
       }
     })
   }

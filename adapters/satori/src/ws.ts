@@ -132,7 +132,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
 
     this.ctx.satori.upload(() => {
       return this.bots
-        .flatMap(bot => bot.resourceUrls)
+        .flatMap(bot => bot.proxyUrls)
         .filter(url => url.startsWith('upload://'))
         .map(url => url.replace('upload://', ''))
     }, async (path) => {

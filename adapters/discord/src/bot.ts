@@ -28,7 +28,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
       },
     })
     this.internal = new Internal(this)
-    this.resourceUrls.push('https://cdn.discordapp.com/')
+    this.proxyUrls.push('https://cdn.discordapp.com/')
     ctx.plugin(WsClient, this)
   }
 

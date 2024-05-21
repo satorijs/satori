@@ -5,6 +5,12 @@ export interface SendOptions {
   linkPreview?: boolean
 }
 
+export interface Upload {
+  type: string
+  filename?: string
+  data: ArrayBuffer
+}
+
 export interface Response {
   status: number
   statusText?: string
@@ -49,7 +55,7 @@ export const Methods: Dict<Method> = {
   'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji']),
   'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji', 'next']),
 
-  'upload.create': Method('createUpload', ['data', 'type'], true),
+  'upload.create': Method('createUpload', [], true),
 
   'guild.get': Method('getGuild', ['guild_id']),
   'guild.list': Method('getGuildList', ['next']),
@@ -111,7 +117,7 @@ export interface Methods {
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
   // upload
-  createUpload(data: ArrayBuffer, type: string | null, name?: string): Promise<Upload>
+  createUpload(...uploads: Upload[]): Promise<string[]>
 
   // user
   getLogin(): Promise<Login>
@@ -225,7 +231,7 @@ export interface Login {
   hidden?: boolean
   status: Status
   features?: string[]
-  resourceUrls?: string[]
+  proxyUrls?: string[]
 }
 
 export const enum Status {
@@ -234,10 +240,6 @@ export const enum Status {
   CONNECT = 2,
   DISCONNECT = 3,
   RECONNECT = 4,
-}
-
-export interface Upload {
-  url: string
 }
 
 export interface Message {

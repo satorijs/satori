@@ -40,7 +40,9 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     let payload: any
     if (method.name === 'createUpload') {
       payload = new FormData()
-      payload.append('file', new Blob([args[0]], { type: args[1] }), args[2])
+      for (const { data, type, filename } of args as Universal.Upload[]) {
+        payload.append('file', new Blob([data], { type }), filename)
+      }
     } else {
       payload = {}
       for (const [index, field] of method.fields.entries()) {
