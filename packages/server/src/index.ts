@@ -1,8 +1,9 @@
 import { camelCase, Context, sanitize, Schema, Session, snakeCase, Time, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
-import { Readable } from 'stream'
-import { ReadableStream } from 'stream/web'
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
+import { readFile } from 'node:fs/promises'
 
 export const name = 'server'
 export const inject = ['server', 'http']
@@ -95,6 +96,18 @@ export function apply(ctx: Context, config: Config) {
       return koa.status = 403
     }
 
+    if (method.name === 'createUpload') {
+      const [file] = Object.values(koa.request.files ?? {}).flat()
+      if (!file) {
+        koa.body = 'file not provided'
+        return koa.status = 400
+      }
+      const data = await readFile(file.filepath)
+      const result = await bot.createUpload(data, file.mimetype, file.newFilename)
+      koa.body = result
+      return koa.status = 201
+    }
+
     const json = koa.request.body
     const args = method.fields.map(({ name }) => {
       return transformKey(json[name], camelCase)
@@ -124,13 +137,15 @@ export function apply(ctx: Context, config: Config) {
   })
 
   ctx.server.get(path + '/v1/upload/:name(.+)', async (koa) => {
-    const result = await ctx.satori.download(koa.params.name)
-    koa.status = result.status
-    if (result.status >= 300 && result.status < 400) {
-      koa.set('Location', result.url!)
-    } else if (result.status >= 200 && result.status < 300) {
-      koa.body = result.data instanceof ReadableStream ? Readable.fromWeb(result.data) : result.data
-      koa.type = result.type!
+    const { status, statusText, data, headers } = await ctx.satori.download(koa.params.name)
+    koa.status = status
+    for (const [key, value] of headers || new Headers()) {
+      koa.set(key, value)
+    }
+    if (status >= 200 && status < 300) {
+      koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data
+    } else {
+      koa.body = statusText
     }
   })
 

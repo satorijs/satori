@@ -1,10 +1,9 @@
 import { Context, Logger, Service, z } from 'cordis'
 import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
-import { ReadableStream } from 'node:stream/web'
 import { Bot } from './bot'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
-import { SendOptions } from '@satorijs/protocol'
+import { Response, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
 h.warn = new Logger('element').warn
@@ -125,17 +124,9 @@ class SatoriContext extends Context {
 
 export { SatoriContext as Context }
 
-export interface UploadResult {
-  status: number
-  data?: ArrayBuffer | ReadableStream
-  type?: string
-  name?: string
-  url?: string
-}
-
 export interface UploadRoute {
   path: string | string[] | (() => string | string[])
-  callback: (path: string) => Promise<UploadResult>
+  callback: (path: string) => Promise<Response>
 }
 
 export class Satori<C extends Context = Context> extends Service<unknown, C> {
@@ -145,14 +136,29 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
   public uid = Math.random().toString(36).slice(2)
 
   _uploadRoutes: UploadRoute[] = []
-  _tempStore: Dict<UploadResult> = Object.create(null)
+  _tempStore: Dict<Response> = Object.create(null)
 
   constructor(ctx?: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
+
     this.upload(`/temp/${this.uid}/`, async (path) => {
       const id = path.split('/').pop()
       return this._tempStore[id] ?? { status: 404 }
+    })
+
+    const self = this
+    ;(ctx as Context).on('http/file', async function (url, options) {
+      if (!url.startsWith('upload://')) return
+      const { status, data, headers } = await self.download(url.slice(9))
+      if (status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
+      if (status >= 300) {
+        const location = headers?.get('location')
+        return this.file(location, options)
+      }
+      const mime = headers?.get('content-type')
+      const filename = headers?.get('content-disposition')?.split('filename=')[1]
+      return { data, filename, mime }
     })
   }
 

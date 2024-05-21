@@ -4,8 +4,7 @@ import h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
-import { Event, List, Login, Methods, SendOptions, Status, Upload, User } from '@satorijs/protocol'
-import { Universal, UploadResult } from '.'
+import { Event, List, Login, Methods, Response, SendOptions, Status, Upload, User } from '@satorijs/protocol'
 
 const eventAliases = [
   ['message-created', 'message'],
@@ -53,7 +52,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     }
 
     this.resourceUrls = [`upload://temp/${ctx.satori.uid}/`]
-    this.features = Object.entries(Universal.Methods)
+    this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
 
@@ -73,7 +72,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     return self
   }
 
-  registerUpload(path: string, callback: (path: string) => Promise<UploadResult>) {
+  registerUpload(path: string, callback: (path: string) => Promise<Response>) {
     this.ctx.satori.upload(path, callback, this.resourceUrls)
   }
 
@@ -193,7 +192,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
     return this.sendMessage(id, content, null, options)
   }
 
-  async createUpload(data: UploadResult['data'], type: string, name?: string): Promise<Upload> {
+  async createUpload(data: ArrayBuffer, type: string | null, name?: string): Promise<Upload> {
     const result = { status: 200, data, type, name }
     const id = Math.random().toString(36).slice(2)
     this.ctx.satori._tempStore[id] = result

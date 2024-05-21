@@ -5,6 +5,13 @@ export interface SendOptions {
   linkPreview?: boolean
 }
 
+export interface Response {
+  status: number
+  statusText?: string
+  data?: ArrayBuffer
+  headers?: Headers
+}
+
 export interface Field {
   name: string
 }
@@ -42,7 +49,7 @@ export const Methods: Dict<Method> = {
   'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji']),
   'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji', 'next']),
 
-  'upload.create': Method('createUpload', ['data', 'type', 'name'], true),
+  'upload.create': Method('createUpload', ['data', 'type'], true),
 
   'guild.get': Method('getGuild', ['guild_id']),
   'guild.list': Method('getGuildList', ['next']),
@@ -104,7 +111,7 @@ export interface Methods {
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
   // upload
-  createUpload(data: ArrayBuffer, type: string, name?: string): Promise<Upload>
+  createUpload(data: ArrayBuffer, type: string | null, name?: string): Promise<Upload>
 
   // user
   getLogin(): Promise<Login>

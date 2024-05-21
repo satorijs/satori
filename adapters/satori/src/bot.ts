@@ -37,19 +37,25 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
 
 for (const [key, method] of Object.entries(Universal.Methods)) {
   SatoriBot.prototype[method.name] = async function (this: SatoriBot, ...args: any[]) {
-    const payload = {}
-    for (const [index, field] of method.fields.entries()) {
-      if (method.name === 'createMessage' && field.name === 'content') {
-        const session = this.session({
-          type: 'send',
-          channel: { id: args[0], type: 0 },
-          ...args[3]?.session?.event,
-        })
-        session.elements = await session.transform(h.normalize(args[index]))
-        if (await session.app.serial(session, 'before-send', session, args[3] ?? {})) return
-        payload[field.name] = session.elements.join('')
-      } else {
-        payload[field.name] = transformKey(args[index], snakeCase)
+    let payload: any
+    if (method.name === 'createUpload') {
+      payload = new FormData()
+      payload.append('file', new Blob([args[0]], { type: args[1] }), args[2])
+    } else {
+      payload = {}
+      for (const [index, field] of method.fields.entries()) {
+        if (method.name === 'createMessage' && field.name === 'content') {
+          const session = this.session({
+            type: 'send',
+            channel: { id: args[0], type: 0 },
+            ...args[3]?.session?.event,
+          })
+          session.elements = await session.transform(h.normalize(args[index]))
+          if (await session.app.serial(session, 'before-send', session, args[3] ?? {})) return
+          payload[field.name] = session.elements.join('')
+        } else {
+          payload[field.name] = transformKey(args[index], snakeCase)
+        }
       }
     }
     this.logger.debug('[request]', key, payload)
