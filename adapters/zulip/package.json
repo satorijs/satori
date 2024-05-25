@@ -30,7 +30,7 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^4.0.0"
+    "@satorijs/core": "^4.1.0"
   },
   "dependencies": {
     "marked": "^9.1.6"
