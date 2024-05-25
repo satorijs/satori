@@ -78,13 +78,15 @@ export function apply(ctx: Context, config: Config) {
     const method = Universal.Methods[koa.params.name]
     if (!method) {
       koa.body = 'method not found'
-      return koa.status = 404
+      koa.status = 404
+      return
     }
 
     if (config.token) {
       if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
         koa.body = 'invalid token'
-        return koa.status = 403
+        koa.status = 403
+        return
       }
     }
 
@@ -92,8 +94,9 @@ export function apply(ctx: Context, config: Config) {
     const platform = koa.request.headers['x-platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (!bot) {
-      koa.body = 'bot not found'
-      return koa.status = 403
+      koa.body = 'login not found'
+      koa.status = 403
+      return
     }
 
     if (method.name === 'createUpload') {
@@ -110,7 +113,8 @@ export function apply(ctx: Context, config: Config) {
       }))
       const result = await bot.createUpload(...uploads)
       koa.body = Object.fromEntries(entries.map(([key], index) => [key, result[index]]))
-      return koa.status = 200
+      koa.status = 200
+      return
     }
 
     const json = koa.request.body
@@ -127,14 +131,16 @@ export function apply(ctx: Context, config: Config) {
     const platform = koa.request.headers['x-platform']
     const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
     if (!bot) {
-      koa.body = 'bot not found'
-      return koa.status = 403
+      koa.body = 'login not found'
+      koa.status = 403
+      return
     }
 
     const name = camelCase(koa.params.name)
     if (!bot.internal?.[name]) {
       koa.body = 'method not found'
-      return koa.status = 404
+      koa.status = 404
+      return
     }
     const result = await bot.internal[name](...koa.request.body)
     koa.body = result
@@ -143,6 +149,21 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
     const url = koa.params.url
+    try {
+      new URL(url)
+    } catch {
+      koa.body = 'invalid url'
+      koa.status = 400
+      return
+    }
+
+    const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls, 1)
+    if (!proxyUrls.some(proxyUrl => url.startsWith(proxyUrl))) {
+      koa.body = 'forbidden'
+      koa.status = 403
+      return
+    }
+
     koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
     if (url.startsWith('upload://')) {
       const { status, statusText, data, headers } = await ctx.satori.download(url.slice(9))
