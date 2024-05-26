@@ -21,7 +21,7 @@ class HttpServer {
       const received = ctx.get('X-Hub-Signature-256').split('sha256=')[1]
       if (!received) return ctx.status = 403
 
-      const payload = ctx.request.rawBody
+      const payload = ctx.request.body[Symbol.for('unparsedBody')]
       const adapters = this.adapters.filter((adapter) => {
         const expected = crypto
           .createHmac('sha256', adapter.config.secret)

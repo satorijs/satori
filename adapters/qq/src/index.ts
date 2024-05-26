@@ -25,6 +25,8 @@ declare module '@satorijs/core' {
     qq?: QQ.Payload & GroupInternal
     qqguild?: QQ.Payload & GuildInternal
   }
+}
 
+declare module 'cordis' {
   interface Events extends QQEvents { }
 }
