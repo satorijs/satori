@@ -1,11 +1,8 @@
 {
   "name": "@satorijs/plugin-server",
   "description": "Basic API server for Satori protocol",
-  "version": "2.6.0",
+  "version": "2.6.3",
   "type": "module",
-  "main": "lib/index.cjs",
-  "module": "lib/index.mjs",
-  "types": "lib/index.d.ts",
   "exports": {
     ".": {
       "require": "./lib/index.cjs",
