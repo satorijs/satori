@@ -14,7 +14,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot
     this.ctx.server.post('/slack', async (ctx) => {
       const timestamp = ctx.request.header['x-slack-request-timestamp'].toString()
       const signature = ctx.request.header['x-slack-signature'].toString()
-      const requestBody = ctx.request.rawBody
+      const requestBody = ctx.request.body[Symbol.for('unparsedBody')]
 
       const hmac = crypto.createHmac('sha256', signing)
       const [version, hash] = signature.split('=')

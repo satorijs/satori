@@ -230,8 +230,8 @@ export interface Login {
   selfId?: string
   hidden?: boolean
   status: Status
-  features?: string[]
-  proxyUrls?: string[]
+  features: string[]
+  proxyUrls: string[]
 }
 
 export const enum Status {

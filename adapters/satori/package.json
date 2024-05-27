@@ -1,13 +1,19 @@
 {
   "name": "@satorijs/adapter-satori",
   "description": "Satori Adapter for Satorijs",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
-  "main": "lib/index.cjs",
-  "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
   "files": [
-    "lib",
-    "src"
+    "lib"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -30,6 +36,6 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^4.0.0"
+    "@satorijs/core": "^4.1.0"
   }
 }

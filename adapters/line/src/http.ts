@@ -16,7 +16,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
       const { destination } = parsed
       const bot = this.bots.find(bot => bot.selfId === destination)
       if (!bot) return ctx.status = 403
-      const hash = crypto.createHmac('SHA256', bot?.config?.secret).update(ctx.request.rawBody || '').digest('base64')
+      const hash = crypto.createHmac('SHA256', bot?.config?.secret).update(ctx.request.body[Symbol.for('unparsedBody')] || '').digest('base64')
       if (hash !== sign) {
         return ctx.status = 403
       }

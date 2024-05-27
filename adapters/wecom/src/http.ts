@@ -34,7 +34,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot
       const { timestamp, nonce, msg_signature } = ctx.request.query
       let { xml: data }: {
         xml: Message
-      } = await xml2js.parseStringPromise(ctx.request.rawBody, {
+      } = await xml2js.parseStringPromise(ctx.request.body[Symbol.for('unparsedBody')], {
         explicitArray: false,
       })
       const botId = data.AgentID
@@ -52,7 +52,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WecomBot
         data = data2
       }
 
-      bot.logger.debug('%c', ctx.request.rawBody)
+      bot.logger.debug('%c', ctx.request.body[Symbol.for('unparsedBody')])
 
       const session = await decodeMessage(localBot, data)
       if (session) {

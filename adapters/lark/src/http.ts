@@ -39,7 +39,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
         const result = enabledSignatureVerify.some((bot) => {
           const timestamp = ctx.get('X-Lark-Request-Timestamp')
           const nonce = ctx.get('X-Lark-Request-Nonce')
-          const body = ctx.request.rawBody
+          const body = ctx.request.body[Symbol.for('unparsedBody')]
           const actualSignature = this.ciphers[bot.config.appId]?.calculateSignature(timestamp, nonce, body)
           if (actualSignature === signature) return true
           else return false
