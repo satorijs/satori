@@ -236,8 +236,14 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
       await this.flush()
       this.mode = 'default'
     } else if (type === 'quote') {
-      await this.flush()
-      this.payload.reply_to_message_id = attrs.id
+      if ('id' in attrs) {
+        await this.flush()
+        this.payload.reply_to_message_id = attrs.id
+      } else {
+        this.payload.caption += '<blockquote>'
+        await this.render(children)
+        this.payload.caption += '</blockquote>'
+      }
     } else if (type === 'button') {
       const last = this.lastRow()
       last.push(this.decodeButton(
