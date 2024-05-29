@@ -56,9 +56,9 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 
   async getMessage(channelId: string, msg_id: string) {
     if (isDirectChannel(channelId)) {
-      return adaptMessage(await this.request('POST', '/user-chat/view', { msg_id }))
+      return adaptMessage(await this.request('GET', '/user-chat/view', { msg_id }))
     } else {
-      return adaptMessage(await this.request('POST', '/message/view', { msg_id }))
+      return adaptMessage(await this.request('GET', '/message/view', { msg_id }))
     }
   }
 
