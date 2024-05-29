@@ -9,6 +9,16 @@ export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   name: data.name,
 })
 
+export const adaptChannel = (data: Kook.Channel): Universal.Channel => ({
+  id: data.id,
+  type: data.is_category ? Universal.Channel.Type.CATEGORY
+    : data.type === 1 ? Universal.Channel.Type.TEXT
+      : data.type === 2 ? Universal.Channel.Type.VOICE
+        : Universal.Channel.Type.TEXT,
+  name: data.name,
+  parentId: data.parent_id,
+})
+
 export const adaptUser = (user: Kook.User): Universal.User => ({
   id: user.id,
   name: user.username,

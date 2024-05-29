@@ -1,5 +1,5 @@
 import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
-import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
+import { adaptChannel, adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
@@ -86,6 +86,11 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   async getGuildList() {
     const { items } = await this.request<Kook.GuildList>('GET', '/guild/list')
     return { data: items.map(adaptGroup) }
+  }
+
+  async getChannelList(guildId: string, next?: string): Promise<Universal.List<Universal.Channel>> {
+    const channels = await this.internal.getChannelList({ guild_id: guildId })
+    return { data: channels.items.map(adaptChannel) }
   }
 
   async getGuildMemberList(guild_id: string) {
