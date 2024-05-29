@@ -7,6 +7,7 @@ export * from './types'
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   id: data.id,
   name: data.name,
+  avatar: data.icon,
 })
 
 export const adaptChannel = (data: Kook.Channel): Universal.Channel => ({
