@@ -144,7 +144,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   async $getFile(filePath: string) {
     if (this.local) {
-      return await this.ctx.http.file(filePath)
+      return await this.ctx.http.file(`file://${filePath}`)
     } else {
       return await this.file.file(`/${filePath}`)
     }
