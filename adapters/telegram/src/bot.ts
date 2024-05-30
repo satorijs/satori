@@ -1,4 +1,5 @@
 import { Binary, Bot, Context, Dict, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
+import { pathToFileURL } from 'url'
 import * as Telegram from './types'
 import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
@@ -144,7 +145,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
 
   async $getFile(filePath: string) {
     if (this.local) {
-      return await this.ctx.http.file(filePath)
+      return await this.ctx.http.file(pathToFileURL(filePath).href)
     } else {
       return await this.file.file(`/${filePath}`)
     }
