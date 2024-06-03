@@ -1,3 +1,4 @@
+import { Context } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import * as Discord from './utils'
 
@@ -14,14 +15,16 @@ type ParamCase<S extends string> =
   ? `${L extends '_' ? '-' : Lowercase<L>}${ParamCase<R>}`
   : S
 
-type DiscordEvents = {
-  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T], bot: DiscordBot) => void
+type DiscordEvents<C extends Context = Context> = {
+  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T], bot: DiscordBot<C>) => void
 }
 
 declare module '@satorijs/core' {
   interface Session {
     discord?: Discord.Gateway.Payload & Discord.Internal
   }
+}
 
-  interface Events extends DiscordEvents {}
+declare module 'cordis' {
+  interface Events<C> extends DiscordEvents<C> {}
 }

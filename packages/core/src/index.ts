@@ -1,5 +1,5 @@
 import { Context, Logger, Service, z } from 'cordis'
-import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
+import { Awaitable, Dict, makeArray, remove } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
@@ -78,16 +78,9 @@ declare module 'cordis' {
 
 declare module '@cordisjs/plugin-http' {
   namespace HTTP {
-    export const Config: z<Config>
     export function createConfig(this: typeof HTTP, endpoint?: string | boolean): z<Config>
   }
 }
-
-defineProperty(HTTP, 'Config', z.object({
-  timeout: z.natural().role('ms').description('等待连接建立的最长时间。'),
-  proxyAgent: z.string().description('使用的代理服务器地址。'),
-  keepAlive: z.boolean().description('是否保持连接。'),
-}).description('请求设置'))
 
 HTTP.createConfig = function createConfig(this, endpoint) {
   return z.object({
@@ -108,11 +101,6 @@ export namespace Component {
 }
 
 export type GetSession<C extends Context> = C[typeof Context.session]
-
-type CordisEvents<C extends Context> = import('cordis').Events<C>
-
-// FIXME remove in the future
-export interface Events<C extends Context = Context> extends CordisEvents<C> {}
 
 class SatoriContext extends Context {
   constructor(config?: any) {

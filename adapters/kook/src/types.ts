@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { HTTP } from '@satorijs/core'
+import { Context, HTTP } from '@satorijs/core'
 import { KookBot } from './bot'
 
 export enum Signal {
@@ -625,39 +625,39 @@ export interface Internal {
   hasPermission(permissions: number, permission: Permissions): boolean
 }
 
-export interface Events {
-  'kook/updated-message'(input: any, bot: KookBot): void
-  'kook/updated-private-message'(input: any, bot: KookBot): void
-  'kook/deleted-message'(input: any, bot: KookBot): void
-  'kook/deleted-private-message'(input: any, bot: KookBot): void
-  'kook/added-reaction'(input: any, bot: KookBot): void
-  'kook/private-added-reaction'(input: any, bot: KookBot): void
-  'kook/deleted-reaction'(input: any, bot: KookBot): void
-  'kook/private-deleted-reaction'(input: any, bot: KookBot): void
-  'kook/updated-channel'(input: any, bot: KookBot): void
-  'kook/deleted-channel'(input: any, bot: KookBot): void
-  'kook/pinned-message'(input: any, bot: KookBot): void
-  'kook/unpinned-message'(input: any, bot: KookBot): void
-  'kook/joined-guild'(input: any, bot: KookBot): void
-  'kook/exited-guild'(input: any, bot: KookBot): void
-  'kook/updated-guild'(input: any, bot: KookBot): void
-  'kook/deleted-guild'(input: any, bot: KookBot): void
-  'kook/self-joined-guild'(input: any, bot: KookBot): void
-  'kook/self-exited-guild'(input: any, bot: KookBot): void
-  'kook/update-guild-member'(input: any, bot: KookBot): void
-  'kook/guild-member-online'(input: any, bot: KookBot): void
-  'kook/guild-member-offline'(input: any, bot: KookBot): void
-  'kook/added-role'(input: any, bot: KookBot): void
-  'kook/deleted-role'(input: any, bot: KookBot): void
-  'kook/updated-role'(input: any, bot: KookBot): void
-  'kook/added-block-list'(input: any, bot: KookBot): void
-  'kook/deleted-block-list'(input: any, bot: KookBot): void
-  'kook/added-emoji'(input: any, bot: KookBot): void
-  'kook/updated-emoji'(input: any, bot: KookBot): void
-  'kook/joined-channel'(input: any, bot: KookBot): void
-  'kook/exited-channel'(input: any, bot: KookBot): void
-  'kook/user-updated'(input: any, bot: KookBot): void
-  'kook/message-btn-click'(input: any, bot: KookBot): void
+export interface Events<C extends Context = Context> {
+  'kook/updated-message'(input: any, bot: KookBot<C>): void
+  'kook/updated-private-message'(input: any, bot: KookBot<C>): void
+  'kook/deleted-message'(input: any, bot: KookBot<C>): void
+  'kook/deleted-private-message'(input: any, bot: KookBot<C>): void
+  'kook/added-reaction'(input: any, bot: KookBot<C>): void
+  'kook/private-added-reaction'(input: any, bot: KookBot<C>): void
+  'kook/deleted-reaction'(input: any, bot: KookBot<C>): void
+  'kook/private-deleted-reaction'(input: any, bot: KookBot<C>): void
+  'kook/updated-channel'(input: any, bot: KookBot<C>): void
+  'kook/deleted-channel'(input: any, bot: KookBot<C>): void
+  'kook/pinned-message'(input: any, bot: KookBot<C>): void
+  'kook/unpinned-message'(input: any, bot: KookBot<C>): void
+  'kook/joined-guild'(input: any, bot: KookBot<C>): void
+  'kook/exited-guild'(input: any, bot: KookBot<C>): void
+  'kook/updated-guild'(input: any, bot: KookBot<C>): void
+  'kook/deleted-guild'(input: any, bot: KookBot<C>): void
+  'kook/self-joined-guild'(input: any, bot: KookBot<C>): void
+  'kook/self-exited-guild'(input: any, bot: KookBot<C>): void
+  'kook/update-guild-member'(input: any, bot: KookBot<C>): void
+  'kook/guild-member-online'(input: any, bot: KookBot<C>): void
+  'kook/guild-member-offline'(input: any, bot: KookBot<C>): void
+  'kook/added-role'(input: any, bot: KookBot<C>): void
+  'kook/deleted-role'(input: any, bot: KookBot<C>): void
+  'kook/updated-role'(input: any, bot: KookBot<C>): void
+  'kook/added-block-list'(input: any, bot: KookBot<C>): void
+  'kook/deleted-block-list'(input: any, bot: KookBot<C>): void
+  'kook/added-emoji'(input: any, bot: KookBot<C>): void
+  'kook/updated-emoji'(input: any, bot: KookBot<C>): void
+  'kook/joined-channel'(input: any, bot: KookBot<C>): void
+  'kook/exited-channel'(input: any, bot: KookBot<C>): void
+  'kook/user-updated'(input: any, bot: KookBot<C>): void
+  'kook/message-btn-click'(input: any, bot: KookBot<C>): void
 }
 
 export class Internal {

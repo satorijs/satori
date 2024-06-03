@@ -130,7 +130,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
         return
       }
 
-      const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls, 1)
+      const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
       if (!proxyUrls.some(proxyUrl => url.startsWith(proxyUrl))) {
         koa.body = 'forbidden'
         koa.status = 403

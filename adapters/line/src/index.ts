@@ -1,4 +1,4 @@
-import { hyphenate } from '@satorijs/core'
+import { Context, hyphenate } from '@satorijs/core'
 import { LineBot } from './bot'
 import * as Line from './types'
 
@@ -9,16 +9,18 @@ export * from './utils'
 export * from './http'
 export * from './message'
 
-type LineEvents = {
-  [P in Line.WebhookEvent['type'] as `line/${hyphenate<P>}`]: (data: Line.WebhookEvent & { type: P }, bot: LineBot) => void
+type LineEvents<C extends Context = Context> = {
+  [P in Line.WebhookEvent['type'] as `line/${hyphenate<P>}`]: (data: Line.WebhookEvent & { type: P }, bot: LineBot<C>) => void
 }
 
 declare module '@satorijs/core' {
   interface Session {
     line?: Line.WebhookEvent & Line.Internal
   }
+}
 
-  interface Events extends LineEvents {}
+declare module 'cordis' {
+  interface Events<C> extends LineEvents<C> {}
 }
 
 export default LineBot

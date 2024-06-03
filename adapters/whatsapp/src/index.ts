@@ -5,7 +5,9 @@ declare module '@satorijs/core' {
   interface Session {
     whatsapp?: Change
   }
+}
 
+declare module 'cordis' {
   interface Events {
     'whatsapp/messages'(messages: MessageValue): void
   }

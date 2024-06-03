@@ -1,3 +1,4 @@
+import { Context } from '@satorijs/core'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
@@ -16,14 +17,16 @@ type ParamCase<S extends string> =
   ? `${L extends '_' ? '-' : Lowercase<L>}${ParamCase<R>}`
   : S
 
-type TelegramEvents = {
-  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: Telegram.Update[T], bot: TelegramBot) => void
+type TelegramEvents<C extends Context = Context> = {
+  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: Telegram.Update[T], bot: TelegramBot<C>) => void
 }
 
 declare module '@satorijs/core' {
   interface Session {
     telegram?: Telegram.Update & Telegram.Internal
   }
+}
 
-  interface Events extends TelegramEvents {}
+declare module 'cordis' {
+  interface Events<C> extends TelegramEvents<C> {}
 }

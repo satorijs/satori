@@ -12,9 +12,11 @@ export * from './utils'
 export default KookBot
 
 declare module '@satorijs/core' {
-  interface Events extends Kook.Events {}
-
   interface Session {
     kook?: Kook.Data & Kook.Internal
   }
+}
+
+declare module 'cordis' {
+  interface Events<C> extends Kook.Events<C> {}
 }
