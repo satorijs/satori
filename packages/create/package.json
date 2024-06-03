@@ -27,6 +27,6 @@
     "boilerplate"
   ],
   "dependencies": {
-    "create-cordis": "^0.1.4"
+    "create-cordis": "^0.2.1"
   }
 }
