@@ -1,7 +1,7 @@
 import { Context, Dict, h, MessageEncoder, Schema, Universal } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
-import { decodeMessage, sanitize } from './utils'
+import { decodeMessage, sanitize, sanitizeCode } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
@@ -234,9 +234,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer += sanitizeCode(children.toString())
       this.buffer += '``'
     } else if (type === 'codeblock') {
-      this.buffer += '```'
+      this.buffer += `\`\`\`${attrs.language ?? ''}\n`
       this.buffer += sanitizeCode(children.toString())
-      this.buffer += '```'
+      this.buffer += '\n```'
     } else if (type === 'a') {
       this.buffer += '['
       await this.render(children)
