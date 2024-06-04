@@ -334,6 +334,8 @@ const types = {
   number: Discord.ApplicationCommand.OptionType.NUMBER,
   integer: Discord.ApplicationCommand.OptionType.INTEGER,
   posint: Discord.ApplicationCommand.OptionType.INTEGER,
+  natural: Discord.ApplicationCommand.OptionType.INTEGER,
+  bigint: Discord.ApplicationCommand.OptionType.INTEGER,
   user: Discord.ApplicationCommand.OptionType.STRING,
   channel: Discord.ApplicationCommand.OptionType.STRING,
   guild: Discord.ApplicationCommand.OptionType.STRING,
@@ -401,7 +403,7 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         name: option.name.toLowerCase(),
         type: types[option.type] ?? types.text,
         required: false,
-        min_value: option.type === 'posint' ? 1 : undefined,
+        min_value: option.type === 'posint' ? 1 : option.type === 'natural' ? 0 : undefined,
       })
     }
   }
