@@ -10,6 +10,12 @@ export const sanitize = (val: string) =>
     .replace(/@everyone/g, () => '\\@everyone')
     .replace(/@here/g, () => '\\@here')
 
+export const sanitizeCode = (val: string) =>
+  val
+    .replace(/(?<=`)(?=`)/g, '\u200b')
+// discord has no way to escape ` in code/codeblock, so we use zero-width space as a fallback.
+// we don't need or have to do any escape other than ` in code/codeblock.
+
 export const decodeUser = (user: Discord.User): Universal.User => ({
   id: user.id,
   name: user.username,

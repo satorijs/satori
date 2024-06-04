@@ -230,9 +230,13 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       await this.render(children)
       this.buffer += '||'
     } else if (type === 'code') {
-      this.buffer += '`'
-      await this.render(children)
-      this.buffer += '`'
+      this.buffer += '``'
+      this.buffer += sanitizeCode(children.toString())
+      this.buffer += '``'
+    } else if (type === 'codeblock') {
+      this.buffer += '```'
+      this.buffer += sanitizeCode(children.toString())
+      this.buffer += '```'
     } else if (type === 'a') {
       this.buffer += '['
       await this.render(children)
