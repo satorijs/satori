@@ -209,6 +209,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     }
     session.event.button = {
       id: input.d.data.resolved.button_id,
+      data: input.d.data.resolved.button_data,
     }
     // session.messageId = input.d.id // event_id is not supported for sending message
 
