@@ -93,6 +93,19 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     return { data: channels.items.map(adaptChannel) }
   }
 
+  async createChannel(guildId: string, data: Partial<Universal.Channel>) {
+    const channel = await this.internal.createChannel({
+      guild_id: guildId,
+      name: data.name,
+      type: data.type === Universal.Channel.Type.TEXT ? 1
+        : data.type === Universal.Channel.Type.VOICE ? 2
+          : 1,
+      parent_id: data.parentId,
+      is_category: data.type === Universal.Channel.Type.CATEGORY ? 1 : 0,
+    })
+    return adaptChannel(channel)
+  }
+
   async getGuildMemberList(guild_id: string) {
     const { items } = await this.request<Kook.GuildUserList>('GET', '/guild/user-list', { guild_id })
     return { data: items.map(decodeGuildMember) }
