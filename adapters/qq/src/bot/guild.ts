@@ -3,6 +3,7 @@ import { QQBot } from '.'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from '../utils'
 import { GuildInternal } from '../internal'
 import { QQGuildMessageEncoder } from '../message'
+import * as QQ from '../types'
 
 export namespace QQGuildBot {
   export interface Config {
@@ -56,6 +57,23 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
 
   async getChannel(channelId: string): Promise<Universal.Channel> {
     const channel = await this.internal.getChannel(channelId)
+    return decodeChannel(channel)
+  }
+
+  async createChannel(guildId: string, data: Partial<Universal.Channel>) {
+    const channel = await this.internal.createGuildChannel(guildId, {
+      name: data.name,
+      type: data.type === Universal.Channel.Type.TEXT ? QQ.ChannelType.TEXT
+        : data.type === Universal.Channel.Type.CATEGORY ? QQ.ChannelType.GROUP
+          : data.type === Universal.Channel.Type.VOICE ? QQ.ChannelType.VOICE
+            : QQ.ChannelType.TEXT,
+      parent_id: data.parentId,
+      position: data.position,
+      sub_type: 0,
+      private_type: 0,
+      speak_permission: 1,
+      private_user_ids: [],
+    })
     return decodeChannel(channel)
   }
 
