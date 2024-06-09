@@ -361,11 +361,13 @@ const decodeArgv = (
     return commandChild ? decodeArgv(dataChild, commandChild) : result
   }
   for (const argument of command.arguments) {
-    const value = options.find(opt => opt.name === argument.name)?.value
+    const name = argument.name.toLowerCase()
+    const value = options.find(opt => opt.name === name)?.value
     if (value !== undefined) result.arguments.push(value)
   }
   for (const option of command.options) {
-    const value = options.find(opt => opt.name === option.name)?.value
+    const name = option.name.toLowerCase()
+    const value = options.find(opt => opt.name === name)?.value
     if (value !== undefined) result.options[option.name] = value
   }
   return result
