@@ -233,7 +233,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer += '``'
       this.buffer += sanitizeCode(children.toString())
       this.buffer += '``'
-    } else if (type === 'codeblock') {
+    } else if (type === 'code-block') {
       this.buffer += `\`\`\`${attrs.language ?? ''}\n`
       this.buffer += sanitizeCode(children.toString())
       this.buffer += '\n```'
