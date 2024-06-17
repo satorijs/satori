@@ -1,5 +1,5 @@
 import { Context, Logger, Service, z } from 'cordis'
-import { Awaitable, Dict, makeArray, remove } from 'cosmokit'
+import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
@@ -135,6 +135,8 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       return this._tempStore[id] ?? { status: 404 }
     })
 
+    defineProperty(this.bots, Service.tracker, {})
+
     const self = this
     ;(ctx as Context).on('http/file', async function (url, options) {
       if (!url.startsWith('upload://')) return
@@ -180,7 +182,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
   }
 
   upload(path: UploadRoute['path'], callback: UploadRoute['callback'], proxyUrls: UploadRoute['path'][] = []) {
-    return this[Context.current].effect(() => {
+    return this.ctx.effect(() => {
       const route: UploadRoute = { path, callback }
       this._uploadRoutes.push(route)
       proxyUrls.push(path)

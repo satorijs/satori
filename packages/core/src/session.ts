@@ -1,6 +1,6 @@
 import { Channel, Event, GuildMember, Message, User } from '@satorijs/protocol'
 import { defineProperty, isNullable } from 'cosmokit'
-import { Context } from 'cordis'
+import { Context, Service } from 'cordis'
 import { Bot } from './bot'
 import h from '@satorijs/element'
 
@@ -29,6 +29,11 @@ export interface Session {
 
 export class Session<C extends Context = Context> {
   static counter = 0
+
+  public [Service.tracker] = {
+    associate: 'session',
+    property: 'ctx',
+  }
 
   public id: number
   public bot: Bot<C>

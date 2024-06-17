@@ -1,5 +1,5 @@
-import { clone, Dict, pick, remove } from 'cosmokit'
-import { Context, Logger } from 'cordis'
+import { clone, Dict, pick } from 'cosmokit'
+import { Context, Logger, Service } from 'cordis'
 import h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
@@ -22,7 +22,11 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   static reusable = true
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
 
-  public self = this
+  public [Service.tracker] = {
+    associate: 'bot',
+    property: 'ctx',
+  }
+
   public user = {} as User
   public isBot = true
   public hidden = false
@@ -33,7 +37,6 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   public error?: Error
   public callbacks: Dict<Function> = {}
   public logger: Logger
-  public [Context.current]: C
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
@@ -42,13 +45,11 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   constructor(public ctx: C, public config: T, platform?: string) {
     this.internal = null
     this.context = ctx
-    this[Context.current] = ctx
-    const self = Context.associate(this, 'bot')
-    ctx.bots.push(self)
-    self.context.emit('bot-added', self)
+    ctx.bots.push(this)
+    this.context.emit('bot-added', this)
     if (platform) {
-      self.logger = ctx.logger(platform)
-      self.platform = platform
+      this.logger = ctx.logger(platform)
+      this.platform = platform
     }
 
     this.proxyUrls = [`upload://temp/${ctx.satori.uid}/`]
@@ -58,18 +59,16 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
 
     ctx.on('ready', async () => {
       await Promise.resolve()
-      self.dispatchLoginEvent('login-added')
-      return self.start()
+      this.dispatchLoginEvent('login-added')
+      return this.start()
     })
 
-    ctx.on('dispose', () => self.dispose())
+    ctx.on('dispose', () => this.dispose())
 
     ctx.on('interaction/button', (session) => {
       const cb = this.callbacks[session.event.button.id]
       if (cb) cb(session)
     })
-
-    return self
   }
 
   registerUpload(path: string, callback: (path: string) => Promise<Response>) {
@@ -85,9 +84,12 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   dispose() {
-    remove(this.ctx.bots, this)
-    this.context.emit('bot-removed', this)
-    this.dispatchLoginEvent('login-removed')
+    const index = this.ctx.bots.findIndex(bot => bot.sid === this.sid)
+    if (index >= 0) {
+      this.ctx.bots.splice(index, 1)
+      this.context.emit('bot-removed', this)
+      this.dispatchLoginEvent('login-removed')
+    }
     return this.stop()
   }
 
@@ -105,7 +107,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   set status(value) {
     if (value === this._status) return
     this._status = value
-    if (this.ctx.bots?.includes(this)) {
+    if (this.ctx.bots?.some(bot => bot.sid === this.sid)) {
       this.context.emit('bot-status-updated', this)
       this.dispatchLoginEvent('login-updated')
     }
@@ -143,7 +145,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
       await this.context.parallel('bot-disconnect', this)
       await this.adapter?.disconnect(this)
     } catch (error) {
-      this.context.emit('internal/error', error)
+      this.context.emit(this.ctx, 'internal/error', error)
     } finally {
       this.offline()
     }
@@ -216,7 +218,7 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
         delete this.ctx.satori._tempStore[id]
       }
     }
-    const _dispose = this[Context.current].on('dispose', dispose)
+    const _dispose = this.ctx.on('dispose', dispose)
     return ids.map(id => `upload://temp/${this.ctx.satori.uid}/${id}`)
   }
 
