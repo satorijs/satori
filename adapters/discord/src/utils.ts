@@ -354,8 +354,9 @@ const decodeArgv = (
   if (!options) return result
   const dataChild = options[0]
   if (dataChild && (
-      dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND ||
-      dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
+    // eslint-disable-next-line operator-linebreak
+    dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND ||
+    dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
   )) {
     const commandChild = command.children.find(cmd => cmd.name.endsWith('.' + dataChild.name))
     return commandChild ? decodeArgv(dataChild, commandChild) : result
