@@ -367,14 +367,30 @@ export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationComman
   options: encodeCommandOptions(cmd),
 })
 
-const decodeArgv = (data: Discord.InteractionData.ApplicationCommand, command: Universal.Command) => {
-  const result = { name: data.name, arguments: [], options: {} } as Universal.Argv
+const decodeArgv = (
+  data: Discord.InteractionData.ApplicationCommand | Discord.InteractionData.ApplicationCommand.Option,
+  command: Universal.Command,
+) => {
+  const result = { name: command.name, arguments: [], options: {} } as Universal.Argv
+  const options = data.options
+  if (!options) return result
+  const dataChild = options[0]
+  if (dataChild && (
+    // eslint-disable-next-line operator-linebreak
+    dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND ||
+    dataChild.type === Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
+  )) {
+    const commandChild = command.children.find(cmd => cmd.name.endsWith('.' + dataChild.name))
+    return commandChild ? decodeArgv(dataChild, commandChild) : result
+  }
   for (const argument of command.arguments) {
-    const value = data.options?.find(opt => opt.name === argument.name)?.value
+    const name = argument.name.toLowerCase()
+    const value = options.find(opt => opt.name === name)?.value
     if (value !== undefined) result.arguments.push(value)
   }
   for (const option of command.options) {
-    const value = data.options?.find(opt => opt.name === option.name)?.value
+    const name = option.name.toLowerCase()
+    const value = options.find(opt => opt.name === name)?.value
     if (value !== undefined) result.options[option.name] = value
   }
   return result
@@ -389,8 +405,8 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
         ? Discord.ApplicationCommand.OptionType.SUB_COMMAND_GROUP
         : Discord.ApplicationCommand.OptionType.SUB_COMMAND,
       options: encodeCommandOptions(child),
-      description: cmd.description[''] || child.name,
-      description_localizations: pick(cmd.description, Discord.Locale),
+      description: child.description[''] || child.name,
+      description_localizations: pick(child.description, Discord.Locale),
     })))
   } else {
     for (const arg of cmd.arguments) {
