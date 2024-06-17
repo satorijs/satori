@@ -310,7 +310,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       file_type,
       srv_send_msg: false,
     }
-    const capture = /^data:([\w/-]+);base64,(.*)$/.exec(url)
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
+    const capture = /^data:([\w/.+-]+);base64,(.*)$/.exec(url)
     if (capture?.[2]) {
       data.file_data = capture[2]
     } else if (await this.bot.ctx.http.isLocal(url)) {
