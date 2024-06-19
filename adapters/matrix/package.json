@@ -31,7 +31,7 @@
     "@cordisjs/plugin-server": "^0.2.3"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.1.1"
+    "@satorijs/core": "^4.1.2"
   },
   "dependencies": {
     "html5parser": "^2.0.2",

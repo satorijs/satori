@@ -36,6 +36,6 @@
     "chat"
   ],
   "peerDependencies": {
-    "@satorijs/core": "^4.1.1"
+    "@satorijs/core": "^4.1.2"
   }
 }

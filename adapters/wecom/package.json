@@ -34,7 +34,7 @@
     "@types/xml2js": "^0.4.14"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.1.1"
+    "@satorijs/core": "^4.1.2"
   },
   "dependencies": {
     "@wecom/crypto": "^1.0.1",

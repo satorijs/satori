@@ -33,7 +33,7 @@
     "@cordisjs/plugin-server": "^0.2.3"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.1.1"
+    "@satorijs/core": "^4.1.2"
   },
   "dependencies": {
     "@slack/types": "^2.11.0"
