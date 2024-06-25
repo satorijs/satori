@@ -8,6 +8,8 @@ export interface User {
   username: string
   /** the user's 4-digit discord-tag */
   discriminator: string
+  /** the user's display name, if it is set. For bots, this is the application name */
+  global_name?: string
   /** the user's avatar hash */
   avatar?: string
   /** whether the user belongs to an OAuth2 application */
@@ -106,7 +108,7 @@ export enum VisibilityType {
   EVERYONE = 1,
 }
 
-export interface UserUpdateEvent extends User {}
+export interface UserUpdateEvent extends User { }
 
 declare module './gateway' {
   interface GatewayEvents {
