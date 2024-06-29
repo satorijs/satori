@@ -400,7 +400,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.flush()
       const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-      if (data.slice(0, 7).toString().includes('#!SILK')) {
+      if ((new TextDecoder()).decode(data.slice(0, 7)).includes('#!SILK')) {
         const onlineFile = await this.sendFile(type, {
           src: `data:audio/amr;base64,` + Buffer.from(data).toString('base64'),
         })
