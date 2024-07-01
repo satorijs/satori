@@ -126,6 +126,7 @@ export namespace QQBot {
   export interface Config extends QQ.Options, WsClient.Options {
     intents?: number
     retryWhen: number[]
+    manualAcknowledge: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -141,5 +142,8 @@ export namespace QQBot {
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
     }),
     WsClient.Options,
+    Schema.object({
+      manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
+    }).description('高级设置'),
   ] as const)
 }
