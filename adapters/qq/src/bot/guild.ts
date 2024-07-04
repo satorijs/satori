@@ -22,8 +22,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     this.parent = config.parent
     this.parent.guildBot = this
     this.platform = 'qqguild'
-    this.internal = new GuildInternal(this, () => config.parent.guildHttp)
-    this.http = config.parent.guildHttp
+    this.internal = new GuildInternal(this, () => config.parent.http)
+    this.http = config.parent.http
   }
 
   get status() {
