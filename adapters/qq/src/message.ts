@@ -193,6 +193,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private passiveId: string
   private passiveSeq: number
+  private passiveEventId: string
   private useMarkdown = false
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
@@ -202,19 +203,23 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
-    let msg_id: string, msg_seq: number
+    let msg_id: string, msg_seq: number, event_id: string
     if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
       this.options.session['seq'] ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
+    } else if (this.options?.session?.qq['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+      event_id = this.options.session.qq['id']
     }
     if (this.passiveId) msg_id = this.passiveId
     if (this.passiveSeq) msg_seq = this.passiveSeq
+    if (this.passiveEventId) event_id = this.passiveEventId
     const data: QQ.Message.Request = {
       content: this.content,
       msg_type: QQ.Message.Type.TEXT,
       msg_id,
       msg_seq,
+      event_id,
     }
     if (this.attachedFile) {
       if (!data.content.length) data.content = ' '
@@ -386,8 +391,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'text') {
       this.content += attrs.content
     } else if (type === 'passive') {
-      this.passiveId = attrs.messageId
-      this.passiveSeq = Number(attrs.seq)
+      if (attrs.messageId) this.passiveId = attrs.messageId
+      if (attrs.seq) this.passiveSeq = Number(attrs.seq)
+      if (attrs.eventId) this.passiveEventId = attrs.eventId
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
