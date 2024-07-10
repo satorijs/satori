@@ -11,7 +11,14 @@ declare module './internal' {
       message: string
       data: any
     }>
-    sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<any>
+    sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<{
+      id: string
+      timestamp: string
+    } & {
+      code: number
+      message: string
+      data: any
+    }>
     sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<any>
     sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<any>
     acknowledgeInteraction(interaction_id: string, data: {
