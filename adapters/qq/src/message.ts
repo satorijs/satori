@@ -409,7 +409,20 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         const silk = this.bot.ctx.get('silk')
         if (!silk) return this.bot.logger.warn('missing silk service, cannot send non-silk audio')
         if (silk.isWav(data)) {
-          const result = await silk.encode(data, 0)
+          let result: Dict
+          const allowSampleRate = [8000, 12000, 16000, 24000, 32000, 44100, 48000]
+          const { fmt } = silk.getWavFileInfo(data)
+          if (!allowSampleRate.includes(fmt.sampleRate)) {
+            if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send some audio')
+            const wavBuf = await this.bot.ctx.get('ffmpeg')
+              .builder()
+              .input(Buffer.from(data))
+              .outputOption('-ar', '24000', '-ac', '1', '-f', 's16le')
+              .run('buffer')
+            result = await silk.encode(wavBuf, 24000)
+          } else {
+            result = await silk.encode(data, 0)
+          }
           const onlineFile = await this.sendFile(type, {
             src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
           })
