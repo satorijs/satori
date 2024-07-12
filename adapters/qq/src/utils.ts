@@ -54,7 +54,7 @@ export function decodeGroupMessage(
   if (!payload) return message
   const date = data.timestamp.slice(0, data.timestamp.indexOf('m=')).trim().replace(/\+(\d{4}) CST/, 'GMT+$1')
   payload.timestamp = new Date(date).valueOf()
-  payload.guild = { id: data.group_id }
+  payload.guild = data.group_id && { id: data.group_id }
   payload.user = { id: data.author.id, avatar: `https://q.qlogo.cn/qqapp/${bot.config.id}/${data.author.id}/640` }
   return message
 }
