@@ -52,7 +52,10 @@ export function decodeGroupMessage(
   message.content = message.elements.join('')
 
   if (!payload) return message
-  const date = data.timestamp.slice(0, data.timestamp.indexOf('m=')).trim().replace(/\+(\d{4}) CST/, 'GMT+$1')
+  let date = data.timestamp
+  if (date.includes('m=')) {
+    date = data.timestamp.slice(0, data.timestamp.indexOf('m=')).trim().replace(/\+(\d{4}) CST/, 'GMT+$1')
+  }
   payload.timestamp = new Date(date).valueOf()
   payload.guild = data.group_id && { id: data.group_id }
   payload.user = { id: data.author.id, avatar: `https://q.qlogo.cn/qqapp/${bot.config.id}/${data.author.id}/640` }
