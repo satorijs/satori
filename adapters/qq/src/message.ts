@@ -403,7 +403,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.flush()
       const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
-      if (data.slice(0, 7).toString().includes('#!SILK')) {
+      if (new TextDecoder().decode(data.slice(0, 7)).includes('#!SILK')) {
         const onlineFile = await this.sendFile(type, {
           src: `data:audio/amr;base64,` + Buffer.from(data).toString('base64'),
         })
@@ -411,20 +411,21 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       } else {
         const silk = this.bot.ctx.get('silk')
         if (!silk) return this.bot.logger.warn('missing silk service, cannot send non-silk audio')
-        if (silk.isWav(data)) {
+        const allowSampleRate = [8000, 12000, 16000, 24000, 32000, 44100, 48000]
+        if (silk.isWav(data) && allowSampleRate.includes(silk.getWavFileInfo(data).fmt.sampleRate)) {
           const result = await silk.encode(data, 0)
           const onlineFile = await this.sendFile(type, {
             src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
           })
           if (onlineFile) this.attachedFile = onlineFile
         } else {
-          if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except wav')
-          const wavBuf = await this.bot.ctx.get('ffmpeg')
+          if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except some wav')
+          const pcmBuf = await this.bot.ctx.get('ffmpeg')
             .builder()
             .input(Buffer.from(data))
             .outputOption('-ar', '24000', '-ac', '1', '-f', 's16le')
             .run('buffer')
-          const result = await silk.encode(wavBuf, 24000)
+          const result = await silk.encode(pcmBuf, 24000)
           const onlineFile = await this.sendFile(type, {
             src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
           })
