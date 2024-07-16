@@ -16,6 +16,7 @@ export const sanitizeCode = (val: string) => val.replace(/(?<=`)(?=`)/g, '\u200b
 
 export const decodeUser = (user: Discord.User): Universal.User => ({
   id: user.id,
+  nick: user.global_name,
   name: user.username,
   userId: user.id,
   avatar: user.avatar && `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
@@ -92,6 +93,16 @@ export async function decodeMessage(
         const channel = data.mention_channels?.find(c => c.id === id)
         return h.sharp(id, { name: channel?.name }).toString()
       })
+  }
+
+  if (data.sticker_items) {
+    message.content += data.sticker_items.map(s => h('sticker', {
+      id: s.id,
+      format_type: s.format_type,
+      name: s.name,
+    }, [
+      h.image(`https://media.discordapp.net/stickers/${s.id}.webp?size=160`),
+    ])).join('')
   }
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
