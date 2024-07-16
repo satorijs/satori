@@ -193,6 +193,7 @@ export interface GetGatewayBotResponse {
 }
 
 export interface PayloadStructure<O extends Opcode, T extends keyof GatewayEvents, D> {
+  id: string
   /** opcode for the payload */
   op: O
   /** event data */

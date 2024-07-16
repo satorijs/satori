@@ -9,7 +9,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   _ping: NodeJS.Timeout
 
   async prepare() {
-    await this.bot.getAccessToken()
+    if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
     let { url } = await this.bot.internal.getGateway()
     url = url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
     this.bot.logger.debug('url: %s', url)
@@ -28,13 +28,14 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
       const parsed: Payload = JSON.parse(data.toString())
       this.bot.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
-        const token = await this.bot.getAccessToken()
+        const token = this.bot.config.authType === 'bearer'
+          ? `QQBot ${await this.bot.getAccessToken()}`
+          : `Bot ${this.bot.config.id}.${this.bot.config.token}`
         if (this._sessionId) {
           this.socket.send(JSON.stringify({
             op: Opcode.RESUME,
             d: {
-              token: `QQBot ${token}`,
-              // token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
+              token,
               session_id: this._sessionId,
               seq: this._s,
             },
@@ -43,8 +44,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
           this.socket.send(JSON.stringify({
             op: Opcode.IDENTIFY,
             d: {
-              // token: `Bot ${this.bot.config.id}.${this.bot.config.token}`,
-              token: `QQBot ${token}`,
+              token,
               intents: this.bot.config.intents,
               shard: [0, 1],
             },

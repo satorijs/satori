@@ -18,7 +18,6 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
 
   internal: GroupInternal
   http: HTTP
-  guildHttp: HTTP
 
   private _token: string
   private _timer: NodeJS.Timeout
@@ -29,12 +28,16 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     if (config.sandbox) {
       endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
     }
-    this.guildHttp = ctx.http.extend({
-      endpoint,
-      headers: {
-        'Authorization': `Bot ${this.config.id}.${this.config.token}`,
-      },
-    })
+    // 如果是 bot 类型, 使用固定 token
+    if (this.config.authType === 'bot') {
+      this.http = this.ctx.http.extend({
+        endpoint,
+        headers: {
+          'Authorization': `Bot ${this.config.id}.${this.config.token}`,
+          'X-Union-Appid': this.config.id,
+        },
+      })
+    }
 
     this.ctx.plugin(QQGuildBot, {
       parent: this,
@@ -126,6 +129,7 @@ export namespace QQBot {
   export interface Config extends QQ.Options, WsClient.Options {
     intents?: number
     retryWhen: number[]
+    manualAcknowledge: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -136,10 +140,13 @@ export namespace QQBot {
       type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
-      authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bot'),
+      authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
     }),
     WsClient.Options,
+    Schema.object({
+      manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
+    }).description('高级设置'),
   ] as const)
 }

@@ -193,6 +193,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private content: string = ''
   private passiveId: string
   private passiveSeq: number
+  private passiveEventId: string
   private useMarkdown = false
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
@@ -202,19 +203,23 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
-    let msg_id: string, msg_seq: number
+    let msg_id: string, msg_seq: number, event_id: string
     if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
       this.options.session['seq'] ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
+    } else if (this.options?.session?.qq['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+      event_id = this.options.session.qq['id']
     }
     if (this.passiveId) msg_id = this.passiveId
     if (this.passiveSeq) msg_seq = this.passiveSeq
+    if (this.passiveEventId) event_id = this.passiveEventId
     const data: QQ.Message.Request = {
       content: this.content,
       msg_type: QQ.Message.Type.TEXT,
       msg_id,
       msg_seq,
+      event_id,
     }
     if (this.attachedFile) {
       if (!data.content.length) data.content = ' '
@@ -240,27 +245,24 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     session.type = 'send'
     const send = async () => {
       try {
-        if (this.session.isDirect) {
-          const { sendResult: { msg_id } } = await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-          session.messageId = msg_id
-        } else {
-          const resp = await this.bot.internal.sendMessage(this.session.channelId, data)
-          if (resp.id) {
-            session.messageId = resp.id
-            session.timestamp = new Date(resp.timestamp).valueOf()
-            session.channelId = this.session.channelId
-            session.guildId = this.session.guildId
+        const resp = this.session.isDirect
+          ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
+          : await this.bot.internal.sendMessage(this.session.channelId, data)
+        if (resp.id) {
+          session.messageId = resp.id
+          session.timestamp = new Date(resp.timestamp).valueOf()
+          session.channelId = this.session.channelId
+          session.guildId = this.session.guildId
+          session.app.emit(session, 'send', session)
+          this.results.push(session.event.message)
+        } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+          try {
+            const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
+            session.messageId = auditData.message_id
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
-          } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
-            try {
-              const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
-              session.messageId = auditData.message_id
-              session.app.emit(session, 'send', session)
-              this.results.push(session.event.message)
-            } catch (e) {
-              this.bot.logger.error(e)
-            }
+          } catch (e) {
+            this.bot.logger.error(e)
           }
         }
       } catch (e) {
@@ -386,8 +388,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'text') {
       this.content += attrs.content
     } else if (type === 'passive') {
-      this.passiveId = attrs.messageId
-      this.passiveSeq = Number(attrs.seq)
+      if (attrs.messageId) this.passiveId = attrs.messageId
+      if (attrs.seq) this.passiveSeq = Number(attrs.seq)
+      if (attrs.eventId) this.passiveEventId = attrs.eventId
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
