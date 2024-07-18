@@ -1,7 +1,7 @@
 {
   "name": "create-satori",
   "description": "Setup a Satori application",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "bin": "lib/bin.js",
   "files": [
@@ -27,6 +27,6 @@
     "boilerplate"
   ],
   "dependencies": {
-    "create-cordis": "^0.2.1"
+    "create-cordis": "^0.2.2"
   }
 }

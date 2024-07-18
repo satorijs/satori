@@ -35,6 +35,6 @@
     "@cordisjs/plugin-server-temp": "^0.4.0"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.1.2"
+    "@satorijs/core": "^4.1.3"
   }
 }
