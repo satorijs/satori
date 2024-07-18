@@ -55,10 +55,8 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
         this._sessionId = ''
         this._s = null
         this.bot.logger.warn('offline: invalid session')
-        this.socket?.close()
       } else if (parsed.op === Opcode.RECONNECT) {
         this.bot.logger.warn('offline: server request reconnect')
-        this.socket?.close()
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
@@ -84,6 +82,10 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 
     this.socket.addEventListener('close', (e) => {
       this.bot.logger.debug('websocket closed, code %o, reason: %s', e.code, e.reason)
+      if (e.code > 4000 && ![4008, 4009].includes(e.code)) {
+        this._sessionId = ''
+        this._s = null
+      }
       clearInterval(this._ping)
     })
   }
