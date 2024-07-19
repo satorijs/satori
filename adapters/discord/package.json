@@ -32,6 +32,10 @@
     "im",
     "chat"
   ],
+  "devDependencies": {
+    "@satorijs/core": "^4.1.3",
+    "cordis": "^3.17.5"
+  },
   "peerDependencies": {
     "@satorijs/core": "^4.1.3"
   }

@@ -26,6 +26,9 @@
     "generator",
     "boilerplate"
   ],
+  "devDependencies": {
+    "@types/node": "^20.14.11"
+  },
   "dependencies": {
     "create-cordis": "^0.2.2"
   }

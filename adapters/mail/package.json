@@ -31,6 +31,12 @@
     "im",
     "chat"
   ],
+  "devDependencies": {
+    "@satorijs/core": "^4.1.3",
+    "@types/node-imap": "^0.9.3",
+    "@types/nodemailer": "^6.4.14",
+    "cordis": "^3.17.5"
+  },
   "peerDependencies": {
     "@satorijs/core": "^4.1.3"
   },
@@ -40,9 +46,5 @@
     "mailparser": "^3.6.9",
     "node-imap": "^0.9.6",
     "nodemailer": "^6.9.13"
-  },
-  "devDependencies": {
-    "@types/node-imap": "^0.9.3",
-    "@types/nodemailer": "^6.4.14"
   }
 }
