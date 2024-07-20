@@ -35,6 +35,9 @@ GroupInternal.define(false, {
   '/v2/groups/{channel.id}/messages': {
     POST: 'sendMessage',
   },
+  '/v2/groups/{channel.id}/messages/{message.id}': {
+    DELETE: 'deleteMessage',
+  },
   '/v2/users/{user.id}/messages': {
     POST: 'sendPrivateMessage',
   },
@@ -57,9 +60,3 @@ GroupInternal.define(false, {
     GET: 'getGatewayBot',
   },
 })
-
-GroupInternal.define(false, {
-  '/v2/groups/{channel.id}/messages/{message.id}': {
-    DELETE: 'deleteMessage',
-  },
-}, true)
