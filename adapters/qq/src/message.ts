@@ -324,7 +324,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     let res: QQ.Message.File.Response
     try {
       if (this.session.isDirect) {
-        res = await this.bot.internal.sendFilePrivate(this.options.session.event.message.user.id, data)
+        res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
       } else {
         res = await this.bot.internal.sendFileGuild(this.session.guildId, data)
       }
