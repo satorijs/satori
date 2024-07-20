@@ -17,7 +17,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
       return this.bot.http.ws(url)
     } catch (error) {
       if (this.bot.http.isError(error) && error.response) {
-        this.bot.logger.warn(`GET /gateway response: %o, trace id: %s`, error.response.data)
+        this.bot.logger.warn(`GET /gateway response: %o`, error.response.data)
       }
       throw error
     }
