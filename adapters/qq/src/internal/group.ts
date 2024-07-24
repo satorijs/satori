@@ -58,6 +58,7 @@ GroupInternal.define(false, {
   },
 })
 
+// tx.sb
 GroupInternal.define(false, {
   '/interactions/{interaction.id}': {
     PUT: 'acknowledgeInteraction',
