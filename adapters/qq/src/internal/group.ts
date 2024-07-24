@@ -58,7 +58,7 @@ GroupInternal.define(false, {
   },
 })
 
-// tx.sb
+// fxxk tencent
 GroupInternal.define(false, {
   '/interactions/{interaction.id}': {
     PUT: 'acknowledgeInteraction',
