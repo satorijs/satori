@@ -10,10 +10,17 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 
   async prepare() {
     if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
-    let { url } = await this.bot.internal.getGateway()
-    url = url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
-    this.bot.logger.debug('url: %s', url)
-    return this.bot.http.ws(url)
+    try {
+      let { url } = await this.bot.internal.getGateway()
+      url = url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
+      this.bot.logger.debug('url: %s', url)
+      return this.bot.http.ws(url)
+    } catch (error) {
+      if (this.bot.http.isError(error) && error.response) {
+        this.bot.logger.warn(`GET /gateway response: %o`, error.response.data)
+      }
+      throw error
+    }
   }
 
   heartbeat() {

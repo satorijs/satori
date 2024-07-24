@@ -34,9 +34,8 @@ export class Internal {
               this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, response.data, response.headers.get('x-tps-trace-id'))
               return response.data
             } catch (error) {
-              this.bot.logger.warn(`${method} ${url} request: %o`, config)
               if (!http.isError(error) || !error.response) throw error
-              this.bot.logger.warn(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers.get('x-tps-trace-id'))
+              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers.get('x-tps-trace-id'))
               throw error
             }
           }
