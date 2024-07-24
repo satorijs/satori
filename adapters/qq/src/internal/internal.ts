@@ -3,7 +3,7 @@ import { Bot, Dict, HTTP, makeArray } from '@satorijs/core'
 export class Internal {
   constructor(private bot: Bot, private http: () => HTTP) { }
 
-  static define(isGuild: boolean, routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, preset: HTTP.RequestConfig = {}) {
+  static define(isGuild: boolean, routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, preset?: HTTP.RequestConfig) {
     for (const path in routes) {
       for (const key in routes[path]) {
         const method = key as HTTP.Method
