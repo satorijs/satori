@@ -4,6 +4,7 @@ import WebSocket from 'ws'
 import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 import { readFile } from 'node:fs/promises'
+import { ParameterizedContext } from 'koa'
 
 declare module 'cordis' {
   interface Context {
@@ -40,6 +41,15 @@ class SatoriServer extends Service<SatoriServer.Config> {
     const logger = ctx.logger('server')
     const path = sanitize(config.path)
 
+    function checkAuth(koa: ParameterizedContext) {
+      if (!config.token) return
+      if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
+        koa.body = 'invalid token'
+        koa.status = 403
+        return true
+      }
+    }
+
     ctx.server.get(path + '/v1/:name', async (koa, next) => {
       const method = Universal.Methods[koa.params.name]
       if (!method) return next()
@@ -55,13 +65,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
         return
       }
 
-      if (config.token) {
-        if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
-          koa.body = 'invalid token'
-          koa.status = 403
-          return
-        }
-      }
+      if (checkAuth(koa)) return
 
       const selfId = koa.request.headers['x-self-id']
       const platform = koa.request.headers['x-platform']
@@ -100,6 +104,8 @@ class SatoriServer extends Service<SatoriServer.Config> {
     })
 
     ctx.server.post(path + '/v1/internal/:name', async (koa) => {
+      if (checkAuth(koa)) return
+
       const selfId = koa.request.headers['x-self-id']
       const platform = koa.request.headers['x-platform']
       const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
@@ -158,6 +164,12 @@ class SatoriServer extends Service<SatoriServer.Config> {
           koa.body = error.response.data
         }
       }
+    })
+
+    ctx.server.post(path + '/v1/admin/login.list', async (koa) => {
+      if (checkAuth(koa)) return
+      koa.body = transformKey(ctx.bots.map(bot => bot.toJSON()), snakeCase)
+      koa.status = 200
     })
 
     const buffer: Session[] = []
