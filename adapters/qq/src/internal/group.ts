@@ -50,9 +50,6 @@ GroupInternal.define(false, {
   '/v2/groups/{channel.id}/files': {
     POST: 'sendFileGuild',
   },
-  '/interactions/{interaction.id}': {
-    PUT: 'acknowledgeInteraction',
-  },
   '/gateway': {
     GET: 'getGateway',
   },
@@ -60,3 +57,10 @@ GroupInternal.define(false, {
     GET: 'getGatewayBot',
   },
 })
+
+// fxxk tencent
+GroupInternal.define(false, {
+  '/interactions/{interaction.id}': {
+    PUT: 'acknowledgeInteraction',
+  },
+}, { responseType: 'text' })
