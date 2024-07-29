@@ -326,7 +326,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       if (this.session.isDirect) {
         res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
       } else {
-        res = await this.bot.internal.sendFileGuild(this.session.guildId, data)
+        res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
       }
     } catch (e) {
       if (!this.bot.http.isError(e)) throw e
