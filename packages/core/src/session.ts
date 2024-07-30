@@ -111,7 +111,15 @@ export class Session<C extends Context = Context> {
 
   set content(value: string | undefined) {
     this.event.message ??= {}
+    this.event.message.quote = undefined
     this.event.message.elements = isNullable(value) ? value : h.parse(value)
+    if (this.event.message.elements?.[0]?.type === 'quote') {
+      const el = this.event.message.elements.shift()
+      this.event.message.quote = {
+        ...el.attrs,
+        content: el.children.join(''),
+      }
+    }
   }
 
   setInternal(type: string, data: any) {
