@@ -248,16 +248,16 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         const resp = this.session.isDirect
           ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
           : await this.bot.internal.sendMessage(this.session.channelId, data)
-        if (resp.id) {
+        if (resp.id && !resp.audit_id) {
           session.messageId = resp.id
           session.timestamp = new Date(resp.timestamp).valueOf()
           session.channelId = this.session.channelId
           session.guildId = this.session.guildId
           session.app.emit(session, 'send', session)
           this.results.push(session.event.message)
-        } else if (resp.code === 304023 && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+        } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
           try {
-            const auditData: QQ.MessageAudited = await this.audit(resp.data.message_audit.audit_id)
+            const auditData: QQ.MessageAudited = await this.audit(resp.audit_id)
             session.messageId = auditData.message_id
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
