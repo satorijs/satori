@@ -60,6 +60,8 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     bot.adapter = this
     bot.http = this.http.extend({
       headers: {
+        'Satori-Platform': platform,
+        'Satori-Login-ID': selfId,
         'X-Platform': platform,
         'X-Self-ID': selfId,
       },
@@ -95,12 +97,12 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
       if (parsed.op === Universal.Opcode.READY) {
         this.logger.debug('ready')
         for (const login of parsed.body.logins) {
-          this.getBot(login.platform, login.selfId, login)
+          this.getBot(login.platform, login.user.id, login)
         }
       }
 
       if (parsed.op === Universal.Opcode.EVENT) {
-        const { id, type, selfId, platform, login } = parsed.body
+        const { id, type, login, selfId = login?.user.id, platform = login?.platform } = parsed.body
         this.sequence = id
         // `login-*` events will be dispatched by the bot,
         // so there is no need to create sessions manually.

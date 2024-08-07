@@ -1,4 +1,4 @@
-import { Channel, Event, GuildMember, Message, User } from '@satorijs/protocol'
+import { Channel, Event, GuildMember, Login, Message, User } from '@satorijs/protocol'
 import { defineProperty, isNullable } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import { Bot } from './bot'
@@ -137,7 +137,14 @@ export class Session<C extends Context = Context> {
   }
 
   toJSON(): Event {
-    return { ...this.event, id: this.id }
+    return {
+      login: {
+        platform: this.platform,
+        user: { id: this.userId },
+      } as Login,
+      ...this.event,
+      id: this.id,
+    }
   }
 }
 

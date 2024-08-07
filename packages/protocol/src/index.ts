@@ -227,6 +227,7 @@ export interface GuildMember {
 export interface Login {
   user?: User
   platform?: string
+  /** @deprecated use `login.user.id` instead */
   selfId?: string
   hidden?: boolean
   status: Status
