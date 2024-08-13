@@ -52,7 +52,11 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
   if (isBotCommand) {
     session.type = 'interaction/command'
     await decodeMessage(bot, message, session.event.message = {}, session.event)
-    session.content = session.content.slice(1)
+    // content: /command@bot ...args
+    const [group] = session.content.split(' ', 1)
+    const [command, username] = group.slice(1).split('@')
+    if (username !== bot.user.name) return
+    session.content = command + session.content.slice(group.length)
   } else if (message) {
     if (update.message?.media_group_id) {
       if (!mediaGroupMap.has(update.message.media_group_id)) { mediaGroupMap.set(update.message.media_group_id, [new Date(), []]) }
