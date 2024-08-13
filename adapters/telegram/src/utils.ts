@@ -59,7 +59,9 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     session.content = command + session.content.slice(group.length)
   } else if (message) {
     if (update.message?.media_group_id) {
-      if (!mediaGroupMap.has(update.message.media_group_id)) { mediaGroupMap.set(update.message.media_group_id, [new Date(), []]) }
+      if (!mediaGroupMap.has(update.message.media_group_id)) {
+        mediaGroupMap.set(update.message.media_group_id, [new Date(), []])
+      }
 
       const [, updates] = mediaGroupMap.get(update.message.media_group_id)
       session.type = update.message || update.channel_post ? 'message' : 'message-updated'
