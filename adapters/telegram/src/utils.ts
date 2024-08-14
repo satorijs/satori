@@ -55,7 +55,7 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
     // content: /command@bot ...args
     const [group] = session.content.split(' ', 1)
     const [command, username] = group.slice(1).split('@')
-    if (username !== bot.user.name) return
+    if (username && username !== bot.user.name) return
     session.content = command + session.content.slice(group.length)
   } else if (message) {
     if (update.message?.media_group_id) {
@@ -170,14 +170,14 @@ export async function decodeMessage(
 
     const obtainAttributeAtBP = (bp: number) => {
       const attr = []
-      let url = null, user = null
+      let url = null, user: Telegram.User = null
       for (const e of entities) {
         if (e.offset <= bp && e.offset + e.length > bp) {
           attr.push(e.type)
 
           if (e.type === 'text_link') {
             url = e.url
-          } else if (e.type === 'mention') {
+          } else if (e.type === 'text_mention') {
             user = e.user
           }
         }
@@ -200,8 +200,9 @@ export async function decodeMessage(
         if (attr.includes('code')) ele = h('code', {}, ele)
         if (attr.includes('pre')) ele = h('pre', {}, ele)
         if (attr.includes('spoiler')) ele = h('spl', {}, ele)
+        if (attr.includes('mention')) ele = h('at', { name: content.slice(1) })
         if (url) ele = h('a', { href: url }, ele)
-        if (user) ele = h('at', { id: user.id }, ele)
+        if (user) ele = h('at', { id: user.id, name: user.username }, ele)
         if (content === '\n') ele = h('br')
         segs.push(ele)
       }
