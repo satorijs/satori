@@ -162,7 +162,10 @@ export async function decodeMessage(
   }
   message.elements = h.parse(message.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
-  if (details && data.message_reference) {
+  // https://github.com/satorijs/satori/issues/306
+  // THREAD_CREATED (18) 事件下，message_reference 没有 message_id
+  // THREAD_STARTER_MESSAGE (21) 事件下，message_reference 有 message_id
+  if (details && data.message_reference?.message_id) {
     const { message_id, channel_id } = data.message_reference
     message.quote = await bot.getMessage(channel_id, message_id, false)
   }
