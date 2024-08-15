@@ -36,6 +36,7 @@ export namespace Adapter {
 
   export abstract class WsClientBase<C extends Context, B extends Bot<C>> extends Adapter<C, B> {
     protected socket: WebSocket
+    protected connectionId = 0
 
     protected abstract prepare(): Awaitable<WebSocket>
     protected abstract accept(socket: WebSocket): void
@@ -47,15 +48,16 @@ export namespace Adapter {
     }
 
     async start() {
-      let _retryCount = 0
+      let retryCount = 0
+      const connectionId = ++this.connectionId
       const logger = this.ctx.logger('adapter')
       const { retryTimes, retryInterval, retryLazy } = this.config
 
       const reconnect = (initial: boolean, message: string) => {
-        if (!this.getActive()) return
+        if (!this.getActive() || connectionId !== this.connectionId) return
 
         let timeout = retryInterval
-        if (_retryCount >= retryTimes) {
+        if (retryCount >= retryTimes) {
           if (initial) {
             return this.setStatus(Status.OFFLINE, new Error(message))
           } else {
@@ -63,11 +65,12 @@ export namespace Adapter {
           }
         }
 
-        _retryCount++
+        retryCount++
         this.setStatus(Status.RECONNECT)
         logger.warn(`${message}, will retry in ${Time.format(timeout)}...`)
         setTimeout(() => {
-          if (this.getActive()) connect()
+          if (!this.getActive() || connectionId !== this.connectionId) return
+          connect()
         }, timeout)
       }
 
@@ -89,13 +92,13 @@ export namespace Adapter {
         })
 
         socket.addEventListener('close', ({ code, reason }) => {
-          this.socket = null
+          if (this.socket === socket) this.socket = null
           logger.debug(`websocket closed with ${code}`)
           reconnect(initial, reason.toString() || `failed to connect to ${url}, code: ${code}`)
         })
 
         socket.addEventListener('open', () => {
-          _retryCount = 0
+          retryCount = 0
           this.socket = socket
           logger.info('connect to server: %c', url)
           this.accept(socket)
