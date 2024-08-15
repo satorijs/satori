@@ -221,8 +221,10 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
       await this.render(children)
       this.payload.caption += '</tg-spoiler>'
     } else if (type === 'code') {
+      this.payload.caption += `<code>${attrs.content ? h.escape(attrs.content) : children.toString()}</code>`
+    } else if (type === 'code-block') {
       const { lang } = attrs
-      this.payload.caption += `<code${lang ? ` class="language-${lang}"` : ''}>${h.escape(attrs.content)}</code>`
+      this.payload.caption += `<pre><code${lang ? ` class="language-${lang}"` : ''}>${children.toString()}</code></pre>`
     } else if (type === 'at') {
       if (attrs.id) {
         this.payload.caption += `<a href="tg://user?id=${attrs.id}">@${attrs.name || attrs.id}</a>`
