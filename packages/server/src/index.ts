@@ -172,6 +172,30 @@ class SatoriServer extends Service<SatoriServer.Config> {
       koa.status = 200
     })
 
+    ctx.server.post(path + '/v1/admin/webhook.create', async (koa) => {
+      if (checkAuth(koa)) return
+      const webhook: SatoriServer.Webhook = transformKey(koa.request.body, camelCase)
+      const index = config.webhooks.findIndex(({ url }) => url === webhook.url)
+      if (index === -1) {
+        config.webhooks.push(webhook)
+        ctx.scope.update(config, false)
+      }
+      koa.body = {}
+      koa.status = 200
+    })
+
+    ctx.server.post(path + '/v1/admin/webhook.delete', async (koa) => {
+      if (checkAuth(koa)) return
+      const url = koa.request.body.url
+      const index = config.webhooks.findIndex(webhook => webhook.url === url)
+      if (index !== -1) {
+        config.webhooks.splice(index, 1)
+        ctx.scope.update(config, false)
+      }
+      koa.body = {}
+      koa.status = 200
+    })
+
     const buffer: Session[] = []
 
     const timeout = setInterval(() => {
@@ -236,7 +260,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }
       for (const webhook of config.webhooks) {
         if (!webhook.enabled) continue
-        ctx.http.post(webhook.endpoint, body, {
+        ctx.http.post(webhook.url, body, {
           headers: webhook.token ? {
             Authorization: `Bearer ${webhook.token}`,
           } : {},
@@ -262,13 +286,13 @@ namespace SatoriServer {
 
   export interface Webhook {
     enabled?: boolean
-    endpoint: string
+    url: string
     token?: string
   }
 
   export const Webhook: Schema<Webhook> = Schema.object({
     enabled: Schema.boolean().default(true),
-    endpoint: Schema.string(),
+    url: Schema.string(),
     token: Schema.string(),
   })
 
