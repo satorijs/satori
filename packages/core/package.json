@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/core",
   "description": "Core components of Satorijs",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -57,13 +57,13 @@
     }
   },
   "peerDependencies": {
-    "cordis": "^3.17.8"
+    "cordis": "^3.18.0"
   },
   "dependencies": {
     "@cordisjs/plugin-http": "^0.6.1",
     "@satorijs/element": "^3.1.7",
     "@satorijs/protocol": "^1.4.2",
-    "cordis": "^3.17.8",
+    "cordis": "^3.18.0",
     "cosmokit": "^1.6.2"
   }
 }
