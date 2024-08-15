@@ -51,13 +51,33 @@ export namespace Adapter {
       const logger = this.ctx.logger('adapter')
       const { retryTimes, retryInterval, retryLazy } = this.config
 
-      const reconnect = async (initial = false) => {
+      const reconnect = (initial: boolean, message: string) => {
+        if (!this.getActive()) return
+
+        let timeout = retryInterval
+        if (_retryCount >= retryTimes) {
+          if (initial) {
+            return this.setStatus(Status.OFFLINE, new Error(message))
+          } else {
+            timeout = retryLazy
+          }
+        }
+
+        _retryCount++
+        this.setStatus(Status.RECONNECT)
+        logger.warn(`${message}, will retry in ${Time.format(timeout)}...`)
+        setTimeout(() => {
+          if (this.getActive()) connect()
+        }, timeout)
+      }
+
+      const connect = async (initial = false) => {
         logger.debug('websocket client opening')
         let socket: WebSocket
         try {
           socket = await this.prepare()
         } catch (error) {
-          logger.warn(error)
+          reconnect(initial, error.toString() || `failed to prepare websocket`)
           return
         }
 
@@ -71,24 +91,7 @@ export namespace Adapter {
         socket.addEventListener('close', ({ code, reason }) => {
           this.socket = null
           logger.debug(`websocket closed with ${code}`)
-          if (!this.getActive()) return
-
-          const message = reason.toString() || `failed to connect to ${url}, code: ${code}`
-          let timeout = retryInterval
-          if (_retryCount >= retryTimes) {
-            if (initial) {
-              return this.setStatus(Status.OFFLINE, new Error(message))
-            } else {
-              timeout = retryLazy
-            }
-          }
-
-          _retryCount++
-          this.setStatus(Status.RECONNECT)
-          logger.warn(`${message}, will retry in ${Time.format(timeout)}...`)
-          setTimeout(() => {
-            if (this.getActive()) reconnect()
-          }, timeout)
+          reconnect(initial, reason.toString() || `failed to connect to ${url}, code: ${code}`)
         })
 
         socket.addEventListener('open', () => {
@@ -99,7 +102,7 @@ export namespace Adapter {
         })
       }
 
-      reconnect(true)
+      connect(true)
     }
 
     async stop() {
