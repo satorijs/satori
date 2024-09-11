@@ -409,27 +409,36 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         })
         this.attachedFile = onlineFile
       } else {
-        const silk = this.bot.ctx.get('silk')
-        if (!silk) return this.bot.logger.warn('missing silk service, cannot send non-silk audio')
-        const allowSampleRate = [8000, 12000, 16000, 24000, 32000, 44100, 48000]
-        if (silk.isWav(data) && allowSampleRate.includes(silk.getWavFileInfo(data).fmt.sampleRate)) {
-          const result = await silk.encode(data, 0)
+        const ntsilk = this.bot.ctx.get('ntsilk')
+        if (ntsilk) {
+          const result = await ntsilk.encode(data)
           const onlineFile = await this.sendFile(type, {
-            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+            src: `data:audio/amr;base64,` + result.output.toString('base64'),
           })
           if (onlineFile) this.attachedFile = onlineFile
         } else {
-          if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except some wav')
-          const pcmBuf = await this.bot.ctx.get('ffmpeg')
-            .builder()
-            .input(Buffer.from(data))
-            .outputOption('-ar', '24000', '-ac', '1', '-f', 's16le')
-            .run('buffer')
-          const result = await silk.encode(pcmBuf, 24000)
-          const onlineFile = await this.sendFile(type, {
-            src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
-          })
-          if (onlineFile) this.attachedFile = onlineFile
+          const silk = this.bot.ctx.get('silk')
+          if (!silk) return this.bot.logger.warn('missing ntsilk/silk service, cannot send non-silk audio')
+          const allowSampleRate = [8000, 12000, 16000, 24000, 32000, 44100, 48000]
+          if (silk.isWav(data) && allowSampleRate.includes(silk.getWavFileInfo(data).fmt.sampleRate)) {
+            const result = await silk.encode(data, 0)
+            const onlineFile = await this.sendFile(type, {
+              src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+            })
+            if (onlineFile) this.attachedFile = onlineFile
+          } else {
+            if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except some wav')
+            const pcmBuf = await this.bot.ctx.get('ffmpeg')
+              .builder()
+              .input(Buffer.from(data))
+              .outputOption('-ar', '24000', '-ac', '1', '-f', 's16le')
+              .run('buffer')
+            const result = await silk.encode(pcmBuf, 24000)
+            const onlineFile = await this.sendFile(type, {
+              src: `data:audio/amr;base64,` + Buffer.from(result.data).toString('base64'),
+            })
+            if (onlineFile) this.attachedFile = onlineFile
+          }
         }
       }
       await this.flush()
