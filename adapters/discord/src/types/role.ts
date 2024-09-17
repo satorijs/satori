@@ -1,87 +1,88 @@
 import { integer, Internal, snowflake } from '.'
 
+// https://github.com/microsoft/TypeScript/issues/37783
 /** https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags */
-export enum Permission {
+export const Permission = {
   /** Allows creation of instant invites */
-  CREATE_INSTANT_INVITE = 1 << 0,
+  CREATE_INSTANT_INVITE: 1n << 0n,
   /** Allows kicking members */
-  KICK_MEMBERS = 1 << 1,
+  KICK_MEMBERS: 1n << 1n,
   /** Allows banning members */
-  BAN_MEMBERS = 1 << 2,
+  BAN_MEMBERS: 1n << 2n,
   /** Allows all permissions and bypasses channel permission overwrites */
-  ADMINISTRATOR = 1 << 3,
+  ADMINISTRATOR: 1n << 3n,
   /** Allows management and editing of channels */
-  MANAGE_CHANNELS = 1 << 4,
+  MANAGE_CHANNELS: 1n << 4n,
   /** Allows management and editing of the guild */
-  MANAGE_GUILD = 1 << 5,
+  MANAGE_GUILD: 1n << 5n,
   /** Allows for the addition of reactions to messages */
-  ADD_REACTIONS = 1 << 6,
+  ADD_REACTIONS: 1n << 6n,
   /** Allows for viewing of audit logs */
-  VIEW_AUDIT_LOG = 1 << 7,
+  VIEW_AUDIT_LOG: 1n << 7n,
   /** Allows for using priority speaker in a voice channel */
-  PRIORITY_SPEAKER = 1 << 8,
+  PRIORITY_SPEAKER: 1n << 8n,
   /** Allows the user to go live */
-  STREAM = 1 << 9,
+  STREAM: 1n << 9n,
   /** Allows guild members to view a channel, which includes reading messages in text channels */
-  VIEW_CHANNEL = 1 << 10,
+  VIEW_CHANNEL: 1n << 10n,
   /** Allows for sending messages in a channel (does not allow sending messages in threads) */
-  SEND_MESSAGES = 1 << 11,
+  SEND_MESSAGES: 1n << 11n,
   /** Allows for sending of /tts messages */
-  SEND_TTS_MESSAGES = 1 << 12,
+  SEND_TTS_MESSAGES: 1n << 12n,
   /** Allows for deletion of other users messages */
-  MANAGE_MESSAGES = 1 << 13,
+  MANAGE_MESSAGES: 1n << 13n,
   /** Links sent by users with this permission will be auto-embedded */
-  EMBED_LINKS = 1 << 14,
+  EMBED_LINKS: 1n << 14n,
   /** Allows for uploading images and files */
-  ATTACH_FILES = 1 << 15,
+  ATTACH_FILES: 1n << 15n,
   /** Allows for reading of message history */
-  READ_MESSAGE_HISTORY = 1 << 16,
+  READ_MESSAGE_HISTORY: 1n << 16n,
   /** Allows for using the @everyone tag to notify all users in a channel, and the @here tag to notify all online users in a channel */
-  MENTION_EVERYONE = 1 << 17,
+  MENTION_EVERYONE: 1n << 17n,
   /** Allows the usage of custom emojis from other servers */
-  USE_EXTERNAL_EMOJIS = 1 << 18,
+  USE_EXTERNAL_EMOJIS: 1n << 18n,
   /** Allows for viewing guild insights */
-  VIEW_GUILD_INSIGHTS = 1 << 19,
+  VIEW_GUILD_INSIGHTS: 1n << 19n,
   /** Allows for joining of a voice channel */
-  CONNECT = 1 << 20,
+  CONNECT: 1n << 20n,
   /** Allows for speaking in a voice channel */
-  SPEAK = 1 << 21,
+  SPEAK: 1n << 21n,
   /** Allows for muting members in a voice channel */
-  MUTE_MEMBERS = 1 << 22,
+  MUTE_MEMBERS: 1n << 22n,
   /** Allows for deafening of members in a voice channel */
-  DEAFEN_MEMBERS = 1 << 23,
+  DEAFEN_MEMBERS: 1n << 23n,
   /** Allows for moving of members between voice channels */
-  MOVE_MEMBERS = 1 << 24,
+  MOVE_MEMBERS: 1n << 24n,
   /** Allows for using voice-activity-detection in a voice channel */
-  USE_VAD = 1 << 25,
+  USE_VAD: 1n << 25n,
   /** Allows for modification of own nickname */
-  CHANGE_NICKNAME = 1 << 26,
+  CHANGE_NICKNAME: 1n << 26n,
   /** Allows for modification of other users nicknames */
-  MANAGE_NICKNAMES = 1 << 27,
+  MANAGE_NICKNAMES: 1n << 27n,
   /** Allows management and editing of roles */
-  MANAGE_ROLES = 1 << 28,
+  MANAGE_ROLES: 1n << 28n,
   /** Allows management and editing of webhooks */
-  MANAGE_WEBHOOKS = 1 << 29,
+  MANAGE_WEBHOOKS: 1n << 29n,
   /** Allows management and editing of emojis and stickers */
-  MANAGE_EMOJIS_AND_STICKERS = 1 << 30,
+  MANAGE_EMOJIS_AND_STICKERS: 1n << 30n,
   /** Allows members to use application commands, including slash commands and context menu commands. */
-  USE_APPLICATION_COMMANDS = 1 << 31,
+  USE_APPLICATION_COMMANDS: 1n << 31n,
   /** Allows for requesting to speak in stage channels. (This permission is under active development and may be changed or removed.) */
-  REQUEST_TO_SPEAK = 1 << 32,
+  REQUEST_TO_SPEAK: 1n << 32n,
   /** Allows for deleting and archiving threads, and viewing all private threads */
-  MANAGE_THREADS = 1 << 34,
+  MANAGE_THREADS: 1n << 34n,
   /** Allows for creating threads */
-  CREATE_PUBLIC_THREADS = 1 << 35,
+  CREATE_PUBLIC_THREADS: 1n << 35n,
   /** Allows for creating private threads */
-  CREATE_PRIVATE_THREADS = 1 << 36,
+  CREATE_PRIVATE_THREADS: 1n << 36n,
   /** Allows the usage of custom stickers from other servers */
-  USE_EXTERNAL_STICKERS = 1 << 37,
+  USE_EXTERNAL_STICKERS: 1n << 37n,
   /** Allows for sending messages in threads */
-  SEND_MESSAGES_IN_THREADS = 1 << 38,
+  SEND_MESSAGES_IN_THREADS: 1n << 38n,
   /** Allows for launching activities (applications with the EMBEDDED flag) in a voice channel */
-  START_EMBEDDED_ACTIVITIES = 1 << 39,
+  START_EMBEDDED_ACTIVITIES: 1n << 39n,
   /** Allows for timing out users to prevent them from sending or reacting to messages in chat and threads, and from speaking in voice and stage channels */
-  MODERATE_MEMBERS = 1 << 40,
+  MODERATE_MEMBERS: 1n << 40n,
 }
 
 /** https://discord.com/developers/docs/topics/permissions#role-object-role-structure */
