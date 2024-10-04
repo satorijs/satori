@@ -225,6 +225,7 @@ export interface GuildMember {
 }
 
 export interface Login {
+  adapter: string
   user?: User
   platform?: string
   /** @deprecated use `login.user.id` instead */

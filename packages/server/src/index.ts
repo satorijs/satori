@@ -67,7 +67,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
 
       if (checkAuth(koa)) return
 
-      const selfId = koa.request.headers['satori-login-id'] ?? koa.request.headers['x-self-id']
+      const selfId = koa.request.headers['satori-user-id'] ?? koa.request.headers['x-self-id']
       const platform = koa.request.headers['satori-platform'] ?? koa.request.headers['x-platform']
       const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
       if (!bot) {

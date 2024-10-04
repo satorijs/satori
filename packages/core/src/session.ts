@@ -140,7 +140,7 @@ export class Session<C extends Context = Context> {
     return {
       login: {
         platform: this.platform,
-        user: { id: this.userId },
+        user: { id: this.selfId },
       } as Login,
       ...this.event,
       id: this.id,

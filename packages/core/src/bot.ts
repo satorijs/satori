@@ -18,7 +18,7 @@ export interface Bot extends Methods {
   internal: any
 }
 
-export abstract class Bot<C extends Context = Context, T = any> implements Login {
+export abstract class Bot<C extends Context = Context, T = any> {
   static reusable = true
   static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
 
@@ -233,7 +233,12 @@ export abstract class Bot<C extends Context = Context, T = any> implements Login
   }
 
   toJSON(): Login {
-    return clone(pick(this, ['platform', 'selfId', 'status', 'user', 'hidden', 'features', 'proxyUrls']))
+    return clone({
+      ...pick(this, ['platform', 'selfId', 'status', 'hidden', 'features', 'proxyUrls']),
+      // make sure `user.id` is present
+      user: this.user.id ? this.user : undefined,
+      adapter: this.platform,
+    })
   }
 
   async getLogin() {
