@@ -78,7 +78,7 @@ export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: A
   switch (body.type) {
     case 'im.message.receive_v1':
       session.type = 'message'
-      session.subtype = body.event.message.chat_id
+      session.subtype = body.event.message.chat_type
       if (session.subtype === 'p2p') session.subtype = 'private'
       session.isDirect = session.subtype === 'private'
       adaptSender(body.event.sender, session)
