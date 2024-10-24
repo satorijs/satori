@@ -1,16 +1,16 @@
 {
   "name": "@satorijs/satori",
   "description": "Core components of Satorijs",
-  "version": "4.2.1",
+  "version": "4.2.5",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
+      "types": "./lib/index.d.ts",
       "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs",
-      "types": "./lib/index.d.ts"
+      "import": "./lib/index.mjs"
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -35,14 +35,13 @@
     "element",
     "message",
     "utilities",
-    "cordis",
-    "plugin"
+    "cordis"
   ],
   "peerDependencies": {
-    "cordis": "^3.18.0"
+    "cordis": "^3.18.1"
   },
   "dependencies": {
-    "@satorijs/core": "4.2.1",
-    "cosmokit": "^1.6.2"
+    "@satorijs/core": "4.2.9",
+    "cosmokit": "^1.6.3"
   }
 }

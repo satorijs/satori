@@ -7,19 +7,19 @@
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "require": "./lib/index.cjs"
     },
     "./jsx-runtime": {
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "require": "./lib/index.cjs"
     },
     "./jsx-dev-runtime": {
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "require": "./lib/index.cjs"
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -55,6 +55,6 @@
     "chai-shape": "^1.1.0"
   },
   "dependencies": {
-    "cosmokit": "^1.6.2"
+    "cosmokit": "^1.6.3"
   }
 }
