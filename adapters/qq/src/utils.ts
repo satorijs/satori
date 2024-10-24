@@ -181,7 +181,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     session.timestamp = input.d.timestamp
     session.userId = input.d.openid
   } else if (input.t === 'FRIEND_DEL') {
-    session.type = 'friend-added'
+    session.type = 'friend-deleted'
     session.timestamp = input.d.timestamp
     session.userId = input.d.openid
   } else if (input.t === 'GROUP_ADD_ROBOT') {
