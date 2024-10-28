@@ -1,6 +1,6 @@
-export interface EventHeader<T extends string> {
+export interface EventHeader<K extends keyof Events> {
   event_id: string
-  event_type: T
+  event_type: K
   create_time: string
   token: string
   app_id: string
@@ -12,11 +12,12 @@ export type EventName = keyof Events
 
 // In fact, this is the 2.0 version of the event sent by Lark.
 // And only the 2.0 version has the `schema` field.
-export type EventSkeleton<T extends EventName, Event, Header = EventHeader<T>> = {
-  schema: '2.0'
-  type: T
-  header: Header
-  event: Event
-}
-
-export type AllEvents = Events[EventName]
+export type EventPayload = {
+  [K in keyof Events]: {
+    schema: '2.0'
+    // special added field for TypeScript
+    type: K
+    header: EventHeader<K>
+    event: Events[K]
+  }
+}[keyof Events]
