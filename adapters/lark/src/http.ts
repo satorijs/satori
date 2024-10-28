@@ -4,7 +4,7 @@ import { Adapter, Context, Logger, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 
 import { FeishuBot } from './bot'
-import { AllEvents } from './types'
+import { EventPayload } from './types'
 import { adaptSession, Cipher } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
@@ -98,7 +98,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
     })
   }
 
-  async dispatchSession(body: AllEvents) {
+  async dispatchSession(body: EventPayload) {
     const { header } = body
     if (!header) return
     const { app_id, event_type } = header

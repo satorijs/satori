@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Context, h, Session, trimSlash, Universal } from '@satorijs/core'
 import { FeishuBot, LarkBot } from './bot'
-import { AllEvents, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
+import { EventPayload, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
 
 export type Sender =
   | {
@@ -22,7 +22,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
   return session
 }
 
-export async function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1']['event'], session: Session, details = true): Promise<Session> {
+export async function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1'], session: Session, details = true): Promise<Session> {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
@@ -71,7 +71,7 @@ export async function adaptMessage(bot: FeishuBot, data: Events['im.message.rece
   return session
 }
 
-export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: AllEvents) {
+export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: EventPayload) {
   const session = bot.session()
   session.setInternal('lark', body)
 
@@ -83,6 +83,35 @@ export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: A
       session.isDirect = session.subtype === 'private'
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
+      break
+    case 'card.action.trigger':
+      if (body.event.action.value?._satori_type === 'command') {
+        session.type = 'interaction/command'
+        let content = body.event.action.value.content
+        const args = [], options = Object.create(null)
+        for (const [key, value] of Object.entries(body.event.action.form_value ?? {})) {
+          if (+key * 0 === 0) {
+            args[+key] = value
+          } else {
+            options[key] = value
+          }
+        }
+        for (let i = 0; i < args.length; ++i) {
+          if (i in args) {
+            content += ` ${args[i]}`
+          } else {
+            content += ` ''`
+          }
+        }
+        for (const [key, value] of Object.entries(options)) {
+          content += ` --${key} ${value}`
+        }
+        session.content = content
+        session.messageId = body.event.context.open_message_id
+        session.channelId = body.event.context.open_chat_id
+        session.guildId = body.event.context.open_chat_id
+        session.userId = body.event.operator.open_id
+      }
       break
   }
   return session
