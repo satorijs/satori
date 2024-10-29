@@ -121,56 +121,39 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async visit(element: h) {
     const { type, attrs, children } = element
-
-    switch (type) {
-      case 'text':
-        this.content += attrs.content
-        break
-      case 'at': {
-        if (attrs.type === 'all') {
-          this.content += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
-        } else {
-          this.content += `<at user_id="${attrs.id}">${attrs.name}</at>`
-        }
-        break
+    if (type === 'text') {
+      this.content += attrs.content
+    } else if (type === 'at') {
+      if (attrs.type === 'all') {
+        this.content += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
+      } else {
+        this.content += `<at user_id="${attrs.id}">${attrs.name}</at>`
       }
-      case 'a':
-        await this.render(children)
-        if (attrs.href) this.content += ` (${attrs.href})`
-        break
-      case 'p':
-        if (!this.content.endsWith('\n')) this.content += '\n'
-        await this.render(children)
-        if (!this.content.endsWith('\n')) this.content += '\n'
-        break
-      case 'br':
-        this.content += '\n'
-        break
-      case 'sharp':
-        // platform does not support sharp
-        break
-      case 'quote':
+    } else if (type === 'a') {
+      await this.render(children)
+      if (attrs.href) this.content += ` (${attrs.href})`
+    } else if (type === 'p') {
+      if (!this.content.endsWith('\n')) this.content += '\n'
+      await this.render(children)
+      if (!this.content.endsWith('\n')) this.content += '\n'
+    } else if (type === 'br') {
+      this.content += '\n'
+    } else if (type === 'sharp') {
+      // platform does not support sharp
+    } else if (type === 'quote') {
+      await this.flush()
+      this.quote = attrs.id
+    } else if (['img', 'image', 'video', 'audio', 'file'].includes(type)) {
+      if (attrs.src || attrs.url) {
         await this.flush()
-        this.quote = attrs.id
-        break
-      case 'img':
-      case 'image':
-      case 'video':
-      case 'audio':
-      case 'file':
-        if (attrs.src || attrs.url) {
-          await this.flush()
-          this.addition = await this.sendFile(type, attrs.src || attrs.url)
-          await this.flush()
-        }
-        break
-      case 'figure': // FIXME: treat as message element for now
-      case 'message':
+        this.addition = await this.sendFile(type as any, attrs.src || attrs.url)
         await this.flush()
-        await this.render(children, true)
-        break
-      default:
-        await this.render(children)
+      }
+    } else if (type === 'figure' || type === 'message') {
+      await this.flush()
+      await this.render(children, true)
+    } else {
+      await this.render(children)
     }
   }
 }
