@@ -161,8 +161,8 @@ export namespace MessageComponent {
 
     /** @see https://open.larksuite.com/document/common-capabilities/message-card/message-cards-content/card-header */
     export interface Header {
-      title: PlainTextElement
-      subtitle?: PlainTextElement
+      title: I18nPlainTextElement
+      subtitle?: I18nPlainTextElement
       template?: Header.Template
       icon?: CustomIconElement
       ud_icon?: StandardIconElement
@@ -186,7 +186,13 @@ export namespace MessageComponent {
 
     export interface PlainTextElement extends BaseElement<'plain_text'> {
       content: string
+    }
+
+    export interface I18nPlainTextElement extends PlainTextElement {
       i18n?: Record<string, string>
+    }
+
+    export interface DivPlainTextElement extends PlainTextElement {
       text_size?: TextSize
       text_color?: string
       text_align?: TextAlign
@@ -226,8 +232,8 @@ export namespace MessageComponent {
 
     export interface HorizontalRuleElement extends BaseElement<'hr'> {}
 
-    export interface ParagraphElement extends BaseElement<'div'> {
-      text?: PlainTextElement
+    export interface DivElement extends BaseElement<'div'> {
+      text?: DivPlainTextElement
     }
 
     export interface MarkdownElement extends BaseElement<'markdown'> {
@@ -239,10 +245,62 @@ export namespace MessageComponent {
 
     export interface HorizontalRuleElement extends BaseElement<'hr'> {}
 
+    export interface ActionModule extends BaseElement<'action'> {
+      actions: ActionElement[]
+      layout?: 'bisected' | 'trisection' | 'flow'
+    }
+
+    export type ActionElement =
+      | ButtonElement
+
+    export type ActionBehavior =
+      | OpenURLBehavior
+      | CallbackBehavior
+
+    export interface OpenURLBehavior {
+      type: 'open_url'
+      default_url: string
+      pc_url?: string
+      ios_url?: string
+      android_url?: string
+    }
+
+    export interface CallbackBehavior {
+      type: 'callback'
+      value: Record<string, string>
+    }
+
+    export interface ButtonElement extends BaseElement<'button'> {
+      text: PlainTextElement
+      type?: ButtonElement.Type
+      size?: ButtonElement.Size
+      width?: ButtonElement.Width
+      icon?: IconElement
+      hover_tips?: PlainTextElement
+      disabled?: boolean
+      disabled_tips?: PlainTextElement
+      confirm?: {
+        title: PlainTextElement
+        text: PlainTextElement
+      }
+      behaviors?: ActionBehavior[]
+      // form-related fields
+      name?: string
+      required?: boolean
+      action_type?: 'link' | 'request' | 'multi' | 'form_submit' | 'form_reset'
+    }
+
+    export namespace ButtonElement {
+      export type Size = 'tiny' | 'small' | 'medium' | 'large'
+      export type Width = 'default' | 'fill' | string
+      export type Type = 'default' | 'primary' | 'danger' | 'text' | 'primary_text' | 'danger_text' | 'primary_filled' | 'danger_filled' | 'laser'
+    }
+
     export type Element =
-      | ParagraphElement
+      | DivElement
       | MarkdownElement
       | HorizontalRuleElement
+      | ActionModule
   }
 
   export interface Template {

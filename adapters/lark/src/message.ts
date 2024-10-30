@@ -8,6 +8,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private textContent = ''
   private richContent: MessageComponent.RichText.Paragraph[] = []
   private cardElements: MessageComponent.Card.Element[] | undefined
+  private actionElements: MessageComponent.Card.ActionElement[] = []
 
   async post(data?: any) {
     try {
@@ -40,11 +41,16 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     }
   }
 
-  private flushText() {
-    if (!this.textContent) return
-    this.richContent.push([{ tag: 'md', text: this.textContent }])
-    this.cardElements?.push({ tag: 'markdown', content: this.textContent })
-    this.textContent = ''
+  private flushText(flushAction = false) {
+    if ((this.textContent || flushAction) && this.actionElements.length) {
+      this.cardElements?.push({ tag: 'action', actions: this.actionElements })
+      this.actionElements = []
+    }
+    if (this.textContent) {
+      this.richContent.push([{ tag: 'md', text: this.textContent }])
+      this.cardElements?.push({ tag: 'markdown', content: this.textContent })
+      this.textContent = ''
+    }
   }
 
   async flush() {
@@ -54,7 +60,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     if (this.cardElements) {
       await this.post({
         msg_type: 'interactive',
-        elements: this.cardElements,
+        content: JSON.stringify({
+          elements: this.cardElements,
+        }),
       })
     } else {
       await this.post({
@@ -147,10 +155,43 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'figure' || type === 'message') {
       await this.flush()
       await this.render(children, true)
-    } else if (type === 'hr' || type === 'lark:hr' || type === 'feishu:hr') {
+    } else if (type === 'hr') {
       this.flushText()
       this.richContent.push([{ tag: 'hr' }])
       this.cardElements?.push({ tag: 'hr' })
+    } else if (type === 'button') {
+      this.flushText()
+      const behaviors: MessageComponent.Card.ActionBehavior[] = []
+      if (attrs.type === 'link') {
+        behaviors.push({
+          type: 'open_url',
+          default_url: attrs.href,
+        })
+      } else if (attrs.type === 'input') {
+        behaviors.push({
+          type: 'callback',
+          value: {
+            _satori_type: 'command',
+            content: attrs.text,
+          },
+        })
+      } else if (attrs.type === 'action') {
+        // TODO
+      }
+      await this.render(children)
+      this.actionElements.push({
+        tag: 'button',
+        text: {
+          tag: 'plain_text',
+          content: this.textContent,
+        },
+        behaviors,
+      })
+      this.textContent = ''
+    } else if (type === 'button-group') {
+      this.flushText(true)
+      await this.render(children)
+      this.flushText(true)
     } else if (type.startsWith('lark:') || type.startsWith('feishu:')) {
       const tag = type.slice(type.split(':', 1)[0].length + 1)
       if (tag === 'share-chat') {
@@ -181,6 +222,16 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         await this.flush()
         this.cardElements = []
         await this.render(children, true)
+      } else if (tag === 'div') {
+        this.flushText()
+        await this.render(children)
+        this.cardElements?.push({
+          tag: 'markdown',
+          text_align: attrs.align,
+          text_size: attrs.size,
+          content: this.textContent,
+        })
+        this.textContent = ''
       }
     } else {
       await this.render(children)
