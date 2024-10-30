@@ -1,19 +1,20 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { BaseResponse, Lark, MessageContent, MessageType } from './types'
+import { BaseResponse, Lark, MessageComponent } from './types'
 import { extractIdType } from './utils'
-
-export interface Addition {
-  file: MessageContent.MediaContents
-  type: MessageType
-}
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
   private quote: string | undefined
-  private content = ''
-  private addition: Addition
-  // TODO: currently not used, would be supported in the future
-  private richText: MessageContent.RichText[string]
+  private textContent = ''
+  private richContent: MessageComponent.RichText.Paragraph[] = []
+  private cardElements: MessageComponent.Card[] | undefined
+  private richElements: MessageComponent.RichText.InlineElement[] | undefined
+
+  private flushRich() {
+    if (!this.textContent) return
+    this.richContent.push([{ tag: 'md', text: this.textContent }])
+    this.textContent = ''
+  }
 
   async post(data?: any) {
     try {
@@ -47,111 +48,128 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   }
 
   async flush() {
-    if (this.content === '' && !this.addition && !this.richText) return
+    if (this.textContent === '' && !this.cardElements && !this.richContent.length) return
 
-    let message: MessageContent.Contents
-    if (this.addition) {
-      message = {
-        ...message,
-        ...this.addition.file,
-      }
+    if (this.cardElements) {
+      await this.post({
+        msg_type: 'interactive',
+        elements: this.cardElements,
+      })
+    } else if (this.richContent.length) {
+      await this.post({
+        msg_type: 'post',
+        content: JSON.stringify({ zh_cn: this.richContent }),
+      })
     }
-    if (this.richText) {
-      message = { zh_cn: this.richText }
-    }
-    if (this.content) {
-      message = { text: this.content }
-    }
-    await this.post({
-      msg_type: this.richText ? 'post' : this.addition ? this.addition.type : 'text',
-      content: JSON.stringify(message),
-    })
 
     // reset cached content
     this.quote = undefined
-    this.content = ''
-    this.addition = undefined
-    this.richText = undefined
+    this.textContent = ''
+    this.richElements = undefined
+    this.richContent = []
+    this.cardElements = undefined
   }
 
-  async sendFile(type: 'img' | 'image' | 'video' | 'audio' | 'file', url: string): Promise<Addition> {
+  async createImage(url: string) {
+    const { filename, type, data } = await this.bot.assetsQuester.file(url)
+    const payload = new FormData()
+    payload.append('image', new Blob([data], { type }), filename)
+    payload.append('image_type', 'message')
+    const { data: { image_key } } = await this.bot.internal.createImImage(payload)
+    return image_key
+  }
+
+  async sendFile(_type: 'video' | 'audio' | 'file', url: string) {
     const payload = new FormData()
 
-    const assetKey = type === 'img' || type === 'image' ? 'image' : 'file'
-    const { filename, mime, data } = await this.bot.assetsQuester.file(url)
-    payload.append(assetKey, new Blob([data], { type: mime }), filename)
+    const { filename, type, data } = await this.bot.assetsQuester.file(url)
+    payload.append('file', new Blob([data], { type }), filename)
+    payload.append('file_name', filename)
 
-    if (type === 'img' || type === 'image') {
-      payload.append('image_type', 'message')
-      const { data } = await this.bot.internal.createImImage(payload)
-      return {
-        type: 'image',
-        file: {
-          image_key: data.image_key,
-        },
-      }
+    if (_type === 'audio') {
+      // FIXME: only support opus
+      payload.append('file_type', 'opus')
+    } else if (_type === 'video') {
+      // FIXME: only support mp4
+      payload.append('file_type', 'mp4')
     } else {
-      let msgType: MessageType = 'file'
-      if (type === 'audio') {
-        // FIXME: only support opus
-        payload.append('file_type', 'opus')
-        msgType = 'audio'
-      } else if (type === 'video') {
-        // FIXME: only support mp4
-        payload.append('file_type', 'mp4')
-        msgType = 'media'
+      const ext = filename.split('.').pop()
+      if (['xls', 'ppt', 'pdf'].includes(ext)) {
+        payload.append('file_type', ext)
       } else {
-        const ext = filename.split('.').pop()
-        if (['xls', 'ppt', 'pdf'].includes(ext)) {
-          payload.append('file_type', ext)
-        } else {
-          payload.append('file_type', 'stream')
-        }
-      }
-      payload.append('file_name', filename)
-      const { data } = await this.bot.internal.createImFile(payload)
-      return {
-        type: msgType,
-        file: {
-          file_key: data.file_key,
-        },
+        payload.append('file_type', 'stream')
       }
     }
+
+    const { data: { file_key } } = await this.bot.internal.createImFile(payload)
+    await this.post({
+      msg_type: _type === 'video' ? 'media' : _type,
+      content: JSON.stringify({ file_key }),
+    })
   }
 
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.content += attrs.content
+      this.textContent += attrs.content
     } else if (type === 'at') {
       if (attrs.type === 'all') {
-        this.content += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
+        this.textContent += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
       } else {
-        this.content += `<at user_id="${attrs.id}">${attrs.name}</at>`
+        this.textContent += `<at user_id="${attrs.id}">${attrs.name}</at>`
       }
     } else if (type === 'a') {
       await this.render(children)
-      if (attrs.href) this.content += ` (${attrs.href})`
+      if (attrs.href) this.textContent += ` (${attrs.href})`
     } else if (type === 'p') {
-      if (!this.content.endsWith('\n')) this.content += '\n'
+      if (!this.textContent.endsWith('\n')) this.textContent += '\n'
       await this.render(children)
-      if (!this.content.endsWith('\n')) this.content += '\n'
+      if (!this.textContent.endsWith('\n')) this.textContent += '\n'
     } else if (type === 'br') {
-      this.content += '\n'
+      this.textContent += '\n'
     } else if (type === 'sharp') {
       // platform does not support sharp
     } else if (type === 'quote') {
       await this.flush()
       this.quote = attrs.id
-    } else if (['img', 'image', 'video', 'audio', 'file'].includes(type)) {
-      if (attrs.src || attrs.url) {
-        await this.flush()
-        this.addition = await this.sendFile(type as any, attrs.src || attrs.url)
-        await this.flush()
-      }
+    } else if (type === 'img' || type === 'image') {
+      const image_key = await this.createImage(attrs.src || attrs.url)
+      this.textContent += `![${attrs.alt ?? '图片'}](${image_key})`
+      this.flushRich()
+      this.richContent.push([{ tag: 'img', image_key }])
+    } else if (['video', 'audio', 'file'].includes(type)) {
+      await this.flush()
+      await this.sendFile(type as any, attrs.src || attrs.url)
     } else if (type === 'figure' || type === 'message') {
       await this.flush()
       await this.render(children, true)
+    } else if (type.startsWith('lark:') || type.startsWith('feishu:')) {
+      const tag = type.slice(type.split(':', 1)[0].length + 1)
+      if (tag === 'share-chat') {
+        await this.flush()
+        await this.post({
+          msg_type: 'share_chat',
+          content: JSON.stringify({ chat_id: attrs.chatId }),
+        })
+      } else if (tag === 'share-user') {
+        await this.flush()
+        await this.post({
+          msg_type: 'share_user',
+          content: JSON.stringify({ user_id: attrs.userId }),
+        })
+      } else if (tag === 'system') {
+        await this.flush()
+        await this.render(children)
+        await this.post({
+          msg_type: 'system',
+          content: JSON.stringify({
+            type: 'divider',
+            params: { divider_text: { text: this.textContent } },
+            options: { need_rollup: attrs.needRollup },
+          }),
+        })
+        this.textContent = ''
+      }
     } else {
       await this.render(children)
     }

@@ -1,23 +1,22 @@
 // https://open.larksuite.com/document/server-docs/im-v1/message-content-description/create_json
 
-export namespace MessageContent {
-  export type Contents =
-    | Text
-    | Image
-    | ShareChat
-    | ShareUser
-    | Audio
-    | Media
-    | File
-    | Sticker
-    | RichText
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'lark:share-chat': {
+        'chat-id': string
+      }
+      'lark:share-user': {
+        'user-id': string
+      }
+      'lark:system': {
+        'need-rollup'?: boolean
+      }
+    }
+  }
+}
 
-  export type MediaContents =
-    | Image
-    | Audio
-    | Media
-    | File
-
+export namespace MessageComponent {
   export interface Text {
     text: string
   }
@@ -40,7 +39,7 @@ export namespace MessageContent {
 
   export interface Media {
     file_key: string
-    image_key: string
+    image_key?: string
   }
 
   export interface File {
@@ -49,6 +48,19 @@ export namespace MessageContent {
 
   export interface Sticker {
     file_key: string
+  }
+
+  export interface System {
+    type: 'divider'
+    params: {
+      divider_text: {
+        text: string
+        i18n_text?: Record<string, string>
+      }
+    }
+    options?: {
+      need_rollup?: boolean
+    }
   }
 
   export interface RichText {
