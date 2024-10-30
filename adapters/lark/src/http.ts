@@ -72,10 +72,10 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
 
       // dispatch message
       bot.logger.debug('received decryped event: %o', body)
-      // @TODO: need await?
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
+      ctx.body = {}
       return ctx.status = 200
     })
 

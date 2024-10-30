@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Context, h, Session, trimSlash, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { EventPayload, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
+import { EventPayload, Events, GetImChatResponse, Lark } from './types'
 
 export type Sender =
   | {
@@ -23,7 +23,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
 }
 
 export async function adaptMessage(bot: LarkBot, data: Events['im.message.receive_v1'], session: Session, details = true): Promise<Session> {
-  const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
+  const json = JSON.parse(data.message.content)
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
   switch (data.message.message_type) {
@@ -119,7 +119,7 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
 
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
 export async function decodeMessage(bot: LarkBot, body: Lark.Message, details = true): Promise<Universal.Message> {
-  const json = JSON.parse(body.body.content) as MessageContentType<MessageType>
+  const json = JSON.parse(body.body.content)
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
   switch (body.msg_type) {

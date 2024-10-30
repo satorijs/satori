@@ -1,14 +1,14 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { BaseResponse, Lark, MessageComponent } from './types'
+import { BaseResponse, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
   private quote: string | undefined
   private textContent = ''
-  private richContent: MessageComponent.RichText.Paragraph[] = []
-  private cardElements: MessageComponent.Card.Element[] | undefined
-  private actionElements: MessageComponent.Card.ActionElement[] = []
+  private richContent: MessageContent.RichText.Paragraph[] = []
+  private cardElements: MessageContent.Card.Element[] | undefined
+  private actionElements: MessageContent.Card.ButtonElement[] = []
 
   async post(data?: any) {
     try {
@@ -67,7 +67,11 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else {
       await this.post({
         msg_type: 'post',
-        content: JSON.stringify({ zh_cn: this.richContent }),
+        content: JSON.stringify({
+          zh_cn: {
+            content: this.richContent,
+          },
+        }),
       })
     }
 
@@ -161,7 +165,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       this.cardElements?.push({ tag: 'hr' })
     } else if (type === 'button') {
       this.flushText()
-      const behaviors: MessageComponent.Card.ActionBehavior[] = []
+      const behaviors: MessageContent.Card.ActionBehavior[] = []
       if (attrs.type === 'link') {
         behaviors.push({
           type: 'open_url',

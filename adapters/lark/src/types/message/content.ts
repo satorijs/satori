@@ -16,7 +16,20 @@ declare global {
   }
 }
 
-export namespace MessageComponent {
+export interface MessageContent {
+  text: MessageContent.Text
+  post: MessageContent.RichText
+  image: MessageContent.Image
+  file: MessageContent.File
+  audio: MessageContent.Audio
+  media: MessageContent.Media
+  sticker: MessageContent.Sticker
+  share_chat: MessageContent.ShareChat
+  share_user: MessageContent.ShareUser
+  system: MessageContent.System
+}
+
+export namespace MessageContent {
   export interface Text {
     text: string
   }
@@ -115,7 +128,7 @@ export namespace MessageComponent {
       text: string
     }
 
-    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
+    export interface HRElement extends BaseElement<'hr'> {}
 
     export interface MarkdownElement extends BaseElement<'md'> {
       text: string
@@ -132,7 +145,7 @@ export namespace MessageComponent {
       | ImageElement
       | MediaElement
       | CodeBlockElement
-      | HorizontalRuleElement
+      | HRElement
 
     export type Paragraph =
       | InlineElement[]

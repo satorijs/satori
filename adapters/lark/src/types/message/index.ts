@@ -1,23 +1,6 @@
-import { Lark } from '..'
-import { MessageComponent } from './content'
+import { Lark, MessageContent } from '..'
 
 export * from './content'
-
-export type MessageType = 'text' | 'post' | 'image' | 'file' | 'audio' | 'media' | 'sticker' | 'interactive' | 'share_chat' | 'share_user'
-
-export interface MessageContentMap {
-  'text': MessageComponent.Text
-  'post': MessageComponent.RichText
-  'image': MessageComponent.Image
-  'file': MessageComponent.File
-  'audio': MessageComponent.Audio
-  'media': MessageComponent.Media
-  'sticker': MessageComponent.Sticker
-  'share_chat': MessageComponent.ShareChat
-  'share_user': MessageComponent.ShareUser
-}
-
-export type MessageContentType<T extends MessageType> = T extends keyof MessageContentMap ? MessageContentMap[T] : any
 
 declare module '../event' {
   export interface Events {
@@ -38,7 +21,7 @@ declare module '../event' {
         create_time: string
         chat_id: string
         chat_type: string
-        message_type: MessageType
+        message_type: keyof MessageContent
         content: string
         mentions: {
           key: string
