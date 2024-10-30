@@ -1,4 +1,4 @@
-// https://open.larksuite.com/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json
+// https://open.larksuite.com/document/server-docs/im-v1/message-content-description/create_json
 
 export namespace MessageContent {
   export type Contents =
@@ -53,50 +53,77 @@ export namespace MessageContent {
 
   export interface RichText {
     [locale: string]: {
-      title: string
+      title?: string
       content: RichText.Paragraph[]
     }
   }
 
   export namespace RichText {
-    export interface Paragraph extends Array<RichText.Content> {}
+    export type Style = 'bold' | 'italic' | 'underline' | 'lineThrough'
 
-    export interface BaseContent {
-      tag: string
+    export interface BaseElement<T extends string = string> {
+      tag: T
     }
 
-    export interface TextContent extends BaseContent {
-      tag: 'text'
+    export interface TextElement extends BaseElement<'text'> {
       text: string
       un_escape?: boolean
+      style?: Style[]
     }
-    export interface LinkContent extends BaseContent {
-      tag: 'a'
+
+    export interface LinkElement extends BaseElement<'a'> {
       text: string
       href: string
+      style?: Style[]
     }
-    export interface AtContent extends BaseContent {
-      tag: 'at'
+
+    export interface AtElement extends BaseElement<'at'> {
       user_id: string
-      user_name?: string
+      style?: Style[]
+      // user_name?: string
     }
-    export interface ImageContent extends BaseContent {
-      tag: 'img'
+
+    export interface ImageElement extends BaseElement<'img'> {
       image_key: string
-      height?: number
-      width?: number
+      // height?: number
+      // width?: number
     }
-    export interface MediaContent extends BaseContent {
-      tag: 'media'
+
+    export interface MediaElement extends BaseElement<'media'> {
       file_key: string
       image_key?: string
     }
 
-    export type Content =
-      | RichText.TextContent
-      | RichText.LinkContent
-      | RichText.AtContent
-      | RichText.ImageContent
-      | RichText.MediaContent
+    export interface EmotionElement extends BaseElement<'emoji'> {
+      emoji_type: string
+    }
+
+    export interface CodeBlockElement extends BaseElement<'code_block'> {
+      language?: string
+      text: string
+    }
+
+    export interface HRElement extends BaseElement<'hr'> {}
+
+    export interface MarkdownElement extends BaseElement<'md'> {
+      text: string
+    }
+
+    export type InlineElement =
+      | TextElement
+      | LinkElement
+      | AtElement
+      | EmotionElement
+      | MarkdownElement
+
+    export type BlockElement =
+      | ImageElement
+      | MediaElement
+      | CodeBlockElement
+      | HRElement
+
+    export type Paragraph =
+      | InlineElement[]
+      | [BlockElement]
   }
 }
