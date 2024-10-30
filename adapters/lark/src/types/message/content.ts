@@ -115,7 +115,7 @@ export namespace MessageComponent {
       text: string
     }
 
-    export interface HRElement extends BaseElement<'hr'> {}
+    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
 
     export interface MarkdownElement extends BaseElement<'md'> {
       text: string
@@ -132,10 +132,124 @@ export namespace MessageComponent {
       | ImageElement
       | MediaElement
       | CodeBlockElement
-      | HRElement
+      | HorizontalRuleElement
 
     export type Paragraph =
       | InlineElement[]
       | [BlockElement]
+  }
+
+  export interface Card {
+    config: Card.Config
+    card_link?: Card.URLs
+    elements?: Card.Element[]
+  }
+
+  export namespace Card {
+    /** @see https://open.larksuite.com/document/common-capabilities/message-card/getting-started/card-structure/card-configuration */
+    export interface Config {
+      enable_forward?: boolean
+      update_multi?: boolean
+    }
+
+    export interface URLs {
+      url: string
+      pc_url?: string
+      ios_url?: string
+      android_url?: string
+    }
+
+    /** @see https://open.larksuite.com/document/common-capabilities/message-card/message-cards-content/card-header */
+    export interface Header {
+      title: PlainTextElement
+      subtitle?: PlainTextElement
+      template?: Header.Template
+      icon?: CustomIconElement
+      ud_icon?: StandardIconElement
+      text_tag_list?: TextTagElement[]
+      i18n_text_tag_list?: Record<string, TextTagElement[]>
+    }
+
+    export namespace Header {
+      export type Template = 'blue' | 'wathet' | 'turquoise' | 'green' | 'yellow' | 'orange' | 'red' | 'carmine' | 'violet' | 'purple' | 'indigo' | 'grey' | 'default'
+    }
+
+    export interface BaseElement<T extends string = string> {
+      tag: T
+    }
+
+    export type TextSize =
+      | 'heading-0' | 'heading-1' | 'heading-2' | 'heading-3' | 'heading-4' | 'heading'
+      | 'normal' | 'notation' | 'xxxx-large' | 'xxx-large' | 'xx-large' | 'x-large' | 'large' | 'medium' | 'small' | 'x-small'
+
+    export type TextAlign = 'left' | 'center' | 'right'
+
+    export interface PlainTextElement extends BaseElement<'plain_text'> {
+      content: string
+      i18n?: Record<string, string>
+      text_size?: TextSize
+      text_color?: string
+      text_align?: TextAlign
+      lines?: number
+      icon?: IconElement
+    }
+
+    export type IconElement = StandardIconElement | CustomIconElement
+
+    export interface CustomIconElement extends BaseElement<'custom_icon'> {
+      img_key: string
+    }
+
+    export interface StandardIconElement extends BaseElement<'standard_icon'> {
+      token: string
+      color?: string
+    }
+
+    export interface TextTagElement extends BaseElement<'text_tag'> {
+      text: PlainTextElement
+      color: TextTagElement.Color
+    }
+
+    export namespace TextTagElement {
+      export type Color = 'neutral' | 'blue' | 'torqoise' | 'lime' | 'orange' | 'violet' | 'indigo' | 'wathet' | 'green' | 'yellow' | 'red' | 'purple' | 'carmine'
+    }
+
+    export interface ImageElement extends BaseElement<'image'> {
+      img_key: string
+      alt?: PlainTextElement
+      title?: PlainTextElement
+      custom_width?: number
+      compact_width?: boolean
+      mode?: 'crop_center' | 'fit_horizontal' | 'large' | 'medium' | 'small' | 'tiny'
+      preview?: boolean
+    }
+
+    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
+
+    export interface ParagraphElement extends BaseElement<'div'> {
+      text?: PlainTextElement
+    }
+
+    export interface MarkdownElement extends BaseElement<'markdown'> {
+      content: string
+      text_size?: TextSize
+      text_align?: TextAlign
+      href?: Record<string, URLs>
+    }
+
+    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
+
+    export type Element =
+      | ParagraphElement
+      | MarkdownElement
+      | HorizontalRuleElement
+  }
+
+  export interface Template {
+    type: 'template'
+    data: {
+      template_id: string
+      template_variable: object
+    }
   }
 }

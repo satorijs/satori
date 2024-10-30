@@ -7,14 +7,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private quote: string | undefined
   private textContent = ''
   private richContent: MessageComponent.RichText.Paragraph[] = []
-  private cardElements: MessageComponent.Card[] | undefined
-  private richElements: MessageComponent.RichText.InlineElement[] | undefined
-
-  private flushRich() {
-    if (!this.textContent) return
-    this.richContent.push([{ tag: 'md', text: this.textContent }])
-    this.textContent = ''
-  }
+  private cardElements: MessageComponent.Card.Element[] | undefined
 
   async post(data?: any) {
     try {
@@ -47,15 +40,23 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     }
   }
 
+  private flushText() {
+    if (!this.textContent) return
+    this.richContent.push([{ tag: 'md', text: this.textContent }])
+    this.cardElements?.push({ tag: 'markdown', content: this.textContent })
+    this.textContent = ''
+  }
+
   async flush() {
-    if (this.textContent === '' && !this.cardElements && !this.richContent.length) return
+    this.flushText()
+    if (!this.cardElements && !this.richContent.length) return
 
     if (this.cardElements) {
       await this.post({
         msg_type: 'interactive',
         elements: this.cardElements,
       })
-    } else if (this.richContent.length) {
+    } else {
       await this.post({
         msg_type: 'post',
         content: JSON.stringify({ zh_cn: this.richContent }),
@@ -65,7 +66,6 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     // reset cached content
     this.quote = undefined
     this.textContent = ''
-    this.richElements = undefined
     this.richContent = []
     this.cardElements = undefined
   }
@@ -79,12 +79,16 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     return image_key
   }
 
-  async sendFile(_type: 'video' | 'audio' | 'file', url: string) {
+  async sendFile(_type: 'video' | 'audio' | 'file', attrs: any) {
+    const url = attrs.src || attrs.url
     const payload = new FormData()
-
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
     payload.append('file', new Blob([data], { type }), filename)
     payload.append('file_name', filename)
+
+    if (attrs.duration) {
+      payload.append('duration', attrs.duration)
+    }
 
     if (_type === 'audio') {
       // FIXME: only support opus
@@ -94,7 +98,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       payload.append('file_type', 'mp4')
     } else {
       const ext = filename.split('.').pop()
-      if (['xls', 'ppt', 'pdf'].includes(ext)) {
+      if (['doc', 'xls', 'ppt', 'pdf'].includes(ext)) {
         payload.append('file_type', ext)
       } else {
         payload.append('file_type', 'stream')
@@ -135,14 +139,18 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'img' || type === 'image') {
       const image_key = await this.createImage(attrs.src || attrs.url)
       this.textContent += `![${attrs.alt ?? '图片'}](${image_key})`
-      this.flushRich()
+      this.flushText()
       this.richContent.push([{ tag: 'img', image_key }])
     } else if (['video', 'audio', 'file'].includes(type)) {
       await this.flush()
-      await this.sendFile(type as any, attrs.src || attrs.url)
+      await this.sendFile(type as any, attrs)
     } else if (type === 'figure' || type === 'message') {
       await this.flush()
       await this.render(children, true)
+    } else if (type === 'hr' || type === 'lark:hr' || type === 'feishu:hr') {
+      this.flushText()
+      this.richContent.push([{ tag: 'hr' }])
+      this.cardElements?.push({ tag: 'hr' })
     } else if (type.startsWith('lark:') || type.startsWith('feishu:')) {
       const tag = type.slice(type.split(':', 1)[0].length + 1)
       if (tag === 'share-chat') {
@@ -169,6 +177,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           }),
         })
         this.textContent = ''
+      } else if (tag === 'card') {
+        await this.flush()
+        this.cardElements = []
+        await this.render(children, true)
       }
     } else {
       await this.render(children)

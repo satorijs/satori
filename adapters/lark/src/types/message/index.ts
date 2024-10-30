@@ -1,20 +1,20 @@
 import { Lark } from '..'
-import { MessageContent } from './content'
+import { MessageComponent } from './content'
 
 export * from './content'
 
 export type MessageType = 'text' | 'post' | 'image' | 'file' | 'audio' | 'media' | 'sticker' | 'interactive' | 'share_chat' | 'share_user'
 
 export interface MessageContentMap {
-  'text': MessageContent.Text
-  'post': MessageContent.RichText
-  'image': MessageContent.Image
-  'file': MessageContent.File
-  'audio': MessageContent.Audio
-  'media': MessageContent.Media
-  'sticker': MessageContent.Sticker
-  'share_chat': MessageContent.ShareChat
-  'share_user': MessageContent.ShareUser
+  'text': MessageComponent.Text
+  'post': MessageComponent.RichText
+  'image': MessageComponent.Image
+  'file': MessageComponent.File
+  'audio': MessageComponent.Audio
+  'media': MessageComponent.Media
+  'sticker': MessageComponent.Sticker
+  'share_chat': MessageComponent.ShareChat
+  'share_user': MessageComponent.ShareUser
 }
 
 export type MessageContentType<T extends MessageType> = T extends keyof MessageContentMap ? MessageContentMap[T] : any
