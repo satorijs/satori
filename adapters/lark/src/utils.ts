@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { Context, h, Session, trimSlash, Universal } from '@satorijs/core'
-import { FeishuBot, LarkBot } from './bot'
+import { LarkBot } from './bot'
 import { EventPayload, Events, GetImChatResponse, Lark, MessageContentType, MessageType } from './types'
 
 export type Sender =
@@ -22,7 +22,7 @@ export function adaptSender(sender: Sender, session: Session): Session {
   return session
 }
 
-export async function adaptMessage(bot: FeishuBot, data: Events['im.message.receive_v1'], session: Session, details = true): Promise<Session> {
+export async function adaptMessage(bot: LarkBot, data: Events['im.message.receive_v1'], session: Session, details = true): Promise<Session> {
   const json = JSON.parse(data.message.content) as MessageContentType<MessageType>
   const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
@@ -71,7 +71,7 @@ export async function adaptMessage(bot: FeishuBot, data: Events['im.message.rece
   return session
 }
 
-export async function adaptSession<C extends Context>(bot: FeishuBot<C>, body: EventPayload) {
+export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: EventPayload) {
   const session = bot.session()
   session.setInternal('lark', body)
 

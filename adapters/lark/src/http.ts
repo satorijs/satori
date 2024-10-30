@@ -3,29 +3,29 @@ import { ReadableStream } from 'node:stream/web'
 import { Adapter, Context, Logger, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 
-import { FeishuBot } from './bot'
+import { LarkBot } from './bot'
 import { EventPayload } from './types'
 import { adaptSession, Cipher } from './utils'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C>> {
   static inject = ['server']
 
   private logger: Logger
   private ciphers: Record<string, Cipher> = {}
 
-  constructor(ctx: C, bot: FeishuBot<C>) {
+  constructor(ctx: C, bot: LarkBot<C>) {
     super(ctx)
     this.logger = ctx.logger('lark')
   }
 
-  fork(ctx: C, bot: FeishuBot<C>) {
+  fork(ctx: C, bot: LarkBot<C>) {
     super.fork(ctx, bot)
 
     this._refreshCipher()
     return bot.initialize()
   }
 
-  async connect(bot: FeishuBot) {
+  async connect(bot: LarkBot) {
     const { path } = bot.config
     bot.ctx.server.post(path, (ctx) => {
       this._refreshCipher()
