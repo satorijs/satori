@@ -153,9 +153,10 @@ export namespace MessageContent {
   }
 
   export interface Card {
-    config: Card.Config
+    config?: Card.Config
     card_link?: Card.URLs
-    elements?: Card.Element[]
+    header?: Card.Header
+    elements: Card.Element[]
   }
 
   export namespace Card {
@@ -233,17 +234,27 @@ export namespace MessageContent {
       export type Color = 'neutral' | 'blue' | 'torqoise' | 'lime' | 'orange' | 'violet' | 'indigo' | 'wathet' | 'green' | 'yellow' | 'red' | 'purple' | 'carmine'
     }
 
-    export interface ImageElement extends BaseElement<'image'> {
+    export interface BaseImageElement extends BaseElement<'image'> {
       img_key: string
       alt?: PlainTextElement
-      title?: PlainTextElement
-      custom_width?: number
-      compact_width?: boolean
-      mode?: 'crop_center' | 'fit_horizontal' | 'large' | 'medium' | 'small' | 'tiny'
-      preview?: boolean
     }
 
-    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
+    export interface ImageElement extends BaseImageElement {
+      title?: PlainTextElement
+      transparent?: string
+      preview?: boolean
+      corner_radius?: string
+      scale_type?: 'crop_center' | 'fit_horizontal' | 'crop_top'
+      size?: 'large' | 'medium' | 'small' | 'tiny' | 'stretch_without_padding' | 'stretch' | string
+      /** @deprecated */
+      custom_width?: number
+      /** @deprecated */
+      compact_width?: boolean
+      /** @deprecated */
+      mode?: 'crop_center' | 'fit_horizontal' | 'large' | 'medium' | 'small' | 'tiny'
+    }
+
+    export interface HRElement extends BaseElement<'hr'> {}
 
     export interface DivElement extends BaseElement<'div'> {
       text?: DivPlainTextElement
@@ -256,15 +267,75 @@ export namespace MessageContent {
       href?: Record<string, URLs>
     }
 
-    export interface HorizontalRuleElement extends BaseElement<'hr'> {}
+    export interface PersonElement extends BaseElement<'person'> {
+      user_id: string
+      size?: 'large' | 'medium' | 'small' | 'extra_small'
+    }
 
-    export interface ActionModule extends BaseElement<'action'> {
-      actions: ActionElement[]
+    export interface PersonListElement extends BaseElement<'person_list'> {
+      persons: { id: string }[]
+      size?: 'large' | 'medium' | 'small' | 'extra_small'
+      show_name?: boolean
+      show_avatar?: boolean
+    }
+
+    export interface ChartElement extends BaseElement<'chart'> {
+      chart_spec: {} // TODO
+      aspect_ratio?: '1:1' | '2:1' | '4:3' | '16:9'
+      color_theme?: 'brand' | 'rainbow' | 'complementary' | 'converse' | 'primary'
+      preview?: boolean
+      height?: 'auto' | string
+    }
+
+    export interface TableElement extends BaseElement<'table'> {
+      page_size?: number
+      row_height?: 'low' | 'medium' | 'high' | string
+      header_style?: TableElement.HeaderStyle
+      columns: TableElement.Column[]
+      rows: object[]
+    }
+
+    export namespace TableElement {
+      export interface HeaderStyle {
+        text_align?: TextAlign
+        text_size?: TextSize
+        background_style?: 'grey' | 'none'
+        text_color?: 'default' | 'grey'
+        bold?: boolean
+        lines?: number
+      }
+
+      export interface Column {
+        name: string
+        display_name?: string
+        width?: 'auto' | string
+        horizontal_align?: 'left' | 'center' | 'right'
+        data_type?: 'text' | 'lark_md' | 'options' | 'number' | 'persons' | 'date' | 'markdown'
+        format?: {
+          percision?: number
+          symbol?: string
+          separator?: string
+        }
+        date_format?: string
+      }
+    }
+
+    export interface NoteElement extends BaseElement<'note'> {
+      elements: NoteElement.InnerElement[]
+    }
+
+    export namespace NoteElement {
+      export type InnerElement = IconElement | PlainTextElement | BaseImageElement
+    }
+
+    export interface ActionElement extends BaseElement<'action'> {
+      actions: ActionElement.InnerElement[]
       layout?: 'bisected' | 'trisection' | 'flow'
     }
 
-    export type ActionElement =
-      | ButtonElement
+    export namespace ActionElement {
+      export type InnerElement = ButtonElement
+    }
 
     export type ActionBehavior =
       | OpenURLBehavior
@@ -312,8 +383,12 @@ export namespace MessageContent {
     export type Element =
       | DivElement
       | MarkdownElement
-      | HorizontalRuleElement
-      | ActionModule
+      | HRElement
+      | ActionElement
+      | NoteElement
+      | ChartElement
+      | TableElement
+      | ImageElement
   }
 
   export interface Template {

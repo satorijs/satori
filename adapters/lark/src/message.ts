@@ -7,8 +7,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private quote: string | undefined
   private textContent = ''
   private richContent: MessageContent.RichText.Paragraph[] = []
-  private cardElements: MessageContent.Card.Element[] | undefined
-  private actionElements: MessageContent.Card.ButtonElement[] = []
+  private card: MessageContent.Card | undefined
+  private noteElements: MessageContent.Card.NoteElement.InnerElement[] | undefined
+  private actionElements: MessageContent.Card.ActionElement.InnerElement[] = []
 
   async post(data?: any) {
     try {
@@ -41,27 +42,31 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     }
   }
 
-  private flushText(flushAction = false) {
-    if ((this.textContent || flushAction) && this.actionElements.length) {
-      this.cardElements?.push({ tag: 'action', actions: this.actionElements })
+  private flushText(button = false) {
+    if ((this.textContent || !button) && this.actionElements.length) {
+      this.card?.elements.push({ tag: 'action', actions: this.actionElements })
       this.actionElements = []
     }
     if (this.textContent) {
       this.richContent.push([{ tag: 'md', text: this.textContent }])
-      this.cardElements?.push({ tag: 'markdown', content: this.textContent })
+      if (this.noteElements) {
+        this.noteElements.push({ tag: 'plain_text', content: this.textContent })
+      } else if (this.card) {
+        this.card.elements.push({ tag: 'markdown', content: this.textContent })
+      }
       this.textContent = ''
     }
   }
 
   async flush() {
     this.flushText()
-    if (!this.cardElements && !this.richContent.length) return
+    if (!this.card.elements && !this.richContent.length) return
 
-    if (this.cardElements) {
+    if (this.card) {
       await this.post({
         msg_type: 'interactive',
         content: JSON.stringify({
-          elements: this.cardElements,
+          elements: this.card.elements,
         }),
       })
     } else {
@@ -79,7 +84,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     this.quote = undefined
     this.textContent = ''
     this.richContent = []
-    this.cardElements = undefined
+    this.card = undefined
   }
 
   async createImage(url: string) {
@@ -162,9 +167,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'hr') {
       this.flushText()
       this.richContent.push([{ tag: 'hr' }])
-      this.cardElements?.push({ tag: 'hr' })
+      this.card?.elements.push({ tag: 'hr' })
     } else if (type === 'button') {
-      this.flushText()
+      this.flushText(true)
       const behaviors: MessageContent.Card.ActionBehavior[] = []
       if (attrs.type === 'link') {
         behaviors.push({
@@ -193,9 +198,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       })
       this.textContent = ''
     } else if (type === 'button-group') {
-      this.flushText(true)
+      this.flushText()
       await this.render(children)
-      this.flushText(true)
+      this.flushText()
     } else if (type.startsWith('lark:') || type.startsWith('feishu:')) {
       const tag = type.slice(type.split(':', 1)[0].length + 1)
       if (tag === 'share-chat') {
@@ -224,18 +229,51 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         this.textContent = ''
       } else if (tag === 'card') {
         await this.flush()
-        this.cardElements = []
+        this.card = {
+          elements: [],
+          header: attrs.title && {
+            template: attrs.color,
+            ud_icon: attrs.icon && {
+              tag: 'standard_icon',
+              token: attrs.icon,
+            },
+            title: {
+              tag: 'plain_text',
+              content: attrs.title,
+            },
+            subtitle: attrs.subtitle && {
+              tag: 'plain_text',
+              content: attrs.subtitle,
+            },
+          },
+        }
         await this.render(children, true)
       } else if (tag === 'div') {
         this.flushText()
         await this.render(children)
-        this.cardElements?.push({
+        this.card?.elements.push({
           tag: 'markdown',
           text_align: attrs.align,
           text_size: attrs.size,
           content: this.textContent,
         })
         this.textContent = ''
+      } else if (tag === 'note') {
+        this.flushText()
+        this.noteElements = []
+        await this.render(children)
+        this.flushText()
+        this.card?.elements.push({
+          tag: 'note',
+          elements: this.noteElements,
+        })
+        this.noteElements = undefined
+      } else if (tag === 'icon') {
+        this.flushText()
+        this.noteElements?.push({
+          tag: 'standard_icon',
+          token: attrs.token,
+        })
       }
     } else {
       await this.render(children)
