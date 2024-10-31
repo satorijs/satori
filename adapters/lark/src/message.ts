@@ -4,7 +4,7 @@ import { BaseResponse, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
-  private quote: string | undefined
+  private quote: Dict | undefined
   private textContent = ''
   private richContent: MessageContent.RichText.Paragraph[] = []
   private card: MessageContent.Card | undefined
@@ -14,11 +14,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   async post(data?: any) {
     try {
       let resp: BaseResponse & { data?: Lark.Message }
-      if (this.quote) {
-        resp = await this.bot.internal.replyImMessage(this.quote, data)
+      if (this.quote?.id) {
+        resp = await this.bot.internal.replyImMessage(this.quote.id, {
+          ...data,
+          reply_in_thread: this.quote.replyInThread,
+        })
       } else {
         data.receive_id = this.channelId
-        resp = await this.bot.internal?.createImMessage(data, {
+        resp = await this.bot.internal.createImMessage(data, {
           receive_id_type: extractIdType(this.channelId),
         })
       }
@@ -174,7 +177,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       // platform does not support sharp
     } else if (type === 'quote') {
       await this.flush()
-      this.quote = attrs.id
+      this.quote = attrs
     } else if (type === 'img' || type === 'image') {
       const image_key = await this.createImage(attrs.src || attrs.url)
       this.textContent += `![${attrs.alt ?? '图片'}](${image_key})`

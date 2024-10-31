@@ -76,5 +76,21 @@ declare module '../event' {
         open_chat_id: string
       }
     }
+    /**
+     * 机器人自定义菜单事件
+     * @see https://open.feishu.cn/document/client-docs/bot-v3/events/menu
+     */
+    'application.bot.menu_v6': {
+      operator: {
+        operator_name: string
+        operator_id: {
+          union_id: string
+          user_id: string
+          open_id: string
+        }
+      }
+      event_key: string
+      timestamp: number
+    }
   }
 }

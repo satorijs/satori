@@ -16681,6 +16681,8 @@ export interface ReplyImMessageRequest {
   content: string
   /** 消息类型，包括：text、post、image、file、audio、media、sticker、interactive、share_card、share_user */
   msg_type: string
+  /** 是否以话题形式回复。取值为 true 时将以话题形式回复。注意：如果要回复的消息已经是话题形式的消息，则默认以话题形式进行回复。 */
+  reply_in_thread?: boolean
   /** 由开发者生成的唯一字符串序列，用于回复消息请求去重；持有相同uuid的请求1小时内至多成功执行一次 */
   uuid?: string
 }

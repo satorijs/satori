@@ -84,6 +84,15 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
       break
+    case 'application.bot.menu_v6':
+      if (body.event.event_key.startsWith('command:')) {
+        session.type = 'interaction/command'
+        session.content = body.event.event_key.slice(8)
+        session.channelId = body.event.operator.operator_id.open_id
+        session.userId = body.event.operator.operator_id.open_id
+        session.isDirect = true
+      }
+      break
     case 'card.action.trigger':
       if (body.event.action.value?._satori_type === 'command') {
         session.type = 'interaction/command'
@@ -114,6 +123,9 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         session.channelId = body.event.context.open_chat_id
         session.guildId = body.event.context.open_chat_id
         session.userId = body.event.operator.open_id
+        const { data } = await bot.internal.getImChat(session.channelId)
+        // TODO: add channel data
+        session.isDirect = data.chat_mode === 'p2p'
       }
       break
   }
