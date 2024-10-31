@@ -106,6 +106,9 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         for (const [key, value] of Object.entries(options)) {
           content += ` --${key} ${value}`
         }
+        if (body.event.action.input_value) {
+          content += ` ${body.event.action.input_value}`
+        }
         session.content = content
         session.messageId = body.event.context.open_message_id
         session.channelId = body.event.context.open_chat_id

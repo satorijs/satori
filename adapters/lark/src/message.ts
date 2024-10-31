@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder } from '@satorijs/core'
+import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { BaseResponse, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
@@ -9,7 +9,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private richContent: MessageContent.RichText.Paragraph[] = []
   private card: MessageContent.Card | undefined
   private noteElements: MessageContent.Card.NoteElement.InnerElement[] | undefined
-  private actionElements: MessageContent.Card.ActionElement.InnerElement[] = []
+  private actionElements: MessageContent.Card.Element[] = []
 
   async post(data?: any) {
     try {
@@ -44,7 +44,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   private flushText(button = false) {
     if ((this.textContent || !button) && this.actionElements.length) {
-      this.card?.elements.push({ tag: 'action', actions: this.actionElements })
+      this.card!.elements.push({ tag: 'action', actions: this.actionElements, layout: 'flow' })
       this.actionElements = []
     }
     if (this.textContent) {
@@ -60,9 +60,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async flush() {
     this.flushText()
-    if (!this.card.elements && !this.richContent.length) return
+    if (!this.card && !this.richContent.length) return
 
     if (this.card) {
+      this.bot.logger.debug('card', JSON.stringify(this.card.elements))
       await this.post({
         msg_type: 'interactive',
         content: JSON.stringify({
@@ -129,6 +130,27 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     })
   }
 
+  private createBehavior(attrs: Dict) {
+    const behaviors: MessageContent.Card.ActionBehavior[] = []
+    if (attrs.type === 'link') {
+      behaviors.push({
+        type: 'open_url',
+        default_url: attrs.href,
+      })
+    } else if (attrs.type === 'input') {
+      behaviors.push({
+        type: 'callback',
+        value: {
+          _satori_type: 'command',
+          content: attrs.text,
+        },
+      })
+    } else if (attrs.type === 'action') {
+      // TODO
+    }
+    return behaviors.length ? behaviors : undefined
+  }
+
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
@@ -168,25 +190,40 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       this.flushText()
       this.richContent.push([{ tag: 'hr' }])
       this.card?.elements.push({ tag: 'hr' })
-    } else if (type === 'button') {
-      this.flushText(true)
-      const behaviors: MessageContent.Card.ActionBehavior[] = []
-      if (attrs.type === 'link') {
-        behaviors.push({
-          type: 'open_url',
-          default_url: attrs.href,
+    } else if (type === 'form') {
+      this.flushText()
+      const length = this.card?.elements.length
+      await this.render(children)
+      if (this.card?.elements.length > length) {
+        const elements = this.card?.elements.slice(length)
+        this.card.elements.push({
+          tag: 'form',
+          name: attrs.name || 'Form',
+          elements,
         })
-      } else if (attrs.type === 'input') {
-        behaviors.push({
-          type: 'callback',
-          value: {
-            _satori_type: 'command',
-            content: attrs.text,
-          },
-        })
-      } else if (attrs.type === 'action') {
-        // TODO
       }
+    } else if (type === 'input') {
+      this.flushText()
+      this.card?.elements.push({
+        tag: 'action',
+        actions: [{
+          tag: 'input',
+          name: attrs.name,
+          width: attrs.width,
+          label: attrs.label && {
+            tag: 'plain_text',
+            content: attrs.label,
+          },
+          placeholder: attrs.placeholder && {
+            tag: 'plain_text',
+            content: attrs.placeholder,
+          },
+          behaviors: this.createBehavior(attrs),
+        }],
+      })
+    } else if (type === 'button') {
+      this.card ??= { elements: [] }
+      this.flushText(true)
       await this.render(children)
       this.actionElements.push({
         tag: 'button',
@@ -194,7 +231,8 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           tag: 'plain_text',
           content: this.textContent,
         },
-        behaviors,
+        disabled: attrs.disabled,
+        behaviors: this.createBehavior(attrs),
       })
       this.textContent = ''
     } else if (type === 'button-group') {

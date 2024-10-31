@@ -328,13 +328,15 @@ export namespace MessageContent {
       export type InnerElement = IconElement | PlainTextElement | BaseImageElement
     }
 
-    export interface ActionElement extends BaseElement<'action'> {
-      actions: ActionElement.InnerElement[]
-      layout?: 'bisected' | 'trisection' | 'flow'
+    export interface FormElement extends BaseElement<'form'> {
+      name: string
+      elements: Element[]
+      confirm?: ConfirmElement
     }
 
-    export namespace ActionElement {
-      export type InnerElement = ButtonElement
+    export interface ActionElement extends BaseElement<'action'> {
+      actions: Element[]
+      layout?: 'bisected' | 'trisection' | 'flow'
     }
 
     export type ActionBehavior =
@@ -354,24 +356,155 @@ export namespace MessageContent {
       value: Record<string, string>
     }
 
-    export interface ButtonElement extends BaseElement<'button'> {
+    export interface BaseButtonElement extends BaseElement<'button'> {
       text: PlainTextElement
-      type?: ButtonElement.Type
       size?: ButtonElement.Size
-      width?: ButtonElement.Width
       icon?: IconElement
-      hover_tips?: PlainTextElement
       disabled?: boolean
+      behaviors?: ActionBehavior[]
+    }
+
+    export interface ButtonElement extends BaseButtonElement {
+      type?: ButtonElement.Type
+      width?: ButtonElement.Width
+      hover_tips?: PlainTextElement
       disabled_tips?: PlainTextElement
       confirm?: {
         title: PlainTextElement
         text: PlainTextElement
       }
-      behaviors?: ActionBehavior[]
       // form-related fields
       name?: string
       required?: boolean
       action_type?: 'link' | 'request' | 'multi' | 'form_submit' | 'form_reset'
+    }
+
+    export interface ConfirmElement {
+      title: PlainTextElement
+      text: PlainTextElement
+    }
+
+    export interface InputElement extends BaseElement<'input'> {
+      name: string
+      required?: boolean
+      placeholder?: PlainTextElement
+      default_value?: string
+      disabled?: boolean
+      width?: 'default' | 'fill' | string
+      max_length?: number
+      input_type?: 'text' | 'multiline_text' | 'password'
+      show_icon?: boolean
+      rows?: number
+      auto_resize?: boolean
+      max_rows?: number
+      label?: PlainTextElement
+      label_position?: 'top' | 'left'
+      value?: string | object
+      behaviors?: ActionBehavior[]
+      confirm?: ConfirmElement
+      fallback?: {
+        tag?: string
+        text?: PlainTextElement
+      }
+    }
+
+    export interface OverflowElement extends BaseElement<'overflow'> {
+      width?: 'default' | 'fill' | string
+      options: OverflowElement.Option[]
+      value?: object
+      confirm?: ConfirmElement
+    }
+
+    export namespace OverflowElement {
+      export interface Option {
+        text?: PlainTextElement
+        multi_url?: URLs
+        value?: string
+      }
+    }
+
+    export interface BaseSelectElement<T extends string = string> extends BaseElement<T> {
+      type?: 'default' | 'text'
+      name?: string
+      required?: boolean
+      disabled?: boolean
+      placeholder?: PlainTextElement
+      width?: 'default' | 'fill' | string
+      confirm?: ConfirmElement
+    }
+
+    export interface OptionElement {
+      text: PlainTextElement
+      icon?: IconElement
+      value: string
+    }
+
+    export interface SelectElement extends BaseSelectElement<'select_static'> {
+      options: OptionElement[]
+      initial_option?: string
+    }
+
+    export interface MultiSelectElement extends BaseSelectElement<'multi_select_static'> {
+      options: OptionElement[]
+      selected_values?: string[]
+    }
+
+    export interface SelectPersonElement extends BaseSelectElement<'select_person'> {
+      options?: { value: string }[]
+    }
+
+    export interface MultiSelectPersonElement extends BaseSelectElement<'multi_select_person'> {
+      options?: { value: string }[]
+      selected_values?: string[]
+    }
+
+    export interface DatePickerElement extends BaseSelectElement<'date_picker'> {
+      initial_date?: string
+      value?: object
+    }
+
+    export interface TimePickerElement extends BaseSelectElement<'picker_time'> {
+      initial_time?: string
+      value?: object
+    }
+
+    export interface DateTimePickerElement extends BaseSelectElement<'picker_datetime'> {
+      initial_datetime?: string
+      value?: object
+    }
+
+    export interface CheckerElement extends BaseElement<'checker'> {
+      name?: string
+      checked?: boolean
+      disabled?: boolean
+      text?: CheckerElement.TextElement
+      overall_checkable?: boolean
+      button_area?: {
+        pc_display_rule?: 'always' | 'on_hover'
+        buttons?: CheckerElement.ButtonElement[]
+      }
+      checked_style?: {
+        show_strikethrough?: boolean
+        opacity?: number
+      }
+      margin?: string
+      padding?: string
+      confirm?: ConfirmElement
+      behaviors?: ActionBehavior[]
+      hover_tips?: PlainTextElement
+      disable_tips?: PlainTextElement
+    }
+
+    export namespace CheckerElement {
+      export interface TextElement extends PlainTextElement {
+        text_size?: 'normal' | 'heading' | 'notation'
+        text_color?: string
+        text_align?: TextAlign
+      }
+
+      export interface ButtonElement extends BaseButtonElement {
+        type: 'text' | 'primary_text' | 'danger_text'
+      }
     }
 
     export namespace ButtonElement {
@@ -389,6 +522,9 @@ export namespace MessageContent {
       | ChartElement
       | TableElement
       | ImageElement
+      | FormElement
+      | InputElement
+      | ButtonElement
   }
 
   export interface Template {
