@@ -130,9 +130,11 @@ export class Session<C extends Context = Context> {
   }
 
   async transform(elements: h[]): Promise<h[]> {
-    return await h.transformAsync(elements, ({ type, attrs, children }, session) => {
+    return await h.transformAsync(elements, async ({ type, attrs, children }, session) => {
       const render = type === 'component' ? attrs.is : this.app.get('component:' + type)
-      return render?.(attrs, children, session) ?? true
+      if (!render) return true
+      children = await render(attrs, children, session)
+      return this.transform(h.toElementArray(children))
     }, this)
   }
 

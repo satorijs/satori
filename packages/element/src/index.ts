@@ -99,7 +99,7 @@ class ElementConstructor {
 defineProperty(ElementConstructor, 'name', 'Element')
 defineProperty(ElementConstructor.prototype, kElement, true)
 
-type RenderFunction = Element.Render<Element.Fragment, any>
+type RenderFunction = Element.Render<Element.Fragment, Awaitable<Element.Fragment>>
 
 function Element(type: string | RenderFunction, ...children: Element.Fragment[]): Element
 function Element(type: string | RenderFunction, attrs: Dict, ...children: Element.Fragment[]): Element
