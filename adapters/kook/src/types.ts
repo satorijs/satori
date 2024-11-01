@@ -139,13 +139,15 @@ export interface MessageReturn {
 export interface Card {
   type: 'card'
   theme?: Card.Theme
-  size?: 'lg' | 'sm'
+  size?: Card.Size
   modules: Card.Module[]
 }
 
 export namespace Card {
   export const Theme = ['primary', 'secondary', 'warning', 'danger', 'info', 'none', 'success'] as const
   export type Theme = typeof Theme[number]
+  export const Size = ['lg', 'sm'] as const
+  export type Size = typeof Size[number]
   export type Module = Section | Container | ImageGroup | ActionGroup | Header | Divider | Invite | File | Countdown | Context
 
   export interface Text {

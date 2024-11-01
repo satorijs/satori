@@ -2,6 +2,31 @@ import { Context, h, MessageEncoder, Schema } from '@satorijs/core'
 import { KookBot } from './bot'
 import * as Kook from './types'
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'kook:image-group': {}
+      'kook:action-group': {}
+      'kook:header': {
+        type: 'h1' | 'h2' | 'h3'
+        content: string
+      }
+      'kook:countdown': {
+        startTime: number
+        endTime: number
+        mode: 'day' | 'hour'
+      }
+      'kook:invite': {
+        code: string
+      }
+      'kook:card': {
+        theme?: Kook.Card.Theme
+        size?: Kook.Card.Size
+      }
+    }
+  }
+}
+
 export function isDirectChannel(channelId: string) {
   return channelId.length > 30
 }
