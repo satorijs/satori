@@ -30,11 +30,11 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/core": "^4.2.9",
+    "@satorijs/core": "^4.2.11",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.9"
+    "@satorijs/core": "^4.2.11"
   },
   "dependencies": {
     "marked": "^9.1.6"

@@ -41,7 +41,7 @@
     "cordis": "^3.18.1"
   },
   "dependencies": {
-    "@satorijs/core": "4.2.9",
+    "@satorijs/core": "4.2.11",
     "cosmokit": "^1.6.3"
   }
 }

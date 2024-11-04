@@ -29,11 +29,11 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.2.9",
+    "@satorijs/core": "^4.2.11",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.9"
+    "@satorijs/core": "^4.2.11"
   },
   "dependencies": {
     "html5parser": "^2.0.2",
