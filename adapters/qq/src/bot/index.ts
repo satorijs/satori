@@ -29,15 +29,13 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
       endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
     }
     // 如果是 bot 类型, 使用固定 token
-    if (this.config.authType === 'bot') {
-      this.http = this.ctx.http.extend({
-        endpoint,
-        headers: {
-          'Authorization': `Bot ${this.config.id}.${this.config.token}`,
-          'X-Union-Appid': this.config.id,
-        },
-      })
-    }
+    this.http = this.ctx.http.extend({
+      endpoint,
+      headers: {
+        'Authorization': this.config.authType === 'bot' ? `Bot ${this.config.id}.${this.config.token}` : '',
+        'X-Union-Appid': this.config.id,
+      },
+    })
 
     this.ctx.plugin(QQGuildBot, {
       parent: this,
@@ -76,18 +74,8 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
         this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, result.data, result.headers.get('x-tps-trace-id'))
         throw new Error('failed to refresh access token')
       }
-      let endpoint = this.config.endpoint
-      if (this.config.sandbox) {
-        endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
-      }
       this._token = result.data.access_token
-      this.http = this.ctx.http.extend({
-        endpoint,
-        headers: {
-          'Authorization': `QQBot ${this._token}`,
-          'X-Union-Appid': this.config.id,
-        },
-      })
+      this.http.config.headers.Authorization = `QQBot ${this._token}`
       // 在上一个 access_token 接近过期的 60 秒内
       // 重新请求可以获取到一个新的 access_token
       this._timer = setTimeout(() => {
