@@ -2,7 +2,7 @@ import { Adapter, Binary, Context, Schema, Universal } from '@satorijs/core'
 import { getPublicKeyAsync, signAsync, verifyAsync } from '@noble/ed25519'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
-import { adaptSession, decodeUser } from './utils'
+import { adaptSession } from './utils'
 import { IncomingHttpHeaders } from 'node:http'
 import { } from '@cordisjs/plugin-server'
 
@@ -27,7 +27,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         const sig = await signAsync(new TextEncoder().encode(data), key)
         ctx.body = {
           plain_token: payload.d.plain_token,
-          signature: Binary.toHex(sig)
+          signature: Binary.toHex(sig),
         }
       } else if (payload.op === Opcode.DISPATCH) {
         // https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html
@@ -51,7 +51,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
 
       ctx.body = {
         d: {},
-        op: Opcode.HTTP_CALLBACK_ACK
+        op: Opcode.HTTP_CALLBACK_ACK,
       }
     })
   }
