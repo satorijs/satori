@@ -1,4 +1,4 @@
-import { Adapter, Binary, Context, Schema } from '@satorijs/core'
+import { Adapter, Binary, Context, Schema, Universal } from '@satorijs/core'
 import { getPublicKeyAsync, signAsync, verifyAsync } from '@noble/ed25519'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
@@ -13,7 +13,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
     if (bot.config.authType === 'bearer') {
       await bot.getAccessToken()
     }
-    await bot.initialize()
+    await this.initialize(bot)
 
     bot.ctx.server.post(bot.config.path, async (ctx) => {
       const bot = this.bots.find(bot => bot.config.id === ctx.get('X-Bot-Appid'))
@@ -25,9 +25,6 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         const key = this.getPrivateKey(bot.config.secret)
         const data = payload.d.event_ts + payload.d.plain_token
         const sig = await signAsync(new TextEncoder().encode(data), key)
-        setTimeout(() => {
-          bot.online()
-        }, 0)
         ctx.body = {
           plain_token: payload.d.plain_token,
           signature: Binary.toHex(sig)
@@ -40,6 +37,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
           return ctx.status = 403
         }
 
+        if (bot.status !== Universal.Status.ONLINE) {
+          await this.initialize(bot)
+        }
         bot.dispatch(bot.session({
           type: 'internal',
           _type: 'qq/' + payload.t.toLowerCase().replace(/_/g, '-'),
@@ -54,6 +54,20 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         op: Opcode.HTTP_CALLBACK_ACK
       }
     })
+  }
+
+  async initialize(bot: QQBot) {
+    try {
+      await bot.initialize()
+      bot.online()
+    } catch (e) {
+      if (bot.http.isError(e) && e.response) {
+        bot.logger.warn(`GET /users/@me response: %o`, e.response.data)
+      } else {
+        bot.logger.warn(e)
+      }
+      bot.offline()
+    }
   }
 
   private getPrivateKey(secret: string) {

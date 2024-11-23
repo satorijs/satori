@@ -50,15 +50,9 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   }
 
   async initialize() {
-    try {
-      const user = await this.guildBot.internal.getMe()
-      Object.assign(this.user, user)
-      this.user.name = user.username
-    } catch (e) {
-      if (this.http.isError(e) && e.response) {
-        this.logger.warn(`GET /users/@me response: %o`, e.response.data)
-      }
-    }
+    const user = await this.guildBot.internal.getMe()
+    Object.assign(this.user, user)
+    this.user.name = user.username
   }
 
   async stop() {
