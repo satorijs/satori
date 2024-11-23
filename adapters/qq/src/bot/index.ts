@@ -53,6 +53,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     const user = await this.guildBot.internal.getMe()
     Object.assign(this.user, user)
     this.user.name = user.username
+    this.user.isBot = true
   }
 
   async stop() {
