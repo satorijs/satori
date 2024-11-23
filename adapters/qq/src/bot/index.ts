@@ -4,6 +4,7 @@ import * as QQ from '../types'
 import { QQGuildBot } from './guild'
 import { QQMessageEncoder } from '../message'
 import { GroupInternal } from '../internal'
+import { HttpServer } from '../http'
 
 interface GetAppAccessTokenResult {
   access_token: string
@@ -12,7 +13,7 @@ interface GetAppAccessTokenResult {
 
 export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   static MessageEncoder = QQMessageEncoder
-  static inject = ['http']
+  static inject = ['server', 'http']
 
   public guildBot: QQGuildBot<C>
 
@@ -41,15 +42,22 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
       parent: this,
     })
     this.internal = new GroupInternal(this, () => this.http)
-    this.ctx.plugin(WsClient, this)
+    if (config.protocol === 'websocket') {
+      this.ctx.plugin(WsClient, this)
+    } else {
+      this.ctx.plugin(HttpServer, this)
+    }
   }
 
   async initialize() {
     try {
       const user = await this.guildBot.internal.getMe()
       Object.assign(this.user, user)
+      this.user.name = user.username
     } catch (e) {
-      this.logger.error(e)
+      if (this.http.isError(e) && e.response) {
+        this.logger.warn(`GET /users/@me response: %o`, e.response.data)
+      }
     }
   }
 
@@ -114,11 +122,15 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
 }
 
 export namespace QQBot {
-  export interface Config extends QQ.Options, WsClient.Options {
+  export interface BaseConfig extends QQ.Options {
     intents?: number
     retryWhen: number[]
     manualAcknowledge: boolean
+    protocol: 'websocket' | 'webhook'
+    path?: string
   }
+
+  export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
@@ -131,8 +143,12 @@ export namespace QQBot {
       authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
+      protocol: Schema.union(['websocket', 'webhook']).description('选择要使用的协议。').default('websocket'),
     }),
-    WsClient.Options,
+    Schema.union([
+      WsClient.Options,
+      HttpServer.Options,
+    ]),
     Schema.object({
       manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
     }).description('高级设置'),

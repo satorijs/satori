@@ -99,9 +99,14 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig { }
+  export interface Options extends Adapter.WsClientConfig {
+    protocol: 'websocket'
+  }
 
   export const Options: Schema<Options> = Schema.intersect([
+    Schema.object({
+      protocol: Schema.const('websocket').required(),
+    }),
     Adapter.WsClientConfig,
   ])
 }
