@@ -1,5 +1,5 @@
 import { Adapter, Binary, Context, Schema } from '@satorijs/core'
-import { getPublicKey, signAsync, verify } from '@noble/ed25519'
+import { getPublicKeyAsync, signAsync, verifyAsync } from '@noble/ed25519'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
@@ -33,7 +33,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         // https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html
         const key = this.getPrivateKey(bot.config.secret)
         const body = ctx.request.body[Symbol.for('unparsedBody')]
-        if (!this.verify(key, ctx.request.header, body)) {
+        if (!(await this.verify(key, ctx.request.header, body))) {
           return ctx.status = 403
         }
 
@@ -65,12 +65,12 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
     return new TextEncoder().encode(seed)
   }
 
-  private verify(privateKey: Uint8Array, header: IncomingHttpHeaders, body: string) {
+  private async verify(privateKey: Uint8Array, header: IncomingHttpHeaders, body: string) {
     const sig = Binary.fromHex(header['x-signature-ed25519'] as string)
     const timestamp = header['x-signature-timestamp'] as string
     const msg = timestamp + body
-    const pubKey = getPublicKey(privateKey)
-    return verify(new Uint8Array(sig), new TextEncoder().encode(msg), pubKey)
+    const pubKey = await getPublicKeyAsync(privateKey)
+    return verifyAsync(new Uint8Array(sig), new TextEncoder().encode(msg), pubKey)
   }
 }
 
