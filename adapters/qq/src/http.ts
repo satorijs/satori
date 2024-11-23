@@ -25,6 +25,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         const key = this.getPrivateKey(bot.config.secret)
         const data = payload.d.event_ts + payload.d.plain_token
         const sig = await signAsync(new TextEncoder().encode(data), key)
+        setTimeout(() => {
+          bot.online()
+        }, 0)
         ctx.body = {
           plain_token: payload.d.plain_token,
           signature: Binary.toHex(sig)
@@ -42,16 +45,13 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
           _type: 'qq/' + payload.t.toLowerCase().replace(/_/g, '-'),
           _data: payload.d,
         }))
-        if (payload.t === 'READY') {
-          bot.user = decodeUser(payload.d.user)
-          bot.guildBot.user = bot.user
-          return bot.online()
-        }
-
         const session = await adaptSession(bot, payload)
         if (session) bot.dispatch(session)
-      } else {
-        ctx.body = {}
+      }
+
+      ctx.body = {
+        d: {},
+        op: Opcode.HTTP_CALLBACK_ACK
       }
     })
   }
