@@ -121,9 +121,18 @@ class SatoriServer extends Service<SatoriServer.Config> {
         koa.status = 404
         return
       }
-      const result = await bot.internal[name](...koa.request.body)
-      koa.body = result
-      koa.status = 200
+      try {
+        const result = await bot.internal[name](...koa.request.body)
+        koa.body = result
+        koa.status = 200
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        koa.status = error.response.status
+        koa.body = error.response.data
+        for (const [key, value] of error.response.headers) {
+          koa.set(key, value)
+        }
+      }
     })
 
     ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
