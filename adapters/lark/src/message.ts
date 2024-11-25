@@ -1,6 +1,6 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { Lark, MessageContent } from './types'
+import { CreateImFileForm, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
@@ -93,40 +93,43 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async createImage(url: string) {
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
-    const payload = new FormData()
-    payload.append('image', new Blob([data], { type }), filename)
-    payload.append('image_type', 'message')
-    const { image_key } = await this.bot.internal.createImImage(payload)
+    const { image_key } = await this.bot.internal.createImImage({
+      image_type: 'message',
+      image: new File([data], filename, { type }),
+    })
     return image_key
   }
 
   async sendFile(_type: 'video' | 'audio' | 'file', attrs: any) {
     const url = attrs.src || attrs.url
-    const payload = new FormData()
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
-    payload.append('file', new Blob([data], { type }), filename)
-    payload.append('file_name', filename)
 
-    if (attrs.duration) {
-      payload.append('duration', attrs.duration)
-    }
-
+    let file_type: CreateImFileForm['file_type']
     if (_type === 'audio') {
       // FIXME: only support opus
-      payload.append('file_type', 'opus')
+      file_type = 'opus'
     } else if (_type === 'video') {
       // FIXME: only support mp4
-      payload.append('file_type', 'mp4')
+      file_type = 'mp4'
     } else {
       const ext = filename.split('.').pop()
       if (['doc', 'xls', 'ppt', 'pdf'].includes(ext)) {
-        payload.append('file_type', ext)
+        file_type = ext
       } else {
-        payload.append('file_type', 'stream')
+        file_type = 'stream'
       }
     }
 
-    const { file_key } = await this.bot.internal.createImFile(payload)
+    const form: CreateImFileForm = {
+      file_type,
+      file: new File([data], filename, { type }),
+      file_name: filename,
+    }
+    if (attrs.duration) {
+      form.duration = attrs.duration
+    }
+
+    const { file_key } = await this.bot.internal.createImFile(form)
     await this.post({
       msg_type: _type === 'video' ? 'media' : _type,
       content: JSON.stringify({ file_key }),

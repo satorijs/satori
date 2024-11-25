@@ -10,7 +10,10 @@ export interface BaseResponse {
   msg: string
 }
 
-type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+export interface InternalConfig {
+  multipart?: boolean
+  noExtractData?: boolean
+}
 
 export class Internal {
   constructor(private bot: LarkBot) {}
@@ -23,10 +26,10 @@ export class Internal {
     throw error
   }
 
-  static define(routes: Dict<Partial<Record<Method, string | string[]>>>, extractData = true) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, options: InternalConfig = {}) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as Method
+        const method = key as HTTP.Method
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
@@ -42,14 +45,23 @@ export class Internal {
                 config.data = args[0]
               }
             } else if (args.length === 2 && method !== 'GET' && method !== 'DELETE') {
-              config.data = args[0]
+              if (options.multipart) {
+                const form = new FormData()
+                for (const key in args[0]) {
+                  const value = args[0][key]
+                  form.append(key, value, value instanceof File ? value.name : undefined)
+                }
+                config.data = form
+              } else {
+                config.data = args[0]
+              }
               config.params = args[1]
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const response = await this.bot.http(method, url, config)
             this.assertResponse(response)
-            return extractData ? response.data.data : response.data
+            return options.noExtractData ? response.data : response.data.data
           }
         }
       }

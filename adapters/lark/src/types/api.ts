@@ -486,7 +486,7 @@ declare module './internal' {
     * 上传图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create
     */
-    createImImage(form: FormData): Promise<CreateImImageResponse>
+    createImImage(form: CreateImImageForm): Promise<CreateImImageResponse>
     /**
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/get
@@ -496,7 +496,7 @@ declare module './internal' {
     * 上传文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create
     */
-    createImFile(form: FormData): Promise<CreateImFileResponse>
+    createImFile(form: CreateImFileForm): Promise<CreateImFileResponse>
     /**
     * 下载文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/get
@@ -736,7 +736,7 @@ declare module './internal' {
     * 上传素材
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/upload_all
     */
-    uploadAllDrivev1Media(form: FormData): Promise<UploadAllDrivev1MediaResponse>
+    uploadAllDrivev1Media(form: UploadAllDrivev1MediaForm): Promise<UploadAllDrivev1MediaResponse>
     /**
     * 下载素材
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/download
@@ -756,7 +756,7 @@ declare module './internal' {
     * 分片上传素材（上传分片）
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/upload_part
     */
-    uploadPartDrivev1Media(form: FormData): Promise<BaseResponse>
+    uploadPartDrivev1Media(form: UploadPartDrivev1MediaForm): Promise<BaseResponse>
     /**
     * 分片上传素材（完成上传）
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/upload_finish
@@ -781,7 +781,7 @@ declare module './internal' {
     * 上传文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/upload_all
     */
-    uploadAllDrivev1File(form: FormData): Promise<UploadAllDrivev1FileResponse>
+    uploadAllDrivev1File(form: UploadAllDrivev1FileForm): Promise<UploadAllDrivev1FileResponse>
     /**
     * 分片上传文件（预上传）
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/upload_prepare
@@ -791,7 +791,7 @@ declare module './internal' {
     * 分片上传文件（上传分片）
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/upload_part
     */
-    uploadPartDrivev1File(form: FormData): Promise<BaseResponse>
+    uploadPartDrivev1File(form: UploadPartDrivev1FileForm): Promise<BaseResponse>
     /**
     * 分片上传文件（完成上传）
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/upload_finish
@@ -2046,7 +2046,7 @@ declare module './internal' {
     * 上传用户人脸识别照片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/file/upload
     */
-    uploadAttendanceFile(form: FormData, query?: UploadAttendanceFileQuery): Promise<UploadAttendanceFileResponse>
+    uploadAttendanceFile(form: UploadAttendanceFileForm, query?: UploadAttendanceFileQuery): Promise<UploadAttendanceFileResponse>
     /**
     * 下载用户人脸识别照片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/file/download
@@ -2741,7 +2741,7 @@ declare module './internal' {
     * 上传附件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/upload
     */
-    uploadTaskv2Attachment(form: FormData, query?: UploadTaskv2AttachmentQuery): Promise<UploadTaskv2AttachmentResponse>
+    uploadTaskv2Attachment(form: UploadTaskv2AttachmentForm, query?: UploadTaskv2AttachmentQuery): Promise<UploadTaskv2AttachmentResponse>
     /**
     * 列取附件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/list
@@ -3256,92 +3256,92 @@ declare module './internal' {
     * 识别文件中的简历信息
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/resume/parse
     */
-    parseDocumentAiResume(form: FormData): Promise<ParseDocumentAiResumeResponse>
+    parseDocumentAiResume(form: ParseDocumentAiResumeForm): Promise<ParseDocumentAiResumeResponse>
     /**
     * 识别文件中的机动车发票
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_invoice/recognize
     */
-    recognizeDocumentAiVehicleInvoice(form: FormData): Promise<RecognizeDocumentAiVehicleInvoiceResponse>
+    recognizeDocumentAiVehicleInvoice(form: RecognizeDocumentAiVehicleInvoiceForm): Promise<RecognizeDocumentAiVehicleInvoiceResponse>
     /**
     * 识别文件中的健康证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/health_certificate/recognize
     */
-    recognizeDocumentAiHealthCertificate(form: FormData): Promise<RecognizeDocumentAiHealthCertificateResponse>
+    recognizeDocumentAiHealthCertificate(form: RecognizeDocumentAiHealthCertificateForm): Promise<RecognizeDocumentAiHealthCertificateResponse>
     /**
     * 识别文件中的港澳居民来往内地通行证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/hkm_mainland_travel_permit/recognize
     */
-    recognizeDocumentAiHkmMainlandTravelPermit(form: FormData): Promise<RecognizeDocumentAiHkmMainlandTravelPermitResponse>
+    recognizeDocumentAiHkmMainlandTravelPermit(form: RecognizeDocumentAiHkmMainlandTravelPermitForm): Promise<RecognizeDocumentAiHkmMainlandTravelPermitResponse>
     /**
     * 识别文件中的台湾居民来往大陆通行证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/tw_mainland_travel_permit/recognize
     */
-    recognizeDocumentAiTwMainlandTravelPermit(form: FormData): Promise<RecognizeDocumentAiTwMainlandTravelPermitResponse>
+    recognizeDocumentAiTwMainlandTravelPermit(form: RecognizeDocumentAiTwMainlandTravelPermitForm): Promise<RecognizeDocumentAiTwMainlandTravelPermitResponse>
     /**
     * 识别文件中的中国护照
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/chinese_passport/recognize
     */
-    recognizeDocumentAiChinesePassport(form: FormData): Promise<RecognizeDocumentAiChinesePassportResponse>
+    recognizeDocumentAiChinesePassport(form: RecognizeDocumentAiChinesePassportForm): Promise<RecognizeDocumentAiChinesePassportResponse>
     /**
     * 识别文件中的银行卡
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/bank_card/recognize
     */
-    recognizeDocumentAiBankCard(form: FormData): Promise<RecognizeDocumentAiBankCardResponse>
+    recognizeDocumentAiBankCard(form: RecognizeDocumentAiBankCardForm): Promise<RecognizeDocumentAiBankCardResponse>
     /**
     * 识别文件中的行驶证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_license/recognize
     */
-    recognizeDocumentAiVehicleLicense(form: FormData): Promise<RecognizeDocumentAiVehicleLicenseResponse>
+    recognizeDocumentAiVehicleLicense(form: RecognizeDocumentAiVehicleLicenseForm): Promise<RecognizeDocumentAiVehicleLicenseResponse>
     /**
     * 识别文件中的火车票
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/train_invoice/recognize
     */
-    recognizeDocumentAiTrainInvoice(form: FormData): Promise<RecognizeDocumentAiTrainInvoiceResponse>
+    recognizeDocumentAiTrainInvoice(form: RecognizeDocumentAiTrainInvoiceForm): Promise<RecognizeDocumentAiTrainInvoiceResponse>
     /**
     * 识别文件中的出租车发票
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/taxi_invoice/recognize
     */
-    recognizeDocumentAiTaxiInvoice(form: FormData): Promise<RecognizeDocumentAiTaxiInvoiceResponse>
+    recognizeDocumentAiTaxiInvoice(form: RecognizeDocumentAiTaxiInvoiceForm): Promise<RecognizeDocumentAiTaxiInvoiceResponse>
     /**
     * 识别文件中的身份证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/id_card/recognize
     */
-    recognizeDocumentAiIdCard(form: FormData): Promise<RecognizeDocumentAiIdCardResponse>
+    recognizeDocumentAiIdCard(form: RecognizeDocumentAiIdCardForm): Promise<RecognizeDocumentAiIdCardResponse>
     /**
     * 识别文件中的食品生产许可证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_produce_license/recognize
     */
-    recognizeDocumentAiFoodProduceLicense(form: FormData): Promise<RecognizeDocumentAiFoodProduceLicenseResponse>
+    recognizeDocumentAiFoodProduceLicense(form: RecognizeDocumentAiFoodProduceLicenseForm): Promise<RecognizeDocumentAiFoodProduceLicenseResponse>
     /**
     * 识别文件中的食品经营许可证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_manage_license/recognize
     */
-    recognizeDocumentAiFoodManageLicense(form: FormData): Promise<RecognizeDocumentAiFoodManageLicenseResponse>
+    recognizeDocumentAiFoodManageLicense(form: RecognizeDocumentAiFoodManageLicenseForm): Promise<RecognizeDocumentAiFoodManageLicenseResponse>
     /**
     * 识别文件中的驾驶证
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/driving_license/recognize
     */
-    recognizeDocumentAiDrivingLicense(form: FormData): Promise<RecognizeDocumentAiDrivingLicenseResponse>
+    recognizeDocumentAiDrivingLicense(form: RecognizeDocumentAiDrivingLicenseForm): Promise<RecognizeDocumentAiDrivingLicenseResponse>
     /**
     * 识别文件中的增值税发票
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vat_invoice/recognize
     */
-    recognizeDocumentAiVatInvoice(form: FormData): Promise<RecognizeDocumentAiVatInvoiceResponse>
+    recognizeDocumentAiVatInvoice(form: RecognizeDocumentAiVatInvoiceForm): Promise<RecognizeDocumentAiVatInvoiceResponse>
     /**
     * 识别文件中的营业执照
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_license/recognize
     */
-    recognizeDocumentAiBusinessLicense(form: FormData): Promise<RecognizeDocumentAiBusinessLicenseResponse>
+    recognizeDocumentAiBusinessLicense(form: RecognizeDocumentAiBusinessLicenseForm): Promise<RecognizeDocumentAiBusinessLicenseResponse>
     /**
     * 提取文件中的合同字段
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/contract/field_extraction
     */
-    fieldExtractionDocumentAiContract(form: FormData): Promise<FieldExtractionDocumentAiContractResponse>
+    fieldExtractionDocumentAiContract(form: FieldExtractionDocumentAiContractForm): Promise<FieldExtractionDocumentAiContractResponse>
     /**
     * 识别文件中的名片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_card/recognize
     */
-    recognizeDocumentAiBusinessCard(form: FormData): Promise<RecognizeDocumentAiBusinessCardResponse>
+    recognizeDocumentAiBusinessCard(form: RecognizeDocumentAiBusinessCardForm): Promise<RecognizeDocumentAiBusinessCardResponse>
     /**
     * 识别图片中的文字
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/optical_char_recognition-v1/image/basic_recognize
@@ -3416,7 +3416,7 @@ declare module './internal' {
     * 上传勋章图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge_image/create
     */
-    createAdminBadgeImage(form: FormData): Promise<CreateAdminBadgeImageResponse>
+    createAdminBadgeImage(form: CreateAdminBadgeImageForm): Promise<CreateAdminBadgeImageResponse>
     /**
     * 获取勋章列表
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
@@ -3636,7 +3636,7 @@ declare module './internal' {
     * 上传文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/upload
     */
-    uploadCorehrPerson(form: FormData): Promise<UploadCorehrPersonResponse>
+    uploadCorehrPerson(form: UploadCorehrPersonForm): Promise<UploadCorehrPersonResponse>
     /**
     * 下载文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/file/get
@@ -4531,7 +4531,7 @@ declare module './internal' {
     * 上传进展记录图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/image/upload
     */
-    uploadOkrImage(form: FormData): Promise<UploadOkrImageResponse>
+    uploadOkrImage(form: UploadOkrImageForm): Promise<UploadOkrImageResponse>
     /**
     * 录入身份信息
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/human_authentication-v1/identity/create
@@ -4691,7 +4691,7 @@ declare module './internal' {
     * 上传图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/upload
     */
-    uploadLingoFile(form: FormData): Promise<UploadLingoFileResponse>
+    uploadLingoFile(form: UploadLingoFileForm): Promise<UploadLingoFileResponse>
     /**
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/download
@@ -4841,7 +4841,7 @@ declare module './internal' {
     * 上传图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/file/upload
     */
-    uploadBaikeFile(form: FormData): Promise<UploadBaikeFileResponse>
+    uploadBaikeFile(form: UploadBaikeFileForm): Promise<UploadBaikeFileResponse>
     /**
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/file/download
@@ -16776,6 +16776,50 @@ export interface UrgentPhoneImMessageQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type: string
 }
+export interface CreateImImageForm {
+  /** 图片类型 */
+  image_type: 'message' | 'avatar'
+  /**
+   * 图片内容。传值方式可以参考请求体示例。
+   *
+   * 注意：
+   *
+   * - 上传的图片大小不能超过 10 MB，也不能上传大小为 0 的图片。
+   * - 分辨率限制：
+   *   - GIF 图片分辨率不能超过 2000 x 2000，其他图片分辨率不能超过 12000 x 12000。
+   *   - 用于设置头像的图片分辨率不能超过 4096 x 4096。
+   */
+  image: Blob
+}
+export interface CreateImFileForm {
+  /**
+   * 待上传的文件类型
+   *
+   * 可选值有：
+   *
+   * - opus：OPUS 音频文件。其他格式的音频文件，请转为 OPUS 格式后上传。可使用 ffmpeg 转换格式：
+   *   ```sh
+   *   ffmpeg -i SourceFile.mp3 -acodec libopus -ac 1 -ar 16000 TargetFile.opus
+   *   ```
+   * - mp4：MP4 格式视频文件
+   * - pdf：PDF 格式文件
+   * - doc：DOC 格式文件
+   * - xls：XLS 格式文件
+   * - ppt：PPT 格式文件
+   * - stream：stream 格式文件。若上传文件不属于以上枚举类型，可以使用 stream 格式
+   */
+  file_type: string
+  /** 带后缀的文件名 */
+  file_name: string
+  /** 文件的时长（视频、音频），单位：毫秒。不传值时无法显示文件的具体时长。 */
+  duration?: number
+  /**
+   * 文件内容，具体的传值方式可参考请求体示例。
+   *
+   * 注意：文件大小不得超过 30 MB，且不允许上传空文件。
+   */
+  file: Blob
+}
 export interface PatchImMessageRequest {
   /** 消息内容 json 格式，[发送消息 content 说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json)，参考文档中的卡片格式 */
   content: string
@@ -17137,6 +17181,44 @@ export interface TaskCheckDrivev1FileQuery {
   /** 文件相关异步任务id */
   task_id: string
 }
+export interface UploadAllDrivev1MediaForm {
+  /**
+   * 要上传的素材的名称
+   *
+   * 数据校验规则：
+   *
+   * - 最大长度：250 字符
+   */
+  file_name: string
+  /**
+   * 上传点的类型。你可根据上传的素材类型与云文档类型确定上传点类型。例如，要将一张图片插入到新版文档（文件类型为 docx）中，需指定上传点为 docx_image；要将一个附件上传到新版文档中，需指定上传点为 docx_file。
+   *
+   * 可选值有：
+   *
+   * - doc_image：旧版文档图片
+   * - docx_image：新版文档图片
+   * - sheet_image：电子表格图片
+   * - doc_file：旧版文档文件
+   * - docx_file：新版文档文件
+   */
+  parent_type: string
+  /** 上传点的 token，即要上传的云文档的 token，用于指定素材将要上传到的云文档或位置。参考素材概述了解上传点类型与上传点 token 的对应关系 */
+  parent_node: string
+  /**
+   * 文件的大小，单位为字节
+   *
+   * 数据校验规则：
+   *
+   * - 最大值：20971520
+   */
+  size: number
+  /** 文件的 Adler-32 校验和 */
+  checksum?: string
+  /** 其它扩展信息。详情参考素材概述。如果需要跨域路由，需要填写路由的云文档 token，格式为 {"drive_route_token":"需要路由的云文档的 token"} */
+  extra?: string
+  /** 文件的二进制内容 */
+  file: Blob
+}
 export interface DownloadDrivev1MediaQuery {
   /** 扩展信息 */
   extra?: string
@@ -17159,6 +17241,18 @@ export interface UploadPrepareDrivev1MediaRequest {
   /** 扩展信息(可选) */
   extra?: string
 }
+export interface UploadPartDrivev1MediaForm {
+  /** 分片上传事务的 ID。通过调用分片上传素材（预上传）接口获取。 */
+  upload_id: string
+  /** 块号，从 0 开始计数。 */
+  seq: number
+  /** 块的大小，单位为字节。 */
+  size: number
+  /** 素材文件的 Adler-32 校验和 */
+  checksum?: string
+  /** 素材文件分片的二进制内容 */
+  file: Blob
+}
 export interface UploadFinishDrivev1MediaRequest {
   /** 分片上传事务ID */
   upload_id: string
@@ -17177,6 +17271,38 @@ export interface GetSubscribeDrivev1FileQuery {
   /** 文档类型 */
   file_type: string
 }
+export interface UploadAllDrivev1FileForm {
+  /**
+   * 要上传的文件的名称。
+   *
+   * 数据校验规则：
+   *
+   * - 最大长度：250 字符
+   */
+  file_name: string
+  /**
+   * 上传点的类型。取固定值 explorer，表示将文件上传至云空间中。
+   *
+   * 可选值有：
+   *
+   * - explorer：云空间
+   */
+  parent_type: string
+  /** 云空间中文件夹的 token。获取方式见文件夹概述。 */
+  parent_node: string
+  /**
+   * 文件的大小，单位为字节。
+   *
+   * 数据校验规则：
+   *
+   * - 最大值：20971520
+   */
+  size: number
+  /** 文件的 Adler-32 校验和 */
+  checksum?: string
+  /** 文件的二进制内容 */
+  file: Blob
+}
 export interface UploadPrepareDrivev1FileRequest {
   /** 文件名 */
   file_name: string
@@ -17186,6 +17312,18 @@ export interface UploadPrepareDrivev1FileRequest {
   parent_node: string
   /** 文件大小 */
   size: number
+}
+export interface UploadPartDrivev1FileForm {
+  /** 分片上传事务 ID。通过调用分片上传文件-预上传接口获取。 */
+  upload_id: string
+  /** 文件分片的序号，从 0 开始计数。 */
+  seq: number
+  /** 分片的大小，单位为字节。 */
+  size: number
+  /** 文件分片的 Adler-32 校验和 */
+  checksum?: string
+  /** 文件分片的二进制内容 */
+  file: Blob
 }
 export interface UploadFinishDrivev1FileRequest {
   /** 分片上传事务ID */
@@ -19186,6 +19324,10 @@ export interface QueryAttendanceUserSettingQuery {
   /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
   employee_type: string
 }
+export interface UploadAttendanceFileForm {
+  /** 文件内容 */
+  file?: Blob
+}
 export interface UploadAttendanceFileQuery {
   /** 带后缀的文件名 */
   file_name: string
@@ -20538,6 +20680,24 @@ export interface ListTaskv2CommentQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
 }
+export interface UploadTaskv2AttachmentForm {
+  /**
+   * 附件归属资源的类型
+   *
+   * 默认值：task
+   */
+  resource_type?: string
+  /**
+   * 附件要归属资源的id。例如，要给任务添加附件，这里要填入任务GUID。任务GUID可以通过任务相关接口获得。
+   *
+   * 数据校验规则：
+   *
+   * - 最大长度：100 字符
+   */
+  resource_id: string
+  /** 要上传的文件，单请求支持最多5个文件。上传结果的顺序将和请求中文件的顺序保持一致。 */
+  file: Blob
+}
 export interface UploadTaskv2AttachmentQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
@@ -21310,6 +21470,90 @@ export interface PatchSearchSchemaRequest {
   /** 数据展示相关配置 */
   display?: Lark.SchemaDisplay
 }
+export interface ParseDocumentAiResumeForm {
+  /** 简历文件，支持 PDF / DOCX / PNG / JPG */
+  file: Blob
+}
+export interface RecognizeDocumentAiVehicleInvoiceForm {
+  /** 识别的机动车发票源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiHealthCertificateForm {
+  /** 识别的健康证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiHkmMainlandTravelPermitForm {
+  /** 识别的港澳居民来往内地通行证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiTwMainlandTravelPermitForm {
+  /** 识别的台湾居民来往大陆通行证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiChinesePassportForm {
+  /** 识别的中国护照源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiBankCardForm {
+  /** 识别的银行卡源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiVehicleLicenseForm {
+  /** 识别的行驶证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiTrainInvoiceForm {
+  /** 识别的火车票源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiTaxiInvoiceForm {
+  /** 识别的出租车票源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiIdCardForm {
+  /** 识别身份证的源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiFoodProduceLicenseForm {
+  /** 识别的食品生产许可证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiFoodManageLicenseForm {
+  /** 识别的食品经营许可证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiDrivingLicenseForm {
+  /** 识别的驾驶证源文件 */
+  file: Blob
+}
+export interface RecognizeDocumentAiVatInvoiceForm {
+  /** 识别的增值税发票文件（支持JPG/JPEG/PNG/PDF/BMP/OFD） */
+  file: Blob
+}
+export interface RecognizeDocumentAiBusinessLicenseForm {
+  /** 识别的营业执照源文件 */
+  file: Blob
+}
+export interface FieldExtractionDocumentAiContractForm {
+  /** 合同字段解析的源文件，当前只支持pdf, doc, docx三种类型的文件 */
+  file: Blob
+  /** pdf页数限制，太长会导致latency增加，最大允许100页 */
+  pdf_page_limit: number
+  /**
+   * ocr 参数，当前支持force, pdf, unused三种格式
+   *
+   * 可选值有：
+   *
+   * - force：pdf类型文件直接走OCR解析
+   * - auto：pdf类型文件先走本地解析，无法解析（扫描/图片版）再走OCR
+   * - unused：不调用OCR，扫描/图片PDF返回不可解析信息
+   */
+  ocr_mode: string
+}
+export interface RecognizeDocumentAiBusinessCardForm {
+  /** 识别名片的源文件（支持 JPG / PNG / PDF） */
+  file: Blob
+}
 export interface BasicRecognizeOpticalCharRecognitionImageRequest {
   /** base64 后的图片数据 */
   image?: string
@@ -21443,6 +21687,19 @@ export interface UpdateAdminBadgeRequest {
   i18n_name?: Lark.I18n
   /** 勋章的多语言描述文案，同explanation字段限制，最多100个字符。 */
   i18n_explanation?: Lark.I18n
+}
+export interface CreateAdminBadgeImageForm {
+  /** 勋章图片的文件，仅支持 PNG 格式，320 x 320 像素，大小不超过 1024 KB。 */
+  image_file: Blob
+  /**
+   * 图片的类型
+   *
+   * 可选值有：
+   *
+   * - 1：勋章详情图
+   * - 2：勋章挂饰图
+   */
+  image_type: 1 | 2
 }
 export interface ListAdminBadgeQuery {
   /** 分页大小 */
@@ -22089,6 +22346,12 @@ export interface PatchCorehrPersonRequest {
 export interface PatchCorehrPersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+export interface UploadCorehrPersonForm {
+  /** 文件二进制内容，大小不超过50M */
+  file_content: Blob
+  /** 文件名称（需带有文件后缀） */
+  file_name: string
 }
 export interface CreateCorehrJobDataRequest {
   /** 级别 */
@@ -23125,27 +23388,21 @@ export interface LeaveRequestHistoryCorehrLeaveQuery {
   employment_id_list?: string[]
   /** 休假发起人 ID 列表，最大 100 个 */
   initiator_id_list?: string[]
-  /** 请假记录的状态
-
-  可选值有：
-
-  - 1：已通过
-
-  - 2：审批中
-
-  - 3：审批中（更正）
-
-  - 4：审批中（取消休假）
-
-  - 5：审批中（返岗）
-
-  - 6：已返岗
-
-  - 7：已拒绝
-
-  - 8：已取消
-
-  - 9：已撤回 */
+  /**
+   * 请假记录的状态
+   *
+   * 可选值有：
+   *
+   * - 1：已通过
+   * - 2：审批中
+   * - 3：审批中（更正）
+   * - 4：审批中（取消休假）
+   * - 5：审批中（返岗）
+   * - 6：已返岗
+   * - 7：已拒绝
+   * - 8：已取消
+   * - 9：已撤回
+  */
   leave_request_status?: string[]
   /** 假期类型 ID 列表，枚举值可通过【获取假期类型列表】接口获取 */
   leave_type_id_list?: string[]
@@ -24264,6 +24521,21 @@ export interface GetOkrProgressRecordQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: string
 }
+export interface UploadOkrImageForm {
+  /** 图片 */
+  data: Blob
+  /** 图片的目标ID */
+  target_id: string
+  /**
+   * 图片使用的目标类型
+   *
+   * 可选值有：
+   *
+   * - 2：okr的O
+   * - 3：okr的KR
+   */
+  target_type: 2 | 3
+}
 export interface CreateHumanAuthenticationIdentityRequest {
   /** 姓名 */
   identity_name: string
@@ -24583,6 +24855,18 @@ export interface ListLingoClassificationQuery {
   /** 词库ID */
   repo_id?: string
 }
+export interface UploadLingoFileForm {
+  /**
+   * 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp
+   *
+   * 数据校验规则：
+   *
+   * - 长度范围：1 字符 ～ 100 字符
+   */
+  name: string
+  /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
+  file: Blob
+}
 export interface ListDataSecurityAndComplianceOpenapiLogRequest {
   /** 飞书开放平台定义的API */
   api_keys?: string[]
@@ -24885,6 +25169,18 @@ export interface ListBaikeClassificationQuery {
   page_size?: number
   /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
   page_token?: string
+}
+export interface UploadBaikeFileForm {
+  /**
+   * 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp
+   *
+   * 数据校验规则：
+   *
+   * - 长度范围：1 字符 ～ 100 字符
+   */
+  name: string
+  /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
+  file: Blob
 }
 export interface ListContactUserQuery {
   /** 此次调用中使用的用户ID的类型 */
@@ -28055,7 +28351,7 @@ Internal.define({
   '/auth/v3/app_ticket/resend': {
     POST: 'appTicketResendAuth',
   },
-}, false)
+}, { noExtractData: true })
 
 Internal.define({
   '/event/v1/outbound_ip': {
