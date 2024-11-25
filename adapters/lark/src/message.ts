@@ -1,6 +1,6 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { BaseResponse, Lark, MessageContent } from './types'
+import { Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
@@ -13,7 +13,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async post(data?: any) {
     try {
-      let resp: BaseResponse & { data?: Lark.Message }
+      let resp: Lark.Message
       if (this.quote?.id) {
         resp = await this.bot.internal.replyImMessage(this.quote.id, {
           ...data,
@@ -26,9 +26,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         })
       }
       const session = this.bot.session()
-      session.messageId = resp.data.message_id
-      session.timestamp = Number(resp.data.create_time) * 1000
-      session.userId = resp.data.sender.id
+      session.messageId = resp.message_id
+      session.timestamp = Number(resp.create_time) * 1000
+      session.userId = resp.sender.id
       session.channelId = this.channelId
       session.guildId = this.guildId
       session.app.emit(session, 'send', session)
@@ -96,7 +96,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     const payload = new FormData()
     payload.append('image', new Blob([data], { type }), filename)
     payload.append('image_type', 'message')
-    const { data: { image_key } } = await this.bot.internal.createImImage(payload)
+    const { image_key } = await this.bot.internal.createImImage(payload)
     return image_key
   }
 
@@ -126,7 +126,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       }
     }
 
-    const { data: { file_key } } = await this.bot.internal.createImFile(payload)
+    const { file_key } = await this.bot.internal.createImFile(payload)
     await this.post({
       msg_type: _type === 'video' ? 'media' : _type,
       content: JSON.stringify({ file_key }),

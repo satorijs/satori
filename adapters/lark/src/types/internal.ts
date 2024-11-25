@@ -15,17 +15,15 @@ type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 export class Internal {
   constructor(private bot: LarkBot) {}
 
-  private processReponse(response: any): BaseResponse {
-    const { code, msg } = response
-    if (code === 0) {
-      return response
-    } else {
-      this.bot.logger.debug('response: %o', response)
-      throw new Error(`HTTP response with non-zero status (${code}) with message "${msg}"`)
-    }
+  private assertResponse(response: HTTP.Response<BaseResponse>) {
+    if (!response.data.code) return
+    this.bot.logger.debug('response: %o', response.data)
+    const error = new HTTP.Error(`request failed`)
+    error.response = response
+    throw error
   }
 
-  static define(routes: Dict<Partial<Record<Method, string | string[]>>>) {
+  static define(routes: Dict<Partial<Record<Method, string | string[]>>>, extractData = true) {
     for (const path in routes) {
       for (const key in routes[path]) {
         const method = key as Method
@@ -49,7 +47,9 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            return this.processReponse((await this.bot.http(method, url, config)).data)
+            const response = await this.bot.http(method, url, config)
+            this.assertResponse(response.data)
+            return extractData ? response.data.data : response.data
           }
         }
       }

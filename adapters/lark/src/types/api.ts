@@ -25123,9 +25123,7 @@ export interface SetVcRoomConfigQuery {
   user_id_type?: string
 }
 
-export interface ListEventOutboundIpResponse extends BaseResponse {
-  data: Paginated<string[], 'ip_list'>
-}
+export interface ListEventOutboundIpResponse extends Paginated<string[], 'ip_list'> {}
 export interface TenantAccessTokenInternalAuthResponse extends BaseResponse {
   /** 访问 token */
   tenant_access_token?: string
@@ -25150,4383 +25148,2898 @@ export interface TenantAccessTokenAuthResponse extends BaseResponse {
   /** app_access_token 过期时间 */
   expire?: number
 }
-export interface CreateAuthenOidcAccessTokenResponse extends BaseResponse {
-  data?: Lark.TokenInfo
-}
-export interface CreateAuthenOidcRefreshAccessTokenResponse extends BaseResponse {
-  data?: Lark.TokenInfo
-}
-export interface GetAuthenUserInfoResponse extends BaseResponse {
-  data?: Lark.UserInfo
-}
-export interface QueryPassportSessionResponse extends BaseResponse {
-  data?: {
-    mask_sessions?: Lark.MaskSession[]
-  }
-}
-export interface ListContactScopeResponse extends BaseResponse {
-  data: Paginated<string[], 'department_ids'>
-}
-export interface CreateContactUserResponse extends BaseResponse {
-  data?: {
-    user?: Lark.User
-  }
-}
-export interface PatchContactUserResponse extends BaseResponse {
-  data?: {
-    user?: Lark.User
-  }
-}
-export interface GetContactUserResponse extends BaseResponse {
-  data?: {
-    user?: Lark.User
-  }
-}
-export interface BatchContactUserResponse extends BaseResponse {
-  data?: {
-    /** 查询到的用户信息，其中异常的用户ID不返回结果。 */
-    items?: Lark.User[]
-  }
-}
-export interface FindByDepartmentContactUserResponse extends BaseResponse {
-  data: Paginated<Lark.User[], 'items'>
-}
-export interface BatchGetIdContactUserResponse extends BaseResponse {
-  data?: {
-    /** 手机号或者邮箱对应的用户id信息 */
-    user_list?: Lark.UserContactInfo[]
-  }
-}
-export interface CreateContactGroupResponse extends BaseResponse {
-  data?: {
-    /** 用户组ID */
-    group_id: string
-  }
-}
-export interface GetContactGroupResponse extends BaseResponse {
-  data?: {
-    /** 用户组详情 */
-    group: Lark.Group
-  }
-}
-export interface SimplelistContactGroupResponse extends BaseResponse {
-  data: Paginated<Lark.Group[], 'grouplist'>
-}
-export interface MemberBelongContactGroupResponse extends BaseResponse {
-  data?: {
-    /** 用户组ID列表 */
-    group_list?: string[]
-    /** 分页查询Token */
-    page_token?: string
-    /** 是否有更多结果 */
-    has_more?: boolean
-  }
-}
-export interface ListContactCustomAttrResponse extends BaseResponse {
-  data: Paginated<Lark.CustomAttr[], 'items'>
-}
-export interface CreateContactEmployeeTypeEnumResponse extends BaseResponse {
-  data?: {
-    /** 创建人员类型接口 */
-    employee_type_enum?: Lark.EmployeeTypeEnum
-  }
-}
-export interface UpdateContactEmployeeTypeEnumResponse extends BaseResponse {
-  data?: {
-    employee_type_enum?: Lark.EmployeeTypeEnum
-  }
-}
-export interface ListContactEmployeeTypeEnumResponse extends BaseResponse {
-  data: Paginated<Lark.EmployeeTypeEnum[], 'items'>
-}
-export interface CreateContactDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.Department
-  }
-}
-export interface PatchContactDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.Department
-  }
-}
-export interface UpdateContactDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.Department
-  }
-}
-export interface GetContactDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.Department
-  }
-}
-export interface BatchContactDepartmentResponse extends BaseResponse {
-  data?: {
-    /** 查询到的部门信息，其中异常的部门ID不返回结果。 */
-    items?: Lark.Department[]
-  }
-}
-export interface ChildrenContactDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.Department[], 'items'>
-}
-export interface ParentContactDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.Department[], 'items'>
-}
-export interface SearchContactDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.Department[], 'items'>
-}
-export interface CreateContactUnitResponse extends BaseResponse {
-  data?: {
-    /** 单位的自定义ID */
-    unit_id: string
-  }
-}
-export interface ListDepartmentContactUnitResponse extends BaseResponse {
-  data?: {
-    /** 单位绑定的部门列表 */
-    departmentlist: Lark.UnitDepartment[]
-    /** 是否还有分页数据 */
-    has_more: boolean
-    /** 下次分页请求标记 */
-    page_token: string
-  }
-}
-export interface GetContactUnitResponse extends BaseResponse {
-  data?: {
-    /** 单位信息 */
-    unit: Lark.Unit
-  }
-}
-export interface ListContactUnitResponse extends BaseResponse {
-  data?: {
-    /** 单位列表 */
-    unitlist: Lark.Unit[]
-    /** 是否还有分页数据 */
-    has_more: boolean
-    /** 分页下次调用的page_token值 */
-    page_token: string
-  }
-}
-export interface BatchAddContactGroupMemberResponse extends BaseResponse {
-  data?: {
-    /** 成员添加操作结果 */
-    results?: Lark.MemberResult[]
-  }
-}
-export interface SimplelistContactGroupMemberResponse extends BaseResponse {
-  data?: {
-    /** 成员列表 */
-    memberlist: Lark.Memberlist[]
-    /** 下次分页获取的page_token */
-    page_token: string
-    /** 是否还需要分页获取 */
-    has_more: boolean
-  }
-}
-export interface CreateContactFunctionalRoleResponse extends BaseResponse {
-  data?: {
-    /** 角色ID，在单租户下唯一 */
-    role_id: string
-  }
-}
-export interface BatchCreateContactFunctionalRoleMemberResponse extends BaseResponse {
-  data?: {
-    /** 批量新增角色成员结果集 */
-    results?: Lark.FunctionalRoleMemberResult[]
-  }
-}
-export interface BatchDeleteContactFunctionalRoleMemberResponse extends BaseResponse {
-  data?: {
-    /** 批量新增角色成员结果集 */
-    result?: Lark.FunctionalRoleMemberResult[]
-  }
-}
-export interface ScopesContactFunctionalRoleMemberResponse extends BaseResponse {
-  data?: {
-    /** 批量更新角色成员管理范围结果集 */
-    results?: Lark.FunctionalRoleMemberResult[]
-  }
-}
-export interface GetContactFunctionalRoleMemberResponse extends BaseResponse {
-  data?: {
-    /** 成员的管理范围 */
-    member?: Lark.FunctionalRoleMember
-  }
-}
-export interface ListContactFunctionalRoleMemberResponse extends BaseResponse {
-  data: Paginated<Lark.FunctionalRoleMember[], 'members'>
-}
-export interface CreateContactJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 职级信息 */
-    job_level?: Lark.JobLevel
-  }
-}
-export interface UpdateContactJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 职级信息 */
-    job_level?: Lark.JobLevel
-  }
-}
-export interface GetContactJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 职级信息 */
-    job_level?: Lark.JobLevel
-  }
-}
-export interface ListContactJobLevelResponse extends BaseResponse {
-  data: Paginated<Lark.JobLevel[], 'items'>
-}
-export interface CreateContactJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 序列信息 */
-    job_family?: Lark.JobFamily
-  }
-}
-export interface UpdateContactJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 更新后的序列信息 */
-    job_family?: Lark.JobFamily
-  }
-}
-export interface GetContactJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 序列信息 */
-    job_family?: Lark.JobFamily
-  }
-}
-export interface ListContactJobFamilyResponse extends BaseResponse {
-  data: Paginated<Lark.JobFamily[], 'items'>
-}
-export interface GetContactJobTitleResponse extends BaseResponse {
-  data?: {
-    /** 职务信息 */
-    job_title?: Lark.JobTitle
-  }
-}
-export interface ListContactJobTitleResponse extends BaseResponse {
-  data: Paginated<Lark.JobTitle[], 'items'>
-}
-export interface GetContactWorkCityResponse extends BaseResponse {
-  data?: {
-    /** 工作城市信息 */
-    work_city?: Lark.WorkCity
-  }
-}
-export interface ListContactWorkCityResponse extends BaseResponse {
-  data: Paginated<Lark.WorkCity[], 'items'>
-}
-export interface CreateImMessageResponse extends BaseResponse {
-  data?: Lark.Message
-}
-export interface ReplyImMessageResponse extends BaseResponse {
-  data?: Lark.Message
-}
-export interface UpdateImMessageResponse extends BaseResponse {
-  data?: Lark.Message
-}
-export interface ForwardImMessageResponse extends BaseResponse {
-  data?: Lark.Message
-}
-export interface MergeForwardImMessageResponse extends BaseResponse {
-  data?: {
-    /** 合并转发生成的新消息 */
-    message?: Lark.Message
-    /** 无效的消息ID列表 */
-    invalid_message_id_list?: string[]
-  }
-}
-export interface ForwardImThreadResponse extends BaseResponse {
-  data?: Lark.Message
-}
-export interface ReadUsersImMessageResponse extends BaseResponse {
-  data?: {
-    /** read_user[] */
-    items?: Lark.ReadUser[]
-    /** 是否还有下一页 */
-    has_more: boolean
-    /** 下一页分页的token */
-    page_token?: string
-  }
-}
-export interface ListImMessageResponse extends BaseResponse {
-  data: Paginated<Lark.Message[], 'items'>
-}
-export interface GetImMessageResponse extends BaseResponse {
-  data?: {
-    /** message[] */
-    items?: Lark.Message[]
-  }
-}
-export interface UrgentAppImMessageResponse extends BaseResponse {
-  data?: {
-    /** 无效的用户id */
-    invalid_user_id_list: string[]
-  }
-}
-export interface UrgentSmsImMessageResponse extends BaseResponse {
-  data?: {
-    /** 无效的用户id */
-    invalid_user_id_list: string[]
-  }
-}
-export interface UrgentPhoneImMessageResponse extends BaseResponse {
-  data?: {
-    /** 无效的用户id */
-    invalid_user_id_list: string[]
-  }
-}
-export interface ReadUserImBatchMessageResponse extends BaseResponse {
-  data?: {
-    read_user?: Lark.BatchMessageReadUser
-  }
-}
-export interface GetProgressImBatchMessageResponse extends BaseResponse {
-  data?: {
-    /** 消息发送进度 */
-    batch_message_send_progress?: Lark.BatchMessageSendProgress
-    /** 消息撤回进度 */
-    batch_message_recall_progress?: Lark.BatchMessageRecallProgress
-  }
-}
-export interface CreateImImageResponse extends BaseResponse {
-  data?: {
-    /** 图片的key */
-    image_key?: string
-  }
-}
-export interface CreateImFileResponse extends BaseResponse {
-  data?: {
-    /** 文件的key */
-    file_key?: string
-  }
-}
-export interface CreateImMessageReactionResponse extends BaseResponse {
-  data?: Lark.MessageReaction
-}
-export interface DeleteImMessageReactionResponse extends BaseResponse {
-  data?: Lark.MessageReaction
-}
-export interface ListImMessageReactionResponse extends BaseResponse {
-  data: Paginated<Lark.MessageReaction[], 'items'>
-}
-export interface CreateImPinResponse extends BaseResponse {
-  data?: {
-    pin?: Lark.Pin
-  }
-}
-export interface ListImPinResponse extends BaseResponse {
-  data: Paginated<Lark.Pin[], 'items'>
-}
-export interface CreateImChatResponse extends BaseResponse {
-  data?: {
-    /** 群ID */
-    chat_id?: string
-    /** 群头像URL */
-    avatar?: string
-    /** 群名称 */
-    name?: string
-    /** 群描述 */
-    description?: string
-    /** 群国际化名称 */
-    i18n_names?: Lark.I18nNames
-    /** 群主 ID */
-    owner_id?: string
-    /** 群主 ID 类型 */
-    owner_id_type?: string
-    /** 谁可以加急 */
-    urgent_setting?: string
-    /** 谁可以发起视频会议 */
-    video_conference_setting?: string
-    /** 加user/bot入群权限(all_members/only_owner) */
-    add_member_permission?: string
-    /** 群分享权限(allowed/not_allowed) */
-    share_card_permission?: string
-    /** at所有人权限(all_members/only_owner) */
-    at_all_permission?: string
-    /** 群编辑权限(all_members/only_owner) */
-    edit_permission?: string
-    /** 群模式 */
-    chat_mode?: string
-    /** 群类型 */
-    chat_type?: string
-    /** 优先级最高的一个群tag */
-    chat_tag?: string
-    /** 是否是外部群 */
-    external?: boolean
-    /** tenant key */
-    tenant_key?: string
-    /** 入群消息可见性 */
-    join_message_visibility?: string
-    /** 出群消息可见性 */
-    leave_message_visibility?: string
-    /** 加群审批 */
-    membership_approval?: string
-    /** 发言权限 */
-    moderation_permission?: string
-    /** 防泄密模式设置 */
-    restricted_mode_setting?: Lark.RestrictedModeSetting
-  }
-}
-export interface GetImChatResponse extends BaseResponse {
-  data?: {
-    /** 群头像URL */
-    avatar?: string
-    /** 群名称 */
-    name?: string
-    /** 群描述 */
-    description?: string
-    /** 群国际化名称 */
-    i18n_names?: Lark.I18nNames
-    /** 加user/bot入群权限(all_members/only_owner) */
-    add_member_permission?: string
-    /** 群分享权限(allowed/not_allowed) */
-    share_card_permission?: string
-    /** at所有人权限(all_members/only_owner) */
-    at_all_permission?: string
-    /** 群编辑权限(all_members/only_owner) */
-    edit_permission?: string
-    /** 群主ID的类型(open_id/user_id/union_id) */
-    owner_id_type?: string
-    /** 群主ID */
-    owner_id?: string
-    /** 用户管理员列表 */
-    user_manager_id_list?: string[]
-    /** 机器人管理员列表 */
-    bot_manager_id_list?: string[]
-    /** 群模式 */
-    chat_mode?: string
-    /** 群类型 */
-    chat_type?: string
-    /** 优先级最高的一个群tag */
-    chat_tag?: string
-    /** 入群消息可见性 */
-    join_message_visibility?: string
-    /** 出群消息可见性 */
-    leave_message_visibility?: string
-    /** 加群审批 */
-    membership_approval?: string
-    /** 发言权限 */
-    moderation_permission?: string
-    /** 是否是外部群 */
-    external?: boolean
-    /** tenant key */
-    tenant_key?: string
-    /** 群成员人数 */
-    user_count?: string
-    /** 群机器人数 */
-    bot_count?: string
-    /** 防泄密模式设置 */
-    restricted_mode_setting?: Lark.RestrictedModeSetting
-    /** 谁可以加急 */
-    urgent_setting?: string
-    /** 谁可以发起视频会议 */
-    video_conference_setting?: string
-  }
-}
-export interface ListImChatResponse extends BaseResponse {
-  data: Paginated<Lark.ListChat[], 'items'>
-}
-export interface SearchImChatResponse extends BaseResponse {
-  data: Paginated<Lark.ListChat[], 'items'>
-}
-export interface GetImChatModerationResponse extends BaseResponse {
-  data: Paginated<Lark.ListModerator[], 'items'>
-}
-export interface LinkImChatResponse extends BaseResponse {
-  data?: {
-    /** 群分享链接 */
-    share_link?: string
-    /** 分享链接过期时间戳（秒级） */
-    expire_time?: string
-    /** 分享链接是否永久有效 */
-    is_permanent?: boolean
-  }
-}
-export interface AddManagersImChatManagersResponse extends BaseResponse {
-  data?: {
-    /** 群目前的管理员id */
-    chat_managers?: string[]
-    /** 群目前的管理员bot id */
-    chat_bot_managers?: string[]
-  }
-}
-export interface DeleteManagersImChatManagersResponse extends BaseResponse {
-  data?: {
-    /** 群目前的管理员id */
-    chat_managers?: string[]
-    /** 群目前的管理员bot id */
-    chat_bot_managers?: string[]
-  }
-}
-export interface CreateImChatMembersResponse extends BaseResponse {
-  data?: {
-    /** ID无效的成员列表 */
-    invalid_id_list?: string[]
-    /** ID不存在的成员列表 */
-    not_existed_id_list?: string[]
-    /** 等待群主或管理员审批的成员ID列表 */
-    pending_approval_id_list?: string[]
-  }
-}
-export interface DeleteImChatMembersResponse extends BaseResponse {
-  data?: {
-    /** 无效成员列表 */
-    invalid_id_list?: string[]
-  }
-}
-export interface GetImChatMembersResponse extends BaseResponse {
-  data: Paginated<Lark.ListMember[], 'items'>
-}
-export interface IsInChatImChatMembersResponse extends BaseResponse {
-  data?: {
-    /** 用户或者机器人是否在群中 */
-    is_in_chat?: boolean
-  }
-}
-export interface GetImChatAnnouncementResponse extends BaseResponse {
-  data?: {
-    /** CCM 文档序列化信息 */
-    content?: string
-    /** 文档当前版本号 纯数字 */
-    revision?: string
-    /** 文档生成的时间戳（秒） */
-    create_time?: string
-    /** 消息更新的时间戳（秒） */
-    update_time?: string
-    /** 文档所有者id类型， open_id/user_id/union_id/app_id */
-    owner_id_type?: string
-    /** 文档所有者id */
-    owner_id?: string
-    /** 文档最新修改者id类型， open_id/user_id/union_id/app_id */
-    modifier_id_type?: string
-    /** 文档最新修改者id */
-    modifier_id?: string
-  }
-}
-export interface CreateImChatTabResponse extends BaseResponse {
-  data?: {
-    /** 群标签列表 */
-    chat_tabs?: Lark.ChatTab[]
-  }
-}
-export interface DeleteTabsImChatTabResponse extends BaseResponse {
-  data?: {
-    /** 群标签列表 */
-    chat_tabs?: Lark.ChatTab[]
-  }
-}
-export interface UpdateTabsImChatTabResponse extends BaseResponse {
-  data?: {
-    /** 群标签列表 */
-    chat_tabs?: Lark.ChatTab[]
-  }
-}
-export interface SortTabsImChatTabResponse extends BaseResponse {
-  data?: {
-    /** 群标签列表 */
-    chat_tabs?: Lark.ChatTab[]
-  }
-}
-export interface ListTabsImChatTabResponse extends BaseResponse {
-  data?: {
-    /** 会话标签页 */
-    chat_tabs?: Lark.ChatTab[]
-  }
-}
-export interface CreateImChatMenuTreeResponse extends BaseResponse {
-  data?: {
-    /** 追加后群内现有菜单 */
-    menu_tree?: Lark.ChatMenuTree
-  }
-}
-export interface DeleteImChatMenuTreeResponse extends BaseResponse {
-  data?: {
-    /** 群内现有菜单 */
-    menu_tree?: Lark.ChatMenuTree
-  }
-}
-export interface PatchImChatMenuItemResponse extends BaseResponse {
-  data?: {
-    chat_menu_item?: Lark.ChatMenuItem
-  }
-}
-export interface SortImChatMenuTreeResponse extends BaseResponse {
-  data?: {
-    /** 排序后群内菜单 */
-    menu_tree?: Lark.ChatMenuTree
-  }
-}
-export interface GetImChatMenuTreeResponse extends BaseResponse {
-  data?: {
-    /** 群内所有菜单 */
-    menu_tree?: Lark.ChatMenuTree
-  }
-}
-export interface ListDrivev1FileResponse extends BaseResponse {
-  data: Paginated<Lark.File[], 'files'>
-}
-export interface CreateFolderDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 创建文件夹的token */
-    token?: string
-    /** 创建文件夹的访问url */
-    url?: string
-  }
-}
-export interface BatchQueryDrivev1MetaResponse extends BaseResponse {
-  data?: {
-    metas: Lark.Meta[]
-    failed_list?: Lark.MetaFailed[]
-  }
-}
-export interface GetDrivev1FileStatisticsResponse extends BaseResponse {
-  data?: {
-    /** 文档token */
-    file_token?: string
-    /** 文档类型 */
-    file_type?: string
-    /** 文档统计信息 */
-    statistics?: Lark.FileStatistics
-  }
-}
-export interface CopyDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 复制后的文件资源 */
-    file?: Lark.File
-  }
-}
-export interface MoveDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 异步任务id，移动文件夹时返回 */
-    task_id?: string
-  }
-}
-export interface DeleteDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 异步任务id，删除文件夹时返回 */
-    task_id?: string
-  }
-}
-export interface CreateShortcutDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 返回创建成功的shortcut节点 */
-    succ_shortcut_node?: Lark.File
-  }
-}
-export interface TaskCheckDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 异步任务的执行状态 */
-    status?: string
-  }
-}
-export interface UploadAllDrivev1MediaResponse extends BaseResponse {
-  data?: {
-    file_token?: string
-  }
-}
-export interface BatchGetTmpDownloadUrlDrivev1MediaResponse extends BaseResponse {
-  data?: {
-    /** 临时下载列表 */
-    tmp_download_urls?: Lark.TmpDownloadUrl[]
-  }
-}
-export interface UploadPrepareDrivev1MediaResponse extends BaseResponse {
-  data?: {
-    /** 分片上传事务ID */
-    upload_id?: string
-    /** 分片大小策略 */
-    block_size?: number
-    /** 分片数量 */
-    block_num?: number
-  }
-}
-export interface UploadFinishDrivev1MediaResponse extends BaseResponse {
-  data?: {
-    file_token?: string
-  }
-}
-export interface UploadAllDrivev1FileResponse extends BaseResponse {
-  data?: {
-    file_token?: string
-  }
-}
-export interface UploadPrepareDrivev1FileResponse extends BaseResponse {
-  data?: {
-    /** 分片上传事务ID */
-    upload_id?: string
-    /** 分片大小策略 */
-    block_size?: number
-    /** 分片数量 */
-    block_num?: number
-  }
-}
-export interface UploadFinishDrivev1FileResponse extends BaseResponse {
-  data?: {
-    file_token?: string
-  }
-}
-export interface CreateDrivev1ImportTaskResponse extends BaseResponse {
-  data?: {
-    /** 导入任务ID */
-    ticket?: string
-  }
-}
-export interface GetDrivev1ImportTaskResponse extends BaseResponse {
-  data?: {
-    result?: Lark.ImportTask
-  }
-}
-export interface CreateDrivev1ExportTaskResponse extends BaseResponse {
-  data?: {
-    /** 导出任务ID */
-    ticket?: string
-  }
-}
-export interface GetDrivev1ExportTaskResponse extends BaseResponse {
-  data?: {
-    /** 导出结果 */
-    result?: Lark.ExportTask
-  }
-}
-export interface ListDrivev1FileViewRecordResponse extends BaseResponse {
-  data: Paginated<Lark.FileViewRecord[], 'items'>
-}
-export interface CreateDrivev1FileVersionResponse extends BaseResponse {
-  data?: Lark.Version
-}
-export interface GetDrivev1FileVersionResponse extends BaseResponse {
-  data?: Lark.Version
-}
-export interface ListDrivev1FileVersionResponse extends BaseResponse {
-  data: Paginated<Lark.Version[], 'items'>
-}
-export interface AuthDrivev1PermissionMemberResponse extends BaseResponse {
-  data?: {
-    /** 是否有权限 */
-    auth_result: boolean
-  }
-}
-export interface ListDrivev1PermissionMemberResponse extends BaseResponse {
-  data?: {
-    /** 返回的列表数据 */
-    items?: Lark.Member[]
-  }
-}
-export interface CreateDrivev1PermissionMemberResponse extends BaseResponse {
-  data?: {
-    /** 本次添加权限的用户信息 */
-    member?: Lark.BaseMember
-  }
-}
-export interface UpdateDrivev1PermissionMemberResponse extends BaseResponse {
-  data?: {
-    /** 本次更新权限的用户信息 */
-    member?: Lark.BaseMember
-  }
-}
-export interface CreateDrivev1PermissionPublicPasswordResponse extends BaseResponse {
-  data?: {
-    /** 密码 */
-    password?: string
-  }
-}
-export interface UpdateDrivev1PermissionPublicPasswordResponse extends BaseResponse {
-  data?: {
-    /** 密码 */
-    password?: string
-  }
-}
-export interface GetDrivev1PermissionPublicResponse extends BaseResponse {
-  data?: {
-    /** 返回的文档公共设置 */
-    permission_public?: Lark.PermissionPublic
-  }
-}
-export interface PatchDrivev1PermissionPublicResponse extends BaseResponse {
-  data?: {
-    /** 本次更新后的文档公共设置 */
-    permission_public?: Lark.PermissionPublic
-  }
-}
-export interface GetDrivev2PermissionPublicResponse extends BaseResponse {
-  data?: {
-    /** 返回的文档公共设置 */
-    permission_public?: Lark.PermissionPublic
-  }
-}
-export interface PatchDrivev2PermissionPublicResponse extends BaseResponse {
-  data?: {
-    /** 本次更新后文档公共设置 */
-    permission_public?: Lark.PermissionPublic
-  }
-}
-export interface ListDrivev1FileCommentResponse extends BaseResponse {
-  data: Paginated<Lark.FileComment[], 'items'>
-}
-export interface BatchQueryDrivev1FileCommentResponse extends BaseResponse {
-  data?: {
-    /** 评论的相关信息、回复的信息、回复分页的信息 */
-    items?: Lark.FileComment[]
-  }
-}
-export interface CreateDrivev1FileCommentResponse extends BaseResponse {
-  data?: Lark.FileComment
-}
-export interface GetDrivev1FileCommentResponse extends BaseResponse {
-  data?: Lark.FileComment
-}
-export interface ListDrivev1FileCommentReplyResponse extends BaseResponse {
-  data: Paginated<Lark.FileCommentReply[], 'items'>
-}
-export interface GetDocxDocumentResponse extends BaseResponse {
-  data?: {
-    /** 文档信息 */
-    document?: Lark.Document
-  }
-}
-export interface RawContentDocxDocumentResponse extends BaseResponse {
-  data?: {
-    /** 文档纯文本 */
-    content?: string
-  }
-}
-export interface ListDocxDocumentBlockResponse extends BaseResponse {
-  data: Paginated<Lark.Block[], 'items'>
-}
-export interface CreateDocxDocumentResponse extends BaseResponse {
-  data?: {
-    /** 新建文档的文档信息 */
-    document?: Lark.Document
-  }
-}
-export interface GetDocxDocumentBlockResponse extends BaseResponse {
-  data?: {
-    /** 查询的 Block 的信息 */
-    block?: Lark.Block
-  }
-}
-export interface GetDocxDocumentBlockChildrenResponse extends BaseResponse {
-  data: Paginated<Lark.Block[], 'items'>
-}
-export interface CreateDocxDocumentBlockChildrenResponse extends BaseResponse {
-  data?: {
-    /** 所添加的孩子的 Block 信息 */
-    children?: Lark.Block[]
-    /** 当前 block children 创建成功后文档的版本号 */
-    document_revision_id?: number
-    /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-    client_token: string
-  }
-}
-export interface PatchDocxDocumentBlockResponse extends BaseResponse {
-  data?: {
-    /** 更新后的 block 信息 */
-    block?: Lark.Block
-    /** 当前更新成功后文档的版本号 */
-    document_revision_id?: number
-    /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-    client_token: string
-  }
-}
-export interface BatchUpdateDocxDocumentBlockResponse extends BaseResponse {
-  data?: {
-    /** 批量更新的 Block */
-    blocks?: Lark.Block[]
-    /** 当前更新成功后文档的版本号 */
-    document_revision_id?: number
-    /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-    client_token: string
-  }
-}
-export interface BatchDeleteDocxDocumentBlockChildrenResponse extends BaseResponse {
-  data?: {
-    /** 当前删除操作成功后文档的版本号 */
-    document_revision_id?: number
-    /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-    client_token: string
-  }
-}
-export interface ListBoardWhiteboardNodeResponse extends BaseResponse {
-  data?: {
-    /** 查询结果 */
-    nodes?: Lark.WhiteboardNode[]
-  }
-}
-export interface GetSheetsSpreadsheetResponse extends BaseResponse {
-  data?: {
-    spreadsheet?: Lark.GetSpreadsheet
-  }
-}
-export interface CreateSheetsSpreadsheetResponse extends BaseResponse {
-  data?: {
-    /** 表格信息 */
-    spreadsheet?: Lark.Spreadsheet
-  }
-}
-export interface GetSheetsSpreadsheetSheetResponse extends BaseResponse {
-  data?: {
-    sheet?: Lark.Sheet
-  }
-}
-export interface QuerySheetsSpreadsheetSheetResponse extends BaseResponse {
-  data?: {
-    /** 工作表信息 */
-    sheets?: Lark.Sheet[]
-  }
-}
-export interface FindSheetsSpreadsheetSheetResponse extends BaseResponse {
-  data?: {
-    /** 查找返回符合条件的信息 */
-    find_result?: Lark.FindReplaceResult
-  }
-}
-export interface ReplaceSheetsSpreadsheetSheetResponse extends BaseResponse {
-  data?: {
-    /** 符合查找条件并替换的单元格信息 */
-    replace_result?: Lark.FindReplaceResult
-  }
-}
-export interface GetSheetsSpreadsheetSheetFilterResponse extends BaseResponse {
-  data?: {
-    sheet_filter_info?: Lark.SheetFilterInfo
-  }
-}
-export interface GetSheetsSpreadsheetSheetFilterViewResponse extends BaseResponse {
-  data?: {
-    /** 筛选视图信息，包括 id、name、range */
-    filter_view?: Lark.FilterView
-  }
-}
-export interface QuerySheetsSpreadsheetSheetFilterViewResponse extends BaseResponse {
-  data?: {
-    /** 子表的所有筛选视图信息，id、name、range */
-    items?: Lark.FilterView[]
-  }
-}
-export interface CreateSheetsSpreadsheetSheetFilterViewResponse extends BaseResponse {
-  data?: {
-    /** 创建的筛选视图的 id 、name、range */
-    filter_view?: Lark.FilterView
-  }
-}
-export interface PatchSheetsSpreadsheetSheetFilterViewResponse extends BaseResponse {
-  data?: {
-    /** 更新后的筛选视图的 id 、name、range */
-    filter_view?: Lark.FilterView
-  }
-}
-export interface GetSheetsSpreadsheetSheetFilterViewConditionResponse extends BaseResponse {
-  data?: {
-    /** 筛选的条件 */
-    condition?: Lark.FilterViewCondition
-  }
-}
-export interface QuerySheetsSpreadsheetSheetFilterViewConditionResponse extends BaseResponse {
-  data?: {
-    /** 筛选视图设置的所有筛选条件 */
-    items?: Lark.FilterViewCondition[]
-  }
-}
-export interface CreateSheetsSpreadsheetSheetFilterViewConditionResponse extends BaseResponse {
-  data?: {
-    /** 创建的筛选条件 */
-    condition?: Lark.FilterViewCondition
-  }
-}
-export interface UpdateSheetsSpreadsheetSheetFilterViewConditionResponse extends BaseResponse {
-  data?: {
-    /** 更新后的筛选条件 */
-    condition?: Lark.FilterViewCondition
-  }
-}
-export interface GetSheetsSpreadsheetSheetFloatImageResponse extends BaseResponse {
-  data?: {
-    float_image?: Lark.FloatImage
-  }
-}
-export interface QuerySheetsSpreadsheetSheetFloatImageResponse extends BaseResponse {
-  data?: {
-    /** 子表的所有浮动图片信息 */
-    items?: Lark.FloatImage[]
-  }
-}
-export interface CreateSheetsSpreadsheetSheetFloatImageResponse extends BaseResponse {
-  data?: {
-    float_image?: Lark.FloatImage
-  }
-}
-export interface PatchSheetsSpreadsheetSheetFloatImageResponse extends BaseResponse {
-  data?: {
-    float_image?: Lark.FloatImage
-  }
-}
-export interface CopyBitableAppResponse extends BaseResponse {
-  data?: {
-    app?: Lark.App
-  }
-}
-export interface CreateBitableAppResponse extends BaseResponse {
-  data?: {
-    app?: Lark.App
-  }
-}
-export interface GetBitableAppResponse extends BaseResponse {
-  data?: {
-    app?: Lark.DisplayApp
-  }
-}
-export interface UpdateBitableAppResponse extends BaseResponse {
-  data?: {
-    app?: Lark.DisplayAppV2
-  }
-}
-export interface CreateBitableAppTableResponse extends BaseResponse {
-  data?: {
-    /** 数据表的唯一标识id */
-    table_id?: string
-    /** 默认表格视图的id，该字段仅在请求参数中填写了default_view_name或fields才会返回 */
-    default_view_id?: string
-    /** 数据表初始字段的id列表，该字段仅在请求参数中填写了fields才会返回 */
-    field_id_list?: string[]
-  }
-}
-export interface BatchCreateBitableAppTableResponse extends BaseResponse {
-  data?: {
-    table_ids?: string[]
-  }
-}
-export interface PatchBitableAppTableResponse extends BaseResponse {
-  data?: {
-    /** 数据表的名称 */
-    name?: string
-  }
-}
-export interface ListBitableAppTableResponse extends BaseResponse {
-  data: Paginated<Lark.AppTable[], 'items'>
-}
-export interface CopyBitableAppDashboardResponse extends BaseResponse {
-  data?: {
-    /** 多维表格 block_id */
-    block_id?: string
-    /** block 名称 */
-    name?: string
-  }
-}
-export interface ListBitableAppDashboardResponse extends BaseResponse {
-  data: Paginated<Lark.AppDashboard[], 'dashboards'>
-}
-export interface PatchBitableAppTableViewResponse extends BaseResponse {
-  data?: {
-    view?: Lark.AppTableView
-  }
-}
-export interface GetBitableAppTableViewResponse extends BaseResponse {
-  data?: {
-    view?: Lark.AppTableView
-  }
-}
-export interface ListBitableAppTableViewResponse extends BaseResponse {
-  data: Paginated<Lark.AppTableView[], 'items'>
-}
-export interface CreateBitableAppTableViewResponse extends BaseResponse {
-  data?: {
-    view?: Lark.AppTableView
-  }
-}
-export interface PatchBitableAppTableFormResponse extends BaseResponse {
-  data?: {
-    /** 表单元数据信息 */
-    form: Lark.AppTableForm
-  }
-}
-export interface GetBitableAppTableFormResponse extends BaseResponse {
-  data?: {
-    /** 表单元数据信息 */
-    form: Lark.AppTableForm
-  }
-}
-export interface PatchBitableAppTableFormFieldResponse extends BaseResponse {
-  data?: {
-    /** 更新后的field值 */
-    field?: Lark.AppTableFormPatchedField
-  }
-}
-export interface ListBitableAppTableFormFieldResponse extends BaseResponse {
-  data: Paginated<Lark.AppTableFormField[], 'items'>
-}
-export interface GetBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    record?: Lark.AppTableRecord
-  }
-}
-export interface SearchBitableAppTableRecordResponse extends BaseResponse {
-  data: Paginated<Lark.AppTableRecord[], 'items'>
-}
-export interface CreateBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    record?: Lark.AppTableRecord
-  }
-}
-export interface UpdateBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    record?: Lark.AppTableRecord
-  }
-}
-export interface DeleteBitableAppTableRecordResponse extends BaseResponse {
-  data?: Lark.DeleteRecord
-}
-export interface BatchCreateBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    /** 本次请求新增的记录列表 */
-    records?: Lark.AppTableRecord[]
-  }
-}
-export interface BatchUpdateBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    /** 更新后的记录 */
-    records?: Lark.AppTableRecord[]
-  }
-}
-export interface BatchDeleteBitableAppTableRecordResponse extends BaseResponse {
-  data?: {
-    /** 记录删除结果 */
-    records?: Lark.DeleteRecord[]
-  }
-}
-export interface ListBitableAppTableFieldResponse extends BaseResponse {
-  data: Paginated<Lark.AppTableFieldForList[], 'items'>
-}
-export interface CreateBitableAppTableFieldResponse extends BaseResponse {
-  data?: {
-    field?: Lark.AppTableField
-  }
-}
-export interface UpdateBitableAppTableFieldResponse extends BaseResponse {
-  data?: {
-    field?: Lark.AppTableField
-  }
-}
-export interface DeleteBitableAppTableFieldResponse extends BaseResponse {
-  data?: {
-    /** 字段唯一标识id */
-    field_id?: string
-    /** 是否已删除 */
-    deleted?: boolean
-  }
-}
-export interface ListBitableAppRoleResponse extends BaseResponse {
-  data: Paginated<Lark.AppRole[], 'items'>
-}
-export interface CreateBitableAppRoleResponse extends BaseResponse {
-  data?: {
-    role?: Lark.AppRole
-  }
-}
-export interface UpdateBitableAppRoleResponse extends BaseResponse {
-  data?: {
-    role?: Lark.AppRole
-  }
-}
-export interface ListBitableAppRoleMemberResponse extends BaseResponse {
-  data: Paginated<Lark.AppRoleMember[], 'items'>
-}
-export interface ListWikiSpaceResponse extends BaseResponse {
-  data: Paginated<Lark.Space[], 'items'>
-}
-export interface GetWikiSpaceResponse extends BaseResponse {
-  data?: {
-    space?: Lark.Space
-  }
-}
-export interface CreateWikiSpaceResponse extends BaseResponse {
-  data?: {
-    space?: Lark.Space
-  }
-}
-export interface CreateWikiSpaceMemberResponse extends BaseResponse {
-  data?: {
-    member?: Lark.Member
-  }
-}
-export interface DeleteWikiSpaceMemberResponse extends BaseResponse {
-  data?: {
-    /** 成员信息 */
-    member: Lark.Member
-  }
-}
-export interface UpdateWikiSpaceSettingResponse extends BaseResponse {
-  data?: {
-    setting?: Lark.Setting
-  }
-}
-export interface CreateWikiSpaceNodeResponse extends BaseResponse {
-  data?: {
-    node?: Lark.Node
-  }
-}
-export interface GetNodeWikiSpaceResponse extends BaseResponse {
-  data?: {
-    /** 节点信息 */
-    node?: Lark.Node
-  }
-}
-export interface ListWikiSpaceNodeResponse extends BaseResponse {
-  data: Paginated<Lark.Node[], 'items'>
-}
-export interface MoveWikiSpaceNodeResponse extends BaseResponse {
-  data?: {
-    /** 移动后的节点信息 */
-    node?: Lark.Node
-  }
-}
-export interface CopyWikiSpaceNodeResponse extends BaseResponse {
-  data?: {
-    /** copy后的节点 */
-    node: Lark.Node
-  }
-}
-export interface MoveDocsToWikiWikiSpaceNodeResponse extends BaseResponse {
-  data?: {
-    /** 移动后的知识库token */
-    wiki_token?: string
-    /** 任务id */
-    task_id?: string
-    /** 是否提交了文档迁入申请 */
-    applied?: boolean
-  }
-}
-export interface GetWikiTaskResponse extends BaseResponse {
-  data?: {
-    /** 任务结果 */
-    task: Lark.TaskResult
-  }
-}
-export interface SearchWikiNodeResponse extends BaseResponse {
-  data: Paginated<Lark.Node[], 'items'>
-}
-export interface GetDrivev1FileSubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 文档订阅信息 */
-    subscription?: Lark.FileSubscription
-  }
-}
-export interface CreateDrivev1FileSubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 本次增加的文档订阅信息 */
-    subscription?: Lark.FileSubscription
-  }
-}
-export interface PatchDrivev1FileSubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 本次修改的文档订阅信息 */
-    subscription?: Lark.FileSubscription
-  }
-}
-export interface CreateCalendarResponse extends BaseResponse {
-  data?: {
-    calendar?: Lark.Calendar
-  }
-}
-export interface PrimaryCalendarResponse extends BaseResponse {
-  data?: {
-    /** 主日历列表 */
-    calendars?: Lark.UserCalendar[]
-  }
-}
-export interface GetCalendarResponse extends BaseResponse {
-  data?: Lark.Calendar
-}
-export interface ListCalendarFreebusyResponse extends BaseResponse {
-  data?: {
-    /** 日历上请求时间区间内的忙闲信息 */
-    freebusy_list?: Lark.Freebusy[]
-  }
-}
-export interface ListCalendarResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下次请求需要带上的分页标记，90 天有效期 */
-    page_token?: string
-    /** 下次请求需要带上的增量同步标记，90 天有效期 */
-    sync_token?: string
-    /** 分页加载的日历数据列表 */
-    calendar_list?: Lark.Calendar[]
-  }
-}
-export interface PatchCalendarResponse extends BaseResponse {
-  data?: {
-    calendar?: Lark.Calendar
-  }
-}
-export interface SearchCalendarResponse extends BaseResponse {
-  data: Paginated<Lark.Calendar[], 'items'>
-}
-export interface SubscribeCalendarResponse extends BaseResponse {
-  data?: {
-    calendar?: Lark.Calendar
-  }
-}
-export interface CreateCalendarCalendarAclResponse extends BaseResponse {
-  data?: Lark.CalendarAcl
-}
-export interface ListCalendarCalendarAclResponse extends BaseResponse {
-  data: Paginated<Lark.CalendarAcl[], 'acls'>
-}
-export interface CreateCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    event?: Lark.CalendarEvent
-  }
-}
-export interface PatchCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    event?: Lark.CalendarEvent
-  }
-}
-export interface GetCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    event?: Lark.CalendarEvent
-  }
-}
-export interface ListCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下次请求需要带上的分页标记，90 天有效期 */
-    page_token?: string
-    /** 下次请求需要带上的增量同步标记，90 天有效期 */
-    sync_token?: string
-    /** 日程列表 */
-    items?: Lark.CalendarEvent[]
-  }
-}
-export interface SearchCalendarCalendarEventResponse extends BaseResponse {
-  data: Paginated<Lark.CalendarEvent[], 'items'>
-}
-export interface InstancesCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    /** instances实例 */
-    items?: Lark.Instance[]
-    page_token?: string
-    has_more?: boolean
-  }
-}
-export interface InstanceViewCalendarCalendarEventResponse extends BaseResponse {
-  data?: {
-    /** 日程instance列表 */
-    items?: Lark.Instance[]
-  }
-}
-export interface CreateCalendarCalendarEventMeetingChatResponse extends BaseResponse {
-  data?: {
-    /** 会议群ID */
-    meeting_chat_id?: string
-    /** 群分享链接 */
-    applink?: string
-  }
-}
-export interface CreateCalendarTimeoffEventResponse extends BaseResponse {
-  data?: Lark.TimeoffEvent
-}
-export interface CreateCalendarCalendarEventAttendeeResponse extends BaseResponse {
-  data?: {
-    /** 被添加的参与人列表 */
-    attendees?: Lark.CalendarEventAttendee[]
-  }
-}
-export interface ListCalendarCalendarEventAttendeeResponse extends BaseResponse {
-  data: Paginated<Lark.CalendarEventAttendee[], 'items'>
-}
-export interface ListCalendarCalendarEventAttendeeChatMemberResponse extends BaseResponse {
-  data: Paginated<Lark.CalendarEventAttendeeChatMember[], 'items'>
-}
-export interface GenerateCaldavConfCalendarSettingResponse extends BaseResponse {
-  data?: {
-    /** caldav密码 */
-    password?: string
-    /** caldav用户名 */
-    user_name?: string
-    /** 服务器地址 */
-    server_address?: string
-    /** 设备名 */
-    device_name?: string
-  }
-}
-export interface CreateCalendarExchangeBindingResponse extends BaseResponse {
-  data?: Lark.ExchangeBinding
-}
-export interface GetCalendarExchangeBindingResponse extends BaseResponse {
-  data?: Lark.ExchangeBinding
-}
-export interface ApplyVcReserveResponse extends BaseResponse {
-  data?: {
-    reserve?: Lark.Reserve
-    reserve_correction_check_info?: Lark.ReserveCorrectionCheckInfo
-  }
-}
-export interface UpdateVcReserveResponse extends BaseResponse {
-  data?: {
-    reserve?: Lark.Reserve
-    reserve_correction_check_info?: Lark.ReserveCorrectionCheckInfo
-  }
-}
-export interface GetVcReserveResponse extends BaseResponse {
-  data?: {
-    reserve?: Lark.Reserve
-  }
-}
-export interface GetActiveMeetingVcReserveResponse extends BaseResponse {
-  data?: {
-    meeting?: Lark.Meeting
-  }
-}
-export interface InviteVcMeetingResponse extends BaseResponse {
-  data?: {
-    /** 邀请结果 */
-    invite_results?: Lark.MeetingInviteStatus[]
-  }
-}
-export interface KickoutVcMeetingResponse extends BaseResponse {
-  data?: {
-    /** 踢出结果 */
-    kickout_results?: Lark.MeetingParticipantResult[]
-  }
-}
-export interface SetHostVcMeetingResponse extends BaseResponse {
-  data?: {
-    /** 会中当前主持人 */
-    host_user?: Lark.MeetingUser
-  }
-}
-export interface GetVcMeetingResponse extends BaseResponse {
-  data?: {
-    meeting?: Lark.Meeting
-  }
-}
-export interface ListByNoVcMeetingResponse extends BaseResponse {
-  data: Paginated<Lark.Meeting[], 'meeting_briefs'>
-}
-export interface GetVcMeetingRecordingResponse extends BaseResponse {
-  data?: {
-    recording?: Lark.MeetingRecording
-  }
-}
-export interface GetDailyVcReportResponse extends BaseResponse {
-  data?: {
-    /** 会议报告 */
-    meeting_report?: Lark.Report
-  }
-}
-export interface GetTopUserVcReportResponse extends BaseResponse {
-  data?: {
-    /** top用户列表 */
-    top_user_report?: Lark.ReportTopUser[]
-  }
-}
-export interface MeetingListVcExportResponse extends BaseResponse {
-  data?: {
-    /** 任务id */
-    task_id?: string
-  }
-}
-export interface ParticipantListVcExportResponse extends BaseResponse {
-  data?: {
-    /** 任务id */
-    task_id?: string
-  }
-}
-export interface ParticipantQualityListVcExportResponse extends BaseResponse {
-  data?: {
-    /** 任务id */
-    task_id?: string
-  }
-}
-export interface ResourceReservationListVcExportResponse extends BaseResponse {
-  data?: {
-    /** 任务id */
-    task_id?: string
-  }
-}
-export interface GetVcExportResponse extends BaseResponse {
-  data?: {
-    /** 任务状态 */
-    status: number
-    /** 文件下载地址 */
-    url?: string
-    /** 文件token */
-    file_token?: string
-    /** 失败信息 */
-    fail_msg?: string
-  }
-}
-export interface CreateVcRoomLevelResponse extends BaseResponse {
-  data?: {
-    room_level?: Lark.RoomLevel
-  }
-}
-export interface GetVcRoomLevelResponse extends BaseResponse {
-  data?: {
-    room_level?: Lark.RoomLevel
-  }
-}
-export interface MgetVcRoomLevelResponse extends BaseResponse {
-  data?: {
-    items?: Lark.RoomLevel[]
-  }
-}
-export interface ListVcRoomLevelResponse extends BaseResponse {
-  data: Paginated<Lark.RoomLevel[], 'items'>
-}
-export interface SearchVcRoomLevelResponse extends BaseResponse {
-  data?: {
-    /** 层级id列表 */
-    level_ids?: string[]
-  }
-}
-export interface CreateVcRoomResponse extends BaseResponse {
-  data?: {
-    room?: Lark.Room
-  }
-}
-export interface GetVcRoomResponse extends BaseResponse {
-  data?: {
-    room?: Lark.Room
-  }
-}
-export interface MgetVcRoomResponse extends BaseResponse {
-  data?: {
-    items?: Lark.Room[]
-  }
-}
-export interface ListVcRoomResponse extends BaseResponse {
-  data: Paginated<Lark.Room[], 'rooms'>
-}
-export interface SearchVcRoomResponse extends BaseResponse {
-  data?: {
-    /** 会议室列表 */
-    rooms?: Lark.Room[]
-    /** 下一页分页的token，下次请求时传入 */
-    page_token?: string
-    /** 是否还有数据 */
-    has_more?: boolean
-  }
-}
-export interface GetVcScopeConfigResponse extends BaseResponse {
-  data?: {
-    /** 当前节点的配置，根据层级顺序从底向上进行合并计算后的结果；如果当前节点某个值已配置，则取该节点的值，否则会从该节点的父层级节点获取，如果父节点依然未配置，则继续向上递归获取；若所有节点均未配置，则该值返回为空 */
-    current_config?: Lark.ScopeConfig
-    /** 所有节点的原始配置，按照层级顺序从底向上返回；如果某节点某个值未配置，则该值返回为空 */
-    origin_configs?: Lark.ScopeConfig[]
-  }
-}
-export interface ReserveScopeVcReserveConfigResponse extends BaseResponse {
-  data?: {
-    /** 预定审批设置 */
-    approve_config?: Lark.ApprovalConfig
-    /** 预定时间设置 */
-    time_config?: Lark.TimeConfig
-    /** 预定范围设置 */
-    reserve_scope_config?: Lark.ReserveScopeConfig
-  }
-}
-export interface GetVcReserveConfigFormResponse extends BaseResponse {
-  data?: {
-    /** 预定表单 */
-    reserve_form_config: Lark.ReserveFormConfig
-  }
-}
-export interface GetVcReserveConfigAdminResponse extends BaseResponse {
-  data?: {
-    /** 预定管理员/部门 */
-    reserve_admin_config: Lark.ReserveAdminConfig
-  }
-}
-export interface GetVcReserveConfigDisableInformResponse extends BaseResponse {
-  data?: {
-    /** 会议室禁用通知配置 */
-    disable_inform?: Lark.DisableInformConfig
-  }
-}
-export interface GetVcMeetingListResponse extends BaseResponse {
-  data: Paginated<Lark.MeetingInfo[], 'meeting_list'>
-}
-export interface GetVcParticipantListResponse extends BaseResponse {
-  data: Paginated<Lark.Participant[], 'participants'>
-}
-export interface GetVcParticipantQualityListResponse extends BaseResponse {
-  data: Paginated<Lark.ParticipantQuality[], 'participant_quality_list'>
-}
-export interface GetVcResourceReservationListResponse extends BaseResponse {
-  data: Paginated<Lark.RoomMeetingReservation[], 'room_reservation_list'>
-}
-export interface ListVcAlertResponse extends BaseResponse {
-  data: Paginated<Lark.Alert[], 'items'>
-}
-export interface CreateAttendanceShiftResponse extends BaseResponse {
-  data?: {
-    /** 班次 */
-    shift?: Lark.Shift
-  }
-}
-export interface GetAttendanceShiftResponse extends BaseResponse {
-  data?: Lark.Shift
-}
-export interface QueryAttendanceShiftResponse extends BaseResponse {
-  data?: Lark.Shift
-}
-export interface ListAttendanceShiftResponse extends BaseResponse {
-  data: Paginated<Lark.Shift[], 'shift_list'>
-}
-export interface CreateAttendanceGroupResponse extends BaseResponse {
-  data?: {
-    group?: Lark.Group
-  }
-}
-export interface GetAttendanceGroupResponse extends BaseResponse {
-  data?: Lark.Group
-}
-export interface SearchAttendanceGroupResponse extends BaseResponse {
-  data?: {
-    /** 考勤组列表 */
-    group_list?: Lark.GroupMeta[]
-  }
-}
-export interface ListAttendanceGroupResponse extends BaseResponse {
-  data: Paginated<Lark.GroupMeta[], 'group_list'>
-}
-export interface BatchCreateAttendanceUserDailyShiftResponse extends BaseResponse {
-  data?: {
-    /** 班表信息列表 */
-    user_daily_shifts?: Lark.UserDailyShift[]
-  }
-}
-export interface QueryAttendanceUserDailyShiftResponse extends BaseResponse {
-  data?: {
-    /** 班表信息列表 */
-    user_daily_shifts?: Lark.UserDailyShift[]
-  }
-}
-export interface UpdateAttendanceUserStatsViewResponse extends BaseResponse {
-  data?: {
-    /** 视图 */
-    view?: Lark.UserStatsView
-  }
-}
-export interface QueryAttendanceUserStatsFieldResponse extends BaseResponse {
-  data?: {
-    user_stats_field?: Lark.UserStatsField
-  }
-}
-export interface QueryAttendanceUserStatsViewResponse extends BaseResponse {
-  data?: {
-    view?: Lark.UserStatsView
-  }
-}
-export interface QueryAttendanceUserStatsDataResponse extends BaseResponse {
-  data?: {
-    /** 用户统计数据 */
-    user_datas?: Lark.UserStatsData[]
-    /** 无权限获取的用户列表 */
-    invalid_user_list?: string[]
-  }
-}
-export interface QueryAttendanceUserApprovalResponse extends BaseResponse {
-  data?: {
-    /** 审批结果列表 */
-    user_approvals?: Lark.UserApproval[]
-  }
-}
-export interface CreateAttendanceUserApprovalResponse extends BaseResponse {
-  data?: {
-    /** 审批信息 */
-    user_approval?: Lark.UserApproval
-  }
-}
-export interface ProcessAttendanceApprovalInfoResponse extends BaseResponse {
-  data?: {
-    /** 审批信息 */
-    approval_info?: Lark.ApprovalInfo
-  }
-}
-export interface CreateAttendanceUserTaskRemedyResponse extends BaseResponse {
-  data?: {
-    /** 补卡审批信息 */
-    user_remedy?: Lark.UserTaskRemedy
-  }
-}
-export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyResponse extends BaseResponse {
-  data?: {
-    /** 用户可补卡时间 */
-    user_allowed_remedys?: Lark.UserAllowedRemedy[]
-  }
-}
-export interface QueryAttendanceUserTaskRemedyResponse extends BaseResponse {
-  data?: {
-    /** 补卡记录列表 */
-    user_remedys?: Lark.UserTaskRemedy[]
-  }
-}
-export interface BatchCreateAttendanceUserFlowResponse extends BaseResponse {
-  data?: {
-    /** 打卡流水记录列表 */
-    flow_records?: Lark.UserFlow[]
-  }
-}
-export interface GetAttendanceUserFlowResponse extends BaseResponse {
-  data?: Lark.UserFlow
-}
-export interface QueryAttendanceUserFlowResponse extends BaseResponse {
-  data?: {
-    /** 打卡记录列表 */
-    user_flow_results?: Lark.UserFlow[]
-  }
-}
-export interface QueryAttendanceUserTaskResponse extends BaseResponse {
-  data?: {
-    /** 打卡任务列表 */
-    user_task_results?: Lark.UserTask[]
-    /** 无效用户工号列表 */
-    invalid_user_ids?: string[]
-    /** 没有权限用户工号列表 */
-    unauthorized_user_ids?: string[]
-  }
-}
-export interface ModifyAttendanceUserSettingResponse extends BaseResponse {
-  data?: {
-    /** 用户设置 */
-    user_setting?: Lark.UserSetting
-  }
-}
-export interface QueryAttendanceUserSettingResponse extends BaseResponse {
-  data?: {
-    /** 用户设置信息列表 */
-    user_settings?: Lark.UserSetting[]
-  }
-}
-export interface UploadAttendanceFileResponse extends BaseResponse {
-  data?: {
-    file?: Lark.File
-  }
-}
-export interface GetAttendanceLeaveEmployExpireRecordResponse extends BaseResponse {
-  data?: {
-    /** 员工过期日期的授予记录 */
-    records: Lark.LeaveEmployExpireRecord[]
-  }
-}
-export interface PatchAttendanceLeaveAccrualRecordResponse extends BaseResponse {
-  data?: {
-    /** 员工过期日期的授予记录 */
-    record: Lark.LeaveAccrualRecord
-  }
-}
-export interface CreateApprovalResponse extends BaseResponse {
-  data?: {
-    /** 审批定义 Code */
-    approval_code?: string
-    /** 审批定义 id */
-    approval_id?: string
-  }
-}
-export interface CreateApprovalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 审批实例 Code */
-    instance_code: string
-  }
-}
-export interface PreviewApprovalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 预览节点信息 */
-    preview_nodes?: Lark.PreviewNode[]
-  }
-}
-export interface GetApprovalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 审批名称 */
-    approval_name: string
-    /** 审批创建时间 */
-    start_time?: string
-    /** 审批完成时间，未完成为 0 */
-    end_time: string
-    /** 发起审批用户 */
-    user_id: string
-    /** 发起审批用户 open id */
-    open_id: string
-    /** 审批单编号 */
-    serial_number: string
-    /** 发起审批用户所在部门 */
-    department_id: string
-    /** 审批实例状态 */
-    status: string
-    /** 用户的唯一标识id */
-    uuid: string
-    /** json字符串，控件值 */
-    form: string
-    /** 审批任务列表 */
-    task_list: Lark.InstanceTask[]
-    /** 评论列表 */
-    comment_list: Lark.InstanceComment[]
-    /** 审批动态 */
-    timeline: Lark.InstanceTimeline[]
-    /** 修改的原实例 code,仅在查询修改实例时显示该字段 */
-    modified_instance_code?: string
-    /** 撤销的原实例 code,仅在查询撤销实例时显示该字段 */
-    reverted_instance_code?: string
-    /** 审批定义 Code */
-    approval_code: string
-    /** 单据是否被撤销 */
-    reverted?: boolean
-    /** 审批实例 Code */
-    instance_code: string
-  }
-}
-export interface ListApprovalInstanceResponse extends BaseResponse {
-  data: Paginated<string[], 'instance_code_list'>
-}
-export interface CreateApprovalInstanceCommentResponse extends BaseResponse {
-  data?: {
-    /** 保存成功的comment_id */
-    comment_id: string
-  }
-}
-export interface DeleteApprovalInstanceCommentResponse extends BaseResponse {
-  data?: {
-    /** 删除的评论ID */
-    comment_id?: string
-  }
-}
-export interface RemoveApprovalInstanceCommentResponse extends BaseResponse {
-  data?: {
-    /** 审批实例code */
-    instance_id?: string
-    /** 租户自定义审批实例ID */
-    external_id?: string
-  }
-}
-export interface ListApprovalInstanceCommentResponse extends BaseResponse {
-  data: Paginated<Lark.Comment[], 'comments'>
-}
-export interface CreateApprovalExternalApprovalResponse extends BaseResponse {
-  data?: {
-    /** 审批定义 code，用户自定义，定义的唯一标识 */
-    approval_code: string
-  }
-}
-export interface GetApprovalExternalApprovalResponse extends BaseResponse {
-  data?: {
-    /** 审批定义名称 */
-    approval_name: string
-    /** 审批定义code */
-    approval_code: string
-    /** 审批定义所属分组 */
-    group_code: string
-    /** 分组名称 */
-    group_name?: string
-    /** 审批定义的说明 */
-    description?: string
-    /** 三方审批定义相关 */
-    external?: Lark.ApprovalCreateExternal
-    /** 可见人列表 */
-    viewers?: Lark.ApprovalCreateViewers[]
-    /** 国际化文案 */
-    i18n_resources?: Lark.I18nResource[]
-    /** 流程管理员 */
-    managers?: string[]
-  }
-}
-export interface CreateApprovalExternalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 同步的实例数据 */
-    data?: Lark.ExternalInstance
-  }
-}
-export interface CheckApprovalExternalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 更新时间不一致的实例信息 */
-    diff_instances?: Lark.ExteranlInstanceCheckResponse[]
-  }
-}
-export interface ListApprovalExternalTaskResponse extends BaseResponse {
-  data: Paginated<Lark.ExternalTaskList[], 'data'>
-}
-export interface QueryApprovalInstanceResponse extends BaseResponse {
-  data: Paginated<Lark.InstanceSearchItem[], 'instance_list'>
-}
-export interface SearchCcApprovalInstanceResponse extends BaseResponse {
-  data?: {
-    /** 查询返回条数 */
-    count?: number
-    /** 审批实例列表 */
-    cc_list?: Lark.CcSearchItem[]
-    /** 翻页 Token */
-    page_token?: string
-    /** 是否有更多任务可供拉取 */
-    has_more?: boolean
-  }
-}
-export interface SearchApprovalTaskResponse extends BaseResponse {
-  data?: {
-    /** 查询返回条数 */
-    count?: number
-    /** 审批任务列表 */
-    task_list?: Lark.TaskSearchItem[]
-    /** 翻页 Token */
-    page_token?: string
-    /** 是否有更多任务可供拉取 */
-    has_more?: boolean
-  }
-}
-export interface QueryApprovalTaskResponse extends BaseResponse {
-  data: Paginated<Lark.Task[], 'tasks'>
-}
-export interface AgentEmailHelpdeskAgentResponse extends BaseResponse {
-  data?: {
-    /** agent emails */
-    agents?: string
-  }
-}
-export interface GetHelpdeskAgentSchedulesResponse extends BaseResponse {
-  data?: {
-    /** schedules of an agent */
-    agent_schedule?: Lark.AgentSchedule
-  }
-}
-export interface ListHelpdeskAgentScheduleResponse extends BaseResponse {
-  data?: {
-    /** schedule of all agent */
-    agent_schedules?: Lark.AgentSchedule[]
-  }
-}
-export interface CreateHelpdeskAgentSkillResponse extends BaseResponse {
-  data?: {
-    agent_skill_id?: string
-  }
-}
-export interface GetHelpdeskAgentSkillResponse extends BaseResponse {
-  data?: {
-    /** agent skill */
-    agent_skill?: Lark.AgentSkill
-  }
-}
-export interface ListHelpdeskAgentSkillResponse extends BaseResponse {
-  data?: {
-    /** list of agent groups */
-    agent_skills?: Lark.AgentSkill[]
-  }
-}
-export interface ListHelpdeskAgentSkillRuleResponse extends BaseResponse {
-  data?: {
-    /** all rules for agent skill */
-    rules?: Lark.AgentSkillRule[]
-  }
-}
-export interface StartServiceHelpdeskTicketResponse extends BaseResponse {
-  data?: {
-    /** chat id */
-    chat_id: string
-  }
-}
-export interface GetHelpdeskTicketResponse extends BaseResponse {
-  data?: {
-    /** ticket detail */
-    ticket?: Lark.Ticket
-  }
-}
-export interface ListHelpdeskTicketResponse extends BaseResponse {
-  data?: {
-    /** the total count */
-    total?: number
-    tickets?: Lark.Ticket[]
-  }
-}
-export interface CustomizedFieldsHelpdeskTicketResponse extends BaseResponse {
-  data?: {
-    /** user customized fields */
-    user_customized_fields?: Lark.UserCustomizedField[]
-    /** ticket customized fields */
-    ticket_customized_fields?: Lark.TicketCustomizedField[]
-  }
-}
-export interface CreateHelpdeskTicketMessageResponse extends BaseResponse {
-  data?: {
-    /** chat消息open ID */
-    message_id?: string
-  }
-}
-export interface ListHelpdeskTicketMessageResponse extends BaseResponse {
-  data?: {
-    /** list of ticket messages */
-    messages?: Lark.TicketMessage[]
-    /** total number of messages */
-    total?: number
-  }
-}
-export interface CreateHelpdeskBotMessageResponse extends BaseResponse {
-  data?: {
-    message_id?: string
-  }
-}
-export interface GetHelpdeskTicketCustomizedFieldResponse extends BaseResponse {
-  data?: Lark.TicketCustomizedField
-}
-export interface ListHelpdeskTicketCustomizedFieldResponse extends BaseResponse {
-  data: Paginated<Lark.TicketCustomizedField[], 'items'>
-}
-export interface CreateHelpdeskFaqResponse extends BaseResponse {
-  data?: {
-    /** faq detail */
-    faq?: Lark.Faq
-  }
-}
-export interface GetHelpdeskFaqResponse extends BaseResponse {
-  data?: {
-    /** faq detail */
-    faq?: Lark.Faq
-  }
-}
-export interface ListHelpdeskFaqResponse extends BaseResponse {
-  data: Paginated<Lark.Faq[], 'items'>
-}
-export interface SearchHelpdeskFaqResponse extends BaseResponse {
-  data: Paginated<Lark.Faq[], 'items'>
-}
-export interface CreateHelpdeskCategoryResponse extends BaseResponse {
-  data?: {
-    /** category */
-    category?: Lark.Category
-  }
-}
-export interface GetHelpdeskCategoryResponse extends BaseResponse {
-  data?: Lark.Category
-}
-export interface ListHelpdeskCategoryResponse extends BaseResponse {
-  data?: {
-    /** list of categories */
-    categories?: Lark.Category[]
-  }
-}
-export interface CreateHelpdeskNotificationResponse extends BaseResponse {
-  data?: {
-    /** 创建成功后的唯一id */
-    notification_id?: string
-    /** 当前状态 */
-    status?: number
-  }
-}
-export interface GetHelpdeskNotificationResponse extends BaseResponse {
-  data?: {
-    /** push任务详情 */
-    notification?: Lark.Notification
-    /** 审批链接 */
-    approval_app_link?: string
-  }
-}
-export interface SubmitApproveHelpdeskNotificationResponse extends BaseResponse {
-  data?: {
-    /** 是否有权限创建或者管理审批流程 （有两种情况会导致没有权限： 1：用户没有安装服务台小程序，需要在https://app.feishu.cn/app/cli_9f9f8825d53b900d或者https://ftest.feishu.cn/admin/appCenter/manage/cli_9f9f8825d53b900d?lang=zh-CN 安装小程序 2：用户安装的服务台小程序版本过低） */
-    has_access?: boolean
-  }
-}
-export interface CreateTaskv1Response extends BaseResponse {
-  data?: {
-    /** 返回创建好的任务 */
-    task?: Lark.Task
-  }
-}
-export interface PatchTaskv1Response extends BaseResponse {
-  data?: {
-    /** 返回修改后的任务详情 */
-    task?: Lark.Task
-  }
-}
-export interface GetTaskv1Response extends BaseResponse {
-  data?: {
-    /** 返回任务资源详情 */
-    task?: Lark.Task
-  }
-}
-export interface ListTaskv1Response extends BaseResponse {
-  data: Paginated<Lark.Task[], 'items'>
-}
-export interface CreateTaskv1TaskReminderResponse extends BaseResponse {
-  data?: {
-    /** 返回创建成功的提醒时间 */
-    reminder?: Lark.Reminder
-  }
-}
-export interface ListTaskv1TaskReminderResponse extends BaseResponse {
-  data: Paginated<Lark.Reminder[], 'items'>
-}
-export interface CreateTaskv1TaskCommentResponse extends BaseResponse {
-  data?: {
-    /** 返回创建好的任务评论 */
-    comment?: Lark.Comment
-  }
-}
-export interface UpdateTaskv1TaskCommentResponse extends BaseResponse {
-  data?: {
-    /** 返回修改后的任务评论详情 */
-    comment?: Lark.Comment
-  }
-}
-export interface GetTaskv1TaskCommentResponse extends BaseResponse {
-  data?: {
-    /** 返回新的任务评论详情 */
-    comment?: Lark.Comment
-  }
-}
-export interface ListTaskv1TaskCommentResponse extends BaseResponse {
-  data: Paginated<Lark.Comment[], 'items'>
-}
-export interface CreateTaskv1TaskFollowerResponse extends BaseResponse {
-  data?: {
-    /** 创建后的任务关注者 */
-    follower: Lark.Follower
-  }
-}
-export interface BatchDeleteFollowerTaskv1Response extends BaseResponse {
-  data?: {
-    /** 实际删除的关注人用户ID列表 */
-    followers?: string[]
-  }
-}
-export interface ListTaskv1TaskFollowerResponse extends BaseResponse {
-  data: Paginated<Lark.Follower[], 'items'>
-}
-export interface CreateTaskv1TaskCollaboratorResponse extends BaseResponse {
-  data?: {
-    /** 返回创建成功后的任务协作者 */
-    collaborator: Lark.Collaborator
-  }
-}
-export interface BatchDeleteCollaboratorTaskv1Response extends BaseResponse {
-  data?: {
-    /** 实际删除的执行人用户ID列表 */
-    collaborators?: string[]
-  }
-}
-export interface ListTaskv1TaskCollaboratorResponse extends BaseResponse {
-  data: Paginated<Lark.Collaborator[], 'items'>
-}
-export interface CreateTaskv2Response extends BaseResponse {
-  data?: {
-    /** 产生的任务 */
-    task?: Lark.Task
-  }
-}
-export interface GetTaskv2Response extends BaseResponse {
-  data?: {
-    /** 获得的任务实体 */
-    task?: Lark.Task
-  }
-}
-export interface PatchTaskv2Response extends BaseResponse {
-  data?: {
-    /** 更新后的任务 */
-    task?: Lark.Task
-  }
-}
-export interface AddMembersTaskv2Response extends BaseResponse {
-  data?: {
-    /** 更新完成后的任务实体数据 */
-    task?: Lark.Task
-  }
-}
-export interface RemoveMembersTaskv2Response extends BaseResponse {
-  data?: {
-    /** 移除成员后的任务数据 */
-    task?: Lark.Task
-  }
-}
-export interface ListTaskv2Response extends BaseResponse {
-  data: Paginated<Lark.Task[], 'items'>
-}
-export interface TasklistsTaskv2Response extends BaseResponse {
-  data?: {
-    /** 任务所在清单的摘要信息 */
-    tasklists?: Lark.TaskInTasklistInfo[]
-  }
-}
-export interface AddTasklistTaskv2Response extends BaseResponse {
-  data?: {
-    /** 添加后的任务详情 */
-    task?: Lark.Task
-  }
-}
-export interface RemoveTasklistTaskv2Response extends BaseResponse {
-  data?: {
-    /** 添加后的任务详情 */
-    task?: Lark.Task
-  }
-}
-export interface AddRemindersTaskv2Response extends BaseResponse {
-  data?: {
-    /** 更新完成后的任务实体 */
-    task?: Lark.Task
-  }
-}
-export interface RemoveRemindersTaskv2Response extends BaseResponse {
-  data?: {
-    /** 移除后任务的提醒列表 */
-    task?: Lark.Task
-  }
-}
-export interface AddDependenciesTaskv2Response extends BaseResponse {
-  data?: {
-    /** 被添加后任务的所有依赖 */
-    dependencies?: Lark.TaskDependency[]
-  }
-}
-export interface RemoveDependenciesTaskv2Response extends BaseResponse {
-  data?: {
-    /** 移除之后的任务GUID */
-    dependencies?: Lark.TaskDependency[]
-  }
-}
-export interface CreateTaskv2TaskSubtaskResponse extends BaseResponse {
-  data?: {
-    /** 创建的任务 */
-    subtask?: Lark.Task
-  }
-}
-export interface ListTaskv2TaskSubtaskResponse extends BaseResponse {
-  data: Paginated<Lark.Task[], 'items'>
-}
-export interface CreateTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 创建的清单数据 */
-    tasklist?: Lark.Tasklist
-  }
-}
-export interface GetTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 清单详情 */
-    tasklist?: Lark.Tasklist
-  }
-}
-export interface PatchTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 修改后的任务清单 */
-    tasklist?: Lark.Tasklist
-  }
-}
-export interface AddMembersTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 完成更新后的清单实体 */
-    tasklist?: Lark.Tasklist
-  }
-}
-export interface RemoveMembersTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 修改完成后的清单实体 */
-    tasklist?: Lark.Tasklist
-  }
-}
-export interface TasksTaskv2TasklistResponse extends BaseResponse {
-  data?: {
-    /** 任务摘要数据 */
-    items?: Lark.TaskSummary[]
-    /** 用于获取下一页的分页标记，最后一页时发返回空 */
-    page_token?: string
-    /** 是否有更多数据 */
-    has_more?: boolean
-  }
-}
-export interface ListTaskv2TasklistResponse extends BaseResponse {
-  data: Paginated<Lark.Tasklist[], 'items'>
-}
-export interface CreateTaskv2TasklistActivitySubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 清单动态订阅 */
-    activity_subscription?: Lark.TasklistActivitySubscription
-  }
-}
-export interface GetTaskv2TasklistActivitySubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 订阅详情 */
-    activity_subscription?: Lark.TasklistActivitySubscription
-  }
-}
-export interface ListTaskv2TasklistActivitySubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 清单的动态订阅数据 */
-    items?: Lark.TasklistActivitySubscription[]
-  }
-}
-export interface PatchTaskv2TasklistActivitySubscriptionResponse extends BaseResponse {
-  data?: {
-    /** 更新后的订阅 */
-    activity_subscription?: Lark.TasklistActivitySubscription
-  }
-}
-export interface CreateTaskv2CommentResponse extends BaseResponse {
-  data?: {
-    /** 创建的评论详情 */
-    comment?: Lark.Comment
-  }
-}
-export interface GetTaskv2CommentResponse extends BaseResponse {
-  data?: {
-    /** 评论详情 */
-    comment?: Lark.Comment
-  }
-}
-export interface PatchTaskv2CommentResponse extends BaseResponse {
-  data?: {
-    /** 更新后的评论 */
-    comment?: Lark.Comment
-  }
-}
-export interface ListTaskv2CommentResponse extends BaseResponse {
-  data: Paginated<Lark.Comment[], 'items'>
-}
-export interface UploadTaskv2AttachmentResponse extends BaseResponse {
-  data?: {
-    /** 上传的附件列表 */
-    items?: Lark.Attachment[]
-  }
-}
-export interface ListTaskv2AttachmentResponse extends BaseResponse {
-  data: Paginated<Lark.Attachment[], 'items'>
-}
-export interface GetTaskv2AttachmentResponse extends BaseResponse {
-  data?: {
-    /** 附件详情 */
-    attachment?: Lark.Attachment
-  }
-}
-export interface CreateTaskv2SectionResponse extends BaseResponse {
-  data?: {
-    /** 创建的自定义分组数据 */
-    section?: Lark.Section
-  }
-}
-export interface GetTaskv2SectionResponse extends BaseResponse {
-  data?: {
-    /** 获取的自定义分组详情 */
-    section?: Lark.Section
-  }
-}
-export interface PatchTaskv2SectionResponse extends BaseResponse {
-  data?: {
-    /** 更新后的自定义分组 */
-    section?: Lark.Section
-  }
-}
-export interface ListTaskv2SectionResponse extends BaseResponse {
-  data: Paginated<Lark.SectionSummary[], 'items'>
-}
-export interface TasksTaskv2SectionResponse extends BaseResponse {
-  data: Paginated<Lark.TaskSummary[], 'items'>
-}
-export interface CreateTaskv2CustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 创建的自定义字段 */
-    custom_field?: Lark.CustomField
-  }
-}
-export interface GetTaskv2CustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 获取的自定义字段数据 */
-    custom_field?: Lark.CustomField
-  }
-}
-export interface PatchTaskv2CustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 修改后的自定义字段设置 */
-    custom_field?: Lark.CustomField
-  }
-}
-export interface ListTaskv2CustomFieldResponse extends BaseResponse {
-  data: Paginated<Lark.CustomField[], 'items'>
-}
-export interface CreateTaskv2CustomFieldOptionResponse extends BaseResponse {
-  data?: {
-    /** 创建的选项 */
-    option?: Lark.Option
-  }
-}
-export interface PatchTaskv2CustomFieldOptionResponse extends BaseResponse {
-  data?: {
-    /** 更新后的option数据 */
-    option?: Lark.Option
-  }
-}
-export interface CreateMailMailgroupResponse extends BaseResponse {
-  data?: Lark.Mailgroup
-}
-export interface PatchMailMailgroupResponse extends BaseResponse {
-  data?: Lark.Mailgroup
-}
-export interface UpdateMailMailgroupResponse extends BaseResponse {
-  data?: Lark.Mailgroup
-}
-export interface GetMailMailgroupResponse extends BaseResponse {
-  data?: Lark.Mailgroup
-}
-export interface ListMailMailgroupResponse extends BaseResponse {
-  data: Paginated<Lark.Mailgroup[], 'items'>
-}
-export interface ListMailMailgroupManagerResponse extends BaseResponse {
-  data: Paginated<Lark.MailgroupManager[], 'items'>
-}
-export interface CreateMailMailgroupMemberResponse extends BaseResponse {
-  data?: Lark.MailgroupMember
-}
-export interface GetMailMailgroupMemberResponse extends BaseResponse {
-  data?: Lark.MailgroupMember
-}
-export interface ListMailMailgroupMemberResponse extends BaseResponse {
-  data: Paginated<Lark.MailgroupMember[], 'items'>
-}
-export interface BatchCreateMailMailgroupMemberResponse extends BaseResponse {
-  data?: {
-    /** 添加成功后的邮件组成员信息列表 */
-    items?: Lark.MailgroupMember[]
-  }
-}
-export interface CreateMailMailgroupAliasResponse extends BaseResponse {
-  data?: {
-    /** 邮件组别名 */
-    mailgroup_alias?: Lark.EmailAlias
-  }
-}
-export interface ListMailMailgroupAliasResponse extends BaseResponse {
-  data?: {
-    /** 邮件组别名 */
-    items?: Lark.EmailAlias[]
-  }
-}
-export interface CreateMailMailgroupPermissionMemberResponse extends BaseResponse {
-  data?: Lark.MailgroupPermissionMember
-}
-export interface GetMailMailgroupPermissionMemberResponse extends BaseResponse {
-  data?: Lark.MailgroupPermissionMember
-}
-export interface ListMailMailgroupPermissionMemberResponse extends BaseResponse {
-  data: Paginated<Lark.MailgroupPermissionMember[], 'items'>
-}
-export interface BatchCreateMailMailgroupPermissionMemberResponse extends BaseResponse {
-  data?: {
-    /** 添加成功后的邮件组权限成员信息列表 */
-    items?: Lark.MailgroupPermissionMember[]
-  }
-}
-export interface CreateMailPublicMailboxResponse extends BaseResponse {
-  data?: Lark.PublicMailbox
-}
-export interface PatchMailPublicMailboxResponse extends BaseResponse {
-  data?: Lark.PublicMailbox
-}
-export interface UpdateMailPublicMailboxResponse extends BaseResponse {
-  data?: Lark.PublicMailbox
-}
-export interface GetMailPublicMailboxResponse extends BaseResponse {
-  data?: Lark.PublicMailbox
-}
-export interface ListMailPublicMailboxResponse extends BaseResponse {
-  data: Paginated<Lark.PublicMailbox[], 'items'>
-}
-export interface CreateMailPublicMailboxMemberResponse extends BaseResponse {
-  data?: Lark.PublicMailboxMember
-}
-export interface GetMailPublicMailboxMemberResponse extends BaseResponse {
-  data?: Lark.PublicMailboxMember
-}
-export interface ListMailPublicMailboxMemberResponse extends BaseResponse {
-  data: Paginated<Lark.PublicMailboxMember[], 'items'>
-}
-export interface BatchCreateMailPublicMailboxMemberResponse extends BaseResponse {
-  data?: {
-    /** 添加成功后的公共邮箱成员信息列表 */
-    items?: Lark.PublicMailboxMember[]
-  }
-}
-export interface CreateMailPublicMailboxAliasResponse extends BaseResponse {
-  data?: {
-    /** 公共邮箱别名 */
-    public_mailbox_alias?: Lark.EmailAlias
-  }
-}
-export interface ListMailPublicMailboxAliasResponse extends BaseResponse {
-  data?: {
-    /** 公共邮箱别名 */
-    items?: Lark.EmailAlias[]
-  }
-}
-export interface CreateMailUserMailboxAliasResponse extends BaseResponse {
-  data?: {
-    /** 用户邮箱别名 */
-    user_mailbox_alias?: Lark.EmailAlias
-  }
-}
-export interface ListMailUserMailboxAliasResponse extends BaseResponse {
-  data: Paginated<Lark.EmailAlias[], 'items'>
-}
-export interface QueryMailUserResponse extends BaseResponse {
-  data?: {
-    /** 邮箱地址返回 */
-    user_list?: Lark.User[]
-  }
-}
-export interface GetApplicationResponse extends BaseResponse {
-  data?: {
-    /** 应用数据 */
-    app?: Lark.Application
-  }
-}
-export interface GetApplicationApplicationAppVersionResponse extends BaseResponse {
-  data?: {
-    app_version?: Lark.ApplicationAppVersion
-  }
-}
-export interface ListApplicationApplicationAppVersionResponse extends BaseResponse {
-  data: Paginated<Lark.ApplicationAppVersion[], 'items'>
-}
-export interface ContactsRangeSuggestApplicationApplicationAppVersionResponse extends BaseResponse {
-  data?: {
-    contacts_range?: Lark.ApplicationAppContactsRange
-  }
-}
-export interface UnderauditlistApplicationResponse extends BaseResponse {
-  data: Paginated<Lark.Application[], 'items'>
-}
-export interface ContactsRangeConfigurationApplicationResponse extends BaseResponse {
-  data?: {
-    contacts_range?: Lark.ApplicationAppContactsRange
-    /** 是否还有更多项 */
-    has_more?: boolean
-    /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-    page_token?: string
-  }
-}
-export interface CheckWhiteBlackListApplicationApplicationVisibilityResponse extends BaseResponse {
-  data?: {
-    /** 用户可见性信息列表 */
-    user_visibility_list?: Lark.ApplicationVisibilityUserWhiteBlackInfo[]
-    /** 部门可见性信息列表 */
-    department_visibility_list?: Lark.ApplicationVisibilityDepartmentWhiteBlackInfo[]
-    /** 用户组可见性信息列表 */
-    group_visibility_list?: Lark.ApplicationVisibilityGroupWhiteBlackInfo[]
-  }
-}
-export interface DepartmentOverviewApplicationApplicationAppUsageResponse extends BaseResponse {
-  data?: {
-    /** 分页查询时返回，代表是否还有更多数据 */
-    has_more?: boolean
-    /** 分页标记，下一页分页的token */
-    page_token?: string
-    /** 部门内员工使用应用的概览数据 */
-    items?: Lark.ApplicationDepartmentAppUsage[]
-  }
-}
-export interface OverviewApplicationApplicationAppUsageResponse extends BaseResponse {
-  data?: {
-    /** 员工使用应用概览数据 */
-    items?: Lark.ApplicationAppUsage[]
-  }
-}
-export interface ListApplicationApplicationFeedbackResponse extends BaseResponse {
-  data?: {
-    /** 应用的反馈列表 */
-    feedback_list?: Lark.ApplicationFeedback[]
-    /** 是否还有更多用户反馈列表，true：是，false：否 */
-    has_more: boolean
-    /** 拉取下一页应用反馈列表时使用的 page_token */
-    page_token?: string
-  }
-}
-export interface QueryTenantTenantProductAssignInfoResponse extends BaseResponse {
-  data?: {
-    /** 租户待分配席位列表 */
-    assign_info_list?: Lark.TenantAssignInfo[]
-  }
-}
-export interface QueryTenantResponse extends BaseResponse {
-  data?: {
-    /** 企业信息 */
-    tenant?: Lark.Tenant
-  }
-}
-export interface GetVerificationResponse extends BaseResponse {
-  data?: {
-    verification?: Lark.Verification
-  }
-}
-export interface CreatePersonalSettingsSystemStatusResponse extends BaseResponse {
-  data?: {
-    /** 系统状态 */
-    system_status?: Lark.SystemStatus
-  }
-}
-export interface PatchPersonalSettingsSystemStatusResponse extends BaseResponse {
-  data?: {
-    /** 系统状态 */
-    system_status?: Lark.SystemStatus
-  }
-}
-export interface ListPersonalSettingsSystemStatusResponse extends BaseResponse {
-  data: Paginated<Lark.SystemStatus[], 'items'>
-}
-export interface BatchOpenPersonalSettingsSystemStatusResponse extends BaseResponse {
-  data?: {
-    /** 开启结果 */
-    result_list: Lark.SystemStatusUserOpenResultEntity[]
-  }
-}
-export interface BatchClosePersonalSettingsSystemStatusResponse extends BaseResponse {
-  data?: {
-    /** 关闭结果 */
-    result_list: Lark.SystemStatusUserCloseResultEntity[]
-  }
-}
-export interface CreateSearchMessageResponse extends BaseResponse {
-  data?: {
-    /** 消息id列表 */
-    items?: string[]
-    /** 翻页 token，传入返回下一页，首页不需要传入 */
-    page_token?: string
-    /** 是否还有下一页 */
-    has_more?: boolean
-  }
-}
-export interface CreateSearchAppResponse extends BaseResponse {
-  data?: {
-    /** app_id列表 */
-    items?: string[]
-    /** 翻页 token，传入返回下一页，首页不需要传入 */
-    page_token?: string
-    /** 是否还有下一页 */
-    has_more?: boolean
-  }
-}
-export interface CreateSearchDataSourceResponse extends BaseResponse {
-  data?: {
-    /** 数据源实例 */
-    data_source?: Lark.DataSource
-  }
-}
-export interface PatchSearchDataSourceResponse extends BaseResponse {
-  data?: {
-    /** 数据源 */
-    data_source?: Lark.DataSource
-  }
-}
-export interface GetSearchDataSourceResponse extends BaseResponse {
-  data?: {
-    /** 数据源实例 */
-    data_source?: Lark.DataSource
-  }
-}
-export interface ListSearchDataSourceResponse extends BaseResponse {
-  data: Paginated<Lark.DataSource[], 'items'>
-}
-export interface GetSearchDataSourceItemResponse extends BaseResponse {
-  data?: {
-    /** 数据项实例 */
-    item: Lark.Item
-  }
-}
-export interface CreateSearchSchemaResponse extends BaseResponse {
-  data?: {
-    /** 数据范式实例 */
-    schema?: Lark.Schema
-  }
-}
-export interface PatchSearchSchemaResponse extends BaseResponse {
-  data?: {
-    /** 数据范式实例 */
-    schema?: Lark.Schema
-  }
-}
-export interface GetSearchSchemaResponse extends BaseResponse {
-  data?: {
-    /** 数据范式 */
-    schema?: Lark.Schema
-  }
-}
-export interface ParseDocumentAiResumeResponse extends BaseResponse {
-  data?: {
-    /** 简历信息 */
-    resumes?: Lark.Resume[]
-  }
-}
-export interface RecognizeDocumentAiVehicleInvoiceResponse extends BaseResponse {
-  data?: {
-    /** 机动车发票信息 */
-    vehicle_invoice?: Lark.VehicleInvoice
-  }
-}
-export interface RecognizeDocumentAiHealthCertificateResponse extends BaseResponse {
-  data?: {
-    /** 健康证信息 */
-    health_certificate?: Lark.HealthCertificate
-  }
-}
-export interface RecognizeDocumentAiHkmMainlandTravelPermitResponse extends BaseResponse {
-  data?: {
-    /** 港澳居民来往内地通行证信息 */
-    hkm_mainland_travel_permit?: Lark.HkmMainlandTravelPermit
-  }
-}
-export interface RecognizeDocumentAiTwMainlandTravelPermitResponse extends BaseResponse {
-  data?: {
-    /** 台湾居民来往大陆通行证信息 */
-    tw_mainland_travel_permit?: Lark.TwMainlandTravelPermit
-  }
-}
-export interface RecognizeDocumentAiChinesePassportResponse extends BaseResponse {
-  data?: {
-    /** 中国护照信息 */
-    chinese_passport?: Lark.ChinesePassport
-  }
-}
-export interface RecognizeDocumentAiBankCardResponse extends BaseResponse {
-  data?: {
-    /** 银行卡信息 */
-    bank_card?: Lark.BankCard
-  }
-}
-export interface RecognizeDocumentAiVehicleLicenseResponse extends BaseResponse {
-  data?: {
-    /** 行驶证信息 */
-    vehicle_license?: Lark.VehicleLicense
-  }
-}
-export interface RecognizeDocumentAiTrainInvoiceResponse extends BaseResponse {
-  data?: {
-    /** 火车票信息 */
-    train_invoices?: Lark.TrainInvoice[]
-  }
-}
-export interface RecognizeDocumentAiTaxiInvoiceResponse extends BaseResponse {
-  data?: {
-    /** 出租车票信息 */
-    taxi_invoices?: Lark.TaxiInvoice[]
-  }
-}
-export interface RecognizeDocumentAiIdCardResponse extends BaseResponse {
-  data?: {
-    /** 身份证信息 */
-    id_card?: Lark.IdCard
-  }
-}
-export interface RecognizeDocumentAiFoodProduceLicenseResponse extends BaseResponse {
-  data?: {
-    /** 食品生产许可证信息 */
-    food_produce_license?: Lark.FoodProduceLicense
-  }
-}
-export interface RecognizeDocumentAiFoodManageLicenseResponse extends BaseResponse {
-  data?: {
-    /** 食品经营许可证信息 */
-    food_manage_license?: Lark.FoodManageLicense
-  }
-}
-export interface RecognizeDocumentAiDrivingLicenseResponse extends BaseResponse {
-  data?: {
-    /** 驾驶证信息 */
-    driving_license?: Lark.DrvingLicense
-  }
-}
-export interface RecognizeDocumentAiVatInvoiceResponse extends BaseResponse {
-  data?: {
-    /** 增值税发票信息 */
-    vat_invoices?: Lark.VatInvoice[]
-  }
-}
-export interface RecognizeDocumentAiBusinessLicenseResponse extends BaseResponse {
-  data?: {
-    /** 营业执照信息 */
-    business_license?: Lark.BusinessLicense
-  }
-}
-export interface FieldExtractionDocumentAiContractResponse extends BaseResponse {
-  data?: {
-    /** 文件的唯一id */
-    file_id?: string
-    /** 总交易金额 */
-    price?: Lark.ExtractPrice
-    /** 期限相关信息，包括开始日期、结束日期、有效时长 */
-    time?: Lark.ExtractTime
-    /** 盖章份数 */
-    copy?: Lark.ExtractCopy
-    /** 币种 */
-    currency?: Lark.ExtractCurrency
-    /** 合同标题 */
-    header?: string
-    /** 主体信息 */
-    body_info?: Lark.BodyInfo[]
-    /** 银行信息 */
-    bank_info?: Lark.BankInfo[]
-  }
-}
-export interface RecognizeDocumentAiBusinessCardResponse extends BaseResponse {
-  data?: {
-    /** 名片信息 */
-    business_cards?: Lark.RecognizedEntities[]
-  }
-}
-export interface BasicRecognizeOpticalCharRecognitionImageResponse extends BaseResponse {
-  data?: {
-    /** 按区域识别，返回文本列表 */
-    text_list: string[]
-  }
-}
-export interface FileRecognizeSpeechToTextSpeechResponse extends BaseResponse {
-  data?: {
-    /** 语音识别后的文本信息 */
-    recognition_text: string
-  }
-}
-export interface StreamRecognizeSpeechToTextSpeechResponse extends BaseResponse {
-  data?: {
-    /** 16 位 String 随机串作为同一数据流的标识 */
-    stream_id: string
-    /** 数据流分片的序号，序号从 0 开始，每次请求递增 1 */
-    sequence_id: number
-    /** 语音流识别后的文本信息 */
-    recognition_text: string
-  }
-}
-export interface DetectTranslationTextResponse extends BaseResponse {
-  data?: {
-    /** 识别的文本语种，返回符合 ISO 693-1 标准 */
-    language: string
-  }
-}
-export interface TranslateTranslationTextResponse extends BaseResponse {
-  data?: {
-    /** 翻译后的文本 */
-    text: string
-  }
-}
-export interface ListAdminAdminDeptStatResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下一页分页的token */
-    page_token?: string
-    items?: Lark.AdminDeptStat[]
-  }
-}
-export interface ListAdminAdminUserStatResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下一页分页的token */
-    page_token?: string
-    items?: Lark.AdminUserStat[]
-  }
-}
-export interface CreateAdminBadgeResponse extends BaseResponse {
-  data?: {
-    /** 勋章的信息 */
-    badge?: Lark.Badge
-  }
-}
-export interface UpdateAdminBadgeResponse extends BaseResponse {
-  data?: {
-    /** 勋章信息 */
-    badge?: Lark.Badge
-  }
-}
-export interface CreateAdminBadgeImageResponse extends BaseResponse {
-  data?: {
-    /** 图片的key */
-    image_key?: string
-  }
-}
-export interface ListAdminBadgeResponse extends BaseResponse {
-  data: Paginated<Lark.Badge[], 'badges'>
-}
-export interface GetAdminBadgeResponse extends BaseResponse {
-  data?: {
-    /** 勋章信息 */
-    badge?: Lark.Badge
-  }
-}
-export interface CreateAdminBadgeGrantResponse extends BaseResponse {
-  data?: {
-    /** 授予名单的信息 */
-    grant?: Lark.Grant
-  }
-}
-export interface UpdateAdminBadgeGrantResponse extends BaseResponse {
-  data?: {
-    /** 授予名单 */
-    grant?: Lark.Grant
-  }
-}
-export interface ListAdminBadgeGrantResponse extends BaseResponse {
-  data: Paginated<Lark.Grant[], 'grants'>
-}
-export interface GetAdminBadgeGrantResponse extends BaseResponse {
-  data?: {
-    /** 授予名单信息 */
-    grant?: Lark.Grant
-  }
-}
-export interface ListEhrEmployeeResponse extends BaseResponse {
-  data: Paginated<Lark.Employee[], 'items'>
-}
-export interface SearchCorehrBasicInfoNationalityResponse extends BaseResponse {
-  data: Paginated<Lark.Nationality[], 'items'>
-}
-export interface SearchCorehrBasicInfoBankResponse extends BaseResponse {
-  data: Paginated<Lark.Bank[], 'items'>
-}
-export interface SearchCorehrBasicInfoBankBranchResponse extends BaseResponse {
-  data: Paginated<Lark.BankBranch[], 'items'>
-}
-export interface GetByParamCorehrCustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 自定义字段详情 */
-    data?: Lark.CustomField
-  }
-}
-export interface QueryCorehrCustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 自定义字段列表 */
-    items?: Lark.CustomField[]
-  }
-}
-export interface ListObjectApiNameCorehrCustomFieldResponse extends BaseResponse {
-  data?: {
-    /** 对象列表 */
-    items?: Lark.Object[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface SearchCorehrBasicInfoCountryRegionResponse extends BaseResponse {
-  data: Paginated<Lark.CountryRegion[], 'items'>
-}
-export interface SearchCorehrBasicInfoCountryRegionSubdivisionResponse extends BaseResponse {
-  data: Paginated<Lark.CountryRegionSubdivision[], 'items'>
-}
-export interface SearchCorehrBasicInfoCityResponse extends BaseResponse {
-  data: Paginated<Lark.City[], 'items'>
-}
-export interface SearchCorehrBasicInfoDistrictResponse extends BaseResponse {
-  data: Paginated<Lark.District[], 'items'>
-}
-export interface CreateCorehrEmployeeTypeResponse extends BaseResponse {
-  data?: {
-    employee_type?: Lark.EmployeeType
-  }
-}
-export interface PatchCorehrEmployeeTypeResponse extends BaseResponse {
-  data?: {
-    employee_type?: Lark.EmployeeType
-  }
-}
-export interface GetCorehrEmployeeTypeResponse extends BaseResponse {
-  data?: {
-    /** 雇员类型 */
-    employee_type?: Lark.EmployeeType
-  }
-}
-export interface ListCorehrEmployeeTypeResponse extends BaseResponse {
-  data?: {
-    /** 查询的雇员类型信息 */
-    items?: Lark.EmployeeType[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface CreateCorehrNationalIdTypeResponse extends BaseResponse {
-  data?: {
-    national_id_type?: Lark.NationalIdType
-  }
-}
-export interface PatchCorehrNationalIdTypeResponse extends BaseResponse {
-  data?: {
-    national_id_type?: Lark.NationalIdType
-  }
-}
-export interface GetCorehrNationalIdTypeResponse extends BaseResponse {
-  data?: {
-    /** 国家证件类型信息 */
-    national_id_type?: Lark.NationalIdType
-  }
-}
-export interface ListCorehrNationalIdTypeResponse extends BaseResponse {
-  data?: {
-    /** 查询的国家证件类型信息 */
-    items?: Lark.NationalIdType[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface CreateCorehrWorkingHoursTypeResponse extends BaseResponse {
-  data?: {
-    working_hours_type?: Lark.WorkingHoursType
-  }
-}
-export interface PatchCorehrWorkingHoursTypeResponse extends BaseResponse {
-  data?: {
-    working_hours_type?: Lark.WorkingHoursType
-  }
-}
-export interface GetCorehrWorkingHoursTypeResponse extends BaseResponse {
-  data?: {
-    /** 工时制度信息 */
-    working_hours_type?: Lark.WorkingHoursType
-  }
-}
-export interface ListCorehrWorkingHoursTypeResponse extends BaseResponse {
-  data?: {
-    /** 查询的工时制度信息 */
-    items?: Lark.WorkingHoursType[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface SearchCorehrBasicInfoCurrencyResponse extends BaseResponse {
-  data: Paginated<Lark.Currency[], 'items'>
-}
-export interface BatchGetCorehrEmployeeResponse extends BaseResponse {
-  data?: {
-    /** 查询的雇佣信息 */
-    items?: Lark.Employee[]
-  }
-}
-export interface SearchCorehrEmployeeResponse extends BaseResponse {
-  data: Paginated<Lark.Employee[], 'items'>
-}
-export interface CreateCorehrEmploymentResponse extends BaseResponse {
-  data?: {
-    employment?: Lark.EmploymentCreate
-  }
-}
-export interface PatchCorehrEmploymentResponse extends BaseResponse {
-  data?: {
-    employment?: Lark.Employment
-  }
-}
-export interface CreateCorehrPersonResponse extends BaseResponse {
-  data?: {
-    person?: Lark.PersonInfo
-  }
-}
-export interface PatchCorehrPersonResponse extends BaseResponse {
-  data?: {
-    person?: Lark.PersonInfo
-  }
-}
-export interface UploadCorehrPersonResponse extends BaseResponse {
-  data?: {
-    /** 上传文件ID */
-    id?: string
-  }
-}
-export interface CreateCorehrJobDataResponse extends BaseResponse {
-  data?: {
-    job_data?: Lark.JobData
-  }
-}
-export interface PatchCorehrJobDataResponse extends BaseResponse {
-  data?: {
-    job_data?: Lark.JobData
-  }
-}
-export interface GetCorehrJobDataResponse extends BaseResponse {
-  data?: {
-    /** 任职信息 */
-    job_data?: Lark.JobData
-  }
-}
-export interface QueryCorehrEmployeesJobDataResponse extends BaseResponse {
-  data?: {
-    /** 任职信息 */
-    items?: Lark.EmployeeJobData[]
-    /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-    page_token?: string
-    /** 是否还有更多项 */
-    has_more?: boolean
-  }
-}
-export interface BatchGetCorehrEmployeesJobDataResponse extends BaseResponse {
-  data?: {
-    /** 查询的雇佣信息 */
-    items?: Lark.EmployeeJobData[]
-  }
-}
-export interface ListCorehrJobDataResponse extends BaseResponse {
-  data?: {
-    /** 查询的任职信息 */
-    items?: Lark.JobData[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface ParentsCorehrDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.DepartmentParents[], 'items'>
-}
-export interface SearchCorehrDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.Department[], 'items'>
-}
-export interface CreateCorehrDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.DepartmentCreate
-  }
-}
-export interface PatchCorehrDepartmentResponse extends BaseResponse {
-  data?: {
-    department?: Lark.Department
-  }
-}
-export interface GetCorehrDepartmentResponse extends BaseResponse {
-  data?: {
-    /** 部门信息 */
-    department?: Lark.Department
-  }
-}
-export interface BatchGetCorehrDepartmentResponse extends BaseResponse {
-  data?: {
-    /** 查询的部门信息 */
-    items?: Lark.Department[]
-  }
-}
-export interface ListCorehrDepartmentResponse extends BaseResponse {
-  data?: {
-    /** 查询的部门信息 */
-    items?: Lark.Department[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface BatchGetCorehrLocationResponse extends BaseResponse {
-  data?: {
-    /** 查询的地点信息 */
-    items?: Lark.Location[]
-  }
-}
-export interface CreateCorehrLocationResponse extends BaseResponse {
-  data?: {
-    location?: Lark.Location
-  }
-}
-export interface GetCorehrLocationResponse extends BaseResponse {
-  data?: {
-    /** 地点信息 */
-    location?: Lark.Location
-  }
-}
-export interface ListCorehrLocationResponse extends BaseResponse {
-  data?: {
-    /** 查询的地点信息 */
-    items?: Lark.Location[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrCompanyResponse extends BaseResponse {
-  data?: {
-    /** 公司信息 */
-    company?: Lark.Company
-  }
-}
-export interface ListCorehrCompanyResponse extends BaseResponse {
-  data?: {
-    /** 查询的公司信息 */
-    items?: Lark.Company[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface BatchGetCorehrCompanyResponse extends BaseResponse {
-  data?: {
-    /** 查询的公司信息 */
-    items?: Lark.Company[]
-  }
-}
-export interface CreateCorehrCompanyResponse extends BaseResponse {
-  data?: {
-    company?: Lark.Company
-  }
-}
-export interface PatchCorehrCompanyResponse extends BaseResponse {
-  data?: {
-    company?: Lark.Company
-  }
-}
-export interface CreateCorehrCostCenterResponse extends BaseResponse {
-  data?: {
-    cost_center?: Lark.CostCenter
-  }
-}
-export interface PatchCorehrCostCenterResponse extends BaseResponse {
-  data?: {
-    cost_center?: Lark.CostCenter
-  }
-}
-export interface SearchCorehrCostCenterResponse extends BaseResponse {
-  data?: {
-    /** 成本中心信息 */
-    items?: Lark.CostCenterVersion[]
-    /** 下一页页码 */
-    page_token?: string
-    /** 是否有下一页 */
-    has_more?: boolean
-  }
-}
-export interface CreateCorehrCostCenterVersionResponse extends BaseResponse {
-  data?: {
-    version?: Lark.CostCenterVersion
-  }
-}
-export interface PatchCorehrCostCenterVersionResponse extends BaseResponse {
-  data?: {
-    version?: Lark.CostCenterVersion
-  }
-}
-export interface BatchGetCorehrJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 查询的职级信息 */
-    items?: Lark.JobLevel[]
-  }
-}
-export interface CreateCorehrJobLevelResponse extends BaseResponse {
-  data?: {
-    job_level?: Lark.JobLevel
-  }
-}
-export interface PatchCorehrJobLevelResponse extends BaseResponse {
-  data?: {
-    job_level?: Lark.JobLevel
-  }
-}
-export interface GetCorehrJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 职务级别信息 */
-    job_level?: Lark.JobLevel
-  }
-}
-export interface ListCorehrJobLevelResponse extends BaseResponse {
-  data?: {
-    /** 查询的职务级别信息 */
-    items?: Lark.JobLevel[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface BatchGetCorehrJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 查询的序列信息 */
-    items?: Lark.JobFamily[]
-  }
-}
-export interface CreateCorehrJobFamilyResponse extends BaseResponse {
-  data?: {
-    job_family?: Lark.JobFamily
-  }
-}
-export interface PatchCorehrJobFamilyResponse extends BaseResponse {
-  data?: {
-    job_family?: Lark.JobFamily
-  }
-}
-export interface GetCorehrJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 职务序列信息 */
-    job_family?: Lark.JobFamily
-  }
-}
-export interface ListCorehrJobFamilyResponse extends BaseResponse {
-  data?: {
-    /** 查询的职务序列信息 */
-    items?: Lark.JobFamily[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface CreateCorehrJobResponse extends BaseResponse {
-  data?: {
-    job?: Lark.Job
-  }
-}
-export interface PatchCorehrJobResponse extends BaseResponse {
-  data?: {
-    job?: Lark.Job
-  }
-}
-export interface GetCorehrJobResponse extends BaseResponse {
-  data?: {
-    /** 职务信息 */
-    job?: Lark.Job
-  }
-}
-export interface ListCorehrJobResponse extends BaseResponse {
-  data?: {
-    /** 查询的职务信息 */
-    items?: Lark.Job[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrJobResponse extends BaseResponse {
-  data?: {
-    /** 职务信息 */
-    job?: Lark.Job
-  }
-}
-export interface ListCorehrJobResponse extends BaseResponse {
-  data?: {
-    /** 查询的职务信息 */
-    items?: Lark.Job[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface CreateCorehrPreHireResponse extends BaseResponse {
-  data?: {
-    /** 待入职 ID */
-    pre_hire_id?: string
-  }
-}
-export interface PatchCorehrPreHireResponse extends BaseResponse {
-  data?: {
-    pre_hire?: Lark.PreHire
-  }
-}
-export interface GetCorehrPreHireResponse extends BaseResponse {
-  data?: {
-    /** 待入职信息 */
-    pre_hire?: Lark.PreHire
-  }
-}
-export interface ListCorehrPreHireResponse extends BaseResponse {
-  data?: {
-    /** 查询的待入职信息 */
-    items?: Lark.PreHireQuery[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface SearchCorehrContractResponse extends BaseResponse {
-  data: Paginated<Lark.Contract[], 'items'>
-}
-export interface CreateCorehrContractResponse extends BaseResponse {
-  data?: {
-    contract?: Lark.Contract
-  }
-}
-export interface PatchCorehrContractResponse extends BaseResponse {
-  data?: {
-    contract?: Lark.Contract
-  }
-}
-export interface GetCorehrContractResponse extends BaseResponse {
-  data?: {
-    /** 合同信息 */
-    contract?: Lark.Contract
-  }
-}
-export interface ListCorehrContractResponse extends BaseResponse {
-  data?: {
-    /** 查询的合同信息 */
-    items?: Lark.Contract[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface SearchCorehrProbationResponse extends BaseResponse {
-  data: Paginated<Lark.ProbationInfo[], 'items'>
-}
-export interface CreateCorehrProbationAssessmentResponse extends BaseResponse {
-  data?: {
-    /** 创建的试用期考核记录 ID 列表，有序返回 */
-    assessment_ids?: string[]
-  }
-}
-export interface QueryCorehrTransferReasonResponse extends BaseResponse {
-  data?: {
-    /** 异动原因列表 */
-    items?: Lark.TransferReason[]
-  }
-}
-export interface QueryCorehrTransferTypeResponse extends BaseResponse {
-  data?: {
-    /** 异动类型列表 */
-    items?: Lark.TransferType[]
-  }
-}
-export interface CreateCorehrJobChangeResponse extends BaseResponse {
-  data?: Lark.JobChange
-}
-export interface SearchCorehrJobChangeResponse extends BaseResponse {
-  data: Paginated<Lark.JobChange[], 'items'>
-}
-export interface QueryCorehrOffboardingResponse extends BaseResponse {
-  data?: {
-    /** 离职原因列表 */
-    items?: Lark.OffboardingReason[]
-  }
-}
-export interface SubmitCorehrOffboardingResponse extends BaseResponse {
-  data?: {
-    /** 离职记录 id */
-    offboarding_id?: string
-    /** 雇员 id */
-    employment_id?: string
-    /** 离职原因 */
-    offboarding_reason_unique_identifier?: string
-    /** 离职日期 */
-    offboarding_date?: string
-    /** 离职原因说明 */
-    offboarding_reason_explanation?: string
-    /** 是否加入离职屏蔽名单 */
-    add_block_list?: boolean
-    /** 屏蔽原因 */
-    block_reason?: string
-    /** 屏蔽原因说明 */
-    block_reason_explanation?: string
-    /** 创建时间 */
-    created_time?: string
-  }
-}
-export interface SearchCorehrOffboardingResponse extends BaseResponse {
-  data: Paginated<Lark.Offboarding[], 'items'>
-}
-export interface CreateCorehrLeaveGrantingRecordResponse extends BaseResponse {
-  data?: {
-    /** 假期授予记录 */
-    leave_granting_record?: Lark.LeaveGrantingRecord
-  }
-}
-export interface LeaveTypesCorehrLeaveResponse extends BaseResponse {
-  data?: {
-    /** 假期类型列表 */
-    leave_type_list?: Lark.LeaveType[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface LeaveBalancesCorehrLeaveResponse extends BaseResponse {
-  data?: {
-    /** 员工假期余额信息列表 */
-    employment_leave_balance_list?: Lark.EmploymentLeaveBalance[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface LeaveRequestHistoryCorehrLeaveResponse extends BaseResponse {
-  data?: {
-    /** 请假记录信息列表 */
-    leave_request_list?: Lark.LeaveRequest[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface BatchGetCorehrEmployeesBpResponse extends BaseResponse {
-  data?: {
-    /** 员工直属 BP 信息，当员工所在部门、属地无 BP 时，会上钻找到最近的 BP */
-    employment_direct_bps?: Lark.EmploymentBp[]
-    /** 员工全部 BP 信息 */
-    employment_all_bps?: Lark.EmploymentBp[]
-  }
-}
-export interface GetByDepartmentCorehrBpResponse extends BaseResponse {
-  data?: {
-    /** 部门 HRBP 信息，依次为部门及各层级上级部门 */
-    items?: Lark.DepartmentHrbp[]
-  }
-}
-export interface ListCorehrBpResponse extends BaseResponse {
-  data: Paginated<Lark.Bp[], 'items'>
-}
-export interface QueryCorehrSecurityGroupResponse extends BaseResponse {
-  data?: {
-    /** HRBP/属地 BP 信息 */
-    hrbp_list?: Lark.Hrbp[]
-  }
-}
-export interface SearchCorehrAssignedUserResponse extends BaseResponse {
-  data?: {
-    /** 用户授权信息 */
-    items?: Lark.RoleAuthorization[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface ListCorehrSecurityGroupResponse extends BaseResponse {
-  data?: {
-    /** 查询的用户角色信息 */
-    items?: Lark.SecurityGroup[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface ListCorehrProcessResponse extends BaseResponse {
-  data: Paginated<string[], 'process_ids'>
-}
-export interface GetCorehrProcessResponse extends BaseResponse {
-  data?: {
-    /** 流程实例ID */
-    process_id?: string
-    /** 流程状态 */
-    status?: number
-    /** 业务类型ID */
-    flow_template_id?: string
-    /** 业务类型名称 */
-    flow_template_name?: Lark.DataengineI18n
-    /** 流程定义ID */
-    flow_definition_id?: string
-    /** 流程定义名称 */
-    flow_definition_name?: Lark.DataengineI18n
-    /** 流程发起人ID */
-    initiator_id?: string
-    /** 流程发起人姓名 */
-    initiator_name?: Lark.DataengineI18n
-    /** 流程发起时间，Unix毫秒时间戳 */
-    create_time?: string
-    /** 流程结束时间，Unix毫秒时间戳 */
-    complete_time?: string
-    /** 发起单据地址 */
-    start_links?: Lark.ProcessLink
-    /** 流程摘要，会随着流程流转发生变化 */
-    abstracts?: Lark.ProcessAbstractItem[]
-    /** 待办列表 */
-    todos?: Lark.ProcessTodoItem[]
-    /** 抄送列表 */
-    cc_list?: Lark.ProcessCcItem[]
-    /** 已办列表 */
-    done_list?: Lark.ProcessDoneItem[]
-  }
-}
-export interface GetCorehrProcessFormVariableDataResponse extends BaseResponse {
-  data?: {
-    /** 流程变量 */
-    field_variable_values?: Lark.FormFieldVariable[]
-  }
-}
-export interface MatchCorehrCompensationStandardResponse extends BaseResponse {
-  data?: Lark.CpstMatchItem
-}
-export interface CombinedCreateHireJobResponse extends BaseResponse {
-  data?: Lark.CombinedJobResult
-}
-export interface GetHireJobResponse extends BaseResponse {
-  data?: {
-    /** 职位数据 */
-    job?: Lark.Job
-  }
-}
-export interface ConfigHireJobResponse extends BaseResponse {
-  data?: {
-    job_config?: Lark.JobConfigResult
-  }
-}
-export interface ListHireJobResponse extends BaseResponse {
-  data?: {
-    /** 是否还有更多项 */
-    has_more?: boolean
-    /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-    page_token?: string
-    /** 列表 */
-    items?: Lark.Job[]
-  }
-}
-export interface CombinedUpdateHireJobResponse extends BaseResponse {
-  data?: Lark.CombinedJobResult
-}
-export interface UpdateConfigHireJobResponse extends BaseResponse {
-  data?: {
-    job_config?: Lark.JobConfigResult
-  }
-}
-export interface ListHireJobTypeResponse extends BaseResponse {
-  data: Paginated<Lark.JobTypeInfo[], 'items'>
-}
-export interface RecruiterHireJobResponse extends BaseResponse {
-  data?: {
-    /** 职位负责人 */
-    info?: Lark.JobRecruiter2
-  }
-}
-export interface CreateHireJobRequirementResponse extends BaseResponse {
-  data?: {
-    job_requirement?: Lark.JobRequirementDto
-  }
-}
-export interface ListHireJobRequirementResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-    /** 查询的招聘需求信息 */
-    items?: Lark.JobRequirementDto[]
-  }
-}
-export interface ListHireJobRequirementSchemaResponse extends BaseResponse {
-  data?: {
-    /** 列表 */
-    items?: Lark.JobRequirementSchema[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface ListHireJobProcessResponse extends BaseResponse {
-  data?: {
-    /** 是否还有更多项 */
-    has_more?: boolean
-    /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-    page_token?: string
-    /** 列表 */
-    items?: Lark.JobProcesses[]
-  }
-}
-export interface ListHireRegistrationSchemaResponse extends BaseResponse {
-  data: Paginated<Lark.RegistrationSchema[], 'items'>
-}
-export interface ListHireReferralWebsiteJobPostResponse extends BaseResponse {
-  data: Paginated<Lark.PortalJobPost[], 'items'>
-}
-export interface GetHireReferralWebsiteJobPostResponse extends BaseResponse {
-  data?: {
-    job_post?: Lark.PortalJobPost
-  }
-}
-export interface GetByApplicationHireReferralResponse extends BaseResponse {
-  data?: {
-    /** 内推信息 */
-    referral?: Lark.Referral
-  }
-}
-export interface CreateHireExternalApplicationResponse extends BaseResponse {
-  data?: {
-    external_application?: Lark.ExternalApplication
-  }
-}
-export interface UpdateHireExternalApplicationResponse extends BaseResponse {
-  data?: {
-    external_application?: Lark.ExternalApplication
-  }
-}
-export interface DeleteHireExternalApplicationResponse extends BaseResponse {
-  data?: {
-    external_application?: Lark.ExternalApplication
-  }
-}
-export interface CreateHireExternalInterviewResponse extends BaseResponse {
-  data?: {
-    external_interview?: Lark.ExternalInterview
-  }
-}
-export interface CreateHireExternalInterviewAssessmentResponse extends BaseResponse {
-  data?: {
-    external_interview_assessment?: Lark.ExternalInterviewAssessment
-  }
-}
-export interface CreateHireExternalBackgroundCheckResponse extends BaseResponse {
-  data?: {
-    external_background_check?: Lark.ExternalBackgroundCheck
-  }
-}
-export interface AddToFolderHireTalentResponse extends BaseResponse {
-  data?: {
-    /** 人才 ID 列表 */
-    talent_id_list?: string[]
-    /** 文件夹 ID */
-    folder_id?: string
-  }
-}
-export interface ListHireTalentFolderResponse extends BaseResponse {
-  data: Paginated<Lark.TalentFolder[], 'items'>
-}
-export interface BatchGetIdHireTalentResponse extends BaseResponse {
-  data?: {
-    /** 人才信息列表 */
-    talent_list?: Lark.TalentBatchInfo[]
-  }
-}
-export interface ListHireTalentResponse extends BaseResponse {
-  data?: {
-    /** 是否还有更多项 */
-    has_more?: boolean
-    /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-    page_token?: string
-    /** 列表 */
-    items?: Lark.Talent[]
-  }
-}
-export interface QueryHireTalentObjectResponse extends BaseResponse {
-  data?: {
-    items?: Lark.CommonSchema[]
-  }
-}
-export interface GetHireTalentResponse extends BaseResponse {
-  data?: {
-    /** 人才信息 */
-    talent?: Lark.Talent
-  }
-}
-export interface CreateHireApplicationResponse extends BaseResponse {
-  data?: {
-    /** 投递ID */
-    id?: string
-  }
-}
-export interface GetHireApplicationResponse extends BaseResponse {
-  data?: {
-    /** 投递数据 */
-    application?: Lark.Application
-  }
-}
-export interface ListHireApplicationResponse extends BaseResponse {
-  data?: {
-    /** 投递数据列表 */
-    items?: string[]
-    /** 游标, 翻下一页数据时使用 */
-    page_token?: string
-    /** 是否还有下一页数据 */
-    has_more?: boolean
-  }
-}
-export interface ListHireEvaluationResponse extends BaseResponse {
-  data: Paginated<Lark.Evaluation[], 'items'>
-}
-export interface ListHireQuestionnaireResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-    /** 满意度评价列表 */
-    items?: Lark.Questionnaire[]
-  }
-}
-export interface ListHireInterviewResponse extends BaseResponse {
-  data?: {
-    /** 面试列表 */
-    items?: Lark.InterviewExtend[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface CreateHireOfferResponse extends BaseResponse {
-  data?: Lark.OfferInfo
-}
-export interface OfferHireApplicationResponse extends BaseResponse {
-  data?: {
-    offer?: Lark.ApplicationOffer
-  }
-}
-export interface GetHireOfferResponse extends BaseResponse {
-  data?: {
-    /** Offer 详情 */
-    offer?: Lark.Offer
-  }
-}
-export interface ListHireOfferResponse extends BaseResponse {
-  data?: {
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-    /** Offer 列表 */
-    items?: Lark.OfferListInfo[]
-  }
-}
-export interface InternOfferStatusHireOfferResponse extends BaseResponse {
-  data?: Lark.InternOfferStatus
-}
-export interface TransferOnboardHireApplicationResponse extends BaseResponse {
-  data?: {
-    /** employee */
-    employee?: Lark.Employee
-  }
-}
-export interface PatchHireEmployeeResponse extends BaseResponse {
-  data?: {
-    /** 员工信息 */
-    employee?: Lark.Employee
-  }
-}
-export interface GetByApplicationHireEmployeeResponse extends BaseResponse {
-  data?: {
-    /** 员工信息 */
-    employee?: Lark.Employee
-  }
-}
-export interface GetHireEmployeeResponse extends BaseResponse {
-  data?: {
-    /** 员工信息 */
-    employee?: Lark.Employee
-  }
-}
-export interface CreateHireNoteResponse extends BaseResponse {
-  data?: {
-    note?: Lark.Note
-  }
-}
-export interface PatchHireNoteResponse extends BaseResponse {
-  data?: {
-    /** 备注数据 */
-    note?: Lark.Note
-  }
-}
-export interface GetHireNoteResponse extends BaseResponse {
-  data?: {
-    /** 备注数据 */
-    note?: Lark.Note
-  }
-}
-export interface ListHireNoteResponse extends BaseResponse {
-  data?: {
-    /** 备注数据列表 */
-    items?: Lark.Note[]
-    /** 是否还有下一页数据 */
-    has_more?: boolean
-    /** 游标, 翻下一页数据时使用 */
-    page_token?: string
-  }
-}
-export interface ListHireResumeSourceResponse extends BaseResponse {
-  data: Paginated<Lark.ResumeSource[], 'items'>
-}
-export interface CreateHireReferralAccountResponse extends BaseResponse {
-  data?: {
-    /** 账号信息 */
-    account?: Lark.Account
-  }
-}
-export interface DeactivateHireReferralAccountResponse extends BaseResponse {
-  data?: {
-    /** 账号信息 */
-    account?: Lark.Account
-  }
-}
-export interface WithdrawHireReferralAccountResponse extends BaseResponse {
-  data?: {
-    /** 请求时传入的提现单ID */
-    external_order_id?: string
-    /** 交易时间戳，需要保存，用于统一交易时间，方便对账 */
-    trans_time?: string
-    /** 本次提现金额明细 */
-    withdrawal_details?: Lark.BonusAmount
-  }
-}
-export interface ReconciliationHireReferralAccountResponse extends BaseResponse {
-  data?: {
-    /** 核对失败的信息 */
-    check_failed_list?: Lark.CheckFailedAccountInfo[]
-  }
-}
-export interface GetHireAttachmentResponse extends BaseResponse {
-  data?: {
-    /** 附件信息 */
-    attachment?: Lark.Attachment
-  }
-}
-export interface PreviewHireAttachmentResponse extends BaseResponse {
-  data?: {
-    /** 预览链接 */
-    url: string
-  }
-}
-export interface CreateOkrPeriodResponse extends BaseResponse {
-  data?: {
-    /** 周期id */
-    period_id?: string
-    /** 周期起始年月 */
-    start_month?: string
-    /** 周期结束年月 */
-    end_month?: string
-  }
-}
-export interface PatchOkrPeriodResponse extends BaseResponse {
-  data?: {
-    /** 周期规则id */
-    period_id?: string
-    /** 周期显示状态 */
-    status?: number
-  }
-}
-export interface ListOkrPeriodResponse extends BaseResponse {
-  data?: {
-    /** 分页标志 */
-    page_token?: string
-    /** 是否有更多 */
-    has_more?: boolean
-    /** 数据项 */
-    items?: Lark.Period[]
-  }
-}
-export interface ListOkrPeriodRuleResponse extends BaseResponse {
-  data?: {
-    /** 指标库列表 */
-    period_rules?: Lark.PeriodRule[]
-  }
-}
-export interface ListOkrUserOkrResponse extends BaseResponse {
-  data?: {
-    /** OKR周期总数 */
-    total?: number
-    /** OKR 列表 */
-    okr_list?: Lark.OkrBatch[]
-  }
-}
-export interface BatchGetOkrResponse extends BaseResponse {
-  data?: {
-    /** OKR 列表 */
-    okr_list?: Lark.OkrBatch[]
-  }
-}
-export interface CreateOkrProgressRecordResponse extends BaseResponse {
-  data?: Lark.ProgressRecord
-}
-export interface UpdateOkrProgressRecordResponse extends BaseResponse {
-  data?: Lark.ProgressRecord
-}
-export interface GetOkrProgressRecordResponse extends BaseResponse {
-  data?: Lark.ProgressRecord
-}
-export interface UploadOkrImageResponse extends BaseResponse {
-  data?: Lark.ImageInfo
-}
-export interface CreateHumanAuthenticationIdentityResponse extends BaseResponse {
-  data?: {
-    /** uid of user bind authentication */
-    verify_uid: string
-  }
-}
-export interface CreateAcsVisitorResponse extends BaseResponse {
-  data?: {
-    /** 访客的id */
-    visitor_id: string
-  }
-}
-export interface GetAcsRuleExternalResponse extends BaseResponse {
-  data?: {
-    /** 设备权限组信息 */
-    rules: Lark.Rule[]
-  }
-}
-export interface CreateAcsRuleExternalResponse extends BaseResponse {
-  data?: {
-    /** 权限组id */
-    rule_id: string
-  }
-}
-export interface GetAcsUserResponse extends BaseResponse {
-  data?: {
-    /** 门禁用户信息 */
-    user?: Lark.User
-  }
-}
-export interface ListAcsUserResponse extends BaseResponse {
-  data: Paginated<Lark.User[], 'items'>
-}
-export interface ListAcsDeviceResponse extends BaseResponse {
-  data?: {
-    items?: Lark.Device[]
-  }
-}
-export interface ListAcsAccessRecordResponse extends BaseResponse {
-  data: Paginated<Lark.AccessRecord[], 'items'>
-}
-export interface ListPerformanceSemesterResponse extends BaseResponse {
-  data?: {
-    /** 周期meta信息列表 */
-    items?: Lark.Semester[]
-  }
-}
-export interface FindByUserListPerformanceStageTaskResponse extends BaseResponse {
-  data?: {
-    /** 周期基础信息 */
-    base?: Lark.SemesterBaseInfo
-    /** 周期环节信息列表 */
-    items?: Lark.StageTask[]
-  }
-}
-export interface FindByPagePerformanceStageTaskResponse extends BaseResponse {
-  data?: {
-    /** 周期基础信息 */
-    base?: Lark.SemesterBaseInfo
-    /** 周期环节信息列表 */
-    items?: Lark.StageTask[]
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下一页分页的token */
-    page_token?: string
-  }
-}
-export interface QueryPerformanceReviewDataResponse extends BaseResponse {
-  data?: Lark.ReviewData
-}
-export interface CreateLingoDraftResponse extends BaseResponse {
-  data?: {
-    draft?: Lark.Draft
-  }
-}
-export interface UpdateLingoDraftResponse extends BaseResponse {
-  data?: {
-    draft?: Lark.Draft
-  }
-}
-export interface CreateLingoEntityResponse extends BaseResponse {
-  data?: {
-    entity?: Lark.Entity
-  }
-}
-export interface UpdateLingoEntityResponse extends BaseResponse {
-  data?: {
-    entity?: Lark.Entity
-  }
-}
-export interface GetLingoEntityResponse extends BaseResponse {
-  data?: {
-    /** 实体词 */
-    entity?: Lark.Entity
-  }
-}
-export interface ListLingoEntityResponse extends BaseResponse {
-  data: Paginated<Lark.Entity[], 'entities'>
-}
-export interface MatchLingoEntityResponse extends BaseResponse {
-  data?: {
-    /** 匹配结果 */
-    results?: Lark.MatchInfo[]
-  }
-}
-export interface SearchLingoEntityResponse extends BaseResponse {
-  data: Paginated<Lark.Entity[], 'entities'>
-}
-export interface HighlightLingoEntityResponse extends BaseResponse {
-  data?: {
-    /** 返回识别到的实体词信息 */
-    phrases?: Lark.Phrase[]
-  }
-}
-export interface ListLingoClassificationResponse extends BaseResponse {
-  data: Paginated<Lark.Classification[], 'items'>
-}
-export interface ListLingoRepoResponse extends BaseResponse {
-  data?: {
-    /** 词库列表 */
-    items?: Lark.Repo[]
-  }
-}
-export interface UploadLingoFileResponse extends BaseResponse {
-  data?: {
-    /** 文件 token */
-    file_token?: string
-  }
-}
-export interface ListDataSecurityAndComplianceOpenapiLogResponse extends BaseResponse {
-  data?: {
-    /** openapi日志列表 */
-    items?: Lark.OpenapiLog[]
-    /** 分页标记 */
-    page_token?: string
-    /** 是否有更多数据 */
-    has_more?: boolean
-  }
-}
-export interface ListAdminAuditInfoResponse extends BaseResponse {
-  data: Paginated<Lark.AuditInfo[], 'items'>
-}
-export interface GetMinutesMinuteStatisticsResponse extends BaseResponse {
-  data?: {
-    /** 妙记浏览信息统计 */
-    statistics?: Lark.Statictics
-  }
-}
-export interface GetMinutesMinuteResponse extends BaseResponse {
-  data?: {
-    /** 妙记基本信息 */
-    minute?: Lark.Minute
-  }
-}
-export interface SearchWorkplaceWorkplaceAccessDataResponse extends BaseResponse {
-  data?: {
-    /** 工作台访问数据 */
-    items?: Lark.WorkplaceAccessData[]
-    /** 是否还有下一页数据 */
-    has_more?: boolean
-    /** 分页标记，存在下一页时返回。 */
-    page_token?: string
-  }
-}
-export interface SearchWorkplaceCustomWorkplaceAccessDataResponse extends BaseResponse {
-  data?: {
-    /** 定制工作台访问数据 */
-    items?: Lark.CustomWorkplaceAccessData[]
-    /** 是否还有下一页数据 */
-    has_more?: boolean
-    /** 分页标记，存在下一页时返回 */
-    page_token?: string
-  }
-}
-export interface SearchWorkplaceWorkplaceBlockAccessDataResponse extends BaseResponse {
-  data?: {
-    /** 工作台中block的访问数据 */
-    items?: Lark.BlockAccessData[]
-    /** 是否还有下一页数据 */
-    has_more?: boolean
-    /** 分页标记，存在下一页时返回 */
-    page_token?: string
-  }
-}
-export interface FavouriteApplicationResponse extends BaseResponse {
-  data: Paginated<Lark.Application[], 'app_list'>
-}
-export interface RecommendApplicationResponse extends BaseResponse {
-  data: Paginated<Lark.Application[], 'app_list'>
-}
-export interface ListApplicationAppRecommendRuleResponse extends BaseResponse {
-  data: Paginated<Lark.AppRecommendRule[], 'rules'>
-}
-export interface QueryReportRuleResponse extends BaseResponse {
-  data?: {
-    /** 规则列表 */
-    rules?: Lark.Rule[]
-  }
-}
-export interface QueryReportTaskResponse extends BaseResponse {
-  data?: {
-    /** 任务列表 */
-    items?: Lark.Task[]
-    /** 是否有下一页数据 */
-    has_more?: boolean
-    /** 下一页分页的token */
-    page_token?: string
-  }
-}
-export interface CreateAuthenAccessTokenResponse extends BaseResponse {
-  data?: Lark.UserAccessTokenInfo
-}
-export interface CreateAuthenRefreshAccessTokenResponse extends BaseResponse {
-  data?: Lark.UserAccessTokenInfo
-}
-export interface CreateBaikeDraftResponse extends BaseResponse {
-  data?: {
-    draft?: Lark.Draft
-  }
-}
-export interface UpdateBaikeDraftResponse extends BaseResponse {
-  data?: {
-    draft?: Lark.Draft
-  }
-}
-export interface CreateBaikeEntityResponse extends BaseResponse {
-  data?: {
-    entity?: Lark.Entity
-  }
-}
-export interface UpdateBaikeEntityResponse extends BaseResponse {
-  data?: {
-    entity?: Lark.Entity
-  }
-}
-export interface GetBaikeEntityResponse extends BaseResponse {
-  data?: {
-    /** 实体词 */
-    entity?: Lark.Entity
-  }
-}
-export interface ListBaikeEntityResponse extends BaseResponse {
-  data: Paginated<Lark.Entity[], 'entities'>
-}
-export interface MatchBaikeEntityResponse extends BaseResponse {
-  data?: {
-    /** 匹配结果 */
-    results?: Lark.MatchInfo[]
-  }
-}
-export interface SearchBaikeEntityResponse extends BaseResponse {
-  data: Paginated<Lark.Entity[], 'entities'>
-}
-export interface HighlightBaikeEntityResponse extends BaseResponse {
-  data?: {
-    /** 返回识别到的实体词信息 */
-    phrases?: Lark.Phrase[]
-  }
-}
-export interface ExtractBaikeEntityResponse extends BaseResponse {
-  data?: {
-    /** 文本中可能的成为百科词条的实体词 */
-    entity_word: Lark.EntityWord[]
-  }
-}
-export interface ListBaikeClassificationResponse extends BaseResponse {
-  data: Paginated<Lark.Classification[], 'items'>
-}
-export interface UploadBaikeFileResponse extends BaseResponse {
-  data?: {
-    /** 文件 token */
-    file_token?: string
-  }
-}
-export interface ListContactUserResponse extends BaseResponse {
-  data: Paginated<Lark.User[], 'items'>
-}
-export interface UpdateContactUserResponse extends BaseResponse {
-  data?: {
-    user?: Lark.User
-  }
-}
-export interface ListContactDepartmentResponse extends BaseResponse {
-  data: Paginated<Lark.Department[], 'items'>
-}
-export interface ListBitableAppTableRecordResponse extends BaseResponse {
-  data: Paginated<Lark.AppTableRecord[], 'items'>
-}
-export interface ListHireApplicationInterviewResponse extends BaseResponse {
-  data?: {
-    /** 分页标志 */
-    page_token?: string
-    /** 是否有更多 */
-    has_more?: boolean
-    /** 面试列表 */
-    items?: Lark.Interview[]
-  }
-}
-export interface GetHireJobManagerResponse extends BaseResponse {
-  data?: {
-    /** 职位负责人 */
-    info?: Lark.JobManager
-  }
-}
-export interface GetHireOfferSchemaResponse extends BaseResponse {
-  data?: Lark.OfferSchema
-}
-export interface ListCorehrSubregionResponse extends BaseResponse {
-  data?: {
-    /** 城市/区域信息 */
-    items?: Lark.Subregion[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrSubregionResponse extends BaseResponse {
-  data?: {
-    /** 城市/区域信息 */
-    subregion?: Lark.Subregion
-  }
-}
-export interface ListCorehrSubdivisionResponse extends BaseResponse {
-  data?: {
-    /** 省份/行政区信息 */
-    items?: Lark.Subdivision[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrSubdivisionResponse extends BaseResponse {
-  data?: {
-    /** 国家/地址信息 */
-    subdivision?: Lark.Subdivision
-  }
-}
-export interface ListCorehrCountryRegionResponse extends BaseResponse {
-  data?: {
-    /** 国家/地址信息 */
-    items?: Lark.CountryRegion[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrCountryRegionResponse extends BaseResponse {
-  data?: {
-    /** 国家/地址信息 */
-    country_region?: Lark.CountryRegion
-  }
-}
-export interface ListCorehrCurrencyResponse extends BaseResponse {
-  data?: {
-    /** 货币信息 */
-    items?: Lark.Currency[]
-    /** 是否有下一页 */
-    has_more?: boolean
-    /** 下一页页码 */
-    page_token?: string
-  }
-}
-export interface GetCorehrCurrencyResponse extends BaseResponse {
-  data?: {
-    /** 货币信息 */
-    currency?: Lark.Currency
-  }
-}
-export interface GetCorehrPersonResponse extends BaseResponse {
-  data?: {
-    /** 个人信息 */
-    person?: Lark.Person
-  }
-}
-export interface SetCheckboardAccessCodeVcRoomConfigResponse extends BaseResponse {
-  data?: {
-    /** 部署访问码 */
-    access_code?: string
-  }
-}
-export interface SetRoomAccessCodeVcRoomConfigResponse extends BaseResponse {
-  data?: {
-    /** 部署访问码 */
-    access_code?: string
-  }
-}
-export interface QueryVcRoomConfigResponse extends BaseResponse {
-  data?: Lark.RoomConfig
-}
+export interface CreateAuthenOidcAccessTokenResponse extends Lark.TokenInfo {}
+export interface CreateAuthenOidcRefreshAccessTokenResponse extends Lark.TokenInfo {}
+export interface GetAuthenUserInfoResponse extends Lark.UserInfo {}
+export interface QueryPassportSessionResponse {
+  mask_sessions?: Lark.MaskSession[]
+}
+export interface ListContactScopeResponse extends Paginated<string[], 'department_ids'> {}
+export interface CreateContactUserResponse {
+  user?: Lark.User
+}
+export interface PatchContactUserResponse {
+  user?: Lark.User
+}
+export interface GetContactUserResponse {
+  user?: Lark.User
+}
+export interface BatchContactUserResponse {
+  /** 查询到的用户信息，其中异常的用户ID不返回结果。 */
+  items?: Lark.User[]
+}
+export interface FindByDepartmentContactUserResponse extends Paginated<Lark.User[], 'items'> {}
+export interface BatchGetIdContactUserResponse {
+  /** 手机号或者邮箱对应的用户id信息 */
+  user_list?: Lark.UserContactInfo[]
+}
+export interface CreateContactGroupResponse {
+  /** 用户组ID */
+  group_id: string
+}
+export interface GetContactGroupResponse {
+  /** 用户组详情 */
+  group: Lark.Group
+}
+export interface SimplelistContactGroupResponse extends Paginated<Lark.Group[], 'grouplist'> {}
+export interface MemberBelongContactGroupResponse {
+  /** 用户组ID列表 */
+  group_list?: string[]
+  /** 分页查询Token */
+  page_token?: string
+  /** 是否有更多结果 */
+  has_more?: boolean
+}
+export interface ListContactCustomAttrResponse extends Paginated<Lark.CustomAttr[], 'items'> {}
+export interface CreateContactEmployeeTypeEnumResponse {
+  /** 创建人员类型接口 */
+  employee_type_enum?: Lark.EmployeeTypeEnum
+}
+export interface UpdateContactEmployeeTypeEnumResponse {
+  employee_type_enum?: Lark.EmployeeTypeEnum
+}
+export interface ListContactEmployeeTypeEnumResponse extends Paginated<Lark.EmployeeTypeEnum[], 'items'> {}
+export interface CreateContactDepartmentResponse {
+  department?: Lark.Department
+}
+export interface PatchContactDepartmentResponse {
+  department?: Lark.Department
+}
+export interface UpdateContactDepartmentResponse {
+  department?: Lark.Department
+}
+export interface GetContactDepartmentResponse {
+  department?: Lark.Department
+}
+export interface BatchContactDepartmentResponse {
+  /** 查询到的部门信息，其中异常的部门ID不返回结果。 */
+  items?: Lark.Department[]
+}
+export interface ChildrenContactDepartmentResponse extends Paginated<Lark.Department[], 'items'> {}
+export interface ParentContactDepartmentResponse extends Paginated<Lark.Department[], 'items'> {}
+export interface SearchContactDepartmentResponse extends Paginated<Lark.Department[], 'items'> {}
+export interface CreateContactUnitResponse {
+  /** 单位的自定义ID */
+  unit_id: string
+}
+export interface ListDepartmentContactUnitResponse {
+  /** 单位绑定的部门列表 */
+  departmentlist: Lark.UnitDepartment[]
+  /** 是否还有分页数据 */
+  has_more: boolean
+  /** 下次分页请求标记 */
+  page_token: string
+}
+export interface GetContactUnitResponse {
+  /** 单位信息 */
+  unit: Lark.Unit
+}
+export interface ListContactUnitResponse {
+  /** 单位列表 */
+  unitlist: Lark.Unit[]
+  /** 是否还有分页数据 */
+  has_more: boolean
+  /** 分页下次调用的page_token值 */
+  page_token: string
+}
+export interface BatchAddContactGroupMemberResponse {
+  /** 成员添加操作结果 */
+  results?: Lark.MemberResult[]
+}
+export interface SimplelistContactGroupMemberResponse {
+  /** 成员列表 */
+  memberlist: Lark.Memberlist[]
+  /** 下次分页获取的page_token */
+  page_token: string
+  /** 是否还需要分页获取 */
+  has_more: boolean
+}
+export interface CreateContactFunctionalRoleResponse {
+  /** 角色ID，在单租户下唯一 */
+  role_id: string
+}
+export interface BatchCreateContactFunctionalRoleMemberResponse {
+  /** 批量新增角色成员结果集 */
+  results?: Lark.FunctionalRoleMemberResult[]
+}
+export interface BatchDeleteContactFunctionalRoleMemberResponse {
+  /** 批量新增角色成员结果集 */
+  result?: Lark.FunctionalRoleMemberResult[]
+}
+export interface ScopesContactFunctionalRoleMemberResponse {
+  /** 批量更新角色成员管理范围结果集 */
+  results?: Lark.FunctionalRoleMemberResult[]
+}
+export interface GetContactFunctionalRoleMemberResponse {
+  /** 成员的管理范围 */
+  member?: Lark.FunctionalRoleMember
+}
+export interface ListContactFunctionalRoleMemberResponse extends Paginated<Lark.FunctionalRoleMember[], 'members'> {}
+export interface CreateContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: Lark.JobLevel
+}
+export interface UpdateContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: Lark.JobLevel
+}
+export interface GetContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: Lark.JobLevel
+}
+export interface ListContactJobLevelResponse extends Paginated<Lark.JobLevel[], 'items'> {}
+export interface CreateContactJobFamilyResponse {
+  /** 序列信息 */
+  job_family?: Lark.JobFamily
+}
+export interface UpdateContactJobFamilyResponse {
+  /** 更新后的序列信息 */
+  job_family?: Lark.JobFamily
+}
+export interface GetContactJobFamilyResponse {
+  /** 序列信息 */
+  job_family?: Lark.JobFamily
+}
+export interface ListContactJobFamilyResponse extends Paginated<Lark.JobFamily[], 'items'> {}
+export interface GetContactJobTitleResponse {
+  /** 职务信息 */
+  job_title?: Lark.JobTitle
+}
+export interface ListContactJobTitleResponse extends Paginated<Lark.JobTitle[], 'items'> {}
+export interface GetContactWorkCityResponse {
+  /** 工作城市信息 */
+  work_city?: Lark.WorkCity
+}
+export interface ListContactWorkCityResponse extends Paginated<Lark.WorkCity[], 'items'> {}
+export interface CreateImMessageResponse extends Lark.Message {}
+export interface ReplyImMessageResponse extends Lark.Message {}
+export interface UpdateImMessageResponse extends Lark.Message {}
+export interface ForwardImMessageResponse extends Lark.Message {}
+export interface MergeForwardImMessageResponse {
+  /** 合并转发生成的新消息 */
+  message?: Lark.Message
+  /** 无效的消息ID列表 */
+  invalid_message_id_list?: string[]
+}
+export interface ForwardImThreadResponse extends Lark.Message {}
+export interface ReadUsersImMessageResponse {
+  /** read_user[] */
+  items?: Lark.ReadUser[]
+  /** 是否还有下一页 */
+  has_more: boolean
+  /** 下一页分页的token */
+  page_token?: string
+}
+export interface ListImMessageResponse extends Paginated<Lark.Message[], 'items'> {}
+export interface GetImMessageResponse {
+  /** message[] */
+  items?: Lark.Message[]
+}
+export interface UrgentAppImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
+}
+export interface UrgentSmsImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
+}
+export interface UrgentPhoneImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
+}
+export interface ReadUserImBatchMessageResponse {
+  read_user?: Lark.BatchMessageReadUser
+}
+export interface GetProgressImBatchMessageResponse {
+  /** 消息发送进度 */
+  batch_message_send_progress?: Lark.BatchMessageSendProgress
+  /** 消息撤回进度 */
+  batch_message_recall_progress?: Lark.BatchMessageRecallProgress
+}
+export interface CreateImImageResponse {
+  /** 图片的key */
+  image_key?: string
+}
+export interface CreateImFileResponse {
+  /** 文件的key */
+  file_key?: string
+}
+export interface CreateImMessageReactionResponse extends Lark.MessageReaction {}
+export interface DeleteImMessageReactionResponse extends Lark.MessageReaction {}
+export interface ListImMessageReactionResponse extends Paginated<Lark.MessageReaction[], 'items'> {}
+export interface CreateImPinResponse {
+  pin?: Lark.Pin
+}
+export interface ListImPinResponse extends Paginated<Lark.Pin[], 'items'> {}
+export interface CreateImChatResponse {
+  /** 群ID */
+  chat_id?: string
+  /** 群头像URL */
+  avatar?: string
+  /** 群名称 */
+  name?: string
+  /** 群描述 */
+  description?: string
+  /** 群国际化名称 */
+  i18n_names?: Lark.I18nNames
+  /** 群主 ID */
+  owner_id?: string
+  /** 群主 ID 类型 */
+  owner_id_type?: string
+  /** 谁可以加急 */
+  urgent_setting?: string
+  /** 谁可以发起视频会议 */
+  video_conference_setting?: string
+  /** 加user/bot入群权限(all_members/only_owner) */
+  add_member_permission?: string
+  /** 群分享权限(allowed/not_allowed) */
+  share_card_permission?: string
+  /** at所有人权限(all_members/only_owner) */
+  at_all_permission?: string
+  /** 群编辑权限(all_members/only_owner) */
+  edit_permission?: string
+  /** 群模式 */
+  chat_mode?: string
+  /** 群类型 */
+  chat_type?: string
+  /** 优先级最高的一个群tag */
+  chat_tag?: string
+  /** 是否是外部群 */
+  external?: boolean
+  /** tenant key */
+  tenant_key?: string
+  /** 入群消息可见性 */
+  join_message_visibility?: string
+  /** 出群消息可见性 */
+  leave_message_visibility?: string
+  /** 加群审批 */
+  membership_approval?: string
+  /** 发言权限 */
+  moderation_permission?: string
+  /** 防泄密模式设置 */
+  restricted_mode_setting?: Lark.RestrictedModeSetting
+}
+export interface GetImChatResponse {
+  /** 群头像URL */
+  avatar?: string
+  /** 群名称 */
+  name?: string
+  /** 群描述 */
+  description?: string
+  /** 群国际化名称 */
+  i18n_names?: Lark.I18nNames
+  /** 加user/bot入群权限(all_members/only_owner) */
+  add_member_permission?: string
+  /** 群分享权限(allowed/not_allowed) */
+  share_card_permission?: string
+  /** at所有人权限(all_members/only_owner) */
+  at_all_permission?: string
+  /** 群编辑权限(all_members/only_owner) */
+  edit_permission?: string
+  /** 群主ID的类型(open_id/user_id/union_id) */
+  owner_id_type?: string
+  /** 群主ID */
+  owner_id?: string
+  /** 用户管理员列表 */
+  user_manager_id_list?: string[]
+  /** 机器人管理员列表 */
+  bot_manager_id_list?: string[]
+  /** 群模式 */
+  chat_mode?: string
+  /** 群类型 */
+  chat_type?: string
+  /** 优先级最高的一个群tag */
+  chat_tag?: string
+  /** 入群消息可见性 */
+  join_message_visibility?: string
+  /** 出群消息可见性 */
+  leave_message_visibility?: string
+  /** 加群审批 */
+  membership_approval?: string
+  /** 发言权限 */
+  moderation_permission?: string
+  /** 是否是外部群 */
+  external?: boolean
+  /** tenant key */
+  tenant_key?: string
+  /** 群成员人数 */
+  user_count?: string
+  /** 群机器人数 */
+  bot_count?: string
+  /** 防泄密模式设置 */
+  restricted_mode_setting?: Lark.RestrictedModeSetting
+  /** 谁可以加急 */
+  urgent_setting?: string
+  /** 谁可以发起视频会议 */
+  video_conference_setting?: string
+}
+export interface ListImChatResponse extends Paginated<Lark.ListChat[], 'items'> {}
+export interface SearchImChatResponse extends Paginated<Lark.ListChat[], 'items'> {}
+export interface GetImChatModerationResponse extends Paginated<Lark.ListModerator[], 'items'> {}
+export interface LinkImChatResponse {
+  /** 群分享链接 */
+  share_link?: string
+  /** 分享链接过期时间戳（秒级） */
+  expire_time?: string
+  /** 分享链接是否永久有效 */
+  is_permanent?: boolean
+}
+export interface AddManagersImChatManagersResponse {
+  /** 群目前的管理员id */
+  chat_managers?: string[]
+  /** 群目前的管理员bot id */
+  chat_bot_managers?: string[]
+}
+export interface DeleteManagersImChatManagersResponse {
+  /** 群目前的管理员id */
+  chat_managers?: string[]
+  /** 群目前的管理员bot id */
+  chat_bot_managers?: string[]
+}
+export interface CreateImChatMembersResponse {
+  /** ID无效的成员列表 */
+  invalid_id_list?: string[]
+  /** ID不存在的成员列表 */
+  not_existed_id_list?: string[]
+  /** 等待群主或管理员审批的成员ID列表 */
+  pending_approval_id_list?: string[]
+}
+export interface DeleteImChatMembersResponse {
+  /** 无效成员列表 */
+  invalid_id_list?: string[]
+}
+export interface GetImChatMembersResponse extends Paginated<Lark.ListMember[], 'items'> {}
+export interface IsInChatImChatMembersResponse {
+  /** 用户或者机器人是否在群中 */
+  is_in_chat?: boolean
+}
+export interface GetImChatAnnouncementResponse {
+  /** CCM 文档序列化信息 */
+  content?: string
+  /** 文档当前版本号 纯数字 */
+  revision?: string
+  /** 文档生成的时间戳（秒） */
+  create_time?: string
+  /** 消息更新的时间戳（秒） */
+  update_time?: string
+  /** 文档所有者id类型， open_id/user_id/union_id/app_id */
+  owner_id_type?: string
+  /** 文档所有者id */
+  owner_id?: string
+  /** 文档最新修改者id类型， open_id/user_id/union_id/app_id */
+  modifier_id_type?: string
+  /** 文档最新修改者id */
+  modifier_id?: string
+}
+export interface CreateImChatTabResponse {
+  /** 群标签列表 */
+  chat_tabs?: Lark.ChatTab[]
+}
+export interface DeleteTabsImChatTabResponse {
+  /** 群标签列表 */
+  chat_tabs?: Lark.ChatTab[]
+}
+export interface UpdateTabsImChatTabResponse {
+  /** 群标签列表 */
+  chat_tabs?: Lark.ChatTab[]
+}
+export interface SortTabsImChatTabResponse {
+  /** 群标签列表 */
+  chat_tabs?: Lark.ChatTab[]
+}
+export interface ListTabsImChatTabResponse {
+  /** 会话标签页 */
+  chat_tabs?: Lark.ChatTab[]
+}
+export interface CreateImChatMenuTreeResponse {
+  /** 追加后群内现有菜单 */
+  menu_tree?: Lark.ChatMenuTree
+}
+export interface DeleteImChatMenuTreeResponse {
+  /** 群内现有菜单 */
+  menu_tree?: Lark.ChatMenuTree
+}
+export interface PatchImChatMenuItemResponse {
+  chat_menu_item?: Lark.ChatMenuItem
+}
+export interface SortImChatMenuTreeResponse {
+  /** 排序后群内菜单 */
+  menu_tree?: Lark.ChatMenuTree
+}
+export interface GetImChatMenuTreeResponse {
+  /** 群内所有菜单 */
+  menu_tree?: Lark.ChatMenuTree
+}
+export interface ListDrivev1FileResponse extends Paginated<Lark.File[], 'files'> {}
+export interface CreateFolderDrivev1FileResponse {
+  /** 创建文件夹的token */
+  token?: string
+  /** 创建文件夹的访问url */
+  url?: string
+}
+export interface BatchQueryDrivev1MetaResponse {
+  metas: Lark.Meta[]
+  failed_list?: Lark.MetaFailed[]
+}
+export interface GetDrivev1FileStatisticsResponse {
+  /** 文档token */
+  file_token?: string
+  /** 文档类型 */
+  file_type?: string
+  /** 文档统计信息 */
+  statistics?: Lark.FileStatistics
+}
+export interface CopyDrivev1FileResponse {
+  /** 复制后的文件资源 */
+  file?: Lark.File
+}
+export interface MoveDrivev1FileResponse {
+  /** 异步任务id，移动文件夹时返回 */
+  task_id?: string
+}
+export interface DeleteDrivev1FileResponse {
+  /** 异步任务id，删除文件夹时返回 */
+  task_id?: string
+}
+export interface CreateShortcutDrivev1FileResponse {
+  /** 返回创建成功的shortcut节点 */
+  succ_shortcut_node?: Lark.File
+}
+export interface TaskCheckDrivev1FileResponse {
+  /** 异步任务的执行状态 */
+  status?: string
+}
+export interface UploadAllDrivev1MediaResponse {
+  file_token?: string
+}
+export interface BatchGetTmpDownloadUrlDrivev1MediaResponse {
+  /** 临时下载列表 */
+  tmp_download_urls?: Lark.TmpDownloadUrl[]
+}
+export interface UploadPrepareDrivev1MediaResponse {
+  /** 分片上传事务ID */
+  upload_id?: string
+  /** 分片大小策略 */
+  block_size?: number
+  /** 分片数量 */
+  block_num?: number
+}
+export interface UploadFinishDrivev1MediaResponse {
+  file_token?: string
+}
+export interface UploadAllDrivev1FileResponse {
+  file_token?: string
+}
+export interface UploadPrepareDrivev1FileResponse {
+  /** 分片上传事务ID */
+  upload_id?: string
+  /** 分片大小策略 */
+  block_size?: number
+  /** 分片数量 */
+  block_num?: number
+}
+export interface UploadFinishDrivev1FileResponse {
+  file_token?: string
+}
+export interface CreateDrivev1ImportTaskResponse {
+  /** 导入任务ID */
+  ticket?: string
+}
+export interface GetDrivev1ImportTaskResponse {
+  result?: Lark.ImportTask
+}
+export interface CreateDrivev1ExportTaskResponse {
+  /** 导出任务ID */
+  ticket?: string
+}
+export interface GetDrivev1ExportTaskResponse {
+  /** 导出结果 */
+  result?: Lark.ExportTask
+}
+export interface ListDrivev1FileViewRecordResponse extends Paginated<Lark.FileViewRecord[], 'items'> {}
+export interface CreateDrivev1FileVersionResponse extends Lark.Version {}
+export interface GetDrivev1FileVersionResponse extends Lark.Version {}
+export interface ListDrivev1FileVersionResponse extends Paginated<Lark.Version[], 'items'> {}
+export interface AuthDrivev1PermissionMemberResponse {
+  /** 是否有权限 */
+  auth_result: boolean
+}
+export interface ListDrivev1PermissionMemberResponse {
+  /** 返回的列表数据 */
+  items?: Lark.Member[]
+}
+export interface CreateDrivev1PermissionMemberResponse {
+  /** 本次添加权限的用户信息 */
+  member?: Lark.BaseMember
+}
+export interface UpdateDrivev1PermissionMemberResponse {
+  /** 本次更新权限的用户信息 */
+  member?: Lark.BaseMember
+}
+export interface CreateDrivev1PermissionPublicPasswordResponse {
+  /** 密码 */
+  password?: string
+}
+export interface UpdateDrivev1PermissionPublicPasswordResponse {
+  /** 密码 */
+  password?: string
+}
+export interface GetDrivev1PermissionPublicResponse {
+  /** 返回的文档公共设置 */
+  permission_public?: Lark.PermissionPublic
+}
+export interface PatchDrivev1PermissionPublicResponse {
+  /** 本次更新后的文档公共设置 */
+  permission_public?: Lark.PermissionPublic
+}
+export interface GetDrivev2PermissionPublicResponse {
+  /** 返回的文档公共设置 */
+  permission_public?: Lark.PermissionPublic
+}
+export interface PatchDrivev2PermissionPublicResponse {
+  /** 本次更新后文档公共设置 */
+  permission_public?: Lark.PermissionPublic
+}
+export interface ListDrivev1FileCommentResponse extends Paginated<Lark.FileComment[], 'items'> {}
+export interface BatchQueryDrivev1FileCommentResponse {
+  /** 评论的相关信息、回复的信息、回复分页的信息 */
+  items?: Lark.FileComment[]
+}
+export interface CreateDrivev1FileCommentResponse extends Lark.FileComment {}
+export interface GetDrivev1FileCommentResponse extends Lark.FileComment {}
+export interface ListDrivev1FileCommentReplyResponse extends Paginated<Lark.FileCommentReply[], 'items'> {}
+export interface GetDocxDocumentResponse {
+  /** 文档信息 */
+  document?: Lark.Document
+}
+export interface RawContentDocxDocumentResponse {
+  /** 文档纯文本 */
+  content?: string
+}
+export interface ListDocxDocumentBlockResponse extends Paginated<Lark.Block[], 'items'> {}
+export interface CreateDocxDocumentResponse {
+  /** 新建文档的文档信息 */
+  document?: Lark.Document
+}
+export interface GetDocxDocumentBlockResponse {
+  /** 查询的 Block 的信息 */
+  block?: Lark.Block
+}
+export interface GetDocxDocumentBlockChildrenResponse extends Paginated<Lark.Block[], 'items'> {}
+export interface CreateDocxDocumentBlockChildrenResponse {
+  /** 所添加的孩子的 Block 信息 */
+  children?: Lark.Block[]
+  /** 当前 block children 创建成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+export interface PatchDocxDocumentBlockResponse {
+  /** 更新后的 block 信息 */
+  block?: Lark.Block
+  /** 当前更新成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+export interface BatchUpdateDocxDocumentBlockResponse {
+  /** 批量更新的 Block */
+  blocks?: Lark.Block[]
+  /** 当前更新成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+export interface BatchDeleteDocxDocumentBlockChildrenResponse {
+  /** 当前删除操作成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+export interface ListBoardWhiteboardNodeResponse {
+  /** 查询结果 */
+  nodes?: Lark.WhiteboardNode[]
+}
+export interface GetSheetsSpreadsheetResponse {
+  spreadsheet?: Lark.GetSpreadsheet
+}
+export interface CreateSheetsSpreadsheetResponse {
+  /** 表格信息 */
+  spreadsheet?: Lark.Spreadsheet
+}
+export interface GetSheetsSpreadsheetSheetResponse {
+  sheet?: Lark.Sheet
+}
+export interface QuerySheetsSpreadsheetSheetResponse {
+  /** 工作表信息 */
+  sheets?: Lark.Sheet[]
+}
+export interface FindSheetsSpreadsheetSheetResponse {
+  /** 查找返回符合条件的信息 */
+  find_result?: Lark.FindReplaceResult
+}
+export interface ReplaceSheetsSpreadsheetSheetResponse {
+  /** 符合查找条件并替换的单元格信息 */
+  replace_result?: Lark.FindReplaceResult
+}
+export interface GetSheetsSpreadsheetSheetFilterResponse {
+  sheet_filter_info?: Lark.SheetFilterInfo
+}
+export interface GetSheetsSpreadsheetSheetFilterViewResponse {
+  /** 筛选视图信息，包括 id、name、range */
+  filter_view?: Lark.FilterView
+}
+export interface QuerySheetsSpreadsheetSheetFilterViewResponse {
+  /** 子表的所有筛选视图信息，id、name、range */
+  items?: Lark.FilterView[]
+}
+export interface CreateSheetsSpreadsheetSheetFilterViewResponse {
+  /** 创建的筛选视图的 id 、name、range */
+  filter_view?: Lark.FilterView
+}
+export interface PatchSheetsSpreadsheetSheetFilterViewResponse {
+  /** 更新后的筛选视图的 id 、name、range */
+  filter_view?: Lark.FilterView
+}
+export interface GetSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 筛选的条件 */
+  condition?: Lark.FilterViewCondition
+}
+export interface QuerySheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 筛选视图设置的所有筛选条件 */
+  items?: Lark.FilterViewCondition[]
+}
+export interface CreateSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 创建的筛选条件 */
+  condition?: Lark.FilterViewCondition
+}
+export interface UpdateSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 更新后的筛选条件 */
+  condition?: Lark.FilterViewCondition
+}
+export interface GetSheetsSpreadsheetSheetFloatImageResponse {
+  float_image?: Lark.FloatImage
+}
+export interface QuerySheetsSpreadsheetSheetFloatImageResponse {
+  /** 子表的所有浮动图片信息 */
+  items?: Lark.FloatImage[]
+}
+export interface CreateSheetsSpreadsheetSheetFloatImageResponse {
+  float_image?: Lark.FloatImage
+}
+export interface PatchSheetsSpreadsheetSheetFloatImageResponse {
+  float_image?: Lark.FloatImage
+}
+export interface CopyBitableAppResponse {
+  app?: Lark.App
+}
+export interface CreateBitableAppResponse {
+  app?: Lark.App
+}
+export interface GetBitableAppResponse {
+  app?: Lark.DisplayApp
+}
+export interface UpdateBitableAppResponse {
+  app?: Lark.DisplayAppV2
+}
+export interface CreateBitableAppTableResponse {
+  /** 数据表的唯一标识id */
+  table_id?: string
+  /** 默认表格视图的id，该字段仅在请求参数中填写了default_view_name或fields才会返回 */
+  default_view_id?: string
+  /** 数据表初始字段的id列表，该字段仅在请求参数中填写了fields才会返回 */
+  field_id_list?: string[]
+}
+export interface BatchCreateBitableAppTableResponse {
+  table_ids?: string[]
+}
+export interface PatchBitableAppTableResponse {
+  /** 数据表的名称 */
+  name?: string
+}
+export interface ListBitableAppTableResponse extends Paginated<Lark.AppTable[], 'items'> {}
+export interface CopyBitableAppDashboardResponse {
+  /** 多维表格 block_id */
+  block_id?: string
+  /** block 名称 */
+  name?: string
+}
+export interface ListBitableAppDashboardResponse extends Paginated<Lark.AppDashboard[], 'dashboards'> {}
+export interface PatchBitableAppTableViewResponse {
+  view?: Lark.AppTableView
+}
+export interface GetBitableAppTableViewResponse {
+  view?: Lark.AppTableView
+}
+export interface ListBitableAppTableViewResponse extends Paginated<Lark.AppTableView[], 'items'> {}
+export interface CreateBitableAppTableViewResponse {
+  view?: Lark.AppTableView
+}
+export interface PatchBitableAppTableFormResponse {
+  /** 表单元数据信息 */
+  form: Lark.AppTableForm
+}
+export interface GetBitableAppTableFormResponse {
+  /** 表单元数据信息 */
+  form: Lark.AppTableForm
+}
+export interface PatchBitableAppTableFormFieldResponse {
+  /** 更新后的field值 */
+  field?: Lark.AppTableFormPatchedField
+}
+export interface ListBitableAppTableFormFieldResponse extends Paginated<Lark.AppTableFormField[], 'items'> {}
+export interface GetBitableAppTableRecordResponse {
+  record?: Lark.AppTableRecord
+}
+export interface SearchBitableAppTableRecordResponse extends Paginated<Lark.AppTableRecord[], 'items'> {}
+export interface CreateBitableAppTableRecordResponse {
+  record?: Lark.AppTableRecord
+}
+export interface UpdateBitableAppTableRecordResponse {
+  record?: Lark.AppTableRecord
+}
+export interface DeleteBitableAppTableRecordResponse extends Lark.DeleteRecord {}
+export interface BatchCreateBitableAppTableRecordResponse {
+  /** 本次请求新增的记录列表 */
+  records?: Lark.AppTableRecord[]
+}
+export interface BatchUpdateBitableAppTableRecordResponse {
+  /** 更新后的记录 */
+  records?: Lark.AppTableRecord[]
+}
+export interface BatchDeleteBitableAppTableRecordResponse {
+  /** 记录删除结果 */
+  records?: Lark.DeleteRecord[]
+}
+export interface ListBitableAppTableFieldResponse extends Paginated<Lark.AppTableFieldForList[], 'items'> {}
+export interface CreateBitableAppTableFieldResponse {
+  field?: Lark.AppTableField
+}
+export interface UpdateBitableAppTableFieldResponse {
+  field?: Lark.AppTableField
+}
+export interface DeleteBitableAppTableFieldResponse {
+  /** 字段唯一标识id */
+  field_id?: string
+  /** 是否已删除 */
+  deleted?: boolean
+}
+export interface ListBitableAppRoleResponse extends Paginated<Lark.AppRole[], 'items'> {}
+export interface CreateBitableAppRoleResponse {
+  role?: Lark.AppRole
+}
+export interface UpdateBitableAppRoleResponse {
+  role?: Lark.AppRole
+}
+export interface ListBitableAppRoleMemberResponse extends Paginated<Lark.AppRoleMember[], 'items'> {}
+export interface ListWikiSpaceResponse extends Paginated<Lark.Space[], 'items'> {}
+export interface GetWikiSpaceResponse {
+  space?: Lark.Space
+}
+export interface CreateWikiSpaceResponse {
+  space?: Lark.Space
+}
+export interface CreateWikiSpaceMemberResponse {
+  member?: Lark.Member
+}
+export interface DeleteWikiSpaceMemberResponse {
+  /** 成员信息 */
+  member: Lark.Member
+}
+export interface UpdateWikiSpaceSettingResponse {
+  setting?: Lark.Setting
+}
+export interface CreateWikiSpaceNodeResponse {
+  node?: Lark.Node
+}
+export interface GetNodeWikiSpaceResponse {
+  /** 节点信息 */
+  node?: Lark.Node
+}
+export interface ListWikiSpaceNodeResponse extends Paginated<Lark.Node[], 'items'> {}
+export interface MoveWikiSpaceNodeResponse {
+  /** 移动后的节点信息 */
+  node?: Lark.Node
+}
+export interface CopyWikiSpaceNodeResponse {
+  /** copy后的节点 */
+  node: Lark.Node
+}
+export interface MoveDocsToWikiWikiSpaceNodeResponse {
+  /** 移动后的知识库token */
+  wiki_token?: string
+  /** 任务id */
+  task_id?: string
+  /** 是否提交了文档迁入申请 */
+  applied?: boolean
+}
+export interface GetWikiTaskResponse {
+  /** 任务结果 */
+  task: Lark.TaskResult
+}
+export interface SearchWikiNodeResponse extends Paginated<Lark.Node[], 'items'> {}
+export interface GetDrivev1FileSubscriptionResponse {
+  /** 文档订阅信息 */
+  subscription?: Lark.FileSubscription
+}
+export interface CreateDrivev1FileSubscriptionResponse {
+  /** 本次增加的文档订阅信息 */
+  subscription?: Lark.FileSubscription
+}
+export interface PatchDrivev1FileSubscriptionResponse {
+  /** 本次修改的文档订阅信息 */
+  subscription?: Lark.FileSubscription
+}
+export interface CreateCalendarResponse {
+  calendar?: Lark.Calendar
+}
+export interface PrimaryCalendarResponse {
+  /** 主日历列表 */
+  calendars?: Lark.UserCalendar[]
+}
+export interface GetCalendarResponse extends Lark.Calendar {}
+export interface ListCalendarFreebusyResponse {
+  /** 日历上请求时间区间内的忙闲信息 */
+  freebusy_list?: Lark.Freebusy[]
+}
+export interface ListCalendarResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下次请求需要带上的分页标记，90 天有效期 */
+  page_token?: string
+  /** 下次请求需要带上的增量同步标记，90 天有效期 */
+  sync_token?: string
+  /** 分页加载的日历数据列表 */
+  calendar_list?: Lark.Calendar[]
+}
+export interface PatchCalendarResponse {
+  calendar?: Lark.Calendar
+}
+export interface SearchCalendarResponse extends Paginated<Lark.Calendar[], 'items'> {}
+export interface SubscribeCalendarResponse {
+  calendar?: Lark.Calendar
+}
+export interface CreateCalendarCalendarAclResponse extends Lark.CalendarAcl {}
+export interface ListCalendarCalendarAclResponse extends Paginated<Lark.CalendarAcl[], 'acls'> {}
+export interface CreateCalendarCalendarEventResponse {
+  event?: Lark.CalendarEvent
+}
+export interface PatchCalendarCalendarEventResponse {
+  event?: Lark.CalendarEvent
+}
+export interface GetCalendarCalendarEventResponse {
+  event?: Lark.CalendarEvent
+}
+export interface ListCalendarCalendarEventResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下次请求需要带上的分页标记，90 天有效期 */
+  page_token?: string
+  /** 下次请求需要带上的增量同步标记，90 天有效期 */
+  sync_token?: string
+  /** 日程列表 */
+  items?: Lark.CalendarEvent[]
+}
+export interface SearchCalendarCalendarEventResponse extends Paginated<Lark.CalendarEvent[], 'items'> {}
+export interface InstancesCalendarCalendarEventResponse {
+  /** instances实例 */
+  items?: Lark.Instance[]
+  page_token?: string
+  has_more?: boolean
+}
+export interface InstanceViewCalendarCalendarEventResponse {
+  /** 日程instance列表 */
+  items?: Lark.Instance[]
+}
+export interface CreateCalendarCalendarEventMeetingChatResponse {
+  /** 会议群ID */
+  meeting_chat_id?: string
+  /** 群分享链接 */
+  applink?: string
+}
+export interface CreateCalendarTimeoffEventResponse extends Lark.TimeoffEvent {}
+export interface CreateCalendarCalendarEventAttendeeResponse {
+  /** 被添加的参与人列表 */
+  attendees?: Lark.CalendarEventAttendee[]
+}
+export interface ListCalendarCalendarEventAttendeeResponse extends Paginated<Lark.CalendarEventAttendee[], 'items'> {}
+export interface ListCalendarCalendarEventAttendeeChatMemberResponse extends Paginated<Lark.CalendarEventAttendeeChatMember[], 'items'> {}
+export interface GenerateCaldavConfCalendarSettingResponse {
+  /** caldav密码 */
+  password?: string
+  /** caldav用户名 */
+  user_name?: string
+  /** 服务器地址 */
+  server_address?: string
+  /** 设备名 */
+  device_name?: string
+}
+export interface CreateCalendarExchangeBindingResponse extends Lark.ExchangeBinding {}
+export interface GetCalendarExchangeBindingResponse extends Lark.ExchangeBinding {}
+export interface ApplyVcReserveResponse {
+  reserve?: Lark.Reserve
+  reserve_correction_check_info?: Lark.ReserveCorrectionCheckInfo
+}
+export interface UpdateVcReserveResponse {
+  reserve?: Lark.Reserve
+  reserve_correction_check_info?: Lark.ReserveCorrectionCheckInfo
+}
+export interface GetVcReserveResponse {
+  reserve?: Lark.Reserve
+}
+export interface GetActiveMeetingVcReserveResponse {
+  meeting?: Lark.Meeting
+}
+export interface InviteVcMeetingResponse {
+  /** 邀请结果 */
+  invite_results?: Lark.MeetingInviteStatus[]
+}
+export interface KickoutVcMeetingResponse {
+  /** 踢出结果 */
+  kickout_results?: Lark.MeetingParticipantResult[]
+}
+export interface SetHostVcMeetingResponse {
+  /** 会中当前主持人 */
+  host_user?: Lark.MeetingUser
+}
+export interface GetVcMeetingResponse {
+  meeting?: Lark.Meeting
+}
+export interface ListByNoVcMeetingResponse extends Paginated<Lark.Meeting[], 'meeting_briefs'> {}
+export interface GetVcMeetingRecordingResponse {
+  recording?: Lark.MeetingRecording
+}
+export interface GetDailyVcReportResponse {
+  /** 会议报告 */
+  meeting_report?: Lark.Report
+}
+export interface GetTopUserVcReportResponse {
+  /** top用户列表 */
+  top_user_report?: Lark.ReportTopUser[]
+}
+export interface MeetingListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+export interface ParticipantListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+export interface ParticipantQualityListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+export interface ResourceReservationListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+export interface GetVcExportResponse {
+  /** 任务状态 */
+  status: number
+  /** 文件下载地址 */
+  url?: string
+  /** 文件token */
+  file_token?: string
+  /** 失败信息 */
+  fail_msg?: string
+}
+export interface CreateVcRoomLevelResponse {
+  room_level?: Lark.RoomLevel
+}
+export interface GetVcRoomLevelResponse {
+  room_level?: Lark.RoomLevel
+}
+export interface MgetVcRoomLevelResponse {
+  items?: Lark.RoomLevel[]
+}
+export interface ListVcRoomLevelResponse extends Paginated<Lark.RoomLevel[], 'items'> {}
+export interface SearchVcRoomLevelResponse {
+  /** 层级id列表 */
+  level_ids?: string[]
+}
+export interface CreateVcRoomResponse {
+  room?: Lark.Room
+}
+export interface GetVcRoomResponse {
+  room?: Lark.Room
+}
+export interface MgetVcRoomResponse {
+  items?: Lark.Room[]
+}
+export interface ListVcRoomResponse extends Paginated<Lark.Room[], 'rooms'> {}
+export interface SearchVcRoomResponse {
+  /** 会议室列表 */
+  rooms?: Lark.Room[]
+  /** 下一页分页的token，下次请求时传入 */
+  page_token?: string
+  /** 是否还有数据 */
+  has_more?: boolean
+}
+export interface GetVcScopeConfigResponse {
+  /** 当前节点的配置，根据层级顺序从底向上进行合并计算后的结果；如果当前节点某个值已配置，则取该节点的值，否则会从该节点的父层级节点获取，如果父节点依然未配置，则继续向上递归获取；若所有节点均未配置，则该值返回为空 */
+  current_config?: Lark.ScopeConfig
+  /** 所有节点的原始配置，按照层级顺序从底向上返回；如果某节点某个值未配置，则该值返回为空 */
+  origin_configs?: Lark.ScopeConfig[]
+}
+export interface ReserveScopeVcReserveConfigResponse {
+  /** 预定审批设置 */
+  approve_config?: Lark.ApprovalConfig
+  /** 预定时间设置 */
+  time_config?: Lark.TimeConfig
+  /** 预定范围设置 */
+  reserve_scope_config?: Lark.ReserveScopeConfig
+}
+export interface GetVcReserveConfigFormResponse {
+  /** 预定表单 */
+  reserve_form_config: Lark.ReserveFormConfig
+}
+export interface GetVcReserveConfigAdminResponse {
+  /** 预定管理员/部门 */
+  reserve_admin_config: Lark.ReserveAdminConfig
+}
+export interface GetVcReserveConfigDisableInformResponse {
+  /** 会议室禁用通知配置 */
+  disable_inform?: Lark.DisableInformConfig
+}
+export interface GetVcMeetingListResponse extends Paginated<Lark.MeetingInfo[], 'meeting_list'> {}
+export interface GetVcParticipantListResponse extends Paginated<Lark.Participant[], 'participants'> {}
+export interface GetVcParticipantQualityListResponse extends Paginated<Lark.ParticipantQuality[], 'participant_quality_list'> {}
+export interface GetVcResourceReservationListResponse extends Paginated<Lark.RoomMeetingReservation[], 'room_reservation_list'> {}
+export interface ListVcAlertResponse extends Paginated<Lark.Alert[], 'items'> {}
+export interface CreateAttendanceShiftResponse {
+  /** 班次 */
+  shift?: Lark.Shift
+}
+export interface GetAttendanceShiftResponse extends Lark.Shift {}
+export interface QueryAttendanceShiftResponse extends Lark.Shift {}
+export interface ListAttendanceShiftResponse extends Paginated<Lark.Shift[], 'shift_list'> {}
+export interface CreateAttendanceGroupResponse {
+  group?: Lark.Group
+}
+export interface GetAttendanceGroupResponse extends Lark.Group {}
+export interface SearchAttendanceGroupResponse {
+  /** 考勤组列表 */
+  group_list?: Lark.GroupMeta[]
+}
+export interface ListAttendanceGroupResponse extends Paginated<Lark.GroupMeta[], 'group_list'> {}
+export interface BatchCreateAttendanceUserDailyShiftResponse {
+  /** 班表信息列表 */
+  user_daily_shifts?: Lark.UserDailyShift[]
+}
+export interface QueryAttendanceUserDailyShiftResponse {
+  /** 班表信息列表 */
+  user_daily_shifts?: Lark.UserDailyShift[]
+}
+export interface UpdateAttendanceUserStatsViewResponse {
+  /** 视图 */
+  view?: Lark.UserStatsView
+}
+export interface QueryAttendanceUserStatsFieldResponse {
+  user_stats_field?: Lark.UserStatsField
+}
+export interface QueryAttendanceUserStatsViewResponse {
+  view?: Lark.UserStatsView
+}
+export interface QueryAttendanceUserStatsDataResponse {
+  /** 用户统计数据 */
+  user_datas?: Lark.UserStatsData[]
+  /** 无权限获取的用户列表 */
+  invalid_user_list?: string[]
+}
+export interface QueryAttendanceUserApprovalResponse {
+  /** 审批结果列表 */
+  user_approvals?: Lark.UserApproval[]
+}
+export interface CreateAttendanceUserApprovalResponse {
+  /** 审批信息 */
+  user_approval?: Lark.UserApproval
+}
+export interface ProcessAttendanceApprovalInfoResponse {
+  /** 审批信息 */
+  approval_info?: Lark.ApprovalInfo
+}
+export interface CreateAttendanceUserTaskRemedyResponse {
+  /** 补卡审批信息 */
+  user_remedy?: Lark.UserTaskRemedy
+}
+export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyResponse {
+  /** 用户可补卡时间 */
+  user_allowed_remedys?: Lark.UserAllowedRemedy[]
+}
+export interface QueryAttendanceUserTaskRemedyResponse {
+  /** 补卡记录列表 */
+  user_remedys?: Lark.UserTaskRemedy[]
+}
+export interface BatchCreateAttendanceUserFlowResponse {
+  /** 打卡流水记录列表 */
+  flow_records?: Lark.UserFlow[]
+}
+export interface GetAttendanceUserFlowResponse extends Lark.UserFlow {}
+export interface QueryAttendanceUserFlowResponse {
+  /** 打卡记录列表 */
+  user_flow_results?: Lark.UserFlow[]
+}
+export interface QueryAttendanceUserTaskResponse {
+  /** 打卡任务列表 */
+  user_task_results?: Lark.UserTask[]
+  /** 无效用户工号列表 */
+  invalid_user_ids?: string[]
+  /** 没有权限用户工号列表 */
+  unauthorized_user_ids?: string[]
+}
+export interface ModifyAttendanceUserSettingResponse {
+  /** 用户设置 */
+  user_setting?: Lark.UserSetting
+}
+export interface QueryAttendanceUserSettingResponse {
+  /** 用户设置信息列表 */
+  user_settings?: Lark.UserSetting[]
+}
+export interface UploadAttendanceFileResponse {
+  file?: Lark.File
+}
+export interface GetAttendanceLeaveEmployExpireRecordResponse {
+  /** 员工过期日期的授予记录 */
+  records: Lark.LeaveEmployExpireRecord[]
+}
+export interface PatchAttendanceLeaveAccrualRecordResponse {
+  /** 员工过期日期的授予记录 */
+  record: Lark.LeaveAccrualRecord
+}
+export interface CreateApprovalResponse {
+  /** 审批定义 Code */
+  approval_code?: string
+  /** 审批定义 id */
+  approval_id?: string
+}
+export interface CreateApprovalInstanceResponse {
+  /** 审批实例 Code */
+  instance_code: string
+}
+export interface PreviewApprovalInstanceResponse {
+  /** 预览节点信息 */
+  preview_nodes?: Lark.PreviewNode[]
+}
+export interface GetApprovalInstanceResponse {
+  /** 审批名称 */
+  approval_name: string
+  /** 审批创建时间 */
+  start_time?: string
+  /** 审批完成时间，未完成为 0 */
+  end_time: string
+  /** 发起审批用户 */
+  user_id: string
+  /** 发起审批用户 open id */
+  open_id: string
+  /** 审批单编号 */
+  serial_number: string
+  /** 发起审批用户所在部门 */
+  department_id: string
+  /** 审批实例状态 */
+  status: string
+  /** 用户的唯一标识id */
+  uuid: string
+  /** json字符串，控件值 */
+  form: string
+  /** 审批任务列表 */
+  task_list: Lark.InstanceTask[]
+  /** 评论列表 */
+  comment_list: Lark.InstanceComment[]
+  /** 审批动态 */
+  timeline: Lark.InstanceTimeline[]
+  /** 修改的原实例 code,仅在查询修改实例时显示该字段 */
+  modified_instance_code?: string
+  /** 撤销的原实例 code,仅在查询撤销实例时显示该字段 */
+  reverted_instance_code?: string
+  /** 审批定义 Code */
+  approval_code: string
+  /** 单据是否被撤销 */
+  reverted?: boolean
+  /** 审批实例 Code */
+  instance_code: string
+}
+export interface ListApprovalInstanceResponse extends Paginated<string[], 'instance_code_list'> {}
+export interface CreateApprovalInstanceCommentResponse {
+  /** 保存成功的comment_id */
+  comment_id: string
+}
+export interface DeleteApprovalInstanceCommentResponse {
+  /** 删除的评论ID */
+  comment_id?: string
+}
+export interface RemoveApprovalInstanceCommentResponse {
+  /** 审批实例code */
+  instance_id?: string
+  /** 租户自定义审批实例ID */
+  external_id?: string
+}
+export interface ListApprovalInstanceCommentResponse extends Paginated<Lark.Comment[], 'comments'> {}
+export interface CreateApprovalExternalApprovalResponse {
+  /** 审批定义 code，用户自定义，定义的唯一标识 */
+  approval_code: string
+}
+export interface GetApprovalExternalApprovalResponse {
+  /** 审批定义名称 */
+  approval_name: string
+  /** 审批定义code */
+  approval_code: string
+  /** 审批定义所属分组 */
+  group_code: string
+  /** 分组名称 */
+  group_name?: string
+  /** 审批定义的说明 */
+  description?: string
+  /** 三方审批定义相关 */
+  external?: Lark.ApprovalCreateExternal
+  /** 可见人列表 */
+  viewers?: Lark.ApprovalCreateViewers[]
+  /** 国际化文案 */
+  i18n_resources?: Lark.I18nResource[]
+  /** 流程管理员 */
+  managers?: string[]
+}
+export interface CreateApprovalExternalInstanceResponse {
+  /** 同步的实例数据 */
+  data?: Lark.ExternalInstance
+}
+export interface CheckApprovalExternalInstanceResponse {
+  /** 更新时间不一致的实例信息 */
+  diff_instances?: Lark.ExteranlInstanceCheckResponse[]
+}
+export interface ListApprovalExternalTaskResponse extends Paginated<Lark.ExternalTaskList[], 'data'> {}
+export interface QueryApprovalInstanceResponse extends Paginated<Lark.InstanceSearchItem[], 'instance_list'> {}
+export interface SearchCcApprovalInstanceResponse {
+  /** 查询返回条数 */
+  count?: number
+  /** 审批实例列表 */
+  cc_list?: Lark.CcSearchItem[]
+  /** 翻页 Token */
+  page_token?: string
+  /** 是否有更多任务可供拉取 */
+  has_more?: boolean
+}
+export interface SearchApprovalTaskResponse {
+  /** 查询返回条数 */
+  count?: number
+  /** 审批任务列表 */
+  task_list?: Lark.TaskSearchItem[]
+  /** 翻页 Token */
+  page_token?: string
+  /** 是否有更多任务可供拉取 */
+  has_more?: boolean
+}
+export interface QueryApprovalTaskResponse extends Paginated<Lark.Task[], 'tasks'> {}
+export interface AgentEmailHelpdeskAgentResponse {
+  /** agent emails */
+  agents?: string
+}
+export interface GetHelpdeskAgentSchedulesResponse {
+  /** schedules of an agent */
+  agent_schedule?: Lark.AgentSchedule
+}
+export interface ListHelpdeskAgentScheduleResponse {
+  /** schedule of all agent */
+  agent_schedules?: Lark.AgentSchedule[]
+}
+export interface CreateHelpdeskAgentSkillResponse {
+  agent_skill_id?: string
+}
+export interface GetHelpdeskAgentSkillResponse {
+  /** agent skill */
+  agent_skill?: Lark.AgentSkill
+}
+export interface ListHelpdeskAgentSkillResponse {
+  /** list of agent groups */
+  agent_skills?: Lark.AgentSkill[]
+}
+export interface ListHelpdeskAgentSkillRuleResponse {
+  /** all rules for agent skill */
+  rules?: Lark.AgentSkillRule[]
+}
+export interface StartServiceHelpdeskTicketResponse {
+  /** chat id */
+  chat_id: string
+}
+export interface GetHelpdeskTicketResponse {
+  /** ticket detail */
+  ticket?: Lark.Ticket
+}
+export interface ListHelpdeskTicketResponse {
+  /** the total count */
+  total?: number
+  tickets?: Lark.Ticket[]
+}
+export interface CustomizedFieldsHelpdeskTicketResponse {
+  /** user customized fields */
+  user_customized_fields?: Lark.UserCustomizedField[]
+  /** ticket customized fields */
+  ticket_customized_fields?: Lark.TicketCustomizedField[]
+}
+export interface CreateHelpdeskTicketMessageResponse {
+  /** chat消息open ID */
+  message_id?: string
+}
+export interface ListHelpdeskTicketMessageResponse {
+  /** list of ticket messages */
+  messages?: Lark.TicketMessage[]
+  /** total number of messages */
+  total?: number
+}
+export interface CreateHelpdeskBotMessageResponse {
+  message_id?: string
+}
+export interface GetHelpdeskTicketCustomizedFieldResponse extends Lark.TicketCustomizedField {}
+export interface ListHelpdeskTicketCustomizedFieldResponse extends Paginated<Lark.TicketCustomizedField[], 'items'> {}
+export interface CreateHelpdeskFaqResponse {
+  /** faq detail */
+  faq?: Lark.Faq
+}
+export interface GetHelpdeskFaqResponse {
+  /** faq detail */
+  faq?: Lark.Faq
+}
+export interface ListHelpdeskFaqResponse extends Paginated<Lark.Faq[], 'items'> {}
+export interface SearchHelpdeskFaqResponse extends Paginated<Lark.Faq[], 'items'> {}
+export interface CreateHelpdeskCategoryResponse {
+  /** category */
+  category?: Lark.Category
+}
+export interface GetHelpdeskCategoryResponse extends Lark.Category {}
+export interface ListHelpdeskCategoryResponse {
+  /** list of categories */
+  categories?: Lark.Category[]
+}
+export interface CreateHelpdeskNotificationResponse {
+  /** 创建成功后的唯一id */
+  notification_id?: string
+  /** 当前状态 */
+  status?: number
+}
+export interface GetHelpdeskNotificationResponse {
+  /** push任务详情 */
+  notification?: Lark.Notification
+  /** 审批链接 */
+  approval_app_link?: string
+}
+export interface SubmitApproveHelpdeskNotificationResponse {
+  /** 是否有权限创建或者管理审批流程 （有两种情况会导致没有权限： 1：用户没有安装服务台小程序，需要在https://app.feishu.cn/app/cli_9f9f8825d53b900d或者https://ftest.feishu.cn/admin/appCenter/manage/cli_9f9f8825d53b900d?lang=zh-CN 安装小程序 2：用户安装的服务台小程序版本过低） */
+  has_access?: boolean
+}
+export interface CreateTaskv1Response {
+  /** 返回创建好的任务 */
+  task?: Lark.Task
+}
+export interface PatchTaskv1Response {
+  /** 返回修改后的任务详情 */
+  task?: Lark.Task
+}
+export interface GetTaskv1Response {
+  /** 返回任务资源详情 */
+  task?: Lark.Task
+}
+export interface ListTaskv1Response extends Paginated<Lark.Task[], 'items'> {}
+export interface CreateTaskv1TaskReminderResponse {
+  /** 返回创建成功的提醒时间 */
+  reminder?: Lark.Reminder
+}
+export interface ListTaskv1TaskReminderResponse extends Paginated<Lark.Reminder[], 'items'> {}
+export interface CreateTaskv1TaskCommentResponse {
+  /** 返回创建好的任务评论 */
+  comment?: Lark.Comment
+}
+export interface UpdateTaskv1TaskCommentResponse {
+  /** 返回修改后的任务评论详情 */
+  comment?: Lark.Comment
+}
+export interface GetTaskv1TaskCommentResponse {
+  /** 返回新的任务评论详情 */
+  comment?: Lark.Comment
+}
+export interface ListTaskv1TaskCommentResponse extends Paginated<Lark.Comment[], 'items'> {}
+export interface CreateTaskv1TaskFollowerResponse {
+  /** 创建后的任务关注者 */
+  follower: Lark.Follower
+}
+export interface BatchDeleteFollowerTaskv1Response {
+  /** 实际删除的关注人用户ID列表 */
+  followers?: string[]
+}
+export interface ListTaskv1TaskFollowerResponse extends Paginated<Lark.Follower[], 'items'> {}
+export interface CreateTaskv1TaskCollaboratorResponse {
+  /** 返回创建成功后的任务协作者 */
+  collaborator: Lark.Collaborator
+}
+export interface BatchDeleteCollaboratorTaskv1Response {
+  /** 实际删除的执行人用户ID列表 */
+  collaborators?: string[]
+}
+export interface ListTaskv1TaskCollaboratorResponse extends Paginated<Lark.Collaborator[], 'items'> {}
+export interface CreateTaskv2Response {
+  /** 产生的任务 */
+  task?: Lark.Task
+}
+export interface GetTaskv2Response {
+  /** 获得的任务实体 */
+  task?: Lark.Task
+}
+export interface PatchTaskv2Response {
+  /** 更新后的任务 */
+  task?: Lark.Task
+}
+export interface AddMembersTaskv2Response {
+  /** 更新完成后的任务实体数据 */
+  task?: Lark.Task
+}
+export interface RemoveMembersTaskv2Response {
+  /** 移除成员后的任务数据 */
+  task?: Lark.Task
+}
+export interface ListTaskv2Response extends Paginated<Lark.Task[], 'items'> {}
+export interface TasklistsTaskv2Response {
+  /** 任务所在清单的摘要信息 */
+  tasklists?: Lark.TaskInTasklistInfo[]
+}
+export interface AddTasklistTaskv2Response {
+  /** 添加后的任务详情 */
+  task?: Lark.Task
+}
+export interface RemoveTasklistTaskv2Response {
+  /** 添加后的任务详情 */
+  task?: Lark.Task
+}
+export interface AddRemindersTaskv2Response {
+  /** 更新完成后的任务实体 */
+  task?: Lark.Task
+}
+export interface RemoveRemindersTaskv2Response {
+  /** 移除后任务的提醒列表 */
+  task?: Lark.Task
+}
+export interface AddDependenciesTaskv2Response {
+  /** 被添加后任务的所有依赖 */
+  dependencies?: Lark.TaskDependency[]
+}
+export interface RemoveDependenciesTaskv2Response {
+  /** 移除之后的任务GUID */
+  dependencies?: Lark.TaskDependency[]
+}
+export interface CreateTaskv2TaskSubtaskResponse {
+  /** 创建的任务 */
+  subtask?: Lark.Task
+}
+export interface ListTaskv2TaskSubtaskResponse extends Paginated<Lark.Task[], 'items'> {}
+export interface CreateTaskv2TasklistResponse {
+  /** 创建的清单数据 */
+  tasklist?: Lark.Tasklist
+}
+export interface GetTaskv2TasklistResponse {
+  /** 清单详情 */
+  tasklist?: Lark.Tasklist
+}
+export interface PatchTaskv2TasklistResponse {
+  /** 修改后的任务清单 */
+  tasklist?: Lark.Tasklist
+}
+export interface AddMembersTaskv2TasklistResponse {
+  /** 完成更新后的清单实体 */
+  tasklist?: Lark.Tasklist
+}
+export interface RemoveMembersTaskv2TasklistResponse {
+  /** 修改完成后的清单实体 */
+  tasklist?: Lark.Tasklist
+}
+export interface TasksTaskv2TasklistResponse {
+  /** 任务摘要数据 */
+  items?: Lark.TaskSummary[]
+  /** 用于获取下一页的分页标记，最后一页时发返回空 */
+  page_token?: string
+  /** 是否有更多数据 */
+  has_more?: boolean
+}
+export interface ListTaskv2TasklistResponse extends Paginated<Lark.Tasklist[], 'items'> {}
+export interface CreateTaskv2TasklistActivitySubscriptionResponse {
+  /** 清单动态订阅 */
+  activity_subscription?: Lark.TasklistActivitySubscription
+}
+export interface GetTaskv2TasklistActivitySubscriptionResponse {
+  /** 订阅详情 */
+  activity_subscription?: Lark.TasklistActivitySubscription
+}
+export interface ListTaskv2TasklistActivitySubscriptionResponse {
+  /** 清单的动态订阅数据 */
+  items?: Lark.TasklistActivitySubscription[]
+}
+export interface PatchTaskv2TasklistActivitySubscriptionResponse {
+  /** 更新后的订阅 */
+  activity_subscription?: Lark.TasklistActivitySubscription
+}
+export interface CreateTaskv2CommentResponse {
+  /** 创建的评论详情 */
+  comment?: Lark.Comment
+}
+export interface GetTaskv2CommentResponse {
+  /** 评论详情 */
+  comment?: Lark.Comment
+}
+export interface PatchTaskv2CommentResponse {
+  /** 更新后的评论 */
+  comment?: Lark.Comment
+}
+export interface ListTaskv2CommentResponse extends Paginated<Lark.Comment[], 'items'> {}
+export interface UploadTaskv2AttachmentResponse {
+  /** 上传的附件列表 */
+  items?: Lark.Attachment[]
+}
+export interface ListTaskv2AttachmentResponse extends Paginated<Lark.Attachment[], 'items'> {}
+export interface GetTaskv2AttachmentResponse {
+  /** 附件详情 */
+  attachment?: Lark.Attachment
+}
+export interface CreateTaskv2SectionResponse {
+  /** 创建的自定义分组数据 */
+  section?: Lark.Section
+}
+export interface GetTaskv2SectionResponse {
+  /** 获取的自定义分组详情 */
+  section?: Lark.Section
+}
+export interface PatchTaskv2SectionResponse {
+  /** 更新后的自定义分组 */
+  section?: Lark.Section
+}
+export interface ListTaskv2SectionResponse extends Paginated<Lark.SectionSummary[], 'items'> {}
+export interface TasksTaskv2SectionResponse extends Paginated<Lark.TaskSummary[], 'items'> {}
+export interface CreateTaskv2CustomFieldResponse {
+  /** 创建的自定义字段 */
+  custom_field?: Lark.CustomField
+}
+export interface GetTaskv2CustomFieldResponse {
+  /** 获取的自定义字段数据 */
+  custom_field?: Lark.CustomField
+}
+export interface PatchTaskv2CustomFieldResponse {
+  /** 修改后的自定义字段设置 */
+  custom_field?: Lark.CustomField
+}
+export interface ListTaskv2CustomFieldResponse extends Paginated<Lark.CustomField[], 'items'> {}
+export interface CreateTaskv2CustomFieldOptionResponse {
+  /** 创建的选项 */
+  option?: Lark.Option
+}
+export interface PatchTaskv2CustomFieldOptionResponse {
+  /** 更新后的option数据 */
+  option?: Lark.Option
+}
+export interface CreateMailMailgroupResponse extends Lark.Mailgroup {}
+export interface PatchMailMailgroupResponse extends Lark.Mailgroup {}
+export interface UpdateMailMailgroupResponse extends Lark.Mailgroup {}
+export interface GetMailMailgroupResponse extends Lark.Mailgroup {}
+export interface ListMailMailgroupResponse extends Paginated<Lark.Mailgroup[], 'items'> {}
+export interface ListMailMailgroupManagerResponse extends Paginated<Lark.MailgroupManager[], 'items'> {}
+export interface CreateMailMailgroupMemberResponse extends Lark.MailgroupMember {}
+export interface GetMailMailgroupMemberResponse extends Lark.MailgroupMember {}
+export interface ListMailMailgroupMemberResponse extends Paginated<Lark.MailgroupMember[], 'items'> {}
+export interface BatchCreateMailMailgroupMemberResponse {
+  /** 添加成功后的邮件组成员信息列表 */
+  items?: Lark.MailgroupMember[]
+}
+export interface CreateMailMailgroupAliasResponse {
+  /** 邮件组别名 */
+  mailgroup_alias?: Lark.EmailAlias
+}
+export interface ListMailMailgroupAliasResponse {
+  /** 邮件组别名 */
+  items?: Lark.EmailAlias[]
+}
+export interface CreateMailMailgroupPermissionMemberResponse extends Lark.MailgroupPermissionMember {}
+export interface GetMailMailgroupPermissionMemberResponse extends Lark.MailgroupPermissionMember {}
+export interface ListMailMailgroupPermissionMemberResponse extends Paginated<Lark.MailgroupPermissionMember[], 'items'> {}
+export interface BatchCreateMailMailgroupPermissionMemberResponse {
+  /** 添加成功后的邮件组权限成员信息列表 */
+  items?: Lark.MailgroupPermissionMember[]
+}
+export interface CreateMailPublicMailboxResponse extends Lark.PublicMailbox {}
+export interface PatchMailPublicMailboxResponse extends Lark.PublicMailbox {}
+export interface UpdateMailPublicMailboxResponse extends Lark.PublicMailbox {}
+export interface GetMailPublicMailboxResponse extends Lark.PublicMailbox {}
+export interface ListMailPublicMailboxResponse extends Paginated<Lark.PublicMailbox[], 'items'> {}
+export interface CreateMailPublicMailboxMemberResponse extends Lark.PublicMailboxMember {}
+export interface GetMailPublicMailboxMemberResponse extends Lark.PublicMailboxMember {}
+export interface ListMailPublicMailboxMemberResponse extends Paginated<Lark.PublicMailboxMember[], 'items'> {}
+export interface BatchCreateMailPublicMailboxMemberResponse {
+  /** 添加成功后的公共邮箱成员信息列表 */
+  items?: Lark.PublicMailboxMember[]
+}
+export interface CreateMailPublicMailboxAliasResponse {
+  /** 公共邮箱别名 */
+  public_mailbox_alias?: Lark.EmailAlias
+}
+export interface ListMailPublicMailboxAliasResponse {
+  /** 公共邮箱别名 */
+  items?: Lark.EmailAlias[]
+}
+export interface CreateMailUserMailboxAliasResponse {
+  /** 用户邮箱别名 */
+  user_mailbox_alias?: Lark.EmailAlias
+}
+export interface ListMailUserMailboxAliasResponse extends Paginated<Lark.EmailAlias[], 'items'> {}
+export interface QueryMailUserResponse {
+  /** 邮箱地址返回 */
+  user_list?: Lark.User[]
+}
+export interface GetApplicationResponse {
+  /** 应用数据 */
+  app?: Lark.Application
+}
+export interface GetApplicationApplicationAppVersionResponse {
+  app_version?: Lark.ApplicationAppVersion
+}
+export interface ListApplicationApplicationAppVersionResponse extends Paginated<Lark.ApplicationAppVersion[], 'items'> {}
+export interface ContactsRangeSuggestApplicationApplicationAppVersionResponse {
+  contacts_range?: Lark.ApplicationAppContactsRange
+}
+export interface UnderauditlistApplicationResponse extends Paginated<Lark.Application[], 'items'> {}
+export interface ContactsRangeConfigurationApplicationResponse {
+  contacts_range?: Lark.ApplicationAppContactsRange
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+}
+export interface CheckWhiteBlackListApplicationApplicationVisibilityResponse {
+  /** 用户可见性信息列表 */
+  user_visibility_list?: Lark.ApplicationVisibilityUserWhiteBlackInfo[]
+  /** 部门可见性信息列表 */
+  department_visibility_list?: Lark.ApplicationVisibilityDepartmentWhiteBlackInfo[]
+  /** 用户组可见性信息列表 */
+  group_visibility_list?: Lark.ApplicationVisibilityGroupWhiteBlackInfo[]
+}
+export interface DepartmentOverviewApplicationApplicationAppUsageResponse {
+  /** 分页查询时返回，代表是否还有更多数据 */
+  has_more?: boolean
+  /** 分页标记，下一页分页的token */
+  page_token?: string
+  /** 部门内员工使用应用的概览数据 */
+  items?: Lark.ApplicationDepartmentAppUsage[]
+}
+export interface OverviewApplicationApplicationAppUsageResponse {
+  /** 员工使用应用概览数据 */
+  items?: Lark.ApplicationAppUsage[]
+}
+export interface ListApplicationApplicationFeedbackResponse {
+  /** 应用的反馈列表 */
+  feedback_list?: Lark.ApplicationFeedback[]
+  /** 是否还有更多用户反馈列表，true：是，false：否 */
+  has_more: boolean
+  /** 拉取下一页应用反馈列表时使用的 page_token */
+  page_token?: string
+}
+export interface QueryTenantTenantProductAssignInfoResponse {
+  /** 租户待分配席位列表 */
+  assign_info_list?: Lark.TenantAssignInfo[]
+}
+export interface QueryTenantResponse {
+  /** 企业信息 */
+  tenant?: Lark.Tenant
+}
+export interface GetVerificationResponse {
+  verification?: Lark.Verification
+}
+export interface CreatePersonalSettingsSystemStatusResponse {
+  /** 系统状态 */
+  system_status?: Lark.SystemStatus
+}
+export interface PatchPersonalSettingsSystemStatusResponse {
+  /** 系统状态 */
+  system_status?: Lark.SystemStatus
+}
+export interface ListPersonalSettingsSystemStatusResponse extends Paginated<Lark.SystemStatus[], 'items'> {}
+export interface BatchOpenPersonalSettingsSystemStatusResponse {
+  /** 开启结果 */
+  result_list: Lark.SystemStatusUserOpenResultEntity[]
+}
+export interface BatchClosePersonalSettingsSystemStatusResponse {
+  /** 关闭结果 */
+  result_list: Lark.SystemStatusUserCloseResultEntity[]
+}
+export interface CreateSearchMessageResponse {
+  /** 消息id列表 */
+  items?: string[]
+  /** 翻页 token，传入返回下一页，首页不需要传入 */
+  page_token?: string
+  /** 是否还有下一页 */
+  has_more?: boolean
+}
+export interface CreateSearchAppResponse {
+  /** app_id列表 */
+  items?: string[]
+  /** 翻页 token，传入返回下一页，首页不需要传入 */
+  page_token?: string
+  /** 是否还有下一页 */
+  has_more?: boolean
+}
+export interface CreateSearchDataSourceResponse {
+  /** 数据源实例 */
+  data_source?: Lark.DataSource
+}
+export interface PatchSearchDataSourceResponse {
+  /** 数据源 */
+  data_source?: Lark.DataSource
+}
+export interface GetSearchDataSourceResponse {
+  /** 数据源实例 */
+  data_source?: Lark.DataSource
+}
+export interface ListSearchDataSourceResponse extends Paginated<Lark.DataSource[], 'items'> {}
+export interface GetSearchDataSourceItemResponse {
+  /** 数据项实例 */
+  item: Lark.Item
+}
+export interface CreateSearchSchemaResponse {
+  /** 数据范式实例 */
+  schema?: Lark.Schema
+}
+export interface PatchSearchSchemaResponse {
+  /** 数据范式实例 */
+  schema?: Lark.Schema
+}
+export interface GetSearchSchemaResponse {
+  /** 数据范式 */
+  schema?: Lark.Schema
+}
+export interface ParseDocumentAiResumeResponse {
+  /** 简历信息 */
+  resumes?: Lark.Resume[]
+}
+export interface RecognizeDocumentAiVehicleInvoiceResponse {
+  /** 机动车发票信息 */
+  vehicle_invoice?: Lark.VehicleInvoice
+}
+export interface RecognizeDocumentAiHealthCertificateResponse {
+  /** 健康证信息 */
+  health_certificate?: Lark.HealthCertificate
+}
+export interface RecognizeDocumentAiHkmMainlandTravelPermitResponse {
+  /** 港澳居民来往内地通行证信息 */
+  hkm_mainland_travel_permit?: Lark.HkmMainlandTravelPermit
+}
+export interface RecognizeDocumentAiTwMainlandTravelPermitResponse {
+  /** 台湾居民来往大陆通行证信息 */
+  tw_mainland_travel_permit?: Lark.TwMainlandTravelPermit
+}
+export interface RecognizeDocumentAiChinesePassportResponse {
+  /** 中国护照信息 */
+  chinese_passport?: Lark.ChinesePassport
+}
+export interface RecognizeDocumentAiBankCardResponse {
+  /** 银行卡信息 */
+  bank_card?: Lark.BankCard
+}
+export interface RecognizeDocumentAiVehicleLicenseResponse {
+  /** 行驶证信息 */
+  vehicle_license?: Lark.VehicleLicense
+}
+export interface RecognizeDocumentAiTrainInvoiceResponse {
+  /** 火车票信息 */
+  train_invoices?: Lark.TrainInvoice[]
+}
+export interface RecognizeDocumentAiTaxiInvoiceResponse {
+  /** 出租车票信息 */
+  taxi_invoices?: Lark.TaxiInvoice[]
+}
+export interface RecognizeDocumentAiIdCardResponse {
+  /** 身份证信息 */
+  id_card?: Lark.IdCard
+}
+export interface RecognizeDocumentAiFoodProduceLicenseResponse {
+  /** 食品生产许可证信息 */
+  food_produce_license?: Lark.FoodProduceLicense
+}
+export interface RecognizeDocumentAiFoodManageLicenseResponse {
+  /** 食品经营许可证信息 */
+  food_manage_license?: Lark.FoodManageLicense
+}
+export interface RecognizeDocumentAiDrivingLicenseResponse {
+  /** 驾驶证信息 */
+  driving_license?: Lark.DrvingLicense
+}
+export interface RecognizeDocumentAiVatInvoiceResponse {
+  /** 增值税发票信息 */
+  vat_invoices?: Lark.VatInvoice[]
+}
+export interface RecognizeDocumentAiBusinessLicenseResponse {
+  /** 营业执照信息 */
+  business_license?: Lark.BusinessLicense
+}
+export interface FieldExtractionDocumentAiContractResponse {
+  /** 文件的唯一id */
+  file_id?: string
+  /** 总交易金额 */
+  price?: Lark.ExtractPrice
+  /** 期限相关信息，包括开始日期、结束日期、有效时长 */
+  time?: Lark.ExtractTime
+  /** 盖章份数 */
+  copy?: Lark.ExtractCopy
+  /** 币种 */
+  currency?: Lark.ExtractCurrency
+  /** 合同标题 */
+  header?: string
+  /** 主体信息 */
+  body_info?: Lark.BodyInfo[]
+  /** 银行信息 */
+  bank_info?: Lark.BankInfo[]
+}
+export interface RecognizeDocumentAiBusinessCardResponse {
+  /** 名片信息 */
+  business_cards?: Lark.RecognizedEntities[]
+}
+export interface BasicRecognizeOpticalCharRecognitionImageResponse {
+  /** 按区域识别，返回文本列表 */
+  text_list: string[]
+}
+export interface FileRecognizeSpeechToTextSpeechResponse {
+  /** 语音识别后的文本信息 */
+  recognition_text: string
+}
+export interface StreamRecognizeSpeechToTextSpeechResponse {
+  /** 16 位 String 随机串作为同一数据流的标识 */
+  stream_id: string
+  /** 数据流分片的序号，序号从 0 开始，每次请求递增 1 */
+  sequence_id: number
+  /** 语音流识别后的文本信息 */
+  recognition_text: string
+}
+export interface DetectTranslationTextResponse {
+  /** 识别的文本语种，返回符合 ISO 693-1 标准 */
+  language: string
+}
+export interface TranslateTranslationTextResponse {
+  /** 翻译后的文本 */
+  text: string
+}
+export interface ListAdminAdminDeptStatResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+  items?: Lark.AdminDeptStat[]
+}
+export interface ListAdminAdminUserStatResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+  items?: Lark.AdminUserStat[]
+}
+export interface CreateAdminBadgeResponse {
+  /** 勋章的信息 */
+  badge?: Lark.Badge
+}
+export interface UpdateAdminBadgeResponse {
+  /** 勋章信息 */
+  badge?: Lark.Badge
+}
+export interface CreateAdminBadgeImageResponse {
+  /** 图片的key */
+  image_key?: string
+}
+export interface ListAdminBadgeResponse extends Paginated<Lark.Badge[], 'badges'> {}
+export interface GetAdminBadgeResponse {
+  /** 勋章信息 */
+  badge?: Lark.Badge
+}
+export interface CreateAdminBadgeGrantResponse {
+  /** 授予名单的信息 */
+  grant?: Lark.Grant
+}
+export interface UpdateAdminBadgeGrantResponse {
+  /** 授予名单 */
+  grant?: Lark.Grant
+}
+export interface ListAdminBadgeGrantResponse extends Paginated<Lark.Grant[], 'grants'> {}
+export interface GetAdminBadgeGrantResponse {
+  /** 授予名单信息 */
+  grant?: Lark.Grant
+}
+export interface ListEhrEmployeeResponse extends Paginated<Lark.Employee[], 'items'> {}
+export interface SearchCorehrBasicInfoNationalityResponse extends Paginated<Lark.Nationality[], 'items'> {}
+export interface SearchCorehrBasicInfoBankResponse extends Paginated<Lark.Bank[], 'items'> {}
+export interface SearchCorehrBasicInfoBankBranchResponse extends Paginated<Lark.BankBranch[], 'items'> {}
+export interface GetByParamCorehrCustomFieldResponse {
+  /** 自定义字段详情 */
+  data?: Lark.CustomField
+}
+export interface QueryCorehrCustomFieldResponse {
+  /** 自定义字段列表 */
+  items?: Lark.CustomField[]
+}
+export interface ListObjectApiNameCorehrCustomFieldResponse {
+  /** 对象列表 */
+  items?: Lark.Object[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface SearchCorehrBasicInfoCountryRegionResponse extends Paginated<Lark.CountryRegion[], 'items'> {}
+export interface SearchCorehrBasicInfoCountryRegionSubdivisionResponse extends Paginated<Lark.CountryRegionSubdivision[], 'items'> {}
+export interface SearchCorehrBasicInfoCityResponse extends Paginated<Lark.City[], 'items'> {}
+export interface SearchCorehrBasicInfoDistrictResponse extends Paginated<Lark.District[], 'items'> {}
+export interface CreateCorehrEmployeeTypeResponse {
+  employee_type?: Lark.EmployeeType
+}
+export interface PatchCorehrEmployeeTypeResponse {
+  employee_type?: Lark.EmployeeType
+}
+export interface GetCorehrEmployeeTypeResponse {
+  /** 雇员类型 */
+  employee_type?: Lark.EmployeeType
+}
+export interface ListCorehrEmployeeTypeResponse {
+  /** 查询的雇员类型信息 */
+  items?: Lark.EmployeeType[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface CreateCorehrNationalIdTypeResponse {
+  national_id_type?: Lark.NationalIdType
+}
+export interface PatchCorehrNationalIdTypeResponse {
+  national_id_type?: Lark.NationalIdType
+}
+export interface GetCorehrNationalIdTypeResponse {
+  /** 国家证件类型信息 */
+  national_id_type?: Lark.NationalIdType
+}
+export interface ListCorehrNationalIdTypeResponse {
+  /** 查询的国家证件类型信息 */
+  items?: Lark.NationalIdType[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface CreateCorehrWorkingHoursTypeResponse {
+  working_hours_type?: Lark.WorkingHoursType
+}
+export interface PatchCorehrWorkingHoursTypeResponse {
+  working_hours_type?: Lark.WorkingHoursType
+}
+export interface GetCorehrWorkingHoursTypeResponse {
+  /** 工时制度信息 */
+  working_hours_type?: Lark.WorkingHoursType
+}
+export interface ListCorehrWorkingHoursTypeResponse {
+  /** 查询的工时制度信息 */
+  items?: Lark.WorkingHoursType[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface SearchCorehrBasicInfoCurrencyResponse extends Paginated<Lark.Currency[], 'items'> {}
+export interface BatchGetCorehrEmployeeResponse {
+  /** 查询的雇佣信息 */
+  items?: Lark.Employee[]
+}
+export interface SearchCorehrEmployeeResponse extends Paginated<Lark.Employee[], 'items'> {}
+export interface CreateCorehrEmploymentResponse {
+  employment?: Lark.EmploymentCreate
+}
+export interface PatchCorehrEmploymentResponse {
+  employment?: Lark.Employment
+}
+export interface CreateCorehrPersonResponse {
+  person?: Lark.PersonInfo
+}
+export interface PatchCorehrPersonResponse {
+  person?: Lark.PersonInfo
+}
+export interface UploadCorehrPersonResponse {
+  /** 上传文件ID */
+  id?: string
+}
+export interface CreateCorehrJobDataResponse {
+  job_data?: Lark.JobData
+}
+export interface PatchCorehrJobDataResponse {
+  job_data?: Lark.JobData
+}
+export interface GetCorehrJobDataResponse {
+  /** 任职信息 */
+  job_data?: Lark.JobData
+}
+export interface QueryCorehrEmployeesJobDataResponse {
+  /** 任职信息 */
+  items?: Lark.EmployeeJobData[]
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 是否还有更多项 */
+  has_more?: boolean
+}
+export interface BatchGetCorehrEmployeesJobDataResponse {
+  /** 查询的雇佣信息 */
+  items?: Lark.EmployeeJobData[]
+}
+export interface ListCorehrJobDataResponse {
+  /** 查询的任职信息 */
+  items?: Lark.JobData[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface ParentsCorehrDepartmentResponse extends Paginated<Lark.DepartmentParents[], 'items'> {}
+export interface SearchCorehrDepartmentResponse extends Paginated<Lark.Department[], 'items'> {}
+export interface CreateCorehrDepartmentResponse {
+  department?: Lark.DepartmentCreate
+}
+export interface PatchCorehrDepartmentResponse {
+  department?: Lark.Department
+}
+export interface GetCorehrDepartmentResponse {
+  /** 部门信息 */
+  department?: Lark.Department
+}
+export interface BatchGetCorehrDepartmentResponse {
+  /** 查询的部门信息 */
+  items?: Lark.Department[]
+}
+export interface ListCorehrDepartmentResponse {
+  /** 查询的部门信息 */
+  items?: Lark.Department[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface BatchGetCorehrLocationResponse {
+  /** 查询的地点信息 */
+  items?: Lark.Location[]
+}
+export interface CreateCorehrLocationResponse {
+  location?: Lark.Location
+}
+export interface GetCorehrLocationResponse {
+  /** 地点信息 */
+  location?: Lark.Location
+}
+export interface ListCorehrLocationResponse {
+  /** 查询的地点信息 */
+  items?: Lark.Location[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrCompanyResponse {
+  /** 公司信息 */
+  company?: Lark.Company
+}
+export interface ListCorehrCompanyResponse {
+  /** 查询的公司信息 */
+  items?: Lark.Company[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface BatchGetCorehrCompanyResponse {
+  /** 查询的公司信息 */
+  items?: Lark.Company[]
+}
+export interface CreateCorehrCompanyResponse {
+  company?: Lark.Company
+}
+export interface PatchCorehrCompanyResponse {
+  company?: Lark.Company
+}
+export interface CreateCorehrCostCenterResponse {
+  cost_center?: Lark.CostCenter
+}
+export interface PatchCorehrCostCenterResponse {
+  cost_center?: Lark.CostCenter
+}
+export interface SearchCorehrCostCenterResponse {
+  /** 成本中心信息 */
+  items?: Lark.CostCenterVersion[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+}
+export interface CreateCorehrCostCenterVersionResponse {
+  version?: Lark.CostCenterVersion
+}
+export interface PatchCorehrCostCenterVersionResponse {
+  version?: Lark.CostCenterVersion
+}
+export interface BatchGetCorehrJobLevelResponse {
+  /** 查询的职级信息 */
+  items?: Lark.JobLevel[]
+}
+export interface CreateCorehrJobLevelResponse {
+  job_level?: Lark.JobLevel
+}
+export interface PatchCorehrJobLevelResponse {
+  job_level?: Lark.JobLevel
+}
+export interface GetCorehrJobLevelResponse {
+  /** 职务级别信息 */
+  job_level?: Lark.JobLevel
+}
+export interface ListCorehrJobLevelResponse {
+  /** 查询的职务级别信息 */
+  items?: Lark.JobLevel[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface BatchGetCorehrJobFamilyResponse {
+  /** 查询的序列信息 */
+  items?: Lark.JobFamily[]
+}
+export interface CreateCorehrJobFamilyResponse {
+  job_family?: Lark.JobFamily
+}
+export interface PatchCorehrJobFamilyResponse {
+  job_family?: Lark.JobFamily
+}
+export interface GetCorehrJobFamilyResponse {
+  /** 职务序列信息 */
+  job_family?: Lark.JobFamily
+}
+export interface ListCorehrJobFamilyResponse {
+  /** 查询的职务序列信息 */
+  items?: Lark.JobFamily[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface CreateCorehrJobResponse {
+  job?: Lark.Job
+}
+export interface PatchCorehrJobResponse {
+  job?: Lark.Job
+}
+export interface GetCorehrJobResponse {
+  /** 职务信息 */
+  job?: Lark.Job
+}
+export interface ListCorehrJobResponse {
+  /** 查询的职务信息 */
+  items?: Lark.Job[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrJobResponse {
+  /** 职务信息 */
+  job?: Lark.Job
+}
+export interface ListCorehrJobResponse {
+  /** 查询的职务信息 */
+  items?: Lark.Job[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface CreateCorehrPreHireResponse {
+  /** 待入职 ID */
+  pre_hire_id?: string
+}
+export interface PatchCorehrPreHireResponse {
+  pre_hire?: Lark.PreHire
+}
+export interface GetCorehrPreHireResponse {
+  /** 待入职信息 */
+  pre_hire?: Lark.PreHire
+}
+export interface ListCorehrPreHireResponse {
+  /** 查询的待入职信息 */
+  items?: Lark.PreHireQuery[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface SearchCorehrContractResponse extends Paginated<Lark.Contract[], 'items'> {}
+export interface CreateCorehrContractResponse {
+  contract?: Lark.Contract
+}
+export interface PatchCorehrContractResponse {
+  contract?: Lark.Contract
+}
+export interface GetCorehrContractResponse {
+  /** 合同信息 */
+  contract?: Lark.Contract
+}
+export interface ListCorehrContractResponse {
+  /** 查询的合同信息 */
+  items?: Lark.Contract[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface SearchCorehrProbationResponse extends Paginated<Lark.ProbationInfo[], 'items'> {}
+export interface CreateCorehrProbationAssessmentResponse {
+  /** 创建的试用期考核记录 ID 列表，有序返回 */
+  assessment_ids?: string[]
+}
+export interface QueryCorehrTransferReasonResponse {
+  /** 异动原因列表 */
+  items?: Lark.TransferReason[]
+}
+export interface QueryCorehrTransferTypeResponse {
+  /** 异动类型列表 */
+  items?: Lark.TransferType[]
+}
+export interface CreateCorehrJobChangeResponse extends Lark.JobChange {}
+export interface SearchCorehrJobChangeResponse extends Paginated<Lark.JobChange[], 'items'> {}
+export interface QueryCorehrOffboardingResponse {
+  /** 离职原因列表 */
+  items?: Lark.OffboardingReason[]
+}
+export interface SubmitCorehrOffboardingResponse {
+  /** 离职记录 id */
+  offboarding_id?: string
+  /** 雇员 id */
+  employment_id?: string
+  /** 离职原因 */
+  offboarding_reason_unique_identifier?: string
+  /** 离职日期 */
+  offboarding_date?: string
+  /** 离职原因说明 */
+  offboarding_reason_explanation?: string
+  /** 是否加入离职屏蔽名单 */
+  add_block_list?: boolean
+  /** 屏蔽原因 */
+  block_reason?: string
+  /** 屏蔽原因说明 */
+  block_reason_explanation?: string
+  /** 创建时间 */
+  created_time?: string
+}
+export interface SearchCorehrOffboardingResponse extends Paginated<Lark.Offboarding[], 'items'> {}
+export interface CreateCorehrLeaveGrantingRecordResponse {
+  /** 假期授予记录 */
+  leave_granting_record?: Lark.LeaveGrantingRecord
+}
+export interface LeaveTypesCorehrLeaveResponse {
+  /** 假期类型列表 */
+  leave_type_list?: Lark.LeaveType[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface LeaveBalancesCorehrLeaveResponse {
+  /** 员工假期余额信息列表 */
+  employment_leave_balance_list?: Lark.EmploymentLeaveBalance[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface LeaveRequestHistoryCorehrLeaveResponse {
+  /** 请假记录信息列表 */
+  leave_request_list?: Lark.LeaveRequest[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface BatchGetCorehrEmployeesBpResponse {
+  /** 员工直属 BP 信息，当员工所在部门、属地无 BP 时，会上钻找到最近的 BP */
+  employment_direct_bps?: Lark.EmploymentBp[]
+  /** 员工全部 BP 信息 */
+  employment_all_bps?: Lark.EmploymentBp[]
+}
+export interface GetByDepartmentCorehrBpResponse {
+  /** 部门 HRBP 信息，依次为部门及各层级上级部门 */
+  items?: Lark.DepartmentHrbp[]
+}
+export interface ListCorehrBpResponse extends Paginated<Lark.Bp[], 'items'> {}
+export interface QueryCorehrSecurityGroupResponse {
+  /** HRBP/属地 BP 信息 */
+  hrbp_list?: Lark.Hrbp[]
+}
+export interface SearchCorehrAssignedUserResponse {
+  /** 用户授权信息 */
+  items?: Lark.RoleAuthorization[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface ListCorehrSecurityGroupResponse {
+  /** 查询的用户角色信息 */
+  items?: Lark.SecurityGroup[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface ListCorehrProcessResponse extends Paginated<string[], 'process_ids'> {}
+export interface GetCorehrProcessResponse {
+  /** 流程实例ID */
+  process_id?: string
+  /** 流程状态 */
+  status?: number
+  /** 业务类型ID */
+  flow_template_id?: string
+  /** 业务类型名称 */
+  flow_template_name?: Lark.DataengineI18n
+  /** 流程定义ID */
+  flow_definition_id?: string
+  /** 流程定义名称 */
+  flow_definition_name?: Lark.DataengineI18n
+  /** 流程发起人ID */
+  initiator_id?: string
+  /** 流程发起人姓名 */
+  initiator_name?: Lark.DataengineI18n
+  /** 流程发起时间，Unix毫秒时间戳 */
+  create_time?: string
+  /** 流程结束时间，Unix毫秒时间戳 */
+  complete_time?: string
+  /** 发起单据地址 */
+  start_links?: Lark.ProcessLink
+  /** 流程摘要，会随着流程流转发生变化 */
+  abstracts?: Lark.ProcessAbstractItem[]
+  /** 待办列表 */
+  todos?: Lark.ProcessTodoItem[]
+  /** 抄送列表 */
+  cc_list?: Lark.ProcessCcItem[]
+  /** 已办列表 */
+  done_list?: Lark.ProcessDoneItem[]
+}
+export interface GetCorehrProcessFormVariableDataResponse {
+  /** 流程变量 */
+  field_variable_values?: Lark.FormFieldVariable[]
+}
+export interface MatchCorehrCompensationStandardResponse extends Lark.CpstMatchItem {}
+export interface CombinedCreateHireJobResponse extends Lark.CombinedJobResult {}
+export interface GetHireJobResponse {
+  /** 职位数据 */
+  job?: Lark.Job
+}
+export interface ConfigHireJobResponse {
+  job_config?: Lark.JobConfigResult
+}
+export interface ListHireJobResponse {
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 列表 */
+  items?: Lark.Job[]
+}
+export interface CombinedUpdateHireJobResponse extends Lark.CombinedJobResult {}
+export interface UpdateConfigHireJobResponse {
+  job_config?: Lark.JobConfigResult
+}
+export interface ListHireJobTypeResponse extends Paginated<Lark.JobTypeInfo[], 'items'> {}
+export interface RecruiterHireJobResponse {
+  /** 职位负责人 */
+  info?: Lark.JobRecruiter2
+}
+export interface CreateHireJobRequirementResponse {
+  job_requirement?: Lark.JobRequirementDto
+}
+export interface ListHireJobRequirementResponse {
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+  /** 查询的招聘需求信息 */
+  items?: Lark.JobRequirementDto[]
+}
+export interface ListHireJobRequirementSchemaResponse {
+  /** 列表 */
+  items?: Lark.JobRequirementSchema[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface ListHireJobProcessResponse {
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 列表 */
+  items?: Lark.JobProcesses[]
+}
+export interface ListHireRegistrationSchemaResponse extends Paginated<Lark.RegistrationSchema[], 'items'> {}
+export interface ListHireReferralWebsiteJobPostResponse extends Paginated<Lark.PortalJobPost[], 'items'> {}
+export interface GetHireReferralWebsiteJobPostResponse {
+  job_post?: Lark.PortalJobPost
+}
+export interface GetByApplicationHireReferralResponse {
+  /** 内推信息 */
+  referral?: Lark.Referral
+}
+export interface CreateHireExternalApplicationResponse {
+  external_application?: Lark.ExternalApplication
+}
+export interface UpdateHireExternalApplicationResponse {
+  external_application?: Lark.ExternalApplication
+}
+export interface DeleteHireExternalApplicationResponse {
+  external_application?: Lark.ExternalApplication
+}
+export interface CreateHireExternalInterviewResponse {
+  external_interview?: Lark.ExternalInterview
+}
+export interface CreateHireExternalInterviewAssessmentResponse {
+  external_interview_assessment?: Lark.ExternalInterviewAssessment
+}
+export interface CreateHireExternalBackgroundCheckResponse {
+  external_background_check?: Lark.ExternalBackgroundCheck
+}
+export interface AddToFolderHireTalentResponse {
+  /** 人才 ID 列表 */
+  talent_id_list?: string[]
+  /** 文件夹 ID */
+  folder_id?: string
+}
+export interface ListHireTalentFolderResponse extends Paginated<Lark.TalentFolder[], 'items'> {}
+export interface BatchGetIdHireTalentResponse {
+  /** 人才信息列表 */
+  talent_list?: Lark.TalentBatchInfo[]
+}
+export interface ListHireTalentResponse {
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 列表 */
+  items?: Lark.Talent[]
+}
+export interface QueryHireTalentObjectResponse {
+  items?: Lark.CommonSchema[]
+}
+export interface GetHireTalentResponse {
+  /** 人才信息 */
+  talent?: Lark.Talent
+}
+export interface CreateHireApplicationResponse {
+  /** 投递ID */
+  id?: string
+}
+export interface GetHireApplicationResponse {
+  /** 投递数据 */
+  application?: Lark.Application
+}
+export interface ListHireApplicationResponse {
+  /** 投递数据列表 */
+  items?: string[]
+  /** 游标, 翻下一页数据时使用 */
+  page_token?: string
+  /** 是否还有下一页数据 */
+  has_more?: boolean
+}
+export interface ListHireEvaluationResponse extends Paginated<Lark.Evaluation[], 'items'> {}
+export interface ListHireQuestionnaireResponse {
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+  /** 满意度评价列表 */
+  items?: Lark.Questionnaire[]
+}
+export interface ListHireInterviewResponse {
+  /** 面试列表 */
+  items?: Lark.InterviewExtend[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface CreateHireOfferResponse extends Lark.OfferInfo {}
+export interface OfferHireApplicationResponse {
+  offer?: Lark.ApplicationOffer
+}
+export interface GetHireOfferResponse {
+  /** Offer 详情 */
+  offer?: Lark.Offer
+}
+export interface ListHireOfferResponse {
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+  /** Offer 列表 */
+  items?: Lark.OfferListInfo[]
+}
+export interface InternOfferStatusHireOfferResponse extends Lark.InternOfferStatus {}
+export interface TransferOnboardHireApplicationResponse {
+  /** employee */
+  employee?: Lark.Employee
+}
+export interface PatchHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Lark.Employee
+}
+export interface GetByApplicationHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Lark.Employee
+}
+export interface GetHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Lark.Employee
+}
+export interface CreateHireNoteResponse {
+  note?: Lark.Note
+}
+export interface PatchHireNoteResponse {
+  /** 备注数据 */
+  note?: Lark.Note
+}
+export interface GetHireNoteResponse {
+  /** 备注数据 */
+  note?: Lark.Note
+}
+export interface ListHireNoteResponse {
+  /** 备注数据列表 */
+  items?: Lark.Note[]
+  /** 是否还有下一页数据 */
+  has_more?: boolean
+  /** 游标, 翻下一页数据时使用 */
+  page_token?: string
+}
+export interface ListHireResumeSourceResponse extends Paginated<Lark.ResumeSource[], 'items'> {}
+export interface CreateHireReferralAccountResponse {
+  /** 账号信息 */
+  account?: Lark.Account
+}
+export interface DeactivateHireReferralAccountResponse {
+  /** 账号信息 */
+  account?: Lark.Account
+}
+export interface WithdrawHireReferralAccountResponse {
+  /** 请求时传入的提现单ID */
+  external_order_id?: string
+  /** 交易时间戳，需要保存，用于统一交易时间，方便对账 */
+  trans_time?: string
+  /** 本次提现金额明细 */
+  withdrawal_details?: Lark.BonusAmount
+}
+export interface ReconciliationHireReferralAccountResponse {
+  /** 核对失败的信息 */
+  check_failed_list?: Lark.CheckFailedAccountInfo[]
+}
+export interface GetHireAttachmentResponse {
+  /** 附件信息 */
+  attachment?: Lark.Attachment
+}
+export interface PreviewHireAttachmentResponse {
+  /** 预览链接 */
+  url: string
+}
+export interface CreateOkrPeriodResponse {
+  /** 周期id */
+  period_id?: string
+  /** 周期起始年月 */
+  start_month?: string
+  /** 周期结束年月 */
+  end_month?: string
+}
+export interface PatchOkrPeriodResponse {
+  /** 周期规则id */
+  period_id?: string
+  /** 周期显示状态 */
+  status?: number
+}
+export interface ListOkrPeriodResponse {
+  /** 分页标志 */
+  page_token?: string
+  /** 是否有更多 */
+  has_more?: boolean
+  /** 数据项 */
+  items?: Lark.Period[]
+}
+export interface ListOkrPeriodRuleResponse {
+  /** 指标库列表 */
+  period_rules?: Lark.PeriodRule[]
+}
+export interface ListOkrUserOkrResponse {
+  /** OKR周期总数 */
+  total?: number
+  /** OKR 列表 */
+  okr_list?: Lark.OkrBatch[]
+}
+export interface BatchGetOkrResponse {
+  /** OKR 列表 */
+  okr_list?: Lark.OkrBatch[]
+}
+export interface CreateOkrProgressRecordResponse extends Lark.ProgressRecord {}
+export interface UpdateOkrProgressRecordResponse extends Lark.ProgressRecord {}
+export interface GetOkrProgressRecordResponse extends Lark.ProgressRecord {}
+export interface UploadOkrImageResponse extends Lark.ImageInfo {}
+export interface CreateHumanAuthenticationIdentityResponse {
+  /** uid of user bind authentication */
+  verify_uid: string
+}
+export interface CreateAcsVisitorResponse {
+  /** 访客的id */
+  visitor_id: string
+}
+export interface GetAcsRuleExternalResponse {
+  /** 设备权限组信息 */
+  rules: Lark.Rule[]
+}
+export interface CreateAcsRuleExternalResponse {
+  /** 权限组id */
+  rule_id: string
+}
+export interface GetAcsUserResponse {
+  /** 门禁用户信息 */
+  user?: Lark.User
+}
+export interface ListAcsUserResponse extends Paginated<Lark.User[], 'items'> {}
+export interface ListAcsDeviceResponse {
+  items?: Lark.Device[]
+}
+export interface ListAcsAccessRecordResponse extends Paginated<Lark.AccessRecord[], 'items'> {}
+export interface ListPerformanceSemesterResponse {
+  /** 周期meta信息列表 */
+  items?: Lark.Semester[]
+}
+export interface FindByUserListPerformanceStageTaskResponse {
+  /** 周期基础信息 */
+  base?: Lark.SemesterBaseInfo
+  /** 周期环节信息列表 */
+  items?: Lark.StageTask[]
+}
+export interface FindByPagePerformanceStageTaskResponse {
+  /** 周期基础信息 */
+  base?: Lark.SemesterBaseInfo
+  /** 周期环节信息列表 */
+  items?: Lark.StageTask[]
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+}
+export interface QueryPerformanceReviewDataResponse extends Lark.ReviewData {}
+export interface CreateLingoDraftResponse {
+  draft?: Lark.Draft
+}
+export interface UpdateLingoDraftResponse {
+  draft?: Lark.Draft
+}
+export interface CreateLingoEntityResponse {
+  entity?: Lark.Entity
+}
+export interface UpdateLingoEntityResponse {
+  entity?: Lark.Entity
+}
+export interface GetLingoEntityResponse {
+  /** 实体词 */
+  entity?: Lark.Entity
+}
+export interface ListLingoEntityResponse extends Paginated<Lark.Entity[], 'entities'> {}
+export interface MatchLingoEntityResponse {
+  /** 匹配结果 */
+  results?: Lark.MatchInfo[]
+}
+export interface SearchLingoEntityResponse extends Paginated<Lark.Entity[], 'entities'> {}
+export interface HighlightLingoEntityResponse {
+  /** 返回识别到的实体词信息 */
+  phrases?: Lark.Phrase[]
+}
+export interface ListLingoClassificationResponse extends Paginated<Lark.Classification[], 'items'> {}
+export interface ListLingoRepoResponse {
+  /** 词库列表 */
+  items?: Lark.Repo[]
+}
+export interface UploadLingoFileResponse {
+  /** 文件 token */
+  file_token?: string
+}
+export interface ListDataSecurityAndComplianceOpenapiLogResponse {
+  /** openapi日志列表 */
+  items?: Lark.OpenapiLog[]
+  /** 分页标记 */
+  page_token?: string
+  /** 是否有更多数据 */
+  has_more?: boolean
+}
+export interface ListAdminAuditInfoResponse extends Paginated<Lark.AuditInfo[], 'items'> {}
+export interface GetMinutesMinuteStatisticsResponse {
+  /** 妙记浏览信息统计 */
+  statistics?: Lark.Statictics
+}
+export interface GetMinutesMinuteResponse {
+  /** 妙记基本信息 */
+  minute?: Lark.Minute
+}
+export interface SearchWorkplaceWorkplaceAccessDataResponse {
+  /** 工作台访问数据 */
+  items?: Lark.WorkplaceAccessData[]
+  /** 是否还有下一页数据 */
+  has_more?: boolean
+  /** 分页标记，存在下一页时返回。 */
+  page_token?: string
+}
+export interface SearchWorkplaceCustomWorkplaceAccessDataResponse {
+  /** 定制工作台访问数据 */
+  items?: Lark.CustomWorkplaceAccessData[]
+  /** 是否还有下一页数据 */
+  has_more?: boolean
+  /** 分页标记，存在下一页时返回 */
+  page_token?: string
+}
+export interface SearchWorkplaceWorkplaceBlockAccessDataResponse {
+  /** 工作台中block的访问数据 */
+  items?: Lark.BlockAccessData[]
+  /** 是否还有下一页数据 */
+  has_more?: boolean
+  /** 分页标记，存在下一页时返回 */
+  page_token?: string
+}
+export interface FavouriteApplicationResponse extends Paginated<Lark.Application[], 'app_list'> {}
+export interface RecommendApplicationResponse extends Paginated<Lark.Application[], 'app_list'> {}
+export interface ListApplicationAppRecommendRuleResponse extends Paginated<Lark.AppRecommendRule[], 'rules'> {}
+export interface QueryReportRuleResponse {
+  /** 规则列表 */
+  rules?: Lark.Rule[]
+}
+export interface QueryReportTaskResponse {
+  /** 任务列表 */
+  items?: Lark.Task[]
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+}
+export interface CreateAuthenAccessTokenResponse extends Lark.UserAccessTokenInfo {}
+export interface CreateAuthenRefreshAccessTokenResponse extends Lark.UserAccessTokenInfo {}
+export interface CreateBaikeDraftResponse {
+  draft?: Lark.Draft
+}
+export interface UpdateBaikeDraftResponse {
+  draft?: Lark.Draft
+}
+export interface CreateBaikeEntityResponse {
+  entity?: Lark.Entity
+}
+export interface UpdateBaikeEntityResponse {
+  entity?: Lark.Entity
+}
+export interface GetBaikeEntityResponse {
+  /** 实体词 */
+  entity?: Lark.Entity
+}
+export interface ListBaikeEntityResponse extends Paginated<Lark.Entity[], 'entities'> {}
+export interface MatchBaikeEntityResponse {
+  /** 匹配结果 */
+  results?: Lark.MatchInfo[]
+}
+export interface SearchBaikeEntityResponse extends Paginated<Lark.Entity[], 'entities'> {}
+export interface HighlightBaikeEntityResponse {
+  /** 返回识别到的实体词信息 */
+  phrases?: Lark.Phrase[]
+}
+export interface ExtractBaikeEntityResponse {
+  /** 文本中可能的成为百科词条的实体词 */
+  entity_word: Lark.EntityWord[]
+}
+export interface ListBaikeClassificationResponse extends Paginated<Lark.Classification[], 'items'> {}
+export interface UploadBaikeFileResponse {
+  /** 文件 token */
+  file_token?: string
+}
+export interface ListContactUserResponse extends Paginated<Lark.User[], 'items'> {}
+export interface UpdateContactUserResponse {
+  user?: Lark.User
+}
+export interface ListContactDepartmentResponse extends Paginated<Lark.Department[], 'items'> {}
+export interface ListBitableAppTableRecordResponse extends Paginated<Lark.AppTableRecord[], 'items'> {}
+export interface ListHireApplicationInterviewResponse {
+  /** 分页标志 */
+  page_token?: string
+  /** 是否有更多 */
+  has_more?: boolean
+  /** 面试列表 */
+  items?: Lark.Interview[]
+}
+export interface GetHireJobManagerResponse {
+  /** 职位负责人 */
+  info?: Lark.JobManager
+}
+export interface GetHireOfferSchemaResponse extends Lark.OfferSchema {}
+export interface ListCorehrSubregionResponse {
+  /** 城市/区域信息 */
+  items?: Lark.Subregion[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrSubregionResponse {
+  /** 城市/区域信息 */
+  subregion?: Lark.Subregion
+}
+export interface ListCorehrSubdivisionResponse {
+  /** 省份/行政区信息 */
+  items?: Lark.Subdivision[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrSubdivisionResponse {
+  /** 国家/地址信息 */
+  subdivision?: Lark.Subdivision
+}
+export interface ListCorehrCountryRegionResponse {
+  /** 国家/地址信息 */
+  items?: Lark.CountryRegion[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrCountryRegionResponse {
+  /** 国家/地址信息 */
+  country_region?: Lark.CountryRegion
+}
+export interface ListCorehrCurrencyResponse {
+  /** 货币信息 */
+  items?: Lark.Currency[]
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 下一页页码 */
+  page_token?: string
+}
+export interface GetCorehrCurrencyResponse {
+  /** 货币信息 */
+  currency?: Lark.Currency
+}
+export interface GetCorehrPersonResponse {
+  /** 个人信息 */
+  person?: Lark.Person
+}
+export interface SetCheckboardAccessCodeVcRoomConfigResponse {
+  /** 部署访问码 */
+  access_code?: string
+}
+export interface SetRoomAccessCodeVcRoomConfigResponse {
+  /** 部署访问码 */
+  access_code?: string
+}
+export interface QueryVcRoomConfigResponse extends Lark.RoomConfig {}
 
 Internal.define({
-  '/event/v1/outbound_ip': {
-    GET: 'listEventOutboundIp',
-  },
   '/auth/v3/tenant_access_token/internal': {
     POST: 'tenantAccessTokenInternalAuth',
   },
@@ -29539,14 +28052,20 @@ Internal.define({
   '/auth/v3/tenant_access_token': {
     POST: 'tenantAccessTokenAuth',
   },
+  '/auth/v3/app_ticket/resend': {
+    POST: 'appTicketResendAuth',
+  },
+}, false)
+
+Internal.define({
+  '/event/v1/outbound_ip': {
+    GET: 'listEventOutboundIp',
+  },
   '/authen/v1/oidc/access_token': {
     POST: 'createAuthenOidcAccessToken',
   },
   '/authen/v1/oidc/refresh_access_token': {
     POST: 'createAuthenOidcRefreshAccessToken',
-  },
-  '/auth/v3/app_ticket/resend': {
-    POST: 'appTicketResendAuth',
   },
   '/authen/v1/user_info': {
     GET: 'getAuthenUserInfo',
