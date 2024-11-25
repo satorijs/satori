@@ -34,7 +34,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
         return bot.http.post('/v1/internal/' + key, args)
       }
       const form = new FormData()
-      form.append('$', new Blob([JSON.stringify(data)], { type: 'application/json' }))
+      form.append('$', JSON.stringify(data))
       for (const [key, value] of Object.entries(blobs)) {
         if (value instanceof File) {
           form.append(key, value, value.name)

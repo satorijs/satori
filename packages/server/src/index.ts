@@ -135,17 +135,12 @@ class SatoriServer extends Service<SatoriServer.Config> {
       try {
         let args = koa.request.body
         if (koa.request.files) {
-          const blobs: Dict<Blob> = Object.create(null)
-          const { $, ...files } = koa.request.files
-          const [json] = await Promise.all([
-            readFile(makeArray($)[0].filepath, 'utf8'),
-            Promise.all(Object.entries(files).map(async ([key, value]) => {
-              value = makeArray(value)[0]
-              const buffer = await readFile(value.filepath)
-              return [key, new File([buffer], value.originalFilename!, { type: value.mimetype! })]
-            })),
-          ])
-          args = deserialize(JSON.parse(json), '$', blobs)
+          const blobs = Object.fromEntries(await Promise.all(Object.entries(koa.request.files).map(async ([key, value]) => {
+            value = makeArray(value)[0]
+            const buffer = await readFile(value.filepath)
+            return [key, new File([buffer], value.originalFilename!, { type: value.mimetype! })] as const
+          })))
+          args = deserialize(JSON.parse(koa.request.body.$), '$', blobs)
         }
         const result = await bot.internal[name](...args)
         koa.body = result
