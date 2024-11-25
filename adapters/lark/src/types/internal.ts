@@ -18,12 +18,28 @@ export interface InternalConfig {
 export class Internal {
   constructor(private bot: LarkBot) {}
 
-  private assertResponse(response: HTTP.Response<BaseResponse>) {
+  private _assertResponse(response: HTTP.Response<BaseResponse>) {
     if (!response.data.code) return
     this.bot.logger.debug('response: %o', response.data)
     const error = new HTTP.Error(`request failed`)
     error.response = response
     throw error
+  }
+
+  private _buildData(arg: object, options: InternalConfig) {
+    if (options.multipart) {
+      const form = new FormData()
+      for (const [key, value] of Object.entries(arg)) {
+        if (value instanceof File) {
+          form.append(key, value, value.name)
+        } else {
+          form.append(key, value)
+        }
+      }
+      return form
+    } else {
+      return arg
+    }
   }
 
   static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, options: InternalConfig = {}) {
@@ -42,25 +58,16 @@ export class Internal {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
               } else {
-                config.data = args[0]
+                config.data = this._buildData(args[0], options)
               }
             } else if (args.length === 2 && method !== 'GET' && method !== 'DELETE') {
-              if (options.multipart) {
-                const form = new FormData()
-                for (const key in args[0]) {
-                  const value = args[0][key]
-                  form.append(key, value, value instanceof File ? value.name : undefined)
-                }
-                config.data = form
-              } else {
-                config.data = args[0]
-              }
+              config.data = this._buildData(args[0], options)
               config.params = args[1]
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const response = await this.bot.http(method, url, config)
-            this.assertResponse(response)
+            this._assertResponse(response)
             return options.noExtractData ? response.data : response.data.data
           }
         }

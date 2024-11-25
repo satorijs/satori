@@ -28581,14 +28581,8 @@ Internal.define({
   '/im/v1/batch_messages/{batch_message_id}/get_progress': {
     GET: 'getProgressImBatchMessage',
   },
-  '/im/v1/images': {
-    POST: 'createImImage',
-  },
   '/im/v1/images/{image_key}': {
     GET: 'getImImage',
-  },
-  '/im/v1/files': {
-    POST: 'createImFile',
   },
   '/im/v1/files/{file_key}': {
     GET: 'getImFile',
@@ -28706,9 +28700,6 @@ Internal.define({
   '/drive/v1/files/task_check': {
     GET: 'taskCheckDrivev1File',
   },
-  '/drive/v1/medias/upload_all': {
-    POST: 'uploadAllDrivev1Media',
-  },
   '/drive/v1/medias/{file_token}/download': {
     GET: 'downloadDrivev1Media',
   },
@@ -28717,9 +28708,6 @@ Internal.define({
   },
   '/drive/v1/medias/upload_prepare': {
     POST: 'uploadPrepareDrivev1Media',
-  },
-  '/drive/v1/medias/upload_part': {
-    POST: 'uploadPartDrivev1Media',
   },
   '/drive/v1/medias/upload_finish': {
     POST: 'uploadFinishDrivev1Media',
@@ -28733,14 +28721,8 @@ Internal.define({
   '/drive/v1/files/{file_token}/get_subscribe': {
     GET: 'getSubscribeDrivev1File',
   },
-  '/drive/v1/files/upload_all': {
-    POST: 'uploadAllDrivev1File',
-  },
   '/drive/v1/files/upload_prepare': {
     POST: 'uploadPrepareDrivev1File',
-  },
-  '/drive/v1/files/upload_part': {
-    POST: 'uploadPartDrivev1File',
   },
   '/drive/v1/files/upload_finish': {
     POST: 'uploadFinishDrivev1File',
@@ -29366,9 +29348,6 @@ Internal.define({
   '/attendance/v1/user_settings/query': {
     GET: 'queryAttendanceUserSetting',
   },
-  '/attendance/v1/files/upload': {
-    POST: 'uploadAttendanceFile',
-  },
   '/attendance/v1/files/{file_id}/download': {
     GET: 'downloadAttendanceFile',
   },
@@ -29702,9 +29681,6 @@ Internal.define({
     PATCH: 'patchTaskv2Comment',
     DELETE: 'deleteTaskv2Comment',
   },
-  '/task/v2/attachments/upload': {
-    POST: 'uploadTaskv2Attachment',
-  },
   '/task/v2/attachments': {
     GET: 'listTaskv2Attachment',
   },
@@ -29945,60 +29921,6 @@ Internal.define({
     PATCH: 'patchSearchSchema',
     GET: 'getSearchSchema',
   },
-  '/document_ai/v1/resume/parse': {
-    POST: 'parseDocumentAiResume',
-  },
-  '/document_ai/v1/vehicle_invoice/recognize': {
-    POST: 'recognizeDocumentAiVehicleInvoice',
-  },
-  '/document_ai/v1/health_certificate/recognize': {
-    POST: 'recognizeDocumentAiHealthCertificate',
-  },
-  '/document_ai/v1/hkm_mainland_travel_permit/recognize': {
-    POST: 'recognizeDocumentAiHkmMainlandTravelPermit',
-  },
-  '/document_ai/v1/tw_mainland_travel_permit/recognize': {
-    POST: 'recognizeDocumentAiTwMainlandTravelPermit',
-  },
-  '/document_ai/v1/chinese_passport/recognize': {
-    POST: 'recognizeDocumentAiChinesePassport',
-  },
-  '/document_ai/v1/bank_card/recognize': {
-    POST: 'recognizeDocumentAiBankCard',
-  },
-  '/document_ai/v1/vehicle_license/recognize': {
-    POST: 'recognizeDocumentAiVehicleLicense',
-  },
-  '/document_ai/v1/train_invoice/recognize': {
-    POST: 'recognizeDocumentAiTrainInvoice',
-  },
-  '/document_ai/v1/taxi_invoice/recognize': {
-    POST: 'recognizeDocumentAiTaxiInvoice',
-  },
-  '/document_ai/v1/id_card/recognize': {
-    POST: 'recognizeDocumentAiIdCard',
-  },
-  '/document_ai/v1/food_produce_license/recognize': {
-    POST: 'recognizeDocumentAiFoodProduceLicense',
-  },
-  '/document_ai/v1/food_manage_license/recognize': {
-    POST: 'recognizeDocumentAiFoodManageLicense',
-  },
-  '/document_ai/v1/driving_license/recognize': {
-    POST: 'recognizeDocumentAiDrivingLicense',
-  },
-  '/document_ai/v1/vat_invoice/recognize': {
-    POST: 'recognizeDocumentAiVatInvoice',
-  },
-  '/document_ai/v1/business_license/recognize': {
-    POST: 'recognizeDocumentAiBusinessLicense',
-  },
-  '/document_ai/v1/contract/field_extraction': {
-    POST: 'fieldExtractionDocumentAiContract',
-  },
-  '/document_ai/v1/business_card/recognize': {
-    POST: 'recognizeDocumentAiBusinessCard',
-  },
   '/optical_char_recognition/v1/image/basic_recognize': {
     POST: 'basicRecognizeOpticalCharRecognitionImage',
   },
@@ -30042,9 +29964,6 @@ Internal.define({
   '/admin/v1/badges/{badge_id}': {
     PUT: 'updateAdminBadge',
     GET: 'getAdminBadge',
-  },
-  '/admin/v1/badge_images': {
-    POST: 'createAdminBadgeImage',
   },
   '/admin/v1/badges/{badge_id}/grants': {
     POST: 'createAdminBadgeGrant',
@@ -30143,9 +30062,6 @@ Internal.define({
   '/corehr/v1/persons/{person_id}': {
     DELETE: 'deleteCorehrPerson',
     GET: 'getCorehrPerson',
-  },
-  '/corehr/v1/persons/upload': {
-    POST: 'uploadCorehrPerson',
   },
   '/corehr/v1/files/{id}': {
     GET: 'getCorehrFile',
@@ -30604,9 +30520,6 @@ Internal.define({
     PUT: 'updateOkrProgressRecord',
     GET: 'getOkrProgressRecord',
   },
-  '/okr/v1/images/upload': {
-    POST: 'uploadOkrImage',
-  },
   '/human_authentication/v1/identities': {
     POST: 'createHumanAuthenticationIdentity',
   },
@@ -30685,9 +30598,6 @@ Internal.define({
   },
   '/lingo/v1/repos': {
     GET: 'listLingoRepo',
-  },
-  '/lingo/v1/files/upload': {
-    POST: 'uploadLingoFile',
   },
   '/lingo/v1/files/{file_token}/download': {
     GET: 'downloadLingoFile',
@@ -30772,9 +30682,6 @@ Internal.define({
   '/baike/v1/classifications': {
     GET: 'listBaikeClassification',
   },
-  '/baike/v1/files/upload': {
-    POST: 'uploadBaikeFile',
-  },
   '/baike/v1/files/{file_token}/download': {
     GET: 'downloadBaikeFile',
   },
@@ -30824,3 +30731,99 @@ Internal.define({
     POST: 'setVcRoomConfig',
   },
 })
+
+Internal.define({
+  '/im/v1/images': {
+    POST: 'createImImage',
+  },
+  '/im/v1/files': {
+    POST: 'createImFile',
+  },
+  '/drive/v1/medias/upload_all': {
+    POST: 'uploadAllDrivev1Media',
+  },
+  '/drive/v1/medias/upload_part': {
+    POST: 'uploadPartDrivev1Media',
+  },
+  '/drive/v1/files/upload_all': {
+    POST: 'uploadAllDrivev1File',
+  },
+  '/drive/v1/files/upload_part': {
+    POST: 'uploadPartDrivev1File',
+  },
+  '/attendance/v1/files/upload': {
+    POST: 'uploadAttendanceFile',
+  },
+  '/task/v2/attachments/upload': {
+    POST: 'uploadTaskv2Attachment',
+  },
+  '/document_ai/v1/resume/parse': {
+    POST: 'parseDocumentAiResume',
+  },
+  '/document_ai/v1/vehicle_invoice/recognize': {
+    POST: 'recognizeDocumentAiVehicleInvoice',
+  },
+  '/document_ai/v1/health_certificate/recognize': {
+    POST: 'recognizeDocumentAiHealthCertificate',
+  },
+  '/document_ai/v1/hkm_mainland_travel_permit/recognize': {
+    POST: 'recognizeDocumentAiHkmMainlandTravelPermit',
+  },
+  '/document_ai/v1/tw_mainland_travel_permit/recognize': {
+    POST: 'recognizeDocumentAiTwMainlandTravelPermit',
+  },
+  '/document_ai/v1/chinese_passport/recognize': {
+    POST: 'recognizeDocumentAiChinesePassport',
+  },
+  '/document_ai/v1/bank_card/recognize': {
+    POST: 'recognizeDocumentAiBankCard',
+  },
+  '/document_ai/v1/vehicle_license/recognize': {
+    POST: 'recognizeDocumentAiVehicleLicense',
+  },
+  '/document_ai/v1/train_invoice/recognize': {
+    POST: 'recognizeDocumentAiTrainInvoice',
+  },
+  '/document_ai/v1/taxi_invoice/recognize': {
+    POST: 'recognizeDocumentAiTaxiInvoice',
+  },
+  '/document_ai/v1/id_card/recognize': {
+    POST: 'recognizeDocumentAiIdCard',
+  },
+  '/document_ai/v1/food_produce_license/recognize': {
+    POST: 'recognizeDocumentAiFoodProduceLicense',
+  },
+  '/document_ai/v1/food_manage_license/recognize': {
+    POST: 'recognizeDocumentAiFoodManageLicense',
+  },
+  '/document_ai/v1/driving_license/recognize': {
+    POST: 'recognizeDocumentAiDrivingLicense',
+  },
+  '/document_ai/v1/vat_invoice/recognize': {
+    POST: 'recognizeDocumentAiVatInvoice',
+  },
+  '/document_ai/v1/business_license/recognize': {
+    POST: 'recognizeDocumentAiBusinessLicense',
+  },
+  '/document_ai/v1/contract/field_extraction': {
+    POST: 'fieldExtractionDocumentAiContract',
+  },
+  '/document_ai/v1/business_card/recognize': {
+    POST: 'recognizeDocumentAiBusinessCard',
+  },
+  '/admin/v1/badge_images': {
+    POST: 'createAdminBadgeImage',
+  },
+  '/corehr/v1/persons/upload': {
+    POST: 'uploadCorehrPerson',
+  },
+  '/okr/v1/images/upload': {
+    POST: 'uploadOkrImage',
+  },
+  '/lingo/v1/files/upload': {
+    POST: 'uploadLingoFile',
+  },
+  '/baike/v1/files/upload': {
+    POST: 'uploadBaikeFile',
+  },
+}, { multipart: true })
