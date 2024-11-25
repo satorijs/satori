@@ -236,6 +236,21 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         },
         disabled: attrs.disabled,
         behaviors: this.createBehavior(attrs),
+        type: attrs['lark:type'],
+        size: attrs['lark:size'],
+        width: attrs['lark:width'],
+        icon: attrs['lark:icon'] && {
+          tag: 'standard_icon',
+          token: attrs['lark:icon'],
+        },
+        hover_tips: attrs['lark:hover-tips'] && {
+          tag: 'plain_text',
+          content: attrs['lark:hover-tips'],
+        },
+        disabled_tips: attrs['lark:disabled-tips'] && {
+          tag: 'plain_text',
+          content: attrs['lark:disabled-tips'],
+        },
       })
       this.textContent = ''
     } else if (type === 'button-group') {

@@ -48,7 +48,7 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const response = await this.bot.http(method, url, config)
-            this.assertResponse(response.data)
+            this.assertResponse(response)
             return extractData ? response.data.data : response.data
           }
         }

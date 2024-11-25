@@ -15,7 +15,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yakumo esbuild && yakumo tsc",
+    "build": "yakumo build",
     "bump": "yakumo version",
     "dep": "yakumo upgrade",
     "pub": "yakumo publish",
