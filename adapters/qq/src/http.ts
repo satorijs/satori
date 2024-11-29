@@ -25,7 +25,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         const key = this.getPrivateKey(bot.config.secret)
         const data = payload.d.event_ts + payload.d.plain_token
         const sig = await signAsync(new TextEncoder().encode(data), key)
-        ctx.body = {
+        return ctx.body = {
           plain_token: payload.d.plain_token,
           signature: Binary.toHex(sig),
         }
