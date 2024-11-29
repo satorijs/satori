@@ -1,6 +1,6 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { BaseResponse, Lark, MessageContent } from './types'
+import { CreateImFileForm, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
@@ -13,7 +13,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async post(data?: any) {
     try {
-      let resp: BaseResponse & { data?: Lark.Message }
+      let resp: Lark.Message
       if (this.quote?.id) {
         resp = await this.bot.internal.replyImMessage(this.quote.id, {
           ...data,
@@ -26,9 +26,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         })
       }
       const session = this.bot.session()
-      session.messageId = resp.data.message_id
-      session.timestamp = Number(resp.data.create_time) * 1000
-      session.userId = resp.data.sender.id
+      session.messageId = resp.message_id
+      session.timestamp = Number(resp.create_time) * 1000
+      session.userId = resp.sender.id
       session.channelId = this.channelId
       session.guildId = this.guildId
       session.app.emit(session, 'send', session)
@@ -93,40 +93,43 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async createImage(url: string) {
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
-    const payload = new FormData()
-    payload.append('image', new Blob([data], { type }), filename)
-    payload.append('image_type', 'message')
-    const { data: { image_key } } = await this.bot.internal.createImImage(payload)
+    const { image_key } = await this.bot.internal.createImImage({
+      image_type: 'message',
+      image: new File([data], filename, { type }),
+    })
     return image_key
   }
 
   async sendFile(_type: 'video' | 'audio' | 'file', attrs: any) {
     const url = attrs.src || attrs.url
-    const payload = new FormData()
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
-    payload.append('file', new Blob([data], { type }), filename)
-    payload.append('file_name', filename)
 
-    if (attrs.duration) {
-      payload.append('duration', attrs.duration)
-    }
-
+    let file_type: CreateImFileForm['file_type']
     if (_type === 'audio') {
       // FIXME: only support opus
-      payload.append('file_type', 'opus')
+      file_type = 'opus'
     } else if (_type === 'video') {
       // FIXME: only support mp4
-      payload.append('file_type', 'mp4')
+      file_type = 'mp4'
     } else {
       const ext = filename.split('.').pop()
       if (['doc', 'xls', 'ppt', 'pdf'].includes(ext)) {
-        payload.append('file_type', ext)
+        file_type = ext
       } else {
-        payload.append('file_type', 'stream')
+        file_type = 'stream'
       }
     }
 
-    const { data: { file_key } } = await this.bot.internal.createImFile(payload)
+    const form: CreateImFileForm = {
+      file_type,
+      file: new File([data], filename, { type }),
+      file_name: filename,
+    }
+    if (attrs.duration) {
+      form.duration = attrs.duration
+    }
+
+    const { file_key } = await this.bot.internal.createImFile(form)
     await this.post({
       msg_type: _type === 'video' ? 'media' : _type,
       content: JSON.stringify({ file_key }),
@@ -236,6 +239,21 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         },
         disabled: attrs.disabled,
         behaviors: this.createBehavior(attrs),
+        type: attrs['lark:type'],
+        size: attrs['lark:size'],
+        width: attrs['lark:width'],
+        icon: attrs['lark:icon'] && {
+          tag: 'standard_icon',
+          token: attrs['lark:icon'],
+        },
+        hover_tips: attrs['lark:hover-tips'] && {
+          tag: 'plain_text',
+          content: attrs['lark:hover-tips'],
+        },
+        disabled_tips: attrs['lark:disabled-tips'] && {
+          tag: 'plain_text',
+          content: attrs['lark:disabled-tips'],
+        },
       })
       this.textContent = ''
     } else if (type === 'button-group') {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "private": true,
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "yarn@4.5.2",
   "workspaces": [
     "docs",
     "external/*",
@@ -15,7 +15,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yakumo esbuild && yakumo tsc",
+    "build": "yakumo build",
     "bump": "yakumo version",
     "dep": "yakumo upgrade",
     "pub": "yakumo publish",

@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/plugin-server",
   "description": "Basic API server for Satori protocol",
-  "version": "2.7.2",
+  "version": "2.8.2",
   "type": "module",
   "exports": {
     ".": {
@@ -36,11 +36,11 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.2.11",
+    "@satorijs/core": "^4.2.12",
     "@types/node": "^22.7.5",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.11"
+    "@satorijs/core": "^4.2.12"
   }
 }

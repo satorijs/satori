@@ -123,9 +123,9 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         session.channelId = body.event.context.open_chat_id
         session.guildId = body.event.context.open_chat_id
         session.userId = body.event.operator.open_id
-        const { data } = await bot.internal.getImChat(session.channelId)
+        const chat = await bot.internal.getImChat(session.channelId)
         // TODO: add channel data
-        session.isDirect = data.chat_mode === 'p2p'
+        session.isDirect = chat.chat_mode === 'p2p'
       }
       break
   }
@@ -201,7 +201,7 @@ export function extractIdType(id: string): Lark.ReceiveIdType {
   return 'user_id'
 }
 
-export function decodeChannel(channelId: string, guild: GetImChatResponse['data']): Universal.Channel {
+export function decodeChannel(channelId: string, guild: GetImChatResponse): Universal.Channel {
   return {
     id: channelId,
     type: Universal.Channel.Type.TEXT,

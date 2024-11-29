@@ -31,11 +31,11 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/core": "^4.2.11",
+    "@satorijs/core": "^4.2.12",
     "cordis": "^3.18.1",
     "@noble/ed25519": "^2.1.0"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.11"
+    "@satorijs/core": "^4.2.12"
   }
 }

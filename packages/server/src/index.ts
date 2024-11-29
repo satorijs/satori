@@ -1,4 +1,4 @@
-import { Binary, camelCase, Context, makeArray, sanitize, Schema, Service, Session, snakeCase, Time, Universal } from '@satorijs/core'
+import { Binary, camelCase, Context, Dict, makeArray, sanitize, Schema, Service, Session, snakeCase, Time, Universal, valueMap } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
@@ -31,6 +31,17 @@ function transformKey(source: any, callback: (key: string) => string) {
     if (key.startsWith('_')) return [key, value]
     return [callback(key), transformKey(value, callback)]
   }))
+}
+
+function deserialize(data: any, path: string, blobs: Dict<Blob>) {
+  if (path in blobs) return blobs[path]
+  if (!data || typeof data !== 'object') return data
+  if (Array.isArray(data)) {
+    return data.map((value, index) => deserialize(value, `${path}.${index}`, blobs))
+  }
+  return valueMap(data, (value, key) => {
+    return deserialize(value, `${path}.${key}`, blobs)
+  })
 }
 
 class SatoriServer extends Service<SatoriServer.Config> {
@@ -121,9 +132,27 @@ class SatoriServer extends Service<SatoriServer.Config> {
         koa.status = 404
         return
       }
-      const result = await bot.internal[name](...koa.request.body)
-      koa.body = result
-      koa.status = 200
+      try {
+        let args = koa.request.body
+        if (koa.request.files) {
+          const blobs = Object.fromEntries(await Promise.all(Object.entries(koa.request.files).map(async ([key, value]) => {
+            value = makeArray(value)[0]
+            const buffer = await readFile(value.filepath)
+            return [key, new File([buffer], value.originalFilename!, { type: value.mimetype! })] as const
+          })))
+          args = deserialize(JSON.parse(koa.request.body.$), '$', blobs)
+        }
+        const result = await bot.internal[name](...args)
+        koa.body = result
+        koa.status = 200
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        koa.status = error.response.status
+        koa.body = error.response.data
+        for (const [key, value] of error.response.headers) {
+          koa.set(key, value)
+        }
+      }
     })
 
     ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
@@ -162,6 +191,9 @@ class SatoriServer extends Service<SatoriServer.Config> {
           if (!ctx.http.isError(error) || !error.response) throw error
           koa.status = error.response.status
           koa.body = error.response.data
+          for (const [key, value] of error.response.headers) {
+            koa.set(key, value)
+          }
         }
       }
     })

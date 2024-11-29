@@ -31,11 +31,11 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.2.11",
+    "@satorijs/core": "^4.2.12",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.11"
+    "@satorijs/core": "^4.2.12"
   },
   "dependencies": {
     "@slack/types": "^2.11.0"

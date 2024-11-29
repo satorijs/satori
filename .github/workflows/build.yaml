@@ -13,8 +13,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v4
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install
-        run: yarn
+        run: yarn --no-immutable
       - name: Lint
         run: yarn lint
 
@@ -26,8 +28,10 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Node
         uses: actions/setup-node@v4
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install
-        run: yarn
+        run: yarn --no-immutable
       - name: Build
         run: yarn build
 
@@ -46,8 +50,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install
-        run: yarn
+        run: yarn --no-immutable
       - name: Unit Test
         run: yarn test:json
       - name: Report Coverage

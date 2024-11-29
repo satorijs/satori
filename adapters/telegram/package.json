@@ -35,11 +35,11 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.2.11",
+    "@satorijs/core": "^4.2.12",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.11"
+    "@satorijs/core": "^4.2.12"
   },
   "dependencies": {
     "file-type": "^16.5.4"
