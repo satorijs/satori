@@ -18,11 +18,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   constructor(ctx: C, config: LarkBot.Config) {
     super(ctx, config, 'lark')
 
-    // lark bot needs config.selfUrl to be set as it should be serve on a public url
-    if (!config.selfUrl && !ctx.server.config.selfUrl) {
-      this.logger.warn('selfUrl is not set, some features may not work')
-    }
-
     this.http = ctx.http.extend({
       endpoint: config.endpoint,
     })
@@ -30,10 +25,14 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     this.internal = new Internal(this)
 
     ctx.plugin(HttpServer, this)
-  }
 
-  get appId() {
-    return this.config.appId
+    this.defineVirtualRoute('/:type/:message_id/:file_key', async ({ params }) => {
+      const type = params.type === 'image' ? 'image' : 'file'
+      const key = params.file_key
+      const messageId = params.message_id
+      const data = await this.internal.getImMessageResource(messageId, key, { type })
+      return { data, status: 200 }
+    })
   }
 
   async initialize() {
