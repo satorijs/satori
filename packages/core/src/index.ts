@@ -1,5 +1,5 @@
 import { Context, Logger, Service, z } from 'cordis'
-import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
+import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
@@ -130,18 +130,19 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
 
-    this.upload(`/temp/${this.uid}/`, async (path) => {
-      const id = path.split('/').pop()
-      return this._tempStore[id] ?? { status: 404 }
-    })
+    // this.upload(`/temp/${this.uid}/`, async (path) => {
+    //   const id = path.split('/').pop()
+    //   return this._tempStore[id] ?? { status: 404 }
+    // })
 
     defineProperty(this.bots, Service.tracker, {})
 
     const self = this
-    ;(ctx as Context).on('http/file', async function (url, options) {
-      if (!url.startsWith('upload://')) return
-      const { status, data, headers } = await self.download(url.slice(9))
-      if (status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
+    ;(ctx as Context).on('http/file', async function (_url, options) {
+      const url = new URL(_url)
+      if (url.protocol !== 'satori:') return
+      const { status, data, headers } = await self.handleRoute('GET', url)
+      if (status >= 400) throw new Error(`Failed to fetch ${_url}, status code: ${status}`)
       if (status >= 300) {
         const location = headers?.get('location')
         return this.file(location, options)
@@ -181,26 +182,13 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  upload(path: UploadRoute['path'], callback: UploadRoute['callback'], proxyUrls: UploadRoute['path'][] = []) {
-    return this.ctx.effect(() => {
-      const route: UploadRoute = { path, callback }
-      this._uploadRoutes.push(route)
-      proxyUrls.push(path)
-      return () => {
-        remove(this._uploadRoutes, route)
-        remove(proxyUrls, path)
-      }
-    })
-  }
-
-  async download(path: string) {
-    for (const route of this._uploadRoutes) {
-      const paths = makeArray(typeof route.path === 'function' ? route.path() : route.path)
-      if (paths.some(prefix => path.startsWith(prefix))) {
-        return route.callback(path)
-      }
-    }
-    return { status: 404 }
+  async handleRoute(method: HTTP.Method, url: URL): Promise<Response> {
+    const capture = /^([^/]+)\/([^/]+)(\/.+)$/.exec(url.pathname)
+    if (!capture) return { status: 400 }
+    const [, platform, selfId, path] = capture
+    const bot = this.bots[`${platform}:${selfId}`]
+    if (!bot) return { status: 404 }
+    return bot._handleRoute(method, path, url.searchParams)
   }
 }
 

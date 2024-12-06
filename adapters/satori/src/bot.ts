@@ -61,6 +61,13 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
     super(ctx, config, 'satori')
     Object.assign(this, config)
   }
+
+  async _handleRoute(method: HTTP.Method, path: string, query: URLSearchParams): Promise<Universal.Response> {
+    return await this.http(`/v1/proxy/internal:${this.platform}/${this.selfId}` + path + '?' + query.toString(), {
+      method,
+      responseType: 'arraybuffer',
+    })
+  }
 }
 
 for (const [key, method] of Object.entries(Universal.Methods)) {
