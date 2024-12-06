@@ -1,6 +1,7 @@
 import { Context, Logger, Service, z } from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
+import { ExtractParams, VirtualRequest, VirtualRouter } from './virtual'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Response, SendOptions } from '@satorijs/protocol'
@@ -22,6 +23,7 @@ export * as Universal from '@satorijs/protocol'
 export * from './bot'
 export * from './adapter'
 export * from './message'
+export * from './virtual'
 export * from './session'
 
 declare module 'cordis' {
@@ -112,28 +114,23 @@ class SatoriContext extends Context {
 
 export { SatoriContext as Context }
 
-export interface UploadRoute {
-  path: string | string[] | (() => string | string[])
-  callback: (path: string) => Promise<Response>
-}
-
 export class Satori<C extends Context = Context> extends Service<unknown, C> {
   static [Service.provide] = 'satori'
   static [Service.immediate] = true
 
   public uid = Math.random().toString(36).slice(2)
 
-  _uploadRoutes: UploadRoute[] = []
-  _tempStore: Dict<Response> = Object.create(null)
+  public _virtual: VirtualRouter
+  public _tempStore: Dict<Response> = Object.create(null)
 
   constructor(ctx?: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
 
-    // this.upload(`/temp/${this.uid}/`, async (path) => {
-    //   const id = path.split('/').pop()
-    //   return this._tempStore[id] ?? { status: 404 }
-    // })
+    this._virtual = new VirtualRouter(ctx)
+    this.defineVirtualRoute('/_tmp/:id', async ({ params }) => {
+      return this._tempStore[params.id] ?? { status: 404 }
+    })
 
     defineProperty(this.bots, Service.tracker, {})
 
@@ -141,7 +138,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     ;(ctx as Context).on('http/file', async function (_url, options) {
       const url = new URL(_url)
       if (url.protocol !== 'satori:') return
-      const { status, data, headers } = await self.handleRoute('GET', url)
+      const { status, data, headers } = await self.handleVirtualRoute('GET', url)
       if (status >= 400) throw new Error(`Failed to fetch ${_url}, status code: ${status}`)
       if (status >= 300) {
         const location = headers?.get('location')
@@ -182,13 +179,20 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  async handleRoute(method: HTTP.Method, url: URL): Promise<Response> {
+  defineVirtualRoute<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
+    return this._virtual.define(path, callback)
+  }
+
+  async handleVirtualRoute(method: HTTP.Method, url: URL): Promise<Response> {
     const capture = /^([^/]+)\/([^/]+)(\/.+)$/.exec(url.pathname)
     if (!capture) return { status: 400 }
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
     if (!bot) return { status: 404 }
-    return bot._handleRoute(method, path, url.searchParams)
+    let response = await bot._virtual.handle(method, path, url.searchParams)
+    response ??= await this._virtual.handle(method, path, url.searchParams)
+    if (!response) return { status: 404 }
+    return response
   }
 }
 

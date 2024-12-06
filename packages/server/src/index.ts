@@ -167,7 +167,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
 
       koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
       if (url.protocol === 'satori:') {
-        const { status, statusText, data, headers } = await ctx.satori.handleRoute('GET', url)
+        const { status, statusText, data, headers } = await ctx.satori.handleVirtualRoute('GET', url)
         koa.status = status
         for (const [key, value] of headers || new Headers()) {
           koa.set(key, value)

@@ -4,78 +4,8 @@ import h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
-import { HTTP } from '@cordisjs/plugin-http'
+import { ExtractParams, VirtualRequest, VirtualRouter } from './virtual'
 import { Event, List, Login, Methods, Response, SendOptions, Status, Upload, User } from '@satorijs/protocol'
-import { Key, pathToRegexp } from 'path-to-regexp'
-
-export interface InternalRequest<P = any> {
-  method: HTTP.Method
-  params: P
-  query: URLSearchParams
-}
-
-export interface InternalRoute {
-  regexp: RegExp
-  keys: Key[]
-  callback: (request: InternalRequest) => Promise<Response>
-}
-
-type Upper =
-  | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K' | 'L' | 'M'
-  | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
-
-type Lower =
-  | 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
-  | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
-
-type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-type Take<S extends string, D extends string, O extends string = ''> =
-  | S extends `${infer L extends D}${infer S}`
-  ? Take<S, D, `${O}${L}`>
-  : [O, S]
-
-type TakeIdent<S extends string> =
-  | S extends `"${infer M}"${infer S}`
-  ? [M, S]
-  : Take<S, Upper | Lower | Digit | '_'>
-
-type SkipRegExp<S extends string, A extends 0[] = [], B extends 0[] = []> =
-  | S extends `${infer M}${infer S}`
-  ? M extends '\\'
-    ? S extends `${string}${infer S}`
-      ? SkipRegExp<S, A, B>
-      : never
-    : M extends '('
-    ? SkipRegExp<S, [0, ...A], B>
-    : M extends ')'
-    ? A['length'] extends B['length']
-      ? S
-      : SkipRegExp<S, A, [0, ...B]>
-    : SkipRegExp<S, A, B>
-  : never
-
-type TakeModifier<P extends string, S extends string> =
-  | S extends `?${infer S}`
-  ? [{ [K in P]?: string }, S]
-  : S extends `+${infer S}`
-  ? [{ [K in P]: string[] }, S]
-  : S extends `*${infer S}`
-  ? [{ [K in P]?: string[] }, S]
-  : S extends `(${infer S}`
-  ? [{ [K in P]: string }, SkipRegExp<S>]
-  : [{ [K in P]: string }, S]
-
-type ExtractParams<S extends string, O extends {} = {}> =
-  | S extends `${string}:${infer S}`
-  ? TakeIdent<S> extends [infer P extends string, infer S extends string]
-    ? TakeModifier<P, S> extends [infer E, infer S extends string]
-      ? ExtractParams<S, O & E>
-      : never
-    : never
-  : O
 
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -111,14 +41,15 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public callbacks: Dict<Function> = {}
   public logger: Logger
 
+  public _virtual: VirtualRouter
+
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
-  _routes: InternalRoute[] = []
-
   constructor(public ctx: C, public config: T, platform?: string) {
     this.internal = null
+    this._virtual = new VirtualRouter(ctx)
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
@@ -146,24 +77,12 @@ export abstract class Bot<C extends Context = Context, T = any> {
     })
   }
 
-  protected _defineRoute<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
-    const keys: Key[] = []
-    this._routes.push({
-      regexp: pathToRegexp(path, keys),
-      keys,
-      callback,
-    })
+  getVirtualUrl(path: string) {
+    return `satori:${this.platform}/${this.selfId}${path}`
   }
 
-  async _handleRoute(method: HTTP.Method, path: string, query: URLSearchParams): Promise<Response> {
-    const route = this._routes.find(({ regexp }) => regexp.test(path))
-    if (!route) return { status: 404 }
-    const params: Dict<string> = {}
-    const capture = route.regexp.exec(path)
-    route.keys.forEach(({ name }, index) => {
-      params[name] = capture[index + 1]
-    })
-    return route.callback({ method, params, query })
+  defineVirtualRoute<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
+    return this._virtual.define(path, callback)
   }
 
   update(login: Login) {
@@ -310,7 +229,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       }
     }
     const _dispose = this.ctx.on('dispose', dispose)
-    return ids.map(id => `satori:${this.platform}/${this.selfId}/temp/${this.ctx.satori.uid}/${id}`)
+    return ids.map(id => this.getVirtualUrl(`/_tmp/${id}`))
   }
 
   async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
