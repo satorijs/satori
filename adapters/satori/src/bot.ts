@@ -61,8 +61,11 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
     super(ctx, config, 'satori')
     Object.assign(this, config)
 
-    this.defineVirtualRoute('/:path(.*)', async ({ method, params, query }) => {
-      return await this.http(`/v1/proxy/internal:${this.platform}/${this.selfId}/${params.path}` + '?' + query.toString(), {
+    this.defineVirtualRoute('/*path', async ({ method, params, query }) => {
+      const search = query.toString()
+      let path = `/v1/proxy/satori:${this.platform}/${this.selfId}/${params.path}`
+      if (search) path += '?' + search
+      return await this.http(path, {
         method,
         responseType: 'arraybuffer',
       })

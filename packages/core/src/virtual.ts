@@ -30,48 +30,37 @@ type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 type Take<S extends string, D extends string, O extends string = ''> =
-  | S extends `${infer L extends D}${infer S}`
-  ? Take<S, D, `${O}${L}`>
+  | S extends `${infer C extends D}${infer S}`
+  ? Take<S, D, `${O}${C}`>
   : [O, S]
 
 type TakeIdent<S extends string> =
-  | S extends `"${infer M}"${infer S}`
-  ? [M, S]
+  | S extends `"${infer P}"${infer S}`
+  ? [P, S]
   : Take<S, Upper | Lower | Digit | '_'>
 
-type SkipRegExp<S extends string, A extends 0[] = [], B extends 0[] = []> =
-  | S extends `${infer M}${infer S}`
-  ? M extends '\\'
+// path-to-regexp v8 syntax
+export type ExtractParams<S extends string, O extends {} = {}, A extends 0[] = []> =
+  | S extends `${infer C}${infer S}`
+  ? C extends '\\'
     ? S extends `${string}${infer S}`
-      ? SkipRegExp<S, A, B>
-      : never
-    : M extends '('
-    ? SkipRegExp<S, [0, ...A], B>
-    : M extends ')'
-    ? A['length'] extends B['length']
-      ? S
-      : SkipRegExp<S, A, [0, ...B]>
-    : SkipRegExp<S, A, B>
-  : never
-
-type TakeModifier<P extends string, S extends string> =
-  | S extends `?${infer S}`
-  ? [{ [K in P]?: string }, S]
-  : S extends `+${infer S}`
-  ? [{ [K in P]: string[] }, S]
-  : S extends `*${infer S}`
-  ? [{ [K in P]?: string[] }, S]
-  : S extends `(${infer S}`
-  ? [{ [K in P]: string }, SkipRegExp<S>]
-  : [{ [K in P]: string }, S]
-
-export type ExtractParams<S extends string, O extends {} = {}> =
-  | S extends `${string}:${infer S}`
-  ? TakeIdent<S> extends [infer P extends string, infer S extends string]
-    ? TakeModifier<P, S> extends [infer E, infer S extends string]
-      ? ExtractParams<S, O & E>
-      : never
-    : never
+      ? ExtractParams<S, O, A>
+      : O
+    : C extends ':' | '*'
+      ? TakeIdent<S> extends [infer P extends string, infer S extends string]
+        ? ExtractParams<S, O & (
+          | A['length'] extends 0
+          ? { [K in P]: string }
+          : { [K in P]?: string }
+        ), A>
+        : never
+      : C extends '{'
+        ? ExtractParams<S, O, [0, ...A]>
+        : C extends '}'
+          ? A extends [0, ...infer A extends 0[]]
+            ? ExtractParams<S, O, A>
+            : ExtractParams<S, O, A>
+          : ExtractParams<S, O, A>
   : O
 
 export class VirtualRouter {
@@ -85,10 +74,8 @@ export class VirtualRouter {
 
   define<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
     return this.ctx.effect(() => {
-      const keys: Key[] = []
       const route: VirtualRoute = {
-        regexp: pathToRegexp(path, keys),
-        keys,
+        ...pathToRegexp(path),
         callback,
       }
       this.routes.push(route)
