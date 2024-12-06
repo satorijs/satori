@@ -446,7 +446,7 @@ declare module './internal' {
     * 获取消息中的资源文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-resource/get
     */
-    getImMessageResource(message_id: string, file_key: string, query?: GetImMessageResourceQuery): Promise<Buffer>
+    getImMessageResource(message_id: string, file_key: string, query?: GetImMessageResourceQuery): Promise<ArrayBuffer>
     /**
     * 获取指定消息的内容
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/get
@@ -491,7 +491,7 @@ declare module './internal' {
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/get
     */
-    getImImage(image_key: string): Promise<Buffer>
+    getImImage(image_key: string): Promise<ArrayBuffer>
     /**
     * 上传文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/create
@@ -501,7 +501,7 @@ declare module './internal' {
     * 下载文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/file/get
     */
-    getImFile(file_key: string): Promise<Buffer>
+    getImFile(file_key: string): Promise<ArrayBuffer>
     /**
     * 更新应用发送的消息卡片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/patch
@@ -741,7 +741,7 @@ declare module './internal' {
     * 下载素材
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/download
     */
-    downloadDrivev1Media(file_token: string, query?: DownloadDrivev1MediaQuery): Promise<Buffer>
+    downloadDrivev1Media(file_token: string, query?: DownloadDrivev1MediaQuery): Promise<ArrayBuffer>
     /**
     * 获取素材临时下载链接
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/media/batch_get_tmp_download_url
@@ -801,7 +801,7 @@ declare module './internal' {
     * 下载文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/download
     */
-    downloadDrivev1File(file_token: string): Promise<Buffer>
+    downloadDrivev1File(file_token: string): Promise<ArrayBuffer>
     /**
     * 创建导入任务
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/import_task/create
@@ -1756,7 +1756,7 @@ declare module './internal' {
     * 下载导出文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/export/download
     */
-    downloadVcExport(query?: DownloadVcExportQuery): Promise<Buffer>
+    downloadVcExport(query?: DownloadVcExportQuery): Promise<ArrayBuffer>
     /**
     * 创建会议室层级
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/create
@@ -2051,7 +2051,7 @@ declare module './internal' {
     * 下载用户人脸识别照片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/file/download
     */
-    downloadAttendanceFile(file_id: string): Promise<Buffer>
+    downloadAttendanceFile(file_id: string): Promise<ArrayBuffer>
     /**
     * 通过过期时间获取发放记录
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/leave_employ_expire_record/get
@@ -2291,7 +2291,7 @@ declare module './internal' {
     * 获取工单内图像
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket/ticket_image
     */
-    ticketImageHelpdeskTicket(query?: TicketImageHelpdeskTicketQuery): Promise<Buffer>
+    ticketImageHelpdeskTicket(query?: TicketImageHelpdeskTicketQuery): Promise<ArrayBuffer>
     /**
     * 回复用户在工单里的提问
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket/answer_user_query
@@ -2371,7 +2371,7 @@ declare module './internal' {
     * 获取知识库图像
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/faq_image
     */
-    faqImageHelpdeskFaq(id: string, image_key: string): Promise<Buffer>
+    faqImageHelpdeskFaq(id: string, image_key: string): Promise<ArrayBuffer>
     /**
     * 搜索知识库
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/search
@@ -3461,7 +3461,7 @@ declare module './internal' {
     * 下载人员的附件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/attachment/get
     */
-    getEhrAttachment(token: string): Promise<Buffer>
+    getEhrAttachment(token: string): Promise<ArrayBuffer>
     /**
     * 查询国籍信息
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search
@@ -3641,7 +3641,7 @@ declare module './internal' {
     * 下载文件
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/file/get
     */
-    getCorehrFile(id: string): Promise<Buffer>
+    getCorehrFile(id: string): Promise<ArrayBuffer>
     /**
     * 创建任职信息
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/create
@@ -4591,7 +4591,7 @@ declare module './internal' {
     * 下载人脸图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user-face/get
     */
-    getAcsUserFace(user_id: string, query?: GetAcsUserFaceQuery): Promise<Buffer>
+    getAcsUserFace(user_id: string, query?: GetAcsUserFaceQuery): Promise<ArrayBuffer>
     /**
     * 获取门禁设备列表
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/device/list
@@ -4606,7 +4606,7 @@ declare module './internal' {
     * 下载开门时的人脸识别图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record-access_photo/get
     */
-    getAcsAccessRecordAccessPhoto(access_record_id: string): Promise<Buffer>
+    getAcsAccessRecordAccessPhoto(access_record_id: string): Promise<ArrayBuffer>
     /**
     * 获取周期
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/semester/list
@@ -4696,7 +4696,7 @@ declare module './internal' {
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/download
     */
-    downloadLingoFile(file_token: string): Promise<Buffer>
+    downloadLingoFile(file_token: string): Promise<ArrayBuffer>
     /**
     * 获取OpenAPI审计日志数据
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/openapi_log/list_data
@@ -4846,7 +4846,7 @@ declare module './internal' {
     * 下载图片
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/file/download
     */
-    downloadBaikeFile(file_token: string): Promise<Buffer>
+    downloadBaikeFile(file_token: string): Promise<ArrayBuffer>
     /**
     * 获取用户列表
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/list
@@ -28351,7 +28351,55 @@ Internal.define({
   '/auth/v3/app_ticket/resend': {
     POST: 'appTicketResendAuth',
   },
-}, { noExtractData: true })
+}, { type: 'json-body' })
+
+Internal.define({
+  '/im/v1/messages/{message_id}/resources/{file_key}': {
+    GET: 'getImMessageResource',
+  },
+  '/im/v1/images/{image_key}': {
+    GET: 'getImImage',
+  },
+  '/im/v1/files/{file_key}': {
+    GET: 'getImFile',
+  },
+  '/drive/v1/medias/{file_token}/download': {
+    GET: 'downloadDrivev1Media',
+  },
+  '/drive/v1/files/{file_token}/download': {
+    GET: 'downloadDrivev1File',
+  },
+  '/vc/v1/exports/download': {
+    GET: 'downloadVcExport',
+  },
+  '/attendance/v1/files/{file_id}/download': {
+    GET: 'downloadAttendanceFile',
+  },
+  '/helpdesk/v1/ticket_images': {
+    GET: 'ticketImageHelpdeskTicket',
+  },
+  '/helpdesk/v1/faqs/{id}/image/{image_key}': {
+    GET: 'faqImageHelpdeskFaq',
+  },
+  '/ehr/v1/attachments/{token}': {
+    GET: 'getEhrAttachment',
+  },
+  '/corehr/v1/files/{id}': {
+    GET: 'getCorehrFile',
+  },
+  '/acs/v1/users/{user_id}/face': {
+    GET: 'getAcsUserFace',
+  },
+  '/acs/v1/access_records/{access_record_id}/access_photo': {
+    GET: 'getAcsAccessRecordAccessPhoto',
+  },
+  '/lingo/v1/files/{file_token}/download': {
+    GET: 'downloadLingoFile',
+  },
+  '/baike/v1/files/{file_token}/download': {
+    GET: 'downloadBaikeFile',
+  },
+}, { type: 'binary' })
 
 Internal.define({
   '/event/v1/outbound_ip': {
@@ -28560,9 +28608,6 @@ Internal.define({
   '/im/v1/messages/{message_id}/read_users': {
     GET: 'readUsersImMessage',
   },
-  '/im/v1/messages/{message_id}/resources/{file_key}': {
-    GET: 'getImMessageResource',
-  },
   '/im/v1/messages/{message_id}/urgent_app': {
     PATCH: 'urgentAppImMessage',
   },
@@ -28580,12 +28625,6 @@ Internal.define({
   },
   '/im/v1/batch_messages/{batch_message_id}/get_progress': {
     GET: 'getProgressImBatchMessage',
-  },
-  '/im/v1/images/{image_key}': {
-    GET: 'getImImage',
-  },
-  '/im/v1/files/{file_key}': {
-    GET: 'getImFile',
   },
   '/im/v1/messages/{message_id}/reactions': {
     POST: 'createImMessageReaction',
@@ -28700,9 +28739,6 @@ Internal.define({
   '/drive/v1/files/task_check': {
     GET: 'taskCheckDrivev1File',
   },
-  '/drive/v1/medias/{file_token}/download': {
-    GET: 'downloadDrivev1Media',
-  },
   '/drive/v1/medias/batch_get_tmp_download_url': {
     GET: 'batchGetTmpDownloadUrlDrivev1Media',
   },
@@ -28726,9 +28762,6 @@ Internal.define({
   },
   '/drive/v1/files/upload_finish': {
     POST: 'uploadFinishDrivev1File',
-  },
-  '/drive/v1/files/{file_token}/download': {
-    GET: 'downloadDrivev1File',
   },
   '/drive/v1/import_tasks': {
     POST: 'createDrivev1ImportTask',
@@ -29200,9 +29233,6 @@ Internal.define({
   '/vc/v1/exports/{task_id}': {
     GET: 'getVcExport',
   },
-  '/vc/v1/exports/download': {
-    GET: 'downloadVcExport',
-  },
   '/vc/v1/room_levels': {
     POST: 'createVcRoomLevel',
     GET: 'listVcRoomLevel',
@@ -29348,9 +29378,6 @@ Internal.define({
   '/attendance/v1/user_settings/query': {
     GET: 'queryAttendanceUserSetting',
   },
-  '/attendance/v1/files/{file_id}/download': {
-    GET: 'downloadAttendanceFile',
-  },
   '/attendance/v1/leave_employ_expire_records/{leave_id}': {
     GET: 'getAttendanceLeaveEmployExpireRecord',
   },
@@ -29477,9 +29504,6 @@ Internal.define({
   '/helpdesk/v1/tickets': {
     GET: 'listHelpdeskTicket',
   },
-  '/helpdesk/v1/ticket_images': {
-    GET: 'ticketImageHelpdeskTicket',
-  },
   '/helpdesk/v1/tickets/{ticket_id}/answer_user_query': {
     POST: 'answerUserQueryHelpdeskTicket',
   },
@@ -29510,9 +29534,6 @@ Internal.define({
     DELETE: 'deleteHelpdeskFaq',
     PATCH: 'patchHelpdeskFaq',
     GET: 'getHelpdeskFaq',
-  },
-  '/helpdesk/v1/faqs/{id}/image/{image_key}': {
-    GET: 'faqImageHelpdeskFaq',
   },
   '/helpdesk/v1/faqs/search': {
     GET: 'searchHelpdeskFaq',
@@ -29977,9 +29998,6 @@ Internal.define({
   '/ehr/v1/employees': {
     GET: 'listEhrEmployee',
   },
-  '/ehr/v1/attachments/{token}': {
-    GET: 'getEhrAttachment',
-  },
   '/corehr/v2/basic_info/nationalities/search': {
     POST: 'searchCorehrBasicInfoNationality',
   },
@@ -30062,9 +30080,6 @@ Internal.define({
   '/corehr/v1/persons/{person_id}': {
     DELETE: 'deleteCorehrPerson',
     GET: 'getCorehrPerson',
-  },
-  '/corehr/v1/files/{id}': {
-    GET: 'getCorehrFile',
   },
   '/corehr/v1/job_datas': {
     POST: 'createCorehrJobData',
@@ -30554,9 +30569,6 @@ Internal.define({
   '/acs/v1/access_records': {
     GET: 'listAcsAccessRecord',
   },
-  '/acs/v1/access_records/{access_record_id}/access_photo': {
-    GET: 'getAcsAccessRecordAccessPhoto',
-  },
   '/performance/v1/semesters': {
     GET: 'listPerformanceSemester',
   },
@@ -30598,9 +30610,6 @@ Internal.define({
   },
   '/lingo/v1/repos': {
     GET: 'listLingoRepo',
-  },
-  '/lingo/v1/files/{file_token}/download': {
-    GET: 'downloadLingoFile',
   },
   '/security_and_compliance/v1/openapi_logs/list_data': {
     POST: 'listDataSecurityAndComplianceOpenapiLog',
@@ -30681,9 +30690,6 @@ Internal.define({
   },
   '/baike/v1/classifications': {
     GET: 'listBaikeClassification',
-  },
-  '/baike/v1/files/{file_token}/download': {
-    GET: 'downloadBaikeFile',
   },
   '/hire/v1/applications/{application_id}/interviews': {
     GET: 'listHireApplicationInterview',

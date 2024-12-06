@@ -12,7 +12,7 @@ export interface BaseResponse {
 
 export interface InternalConfig {
   multipart?: boolean
-  noExtractData?: boolean
+  type?: 'json-body' | 'binary'
 }
 
 export class Internal {
@@ -66,9 +66,16 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
+            if (options.type === 'binary') {
+              config.responseType = 'arraybuffer'
+            }
             const response = await this.bot.http(method, url, config)
             this._assertResponse(response)
-            return options.noExtractData ? response.data : response.data.data
+            if (options.type === 'json-body' || options.type === 'binary') {
+              return response.data
+            } else {
+              return response.data.data
+            }
           }
         }
       }
