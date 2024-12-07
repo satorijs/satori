@@ -4,7 +4,10 @@ import h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
+import { ExtractParams, VirtualRequest, VirtualRouter } from './virtual'
 import { Event, List, Login, Methods, Response, SendOptions, Status, Upload, User } from '@satorijs/protocol'
+
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 const eventAliases = [
   ['message-created', 'message'],
@@ -38,12 +41,15 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public callbacks: Dict<Function> = {}
   public logger: Logger
 
+  public _virtual: VirtualRouter
+
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
   constructor(public ctx: C, public config: T, platform?: string) {
     this.internal = null
+    this._virtual = new VirtualRouter(ctx)
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
@@ -52,7 +58,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       this.platform = platform
     }
 
-    this.proxyUrls = [`upload://temp/${ctx.satori.uid}/`]
+    this.proxyUrls = [`satori://temp/${ctx.satori.uid}/`]
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
@@ -71,8 +77,12 @@ export abstract class Bot<C extends Context = Context, T = any> {
     })
   }
 
-  registerUpload(path: string, callback: (path: string) => Promise<Response>) {
-    this.ctx.satori.upload(path, callback, this.proxyUrls)
+  getVirtualUrl(path: string) {
+    return `satori:${this.platform}/${this.selfId}${path}`
+  }
+
+  defineVirtualRoute<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
+    return this._virtual.define(path, callback)
   }
 
   update(login: Login) {
@@ -219,7 +229,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       }
     }
     const _dispose = this.ctx.on('dispose', dispose)
-    return ids.map(id => `upload://temp/${this.ctx.satori.uid}/${id}`)
+    return ids.map(id => this.getVirtualUrl(`/_tmp/${id}`))
   }
 
   async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
