@@ -75,7 +75,11 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
           this._sessionId = parsed.d.session_id
           this.bot.user = decodeUser(parsed.d.user)
           this.bot.guildBot.user = this.bot.user
-          await this.bot.initialize()
+          try {
+            await this.bot.initialize()
+          } catch (e) {
+            this.bot.logger.warn(e)
+          }
           return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
@@ -99,9 +103,14 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig { }
+  export interface Options extends Adapter.WsClientConfig {
+    protocol: 'websocket'
+  }
 
   export const Options: Schema<Options> = Schema.intersect([
+    Schema.object({
+      protocol: Schema.const('websocket').required(),
+    }),
     Adapter.WsClientConfig,
   ])
 }
