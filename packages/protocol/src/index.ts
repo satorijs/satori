@@ -14,7 +14,7 @@ export interface Upload {
 export interface Response {
   status: number
   statusText?: string
-  data?: ArrayBuffer
+  body?: ArrayBuffer
   headers?: Headers
 }
 

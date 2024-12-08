@@ -5,16 +5,18 @@ import { Response } from '@satorijs/protocol'
 import { Key, pathToRegexp } from 'path-to-regexp'
 import { Context } from '.'
 
-export interface VirtualRequest<P = any> {
+export interface InternalRequest<P = any> {
   method: HTTP.Method
   params: P
   query: URLSearchParams
+  headers: Dict<string> // Headers
+  body: any
 }
 
-export interface VirtualRoute {
+export interface InternalRoute {
   regexp: RegExp
   keys: Key[]
-  callback: (request: VirtualRequest) => Promise<Response>
+  callback: (request: InternalRequest) => Promise<Response>
 }
 
 type Upper =
@@ -63,18 +65,18 @@ export type ExtractParams<S extends string, O extends {} = {}, A extends 0[] = [
           : ExtractParams<S, O, A>
   : O
 
-export class VirtualRouter {
+export class InternalRouter {
   public [Service.tracker] = {
     property: 'ctx',
   }
 
-  routes: VirtualRoute[] = []
+  routes: InternalRoute[] = []
 
   constructor(public ctx: Context) {}
 
-  define<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
+  define<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
     return this.ctx.effect(() => {
-      const route: VirtualRoute = {
+      const route: InternalRoute = {
         ...pathToRegexp(path),
         callback,
       }
@@ -83,7 +85,7 @@ export class VirtualRouter {
     })
   }
 
-  handle(method: HTTP.Method, path: string, query: URLSearchParams): undefined | Promise<Response> {
+  handle(method: HTTP.Method, path: string, query: URLSearchParams, headers: Headers, body: any): undefined | Promise<Response> {
     for (const route of this.routes) {
       const capture = route.regexp.exec(path)
       if (!capture) continue
@@ -91,7 +93,13 @@ export class VirtualRouter {
       route.keys.forEach(({ name }, index) => {
         params[name] = capture[index + 1]
       })
-      return route.callback({ method, params, query })
+      return route.callback({
+        method,
+        params,
+        query,
+        body,
+        headers: Object.fromEntries(headers.entries()),
+      })
     }
   }
 }

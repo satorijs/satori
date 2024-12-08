@@ -2,7 +2,6 @@ import { Binary, camelCase, Context, Dict, makeArray, sanitize, Schema, Service,
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
-import { ReadableStream } from 'node:stream/web'
 import { readFile } from 'node:fs/promises'
 import { ParameterizedContext } from 'koa'
 
@@ -166,14 +165,14 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }
 
       koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
-      if (url.protocol === 'satori:') {
-        const { status, statusText, data, headers } = await ctx.satori.handleVirtualRoute('GET', url)
+      if (url.protocol === 'internal:') {
+        const { status, statusText, body, headers } = await ctx.satori.handleInternalRoute('GET', url)
         koa.status = status
         for (const [key, value] of headers || new Headers()) {
           koa.set(key, value)
         }
         if (status >= 200 && status < 300) {
-          koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data ? Buffer.from(data) : null
+          koa.body = body ? Buffer.from(body) : null
         } else {
           koa.body = statusText
         }

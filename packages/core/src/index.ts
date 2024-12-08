@@ -1,7 +1,7 @@
 import { Context, Logger, Service, z } from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
-import { ExtractParams, VirtualRequest, VirtualRouter } from './virtual'
+import { ExtractParams, InternalRequest, InternalRouter } from './internal'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Response, SendOptions } from '@satorijs/protocol'
@@ -23,7 +23,7 @@ export * as Universal from '@satorijs/protocol'
 export * from './bot'
 export * from './adapter'
 export * from './message'
-export * from './virtual'
+export * from './internal'
 export * from './session'
 
 declare module 'cordis' {
@@ -120,15 +120,15 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
 
   public uid = Math.random().toString(36).slice(2)
 
-  public _virtual: VirtualRouter
+  public _internalRouter: InternalRouter
   public _tempStore: Dict<Response> = Object.create(null)
 
   constructor(ctx?: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
 
-    this._virtual = new VirtualRouter(ctx)
-    this.defineVirtualRoute('/_tmp/:id', async ({ params }) => {
+    this._internalRouter = new InternalRouter(ctx)
+    this.defineInternalRoute('/_tmp/:id', async ({ params }) => {
       return this._tempStore[params.id] ?? { status: 404 }
     })
 
@@ -137,8 +137,8 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     const self = this
     ;(ctx as Context).on('http/file', async function (_url, options) {
       const url = new URL(_url)
-      if (url.protocol !== 'satori:') return
-      const { status, data, headers } = await self.handleVirtualRoute('GET', url)
+      if (url.protocol !== 'internal:') return
+      const { status, body, headers } = await self.handleInternalRoute('GET', url)
       if (status >= 400) throw new Error(`Failed to fetch ${_url}, status code: ${status}`)
       if (status >= 300) {
         const location = headers?.get('location')
@@ -146,7 +146,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       }
       const type = headers?.get('content-type')
       const filename = headers?.get('content-disposition')?.split('filename=')[1]
-      return { data, filename, type, mime: type }
+      return { data: body, filename, type, mime: type }
     })
   }
 
@@ -179,18 +179,18 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  defineVirtualRoute<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
-    return this._virtual.define(path, callback)
+  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
+    return this._internalRouter.define(path, callback)
   }
 
-  async handleVirtualRoute(method: HTTP.Method, url: URL): Promise<Response> {
+  async handleInternalRoute(method: HTTP.Method, url: URL, headers = new Headers(), body?: any): Promise<Response> {
     const capture = /^([^/]+)\/([^/]+)(\/.+)$/.exec(url.pathname)
     if (!capture) return { status: 400 }
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
     if (!bot) return { status: 404 }
-    let response = await bot._virtual.handle(method, path, url.searchParams)
-    response ??= await this._virtual.handle(method, path, url.searchParams)
+    let response = await bot._internalRouter.handle(method, path, url.searchParams, headers, body)
+    response ??= await this._internalRouter.handle(method, path, url.searchParams, headers, body)
     if (!response) return { status: 404 }
     return response
   }
