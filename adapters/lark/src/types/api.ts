@@ -25654,11 +25654,11 @@ export interface GetProgressImBatchMessageResponse {
 }
 export interface CreateImImageResponse {
   /** 图片的key */
-  image_key?: string
+  image_key: string
 }
 export interface CreateImFileResponse {
   /** 文件的key */
-  file_key?: string
+  file_key: string
 }
 export interface CreateImMessageReactionResponse extends Lark.MessageReaction {}
 export interface DeleteImMessageReactionResponse extends Lark.MessageReaction {}

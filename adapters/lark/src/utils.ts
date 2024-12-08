@@ -45,18 +45,18 @@ export async function adaptMessage(bot: LarkBot, data: Events['im.message.receiv
       break
     }
     case 'image':
-      content.push(h.image(bot.getVirtualUrl(`/image/${data.message.message_id}/${json.image_key}`)))
+      content.push(h.image(bot.getResourceUrl('image', data.message.message_id, json.image_key)))
       break
     case 'audio':
-      content.push(h.audio(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`)))
+      content.push(h.audio(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
       break
     case 'media':
-      content.push(h.video(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`), {
+      content.push(h.video(bot.getResourceUrl('file', data.message.message_id, json.file_key), {
         poster: json.image_key,
       }))
       break
     case 'file':
-      content.push(h.file(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`)))
+      content.push(h.file(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
       break
   }
 
@@ -157,18 +157,18 @@ export async function decodeMessage(bot: LarkBot, body: Lark.Message, details = 
       break
     }
     case 'image':
-      content.push(h.image(bot.getVirtualUrl(`/image/${body.message_id}/${json.image_key}`)))
+      content.push(h.image(bot.getResourceUrl('image', body.message_id, json.image_key)))
       break
     case 'audio':
-      content.push(h.audio(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`)))
+      content.push(h.audio(bot.getResourceUrl('file', body.message_id, json.file_key)))
       break
     case 'media':
-      content.push(h.video(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`), {
+      content.push(h.video(bot.getResourceUrl('file', body.message_id, json.file_key), {
         poster: json.image_key,
       }))
       break
     case 'file':
-      content.push(h.file(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`)))
+      content.push(h.file(bot.getResourceUrl('file', body.message_id, json.file_key)))
       break
   }
 

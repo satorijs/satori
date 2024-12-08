@@ -101,7 +101,17 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   }
 
   async sendFile(_type: 'video' | 'audio' | 'file', attrs: any) {
-    const url = attrs.src || attrs.url
+    const url: string = attrs.src || attrs.url
+    const prefix = this.bot.getInternalUrl('/im/v1/files/')
+    if (url.startsWith(prefix)) {
+      const file_key = url.slice(prefix.length)
+      await this.post({
+        msg_type: _type === 'video' ? 'media' : _type,
+        content: JSON.stringify({ file_key }),
+      })
+      return
+    }
+
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
 
     let file_type: CreateImFileForm['file_type']

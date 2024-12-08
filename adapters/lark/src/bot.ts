@@ -26,13 +26,13 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
     ctx.plugin(HttpServer, this)
 
-    this.defineVirtualRoute('/:type/:message_id/:file_key', async ({ params }) => {
-      const type = params.type === 'image' ? 'image' : 'file'
-      const key = params.file_key
-      const messageId = params.message_id
-      const data = await this.internal.getImMessageResource(messageId, key, { type })
-      return { data, status: 200 }
+    this.defineInternalRoute('/*path', async ({ params, method, headers, body }) => {
+      return this.http(params.path, { method, data: body, headers })
     })
+  }
+
+  getResourceUrl(type: string, message_id: string, file_key: string) {
+    return this.getInternalUrl(`/im/v1/messages/${message_id}/resources/${file_key}`, { type })
   }
 
   async initialize() {
@@ -128,6 +128,17 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     const members = await this.internal.getImChatMembers(guildId, { page_token: after })
     const data = members.items.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
     return { data, next: members.page_token }
+  }
+
+  async createUpload(...uploads: Universal.Upload[]): Promise<string[]> {
+    return await Promise.all(uploads.map(async (upload) => {
+      const response = await this.internal.createImFile({
+        file_name: upload.filename,
+        file_type: upload.type,
+        file: new Blob([upload.data]),
+      })
+      return this.getInternalUrl(`/im/v1/files/${response.file_key}`)
+    }))
   }
 }
 
