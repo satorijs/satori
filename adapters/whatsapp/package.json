@@ -28,11 +28,11 @@
     "satori"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.3.1",
+    "@cordisjs/plugin-server": "^0.2.5",
+    "@satorijs/core": "^4.3.2",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.3.1"
+    "@satorijs/core": "^4.3.2"
   }
 }
