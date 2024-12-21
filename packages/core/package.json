@@ -37,11 +37,6 @@
     "utilities",
     "cordis"
   ],
-  "scripts": {
-    "compile:cjs": "esbuild src/index.ts --outfile=lib/index.cjs --bundle --sourcemap --sources-content=false --platform=node --external:cosmokit --external:cordis --target=es2022",
-    "compile:esm": "esbuild src/index.ts --outfile=lib/index.mjs --bundle --sourcemap --sources-content=false --platform=neutral --external:cosmokit --external:cordis --target=es2022",
-    "build": "yarn compile:cjs && yarn compile:esm && yarn dtsc"
-  },
   "cordis": {
     "ecosystem": {
       "name": "satori",

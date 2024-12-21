@@ -41,7 +41,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public callbacks: Dict<Function> = {}
   public logger: Logger
 
-  public _internalRouter: InternalRouter
+  public _internalRouter: InternalRouter<C>
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
@@ -83,7 +83,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
     return `internal${slash ? '/' : ':'}${this.platform}/${this.selfId}${path}${search}`
   }
 
-  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
+  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
     return this._internalRouter.define(path, callback)
   }
 

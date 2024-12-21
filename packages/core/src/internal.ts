@@ -3,20 +3,21 @@ import { Dict, remove } from 'cosmokit'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Response } from '@satorijs/protocol'
 import { Key, pathToRegexp } from 'path-to-regexp'
-import { Context } from '.'
+import { Bot, Context } from '.'
 
-export interface InternalRequest<P = any> {
+export interface InternalRequest<C extends Context, P = any> {
+  bot: Bot<C>
   method: HTTP.Method
   params: P
   query: URLSearchParams
   headers: Dict<string> // Headers
-  body: any
+  body: ArrayBuffer
 }
 
-export interface InternalRoute {
+export interface InternalRoute<C extends Context> {
   regexp: RegExp
   keys: Key[]
-  callback: (request: InternalRequest) => Promise<Response>
+  callback: (request: InternalRequest<C>) => Promise<Response>
 }
 
 type Upper =
@@ -65,18 +66,18 @@ export type ExtractParams<S extends string, O extends {} = {}, A extends 0[] = [
           : ExtractParams<S, O, A>
   : O
 
-export class InternalRouter {
+export class InternalRouter<C extends Context> {
   public [Service.tracker] = {
     property: 'ctx',
   }
 
-  routes: InternalRoute[] = []
+  routes: InternalRoute<C>[] = []
 
   constructor(public ctx: Context) {}
 
-  define<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
+  define<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
     return this.ctx.effect(() => {
-      const route: InternalRoute = {
+      const route: InternalRoute<C> = {
         ...pathToRegexp(path),
         callback,
       }
@@ -85,7 +86,7 @@ export class InternalRouter {
     })
   }
 
-  handle(method: HTTP.Method, path: string, query: URLSearchParams, headers: Headers, body: any): undefined | Promise<Response> {
+  handle(bot: Bot<C>, method: HTTP.Method, path: string, query: URLSearchParams, headers: Headers, body: any): undefined | Promise<Response> {
     for (const route of this.routes) {
       const capture = route.regexp.exec(path)
       if (!capture) continue
@@ -94,6 +95,7 @@ export class InternalRouter {
         params[name] = capture[index + 1]
       })
       return route.callback({
+        bot,
         method,
         params,
         query,

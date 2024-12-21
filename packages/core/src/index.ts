@@ -120,17 +120,12 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
 
   public uid = Math.random().toString(36).slice(2)
 
-  public _internalRouter: InternalRouter
+  public _internalRouter: InternalRouter<C>
   public _tempStore: Dict<Response> = Object.create(null)
 
   constructor(ctx?: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
-
-    this._internalRouter = new InternalRouter(ctx)
-    this.defineInternalRoute('/_tmp/:id', async ({ params }) => {
-      return this._tempStore[params.id] ?? { status: 404 }
-    })
 
     defineProperty(this.bots, Service.tracker, {})
 
@@ -147,6 +142,13 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       const type = headers?.get('content-type')
       const filename = headers?.get('content-disposition')?.split('filename=')[1]
       return { data: body, filename, type, mime: type }
+    })
+
+    this._internalRouter = new InternalRouter(ctx)
+
+    this.defineInternalRoute('/_tmp/:id', async ({ params, method }) => {
+      if (method !== 'GET') return { status: 405 }
+      return this._tempStore[params.id] ?? { status: 404 }
     })
   }
 
@@ -179,7 +181,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<ExtractParams<P>>) => Promise<Response>) {
+  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
     return this._internalRouter.define(path, callback)
   }
 
@@ -189,8 +191,8 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
     if (!bot) return { status: 404 }
-    let response = await bot._internalRouter.handle(method, path, url.searchParams, headers, body)
-    response ??= await this._internalRouter.handle(method, path, url.searchParams, headers, body)
+    let response = await bot._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
+    response ??= await this._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
     if (!response) return { status: 404 }
     return response
   }
