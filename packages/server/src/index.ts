@@ -1,9 +1,11 @@
-import { Binary, camelCase, Context, Dict, makeArray, sanitize, Schema, Service, Session, snakeCase, Time, Universal, valueMap } from '@satorijs/core'
+import { Context, Schema, Service, Session, Universal } from '@satorijs/core'
+import { Binary, camelCase, defineProperty, Dict, makeArray, sanitize, snakeCase, Time, valueMap } from 'cosmokit'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
 import { readFile } from 'node:fs/promises'
-import { ParameterizedContext } from 'koa'
+import { Middleware, ParameterizedContext } from 'koa'
+import { getBoundary, parse } from 'parse-multipart-data'
 
 declare module 'cordis' {
   interface Context {
@@ -43,6 +45,15 @@ function deserialize(data: any, path: string, blobs: Dict<Blob>) {
   })
 }
 
+const FILTER_HEADERS = [
+  'host',
+  'authorization',
+  'satori-user-id',
+  'satori-platform',
+  'x-self-id',
+  'x-platform',
+]
+
 class SatoriServer extends Service<SatoriServer.Config> {
   static inject = ['server', 'http']
 
@@ -50,6 +61,34 @@ class SatoriServer extends Service<SatoriServer.Config> {
     super(ctx, 'satori.server', true)
     const logger = ctx.logger('server')
     const path = sanitize(config.path)
+
+    ctx.satori.defineInternalRoute('/_api/:name', async ({ bot, headers, params, method, body }) => {
+      if (method !== 'POST') return { status: 405 }
+      const type = headers['content-type']
+      const boundary = getBoundary(type)
+      let args: any
+      if (boundary) {
+        const blobs: Dict<Blob> = {}
+        const fields: Dict<string> = {}
+        for (const { name, type, data, filename } of parse(Buffer.from(body), boundary)) {
+          if (type) {
+            blobs[name!] = new File([data], filename!, { type })
+          } else {
+            fields[name!] = data.toString()
+          }
+        }
+        args = deserialize(JSON.parse(fields.$), '$', blobs)
+      } else {
+        args = JSON.parse(new TextDecoder().decode(body))
+      }
+      try {
+        const result = await bot.internal[camelCase(params.name)](...args)
+        return { body: result, status: 200 }
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        return error.response
+      }
+    })
 
     function checkAuth(koa: ParameterizedContext) {
       if (!config.token) return
@@ -113,45 +152,33 @@ class SatoriServer extends Service<SatoriServer.Config> {
       koa.status = 200
     })
 
-    ctx.server.post(path + '/v1/internal/:name', async (koa) => {
-      if (checkAuth(koa)) return
+    const marker: Middleware = defineProperty((_, next) => next(), Symbol.for('noParseBody'), true)
 
-      const selfId = koa.request.headers['x-self-id']
-      const platform = koa.request.headers['x-platform']
-      const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
-      if (!bot) {
-        koa.body = 'login not found'
-        koa.status = 403
-        return
-      }
-
-      const name = camelCase(koa.params.name)
-      if (!bot.internal?.[name]) {
-        koa.body = 'method not found'
-        koa.status = 404
-        return
-      }
-      try {
-        let args = koa.request.body
-        if (koa.request.files) {
-          const blobs = Object.fromEntries(await Promise.all(Object.entries(koa.request.files).map(async ([key, value]) => {
-            value = makeArray(value)[0]
-            const buffer = await readFile(value.filepath)
-            return [key, new File([buffer], value.originalFilename!, { type: value.mimetype! })] as const
-          })))
-          args = deserialize(JSON.parse(koa.request.body.$), '$', blobs)
-        }
-        const result = await bot.internal[name](...args)
-        koa.body = result
-        koa.status = 200
-      } catch (error) {
-        if (!ctx.http.isError(error) || !error.response) throw error
-        koa.status = error.response.status
-        koa.body = error.response.data
-        for (const [key, value] of error.response.headers) {
-          koa.set(key, value)
+    ctx.server.all(path + '/v1/internal/:path(.+)', marker, async (koa) => {
+      const url = new URL(`internal:${koa.params.path}`)
+      for (const [key, value] of Object.entries(koa.query)) {
+        for (const item of makeArray(value)) {
+          url.searchParams.append(key, item)
         }
       }
+
+      const headers = new Headers()
+      for (const [key, value] of Object.entries(koa.headers)) {
+        if (FILTER_HEADERS.includes(key)) continue
+        headers.set(key, value as string)
+      }
+
+      const buffers: any[] = []
+      for await (const chunk of koa.req) {
+        buffers.push(chunk)
+      }
+      const body = Binary.fromSource(Buffer.concat(buffers))
+      const response = await ctx.satori.handleInternalRoute(koa.method as any, url, headers, body)
+      for (const [key, value] of response.headers ?? new Headers()) {
+        koa.set(key, value)
+      }
+      koa.status = response.status
+      koa.body = response.body ? Buffer.from(response.body) : ''
     })
 
     ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
@@ -165,34 +192,21 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }
 
       koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
-      if (url.protocol === 'internal:') {
-        const { status, statusText, body, headers } = await ctx.satori.handleInternalRoute('GET', url)
-        koa.status = status
-        for (const [key, value] of headers || new Headers()) {
-          koa.set(key, value)
-        }
-        if (status >= 200 && status < 300) {
-          koa.body = body ? Buffer.from(body) : null
-        } else {
-          koa.body = statusText
-        }
-      } else {
-        const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
-        if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
-          koa.body = 'forbidden'
-          koa.status = 403
-          return
-        }
+      const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
+      if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
+        koa.body = 'forbidden'
+        koa.status = 403
+        return
+      }
 
-        try {
-          koa.body = Readable.fromWeb(await ctx.http.get(url.href, { responseType: 'stream' }))
-        } catch (error) {
-          if (!ctx.http.isError(error) || !error.response) throw error
-          koa.status = error.response.status
-          koa.body = error.response.data
-          for (const [key, value] of error.response.headers) {
-            koa.set(key, value)
-          }
+      try {
+        koa.body = Readable.fromWeb(await ctx.http.get(url.href, { responseType: 'stream' }))
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        koa.status = error.response.status
+        koa.body = error.response.data
+        for (const [key, value] of error.response.headers) {
+          koa.set(key, value)
         }
       }
     })

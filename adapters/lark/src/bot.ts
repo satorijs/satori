@@ -26,8 +26,20 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
     ctx.plugin(HttpServer, this)
 
-    this.defineInternalRoute('/*path', async ({ params, method, headers, body }) => {
-      return this.http(params.path, { method, data: body, headers })
+    this.defineInternalRoute('/*path', async ({ params, method, headers, body, query }) => {
+      const response = await this.http('/' + params.path, {
+        method,
+        headers,
+        data: method === 'GET' || method === 'HEAD' ? null : body,
+        params: Object.fromEntries(query.entries()),
+        responseType: 'arraybuffer',
+        validateStatus: () => true,
+      })
+      return {
+        status: response.status,
+        body: response.data,
+        headers: response.headers,
+      }
     })
   }
 
@@ -163,14 +175,14 @@ export namespace LarkBot {
         Schema.object({
           platform: Schema.const('feishu').required(),
         }),
-        HTTP.createConfig('https://open.feishu.cn/open-apis/'),
+        HTTP.createConfig('https://open.feishu.cn/open-apis'),
         HttpServer.createConfig('/feishu'),
       ]),
       Schema.intersect([
         Schema.object({
           platform: Schema.const('lark').required(),
         }),
-        HTTP.createConfig('https://open.larksuite.com/open-apis/'),
+        HTTP.createConfig('https://open.larksuite.com/open-apis'),
         HttpServer.createConfig('/lark'),
       ]),
     ]),

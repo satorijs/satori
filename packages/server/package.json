@@ -35,12 +35,15 @@
     "api"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.4",
+    "@cordisjs/plugin-server": "^0.2.5",
     "@satorijs/core": "^4.3.1",
     "@types/node": "^22.7.5",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
     "@satorijs/core": "^4.3.1"
+  },
+  "dependencies": {
+    "parse-multipart-data": "^1.5.0"
   }
 }
