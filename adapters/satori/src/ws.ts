@@ -1,4 +1,4 @@
-import { Adapter, camelize, Context, HTTP, Logger, pick, Schema, Time, Universal } from '@satorijs/core'
+import { Adapter, camelize, Context, HTTP, Logger, Schema, Time, Universal } from '@satorijs/core'
 import { SatoriBot, transformKey } from './bot'
 
 export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
@@ -130,17 +130,6 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
 
     this.socket.addEventListener('close', () => {
       clearInterval(this.timeout)
-    })
-
-    this.ctx.satori.upload(() => {
-      return this.bots
-        .flatMap(bot => bot.proxyUrls)
-        .filter(url => url.startsWith('upload://'))
-        .map(url => url.replace('upload://', ''))
-    }, async (path) => {
-      path = path.replace(/^\//g, '')
-      const response = await this.http('/v1/proxy/upload://' + path, { responseType: 'arraybuffer' })
-      return pick(response, ['status', 'data', 'headers', 'statusText'])
     })
   }
 

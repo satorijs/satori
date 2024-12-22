@@ -156,37 +156,37 @@ class SatoriServer extends Service<SatoriServer.Config> {
     })
 
     ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
-      const url = koa.params.url
+      let url: URL
       try {
-        new URL(url)
+        url = new URL(koa.params.url)
       } catch {
         koa.body = 'invalid url'
         koa.status = 400
         return
       }
 
-      const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
-      if (!proxyUrls.some(proxyUrl => url.startsWith(proxyUrl))) {
-        koa.body = 'forbidden'
-        koa.status = 403
-        return
-      }
-
       koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
-      if (url.startsWith('upload://')) {
-        const { status, statusText, data, headers } = await ctx.satori.download(url.slice(9))
+      if (url.protocol === 'satori:') {
+        const { status, statusText, data, headers } = await ctx.satori.handleVirtualRoute('GET', url)
         koa.status = status
         for (const [key, value] of headers || new Headers()) {
           koa.set(key, value)
         }
         if (status >= 200 && status < 300) {
-          koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data
+          koa.body = data instanceof ReadableStream ? Readable.fromWeb(data) : data ? Buffer.from(data) : null
         } else {
           koa.body = statusText
         }
       } else {
+        const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
+        if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
+          koa.body = 'forbidden'
+          koa.status = 403
+          return
+        }
+
         try {
-          koa.body = Readable.fromWeb(await ctx.http.get(koa.params.url, { responseType: 'stream' }))
+          koa.body = Readable.fromWeb(await ctx.http.get(url.href, { responseType: 'stream' }))
         } catch (error) {
           if (!ctx.http.isError(error) || !error.response) throw error
           koa.status = error.response.status

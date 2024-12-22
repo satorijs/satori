@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Context, h, Session, trimSlash, Universal } from '@satorijs/core'
+import { Context, h, Session, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { EventPayload, Events, GetImChatResponse, Lark } from './types'
 
@@ -24,7 +24,6 @@ export function adaptSender(sender: Sender, session: Session): Session {
 
 export async function adaptMessage(bot: LarkBot, data: Events['im.message.receive_v1'], session: Session, details = true): Promise<Session> {
   const json = JSON.parse(data.message.content)
-  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: (string | h)[] = []
   switch (data.message.message_type) {
     case 'text': {
@@ -46,16 +45,18 @@ export async function adaptMessage(bot: LarkBot, data: Events['im.message.receiv
       break
     }
     case 'image':
-      content.push(h.image(`${assetEndpoint}/image/${data.message.message_id}/${json.image_key}?self_id=${bot.selfId}`))
+      content.push(h.image(bot.getVirtualUrl(`/image/${data.message.message_id}/${json.image_key}`)))
       break
     case 'audio':
-      content.push(h.audio(`${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      content.push(h.audio(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`)))
       break
     case 'media':
-      content.push(h.video(`${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`, json.image_key))
+      content.push(h.video(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`), {
+        poster: json.image_key,
+      }))
       break
     case 'file':
-      content.push(h.file(`${assetEndpoint}/file/${data.message.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      content.push(h.file(bot.getVirtualUrl(`/file/${data.message.message_id}/${json.file_key}`)))
       break
   }
 
@@ -135,7 +136,6 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
 export async function decodeMessage(bot: LarkBot, body: Lark.Message, details = true): Promise<Universal.Message> {
   const json = JSON.parse(body.body.content)
-  const assetEndpoint = trimSlash(bot.config.selfUrl ?? bot.ctx.server.config.selfUrl) + bot.config.path + '/assets'
   const content: h[] = []
   switch (body.msg_type) {
     case 'text': {
@@ -157,16 +157,18 @@ export async function decodeMessage(bot: LarkBot, body: Lark.Message, details = 
       break
     }
     case 'image':
-      content.push(h.image(`${assetEndpoint}/image/${body.message_id}/${json.image_key}?self_id=${bot.selfId}`))
+      content.push(h.image(bot.getVirtualUrl(`/image/${body.message_id}/${json.image_key}`)))
       break
     case 'audio':
-      content.push(h.audio(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      content.push(h.audio(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`)))
       break
     case 'media':
-      content.push(h.video(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`, json.image_key))
+      content.push(h.video(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`), {
+        poster: json.image_key,
+      }))
       break
     case 'file':
-      content.push(h.file(`${assetEndpoint}/file/${body.message_id}/${json.file_key}?self_id=${bot.selfId}`))
+      content.push(h.file(bot.getVirtualUrl(`/file/${body.message_id}/${json.file_key}`)))
       break
   }
 

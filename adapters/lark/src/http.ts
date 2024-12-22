@@ -1,5 +1,3 @@
-import { Readable } from 'node:stream'
-import { ReadableStream } from 'node:stream/web'
 import { Adapter, Context, Logger, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
 
@@ -78,24 +76,6 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
       ctx.body = {}
       return ctx.status = 200
     })
-
-    bot.ctx.server.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
-      const type = ctx.params.type === 'image' ? 'image' : 'file'
-      const key = ctx.params.key
-      const messageId = ctx.params.message_id
-      const selfId = ctx.request.query.self_id
-      const bot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!bot) return ctx.status = 404
-
-      const resp = await bot.http<ReadableStream>(`/im/v1/messages/${messageId}/resources/${key}`, {
-        method: 'GET',
-        params: { type },
-        responseType: 'stream',
-      })
-      ctx.set('content-type', resp.headers.get('content-type'))
-      ctx.status = 200
-      ctx.response.body = Readable.fromWeb(resp.data)
-    })
   }
 
   async dispatchSession(body: EventPayload) {
@@ -103,7 +83,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
     if (!header) return
     const { app_id, event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
-    const bot = this.bots.find((bot) => bot.appId === app_id)
+    const bot = this.bots.find((bot) => bot.config.appId === app_id)
     const session = await adaptSession(bot, body)
     bot.dispatch(session)
   }

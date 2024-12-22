@@ -31,10 +31,10 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.2.12",
+    "@satorijs/core": "^4.3.1",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.12"
+    "@satorijs/core": "^4.3.1"
   }
 }
