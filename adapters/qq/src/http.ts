@@ -21,7 +21,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
 
       ctx.status = 200
       const payload: Payload = ctx.request.body
-      if (payload.op === Opcode.Address_Verification) {
+      if (payload.op === Opcode.ADDRESS_VERIFICATION) {
         const key = this.getPrivateKey(bot.config.secret)
         const data = payload.d.event_ts + payload.d.plain_token
         const sig = await signAsync(new TextEncoder().encode(data), key)

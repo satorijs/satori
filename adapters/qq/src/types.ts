@@ -113,7 +113,7 @@ export enum Opcode {
   /** 仅用于 http 回调模式的回包，代表机器人收到了平台推送的数据 */
   HTTP_CALLBACK_ACK = 12,
   /** 开放平台对机器人服务端进行验证 */
-  Address_Verification = 13
+  ADDRESS_VERIFICATION = 13,
 }
 
 export type WithOpUser<T> = T & { op_user_id: string }
@@ -250,7 +250,7 @@ export type Payload = DispatchPayload | {
 } | {
   op: Opcode.INVALID_SESSION
 } | {
-  op: Opcode.Address_Verification
+  op: Opcode.ADDRESS_VERIFICATION
   d: {
     plain_token: string
     event_ts: number

@@ -13,7 +13,10 @@ interface GetAppAccessTokenResult {
 
 export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   static MessageEncoder = QQMessageEncoder
-  static inject = ['server', 'http']
+  static inject = {
+    required: ['http'],
+    optional: ['server'],
+  }
 
   public guildBot: QQGuildBot<C>
 
