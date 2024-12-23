@@ -13,6 +13,8 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   private sequence?: number
   private timeout?: NodeJS.Timeout
 
+  private _metaDispose?: () => void
+
   constructor(public ctx: C, public config: SatoriAdapter.Config) {
     super(ctx, config)
     this.logger = ctx.logger('satori')
@@ -99,6 +101,12 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
         for (const login of parsed.body.logins) {
           this.getBot(login.platform, login.user.id, login)
         }
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls)
+      }
+
+      if (parsed.op === Universal.Opcode.META) {
+        this._metaDispose?.()
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls)
       }
 
       if (parsed.op === Universal.Opcode.EVENT) {
@@ -130,6 +138,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
 
     this.socket.addEventListener('close', () => {
       clearInterval(this.timeout)
+      this._metaDispose?.()
     })
   }
 

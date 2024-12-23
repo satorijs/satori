@@ -205,13 +205,17 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }
     })
 
-    ctx.server.post(path + '/v1/admin/login.list', async (koa) => {
+    ctx.server.all(path + '/v1/admin/:path(.+)', async (koa) => {
+      koa.redirect(`${path}/v1/meta/${koa.params.path}`)
+    })
+
+    ctx.server.post(path + '/v1/meta', async (koa) => {
       if (checkAuth(koa)) return
-      koa.body = transformKey(ctx.bots.map(bot => bot.toJSON()), snakeCase)
+      koa.body = transformKey(ctx.satori.toJSON(), snakeCase)
       koa.status = 200
     })
 
-    ctx.server.post(path + '/v1/admin/webhook.create', async (koa) => {
+    ctx.server.post(path + '/v1/meta/webhook.create', async (koa) => {
       if (checkAuth(koa)) return
       const webhook: SatoriServer.Webhook = transformKey(koa.request.body, camelCase)
       const index = config.webhooks.findIndex(({ url }) => url === webhook.url)
@@ -223,7 +227,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
       koa.status = 200
     })
 
-    ctx.server.post(path + '/v1/admin/webhook.delete', async (koa) => {
+    ctx.server.post(path + '/v1/meta/webhook.delete', async (koa) => {
       if (checkAuth(koa)) return
       const url = koa.request.body.url
       const index = config.webhooks.findIndex(webhook => webhook.url === url)
@@ -266,13 +270,11 @@ class SatoriServer extends Service<SatoriServer.Config> {
           client.authorized = true
           socket.send(JSON.stringify({
             op: Universal.Opcode.READY,
-            body: {
-              logins: transformKey(ctx.bots.map(bot => bot.toJSON()), snakeCase),
-            },
+            body: transformKey(ctx.satori.toJSON(), snakeCase),
           }))
-          if (!payload.body?.sequence) return
+          if (!payload.body?.sn) return
           for (const session of buffer) {
-            if (session.id <= payload.body.sequence) continue
+            if (session.id <= payload.body.sn) continue
             dispatch(socket, transformKey(session.toJSON(), snakeCase))
           }
         } else if (payload.op === Universal.Opcode.PING) {
@@ -291,8 +293,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }))
     }
 
-    ctx.on('internal/session', (session) => {
-      const body = transformKey(session.toJSON(), snakeCase)
+    function sendEvent(opcode: Universal.Opcode, body: any) {
       for (const socket of layer.clients) {
         if (!socket[kClient]?.authorized) continue
         dispatch(socket, body)
@@ -300,11 +301,24 @@ class SatoriServer extends Service<SatoriServer.Config> {
       for (const webhook of config.webhooks) {
         if (!webhook.enabled) continue
         ctx.http.post(webhook.url, body, {
-          headers: webhook.token ? {
-            Authorization: `Bearer ${webhook.token}`,
-          } : {},
+          headers: {
+            'Satori-Opcode': opcode,
+            ...webhook.token ? {
+              'Authorization': `Bearer ${webhook.token}`,
+            } : {},
+          },
         }).catch(logger.warn)
       }
+    }
+
+    ctx.on('internal/session', (session) => {
+      const body = transformKey(session.toJSON(), snakeCase)
+      sendEvent(Universal.Opcode.EVENT, body)
+    })
+
+    ctx.on('satori/meta', () => {
+      const body = transformKey(ctx.satori.toJSON(true), snakeCase)
+      sendEvent(Universal.Opcode.META, body)
     })
   }
 

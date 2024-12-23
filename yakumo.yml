@@ -12,6 +12,7 @@
       satori: /packages/core
       ss: /packages/server
       sa: /adapters/satori
+      lark: /adapters/lark
 - id: 67eben
   name: yakumo-esbuild
 - id: fqmym8

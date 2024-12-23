@@ -340,6 +340,7 @@ export const enum Opcode {
   PONG = 2,
   IDENTIFY = 3,
   READY = 4,
+  META = 5,
 }
 
 export interface GatewayPayloadStructure<O extends Opcode> {
@@ -349,7 +350,7 @@ export interface GatewayPayloadStructure<O extends Opcode> {
 
 export type ServerPayload = {
   [O in Opcode]: GatewayPayloadStructure<O>
-}[Opcode.EVENT | Opcode.PONG | Opcode.READY]
+}[Opcode.EVENT | Opcode.PONG | Opcode.READY | Opcode.META]
 
 export type ClientPayload = {
   [O in Opcode]: GatewayPayloadStructure<O>
@@ -365,6 +366,10 @@ export interface GatewayBody {
   }
   [Opcode.READY]: {
     logins: Login[]
+    proxyUrls: string[]
+  }
+  [Opcode.META]: {
+    proxyUrls: string[]
   }
 }
 
