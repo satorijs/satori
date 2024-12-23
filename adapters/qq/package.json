@@ -31,6 +31,7 @@
     "chat"
   ],
   "devDependencies": {
+    "@noble/ed25519": "^2.1.0",
     "@satorijs/core": "^4.3.3",
     "cordis": "^3.18.1"
   },
