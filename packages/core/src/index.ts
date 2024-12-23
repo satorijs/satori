@@ -39,6 +39,7 @@ declare module 'cordis' {
   }
 
   interface Events<C> {
+    'satori/meta'(): void
     'internal/session'(session: GetSession<C>): void
     'interaction/command'(session: GetSession<C>): void
     'interaction/button'(session: GetSession<C>): void
@@ -114,14 +115,62 @@ class SatoriContext extends Context {
 
 export { SatoriContext as Context }
 
+class DisposableSet<T> {
+  private sn = 0
+  private map1 = new Map<number, T[]>()
+  private map2 = new Map<T, Set<number>>()
+
+  constructor(private ctx: Context) {
+    defineProperty(this, Service.tracker, {
+      property: 'ctx',
+    })
+  }
+
+  add(...values: T[]) {
+    const sn = ++this.sn
+    return this.ctx.effect(() => {
+      let hasUpdate = false
+      for (const value of values) {
+        if (!this.map2.has(value)) {
+          this.map2.set(value, new Set())
+          hasUpdate = true
+        }
+        this.map2.get(value)!.add(sn)
+      }
+      this.map1.set(sn, values)
+      if (hasUpdate) this.ctx.emit('satori/meta')
+      return () => {
+        let hasUpdate = false
+        this.map1.delete(sn)
+        for (const value of values) {
+          this.map2.get(value)!.delete(sn)
+          if (this.map2.get(value)!.size === 0) {
+            this.map2.delete(value)
+            hasUpdate = true
+          }
+        }
+        if (hasUpdate) this.ctx.emit('satori/meta')
+      }
+    })
+  }
+
+  [Symbol.iterator]() {
+    return new Set(([] as T[]).concat(...this.map1.values()))[Symbol.iterator]()
+  }
+}
+
 export class Satori<C extends Context = Context> extends Service<unknown, C> {
   static [Service.provide] = 'satori'
   static [Service.immediate] = true
 
   public uid = Math.random().toString(36).slice(2)
+  public proxyUrls: DisposableSet<string> = new DisposableSet(this.ctx)
 
   public _internalRouter: InternalRouter<C>
   public _tempStore: Dict<Response> = Object.create(null)
+
+  public _loginSeq = 0
+  public _sessionSeq = 0
 
   constructor(ctx?: C) {
     super(ctx)
@@ -195,6 +244,13 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     response ??= await this._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
     if (!response) return { status: 404 }
     return response
+  }
+
+  toJSON(meta = false) {
+    return {
+      logins: meta ? undefined : this.bots.map(bot => bot.toJSON()),
+      proxyUrls: [...this.proxyUrls],
+    }
   }
 }
 

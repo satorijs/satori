@@ -7,12 +7,6 @@ import { readFile } from 'node:fs/promises'
 import { Middleware, ParameterizedContext } from 'koa'
 import { getBoundary, parse } from 'parse-multipart-data'
 
-declare module 'cordis' {
-  interface Context {
-    'satori.server': SatoriServer
-  }
-}
-
 declare module '@satorijs/core' {
   interface Satori {
     server: SatoriServer
@@ -192,7 +186,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
       }
 
       koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
-      const proxyUrls = ctx.bots.flatMap(bot => bot.proxyUrls)
+      const proxyUrls = [...ctx.satori.proxyUrls]
       if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
         koa.body = 'forbidden'
         koa.status = 403

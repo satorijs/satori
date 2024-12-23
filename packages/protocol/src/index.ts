@@ -225,6 +225,7 @@ export interface GuildMember {
 }
 
 export interface Login {
+  sn: number
   adapter: string
   user?: User
   platform?: string
@@ -233,7 +234,6 @@ export interface Login {
   hidden?: boolean
   status: Status
   features: string[]
-  proxyUrls: string[]
 }
 
 export const enum Status {
@@ -309,7 +309,7 @@ export type EventName =
   | 'guild-member-request'
 
 export interface Event {
-  id: number
+  sn: number
   type: string
   selfId: string
   platform: string
@@ -361,7 +361,7 @@ export interface GatewayBody {
   [Opcode.PONG]: {}
   [Opcode.IDENTIFY]: {
     token?: string
-    sequence?: number
+    sn?: number
   }
   [Opcode.READY]: {
     logins: Login[]

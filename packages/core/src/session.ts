@@ -28,14 +28,13 @@ export interface Session {
 }
 
 export class Session<C extends Context = Context> {
-  static counter = 0
-
   public [Service.tracker] = {
     associate: 'session',
     property: 'ctx',
   }
 
-  public id: number
+  public id: number // for backward compatibility
+  public sn: number
   public bot: Bot<C>
   public app: C['root']
   public event: Event
@@ -46,7 +45,7 @@ export class Session<C extends Context = Context> {
     event.platform ??= bot.platform
     event.timestamp ??= Date.now()
     this.event = event as Event
-    this.id = ++Session.counter
+    this.sn = this.id = ++bot.ctx.satori._sessionSeq
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
     defineProperty(this, Context.current, bot.ctx)
@@ -145,7 +144,8 @@ export class Session<C extends Context = Context> {
         user: { id: this.selfId },
       } as Login,
       ...clone(this.event),
-      id: this.id,
+      sn: this.sn,
+      ['id' as never]: this.sn, // for backward compatibility
     }
     if (event.message?.elements) {
       event.message.content = this.content

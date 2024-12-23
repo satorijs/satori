@@ -30,12 +30,12 @@ export abstract class Bot<C extends Context = Context, T = any> {
     property: 'ctx',
   }
 
+  public sn: number
   public user = {} as User
   public isBot = true
   public hidden = false
   public platform: string
   public features: string[]
-  public proxyUrls: string[]
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
@@ -48,6 +48,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
   protected _status: Status = Status.OFFLINE
 
   constructor(public ctx: C, public config: T, platform?: string) {
+    this.sn = ++ctx.satori._loginSeq
     this.internal = null
     this._internalRouter = new InternalRouter(ctx)
     this.context = ctx
@@ -58,7 +59,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
       this.platform = platform
     }
 
-    this.proxyUrls = []
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
@@ -246,7 +246,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   toJSON(): Login {
     return clone({
-      ...pick(this, ['platform', 'selfId', 'status', 'hidden', 'features', 'proxyUrls']),
+      ...pick(this, ['sn', 'platform', 'selfId', 'status', 'hidden', 'features']),
       // make sure `user.id` is present
       user: this.user.id ? this.user : undefined,
       adapter: this.platform,
