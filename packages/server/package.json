@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/plugin-server",
   "description": "Basic API server for Satori protocol",
-  "version": "2.8.3",
+  "version": "2.8.5",
   "type": "module",
   "exports": {
     ".": {
@@ -35,12 +35,16 @@
     "api"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.4",
-    "@satorijs/core": "^4.3.1",
+    "@cordisjs/plugin-server": "^0.2.5",
+    "@satorijs/core": "^4.3.3",
     "@types/node": "^22.7.5",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.3.1"
+    "@satorijs/core": "^4.3.3"
+  },
+  "dependencies": {
+    "cosmokit": "^1.6.3",
+    "parse-multipart-data": "^1.5.0"
   }
 }

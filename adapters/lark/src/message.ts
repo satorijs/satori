@@ -11,10 +11,21 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private noteElements: MessageContent.Card.NoteElement.InnerElement[] | undefined
   private actionElements: MessageContent.Card.Element[] = []
 
+  public editMessageIds: string[] | undefined
+
   async post(data?: any) {
     try {
       let resp: Lark.Message
-      if (this.quote?.id) {
+      if (this.editMessageIds) {
+        const messageId = this.editMessageIds.pop()
+        if (!messageId) throw new Error('No message to edit')
+        if (data.msg_type === 'interactive') {
+          delete data.msg_type
+          await this.bot.internal.patchImMessage(messageId, data)
+        } else {
+          await this.bot.internal.updateImMessage(messageId, data)
+        }
+      } else if (this.quote?.id) {
         resp = await this.bot.internal.replyImMessage(this.quote.id, {
           ...data,
           reply_in_thread: this.quote.replyInThread,
@@ -25,6 +36,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           receive_id_type: extractIdType(this.channelId),
         })
       }
+      if (!resp) return
       const session = this.bot.session()
       session.messageId = resp.message_id
       session.timestamp = Number(resp.create_time) * 1000
@@ -70,6 +82,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       await this.post({
         msg_type: 'interactive',
         content: JSON.stringify({
+          header: this.card.header,
           elements: this.card.elements,
         }),
       })
@@ -101,7 +114,17 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   }
 
   async sendFile(_type: 'video' | 'audio' | 'file', attrs: any) {
-    const url = attrs.src || attrs.url
+    const url: string = attrs.src || attrs.url
+    const prefix = this.bot.getInternalUrl('/im/v1/files/')
+    if (url.startsWith(prefix)) {
+      const file_key = url.slice(prefix.length)
+      await this.post({
+        msg_type: _type === 'video' ? 'media' : _type,
+        content: JSON.stringify({ file_key }),
+      })
+      return
+    }
+
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
 
     let file_type: CreateImFileForm['file_type']

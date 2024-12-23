@@ -4,7 +4,7 @@ import h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
-import { ExtractParams, VirtualRequest, VirtualRouter } from './virtual'
+import { ExtractParams, InternalRequest, InternalRouter } from './internal'
 import { Event, List, Login, Methods, Response, SendOptions, Status, Upload, User } from '@satorijs/protocol'
 
 /* eslint-enable @typescript-eslint/no-unused-vars */
@@ -30,26 +30,27 @@ export abstract class Bot<C extends Context = Context, T = any> {
     property: 'ctx',
   }
 
+  public sn: number
   public user = {} as User
   public isBot = true
   public hidden = false
   public platform: string
   public features: string[]
-  public proxyUrls: string[]
   public adapter?: Adapter<C, this>
   public error?: Error
   public callbacks: Dict<Function> = {}
   public logger: Logger
 
-  public _virtual: VirtualRouter
+  public _internalRouter: InternalRouter<C>
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
   constructor(public ctx: C, public config: T, platform?: string) {
+    this.sn = ++ctx.satori._loginSeq
     this.internal = null
-    this._virtual = new VirtualRouter(ctx)
+    this._internalRouter = new InternalRouter(ctx)
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
@@ -58,7 +59,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
       this.platform = platform
     }
 
-    this.proxyUrls = [`satori://temp/${ctx.satori.uid}/`]
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
@@ -77,12 +77,14 @@ export abstract class Bot<C extends Context = Context, T = any> {
     })
   }
 
-  getVirtualUrl(path: string) {
-    return `satori:${this.platform}/${this.selfId}${path}`
+  getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0], slash?: boolean) {
+    let search = new URLSearchParams(init).toString()
+    if (search) search = '?' + search
+    return `internal${slash ? '/' : ':'}${this.platform}/${this.selfId}${path}${search}`
   }
 
-  defineVirtualRoute<P extends string>(path: P, callback: (request: VirtualRequest<ExtractParams<P>>) => Promise<Response>) {
-    return this._virtual.define(path, callback)
+  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
+    return this._internalRouter.define(path, callback)
   }
 
   update(login: Login) {
@@ -215,7 +217,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       }
       this.ctx.satori._tempStore[id] = {
         status: 200,
-        data: upload.data,
+        body: upload.data,
         headers,
       }
       ids.push(id)
@@ -229,7 +231,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       }
     }
     const _dispose = this.ctx.on('dispose', dispose)
-    return ids.map(id => this.getVirtualUrl(`/_tmp/${id}`))
+    return ids.map(id => this.getInternalUrl(`/_tmp/${id}`))
   }
 
   async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
@@ -244,7 +246,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   toJSON(): Login {
     return clone({
-      ...pick(this, ['platform', 'selfId', 'status', 'hidden', 'features', 'proxyUrls']),
+      ...pick(this, ['sn', 'platform', 'selfId', 'status', 'hidden', 'features']),
       // make sure `user.id` is present
       user: this.user.id ? this.user : undefined,
       adapter: this.platform,

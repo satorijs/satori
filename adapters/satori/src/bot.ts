@@ -31,7 +31,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
       const blobs: Dict<Blob> = Object.create(null)
       const data = serialize(args, '$', blobs)
       if (!Object.keys(blobs).length) {
-        return bot.http.post('/v1/internal/' + key, args)
+        return bot.http.post('/v1/internal/_api/' + key, args)
       }
       const form = new FormData()
       form.append('$', JSON.stringify(data))
@@ -42,7 +42,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
           form.append(key, value)
         }
       }
-      return bot.http.post('/v1/internal/' + key, form)
+      return bot.http.post('/v1/internal/_api/' + key, form)
     },
     get(target, key, receiver) {
       if (typeof key === 'symbol' || key in target) {
@@ -61,14 +61,19 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
     super(ctx, config, 'satori')
     Object.assign(this, config)
 
-    this.defineVirtualRoute('/*path', async ({ method, params, query }) => {
-      const search = query.toString()
-      let path = `/v1/proxy/satori:${this.platform}/${this.selfId}/${params.path}`
-      if (search) path += '?' + search
-      return await this.http(path, {
+    this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
+      const response = await this.http(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
         method,
+        headers,
+        data: method === 'GET' || method === 'HEAD' ? null : body,
         responseType: 'arraybuffer',
+        validateStatus: () => true,
       })
+      return {
+        status: response.status,
+        body: response.data,
+        headers: response.headers,
+      }
     })
   }
 }
@@ -84,7 +89,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     } else {
       payload = {}
       for (const [index, field] of method.fields.entries()) {
-        if (method.name === 'createMessage' && field.name === 'content') {
+        if ((method.name === 'createMessage' || method.name === 'editMessage') && field.name === 'content') {
           const session = this.session({
             type: 'send',
             channel: { id: args[0], type: 0 },

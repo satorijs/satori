@@ -26,13 +26,25 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
     ctx.plugin(HttpServer, this)
 
-    this.defineVirtualRoute('/:type/:message_id/:file_key', async ({ params }) => {
-      const type = params.type === 'image' ? 'image' : 'file'
-      const key = params.file_key
-      const messageId = params.message_id
-      const data = await this.internal.getImMessageResource(messageId, key, { type })
-      return { data, status: 200 }
+    this.defineInternalRoute('/*path', async ({ params, method, headers, body, query }) => {
+      const response = await this.http('/' + params.path, {
+        method,
+        headers,
+        data: method === 'GET' || method === 'HEAD' ? null : body,
+        params: Object.fromEntries(query.entries()),
+        responseType: 'arraybuffer',
+        validateStatus: () => true,
+      })
+      return {
+        status: response.status,
+        body: response.data,
+        headers: response.headers,
+      }
     })
+  }
+
+  getResourceUrl(type: string, message_id: string, file_key: string) {
+    return this.getInternalUrl(`/im/v1/messages/${message_id}/resources/${file_key}`, { type })
   }
 
   async initialize() {
@@ -76,10 +88,9 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async editMessage(channelId: string, messageId: string, content: h.Fragment) {
-    await this.internal.updateImMessage(messageId, {
-      content: h.normalize(content).join(''),
-      msg_type: 'text',
-    })
+    const encoder = new LarkMessageEncoder(this, channelId)
+    encoder.editMessageIds = [messageId]
+    await encoder.send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
@@ -129,6 +140,17 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     const data = members.items.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
     return { data, next: members.page_token }
   }
+
+  async createUpload(...uploads: Universal.Upload[]): Promise<string[]> {
+    return await Promise.all(uploads.map(async (upload) => {
+      const response = await this.internal.createImFile({
+        file_name: upload.filename,
+        file_type: upload.type,
+        file: new Blob([upload.data]),
+      })
+      return this.getInternalUrl(`/im/v1/files/${response.file_key}`)
+    }))
+  }
 }
 
 export namespace LarkBot {
@@ -152,14 +174,14 @@ export namespace LarkBot {
         Schema.object({
           platform: Schema.const('feishu').required(),
         }),
-        HTTP.createConfig('https://open.feishu.cn/open-apis/'),
+        HTTP.createConfig('https://open.feishu.cn/open-apis'),
         HttpServer.createConfig('/feishu'),
       ]),
       Schema.intersect([
         Schema.object({
           platform: Schema.const('lark').required(),
         }),
-        HTTP.createConfig('https://open.larksuite.com/open-apis/'),
+        HTTP.createConfig('https://open.larksuite.com/open-apis'),
         HttpServer.createConfig('/lark'),
       ]),
     ]),

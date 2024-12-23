@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-discord",
   "description": "Discord Adapter for Satorijs",
-  "version": "4.5.9",
+  "version": "4.5.10",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -33,10 +33,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/core": "^4.3.1",
+    "@satorijs/core": "^4.3.3",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.3.1"
+    "@satorijs/core": "^4.3.3"
   }
 }

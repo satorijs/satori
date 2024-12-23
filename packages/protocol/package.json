@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/protocol",
   "description": "Protocol types for Satori protocol",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
