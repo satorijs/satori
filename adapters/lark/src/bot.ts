@@ -88,10 +88,9 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async editMessage(channelId: string, messageId: string, content: h.Fragment) {
-    await this.internal.updateImMessage(messageId, {
-      content: h.normalize(content).join(''),
-      msg_type: 'text',
-    })
+    const encoder = new LarkMessageEncoder(this, channelId)
+    encoder.editMessageIds = [messageId]
+    await encoder.send(content)
   }
 
   async deleteMessage(channelId: string, messageId: string) {

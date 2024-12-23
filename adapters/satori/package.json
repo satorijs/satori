@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-satori",
   "description": "Satori Adapter for Satorijs",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "type": "module",
   "exports": {
     ".": {

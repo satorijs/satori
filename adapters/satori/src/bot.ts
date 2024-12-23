@@ -89,7 +89,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     } else {
       payload = {}
       for (const [index, field] of method.fields.entries()) {
-        if (method.name === 'createMessage' && field.name === 'content') {
+        if ((method.name === 'createMessage' || method.name === 'editMessage') && field.name === 'content') {
           const session = this.session({
             type: 'send',
             channel: { id: args[0], type: 0 },
