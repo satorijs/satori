@@ -1,4 +1,4 @@
-import { Bot, Context, h, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
 
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
@@ -71,10 +71,12 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     })
     this.logger.debug('refreshed token %s', token)
     this.token = token
-    // Token would be expired in 2 hours, refresh it every 1 hour
-    // see https://open.larksuite.com/document/ukTMukTMukTM/ukDNz4SO0MjL5QzM/auth-v3/auth/tenant_access_token_internal
+    // tenant_access_token 的最大有效期是 2 小时。
+    // 剩余有效期小于 30 分钟时，调用本接口会返回一个新的 tenant_access_token，这会同时存在两个有效的 tenant_access_token。
+    // 剩余有效期大于等于 30 分钟时，调用本接口会返回原有的 tenant_access_token。
+    // https://open.feishu.cn/document/server-docs/authentication-management/access-token/tenant_access_token_internal
     if (this._refresher) clearTimeout(this._refresher)
-    this._refresher = setTimeout(() => this.refreshToken(), 3600 * 1000)
+    this._refresher = setTimeout(() => this.refreshToken(), Time.minute * 100)
     this.online()
   }
 
