@@ -9,7 +9,7 @@ export default LarkBot
 
 declare module '@satorijs/core' {
   interface Session {
-    feishu: Lark.Internal
-    lark: Lark.Internal
+    feishu: Lark.Internal & Lark.EventPayload
+    lark: Lark.Internal & Lark.EventPayload
   }
 }

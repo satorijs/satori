@@ -18,6 +18,7 @@ declare module '../event' {
         message_id: string
         root_id: string
         parent_id: string
+        thread_id: string
         create_time: string
         chat_id: string
         chat_type: string

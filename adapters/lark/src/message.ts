@@ -16,6 +16,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   async post(data?: any) {
     try {
       let resp: Lark.Message
+      let quote = this.quote
+      const payload = this.options?.session?.lark
+      if (!quote && payload?.type === 'im.message.receive_v1' && payload.event.message.thread_id) {
+        quote = {
+          id: payload.event.message.message_id,
+          replyInThread: true,
+        }
+      }
       if (this.editMessageIds) {
         const messageId = this.editMessageIds.pop()
         if (!messageId) throw new Error('No message to edit')
@@ -25,10 +33,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         } else {
           await this.bot.internal.updateImMessage(messageId, data)
         }
-      } else if (this.quote?.id) {
-        resp = await this.bot.internal.replyImMessage(this.quote.id, {
+      } else if (quote?.id) {
+        resp = await this.bot.internal.replyImMessage(quote.id, {
           ...data,
-          reply_in_thread: this.quote.replyInThread,
+          reply_in_thread: quote.replyInThread,
         })
       } else {
         data.receive_id = this.channelId
