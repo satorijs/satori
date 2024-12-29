@@ -1,11 +1,10 @@
 import { Context, Schema, Service, Session, Universal } from '@satorijs/core'
-import { Binary, camelCase, defineProperty, Dict, makeArray, sanitize, snakeCase, Time, valueMap } from 'cosmokit'
+import { Binary, camelCase, defineProperty, makeArray, sanitize, snakeCase, Time } from 'cosmokit'
 import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
 import { readFile } from 'node:fs/promises'
 import { Middleware, ParameterizedContext } from 'koa'
-import { getBoundary, parse } from 'parse-multipart-data'
 
 declare module '@satorijs/core' {
   interface Satori {
@@ -28,17 +27,6 @@ function transformKey(source: any, callback: (key: string) => string) {
   }))
 }
 
-function deserialize(data: any, path: string, blobs: Dict<Blob>) {
-  if (path in blobs) return blobs[path]
-  if (!data || typeof data !== 'object') return data
-  if (Array.isArray(data)) {
-    return data.map((value, index) => deserialize(value, `${path}.${index}`, blobs))
-  }
-  return valueMap(data, (value, key) => {
-    return deserialize(value, `${path}.${key}`, blobs)
-  })
-}
-
 const FILTER_HEADERS = [
   'host',
   'authorization',
@@ -55,34 +43,6 @@ class SatoriServer extends Service<SatoriServer.Config> {
     super(ctx, 'satori.server', true)
     const logger = ctx.logger('server')
     const path = sanitize(config.path)
-
-    ctx.satori.defineInternalRoute('/_api/:name', async ({ bot, headers, params, method, body }) => {
-      if (method !== 'POST') return { status: 405 }
-      const type = headers['content-type']
-      const boundary = getBoundary(type)
-      let args: any
-      if (boundary) {
-        const blobs: Dict<Blob> = {}
-        const fields: Dict<string> = {}
-        for (const { name, type, data, filename } of parse(Buffer.from(body), boundary)) {
-          if (type) {
-            blobs[name!] = new File([data], filename!, { type })
-          } else {
-            fields[name!] = data.toString()
-          }
-        }
-        args = deserialize(JSON.parse(fields.$), '$', blobs)
-      } else {
-        args = JSON.parse(new TextDecoder().decode(body))
-      }
-      try {
-        const result = await bot.internal[camelCase(params.name)](...args)
-        return { body: result, status: 200 }
-      } catch (error) {
-        if (!ctx.http.isError(error) || !error.response) throw error
-        return error.response
-      }
-    })
 
     function checkAuth(koa: ParameterizedContext) {
       if (!config.token) return

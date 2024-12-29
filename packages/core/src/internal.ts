@@ -1,5 +1,5 @@
 import { Service } from 'cordis'
-import { Dict, remove } from 'cosmokit'
+import { Dict, remove, valueMap } from 'cosmokit'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Response } from '@satorijs/protocol'
 import { Key, pathToRegexp } from 'path-to-regexp'
@@ -103,5 +103,33 @@ export class InternalRouter<C extends Context> {
         headers: Object.fromEntries(headers.entries()),
       })
     }
+  }
+}
+
+export namespace JsonForm {
+  export function load(data: any, path: string, form: FormData) {
+    const value = form.get(path)
+    if (value instanceof File) return value
+    if (!data || typeof data !== 'object') return data
+    if (Array.isArray(data)) {
+      return data.map((value, index) => load(value, `${path}.${index}`, form))
+    }
+    return valueMap(data, (value, key) => {
+      return load(value, `${path}.${key}`, form)
+    })
+  }
+
+  export function dump(data: any, path: string, form: FormData) {
+    if (!data || typeof data !== 'object') return data
+    if (data instanceof Blob) {
+      form.append(path, data)
+      return null
+    }
+    if (Array.isArray(data)) {
+      return data.map((value, index) => dump(value, `${path}.${index}`, form))
+    }
+    return valueMap(data, (value, key) => {
+      return dump(value, `${path}.${key}`, form)
+    })
   }
 }

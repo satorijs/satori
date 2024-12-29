@@ -1,4 +1,4 @@
-import { Bot, camelCase, Context, Dict, h, HTTP, snakeCase, Universal, valueMap } from '@satorijs/core'
+import { Bot, camelCase, Context, h, HTTP, JsonForm, snakeCase, Universal } from '@satorijs/core'
 
 export function transformKey(source: any, callback: (key: string) => string) {
   if (!source || typeof source !== 'object') return source
@@ -9,40 +9,18 @@ export function transformKey(source: any, callback: (key: string) => string) {
   }))
 }
 
-function serialize(data: any, path: string, blobs: Dict<Blob>) {
-  if (!data || typeof data !== 'object') return data
-  if (data instanceof Blob) {
-    blobs[path] = data
-    return null
-  }
-  if (Array.isArray(data)) {
-    return data.map((value, index) => serialize(value, `${path}.${index}`, blobs))
-  }
-  return valueMap(data, (value, key) => {
-    return serialize(value, `${path}.${key}`, blobs)
-  })
-}
-
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
-      const key = snakeCase(prefix.slice(1))
+      const key = prefix.slice(1)
       bot.logger.debug('[request.internal]', key, args)
-      const blobs: Dict<Blob> = Object.create(null)
-      const data = serialize(args, '$', blobs)
-      if (!Object.keys(blobs).length) {
-        return bot.http.post('/v1/internal/_api/' + key, args)
-      }
       const form = new FormData()
-      form.append('$', JSON.stringify(data))
-      for (const [key, value] of Object.entries(blobs)) {
-        if (value instanceof File) {
-          form.append(key, value, value.name)
-        } else {
-          form.append(key, value)
-        }
+      args = JsonForm.dump(args, '$', form)
+      if (![...form.entries()].length) {
+        return bot.http.post('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), args)
       }
-      return bot.http.post('/v1/internal/_api/' + key, form)
+      form.append('$', JSON.stringify(args))
+      return bot.http.post('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), form)
     },
     get(target, key, receiver) {
       if (typeof key === 'symbol' || key in target) {

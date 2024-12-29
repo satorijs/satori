@@ -151,7 +151,7 @@ export class Session<C extends Context = Context> {
       event.message.content = this.content
       delete event.message.elements
       if (event.message.quote) {
-        event.message.content = `<quote id="${event.message.quote.id}">${event.message.quote.content}</quote> ` + event.message.content
+        event.message.content = `<quote id="${event.message.quote.id}">${event.message.quote.content}</quote>` + event.message.content
       }
     }
     return event

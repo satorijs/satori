@@ -1,7 +1,7 @@
 import { Context, Logger, Service, z } from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
-import { ExtractParams, InternalRequest, InternalRouter } from './internal'
+import { ExtractParams, InternalRequest, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
 import { Response, SendOptions } from '@satorijs/protocol'
@@ -199,6 +199,37 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       if (method !== 'GET') return { status: 405 }
       return this._tempStore[params.id] ?? { status: 404 }
     })
+
+    this.defineInternalRoute('/_api/:name', async ({ bot, headers, params, method, body }) => {
+      if (method !== 'POST') return { status: 405 }
+      const type = headers['content-type']
+      let args: any
+      if (type?.startsWith('multipart/form-data')) {
+        const response = new globalThis.Response(body, { headers })
+        const form = await response.formData()
+        const rawData = form.get('$') as string
+        try {
+          args = JSON.parse(rawData)
+        } catch {
+          return { status: 400 }
+        }
+        args = JsonForm.load(args, '$', form)
+      } else {
+        args = JSON.parse(new TextDecoder().decode(body))
+      }
+      try {
+        const result = await bot.internal[params.name](...args)
+        const body = new TextEncoder().encode(JSON.stringify(result))
+        const headers = new Headers()
+        if (body.byteLength) {
+          headers.set('content-type', 'application/json')
+        }
+        return { body, headers, status: 200 }
+      } catch (error) {
+        if (!ctx.http.isError(error) || !error.response) throw error
+        return error.response
+      }
+    })
   }
 
   public bots = new Proxy([], {
@@ -240,8 +271,8 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
     if (!bot) return { status: 404 }
-    let response = await bot._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
-    response ??= await this._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
+    let response = await this._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
+    response ??= await bot._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
     if (!response) return { status: 404 }
     return response
   }
