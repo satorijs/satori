@@ -1,5 +1,5 @@
 import Element from '@satorijs/element'
-import { Dict } from 'cosmokit'
+import { Dict, isNullable, pick } from 'cosmokit'
 
 export interface SendOptions {
   linkPreview?: boolean
@@ -212,6 +212,62 @@ export interface User {
   avatar?: string
   discriminator?: string
   isBot?: boolean
+}
+
+export interface Resource<K> {
+  attrs: (keyof K)[]
+  children: (keyof K)[]
+  content?: keyof K
+}
+
+export function Resource<K>(attrs: (keyof K)[], children: (keyof K)[] = [], content?: keyof K): Resource<K> {
+  return { attrs, children, content }
+}
+
+export namespace Resource {
+  export interface Definitions {
+    user: User
+    member: GuildMember
+    channel: Channel
+    guild: Guild
+    quote: Message
+  }
+
+  const Definitions: { [K in keyof Definitions]: Resource<Definitions[K]> } = {
+    user: Resource(['id', 'name', 'nick', 'avatar', 'isBot']),
+    member: Resource(['name', 'nick', 'avatar']),
+    channel: Resource(['id', 'type', 'name']),
+    guild: Resource(['id', 'name', 'avatar']),
+    quote: Resource(['id'], ['quote', 'user', 'member', 'channel'], 'content'),
+  }
+
+  export function encode<K extends keyof Definitions>(type: K, data: Definitions[K]) {
+    const resource = Definitions[type]
+    const element = Element(type, pick(data, resource.attrs as any))
+    for (const key of resource.children) {
+      if (isNullable(data[key])) continue
+      element.children.push(encode(key as any, data[key]))
+    }
+    if (resource.content && !isNullable(data[resource.content])) {
+      element.children.push(...Element.parse(data[resource.content] as string))
+    }
+    return element
+  }
+
+  export function decode(element: Element) {
+    const data: any = element.attrs
+    const resource = Definitions[element.type]
+    for (const key of resource.children) {
+      const index = element.children.findIndex((el) => el.type === key)
+      if (index === -1) continue
+      const [child] = element.children.splice(index, 1)
+      data[key] = decode(child)
+    }
+    if (resource.content && element.children.length) {
+      data[resource.content] = element.children.join('')
+    }
+    return data
+  }
 }
 
 export interface GuildMember {

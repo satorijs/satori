@@ -1,4 +1,4 @@
-import { Channel, Event, GuildMember, Login, Message, User } from '@satorijs/protocol'
+import { Channel, Event, GuildMember, Login, Message, Resource, User } from '@satorijs/protocol'
 import { clone, defineProperty, isNullable } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import { Bot } from './bot'
@@ -114,10 +114,7 @@ export class Session<C extends Context = Context> {
     this.event.message.elements = isNullable(value) ? value : h.parse(value)
     if (this.event.message.elements?.[0]?.type === 'quote') {
       const el = this.event.message.elements.shift()
-      this.event.message.quote = {
-        ...el.attrs,
-        content: el.children.join(''),
-      }
+      this.event.message.quote = Resource.decode(el)
     }
   }
 
@@ -151,7 +148,7 @@ export class Session<C extends Context = Context> {
       event.message.content = this.content
       delete event.message.elements
       if (event.message.quote) {
-        event.message.content = `<quote id="${event.message.quote.id}">${event.message.quote.content}</quote>` + event.message.content
+        event.message.content = Resource.encode('quote', event.message.quote) + event.message.content
       }
     }
     return event
