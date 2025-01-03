@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Context, h, Session, Universal } from '@satorijs/core'
+import { Context, h, pick, Session, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { EventPayload, Events, GetImChatResponse, Lark } from './types'
 
@@ -75,9 +75,14 @@ export async function adaptMessage(bot: LarkBot, data: Events['im.message.receiv
 export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: EventPayload) {
   const session = bot.session()
   session.setInternal('lark', body)
+  session.event.referrer = {
+    type: body.type,
+    event: {},
+  }
 
   switch (body.type) {
     case 'im.message.receive_v1':
+      session.event.referrer.event.message = pick(body.event.message, ['message_id', 'thread_id'])
       session.type = 'message'
       session.subtype = body.event.message.chat_type
       if (session.subtype === 'p2p') session.subtype = 'private'
@@ -95,6 +100,7 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
       }
       break
     case 'card.action.trigger':
+      session.event.referrer.event.context = pick(body.event.context, ['open_message_id'])
       if (body.event.action.value?._satori_type === 'command') {
         session.type = 'interaction/command'
         let content = body.event.action.value.content

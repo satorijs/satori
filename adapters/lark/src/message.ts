@@ -1,9 +1,11 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { CreateImFileForm, Lark, MessageContent } from './types'
+import { CreateImFileForm, EventPayload, Lark, MessageContent } from './types'
 import { extractIdType } from './utils'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
+  declare referrer?: EventPayload
+
   private quote: Dict | undefined
   private textContent = ''
   private richContent: MessageContent.RichText.Paragraph[] = []
@@ -17,19 +19,18 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     try {
       let resp: Lark.Message
       let quote = this.quote
-      if (!quote) {
-        const payload = this.options?.session?.lark
-        if (payload?.type === 'im.message.receive_v1' && payload.event.message.thread_id) {
+      if (!quote && this.referrer) {
+        if (this.referrer.type === 'im.message.receive_v1' && this.referrer.event.message.thread_id) {
           quote = {
-            id: payload.event.message.message_id,
+            id: this.referrer.event.message.message_id,
             replyInThread: true,
           }
-        } else if (payload?.type === 'card.action.trigger') {
+        } else if (this.referrer.type === 'card.action.trigger') {
           // cannot determine whether the card is in thread or not
-          const { items: [message] } = await this.bot.internal.getImMessage(payload.event.context.open_message_id)
+          const { items: [message] } = await this.bot.internal.getImMessage(this.referrer.event.context.open_message_id)
           if (message?.thread_id) {
             quote = {
-              id: payload.event.context.open_message_id,
+              id: this.referrer.event.context.open_message_id,
               replyInThread: true,
             }
           }
