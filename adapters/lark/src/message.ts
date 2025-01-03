@@ -17,11 +17,22 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     try {
       let resp: Lark.Message
       let quote = this.quote
-      const payload = this.options?.session?.lark
-      if (!quote && payload?.type === 'im.message.receive_v1' && payload.event.message.thread_id) {
-        quote = {
-          id: payload.event.message.message_id,
-          replyInThread: true,
+      if (!quote) {
+        const payload = this.options?.session?.lark
+        if (payload?.type === 'im.message.receive_v1' && payload.event.message.thread_id) {
+          quote = {
+            id: payload.event.message.message_id,
+            replyInThread: true,
+          }
+        } else if (payload?.type === 'card.action.trigger') {
+          // cannot determine whether the card is in thread or not
+          const { items: [message] } = await this.bot.internal.getImMessage(payload.event.context.open_message_id)
+          if (message?.thread_id) {
+            quote = {
+              id: payload.event.context.open_message_id,
+              replyInThread: true,
+            }
+          }
         }
       }
       if (this.editMessageIds) {
@@ -49,8 +60,8 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       session.messageId = resp.message_id
       session.timestamp = Number(resp.create_time) * 1000
       session.userId = resp.sender.id
-      session.channelId = this.channelId
-      session.guildId = this.guildId
+      session.channelId = this.session.channelId
+      session.guildId = this.session.guildId
       session.app.emit(session, 'send', session)
       this.results.push(session.event.message)
     } catch (e) {

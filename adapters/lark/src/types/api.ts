@@ -451,7 +451,7 @@ declare module './internal' {
     * 获取指定消息的内容
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/get
     */
-    getImMessage(message_id: string): Promise<GetImMessageResponse>
+    getImMessage(message_id: string, query?: GetImMessageQuery): Promise<GetImMessageResponse>
     /**
     * 发送应用内加急
     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/urgent_app
@@ -5428,6 +5428,8 @@ declare module '.' {
       root_id?: string
       /** 父消息的id open_message_id */
       parent_id?: string
+      /** 消息所属的话题 ID */
+      thread_id?: string
       /** 消息类型 text post card image等等 */
       msg_type?: string
       /** 消息生成的时间戳(毫秒) */
@@ -16751,6 +16753,17 @@ export interface ListImMessageQuery {
 export interface GetImMessageResourceQuery {
   /** 资源类型，可选"image, file“； image对应消息中的 图片，富文本消息中的图片。  file对应消息中的 文件、音频、视频、（表情包除外） */
   type: string
+}
+export interface GetImMessageQuery {
+  /**
+   * 用户 ID 类型
+   *
+   * - `open_id`：标识一个用户在某个应用中的身份。同一个用户在不同应用中的 Open ID 不同。
+   * - `union_id`：标识一个用户在某个应用开发商下的身份。同一用户在同一开发商下的应用中的 Union ID 是相同的，在不同开发商下的应用中的 Union ID 是不同的。通过 Union ID，应用开发商可以把同个用户在多个应用中的身份关联起来。
+   * - `user_id`：标识一个用户在某个租户内的身份。同一个用户在租户 A 和租户 B 内的 User ID 是不同的。在同一个租户内，一个用户的 User ID 在所有应用（包括商店应用）中都保持一致。User ID 主要用于在不同的应用间打通用户数据。
+   * @default 'open_id'
+   */
+  user_id_type?: 'open_id' | 'user_id' | 'union_id'
 }
 export interface UrgentAppImMessageRequest {
   /** 该字段标识目标用户的id类型 */
