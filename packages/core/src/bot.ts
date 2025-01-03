@@ -23,7 +23,7 @@ export interface Bot extends Methods {
 
 export abstract class Bot<C extends Context = Context, T = any> {
   static reusable = true
-  static MessageEncoder?: new (bot: Bot, channelId: string, guildId?: string, options?: SendOptions) => MessageEncoder
+  static MessageEncoder?: new (bot: Bot, channelId: string, referrer?: any, options?: SendOptions) => MessageEncoder
 
   public [Service.tracker] = {
     associate: 'bot',
@@ -191,13 +191,13 @@ export abstract class Bot<C extends Context = Context, T = any> {
     }
   }
 
-  async createMessage(channelId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
+  async createMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
-    return new MessageEncoder(this, channelId, guildId, options).send(content)
+    return new MessageEncoder(this, channelId, referrer, options).send(content)
   }
 
-  async sendMessage(channelId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
-    const messages = await this.createMessage(channelId, content, guildId, options)
+  async sendMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
+    const messages = await this.createMessage(channelId, content, referrer, options)
     return messages.map(message => message.id)
   }
 

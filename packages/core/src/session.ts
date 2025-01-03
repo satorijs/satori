@@ -25,6 +25,7 @@ export interface Session {
   operatorId: string
   roleId: string
   quote: Message
+  referrer: any
 }
 
 export class Session<C extends Context = Context> {
@@ -187,3 +188,4 @@ defineAccessor(Session.prototype, 'messageId', ['event', 'message', 'id'])
 defineAccessor(Session.prototype, 'operatorId', ['event', 'operator', 'id'])
 defineAccessor(Session.prototype, 'roleId', ['event', 'role', 'id'])
 defineAccessor(Session.prototype, 'quote', ['event', 'message', 'quote'])
+defineAccessor(Session.prototype, 'referrer', ['event', 'referrer'])

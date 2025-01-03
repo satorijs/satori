@@ -1,14 +1,5 @@
 import { Bot, camelCase, Context, h, HTTP, JsonForm, snakeCase, Universal } from '@satorijs/core'
 
-export function transformKey(source: any, callback: (key: string) => string) {
-  if (!source || typeof source !== 'object') return source
-  if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
-  return Object.fromEntries(Object.entries(source).map(([key, value]) => {
-    if (key.startsWith('_')) return [key, value]
-    return [callback(key), transformKey(value, callback)]
-  }))
-}
-
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
@@ -76,13 +67,15 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
           session.elements = await session.transform(h.normalize(args[index]))
           if (await session.app.serial(session, 'before-send', session, args[3] ?? {})) return
           payload[field.name] = session.elements.join('')
+        } else if (field.name === 'referrer') {
+          payload[field.name] = args[index]
         } else {
-          payload[field.name] = transformKey(args[index], snakeCase)
+          payload[field.name] = Universal.transformKey(args[index], snakeCase)
         }
       }
     }
     this.logger.debug('[request]', key, payload)
     const result = await this.http.post('/v1/' + key, payload)
-    return transformKey(result, camelCase)
+    return Universal.transformKey(result, camelCase)
   }
 }

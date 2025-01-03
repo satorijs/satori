@@ -14,7 +14,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   public results: Message[] = []
   public session: C[typeof Context.session]
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
+  constructor(public bot: B, public channelId: string, public referrer?: any, public options: SendOptions = {}) {}
 
   async prepare() {}
 

@@ -44,7 +44,7 @@ export const Methods: Dict<Method> = {
   'channel.delete': Method('deleteChannel', ['channel_id']),
   'channel.mute': Method('muteChannel', ['channel_id', 'guild_id', 'enable']),
 
-  'message.create': Method('createMessage', ['channel_id', 'content']),
+  'message.create': Method('createMessage', ['channel_id', 'content', 'referrer']),
   'message.update': Method('editMessage', ['channel_id', 'message_id', 'content']),
   'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
@@ -100,8 +100,8 @@ export type Order = 'asc' | 'desc'
 
 export interface Methods {
   // message
-  createMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
-  sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+  createMessage(channelId: string, content: Element.Fragment, referrer?: any, options?: SendOptions): Promise<Message[]>
+  sendMessage(channelId: string, content: Element.Fragment, referrer?: any, options?: SendOptions): Promise<string[]>
   sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
   getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<TwoWayList<Message>>
@@ -214,13 +214,13 @@ export interface User {
   isBot?: boolean
 }
 
-export interface Resource<K> {
+export interface Resource<K = any> {
   attrs: (keyof K)[]
   children: (keyof K)[]
   content?: keyof K
 }
 
-export function Resource<K>(attrs: (keyof K)[], children: (keyof K)[] = [], content?: keyof K): Resource<K> {
+export function Resource<K>(attrs: (keyof K)[] = [], children: (keyof K)[] = [], content?: keyof K): Resource<K> {
   return { attrs, children, content }
 }
 
@@ -268,6 +268,15 @@ export namespace Resource {
     }
     return data
   }
+}
+
+export function transformKey(source: any, callback: (key: string) => string) {
+  if (!source || typeof source !== 'object') return source
+  if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => {
+    if (key.startsWith('_') || key === 'referrer') return [key, value]
+    return [callback(key), transformKey(value, callback)]
+  }))
 }
 
 export interface GuildMember {
@@ -380,12 +389,18 @@ export interface Event {
   role?: GuildRole
   user?: User
   button?: Button
+  referrer: any
   _type?: string
   _data?: any
   /** @deprecated */
   subtype?: string
   /** @deprecated */
   subsubtype?: string
+}
+
+export interface Meta {
+  logins: Login[]
+  proxyUrls: string[]
 }
 
 export type MessageLike = Message | Event
@@ -420,10 +435,7 @@ export interface GatewayBody {
     token?: string
     sn?: number
   }
-  [Opcode.READY]: {
-    logins: Login[]
-    proxyUrls: string[]
-  }
+  [Opcode.READY]: Meta
   [Opcode.META]: {
     proxyUrls: string[]
   }

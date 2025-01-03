@@ -1,5 +1,5 @@
 import { Adapter, camelize, Context, HTTP, Logger, Schema, Time, Universal } from '@satorijs/core'
-import { SatoriBot, transformKey } from './bot'
+import { SatoriBot } from './bot'
 
 export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
   static schema = true as any
@@ -91,7 +91,7 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
       let parsed: Universal.ServerPayload
       data = data.toString()
       try {
-        parsed = transformKey(JSON.parse(data), camelize)
+        parsed = Universal.transformKey(JSON.parse(data), camelize)
       } catch (error) {
         return this.logger.warn('cannot parse message', data)
       }

@@ -4,7 +4,7 @@ import { Bot } from './bot'
 import { ExtractParams, InternalRequest, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
-import { Response, SendOptions } from '@satorijs/protocol'
+import { Meta, Response, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
 h.warn = new Logger('element').warn
@@ -277,7 +277,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return response
   }
 
-  toJSON(meta = false) {
+  toJSON(meta = false): Meta {
     return {
       logins: meta ? undefined : this.bots.map(bot => bot.toJSON()),
       proxyUrls: [...this.proxyUrls],
