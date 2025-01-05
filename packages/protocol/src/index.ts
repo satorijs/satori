@@ -1,6 +1,8 @@
 import Element from '@satorijs/element'
 import { Dict, isNullable, pick } from 'cosmokit'
 
+type PartialWithPick<T, K extends keyof T> = Partial<T> & Pick<T, K>
+
 export interface SendOptions {
   linkPreview?: boolean
 }
@@ -66,6 +68,7 @@ export const Methods: Dict<Method> = {
   'guild.member.mute': Method('muteGuildMember', ['guild_id', 'user_id', 'duration', 'reason']),
   'guild.member.role.set': Method('setGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
   'guild.member.role.unset': Method('unsetGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
+  'guild.member.role.list': Method('getGuildMemberRoleList', ['guild_id', 'user_id', 'next']),
 
   'guild.role.list': Method('getGuildRoleList', ['guild_id', 'next']),
   'guild.role.create': Method('createGuildRole', ['guild_id', 'data']),
@@ -137,10 +140,11 @@ export interface Methods {
   getGuildMemberIter(guildId: string): AsyncIterable<GuildMember>
   kickGuildMember(guildId: string, userId: string, permanent?: boolean): Promise<void>
   muteGuildMember(guildId: string, userId: string, duration: number, reason?: string): Promise<void>
-
-  // role
   setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
   unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
+  getGuildMemberRoleList(guildId: string, userId: string, next?: string): Promise<List<PartialWithPick<GuildRole, 'id'>>>
+
+  // role
   getGuildRoleList(guildId: string, next?: string): Promise<List<GuildRole>>
   getGuildRoleIter(guildId: string): AsyncIterable<GuildRole>
   createGuildRole(guildId: string, data: Partial<GuildRole>): Promise<GuildRole>

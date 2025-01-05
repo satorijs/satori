@@ -188,6 +188,11 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return this.internal.removeGuildMemberRole(guildId, userId, roleId)
   }
 
+  async getGuildMemberRoleList(guildId: string, userId: string, next?: string) {
+    const data = await this.internal.getGuildMember(guildId, userId)
+    return { data: data.roles.map(id => ({ id })) }
+  }
+
   async getGuildRoleList(guildId: string) {
     const data = await this.internal.getGuildRoles(guildId)
     return { data: data.map(Discord.decodeRole) }
