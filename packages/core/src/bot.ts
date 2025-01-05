@@ -213,7 +213,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
       const headers = new Headers()
       headers.set('content-type', upload.type)
       if (upload.filename) {
-        headers.set('content-disposition', `attachment; filename="${upload.filename}"`)
+        headers.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(upload.filename)}`)
       }
       this.ctx.satori._tempStore[id] = {
         status: 200,
