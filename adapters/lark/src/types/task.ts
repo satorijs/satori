@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Attachment, Collaborator, Comment, CustomComplete, CustomField, DatetimeSetting, DocxSource, Due, Follower, InputComment, InputCustomField, InputCustomFieldValue, InputOption, InputSection, InputTask, InputTasklist, Member, MemberSetting, NumberSetting, Option, Origin, Reminder, Section, SectionSummary, SelectSetting, Start, Task, TaskDependency, TaskInTasklistInfo, TaskSummary, Tasklist, TasklistActivitySubscription, TextSetting } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 列取任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/list
      */
-    listTaskV2(query?: ListTaskV2Query): Promise<ListTaskV2Response>
+    listTaskV2(query?: ListTaskV2Query): Promise<Paginated<Task>>
     /**
      * 列取任务所在清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/tasklists
@@ -82,7 +82,7 @@ declare module '../internal' {
      * 获取任务的子任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/list
      */
-    listTaskV2TaskSubtask(task_guid: string, query?: ListTaskV2TaskSubtaskQuery): Promise<ListTaskV2TaskSubtaskResponse>
+    listTaskV2TaskSubtask(task_guid: string, query?: ListTaskV2TaskSubtaskQuery): Promise<Paginated<Task>>
     /**
      * 创建清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/create
@@ -117,12 +117,12 @@ declare module '../internal' {
      * 获取清单任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/tasks
      */
-    tasksTaskV2Tasklist(tasklist_guid: string, query?: TasksTaskV2TasklistQuery): Promise<TasksTaskV2TasklistResponse>
+    tasksTaskV2Tasklist(tasklist_guid: string, query?: TasksTaskV2TasklistQuery): Promise<Paginated<TaskSummary>>
     /**
      * 获取清单列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/list
      */
-    listTaskV2Tasklist(query?: ListTaskV2TasklistQuery): Promise<ListTaskV2TasklistResponse>
+    listTaskV2Tasklist(query?: ListTaskV2TasklistQuery): Promise<Paginated<Tasklist>>
     /**
      * 创建动态订阅
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist-activity_subscription/create
@@ -172,7 +172,7 @@ declare module '../internal' {
      * 获取评论列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/comment/list
      */
-    listTaskV2Comment(query?: ListTaskV2CommentQuery): Promise<ListTaskV2CommentResponse>
+    listTaskV2Comment(query?: ListTaskV2CommentQuery): Promise<Paginated<Comment>>
     /**
      * 上传附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/upload
@@ -182,7 +182,7 @@ declare module '../internal' {
      * 列取附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/list
      */
-    listTaskV2Attachment(query?: ListTaskV2AttachmentQuery): Promise<ListTaskV2AttachmentResponse>
+    listTaskV2Attachment(query?: ListTaskV2AttachmentQuery): Promise<Paginated<Attachment>>
     /**
      * 获取附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/get
@@ -217,12 +217,12 @@ declare module '../internal' {
      * 获取自定义分组列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/list
      */
-    listTaskV2Section(query?: ListTaskV2SectionQuery): Promise<ListTaskV2SectionResponse>
+    listTaskV2Section(query?: ListTaskV2SectionQuery): Promise<Paginated<SectionSummary>>
     /**
      * 获取自定义分组任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/tasks
      */
-    tasksTaskV2Section(section_guid: string, query?: TasksTaskV2SectionQuery): Promise<TasksTaskV2SectionResponse>
+    tasksTaskV2Section(section_guid: string, query?: TasksTaskV2SectionQuery): Promise<Paginated<TaskSummary>>
     /**
      * 创建自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/create
@@ -242,7 +242,7 @@ declare module '../internal' {
      * 列取自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/list
      */
-    listTaskV2CustomField(query?: ListTaskV2CustomFieldQuery): Promise<ListTaskV2CustomFieldResponse>
+    listTaskV2CustomField(query?: ListTaskV2CustomFieldQuery): Promise<Paginated<CustomField>>
     /**
      * 将自定义字段加入资源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/add
@@ -297,7 +297,7 @@ declare module '../internal' {
      * 查询所有任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/list
      */
-    listTaskV1(query?: ListTaskV1Query): Promise<ListTaskV1Response>
+    listTaskV1(query?: ListTaskV1Query): Promise<Paginated<Task>>
     /**
      * 新增提醒时间
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/create
@@ -312,7 +312,7 @@ declare module '../internal' {
      * 查询提醒时间列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/list
      */
-    listTaskV1TaskReminder(task_id: string, query?: ListTaskV1TaskReminderQuery): Promise<ListTaskV1TaskReminderResponse>
+    listTaskV1TaskReminder(task_id: string, query?: ListTaskV1TaskReminderQuery): Promise<Paginated<Reminder>>
     /**
      * 创建评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/create
@@ -337,7 +337,7 @@ declare module '../internal' {
      * 获取评论列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/list
      */
-    listTaskV1TaskComment(task_id: string, query?: ListTaskV1TaskCommentQuery): Promise<ListTaskV1TaskCommentResponse>
+    listTaskV1TaskComment(task_id: string, query?: ListTaskV1TaskCommentQuery): Promise<Paginated<Comment>>
     /**
      * 新增关注人
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/create
@@ -357,7 +357,7 @@ declare module '../internal' {
      * 获取关注人列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/list
      */
-    listTaskV1TaskFollower(task_id: string, query?: ListTaskV1TaskFollowerQuery): Promise<ListTaskV1TaskFollowerResponse>
+    listTaskV1TaskFollower(task_id: string, query?: ListTaskV1TaskFollowerQuery): Promise<Paginated<Follower>>
     /**
      * 新增执行者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/create
@@ -377,7 +377,7 @@ declare module '../internal' {
      * 获取执行者列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/list
      */
-    listTaskV1TaskCollaborator(task_id: string, query?: ListTaskV1TaskCollaboratorQuery): Promise<ListTaskV1TaskCollaboratorResponse>
+    listTaskV1TaskCollaborator(task_id: string, query?: ListTaskV1TaskCollaboratorQuery): Promise<Paginated<Collaborator>>
   }
 }
 
@@ -462,11 +462,7 @@ export interface RemoveMembersTaskV2Query {
   user_id_type?: string
 }
 
-export interface ListTaskV2Query {
-  /** 每页的任务数量 */
-  page_size?: number
-  /** 分页标记。第一次请求不填该参数，表示从头开始查询；查询结果若还有更多数据时会同时返回新的 page_token。使用page_token重新调用本接口可以获取下一页数据。 */
-  page_token?: string
+export interface ListTaskV2Query extends Pagination {
   /** 是否按任务完成进行过滤。不填写表示不过滤。 */
   completed?: boolean
   /** 查询任务的范围 */
@@ -569,11 +565,7 @@ export interface CreateTaskV2TaskSubtaskQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2TaskSubtaskQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV2TaskSubtaskQuery extends Pagination {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
 }
@@ -629,11 +621,7 @@ export interface RemoveMembersTaskV2TasklistQuery {
   user_id_type?: string
 }
 
-export interface TasksTaskV2TasklistQuery {
-  /** 每页返回的任务数量 */
-  page_size?: number
-  /** 分页标记。第一次请求不填该参数，表示从头开始查询；查询结果若还有更多数据时会同时返回新的 page_token。使用page_token重新调用本接口可以获取下一页数据。 */
-  page_token?: string
+export interface TasksTaskV2TasklistQuery extends Pagination {
   /** 只查看特定完成状态的任务，不填写表示不按完成状态过滤 */
   completed?: boolean
   /** 任务创建的起始时间戳（ms），闭区间，不填写默认为首个任务的创建时间戳 */
@@ -644,11 +632,7 @@ export interface TasksTaskV2TasklistQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2TasklistQuery {
-  /** 每页返回的清单数量 */
-  page_size?: number
-  /** 分页标记。第一次请求不填该参数，表示从头开始查询；查询结果若还有更多数据时会同时返回新的 page_token。使用page_token重新调用本接口可以获取下一页数据。 */
-  page_token?: string
+export interface ListTaskV2TasklistQuery extends Pagination {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
 }
@@ -726,11 +710,7 @@ export interface PatchTaskV2CommentQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2CommentQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV2CommentQuery extends Pagination {
   /** 要获取评论列表的资源类型 */
   resource_type?: string
   /** 要获取评论的资源ID。例如要获取任务的评论列表，此处应该填写任务全局唯一ID */
@@ -755,11 +735,7 @@ export interface UploadTaskV2AttachmentQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListTaskV2AttachmentQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV2AttachmentQuery extends Pagination {
   /** 附件归属的资源类型 */
   resource_type?: string
   /** 附件归属资源的id，配合resource_type使用。例如希望获取任务的附件，需要设置 resource_type为task， resource_id为任务的全局唯一ID */
@@ -808,11 +784,7 @@ export interface PatchTaskV2SectionQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2SectionQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV2SectionQuery extends Pagination {
   /** 自定义分组所属的资源类型。支持"my_tasks"(我负责的）和"tasklist"（清单）。当使用"tasklist"时，需要用resource_id提供清单GUID。 */
   resource_type: string
   /** 如`resource_type`为"tasklist"，这里需要填写要列取自定义分组的清单的GUID。 */
@@ -821,11 +793,7 @@ export interface ListTaskV2SectionQuery {
   user_id_type?: string
 }
 
-export interface TasksTaskV2SectionQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记 */
-  page_token?: string
+export interface TasksTaskV2SectionQuery extends Pagination {
   /** 按照任务状态过滤，如果不填写则表示不按完成状态过滤 */
   completed?: boolean
   /** 按照创建时间筛选的起始时间戳（ms)，如不填写则为首个任务的创建时刻 */
@@ -881,11 +849,7 @@ export interface PatchTaskV2CustomFieldQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListTaskV2CustomFieldQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV2CustomFieldQuery extends Pagination {
   /** 用户ID格式，支持open_id, user_id, union_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 资源类型，如提供表示仅查询特定资源下的自定义字段。目前只支持tasklist。 */
@@ -977,11 +941,7 @@ export interface GetTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1Query {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV1Query extends Pagination {
   /** 范围查询任务时，查询的起始时间。不填时默认起始时间为第一个任务的创建时间。 */
   start_create_time?: string
   /** 范围查询任务时，查询的结束时间。不填时默认结束时间为最后一个任务的创建时间。 */
@@ -997,11 +957,7 @@ export interface CreateTaskV1TaskReminderRequest {
   relative_fire_minute: number
 }
 
-export interface ListTaskV1TaskReminderQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV1TaskReminderQuery extends Pagination {
 }
 
 export interface CreateTaskV1TaskCommentRequest {
@@ -1037,11 +993,7 @@ export interface GetTaskV1TaskCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskCommentQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
+export interface ListTaskV1TaskCommentQuery extends Pagination {
   /** 评论排序标记，可按照评论时间从小到大查询，或者评论时间从大到小查询，不填默认按照从小到大 */
   list_direction?: 0 | 1
   /** 此次调用中使用的用户ID的类型 */
@@ -1075,11 +1027,7 @@ export interface BatchDeleteFollowerTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskFollowerQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV1TaskFollowerQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -1111,11 +1059,7 @@ export interface BatchDeleteCollaboratorTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskCollaboratorQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListTaskV1TaskCollaboratorQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -1143,15 +1087,6 @@ export interface AddMembersTaskV2Response {
 export interface RemoveMembersTaskV2Response {
   /** 移除成员后的任务数据 */
   task?: Task
-}
-
-export interface ListTaskV2Response {
-  /** 返回的任务列表 */
-  items?: Task[]
-  /** 获取下一次分页的分页标记 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
 }
 
 export interface TasklistsTaskV2Response {
@@ -1194,15 +1129,6 @@ export interface CreateTaskV2TaskSubtaskResponse {
   subtask?: Task
 }
 
-export interface ListTaskV2TaskSubtaskResponse {
-  /** 子任务列表 */
-  items?: Task[]
-  /** 用于返回下一个分页的token */
-  page_token?: string
-  /** 是否还有下一页数据。 */
-  has_more?: boolean
-}
-
 export interface CreateTaskV2TasklistResponse {
   /** 创建的清单数据 */
   tasklist?: Tasklist
@@ -1226,24 +1152,6 @@ export interface AddMembersTaskV2TasklistResponse {
 export interface RemoveMembersTaskV2TasklistResponse {
   /** 修改完成后的清单实体 */
   tasklist?: Tasklist
-}
-
-export interface TasksTaskV2TasklistResponse {
-  /** 任务摘要数据 */
-  items?: TaskSummary[]
-  /** 用于获取下一页的分页标记，最后一页时发返回空 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
-}
-
-export interface ListTaskV2TasklistResponse {
-  /** 清单数据列表 */
-  items?: Tasklist[]
-  /** 用于获取下一页的分页标记 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
 }
 
 export interface CreateTaskV2TasklistActivitySubscriptionResponse {
@@ -1281,27 +1189,9 @@ export interface PatchTaskV2CommentResponse {
   comment?: Comment
 }
 
-export interface ListTaskV2CommentResponse {
-  /** 评论列表数据 */
-  items?: Comment[]
-  /** 用于获取下一页的分页标记，当has_more为false时为空 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-}
-
 export interface UploadTaskV2AttachmentResponse {
   /** 上传的附件列表 */
   items?: Attachment[]
-}
-
-export interface ListTaskV2AttachmentResponse {
-  /** 附件列表 */
-  items?: Attachment[]
-  /** 获取下一页的分页标记，无更多数据时返回空 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
 }
 
 export interface GetTaskV2AttachmentResponse {
@@ -1324,24 +1214,6 @@ export interface PatchTaskV2SectionResponse {
   section?: Section
 }
 
-export interface ListTaskV2SectionResponse {
-  /** 自定义分组的摘要列表 */
-  items?: SectionSummary[]
-  /** 获取下一页数据的分页标记，没有更多数据时返回空 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
-}
-
-export interface TasksTaskV2SectionResponse {
-  /** 任务摘要信息 */
-  items?: TaskSummary[]
-  /** 获取下一页的分页标记，无更多数据时返回空 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
-}
-
 export interface CreateTaskV2CustomFieldResponse {
   /** 创建的自定义字段 */
   custom_field?: CustomField
@@ -1355,15 +1227,6 @@ export interface GetTaskV2CustomFieldResponse {
 export interface PatchTaskV2CustomFieldResponse {
   /** 修改后的自定义字段设置 */
   custom_field?: CustomField
-}
-
-export interface ListTaskV2CustomFieldResponse {
-  /** 返回的自定义字段列表 */
-  items?: CustomField[]
-  /** 用于获取下一页数据的page_token */
-  page_token?: string
-  /** 是否有下一页的数据 */
-  has_more?: boolean
 }
 
 export interface CreateTaskV2CustomFieldOptionResponse {
@@ -1391,27 +1254,9 @@ export interface GetTaskV1Response {
   task?: Task
 }
 
-export interface ListTaskV1Response {
-  /** 任务列表 */
-  items?: Task[]
-  /** 分页标记，分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** true */
-  has_more?: boolean
-}
-
 export interface CreateTaskV1TaskReminderResponse {
   /** 返回创建成功的提醒时间 */
   reminder?: Reminder
-}
-
-export interface ListTaskV1TaskReminderResponse {
-  /** 返回提醒时间设置列表 */
-  items?: Reminder[]
-  /** 分页标记，分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
 }
 
 export interface CreateTaskV1TaskCommentResponse {
@@ -1429,15 +1274,6 @@ export interface GetTaskV1TaskCommentResponse {
   comment?: Comment
 }
 
-export interface ListTaskV1TaskCommentResponse {
-  /** 返回的评论列表 */
-  items?: Comment[]
-  /** 分页标记，分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-}
-
 export interface CreateTaskV1TaskFollowerResponse {
   /** 创建后的任务关注者 */
   follower: Follower
@@ -1448,15 +1284,6 @@ export interface BatchDeleteFollowerTaskV1Response {
   followers?: string[]
 }
 
-export interface ListTaskV1TaskFollowerResponse {
-  /** 返回的关注者列表 */
-  items?: Follower[]
-  /** 分页标记，分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-}
-
 export interface CreateTaskV1TaskCollaboratorResponse {
   /** 返回创建成功后的任务协作者 */
   collaborator: Collaborator
@@ -1465,15 +1292,6 @@ export interface CreateTaskV1TaskCollaboratorResponse {
 export interface BatchDeleteCollaboratorTaskV1Response {
   /** 实际删除的执行人用户ID列表 */
   collaborators?: string[]
-}
-
-export interface ListTaskV1TaskCollaboratorResponse {
-  /** 返回的协作者列表 */
-  items?: Collaborator[]
-  /** 分页标记，分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
 }
 
 Internal.define({

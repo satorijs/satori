@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Classification, ClassificationFilter, Draft, Entity, EntityWord, MatchInfo, OuterInfo, Phrase, RelatedMeta, Term } from '.'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -162,11 +162,7 @@ export interface GetBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListBaikeEntityQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBaikeEntityQuery extends Pagination {
   /** 相关外部系统【可用来过滤词条数据】 */
   provider?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -189,11 +185,7 @@ export interface SearchBaikeEntityRequest {
   creators?: string[]
 }
 
-export interface SearchBaikeEntityQuery {
-  /** 每页返回的词条量 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchBaikeEntityQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -208,11 +200,7 @@ export interface ExtractBaikeEntityRequest {
   text?: string
 }
 
-export interface ListBaikeClassificationQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBaikeClassificationQuery extends Pagination {
 }
 
 export interface UploadBaikeFileForm {

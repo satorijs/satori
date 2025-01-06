@@ -162,7 +162,7 @@ function _formatType(schema: Schema, imports = new Set<string>()) {
   if (schema.type === 'boolean') return 'boolean'
   if (schema.type === 'object') {
     if (!schema.properties) return 'unknown'
-    return `{\n${generateParams(schema.properties, imports)}\n}`
+    return `{\n${generateParams(schema.properties, imports)}}`
   } else if (schema.type === 'list') {
     return formatType(schema.items!, imports) + '[]'
   }
@@ -170,10 +170,11 @@ function _formatType(schema: Schema, imports = new Set<string>()) {
 }
 
 function generateParams(properties: Schema[], imports: Set<string>): string {
+  if (!properties.length) return ''
   const getDesc = (v: Schema) => v.description ? `  /** ${v.description.replace(/\n/g, '').trim()} */\n` : ''
   return properties.map((schema: Schema) => {
     return `${getDesc(schema)}  ${schema.name}${schema.required ? '' : '?'}: ${formatType(schema, imports)}`
-  }).join('\n')
+  }).join('\n') + '\n'
 }
 
 function getApiName(detail: ApiDetail) {
@@ -194,6 +195,7 @@ interface Project {
   responses: string[]
   internals: string[]
   imports: Set<string>
+  internalImports: Set<string>
   defines: Record<string, Record<string, string>>
 }
 
@@ -216,6 +218,7 @@ async function start() {
       responses: [],
       internals: [],
       imports: new Set(),
+      internalImports: new Set(['Internal']),
       defines: {},
     }
 
@@ -224,7 +227,6 @@ async function start() {
     const args: string[] = []
     const extras: string[] = []
     let returnType = `${apiType}Response`
-    // if (api.pagination) console.log(apiName, 'pagination')
 
     for (const property of detail.request.path?.properties || []) {
       args.push(`${property.name}: ${formatType(property, project.imports)}`)
@@ -232,16 +234,23 @@ async function start() {
     if (detail.supportFileUpload && detail.request.body?.properties?.length) {
       const name = `${apiType}Form`
       args.push(`form: ${name}`)
-      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body!.properties, project.imports)}\n}`)
+      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body!.properties, project.imports)}}`)
       extras.push(`multipart: true`)
     } else if (detail.request.body?.properties?.length) {
       const name = `${apiType}Request`
-      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body.properties, project.imports)}\n}`)
+      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body.properties, project.imports)}}`)
       args.push(`body: ${name}`)
     }
     if (detail.request.query?.properties?.length) {
       const name = `${apiType}Query`
-      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.query.properties, project.imports)}\n}`)
+      const keys = detail.request.query.properties.map(s => s.name)
+      if (keys.includes('page_token') && keys.includes('page_size')) {
+        const properties = detail.request.query.properties.filter(s => s.name !== 'page_token' && s.name !== 'page_size')
+        project.requests.push(`export interface ${name} extends Pagination {\n${generateParams(properties, project.imports)}}`)
+        project.internalImports.add('Pagination')
+      } else {
+        project.requests.push(`export interface ${name} {\n${generateParams(detail.request.query.properties, project.imports)}}`)
+      }
       args.push(`query?: ${name}`)
     }
 
@@ -252,7 +261,7 @@ async function start() {
     } else {
       const keys = (detail.response.body?.properties || []).map(v => v.name)
       if (!keys.includes('code') || !keys.includes('msg')) {
-        console.log(`unknown response body keys: ${keys}, see https://open.feishu.cn${summary.fullPath}}`)
+        console.log(`unsupported response body: ${keys}, see https://open.feishu.cn${summary.fullPath}}`)
         return
       } else if (keys.length === 2) {
         returnType = 'void'
@@ -261,10 +270,33 @@ async function start() {
         if (!data.properties?.length) {
           returnType = 'void'
         } else {
-          project.responses.push(`export interface ${returnType} {\n${generateParams(data.properties, project.imports)}\n}`)
+          const keys = (data.properties || []).map(v => v.name)
+          let pagination: [string, Schema] | undefined
+          if (keys.includes('has_more') && keys.includes('page_token') && keys.length === 3) {
+            const list = (data.properties || []).find(v => v.name !== 'has_more' && v.name !== 'page_token')!
+            if (list.type === 'list') {
+              pagination = [list.name, list.items!]
+            }
+          }
+          if (pagination) {
+            const [key, item] = pagination
+            let inner = formatType(item, project.imports)
+            if (item.type === 'object' && item.properties && !item.ref) {
+              const name = `${apiType}Item`
+              project.responses.push(`export interface ${name} ${inner}`)
+              inner = name
+            }
+            returnType = key === 'items' ? `Paginated<${inner}>` : `Paginated<${inner}, '${key}'>`
+            project.internalImports.add('Paginated')
+          } else {
+            if (detail.pagination) {
+              console.log(`unsupported pagination (${keys.join(', ')}), see https://open.feishu.cn${summary.fullPath}}`)
+            }
+            project.responses.push(`export interface ${returnType} {\n${generateParams(data.properties, project.imports)}}`)
+          }
         }
       } else {
-        project.responses.push(`export interface ${returnType} extends BaseResponse {\n${generateParams(detail.response.body.properties!, project.imports)}\n}`)
+        project.responses.push(`export interface ${returnType} extends BaseResponse {\n${generateParams(detail.response.body.properties!, project.imports)}}`)
         extras.push(`type: 'raw-json'`)
       }
     }
@@ -292,9 +324,9 @@ async function start() {
       }).join('\n')
       return `'${path}': {\n${content}\n  },`
     }).join('\n  ')
-    const imports = [`import { Internal } from '../internal'`]
+    const imports = [`import { ${[...project.internalImports].sort().join(', ')} } from '../internal'`]
     if (project.imports.size) {
-      imports.push(`import { ${[...project.imports].sort().join(', ')} } from '.'`)
+      imports.unshift(`import { ${[...project.imports].sort().join(', ')} } from '.'`)
     }
     await writeFile(path, [
       imports.join('\n'),

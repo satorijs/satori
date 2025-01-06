@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { SystemStatus, SystemStatusI18nName, SystemStatusSyncSetting, SystemStatusUserCloseResultEntity, SystemStatusUserOpenParam, SystemStatusUserOpenResultEntity } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -22,7 +22,7 @@ declare module '../internal' {
      * 获取系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/list
      */
-    listPersonalSettingsSystemStatus(query?: ListPersonalSettingsSystemStatusQuery): Promise<ListPersonalSettingsSystemStatusResponse>
+    listPersonalSettingsSystemStatus(query?: ListPersonalSettingsSystemStatusQuery): Promise<Paginated<SystemStatus>>
     /**
      * 批量开启系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/batch_open
@@ -58,11 +58,7 @@ export interface PatchPersonalSettingsSystemStatusRequest {
   update_fields: 'TITLE' | 'I18N_TITLE' | 'ICON' | 'COLOR' | 'PRIORITY' | 'SYNC_SETTING'[]
 }
 
-export interface ListPersonalSettingsSystemStatusQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListPersonalSettingsSystemStatusQuery extends Pagination {
 }
 
 export interface BatchOpenPersonalSettingsSystemStatusRequest {
@@ -93,15 +89,6 @@ export interface CreatePersonalSettingsSystemStatusResponse {
 export interface PatchPersonalSettingsSystemStatusResponse {
   /** 系统状态 */
   system_status?: SystemStatus
-}
-
-export interface ListPersonalSettingsSystemStatusResponse {
-  /** 租户系统状态 */
-  items?: SystemStatus[]
-  /** 分页token */
-  page_token?: string
-  /** 是否存在更多 */
-  has_more?: boolean
 }
 
 export interface BatchOpenPersonalSettingsSystemStatusResponse {

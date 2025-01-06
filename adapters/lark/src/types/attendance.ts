@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { ApprovalInfo, ArchiveField, ArchiveReportData, ArchiveReportMeta, File, FlexibleRule, FreePunchCfg, Group, GroupMeta, LangText, LateOffLateOnRule, LateOffLateOnSetting, LeaveAccrualRecord, LeaveEmployExpireRecord, LeaveNeedPunchCfg, Location, Machine, MemberStatusChange, OvertimeClockCfg, OvertimeRule, PunchMember, PunchSpecialDateShift, PunchTimeRule, RestRule, RestTimeFlexibleConfig, Shift, ShiftAttendanceTimeConfig, ShiftMiddleTimeRule, UserAllowedRemedy, UserApproval, UserBase, UserDailyShift, UserFlow, UserSetting, UserStatsData, UserStatsField, UserStatsView, UserTask, UserTaskRemedy, UserTmpDailyShift } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -27,7 +27,7 @@ declare module '../internal' {
      * 查询所有班次
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/shift/list
      */
-    listAttendanceShift(query?: ListAttendanceShiftQuery): Promise<ListAttendanceShiftResponse>
+    listAttendanceShift(query?: ListAttendanceShiftQuery): Promise<Paginated<Shift, 'shift_list'>>
     /**
      * 创建或修改排班表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_daily_shift/batch_create
@@ -47,7 +47,7 @@ declare module '../internal' {
      * 查询考勤组下所有成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list_user
      */
-    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery): Promise<ListUserAttendanceGroupResponse>
+    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery): Promise<Paginated<UserBase, 'users'>>
     /**
      * 创建或修改考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/create
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 查询所有考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list
      */
-    listAttendanceGroup(query?: ListAttendanceGroupQuery): Promise<ListAttendanceGroupResponse>
+    listAttendanceGroup(query?: ListAttendanceGroupQuery): Promise<Paginated<GroupMeta, 'group_list'>>
     /**
      * 修改用户人脸识别信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_setting/modify
@@ -162,7 +162,7 @@ declare module '../internal' {
      * 查询所有归档规则
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/archive_rule/list
      */
-    listAttendanceArchiveRule(query?: ListAttendanceArchiveRuleQuery): Promise<ListAttendanceArchiveRuleResponse>
+    listAttendanceArchiveRule(query?: ListAttendanceArchiveRuleQuery): Promise<Paginated<ArchiveReportMeta>>
     /**
      * 导入打卡流水
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_flow/batch_create
@@ -247,11 +247,7 @@ export interface QueryAttendanceShiftQuery {
   shift_name: string
 }
 
-export interface ListAttendanceShiftQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAttendanceShiftQuery extends Pagination {
 }
 
 export interface BatchCreateAttendanceUserDailyShiftRequest {
@@ -292,15 +288,11 @@ export interface BatchCreateTempAttendanceUserDailyShiftQuery {
   employee_type: 'employee_id' | 'employee_no'
 }
 
-export interface ListUserAttendanceGroupQuery {
+export interface ListUserAttendanceGroupQuery extends Pagination {
   /** 用户 ID 的类型 */
   employee_type: string
   /** 部门 ID 的类型 */
   dept_type: string
-  /** 分页大小 */
-  page_size?: number
-  /** 第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 打卡类型 */
   member_clock_type: number
 }
@@ -331,11 +323,7 @@ export interface SearchAttendanceGroupRequest {
   group_name: string
 }
 
-export interface ListAttendanceGroupQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAttendanceGroupQuery extends Pagination {
 }
 
 export interface ModifyAttendanceUserSettingRequest {
@@ -573,11 +561,7 @@ export interface DelReportAttendanceArchiveRuleQuery {
   employee_type: string
 }
 
-export interface ListAttendanceArchiveRuleQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAttendanceArchiveRuleQuery extends Pagination {
 }
 
 export interface BatchCreateAttendanceUserFlowRequest {
@@ -764,15 +748,6 @@ export interface QueryAttendanceShiftResponse {
   rest_time_flexible_configs?: RestTimeFlexibleConfig[]
 }
 
-export interface ListAttendanceShiftResponse {
-  /** 班次列表 */
-  shift_list?: Shift[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
 export interface BatchCreateAttendanceUserDailyShiftResponse {
   /** 班表信息列表 */
   user_daily_shifts?: UserDailyShift[]
@@ -786,15 +761,6 @@ export interface QueryAttendanceUserDailyShiftResponse {
 export interface BatchCreateTempAttendanceUserDailyShiftResponse {
   /** 临时班表信息列表 */
   user_tmp_daily_shifts?: UserTmpDailyShift[]
-}
-
-export interface ListUserAttendanceGroupResponse {
-  /** 考勤组成员列表 */
-  users?: UserBase[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface CreateAttendanceGroupResponse {
@@ -946,15 +912,6 @@ export interface SearchAttendanceGroupResponse {
   group_list?: GroupMeta[]
 }
 
-export interface ListAttendanceGroupResponse {
-  /** 考勤组列表 */
-  group_list?: GroupMeta[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
 export interface ModifyAttendanceUserSettingResponse {
   /** 用户设置 */
   user_setting?: UserSetting
@@ -1029,15 +986,6 @@ export interface UploadReportAttendanceArchiveRuleResponse {
   invalid_code?: string[]
   /** 无效的member_id */
   invalid_member_id?: string[]
-}
-
-export interface ListAttendanceArchiveRuleResponse {
-  /** 分页查询结果项 */
-  items?: ArchiveReportMeta[]
-  /** 分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否有更多项 */
-  has_more?: boolean
 }
 
 export interface BatchCreateAttendanceUserFlowResponse {

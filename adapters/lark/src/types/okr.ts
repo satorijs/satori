@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { ContentBlock, OkrBatch, OkrReview, Period, PeriodRule } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -17,7 +17,7 @@ declare module '../internal' {
      * 获取 OKR 周期列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/period/list
      */
-    listOkrPeriod(query?: ListOkrPeriodQuery): Promise<ListOkrPeriodResponse>
+    listOkrPeriod(query?: ListOkrPeriodQuery): Promise<Paginated<Period>>
     /**
      * 获取 OKR 周期规则
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/period_rule/list
@@ -78,11 +78,7 @@ export interface PatchOkrPeriodRequest {
   status: 1 | 2 | 3
 }
 
-export interface ListOkrPeriodQuery {
-  /** 分页标志page_token */
-  page_token?: string
-  /** 分页大小，默认10 */
-  page_size?: number
+export interface ListOkrPeriodQuery extends Pagination {
 }
 
 export interface ListOkrUserOkrQuery {
@@ -176,15 +172,6 @@ export interface PatchOkrPeriodResponse {
   period_id?: string
   /** 周期显示状态 */
   status?: 1 | 2 | 3
-}
-
-export interface ListOkrPeriodResponse {
-  /** 分页标志 */
-  page_token?: string
-  /** 是否有更多 */
-  has_more?: boolean
-  /** 数据项 */
-  items?: Period[]
 }
 
 export interface ListOkrPeriodRuleResponse {

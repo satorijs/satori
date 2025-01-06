@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Classification, ClassificationFilter, Draft, Entity, I18nEntryDesc, MatchInfo, OuterInfo, Phrase, RelatedMeta, Repo, Term } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 获取词条列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/list
      */
-    listLingoEntity(query?: ListLingoEntityQuery): Promise<ListLingoEntityResponse>
+    listLingoEntity(query?: ListLingoEntityQuery): Promise<Paginated<Entity, 'entities'>>
     /**
      * 精准搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/match
@@ -47,7 +47,7 @@ declare module '../internal' {
      * 模糊搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/search
      */
-    searchLingoEntity(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery): Promise<SearchLingoEntityResponse>
+    searchLingoEntity(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery): Promise<Paginated<Entity, 'entities'>>
     /**
      * 词条高亮
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/highlight
@@ -57,7 +57,7 @@ declare module '../internal' {
      * 获取词典分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/classification/list
      */
-    listLingoClassification(query?: ListLingoClassificationQuery): Promise<ListLingoClassificationResponse>
+    listLingoClassification(query?: ListLingoClassificationQuery): Promise<Paginated<Classification>>
     /**
      * 获取词库列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/repo/list
@@ -186,11 +186,7 @@ export interface GetLingoEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListLingoEntityQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListLingoEntityQuery extends Pagination {
   /** 数据提供方【可用来过滤数据】 */
   provider?: string
   /** 词库 id */
@@ -220,11 +216,7 @@ export interface SearchLingoEntityRequest {
   creators?: string[]
 }
 
-export interface SearchLingoEntityQuery {
-  /** 每页返回的词条量 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchLingoEntityQuery extends Pagination {
   /** 词库ID */
   repo_id?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -236,11 +228,7 @@ export interface HighlightLingoEntityRequest {
   text: string
 }
 
-export interface ListLingoClassificationQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListLingoClassificationQuery extends Pagination {
   /** 词库ID */
   repo_id?: string
 }
@@ -273,41 +261,14 @@ export interface GetLingoEntityResponse {
   entity?: Entity
 }
 
-export interface ListLingoEntityResponse {
-  /** 词条列表 */
-  entities?: Entity[]
-  /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
 export interface MatchLingoEntityResponse {
   /** 匹配结果 */
   results?: MatchInfo[]
 }
 
-export interface SearchLingoEntityResponse {
-  /** 数据数组 */
-  entities?: Entity[]
-  /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
 export interface HighlightLingoEntityResponse {
   /** 返回识别到的实体词信息 */
   phrases?: Phrase[]
-}
-
-export interface ListLingoClassificationResponse {
-  /** 分类list */
-  items?: Classification[]
-  /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface ListLingoRepoResponse {

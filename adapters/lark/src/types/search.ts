@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Acl, ConnectorParam, DataSource, I18nMeta, Item, ItemContent, ItemMetadata, PatchSchemaProperty, Schema, SchemaDisplay, SchemaProperty } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,12 +7,12 @@ declare module '../internal' {
      * 搜索消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/message/create
      */
-    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): Promise<CreateSearchMessageResponse>
+    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): Promise<Paginated<string>>
     /**
      * 搜索应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/app/create
      */
-    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): Promise<CreateSearchAppResponse>
+    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): Promise<Paginated<string>>
     /**
      * 创建数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/create
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 批量获取数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/list
      */
-    listSearchDataSource(query?: ListSearchDataSourceQuery): Promise<ListSearchDataSourceResponse>
+    listSearchDataSource(query?: ListSearchDataSourceQuery): Promise<Paginated<DataSource>>
     /**
      * 为指定数据项创建索引
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source-item/create
@@ -97,13 +97,9 @@ export interface CreateSearchMessageRequest {
   end_time?: string
 }
 
-export interface CreateSearchMessageQuery {
+export interface CreateSearchMessageQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页大小 */
-  page_size?: number
-  /** 分页token */
-  page_token?: string
 }
 
 export interface CreateSearchAppRequest {
@@ -111,13 +107,9 @@ export interface CreateSearchAppRequest {
   query: string
 }
 
-export interface CreateSearchAppQuery {
+export interface CreateSearchAppQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页大小 */
-  page_size?: number
-  /** 分页token */
-  page_token?: string
 }
 
 export interface CreateSearchDataSourceRequest {
@@ -168,13 +160,9 @@ export interface PatchSearchDataSourceRequest {
   enable_answer?: boolean
 }
 
-export interface ListSearchDataSourceQuery {
+export interface ListSearchDataSourceQuery extends Pagination {
   /** 回包数据格式，0-全量数据；1-摘要数据。**注**：摘要数据仅包含"id"，"name"，"state"。 */
   view?: 0 | 1
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface CreateSearchDataSourceItemRequest {
@@ -211,24 +199,6 @@ export interface PatchSearchSchemaRequest {
   properties?: PatchSchemaProperty[]
 }
 
-export interface CreateSearchMessageResponse {
-  /** 消息id列表 */
-  items?: string[]
-  /** 翻页 token，传入返回下一页，首页不需要传入 */
-  page_token?: string
-  /** 是否还有下一页 */
-  has_more?: boolean
-}
-
-export interface CreateSearchAppResponse {
-  /** app_id列表 */
-  items?: string[]
-  /** 翻页 token，传入返回下一页，首页不需要传入 */
-  page_token?: string
-  /** 是否还有下一页 */
-  has_more?: boolean
-}
-
 export interface CreateSearchDataSourceResponse {
   /** 数据源实例 */
   data_source?: DataSource
@@ -242,15 +212,6 @@ export interface PatchSearchDataSourceResponse {
 export interface GetSearchDataSourceResponse {
   /** 数据源实例 */
   data_source?: DataSource
-}
-
-export interface ListSearchDataSourceResponse {
-  /** 是否有更多数据 */
-  has_more?: boolean
-  /** 取数据的凭证 */
-  page_token?: string
-  /** 返回的数据 */
-  items?: DataSource[]
 }
 
 export interface GetSearchDataSourceItemResponse {

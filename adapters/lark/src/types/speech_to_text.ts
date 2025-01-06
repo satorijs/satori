@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { FileConfig, Speech, StreamConfig } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

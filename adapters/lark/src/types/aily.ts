@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AilyKnowledgeAskProcessData, AilyKnowledgeFaq, AilyKnowledgeMessage, AilyMention, AilyMessage, AilyMessageContentType, AilySession, DataAsset, DataAssetTag, Run, Skill, SkillGlobalVariable } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 列出智能伙伴消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/list
      */
-    listAilyAilySessionAilyMessage(aily_session_id: string, query?: ListAilyAilySessionAilyMessageQuery): Promise<ListAilyAilySessionAilyMessageResponse>
+    listAilyAilySessionAilyMessage(aily_session_id: string, query?: ListAilyAilySessionAilyMessageQuery): Promise<Paginated<AilyMessage, 'messages'>>
     /**
      * 创建运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/create
@@ -52,7 +52,7 @@ declare module '../internal' {
      * 列出运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/list
      */
-    listAilyAilySessionRun(aily_session_id: string, query?: ListAilyAilySessionRunQuery): Promise<ListAilyAilySessionRunResponse>
+    listAilyAilySessionRun(aily_session_id: string, query?: ListAilyAilySessionRunQuery): Promise<Paginated<Run, 'runs'>>
     /**
      * 取消运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/cancel
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 查询技能列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-skill/list
      */
-    listAilyAppSkill(app_id: string, query?: ListAilyAppSkillQuery): Promise<ListAilyAppSkillResponse>
+    listAilyAppSkill(app_id: string, query?: ListAilyAppSkillQuery): Promise<Paginated<Skill, 'skills'>>
     /**
      * 执行数据知识问答
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-knowledge/ask
@@ -82,12 +82,12 @@ declare module '../internal' {
      * 查询数据知识列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/list
      */
-    listAilyAppDataAsset(app_id: string, query?: ListAilyAppDataAssetQuery): Promise<ListAilyAppDataAssetResponse>
+    listAilyAppDataAsset(app_id: string, query?: ListAilyAppDataAssetQuery): Promise<Paginated<DataAsset>>
     /**
      * 获取数据知识分类列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset_tag/list
      */
-    listAilyAppDataAssetTag(app_id: string, query?: ListAilyAppDataAssetTagQuery): Promise<ListAilyAppDataAssetTagResponse>
+    listAilyAppDataAssetTag(app_id: string, query?: ListAilyAppDataAssetTagQuery): Promise<Paginated<DataAssetTag>>
   }
 }
 
@@ -120,11 +120,7 @@ export interface CreateAilyAilySessionAilyMessageRequest {
   mentions?: AilyMention[]
 }
 
-export interface ListAilyAilySessionAilyMessageQuery {
-  /** 页面大小 */
-  page_size?: number
-  /** 分页偏移量 */
-  page_token?: string
+export interface ListAilyAilySessionAilyMessageQuery extends Pagination {
   /** 运行 ID */
   run_id?: string
   /** 返回生成中的消息 */
@@ -142,11 +138,7 @@ export interface CreateAilyAilySessionRunRequest {
   metadata?: string
 }
 
-export interface ListAilyAilySessionRunQuery {
-  /** 页面大小 */
-  page_size?: number
-  /** 分页偏移量 */
-  page_token?: string
+export interface ListAilyAilySessionRunQuery extends Pagination {
 }
 
 export interface StartAilyAppSkillRequest {
@@ -156,11 +148,7 @@ export interface StartAilyAppSkillRequest {
   input?: string
 }
 
-export interface ListAilyAppSkillQuery {
-  /** 页面大小 */
-  page_size?: number
-  /** 分页偏移量 */
-  page_token?: string
+export interface ListAilyAppSkillQuery extends Pagination {
 }
 
 export interface AskAilyAppKnowledgeRequest {
@@ -172,11 +160,7 @@ export interface AskAilyAppKnowledgeRequest {
   data_asset_tag_ids?: string[]
 }
 
-export interface ListAilyAppDataAssetQuery {
-  /** 分页参数：分页大小，默认：20，最大：100 */
-  page_size?: number
-  /** 分页参数：分页起始位置，为空表示首页 */
-  page_token?: string
+export interface ListAilyAppDataAssetQuery extends Pagination {
   /** 模糊匹配关键词 */
   keyword?: string
   /** 根据数据知识 ID 进行过滤 */
@@ -189,11 +173,7 @@ export interface ListAilyAppDataAssetQuery {
   with_connect_status?: boolean
 }
 
-export interface ListAilyAppDataAssetTagQuery {
-  /** 分页参数：分页大小，默认：20，最大：100 */
-  page_size?: number
-  /** 分页参数：分页起始位置，为空表示首页 */
-  page_token?: string
+export interface ListAilyAppDataAssetTagQuery extends Pagination {
   /** 模糊匹配分类名称 */
   keyword?: string
   /** 模糊匹配分类名称 */
@@ -225,15 +205,6 @@ export interface GetAilyAilySessionAilyMessageResponse {
   message?: AilyMessage
 }
 
-export interface ListAilyAilySessionAilyMessageResponse {
-  /** 消息列表 */
-  messages?: AilyMessage[]
-  /** 下一页的起始偏移量 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-}
-
 export interface CreateAilyAilySessionRunResponse {
   /** 运行信息 */
   run?: Run
@@ -242,15 +213,6 @@ export interface CreateAilyAilySessionRunResponse {
 export interface GetAilyAilySessionRunResponse {
   /** 运行信息 */
   run?: Run
-}
-
-export interface ListAilyAilySessionRunResponse {
-  /** 运行列表 */
-  runs?: Run[]
-  /** 下一页的起始偏移量 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
 }
 
 export interface CancelAilyAilySessionRunResponse {
@@ -270,15 +232,6 @@ export interface GetAilyAppSkillResponse {
   skill?: Skill
 }
 
-export interface ListAilyAppSkillResponse {
-  /** 技能列表 */
-  skills?: Skill[]
-  /** 下一页的起始偏移量 */
-  page_token?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-}
-
 export interface AskAilyAppKnowledgeResponse {
   /** 响应状态，枚举值 */
   status?: 'processing' | 'finished'
@@ -292,24 +245,6 @@ export interface AskAilyAppKnowledgeResponse {
   faq_result?: AilyKnowledgeFaq
   /** 是否有结果，true 则 代表 message 中的内容是通过配置知识而生成的 */
   has_answer?: boolean
-}
-
-export interface ListAilyAppDataAssetResponse {
-  /** 数据知识列表 */
-  items?: DataAsset[]
-  /** has_more=true，可使用page_token继续查询 */
-  page_token?: string
-  /** 是否有更多 */
-  has_more?: boolean
-}
-
-export interface ListAilyAppDataAssetTagResponse {
-  /** 数据知识分类列表 */
-  items?: DataAssetTag[]
-  /** has_more=true，可使用 page_token继续查询 */
-  page_token?: string
-  /** 是否有更多 */
-  has_more?: boolean
 }
 
 Internal.define({

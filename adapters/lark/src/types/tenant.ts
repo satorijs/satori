@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Tenant, TenantAssignInfo } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

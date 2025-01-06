@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Condition, Dimension, FilterView, FilterViewCondition, FindCondition, FindReplaceResult, FloatImage, GetSpreadsheet, Sheet, SheetFilterInfo, Spreadsheet } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

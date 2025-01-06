@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AllowedRollbaclkTaskItemType, AuditLogDetail, AuditLogEsField, Criterion, EnvironmentVariable, EnvironmentVariableFilter, ObjectMeta, RecordGroupByItem, RecordResult, RoleMember, SearchObjectParam, Sort, UserTask } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

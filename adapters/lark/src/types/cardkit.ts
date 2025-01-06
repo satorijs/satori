@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Card } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

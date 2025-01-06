@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { ApprovalConfig, ApprovalCreateExternal, ApprovalCreateViewers, ApprovalForm, ApprovalNode, ApprovalNodeInfo, ApprovalSetting, ApprovalViewerInfo, CcNode, CcSearchItem, Comment, CommentAtInfo, Count, ExteranlInstanceCheck, ExteranlInstanceCheckResponse, ExternalInstance, ExternalInstanceForm, ExternalInstanceLink, ExternalInstanceTaskNode, ExternalTaskList, I18nResource, InstanceComment, InstanceSearchItem, InstanceTask, InstanceTimeline, NodeApprover, NodeAutoApproval, NodeCc, PreviewNode, Task, TaskSearchItem, TrusteeshipInstanceCacheConfig, TrusteeshipUrls } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 批量获取审批实例 ID
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/list
      */
-    listApprovalInstance(query?: ListApprovalInstanceQuery): Promise<ListApprovalInstanceResponse>
+    listApprovalInstance(query?: ListApprovalInstanceQuery): Promise<Paginated<string, 'instance_code_list'>>
     /**
      * 同意审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/approve
@@ -117,7 +117,7 @@ declare module '../internal' {
      * 获取三方审批任务状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/external_task/list
      */
-    listApprovalExternalTask(body: ListApprovalExternalTaskRequest, query?: ListApprovalExternalTaskQuery): Promise<ListApprovalExternalTaskResponse>
+    listApprovalExternalTask(body: ListApprovalExternalTaskRequest, query?: ListApprovalExternalTaskQuery): Promise<Paginated<ExternalTaskList, 'data'>>
     /**
      * 查询实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/query
@@ -294,11 +294,7 @@ export interface GetApprovalInstanceQuery {
   user_id_type?: 'user_id' | 'open_id' | 'union_id'
 }
 
-export interface ListApprovalInstanceQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListApprovalInstanceQuery extends Pagination {
   /** 审批定义唯一标识 */
   approval_code: string
   /** 审批实例创建时间区间（毫秒） */
@@ -460,15 +456,11 @@ export interface RemoveApprovalInstanceCommentQuery {
   user_id?: string
 }
 
-export interface ListApprovalInstanceCommentQuery {
+export interface ListApprovalInstanceCommentQuery extends Pagination {
   /** 用户ID类型，不填默认为open_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 用户ID */
   user_id: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface CreateApprovalExternalApprovalRequest {
@@ -573,11 +565,7 @@ export interface ListApprovalExternalTaskRequest {
   status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'TRANSFERRED' | 'DONE'
 }
 
-export interface ListApprovalExternalTaskQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListApprovalExternalTaskQuery extends Pagination {
 }
 
 export interface QueryApprovalInstanceRequest {
@@ -603,11 +591,7 @@ export interface QueryApprovalInstanceRequest {
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
 }
 
-export interface QueryApprovalInstanceQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryApprovalInstanceQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -635,11 +619,7 @@ export interface SearchCcApprovalInstanceRequest {
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
 }
 
-export interface SearchCcApprovalInstanceQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCcApprovalInstanceQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -671,20 +651,12 @@ export interface SearchApprovalTaskRequest {
   order?: 0 | 1 | 2 | 3
 }
 
-export interface SearchApprovalTaskQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchApprovalTaskQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface QueryApprovalTaskQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryApprovalTaskQuery extends Pagination {
   /** 需要查询的 User ID */
   user_id: string
   /** 需要查询的任务分组主题，如「待办」、「已办」等 */
@@ -766,15 +738,6 @@ export interface GetApprovalInstanceResponse {
   instance_code: string
 }
 
-export interface ListApprovalInstanceResponse {
-  /** 审批实例 Code */
-  instance_code_list: string[]
-  /** 翻页 Token */
-  page_token: string
-  /** 是否有更多任务可供拉取 */
-  has_more: boolean
-}
-
 export interface CreateApprovalInstanceCommentResponse {
   /** 保存成功的comment_id */
   comment_id: string
@@ -831,15 +794,6 @@ export interface CreateApprovalExternalInstanceResponse {
 export interface CheckApprovalExternalInstanceResponse {
   /** 更新时间不一致的实例信息 */
   diff_instances?: ExteranlInstanceCheckResponse[]
-}
-
-export interface ListApprovalExternalTaskResponse {
-  /** 任务列表 */
-  data?: ExternalTaskList[]
-  /** 翻页 Token */
-  page_token?: string
-  /** 是否有更多任务可供拉取 */
-  has_more?: boolean
 }
 
 export interface QueryApprovalInstanceResponse {

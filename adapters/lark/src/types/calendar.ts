@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AclScope, Attachment, Calendar, CalendarAcl, CalendarEvent, CalendarEventAttendee, CalendarEventAttendeeChatMember, CalendarEventAttendeeId, EventLocation, EventSearchFilter, Freebusy, Instance, Reminder, Schema, TimeInfo, UserCalendar, Vchat } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -77,7 +77,7 @@ declare module '../internal' {
      * 获取访问控制列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/list
      */
-    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery): Promise<ListCalendarCalendarAclResponse>
+    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery): Promise<Paginated<CalendarAcl, 'acls'>>
     /**
      * 订阅日历访问控制变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/subscription
@@ -137,7 +137,7 @@ declare module '../internal' {
      * 获取重复日程实例
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instances
      */
-    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): Promise<InstancesCalendarCalendarEventResponse>
+    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): Promise<Paginated<Instance>>
     /**
      * 查询日程视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instance_view
@@ -182,12 +182,12 @@ declare module '../internal' {
      * 获取日程参与人列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/list
      */
-    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): Promise<ListCalendarCalendarEventAttendeeResponse>
+    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): Promise<Paginated<CalendarEventAttendee>>
     /**
      * 获取日程参与群成员列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee-chat_member/list
      */
-    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): Promise<ListCalendarCalendarEventAttendeeChatMemberResponse>
+    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): Promise<Paginated<CalendarEventAttendeeChatMember>>
     /**
      * 生成 CalDAV 配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/setting/generate_caldav_conf
@@ -249,11 +249,7 @@ export interface ListCalendarFreebusyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarQuery {
-  /** 一次请求要求返回最大数量，默认500，取值范围为[50. 1000] */
-  page_size?: number
-  /** 上次请求Response返回的分页标记，首次请求时为空 */
-  page_token?: string
+export interface ListCalendarQuery extends Pagination {
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
   sync_token?: string
 }
@@ -276,11 +272,7 @@ export interface SearchCalendarRequest {
   query: string
 }
 
-export interface SearchCalendarQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface SearchCalendarQuery extends Pagination {
 }
 
 export interface CreateCalendarCalendarAclRequest {
@@ -295,13 +287,9 @@ export interface CreateCalendarCalendarAclQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarAclQuery {
+export interface ListCalendarCalendarAclQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface CreateCalendarCalendarEventRequest {
@@ -398,13 +386,9 @@ export interface GetCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventQuery {
-  /** 一次请求要求返回最大数量，默认500，取值范围为[50, 1000] */
-  page_size?: number
+export interface ListCalendarCalendarEventQuery extends Pagination {
   /** 拉取anchor_time之后的日程，为timestamp */
   anchor_time?: string
-  /** 上次请求Response返回的分页标记，首次请求时为空 */
-  page_token?: string
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
   sync_token?: string
   /** 日程开始Unix时间戳，单位为秒 */
@@ -422,13 +406,9 @@ export interface SearchCalendarCalendarEventRequest {
   filter?: EventSearchFilter
 }
 
-export interface SearchCalendarCalendarEventQuery {
+export interface SearchCalendarCalendarEventQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface ReplyCalendarCalendarEventRequest {
@@ -436,15 +416,11 @@ export interface ReplyCalendarCalendarEventRequest {
   rsvp_status: 'accept' | 'decline' | 'tentative'
 }
 
-export interface InstancesCalendarCalendarEventQuery {
+export interface InstancesCalendarCalendarEventQuery extends Pagination {
   /** 日程实例开始Unix时间戳，单位为秒,日程的end_time的下限（不包含） */
   start_time: string
   /** 日程实例结束Unix时间戳，单位为秒,日程的start_time上限（不包含） */
   end_time: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface InstanceViewCalendarCalendarEventQuery {
@@ -517,22 +493,14 @@ export interface BatchDeleteCalendarCalendarEventAttendeeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventAttendeeQuery {
+export interface ListCalendarCalendarEventAttendeeQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 是否需要会议室表单信息 */
   need_resource_customization?: boolean
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
-export interface ListCalendarCalendarEventAttendeeChatMemberQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListCalendarCalendarEventAttendeeChatMemberQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -636,15 +604,6 @@ export interface CreateCalendarCalendarAclResponse {
   scope: AclScope
 }
 
-export interface ListCalendarCalendarAclResponse {
-  /** 入参日历对应的acl列表 */
-  acls?: CalendarAcl[]
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下次请求需要带上的分页标记，90 天有效期 */
-  page_token?: string
-}
-
 export interface CreateCalendarCalendarEventResponse {
   /** 日程信息 */
   event?: CalendarEvent
@@ -676,13 +635,6 @@ export interface SearchCalendarCalendarEventResponse {
   items?: CalendarEvent[]
   /** 下次请求需要带上的分页标记 */
   page_token?: string
-}
-
-export interface InstancesCalendarCalendarEventResponse {
-  /** instances实例 */
-  items?: Instance[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface InstanceViewCalendarCalendarEventResponse {
@@ -722,24 +674,6 @@ export interface CreateCalendarTimeoffEventResponse {
 export interface CreateCalendarCalendarEventAttendeeResponse {
   /** 被添加的参与人列表 */
   attendees?: CalendarEventAttendee[]
-}
-
-export interface ListCalendarCalendarEventAttendeeResponse {
-  /** 日程的参与者列表 */
-  items?: CalendarEventAttendee[]
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下次请求需要带上的分页标记，90 天有效期 */
-  page_token?: string
-}
-
-export interface ListCalendarCalendarEventAttendeeChatMemberResponse {
-  /** chat类型的参与人的群成员列表 */
-  items?: CalendarEventAttendeeChatMember[]
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下次请求需要带上的分页标记 */
-  page_token?: string
 }
 
 export interface GenerateCaldavConfCalendarSettingResponse {

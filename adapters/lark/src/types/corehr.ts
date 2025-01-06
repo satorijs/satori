@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Address, ApprovalGroup, ApproverInfo, AssessmentForCreate, AssignedOrganizationWithCode, Bank, BankAccount, BankBranch, BasicInfo, BasicInfoUpdate, Bp, BpRoleOrganization, City, Company, Contract, CostCenter, CostCenterVersion, CountryRegion, CountryRegionSubdivision, CpstGrade, CreateTransferInfo, Currency, CustomField, CustomFieldData, DataengineI18n, Department, DepartmentChange, DepartmentCreate, DepartmentHrbp, DepartmentParents, DepartmentTimeline, DepartmentTree, Dependent, District, Education, EducationInfo, Email, EmergencyContact, Employee, EmployeeJobData, EmployeeType, EmployeesAdditionalJob, EmployeesAdditionalJobBatchReqDate, EmployeesAdditionalJobWriteResp, Employment, EmploymentBp, EmploymentCreate, EmploymentLeaveBalance, Enum, EnumFieldOption, FieldVariableValue, FormFieldVariable, HiberarchyCommon, Hrbp, I18n, IdInfo, Job, JobChange, JobData, JobFamily, JobGrade, JobLevel, Language, LeaveGrantingRecord, LeaveRequest, LeaveType, Location, ManagementScope, NationalId, NationalIdType, Nationality, Object, ObjectFieldData, Offboarding, OffboardingReason, OfferInfo, OfferInfoUpdate, OrganizationOpLog, Person, PersonInfo, PersonName, PersonalProfile, Phone, PhoneNumberAndAreaCode, PreHire, PreHireQuery, ProbationInfo, ProbationInfoForSubmit, ProcessAbstractItem, ProcessCcItem, ProcessCommentInfo, ProcessDoneItem, ProcessFormVariableV2, ProcessLink, ProcessSystemDoneItem, ProcessSystemTodoItem, ProcessTodoItem, ProfileSettingCareer, ProfileSettingDataAttachment, ProfileSettingEmploymentInfo, ProfileSettingPersonalInfo, ResidentTax, RoleAuthorization, SecurityGroup, Subdivision, Subregion, SupportCostCenterItem, TimeZone, TransferInfo, TransferReason, TransferType, WkCalendarDate, WkOption, WorkCalendarDetail, WorkExperience, WorkExperienceInfo, WorkforcePlan, WorkforcePlanDetail, WorkforcePlanDetailRow, WorkingHoursType } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,7 +7,7 @@ declare module '../internal' {
      * 获取飞书人事对象列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/list_object_api_name
      */
-    listObjectApiNameCorehrCustomField(query?: ListObjectApiNameCorehrCustomFieldQuery): Promise<ListObjectApiNameCorehrCustomFieldResponse>
+    listObjectApiNameCorehrCustomField(query?: ListObjectApiNameCorehrCustomFieldQuery): Promise<Paginated<Object>>
     /**
      * 获取自定义字段列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/query
@@ -32,27 +32,27 @@ declare module '../internal' {
      * 查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search
      */
-    searchCorehrBasicInfoCountryRegion(body: SearchCorehrBasicInfoCountryRegionRequest, query?: SearchCorehrBasicInfoCountryRegionQuery): Promise<SearchCorehrBasicInfoCountryRegionResponse>
+    searchCorehrBasicInfoCountryRegion(body: SearchCorehrBasicInfoCountryRegionRequest, query?: SearchCorehrBasicInfoCountryRegionQuery): Promise<Paginated<CountryRegion>>
     /**
      * 查询省份/主要行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search
      */
-    searchCorehrBasicInfoCountryRegionSubdivision(body: SearchCorehrBasicInfoCountryRegionSubdivisionRequest, query?: SearchCorehrBasicInfoCountryRegionSubdivisionQuery): Promise<SearchCorehrBasicInfoCountryRegionSubdivisionResponse>
+    searchCorehrBasicInfoCountryRegionSubdivision(body: SearchCorehrBasicInfoCountryRegionSubdivisionRequest, query?: SearchCorehrBasicInfoCountryRegionSubdivisionQuery): Promise<Paginated<CountryRegionSubdivision>>
     /**
      * 查询城市信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search
      */
-    searchCorehrBasicInfoCity(body: SearchCorehrBasicInfoCityRequest, query?: SearchCorehrBasicInfoCityQuery): Promise<SearchCorehrBasicInfoCityResponse>
+    searchCorehrBasicInfoCity(body: SearchCorehrBasicInfoCityRequest, query?: SearchCorehrBasicInfoCityQuery): Promise<Paginated<City>>
     /**
      * 查询区/县信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-district/search
      */
-    searchCorehrBasicInfoDistrict(body: SearchCorehrBasicInfoDistrictRequest, query?: SearchCorehrBasicInfoDistrictQuery): Promise<SearchCorehrBasicInfoDistrictResponse>
+    searchCorehrBasicInfoDistrict(body: SearchCorehrBasicInfoDistrictRequest, query?: SearchCorehrBasicInfoDistrictQuery): Promise<Paginated<District>>
     /**
      * 查询国籍信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search
      */
-    searchCorehrBasicInfoNationality(body: SearchCorehrBasicInfoNationalityRequest, query?: SearchCorehrBasicInfoNationalityQuery): Promise<SearchCorehrBasicInfoNationalityResponse>
+    searchCorehrBasicInfoNationality(body: SearchCorehrBasicInfoNationalityRequest, query?: SearchCorehrBasicInfoNationalityQuery): Promise<Paginated<Nationality>>
     /**
      * 创建国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/create
@@ -77,32 +77,32 @@ declare module '../internal' {
      * 批量查询国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/list
      */
-    listCorehrNationalIdType(query?: ListCorehrNationalIdTypeQuery): Promise<ListCorehrNationalIdTypeResponse>
+    listCorehrNationalIdType(query?: ListCorehrNationalIdTypeQuery): Promise<Paginated<NationalIdType>>
     /**
      * 查询银行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search
      */
-    searchCorehrBasicInfoBank(body: SearchCorehrBasicInfoBankRequest, query?: SearchCorehrBasicInfoBankQuery): Promise<SearchCorehrBasicInfoBankResponse>
+    searchCorehrBasicInfoBank(body: SearchCorehrBasicInfoBankRequest, query?: SearchCorehrBasicInfoBankQuery): Promise<Paginated<Bank>>
     /**
      * 查询支行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank_branch/search
      */
-    searchCorehrBasicInfoBankBranch(body: SearchCorehrBasicInfoBankBranchRequest, query?: SearchCorehrBasicInfoBankBranchQuery): Promise<SearchCorehrBasicInfoBankBranchResponse>
+    searchCorehrBasicInfoBankBranch(body: SearchCorehrBasicInfoBankBranchRequest, query?: SearchCorehrBasicInfoBankBranchQuery): Promise<Paginated<BankBranch>>
     /**
      * 查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-currency/search
      */
-    searchCorehrBasicInfoCurrency(body: SearchCorehrBasicInfoCurrencyRequest, query?: SearchCorehrBasicInfoCurrencyQuery): Promise<SearchCorehrBasicInfoCurrencyResponse>
+    searchCorehrBasicInfoCurrency(body: SearchCorehrBasicInfoCurrencyRequest, query?: SearchCorehrBasicInfoCurrencyQuery): Promise<Paginated<Currency>>
     /**
      * 查询时区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-time_zone/search
      */
-    searchCorehrBasicInfoTimeZone(body: SearchCorehrBasicInfoTimeZoneRequest, query?: SearchCorehrBasicInfoTimeZoneQuery): Promise<SearchCorehrBasicInfoTimeZoneResponse>
+    searchCorehrBasicInfoTimeZone(body: SearchCorehrBasicInfoTimeZoneRequest, query?: SearchCorehrBasicInfoTimeZoneQuery): Promise<Paginated<TimeZone>>
     /**
      * 查询语言信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-language/search
      */
-    searchCorehrBasicInfoLanguage(body: SearchCorehrBasicInfoLanguageRequest, query?: SearchCorehrBasicInfoLanguageQuery): Promise<SearchCorehrBasicInfoLanguageResponse>
+    searchCorehrBasicInfoLanguage(body: SearchCorehrBasicInfoLanguageRequest, query?: SearchCorehrBasicInfoLanguageQuery): Promise<Paginated<Language>>
     /**
      * 创建人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/create
@@ -127,7 +127,7 @@ declare module '../internal' {
      * 批量查询人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list
      */
-    listCorehrEmployeeType(query?: ListCorehrEmployeeTypeQuery): Promise<ListCorehrEmployeeTypeResponse>
+    listCorehrEmployeeType(query?: ListCorehrEmployeeTypeQuery): Promise<Paginated<EmployeeType>>
     /**
      * 创建工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/create
@@ -152,7 +152,7 @@ declare module '../internal' {
      * 批量查询工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list
      */
-    listCorehrWorkingHoursType(query?: ListCorehrWorkingHoursTypeQuery): Promise<ListCorehrWorkingHoursTypeResponse>
+    listCorehrWorkingHoursType(query?: ListCorehrWorkingHoursTypeQuery): Promise<Paginated<WorkingHoursType>>
     /**
      * ID 转换
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/common_data-id/convert
@@ -167,7 +167,7 @@ declare module '../internal' {
      * 搜索员工信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/search
      */
-    searchCorehrEmployee(body: SearchCorehrEmployeeRequest, query?: SearchCorehrEmployeeQuery): Promise<SearchCorehrEmployeeResponse>
+    searchCorehrEmployee(body: SearchCorehrEmployeeRequest, query?: SearchCorehrEmployeeQuery): Promise<Paginated<Employee>>
     /**
      * 添加人员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/create
@@ -232,7 +232,7 @@ declare module '../internal' {
      * 获取任职信息列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-job_data/query
      */
-    queryCorehrEmployeesJobData(body: QueryCorehrEmployeesJobDataRequest, query?: QueryCorehrEmployeesJobDataQuery): Promise<QueryCorehrEmployeesJobDataResponse>
+    queryCorehrEmployeesJobData(body: QueryCorehrEmployeesJobDataRequest, query?: QueryCorehrEmployeesJobDataQuery): Promise<Paginated<EmployeeJobData>>
     /**
      * 批量查询员工任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-job_data/batch_get
@@ -242,7 +242,7 @@ declare module '../internal' {
      * 批量查询任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/list
      */
-    listCorehrJobData(query?: ListCorehrJobDataQuery): Promise<ListCorehrJobDataResponse>
+    listCorehrJobData(query?: ListCorehrJobDataQuery): Promise<Paginated<JobData>>
     /**
      * 查询单个任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/get
@@ -267,7 +267,7 @@ declare module '../internal' {
      * 批量查询兼职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/batch
      */
-    batchCorehrEmployeesAdditionalJob(body: BatchCorehrEmployeesAdditionalJobRequest, query?: BatchCorehrEmployeesAdditionalJobQuery): Promise<BatchCorehrEmployeesAdditionalJobResponse>
+    batchCorehrEmployeesAdditionalJob(body: BatchCorehrEmployeesAdditionalJobRequest, query?: BatchCorehrEmployeesAdditionalJobQuery): Promise<Paginated<EmployeesAdditionalJob>>
     /**
      * 批量查询部门操作日志
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_operation_logs
@@ -307,17 +307,17 @@ declare module '../internal' {
      * 查询指定生效日期的部门架构树
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/tree
      */
-    treeCorehrDepartment(body: TreeCorehrDepartmentRequest, query?: TreeCorehrDepartmentQuery): Promise<TreeCorehrDepartmentResponse>
+    treeCorehrDepartment(body: TreeCorehrDepartmentRequest, query?: TreeCorehrDepartmentQuery): Promise<Paginated<DepartmentTree>>
     /**
      * 批量查询部门版本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_multi_timeline
      */
-    queryMultiTimelineCorehrDepartment(body: QueryMultiTimelineCorehrDepartmentRequest, query?: QueryMultiTimelineCorehrDepartmentQuery): Promise<QueryMultiTimelineCorehrDepartmentResponse>
+    queryMultiTimelineCorehrDepartment(body: QueryMultiTimelineCorehrDepartmentRequest, query?: QueryMultiTimelineCorehrDepartmentQuery): Promise<Paginated<DepartmentTimeline>>
     /**
      * 搜索部门信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/search
      */
-    searchCorehrDepartment(body: SearchCorehrDepartmentRequest, query?: SearchCorehrDepartmentQuery): Promise<SearchCorehrDepartmentResponse>
+    searchCorehrDepartment(body: SearchCorehrDepartmentRequest, query?: SearchCorehrDepartmentQuery): Promise<Paginated<Department>>
     /**
      * 删除部门 V2
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/delete
@@ -352,7 +352,7 @@ declare module '../internal' {
      * 批量分页查询地点信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list
      */
-    listCorehrLocation(query?: ListCorehrLocationQuery): Promise<ListCorehrLocationResponse>
+    listCorehrLocation(query?: ListCorehrLocationQuery): Promise<Paginated<Location>>
     /**
      * 启用/停用地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/active
@@ -402,7 +402,7 @@ declare module '../internal' {
      * 批量查询公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list
      */
-    listCorehrCompany(query?: ListCorehrCompanyQuery): Promise<ListCorehrCompanyResponse>
+    listCorehrCompany(query?: ListCorehrCompanyQuery): Promise<Paginated<Company>>
     /**
      * 查询指定时间范围内当前生效信息发生变更的公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/query_recent_change
@@ -437,7 +437,7 @@ declare module '../internal' {
      * 搜索成本中心信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/search
      */
-    searchCorehrCostCenter(body: SearchCorehrCostCenterRequest, query?: SearchCorehrCostCenterQuery): Promise<SearchCorehrCostCenterResponse>
+    searchCorehrCostCenter(body: SearchCorehrCostCenterRequest, query?: SearchCorehrCostCenterQuery): Promise<Paginated<CostCenterVersion>>
     /**
      * 删除成本中心
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/delete
@@ -492,7 +492,7 @@ declare module '../internal' {
      * 批量查询序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list
      */
-    listCorehrJobFamily(query?: ListCorehrJobFamilyQuery): Promise<ListCorehrJobFamilyResponse>
+    listCorehrJobFamily(query?: ListCorehrJobFamilyQuery): Promise<Paginated<JobFamily>>
     /**
      * 查询当前生效信息发生变更的序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_family/query_recent_change
@@ -527,7 +527,7 @@ declare module '../internal' {
      * 批量查询职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list
      */
-    listCorehrJobLevel(query?: ListCorehrJobLevelQuery): Promise<ListCorehrJobLevelResponse>
+    listCorehrJobLevel(query?: ListCorehrJobLevelQuery): Promise<Paginated<JobLevel>>
     /**
      * 查询当前生效信息发生变更的职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_level/query_recent_change
@@ -557,7 +557,7 @@ declare module '../internal' {
      * 查询职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query
      */
-    queryCorehrJobGrade(body: QueryCorehrJobGradeRequest, query?: QueryCorehrJobGradeQuery): Promise<QueryCorehrJobGradeResponse>
+    queryCorehrJobGrade(body: QueryCorehrJobGradeRequest, query?: QueryCorehrJobGradeQuery): Promise<Paginated<JobGrade>>
     /**
      * 查询当前生效信息发生变更的职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query_recent_change
@@ -592,7 +592,7 @@ declare module '../internal' {
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list
      */
-    listCorehrJob(query?: ListCorehrJobQuery): Promise<ListCorehrJobResponse>
+    listCorehrJob(query?: ListCorehrJobQuery): Promise<Paginated<Job>>
     /**
      * 撤销入职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/withdraw_onboarding
@@ -622,7 +622,7 @@ declare module '../internal' {
      * 查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/query
      */
-    queryCorehrPreHire(body: QueryCorehrPreHireRequest, query?: QueryCorehrPreHireQuery): Promise<QueryCorehrPreHireResponse>
+    queryCorehrPreHire(body: QueryCorehrPreHireRequest, query?: QueryCorehrPreHireQuery): Promise<Paginated<PreHire>>
     /**
      * 查询单个待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/get
@@ -632,12 +632,12 @@ declare module '../internal' {
      * 批量查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/list
      */
-    listCorehrPreHire(query?: ListCorehrPreHireQuery): Promise<ListCorehrPreHireResponse>
+    listCorehrPreHire(query?: ListCorehrPreHireQuery): Promise<Paginated<PreHireQuery>>
     /**
      * 搜索待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/search
      */
-    searchCorehrPreHire(body: SearchCorehrPreHireRequest, query?: SearchCorehrPreHireQuery): Promise<SearchCorehrPreHireResponse>
+    searchCorehrPreHire(body: SearchCorehrPreHireRequest, query?: SearchCorehrPreHireQuery): Promise<Paginated<PreHire>>
     /**
      * 流转入职任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/transit_task
@@ -677,7 +677,7 @@ declare module '../internal' {
      * 搜索试用期信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/search
      */
-    searchCorehrProbation(body: SearchCorehrProbationRequest, query?: SearchCorehrProbationQuery): Promise<SearchCorehrProbationResponse>
+    searchCorehrProbation(body: SearchCorehrProbationRequest, query?: SearchCorehrProbationQuery): Promise<Paginated<ProbationInfo>>
     /**
      * 删除试用期考核信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation-assessment/delete
@@ -712,7 +712,7 @@ declare module '../internal' {
      * 搜索员工异动信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/search
      */
-    searchCorehrJobChange(body: SearchCorehrJobChangeRequest, query?: SearchCorehrJobChangeQuery): Promise<SearchCorehrJobChangeResponse>
+    searchCorehrJobChange(body: SearchCorehrJobChangeRequest, query?: SearchCorehrJobChangeQuery): Promise<Paginated<JobChange>>
     /**
      * 撤销异动
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/revoke
@@ -747,7 +747,7 @@ declare module '../internal' {
      * 搜索离职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/search
      */
-    searchCorehrOffboarding(body: SearchCorehrOffboardingRequest, query?: SearchCorehrOffboardingQuery): Promise<SearchCorehrOffboardingResponse>
+    searchCorehrOffboarding(body: SearchCorehrOffboardingRequest, query?: SearchCorehrOffboardingQuery): Promise<Paginated<Offboarding>>
     /**
      * 新建合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/create
@@ -772,12 +772,12 @@ declare module '../internal' {
      * 批量查询合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/list
      */
-    listCorehrContract(query?: ListCorehrContractQuery): Promise<ListCorehrContractResponse>
+    listCorehrContract(query?: ListCorehrContractQuery): Promise<Paginated<Contract>>
     /**
      * 搜索合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/contract/search
      */
-    searchCorehrContract(body: SearchCorehrContractRequest, query?: SearchCorehrContractQuery): Promise<SearchCorehrContractResponse>
+    searchCorehrContract(body: SearchCorehrContractRequest, query?: SearchCorehrContractQuery): Promise<Paginated<Contract>>
     /**
      * 批量创建/更新明细行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/workforce_plan_detail_row/batchSave
@@ -822,17 +822,17 @@ declare module '../internal' {
      * 获取假期类型列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_types
      */
-    leaveTypesCorehrLeave(query?: LeaveTypesCorehrLeaveQuery): Promise<LeaveTypesCorehrLeaveResponse>
+    leaveTypesCorehrLeave(query?: LeaveTypesCorehrLeaveQuery): Promise<Paginated<LeaveType, 'leave_type_list'>>
     /**
      * 批量查询员工假期余额
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_balances
      */
-    leaveBalancesCorehrLeave(query?: LeaveBalancesCorehrLeaveQuery): Promise<LeaveBalancesCorehrLeaveResponse>
+    leaveBalancesCorehrLeave(query?: LeaveBalancesCorehrLeaveQuery): Promise<Paginated<EmploymentLeaveBalance, 'employment_leave_balance_list'>>
     /**
      * 批量查询员工请假记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_request_history
      */
-    leaveRequestHistoryCorehrLeave(query?: LeaveRequestHistoryCorehrLeaveQuery): Promise<LeaveRequestHistoryCorehrLeaveResponse>
+    leaveRequestHistoryCorehrLeave(query?: LeaveRequestHistoryCorehrLeaveQuery): Promise<Paginated<LeaveRequest, 'leave_request_list'>>
     /**
      * 获取工作日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar
@@ -852,7 +852,7 @@ declare module '../internal' {
      * 批量查询用户授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/query
      */
-    queryCorehrAuthorization(query?: QueryCorehrAuthorizationQuery): Promise<QueryCorehrAuthorizationResponse>
+    queryCorehrAuthorization(query?: QueryCorehrAuthorizationQuery): Promise<Paginated<RoleAuthorization>>
     /**
      * 查询单个用户授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/get_by_param
@@ -862,7 +862,7 @@ declare module '../internal' {
      * 批量获取角色列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/security_group/list
      */
-    listCorehrSecurityGroup(query?: ListCorehrSecurityGroupQuery): Promise<ListCorehrSecurityGroupResponse>
+    listCorehrSecurityGroup(query?: ListCorehrSecurityGroupQuery): Promise<Paginated<SecurityGroup>>
     /**
      * 为用户授权角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/add_role_assign
@@ -897,17 +897,17 @@ declare module '../internal' {
      * 获取 HRBP 列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/bp/list
      */
-    listCorehrBp(query?: ListCorehrBpQuery): Promise<ListCorehrBpResponse>
+    listCorehrBp(query?: ListCorehrBpQuery): Promise<Paginated<Bp>>
     /**
      * 获取组织类角色授权列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/assigned_user/search
      */
-    searchCorehrAssignedUser(body: SearchCorehrAssignedUserRequest, query?: SearchCorehrAssignedUserQuery): Promise<SearchCorehrAssignedUserResponse>
+    searchCorehrAssignedUser(body: SearchCorehrAssignedUserRequest, query?: SearchCorehrAssignedUserQuery): Promise<Paginated<RoleAuthorization>>
     /**
      * 查询流程实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/list
      */
-    listCorehrProcess(query?: ListCorehrProcessQuery): Promise<ListCorehrProcessResponse>
+    listCorehrProcess(query?: ListCorehrProcessQuery): Promise<Paginated<string, 'process_ids'>>
     /**
      * 获取单个流程详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/get
@@ -932,7 +932,7 @@ declare module '../internal' {
      * 获取指定人员审批任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approver/list
      */
-    listCorehrApprover(query?: ListCorehrApproverQuery): Promise<ListCorehrApproverResponse>
+    listCorehrApprover(query?: ListCorehrApproverQuery): Promise<Paginated<ApproverInfo, 'approver_list'>>
     /**
      * 通过/拒绝审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-approver/update
@@ -962,7 +962,7 @@ declare module '../internal' {
      * 批量查询城市/区域信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subregion/list
      */
-    listCorehrSubregion(query?: ListCorehrSubregionQuery): Promise<ListCorehrSubregionResponse>
+    listCorehrSubregion(query?: ListCorehrSubregionQuery): Promise<Paginated<Subregion>>
     /**
      * 查询单条城市/区域信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subregion/get
@@ -972,7 +972,7 @@ declare module '../internal' {
      * 批量查询省份/行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subdivision/list
      */
-    listCorehrSubdivision(query?: ListCorehrSubdivisionQuery): Promise<ListCorehrSubdivisionResponse>
+    listCorehrSubdivision(query?: ListCorehrSubdivisionQuery): Promise<Paginated<Subdivision>>
     /**
      * 查询单条省份/行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subdivision/get
@@ -982,7 +982,7 @@ declare module '../internal' {
      * 批量查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/country_region/list
      */
-    listCorehrCountryRegion(query?: ListCorehrCountryRegionQuery): Promise<ListCorehrCountryRegionResponse>
+    listCorehrCountryRegion(query?: ListCorehrCountryRegionQuery): Promise<Paginated<CountryRegion>>
     /**
      * 查询单条国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/country_region/get
@@ -992,7 +992,7 @@ declare module '../internal' {
      * 批量查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/currency/list
      */
-    listCorehrCurrency(query?: ListCorehrCurrencyQuery): Promise<ListCorehrCurrencyResponse>
+    listCorehrCurrency(query?: ListCorehrCurrencyQuery): Promise<Paginated<Currency>>
     /**
      * 查询单个货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/currency/get
@@ -1022,12 +1022,12 @@ declare module '../internal' {
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/list
      */
-    listCorehrJob(query?: ListCorehrJobQuery): Promise<ListCorehrJobResponse>
+    listCorehrJob(query?: ListCorehrJobQuery): Promise<Paginated<Job>>
     /**
      * 批量查询部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/list
      */
-    listCorehrDepartment(query?: ListCorehrDepartmentQuery): Promise<ListCorehrDepartmentResponse>
+    listCorehrDepartment(query?: ListCorehrDepartmentQuery): Promise<Paginated<Department>>
     /**
      * 更新个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/patch
@@ -1051,11 +1051,7 @@ declare module '../internal' {
   }
 }
 
-export interface ListObjectApiNameCorehrCustomFieldQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListObjectApiNameCorehrCustomFieldQuery extends Pagination {
 }
 
 export interface QueryCorehrCustomFieldQuery {
@@ -1105,11 +1101,7 @@ export interface SearchCorehrBasicInfoCountryRegionRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoCountryRegionQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoCountryRegionQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoCountryRegionSubdivisionRequest {
@@ -1121,11 +1113,7 @@ export interface SearchCorehrBasicInfoCountryRegionSubdivisionRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoCountryRegionSubdivisionQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoCountryRegionSubdivisionQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoCityRequest {
@@ -1137,11 +1125,7 @@ export interface SearchCorehrBasicInfoCityRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoCityQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoCityQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoDistrictRequest {
@@ -1153,11 +1137,7 @@ export interface SearchCorehrBasicInfoDistrictRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoDistrictQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoDistrictQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoNationalityRequest {
@@ -1169,11 +1149,7 @@ export interface SearchCorehrBasicInfoNationalityRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoNationalityQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoNationalityQuery extends Pagination {
 }
 
 export interface CreateCorehrNationalIdTypeRequest {
@@ -1224,11 +1200,7 @@ export interface PatchCorehrNationalIdTypeQuery {
   client_token?: string
 }
 
-export interface ListCorehrNationalIdTypeQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrNationalIdTypeQuery extends Pagination {
   /** 证件类型 */
   identification_type?: string
   /** 证件类型编码 */
@@ -1250,11 +1222,7 @@ export interface SearchCorehrBasicInfoBankRequest {
   update_end_time?: string
 }
 
-export interface SearchCorehrBasicInfoBankQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoBankQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoBankBranchRequest {
@@ -1274,11 +1242,7 @@ export interface SearchCorehrBasicInfoBankBranchRequest {
   update_end_time?: string
 }
 
-export interface SearchCorehrBasicInfoBankBranchQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoBankBranchQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoCurrencyRequest {
@@ -1288,11 +1252,7 @@ export interface SearchCorehrBasicInfoCurrencyRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoCurrencyQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoCurrencyQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoTimeZoneRequest {
@@ -1302,11 +1262,7 @@ export interface SearchCorehrBasicInfoTimeZoneRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoTimeZoneQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoTimeZoneQuery extends Pagination {
 }
 
 export interface SearchCorehrBasicInfoLanguageRequest {
@@ -1316,11 +1272,7 @@ export interface SearchCorehrBasicInfoLanguageRequest {
   status_list?: 1 | 0[]
 }
 
-export interface SearchCorehrBasicInfoLanguageQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrBasicInfoLanguageQuery extends Pagination {
 }
 
 export interface CreateCorehrEmployeeTypeRequest {
@@ -1359,11 +1311,7 @@ export interface PatchCorehrEmployeeTypeQuery {
   client_token?: string
 }
 
-export interface ListCorehrEmployeeTypeQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrEmployeeTypeQuery extends Pagination {
 }
 
 export interface CreateCorehrWorkingHoursTypeRequest {
@@ -1406,11 +1354,7 @@ export interface PatchCorehrWorkingHoursTypeQuery {
   client_token?: string
 }
 
-export interface ListCorehrWorkingHoursTypeQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrWorkingHoursTypeQuery extends Pagination {
 }
 
 export interface ConvertCorehrCommonDataIdRequest {
@@ -1530,11 +1474,7 @@ export interface SearchCorehrEmployeeRequest {
   archive_cpst_plan_id_list?: string[]
 }
 
-export interface SearchCorehrEmployeeQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrEmployeeQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -1935,11 +1875,7 @@ export interface QueryCorehrEmployeesJobDataRequest {
   assignment_start_reasons?: string[]
 }
 
-export interface QueryCorehrEmployeesJobDataQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryCorehrEmployeesJobDataQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -1970,11 +1906,7 @@ export interface BatchGetCorehrEmployeesJobDataQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrJobDataQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrJobDataQuery extends Pagination {
   /** 雇佣 ID */
   employment_id?: string
   /** 任职信息 ID 列表，最大 100 个（不传则默认查询全部任职信息） */
@@ -2111,11 +2043,7 @@ export interface BatchCorehrEmployeesAdditionalJobRequest {
   is_effective?: boolean
 }
 
-export interface BatchCorehrEmployeesAdditionalJobQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface BatchCorehrEmployeesAdditionalJobQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -2131,11 +2059,7 @@ export interface QueryOperationLogsCorehrDepartmentRequest {
   end_date: string
 }
 
-export interface QueryOperationLogsCorehrDepartmentQuery {
-  /** 分页大小，最大 1000 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token,下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryOperationLogsCorehrDepartmentQuery extends Pagination {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
@@ -2224,11 +2148,7 @@ export interface BatchGetCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryRecentChangeCorehrDepartmentQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrDepartmentQuery extends Pagination {
   /** 查询的开始时间，格式 "yyyy-MM-dd"，不带时分秒，包含 start_date 传入的时间, 系统会以 start_date 的 00:00:00 查询。 */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd"，不带时分秒， 查询日期小于 end_data + 1 天的 00:00:00。 */
@@ -2262,11 +2182,7 @@ export interface TreeCorehrDepartmentRequest {
   effective_date?: string
 }
 
-export interface TreeCorehrDepartmentQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface TreeCorehrDepartmentQuery extends Pagination {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
@@ -2282,11 +2198,7 @@ export interface QueryMultiTimelineCorehrDepartmentRequest {
   fields?: string[]
 }
 
-export interface QueryMultiTimelineCorehrDepartmentQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryMultiTimelineCorehrDepartmentQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -2312,11 +2224,7 @@ export interface SearchCorehrDepartmentRequest {
   fields?: string[]
 }
 
-export interface SearchCorehrDepartmentQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrDepartmentQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -2382,11 +2290,7 @@ export interface PatchCorehrLocationQuery {
   client_token?: string
 }
 
-export interface QueryRecentChangeCorehrLocationQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrLocationQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -2398,11 +2302,7 @@ export interface BatchGetCorehrLocationRequest {
   location_ids: string[]
 }
 
-export interface ListCorehrLocationQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrLocationQuery extends Pagination {
 }
 
 export interface ActiveCorehrLocationRequest {
@@ -2589,18 +2489,10 @@ export interface ActiveCorehrCompanyRequest {
   operation_reason: string
 }
 
-export interface ListCorehrCompanyQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrCompanyQuery extends Pagination {
 }
 
-export interface QueryRecentChangeCorehrCompanyQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrCompanyQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -2646,11 +2538,7 @@ export interface PatchCorehrCostCenterQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface QueryRecentChangeCorehrCostCenterQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrCostCenterQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -2670,11 +2558,7 @@ export interface SearchCorehrCostCenterRequest {
   get_all_version?: boolean
 }
 
-export interface SearchCorehrCostCenterQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrCostCenterQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
@@ -2806,18 +2690,10 @@ export interface PatchCorehrJobFamilyQuery {
   client_token?: string
 }
 
-export interface ListCorehrJobFamilyQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrJobFamilyQuery extends Pagination {
 }
 
-export interface QueryRecentChangeCorehrJobFamilyQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrJobFamilyQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -2873,18 +2749,10 @@ export interface PatchCorehrJobLevelQuery {
   client_token?: string
 }
 
-export interface ListCorehrJobLevelQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrJobLevelQuery extends Pagination {
 }
 
-export interface QueryRecentChangeCorehrJobLevelQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrJobLevelQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -2939,18 +2807,10 @@ export interface QueryCorehrJobGradeRequest {
   active?: boolean
 }
 
-export interface QueryCorehrJobGradeQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryCorehrJobGradeQuery extends Pagination {
 }
 
-export interface QueryRecentChangeCorehrJobGradeQuery {
-  /** 分页大小，最大 2000 */
-  page_size: number
-  /** 页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryRecentChangeCorehrJobGradeQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
@@ -3013,11 +2873,7 @@ export interface PatchCorehrJobQuery {
   client_token?: string
 }
 
-export interface ListCorehrJobQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrJobQuery extends Pagination {
   /** 名称 */
   name?: string
   /** 语言 */
@@ -3073,22 +2929,14 @@ export interface QueryCorehrPreHireRequest {
   fields?: string[]
 }
 
-export interface QueryCorehrPreHireQuery {
-  /** 分页大小，最大 10 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface QueryCorehrPreHireQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrPreHireQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrPreHireQuery extends Pagination {
   /** 待入职ID列表 */
   pre_hire_ids?: string[]
 }
@@ -3130,11 +2978,7 @@ export interface SearchCorehrPreHireRequest {
   fields?: string[]
 }
 
-export interface SearchCorehrPreHireQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrPreHireQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -3244,11 +3088,7 @@ export interface SearchCorehrProbationRequest {
   final_assessment_grade?: string
 }
 
-export interface SearchCorehrProbationQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrProbationQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -3354,11 +3194,7 @@ export interface SearchCorehrJobChangeRequest {
   target_department_ids?: string[]
 }
 
-export interface SearchCorehrJobChangeQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrJobChangeQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -3493,11 +3329,7 @@ export interface SearchCorehrOffboardingRequest {
   employee_reasons?: string[]
 }
 
-export interface SearchCorehrOffboardingQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrOffboardingQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
@@ -3562,11 +3394,7 @@ export interface PatchCorehrContractQuery {
   client_token?: string
 }
 
-export interface ListCorehrContractQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrContractQuery extends Pagination {
 }
 
 export interface SearchCorehrContractRequest {
@@ -3576,11 +3404,7 @@ export interface SearchCorehrContractRequest {
   contract_id_list?: string[]
 }
 
-export interface SearchCorehrContractQuery {
-  /** 分页大小，最大 100 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchCorehrContractQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
@@ -3647,11 +3471,7 @@ export interface BatchCorehrWorkforcePlanDetailRequest {
   cost_center_ids?: string[]
 }
 
-export interface BatchCorehrWorkforcePlanDetailQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface BatchCorehrWorkforcePlanDetailQuery extends Pagination {
 }
 
 export interface CreateCorehrLeaveGrantingRecordRequest {
@@ -3680,22 +3500,14 @@ export interface CreateCorehrLeaveGrantingRecordQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface LeaveTypesCorehrLeaveQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface LeaveTypesCorehrLeaveQuery extends Pagination {
   /** 假期类型状态（不传则为全部）可选值有：- 1：已启用- 2：已停用 */
   status?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface LeaveBalancesCorehrLeaveQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大20 */
-  page_size: string
+export interface LeaveBalancesCorehrLeaveQuery extends Pagination {
   /** 查询截止日期，即截止到某天余额数据的日期（不传则默认为当天） */
   as_of_date?: string
   /** 员工 ID 列表，最大 100 个（不传则默认查询全部员工） */
@@ -3708,11 +3520,7 @@ export interface LeaveBalancesCorehrLeaveQuery {
   include_offboard?: boolean
 }
 
-export interface LeaveRequestHistoryCorehrLeaveQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface LeaveRequestHistoryCorehrLeaveQuery extends Pagination {
   /** 员工 ID 列表，最大 100 个（不传则默认查询全部员工） */
   employment_id_list?: string[]
   /** 休假发起人 ID 列表，最大 100 个 */
@@ -3804,15 +3612,11 @@ export interface WorkCalendarDateCorehrLeaveRequest {
   ids?: string[]
 }
 
-export interface QueryCorehrAuthorizationQuery {
+export interface QueryCorehrAuthorizationQuery extends Pagination {
   /** 员工ID列表，最大100个（不传则默认查询全部员工） */
   employment_id_list?: string[]
   /** 角色 ID 列表，最大 100 个 */
   role_id_list?: string[]
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大20 */
-  page_size?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 授权时间大于 */
@@ -3828,11 +3632,7 @@ export interface GetByParamCorehrAuthorizationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface ListCorehrSecurityGroupQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrSecurityGroupQuery extends Pagination {
 }
 
 export interface AddRoleAssignCorehrAuthorizationRequest {
@@ -3910,11 +3710,7 @@ export interface QueryCorehrSecurityGroupQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrBpQuery {
-  /** 分页大小，最大 500 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListCorehrBpQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -3939,13 +3735,9 @@ export interface SearchCorehrAssignedUserQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface ListCorehrProcessQuery {
+export interface ListCorehrProcessQuery extends Pagination {
   /** 查询流程状态列表。 */
   statuses?: number[]
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size: number
   /** 查询开始时间（unix毫秒时间戳），闭区间，开始时间和结束时间跨度不能超过31天 */
   modify_time_from: string
   /** 1. 任务查询结束时间，闭区间 2. 单位：ms。从1970年1月1日(UTC/GMT的午夜) 开始经过的毫秒数 3. 注意：开始时间和结束时间跨度不能超过31天 4. 示例值：1719549169735 */
@@ -3994,11 +3786,7 @@ export interface UpdateCorehrProcessWithdrawQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
 }
 
-export interface ListCorehrApproverQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListCorehrApproverQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 按user_id_type类型传递。如果system_approval为false，则必填。否则非必填。 */
@@ -4104,36 +3892,20 @@ export interface MatchCorehrCompensationStandardQuery {
   effective_time?: string
 }
 
-export interface ListCorehrSubregionQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrSubregionQuery extends Pagination {
   /** 省份/行政区id，填写后只查询该省份/行政区下的城市/区域 */
   subdivision_id?: string
 }
 
-export interface ListCorehrSubdivisionQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrSubdivisionQuery extends Pagination {
   /** 国家/地区id，填写后只查询该国家/地区下的省份/行政区 */
   country_region_id?: string
 }
 
-export interface ListCorehrCountryRegionQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrCountryRegionQuery extends Pagination {
 }
 
-export interface ListCorehrCurrencyQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrCurrencyQuery extends Pagination {
 }
 
 export interface PatchCorehrDepartmentRequest {
@@ -4173,22 +3945,14 @@ export interface GetCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrJobQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrJobQuery extends Pagination {
   /** 名称 */
   name?: string
   /** 语言 */
   query_language?: string
 }
 
-export interface ListCorehrDepartmentQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size: string
+export interface ListCorehrDepartmentQuery extends Pagination {
   /** 部门ID列表 */
   department_id_list?: string[]
   /** 部门名称列表，需精确匹配 */
@@ -4332,15 +4096,6 @@ export interface SubmitCorehrOffboardingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface ListObjectApiNameCorehrCustomFieldResponse {
-  /** 对象列表 */
-  items?: Object[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface QueryCorehrCustomFieldResponse {
   /** 自定义字段列表 */
   items?: CustomField[]
@@ -4365,43 +4120,6 @@ export interface EditEnumOptionCorehrCommonDataMetaDataResponse {
   enum_field_options?: EnumFieldOption[]
 }
 
-export interface SearchCorehrBasicInfoCountryRegionResponse {
-  /** 查询到的国家/地区列表 */
-  items?: CountryRegion[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoCountryRegionSubdivisionResponse {
-  /** 查询的省份/行政区信息 */
-  items?: CountryRegionSubdivision[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoCityResponse {
-  /** 查询到的城市列表 */
-  items?: City[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoDistrictResponse {
-  /** 查询到的区/县列表 */
-  items?: District[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoNationalityResponse {
-  /** 查询到的国籍列表 */
-  items?: Nationality[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface CreateCorehrNationalIdTypeResponse {
   national_id_type?: NationalIdType
 }
@@ -4413,50 +4131,6 @@ export interface PatchCorehrNationalIdTypeResponse {
 export interface GetCorehrNationalIdTypeResponse {
   /** 国家证件类型信息 */
   national_id_type?: NationalIdType
-}
-
-export interface ListCorehrNationalIdTypeResponse {
-  /** 查询的国家证件类型信息 */
-  items?: NationalIdType[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface SearchCorehrBasicInfoBankResponse {
-  /** 查询到的银行列表 */
-  items?: Bank[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoBankBranchResponse {
-  /** 查询到的支行列表 */
-  items?: BankBranch[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoCurrencyResponse {
-  /** 查询到的货币信息列表 */
-  items?: Currency[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoTimeZoneResponse {
-  /** 查询到的时区列表 */
-  items?: TimeZone[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface SearchCorehrBasicInfoLanguageResponse {
-  /** 查询到的语言列表 */
-  items?: Language[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface CreateCorehrEmployeeTypeResponse {
@@ -4472,15 +4146,6 @@ export interface GetCorehrEmployeeTypeResponse {
   employee_type?: EmployeeType
 }
 
-export interface ListCorehrEmployeeTypeResponse {
-  /** 查询的雇员类型信息 */
-  items?: EmployeeType[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface CreateCorehrWorkingHoursTypeResponse {
   working_hours_type?: WorkingHoursType
 }
@@ -4494,15 +4159,6 @@ export interface GetCorehrWorkingHoursTypeResponse {
   working_hours_type?: WorkingHoursType
 }
 
-export interface ListCorehrWorkingHoursTypeResponse {
-  /** 查询的工时制度信息 */
-  items?: WorkingHoursType[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface ConvertCorehrCommonDataIdResponse {
   /** ID 信息列表 */
   items?: IdInfo[]
@@ -4511,15 +4167,6 @@ export interface ConvertCorehrCommonDataIdResponse {
 export interface BatchGetCorehrEmployeeResponse {
   /** 查询的雇佣信息 */
   items?: Employee[]
-}
-
-export interface SearchCorehrEmployeeResponse {
-  /** 查询的雇佣信息 */
-  items?: Employee[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface CreateCorehrEmployeeResponse {
@@ -4560,27 +4207,9 @@ export interface PatchCorehrJobDataResponse {
   job_data?: JobData
 }
 
-export interface QueryCorehrEmployeesJobDataResponse {
-  /** 任职信息 */
-  items?: EmployeeJobData[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
 export interface BatchGetCorehrEmployeesJobDataResponse {
   /** 查询的雇佣信息 */
   items?: EmployeeJobData[]
-}
-
-export interface ListCorehrJobDataResponse {
-  /** 查询的任职信息 */
-  items?: JobData[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface GetCorehrJobDataResponse {
@@ -4594,15 +4223,6 @@ export interface CreateCorehrEmployeesAdditionalJobResponse {
 
 export interface PatchCorehrEmployeesAdditionalJobResponse {
   additional_job?: EmployeesAdditionalJobWriteResp
-}
-
-export interface BatchCorehrEmployeesAdditionalJobResponse {
-  /** 兼职记录 */
-  items?: EmployeesAdditionalJob[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface QueryOperationLogsCorehrDepartmentResponse {
@@ -4644,33 +4264,6 @@ export interface QueryTimelineCorehrDepartmentResponse {
   items?: DepartmentTimeline[]
 }
 
-export interface TreeCorehrDepartmentResponse {
-  /** 部门树节点 */
-  items?: DepartmentTree[]
-  /** 下一页token */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
-export interface QueryMultiTimelineCorehrDepartmentResponse {
-  /** 部门信息 */
-  items?: DepartmentTimeline[]
-  /** 下一页token */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
-export interface SearchCorehrDepartmentResponse {
-  /** 查询的部门信息 */
-  items?: Department[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
 export interface CreateCorehrLocationResponse {
   location?: Location
 }
@@ -4696,15 +4289,6 @@ export interface BatchGetCorehrLocationResponse {
   items?: Location[]
 }
 
-export interface ListCorehrLocationResponse {
-  /** 查询的地点信息 */
-  items?: Location[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface CreateCorehrLocationAddressResponse {
   /** 地址 ID */
   address_id?: string
@@ -4721,15 +4305,6 @@ export interface PatchCorehrCompanyResponse {
 export interface GetCorehrCompanyResponse {
   /** 公司信息 */
   company?: Company
-}
-
-export interface ListCorehrCompanyResponse {
-  /** 查询的公司信息 */
-  items?: Company[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface QueryRecentChangeCorehrCompanyResponse {
@@ -4765,15 +4340,6 @@ export interface QueryRecentChangeCorehrCostCenterResponse {
   has_more?: boolean
   /** 删除的成本中心 ID 列表 */
   deleted_cost_center_ids?: string[]
-}
-
-export interface SearchCorehrCostCenterResponse {
-  /** 成本中心信息 */
-  items?: CostCenterVersion[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface CreateCorehrCostCenterVersionResponse {
@@ -4812,15 +4378,6 @@ export interface GetCorehrJobFamilyResponse {
   job_family?: JobFamily
 }
 
-export interface ListCorehrJobFamilyResponse {
-  /** 查询的职务序列信息 */
-  items?: JobFamily[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface QueryRecentChangeCorehrJobFamilyResponse {
   /** 序列 ID 列表 */
   job_family_ids?: string[]
@@ -4850,15 +4407,6 @@ export interface GetCorehrJobLevelResponse {
   job_level?: JobLevel
 }
 
-export interface ListCorehrJobLevelResponse {
-  /** 查询的职务级别信息 */
-  items?: JobLevel[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface QueryRecentChangeCorehrJobLevelResponse {
   /** 职级 ID 列表 */
   job_level_ids?: string[]
@@ -4878,15 +4426,6 @@ export interface BatchGetCorehrJobLevelResponse {
 export interface CreateCorehrJobGradeResponse {
   /** 职等ID */
   grade_id?: string
-}
-
-export interface QueryCorehrJobGradeResponse {
-  /** 职等信息列表 */
-  items?: JobGrade[]
-  /** 下一页token */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface QueryRecentChangeCorehrJobGradeResponse {
@@ -4913,15 +4452,6 @@ export interface GetCorehrJobResponse {
   job?: Job
 }
 
-export interface ListCorehrJobResponse {
-  /** 查询的职务信息 */
-  items?: Job[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface WithdrawOnboardingCorehrPreHireResponse {
   /** 是否成功撤销入职 */
   success?: boolean
@@ -4942,36 +4472,9 @@ export interface PatchCorehrPreHireResponse {
   pre_hire_id?: string
 }
 
-export interface QueryCorehrPreHireResponse {
-  /** 查询待入职的信息 */
-  items?: PreHire[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
 export interface GetCorehrPreHireResponse {
   /** 待入职信息 */
   pre_hire?: PreHire
-}
-
-export interface ListCorehrPreHireResponse {
-  /** 查询的待入职信息 */
-  items?: PreHireQuery[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface SearchCorehrPreHireResponse {
-  /** 查询的部门信息 */
-  items?: PreHire[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface TransitTaskCorehrPreHireResponse {
@@ -4991,15 +4494,6 @@ export interface PatchCorehrPreHireResponse {
 export interface CreateCorehrProbationAssessmentResponse {
   /** 创建的试用期考核记录 ID 列表，有序返回 */
   assessment_ids?: string[]
-}
-
-export interface SearchCorehrProbationResponse {
-  /** 查询的试用期信息 */
-  items?: ProbationInfo[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface SubmitCorehrProbationResponse {
@@ -5040,15 +4534,6 @@ export interface QueryCorehrTransferTypeResponse {
 export interface QueryCorehrTransferReasonResponse {
   /** 异动原因列表 */
   items?: TransferReason[]
-}
-
-export interface SearchCorehrJobChangeResponse {
-  /** 员工异动列表 */
-  items?: JobChange[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface CreateCorehrJobChangeResponse {
@@ -5107,15 +4592,6 @@ export interface EditCorehrOffboardingResponse {
   data: ObjectFieldData[]
 }
 
-export interface SearchCorehrOffboardingResponse {
-  /** 查询的员工离职信息 */
-  items?: Offboarding[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
 export interface CreateCorehrContractResponse {
   contract?: Contract
 }
@@ -5127,24 +4603,6 @@ export interface PatchCorehrContractResponse {
 export interface GetCorehrContractResponse {
   /** 合同信息 */
   contract?: Contract
-}
-
-export interface ListCorehrContractResponse {
-  /** 查询的合同信息 */
-  items?: Contract[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface SearchCorehrContractResponse {
-  /** 查询的合同信息 */
-  items?: Contract[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface ListCorehrWorkforcePlanResponse {
@@ -5172,33 +4630,6 @@ export interface CreateCorehrLeaveGrantingRecordResponse {
   leave_granting_record?: LeaveGrantingRecord
 }
 
-export interface LeaveTypesCorehrLeaveResponse {
-  /** 假期类型列表 */
-  leave_type_list?: LeaveType[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface LeaveBalancesCorehrLeaveResponse {
-  /** 员工假期余额信息列表 */
-  employment_leave_balance_list?: EmploymentLeaveBalance[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface LeaveRequestHistoryCorehrLeaveResponse {
-  /** 请假记录信息列表 */
-  leave_request_list?: LeaveRequest[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface WorkCalendarCorehrLeaveResponse {
   /** 工作日历列表 */
   work_calendars?: WorkCalendarDetail[]
@@ -5216,27 +4647,9 @@ export interface WorkCalendarDateCorehrLeaveResponse {
   calendar_dates?: WkCalendarDate[]
 }
 
-export interface QueryCorehrAuthorizationResponse {
-  /** 查询的用户授权信息 */
-  items?: RoleAuthorization[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetByParamCorehrAuthorizationResponse {
   /** 角色授权信息 */
   role_authorization?: RoleAuthorization
-}
-
-export interface ListCorehrSecurityGroupResponse {
-  /** 查询的用户角色信息 */
-  items?: SecurityGroup[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface AddRoleAssignCorehrAuthorizationResponse {
@@ -5269,33 +4682,6 @@ export interface GetByDepartmentCorehrBpResponse {
 export interface QueryCorehrSecurityGroupResponse {
   /** HRBP/属地 BP 信息 */
   hrbp_list?: Hrbp[]
-}
-
-export interface ListCorehrBpResponse {
-  /** HRBP 信息 */
-  items?: Bp[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
-export interface SearchCorehrAssignedUserResponse {
-  /** 用户授权信息 */
-  items?: RoleAuthorization[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListCorehrProcessResponse {
-  /** 流程实例ID列表 */
-  process_ids?: string[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 有更多项时的分页键 */
-  page_token?: string
 }
 
 export interface GetCorehrProcessResponse {
@@ -5350,15 +4736,6 @@ export interface GetCorehrProcessFormVariableDataResponse {
   process_id?: string
 }
 
-export interface ListCorehrApproverResponse {
-  /** 分页键 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
-  /** 审批任务列表 */
-  approver_list?: ApproverInfo[]
-}
-
 export interface UpdateCorehrProcessApproverResponse {
   /** 错误码，非 0 表示失败 */
   code: number
@@ -5380,27 +4757,9 @@ export interface GetCorehrProcessFormVariableDataResponse {
   field_variable_values?: FormFieldVariable[]
 }
 
-export interface ListCorehrSubregionResponse {
-  /** 城市/区域信息 */
-  items?: Subregion[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetCorehrSubregionResponse {
   /** 城市/区域信息 */
   subregion?: Subregion
-}
-
-export interface ListCorehrSubdivisionResponse {
-  /** 省份/行政区信息 */
-  items?: Subdivision[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface GetCorehrSubdivisionResponse {
@@ -5408,27 +4767,9 @@ export interface GetCorehrSubdivisionResponse {
   subdivision?: Subdivision
 }
 
-export interface ListCorehrCountryRegionResponse {
-  /** 国家/地址信息 */
-  items?: CountryRegion[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetCorehrCountryRegionResponse {
   /** 国家/地址信息 */
   country_region?: CountryRegion
-}
-
-export interface ListCorehrCurrencyResponse {
-  /** 货币信息 */
-  items?: Currency[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface GetCorehrCurrencyResponse {
@@ -5448,24 +4789,6 @@ export interface PatchCorehrDepartmentResponse {
 export interface GetCorehrDepartmentResponse {
   /** 部门信息 */
   department?: Department
-}
-
-export interface ListCorehrJobResponse {
-  /** 查询的职务信息 */
-  items?: Job[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListCorehrDepartmentResponse {
-  /** 查询的部门信息 */
-  items?: Department[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface PatchCorehrPersonResponse {

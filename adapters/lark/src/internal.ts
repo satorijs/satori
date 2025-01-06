@@ -10,6 +10,18 @@ export interface BaseResponse {
   msg: string
 }
 
+export interface Pagination {
+  page_size?: number
+  page_token?: string
+}
+
+export type Paginated<T, K extends string = 'items'> = {
+  [P in K]: T[];
+} & {
+  has_more: boolean
+  page_token: string
+}
+
 export interface InternalRoute {
   name: string
   multipart?: boolean

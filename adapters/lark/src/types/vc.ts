@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Alert, ApprovalConfig, Device, DisableInformConfig, Meeting, MeetingInfo, MeetingInviteStatus, MeetingParticipantResult, MeetingRecording, MeetingUser, Participant, ParticipantQuality, RecordingPermissionObject, Report, ReportTopUser, Reserve, ReserveAdminConfig, ReserveCorrectionCheckInfo, ReserveFormConfig, ReserveMeetingSetting, ReserveScopeConfig, Room, RoomConfig, RoomDigitalSignage, RoomLevel, RoomMeetingReservation, RoomStatus, ScopeConfig, TimeConfig } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -57,7 +57,7 @@ declare module '../internal' {
      * 获取与会议号关联的会议列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/list_by_no
      */
-    listByNoVcMeeting(query?: ListByNoVcMeetingQuery): Promise<ListByNoVcMeetingResponse>
+    listByNoVcMeeting(query?: ListByNoVcMeetingQuery): Promise<Paginated<Meeting, 'meeting_briefs'>>
     /**
      * 开始录制
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting-recording/start
@@ -147,7 +147,7 @@ declare module '../internal' {
      * 查询会议室层级列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/list
      */
-    listVcRoomLevel(query?: ListVcRoomLevelQuery): Promise<ListVcRoomLevelResponse>
+    listVcRoomLevel(query?: ListVcRoomLevelQuery): Promise<Paginated<RoomLevel>>
     /**
      * 搜索会议室层级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/search
@@ -182,12 +182,12 @@ declare module '../internal' {
      * 查询会议室列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room/list
      */
-    listVcRoom(query?: ListVcRoomQuery): Promise<ListVcRoomResponse>
+    listVcRoom(query?: ListVcRoomQuery): Promise<Paginated<Room, 'rooms'>>
     /**
      * 搜索会议室
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room/search
      */
-    searchVcRoom(body: SearchVcRoomRequest, query?: SearchVcRoomQuery): Promise<SearchVcRoomResponse>
+    searchVcRoom(body: SearchVcRoomRequest, query?: SearchVcRoomQuery): Promise<Paginated<Room, 'rooms'>>
     /**
      * 查询会议室配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/scope_config/get
@@ -242,27 +242,27 @@ declare module '../internal' {
      * 查询会议明细
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting_list/get
      */
-    getVcMeetingList(query?: GetVcMeetingListQuery): Promise<GetVcMeetingListResponse>
+    getVcMeetingList(query?: GetVcMeetingListQuery): Promise<Paginated<MeetingInfo, 'meeting_list'>>
     /**
      * 查询参会人明细
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_list/get
      */
-    getVcParticipantList(query?: GetVcParticipantListQuery): Promise<GetVcParticipantListResponse>
+    getVcParticipantList(query?: GetVcParticipantListQuery): Promise<Paginated<Participant, 'participants'>>
     /**
      * 查询参会人会议质量数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_quality_list/get
      */
-    getVcParticipantQualityList(query?: GetVcParticipantQualityListQuery): Promise<GetVcParticipantQualityListResponse>
+    getVcParticipantQualityList(query?: GetVcParticipantQualityListQuery): Promise<Paginated<ParticipantQuality, 'participant_quality_list'>>
     /**
      * 查询会议室预定数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/resource_reservation_list/get
      */
-    getVcResourceReservationList(query?: GetVcResourceReservationListQuery): Promise<GetVcResourceReservationListResponse>
+    getVcResourceReservationList(query?: GetVcResourceReservationListQuery): Promise<Paginated<RoomMeetingReservation, 'room_reservation_list'>>
     /**
      * 获取告警记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/alert/list
      */
-    listVcAlert(query?: ListVcAlertQuery): Promise<ListVcAlertResponse>
+    listVcAlert(query?: ListVcAlertQuery): Promise<Paginated<Alert>>
     /**
      * 创建签到板部署码
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_config/set_checkboard_access_code
@@ -365,17 +365,13 @@ export interface GetVcMeetingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListByNoVcMeetingQuery {
+export interface ListByNoVcMeetingQuery extends Pagination {
   /** 9位会议号 */
   meeting_no: string
   /** 查询开始时间（unix时间，单位sec） */
   start_time: string
   /** 查询结束时间（unix时间，单位sec） */
   end_time: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface StartVcMeetingRecordingRequest {
@@ -531,13 +527,9 @@ export interface MgetVcRoomLevelRequest {
   level_ids: string[]
 }
 
-export interface ListVcRoomLevelQuery {
+export interface ListVcRoomLevelQuery extends Pagination {
   /** 层级ID，不传则返回该租户下第一层级列表 */
   room_level_id?: string
-  /** 分页尺寸大小 */
-  page_size?: number
-  /** 分页标记,第一次请求不填,表示从头开始遍历.下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
 }
 
 export interface SearchVcRoomLevelQuery {
@@ -604,11 +596,7 @@ export interface MgetVcRoomQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListVcRoomQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListVcRoomQuery extends Pagination {
   /** 层级ID，不传则返回该租户下的所有会议室 */
   room_level_id?: string
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
@@ -740,7 +728,7 @@ export interface PatchVcReserveConfigDisableInformQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcMeetingListQuery {
+export interface GetVcMeetingListQuery extends Pagination {
   /** 查询开始时间（unix时间，单位sec） */
   start_time: string
   /** 查询结束时间（unix时间，单位sec） */
@@ -755,15 +743,11 @@ export interface GetVcMeetingListQuery {
   room_id?: string
   /** 按会议类型筛选（最多一个筛选条件） */
   meeting_type?: 1 | 2 | 3
-  /** 分页尺寸大小 */
-  page_size?: number
-  /** 分页标记,第一次请求不填,表示从头开始遍历.下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcParticipantListQuery {
+export interface GetVcParticipantListQuery extends Pagination {
   /** 会议开始时间（需要精确到一分钟，unix时间，单位sec） */
   meeting_start_time: string
   /** 会议结束时间（unix时间，单位sec；对于进行中会议则传0） */
@@ -776,15 +760,11 @@ export interface GetVcParticipantListQuery {
   user_id?: string
   /** 按参会Rooms筛选（最多一个筛选条件） */
   room_id?: string
-  /** 分页尺寸大小 */
-  page_size?: number
-  /** 分页标记,第一次请求不填,表示从头开始遍历.下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcParticipantQualityListQuery {
+export interface GetVcParticipantQualityListQuery extends Pagination {
   /** 会议开始时间（需要精确到一分钟，unix时间，单位sec） */
   meeting_start_time: string
   /** 会议结束时间（unix时间，单位sec） */
@@ -797,15 +777,11 @@ export interface GetVcParticipantQualityListQuery {
   user_id?: string
   /** 参会人为Rooms时填入 */
   room_id?: string
-  /** 分页尺寸大小 */
-  page_size?: number
-  /** 分页标记,第一次请求不填,表示从头开始遍历.下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcResourceReservationListQuery {
+export interface GetVcResourceReservationListQuery extends Pagination {
   /** 层级id */
   room_level_id: string
   /** 是否展示会议主题 */
@@ -818,13 +794,9 @@ export interface GetVcResourceReservationListQuery {
   room_ids: string[]
   /** 若为true表示导出room_ids范围外的会议室，默认为false */
   is_exclude?: boolean
-  /** 分页尺寸大小 */
-  page_size?: number
-  /** 分页标记,第一次请求不填,表示从头开始遍历.下次遍历可采用该 page_token获取查询结果 */
-  page_token?: string
 }
 
-export interface ListVcAlertQuery {
+export interface ListVcAlertQuery extends Pagination {
   /** 开始时间（unix时间，单位sec） */
   start_time: string
   /** 结束时间（unix时间，单位sec） */
@@ -833,10 +805,6 @@ export interface ListVcAlertQuery {
   query_type?: 1 | 2 | 3
   /** 查询对象ID */
   query_value?: string
-  /** 请求期望返回的告警记录数量，不足则返回全部，该值默认为 100，最大为 1000 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface SetCheckboardAccessCodeVcRoomConfigRequest {
@@ -949,15 +917,6 @@ export interface GetVcMeetingResponse {
   meeting?: Meeting
 }
 
-export interface ListByNoVcMeetingResponse {
-  /** 是否还有数据 */
-  has_more?: boolean
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 会议简要信息列表 */
-  meeting_briefs?: Meeting[]
-}
-
 export interface GetVcMeetingRecordingResponse {
   recording?: MeetingRecording
 }
@@ -1016,13 +975,6 @@ export interface MgetVcRoomLevelResponse {
   items?: RoomLevel[]
 }
 
-export interface ListVcRoomLevelResponse {
-  /** 层级列表 */
-  items?: RoomLevel[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface SearchVcRoomLevelResponse {
   /** 层级id列表 */
   level_ids?: string[]
@@ -1039,24 +991,6 @@ export interface GetVcRoomResponse {
 export interface MgetVcRoomResponse {
   /** 会议室列表 */
   items?: Room[]
-}
-
-export interface ListVcRoomResponse {
-  /** 会议室列表 */
-  rooms?: Room[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface SearchVcRoomResponse {
-  /** 会议室列表 */
-  rooms?: Room[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
 }
 
 export interface GetVcScopeConfigResponse {
@@ -1088,51 +1022,6 @@ export interface GetVcReserveConfigAdminResponse {
 export interface GetVcReserveConfigDisableInformResponse {
   /** 会议室禁用通知配置 */
   disable_inform?: DisableInformConfig
-}
-
-export interface GetVcMeetingListResponse {
-  /** 会议列表 */
-  meeting_list?: MeetingInfo[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface GetVcParticipantListResponse {
-  /** 参会人列表 */
-  participants?: Participant[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface GetVcParticipantQualityListResponse {
-  /** 参会人参会质量列表 */
-  participant_quality_list?: ParticipantQuality[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface GetVcResourceReservationListResponse {
-  /** 会议室预定列表 */
-  room_reservation_list?: RoomMeetingReservation[]
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface ListVcAlertResponse {
-  /** 是否还有数据 */
-  has_more?: boolean
-  /** 下一页分页的token，下次请求时传入 */
-  page_token?: string
-  /** 告警记录 */
-  items?: Alert[]
 }
 
 export interface SetCheckboardAccessCodeVcRoomConfigResponse {

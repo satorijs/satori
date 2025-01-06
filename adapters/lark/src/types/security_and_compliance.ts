@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { OpenapiLog } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,7 +7,7 @@ declare module '../internal' {
      * 获取OpenAPI审计日志数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/openapi_log/list_data
      */
-    listDataSecurityAndComplianceOpenapiLog(body: ListDataSecurityAndComplianceOpenapiLogRequest): Promise<ListDataSecurityAndComplianceOpenapiLogResponse>
+    listDataSecurityAndComplianceOpenapiLog(body: ListDataSecurityAndComplianceOpenapiLogRequest): Promise<Paginated<OpenapiLog>>
   }
 }
 
@@ -24,15 +24,6 @@ export interface ListDataSecurityAndComplianceOpenapiLogRequest {
   page_size?: number
   /** 分页标记，第一次请求不填，表示从头开始遍历；当返回的has_more为true时，会返回新的page_token，再次调用接口，传入这个page_token，将获得下一页数据 */
   page_token?: string
-}
-
-export interface ListDataSecurityAndComplianceOpenapiLogResponse {
-  /** openapi日志列表 */
-  items?: OpenapiLog[]
-  /** 分页标记 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
 }
 
 Internal.define({

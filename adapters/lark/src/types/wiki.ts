@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Member, Node, Setting, Space, TaskResult } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,7 +7,7 @@ declare module '../internal' {
      * 获取知识空间列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/list
      */
-    listWikiSpace(query?: ListWikiSpaceQuery): Promise<ListWikiSpaceResponse>
+    listWikiSpace(query?: ListWikiSpaceQuery): Promise<Paginated<Space>>
     /**
      * 获取知识空间信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/get
@@ -22,7 +22,7 @@ declare module '../internal' {
      * 获取知识空间成员列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/list
      */
-    listWikiSpaceMember(space_id: string, query?: ListWikiSpaceMemberQuery): Promise<ListWikiSpaceMemberResponse>
+    listWikiSpaceMember(space_id: string, query?: ListWikiSpaceMemberQuery): Promise<Paginated<Member, 'members'>>
     /**
      * 添加知识空间成员
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/create
@@ -52,7 +52,7 @@ declare module '../internal' {
      * 获取知识空间子节点列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/list
      */
-    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery): Promise<ListWikiSpaceNodeResponse>
+    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery): Promise<Paginated<Node>>
     /**
      * 移动知识空间节点
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/move
@@ -82,15 +82,11 @@ declare module '../internal' {
      * 搜索 Wiki
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uEzN0YjLxcDN24SM3QjN/search_wiki
      */
-    searchWikiNode(body: SearchWikiNodeRequest, query?: SearchWikiNodeQuery): Promise<SearchWikiNodeResponse>
+    searchWikiNode(body: SearchWikiNodeRequest, query?: SearchWikiNodeQuery): Promise<Paginated<Node>>
   }
 }
 
-export interface ListWikiSpaceQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListWikiSpaceQuery extends Pagination {
   /** 当查询个人文档库时，指定返回的文档库名称展示语言。可选值有：zh, id, de, en, es, fr, it, pt, vi, ru, hi, th, ko, ja, zh-HK, zh-TW。 */
   lang?: 'zh' | 'id' | 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt' | 'vi' | 'ru' | 'hi' | 'th' | 'ko' | 'ja' | 'zh-HK' | 'zh-TW'
 }
@@ -109,11 +105,7 @@ export interface CreateWikiSpaceRequest {
   open_sharing?: 'open' | 'closed'
 }
 
-export interface ListWikiSpaceMemberQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListWikiSpaceMemberQuery extends Pagination {
 }
 
 export interface CreateWikiSpaceMemberRequest {
@@ -168,11 +160,7 @@ export interface GetNodeWikiSpaceQuery {
   obj_type?: 'doc' | 'docx' | 'sheet' | 'mindnote' | 'bitable' | 'file' | 'slides' | 'wiki'
 }
 
-export interface ListWikiSpaceNodeQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListWikiSpaceNodeQuery extends Pagination {
   /** 父节点token */
   parent_node_token?: string
 }
@@ -223,20 +211,7 @@ export interface SearchWikiNodeRequest {
   node_id?: string
 }
 
-export interface SearchWikiNodeQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
-}
-
-export interface ListWikiSpaceResponse {
-  /** 知识空间列表 */
-  items?: Space[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
+export interface SearchWikiNodeQuery extends Pagination {
 }
 
 export interface GetWikiSpaceResponse {
@@ -247,15 +222,6 @@ export interface GetWikiSpaceResponse {
 export interface CreateWikiSpaceResponse {
   /** 知识空间信息 */
   space?: Space
-}
-
-export interface ListWikiSpaceMemberResponse {
-  /** 空间成员列表 */
-  members?: Member[]
-  /** 分页标记 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface CreateWikiSpaceMemberResponse {
@@ -283,15 +249,6 @@ export interface GetNodeWikiSpaceResponse {
   node?: Node
 }
 
-export interface ListWikiSpaceNodeResponse {
-  /** 知识空间节点信息 */
-  items?: Node[]
-  /** 分页Token */
-  page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
 export interface MoveWikiSpaceNodeResponse {
   /** 移动后的节点信息 */
   node?: Node
@@ -314,15 +271,6 @@ export interface MoveDocsToWikiWikiSpaceNodeResponse {
 export interface GetWikiTaskResponse {
   /** 任务结果 */
   task: TaskResult
-}
-
-export interface SearchWikiNodeResponse {
-  /** 搜索到 wiki */
-  items: Node[]
-  /** 翻页 token，传入返回下一页，首页不需要传入 */
-  page_token?: string
-  /** 是否还有下一页 */
-  has_more: boolean
 }
 
 Internal.define({

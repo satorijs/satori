@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { MaskSession } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { App, AppDashboard, AppRole, AppRoleBlockRole, AppRoleMember, AppRoleMemberId, AppRoleTableRole, AppTable, AppTableField, AppTableFieldDescription, AppTableFieldForList, AppTableFieldProperty, AppTableForm, AppTableFormField, AppTableFormPatchedField, AppTableRecord, AppTableView, AppTableViewProperty, AppWorkflow, DeleteRecord, DisplayApp, DisplayAppV2, FilterInfo, ReqTable, Sort } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -147,7 +147,7 @@ declare module '../internal' {
      * 列出仪表盘
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-dashboard/list
      */
-    listBitableAppDashboard(app_token: string, query?: ListBitableAppDashboardQuery): Promise<ListBitableAppDashboardResponse>
+    listBitableAppDashboard(app_token: string, query?: ListBitableAppDashboardQuery): Promise<Paginated<AppDashboard, 'dashboards'>>
     /**
      * 更新表单元数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form/patch
@@ -283,11 +283,7 @@ export interface PatchBitableAppTableRequest {
   name?: string
 }
 
-export interface ListBitableAppTableQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListBitableAppTableQuery extends Pagination {
 }
 
 export interface BatchDeleteBitableAppTableRequest {
@@ -309,11 +305,7 @@ export interface PatchBitableAppTableViewRequest {
   property?: AppTableViewProperty
 }
 
-export interface ListBitableAppTableViewQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBitableAppTableViewQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -357,13 +349,9 @@ export interface SearchBitableAppTableRecordRequest {
   automatic_fields?: boolean
 }
 
-export interface SearchBitableAppTableRecordQuery {
+export interface SearchBitableAppTableRecordQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface BatchCreateBitableAppTableRecordRequest {
@@ -439,15 +427,11 @@ export interface UpdateBitableAppTableFieldRequest {
   ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
 }
 
-export interface ListBitableAppTableFieldQuery {
+export interface ListBitableAppTableFieldQuery extends Pagination {
   /** 视图 ID */
   view_id?: string
   /** 控制字段描述（多行文本格式）数据的返回格式, true 表示以数组富文本形式返回 */
   text_field_as_array?: boolean
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface CopyBitableAppDashboardRequest {
@@ -455,11 +439,7 @@ export interface CopyBitableAppDashboardRequest {
   name: string
 }
 
-export interface ListBitableAppDashboardQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBitableAppDashboardQuery extends Pagination {
 }
 
 export interface PatchBitableAppTableFormRequest {
@@ -488,18 +468,10 @@ export interface PatchBitableAppTableFormFieldRequest {
   visible?: boolean
 }
 
-export interface ListBitableAppTableFormFieldQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBitableAppTableFormFieldQuery extends Pagination {
 }
 
-export interface ListBitableAppRoleQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBitableAppRoleQuery extends Pagination {
 }
 
 export interface CreateBitableAppRoleRequest {
@@ -530,11 +502,7 @@ export interface BatchCreateBitableAppRoleMemberRequest {
   member_list: AppRoleMemberId[]
 }
 
-export interface ListBitableAppRoleMemberQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListBitableAppRoleMemberQuery extends Pagination {
 }
 
 export interface CreateBitableAppRoleMemberRequest {
@@ -552,11 +520,7 @@ export interface DeleteBitableAppRoleMemberQuery {
   member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
 }
 
-export interface ListBitableAppWorkflowQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListBitableAppWorkflowQuery extends Pagination {
 }
 
 export interface UpdateBitableAppWorkflowRequest {
@@ -577,7 +541,7 @@ export interface GetBitableAppTableRecordQuery {
   automatic_fields?: boolean
 }
 
-export interface ListBitableAppTableRecordQuery {
+export interface ListBitableAppTableRecordQuery extends Pagination {
   /** 视图 id注意：如 filter 或 sort 有值，view_id 会被忽略。 */
   view_id?: string
   /** 筛选参数注意：1.筛选记录的表达式不超过2000个字符。2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。3.仅支持字段在页面展示字符值进行筛选。详细请参考[记录筛选开发指南](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter) */
@@ -594,10 +558,6 @@ export interface ListBitableAppTableRecordQuery {
   display_formula_ref?: boolean
   /** 控制是否返回自动计算的字段，例如 `created_by`/`created_time`/`last_modified_by`/`last_modified_time`，true 表示返回 */
   automatic_fields?: boolean
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface CreateBitableAppResponse {
@@ -748,15 +708,6 @@ export interface CopyBitableAppDashboardResponse {
   block_id?: string
   /** block 名称 */
   name?: string
-}
-
-export interface ListBitableAppDashboardResponse {
-  /** 仪表盘信息 */
-  dashboards: AppDashboard[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token: string
-  /** 是否还有更多项 */
-  has_more: boolean
 }
 
 export interface PatchBitableAppTableFormResponse {

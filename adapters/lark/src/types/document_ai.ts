@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { BankCard, BankInfo, BodyInfo, BusinessLicense, ChinesePassport, DrvingLicense, ExtractCopy, ExtractCurrency, ExtractPrice, ExtractTime, FoodManageLicense, FoodProduceLicense, HealthCertificate, HkmMainlandTravelPermit, IdCard, RecognizedEntities, Resume, TaxiInvoice, TrainInvoice, TwMainlandTravelPermit, VatInvoice, VehicleInvoice, VehicleLicense } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

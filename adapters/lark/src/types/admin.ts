@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AdminDeptStat, AdminUserStat, AuditInfo, Badge, Grant, I18n, Password, RuleDetail } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -12,12 +12,12 @@ declare module '../internal' {
      * 获取部门维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_dept_stat/list
      */
-    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery): Promise<ListAdminAdminDeptStatResponse>
+    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery): Promise<Paginated<AdminDeptStat>>
     /**
      * 获取用户维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_user_stat/list
      */
-    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery): Promise<ListAdminAdminUserStatResponse>
+    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery): Promise<Paginated<AdminUserStat>>
     /**
      * 创建勋章
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/create
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 获取勋章列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
      */
-    listAdminBadge(query?: ListAdminBadgeQuery): Promise<ListAdminBadgeResponse>
+    listAdminBadge(query?: ListAdminBadgeQuery): Promise<Paginated<Badge, 'badges'>>
     /**
      * 获取勋章详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/get
@@ -62,7 +62,7 @@ declare module '../internal' {
      * 获取授予名单列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/list
      */
-    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery): Promise<ListAdminBadgeGrantResponse>
+    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery): Promise<Paginated<Grant, 'grants'>>
     /**
      * 获取授予名单详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/get
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 获取行为审计日志数据
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uQjM5YjL0ITO24CNykjN/audit_log/audit_data_get
      */
-    listAdminAuditInfo(query?: ListAdminAuditInfoQuery): Promise<ListAdminAuditInfoResponse>
+    listAdminAuditInfo(query?: ListAdminAuditInfoQuery): Promise<Paginated<AuditInfo>>
   }
 }
 
@@ -88,7 +88,7 @@ export interface ResetAdminPasswordQuery {
   user_id_type: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListAdminAdminDeptStatQuery {
+export interface ListAdminAdminDeptStatQuery extends Pagination {
   /** 部门ID类型 */
   department_id_type: 'department_id' | 'open_department_id'
   /** 起始日期（包含），格式是YYYY-mm-dd */
@@ -99,17 +99,13 @@ export interface ListAdminAdminDeptStatQuery {
   department_id: string
   /** 是否包含子部门，如果该值为false，则只查出本部门直属用户活跃和功能使用数据；如果该值为true，则查出该部门以及其子部门（子部门层级最多不超过根部门下的前4级）的用户活跃和功能使用数据 */
   contains_child_dept: boolean
-  /** 分页大小，默认是10 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；当返回的has_more为true时，会返回新的page_token，再次调用接口，传入这个page_token，将获得下一页数据 */
-  page_token?: string
   /** 跨域访问的geo */
   target_geo?: string
   /** 是否返回分产品版本数据 */
   with_product_version?: boolean
 }
 
-export interface ListAdminAdminUserStatQuery {
+export interface ListAdminAdminUserStatQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 部门ID类型 */
@@ -122,10 +118,6 @@ export interface ListAdminAdminUserStatQuery {
   department_id?: string
   /** 用户的open_id，user_id或者union_id，取决于user_id_type */
   user_id?: string
-  /** 分页大小，默认是10 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；当返回的has_more为true时，会返回新的page_token，再次调用接口，传入这个page_token，将获得下一页数据 */
-  page_token?: string
   /** 跨域访问的geo */
   target_geo?: string
 }
@@ -167,11 +159,7 @@ export interface CreateAdminBadgeImageForm {
   image_type: 1 | 2
 }
 
-export interface ListAdminBadgeQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAdminBadgeQuery extends Pagination {
   /** 租户内唯一的勋章名称，精确匹配。 */
   name?: string
 }
@@ -228,11 +216,7 @@ export interface UpdateAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminBadgeGrantQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAdminBadgeGrantQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型。 */
@@ -248,7 +232,7 @@ export interface GetAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminAuditInfoQuery {
+export interface ListAdminAuditInfoQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 日志时间范围: 结束时间. 格式: 秒级时间戳. 默认值: 此刻 */
@@ -263,10 +247,6 @@ export interface ListAdminAuditInfoQuery {
   operator_value?: string
   /** 过滤模块 */
   event_module?: number
-  /** 下一页分页的token */
-  page_token?: string
-  /** 分页参数 */
-  page_size?: number
   /** 过滤用户类型. 仅当 operator_type=user 时生效 */
   user_type?: 0 | 1 | 2
   /** 过滤操作对象: 操作对象类型. 与object_value配合使用 */
@@ -275,24 +255,6 @@ export interface ListAdminAuditInfoQuery {
   object_value?: string
   /** 增强过滤操作对象: 操作对象ID，支持云文档侧泛token过滤。会覆盖object_type和object_value查询条件 */
   ext_filter_object_by_ccm_token?: string
-}
-
-export interface ListAdminAdminDeptStatResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 部门统计值 */
-  items?: AdminDeptStat[]
-}
-
-export interface ListAdminAdminUserStatResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 数据报表 */
-  items?: AdminUserStat[]
 }
 
 export interface CreateAdminBadgeResponse {
@@ -310,15 +272,6 @@ export interface CreateAdminBadgeImageResponse {
   image_key?: string
 }
 
-export interface ListAdminBadgeResponse {
-  /** 勋章列表 */
-  badges?: Badge[]
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否已经遍历完，表示本次页面请求已经拿到所有列表数据 */
-  has_more?: boolean
-}
-
 export interface GetAdminBadgeResponse {
   /** 勋章信息 */
   badge?: Badge
@@ -334,27 +287,9 @@ export interface UpdateAdminBadgeGrantResponse {
   grant?: Grant
 }
 
-export interface ListAdminBadgeGrantResponse {
-  /** 授予名单列表 */
-  grants?: Grant[]
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否已经遍历完，表示本次页面请求已经拿到所有列表数据 */
-  has_more?: boolean
-}
-
 export interface GetAdminBadgeGrantResponse {
   /** 授予名单信息 */
   grant?: Grant
-}
-
-export interface ListAdminAuditInfoResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 返回的具体数据内容 */
-  items?: AuditInfo[]
 }
 
 Internal.define({

@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AgentSchedule, AgentScheduleUpdateInfo, AgentSkill, AgentSkillRule, Category, CustomizedFieldDisplayItem, Event, Faq, FaqCreateInfo, FaqUpdateInfo, Notification, NotificationChat, NotificationDepartment, NotificationUser, Ticket, TicketCustomizedField, TicketMessage, TicketUser, UserCustomizedField, UserQueryFaqInfo } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -177,7 +177,7 @@ declare module '../internal' {
      * 搜索知识库
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/search
      */
-    searchHelpdeskFaq(query?: SearchHelpdeskFaqQuery): Promise<SearchHelpdeskFaqResponse>
+    searchHelpdeskFaq(query?: SearchHelpdeskFaqQuery): Promise<Paginated<Faq>>
     /**
      * 创建知识库分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/category/create
@@ -451,11 +451,7 @@ export interface ListHelpdeskTicketCustomizedFieldRequest {
   visible?: boolean
 }
 
-export interface ListHelpdeskTicketCustomizedFieldQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListHelpdeskTicketCustomizedFieldQuery extends Pagination {
 }
 
 export interface CreateHelpdeskFaqRequest {
@@ -468,28 +464,20 @@ export interface PatchHelpdeskFaqRequest {
   faq?: FaqUpdateInfo
 }
 
-export interface ListHelpdeskFaqQuery {
+export interface ListHelpdeskFaqQuery extends Pagination {
   /** 知识库分类ID */
   category_id?: string
   /** 搜索条件: 知识库状态 1:在线 0:删除，可恢复 2：删除，不可恢复 */
   status?: string
   /** 搜索条件: 关键词，匹配问题标题，问题关键字，用户姓名 */
   search?: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
-export interface SearchHelpdeskFaqQuery {
+export interface SearchHelpdeskFaqQuery extends Pagination {
   /** 搜索query，query内容如果不是英文，包含中文空格等有两种编码策略：1. url编码 2. base64编码，同时加上base64=true参数 */
   query: string
   /** 是否转换为base64,输入true表示是，不填写表示否，中文需要转换为base64 */
   base64?: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface CreateHelpdeskCategoryRequest {
@@ -777,14 +765,6 @@ export interface ListHelpdeskFaqResponse {
   page_size?: number
   /** the total count */
   total?: number
-  items?: Faq[]
-}
-
-export interface SearchHelpdeskFaqResponse {
-  /** if there's next page */
-  has_more?: boolean
-  /** the next page token */
-  page_token?: string
   items?: Faq[]
 }
 

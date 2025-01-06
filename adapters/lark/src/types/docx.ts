@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Block, BlockIdRelation, DeleteGridColumnRequest, DeleteTableColumnsRequest, DeleteTableRowsRequest, Document, InsertGridColumnRequest, InsertTableColumnRequest, InsertTableRowRequest, MergeTableCellsRequest, ReplaceFileRequest, ReplaceImageRequest, UnmergeTableCellsRequest, UpdateBlockRequest, UpdateGridColumnWidthRatioRequest, UpdateTablePropertyRequest, UpdateTaskRequest, UpdateTextElementsRequest, UpdateTextRequest, UpdateTextStyleRequest } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -12,7 +12,7 @@ declare module '../internal' {
      * 获取群公告所有块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block/list
      */
-    listDocxChatAnnouncementBlock(chat_id: string, query?: ListDocxChatAnnouncementBlockQuery): Promise<ListDocxChatAnnouncementBlockResponse>
+    listDocxChatAnnouncementBlock(chat_id: string, query?: ListDocxChatAnnouncementBlockQuery): Promise<Paginated<Block>>
     /**
      * 在群公告中创建块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/create
@@ -32,7 +32,7 @@ declare module '../internal' {
      * 获取所有子块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/get
      */
-    getDocxChatAnnouncementBlockChildren(chat_id: string, block_id: string, query?: GetDocxChatAnnouncementBlockChildrenQuery): Promise<GetDocxChatAnnouncementBlockChildrenResponse>
+    getDocxChatAnnouncementBlockChildren(chat_id: string, block_id: string, query?: GetDocxChatAnnouncementBlockChildrenQuery): Promise<Paginated<Block>>
     /**
      * 删除群公告中的块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/batch_delete
@@ -57,7 +57,7 @@ declare module '../internal' {
      * 获取文档所有块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block/list
      */
-    listDocxDocumentBlock(document_id: string, query?: ListDocxDocumentBlockQuery): Promise<ListDocxDocumentBlockResponse>
+    listDocxDocumentBlock(document_id: string, query?: ListDocxDocumentBlockQuery): Promise<Paginated<Block>>
     /**
      * 创建块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/create
@@ -87,7 +87,7 @@ declare module '../internal' {
      * 获取所有子块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/get
      */
-    getDocxDocumentBlockChildren(document_id: string, block_id: string, query?: GetDocxDocumentBlockChildrenQuery): Promise<GetDocxDocumentBlockChildrenResponse>
+    getDocxDocumentBlockChildren(document_id: string, block_id: string, query?: GetDocxDocumentBlockChildrenQuery): Promise<Paginated<Block>>
     /**
      * 删除块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/batch_delete
@@ -101,11 +101,7 @@ export interface GetDocxChatAnnouncementQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDocxChatAnnouncementBlockQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDocxChatAnnouncementBlockQuery extends Pagination {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的编辑权限。 */
   revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -149,13 +145,9 @@ export interface GetDocxChatAnnouncementBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetDocxChatAnnouncementBlockChildrenQuery {
+export interface GetDocxChatAnnouncementBlockChildrenQuery extends Pagination {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的更新权限。 */
   revision_id?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -186,11 +178,7 @@ export interface RawContentDocxDocumentQuery {
   lang?: 0 | 1 | 2
 }
 
-export interface ListDocxDocumentBlockQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDocxDocumentBlockQuery extends Pagination {
   /** 查询的文档版本，-1表示文档最新版本。若此时查询的版本为文档最新版本，则需要持有文档的阅读权限；若此时查询的版本为文档的历史版本，则需要持有文档的编辑权限。 */
   document_revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -296,13 +284,9 @@ export interface BatchUpdateDocxDocumentBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetDocxDocumentBlockChildrenQuery {
+export interface GetDocxDocumentBlockChildrenQuery extends Pagination {
   /** 操作的文档版本，-1表示文档最新版本。若此时操作的版本为文档最新版本，则需要持有文档的阅读权限；若此时操作的版本为文档的历史版本，则需要持有文档的编辑权限。 */
   document_revision_id?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -340,15 +324,6 @@ export interface GetDocxChatAnnouncementResponse {
   announcement_type?: 'docx' | 'doc'
 }
 
-export interface ListDocxChatAnnouncementBlockResponse {
-  /** 群公告的 Block 信息 */
-  items?: Block[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
 export interface CreateDocxChatAnnouncementBlockChildrenResponse {
   /** 所添加的孩子的 Block 信息 */
   children?: Block[]
@@ -372,15 +347,6 @@ export interface GetDocxChatAnnouncementBlockResponse {
   block?: Block
 }
 
-export interface GetDocxChatAnnouncementBlockChildrenResponse {
-  /** Block 的 Children 列表 */
-  items?: Block[]
-  /** 下一个分页的分页标记 */
-  page_token?: string
-  /** 是否还有下一个分页 */
-  has_more?: boolean
-}
-
 export interface BatchDeleteDocxChatAnnouncementBlockChildrenResponse {
   /** 当前删除操作成功后群公告的版本号 */
   revision_id?: number
@@ -401,15 +367,6 @@ export interface GetDocxDocumentResponse {
 export interface RawContentDocxDocumentResponse {
   /** 文档纯文本 */
   content?: string
-}
-
-export interface ListDocxDocumentBlockResponse {
-  /** 文档的 Block 信息 */
-  items?: Block[]
-  /** 下一个分页的分页标记 */
-  page_token?: string
-  /** 是否还有下一个分页 */
-  has_more?: boolean
 }
 
 export interface CreateDocxDocumentBlockChildrenResponse {
@@ -453,15 +410,6 @@ export interface BatchUpdateDocxDocumentBlockResponse {
   document_revision_id?: number
   /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
   client_token: string
-}
-
-export interface GetDocxDocumentBlockChildrenResponse {
-  /** block 的 children 列表 */
-  items?: Block[]
-  /** 下一个分页的分页标记 */
-  page_token?: string
-  /** 是否还有下一个分页 */
-  has_more?: boolean
 }
 
 export interface BatchDeleteDocxDocumentBlockChildrenResponse {

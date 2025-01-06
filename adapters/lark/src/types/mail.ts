@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Attachment, EmailAlias, MailAddress, Mailgroup, MailgroupManager, MailgroupMember, MailgroupPermissionMember, PublicMailbox, PublicMailboxMember, User } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 批量获取邮件组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup/list
      */
-    listMailMailgroup(query?: ListMailMailgroupQuery): Promise<ListMailMailgroupResponse>
+    listMailMailgroup(query?: ListMailMailgroupQuery): Promise<Paginated<Mailgroup>>
     /**
      * 批量创建邮件组管理员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-manager/batch_create
@@ -52,7 +52,7 @@ declare module '../internal' {
      * 批量获取邮件组管理员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-manager/list
      */
-    listMailMailgroupManager(mailgroup_id: string, query?: ListMailMailgroupManagerQuery): Promise<ListMailMailgroupManagerResponse>
+    listMailMailgroupManager(mailgroup_id: string, query?: ListMailMailgroupManagerQuery): Promise<Paginated<MailgroupManager>>
     /**
      * 创建邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/create
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 获取所有邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/list
      */
-    listMailMailgroupMember(mailgroup_id: string, query?: ListMailMailgroupMemberQuery): Promise<ListMailMailgroupMemberResponse>
+    listMailMailgroupMember(mailgroup_id: string, query?: ListMailMailgroupMemberQuery): Promise<Paginated<MailgroupMember>>
     /**
      * 批量创建邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/batch_create
@@ -117,7 +117,7 @@ declare module '../internal' {
      * 批量获取邮件组权限成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-permission_member/list
      */
-    listMailMailgroupPermissionMember(mailgroup_id: string, query?: ListMailMailgroupPermissionMemberQuery): Promise<ListMailMailgroupPermissionMemberResponse>
+    listMailMailgroupPermissionMember(mailgroup_id: string, query?: ListMailMailgroupPermissionMemberQuery): Promise<Paginated<MailgroupPermissionMember>>
     /**
      * 批量创建邮件组权限成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-permission_member/batch_create
@@ -152,7 +152,7 @@ declare module '../internal' {
      * 查询所有公共邮箱
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/list
      */
-    listMailPublicMailbox(query?: ListMailPublicMailboxQuery): Promise<ListMailPublicMailboxResponse>
+    listMailPublicMailbox(query?: ListMailPublicMailboxQuery): Promise<Paginated<PublicMailbox>>
     /**
      * 永久删除公共邮箱
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/delete
@@ -182,7 +182,7 @@ declare module '../internal' {
      * 查询所有公共邮箱成员信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox-member/list
      */
-    listMailPublicMailboxMember(public_mailbox_id: string, query?: ListMailPublicMailboxMemberQuery): Promise<ListMailPublicMailboxMemberResponse>
+    listMailPublicMailboxMember(public_mailbox_id: string, query?: ListMailPublicMailboxMemberQuery): Promise<Paginated<PublicMailboxMember>>
     /**
      * 批量添加公共邮箱成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox-member/batch_create
@@ -292,15 +292,11 @@ export interface UpdateMailMailgroupRequest {
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
 
-export interface ListMailMailgroupQuery {
+export interface ListMailMailgroupQuery extends Pagination {
   /** 邮件组管理员用户ID，用于获取该用户有管理权限的邮件组 */
   manager_user_id?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface BatchCreateMailMailgroupManagerRequest {
@@ -323,11 +319,7 @@ export interface BatchDeleteMailMailgroupManagerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListMailMailgroupManagerQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListMailMailgroupManagerQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -357,15 +349,11 @@ export interface GetMailMailgroupMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListMailMailgroupMemberQuery {
+export interface ListMailMailgroupMemberQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface BatchCreateMailMailgroupMemberRequest {
@@ -415,15 +403,11 @@ export interface GetMailMailgroupPermissionMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListMailMailgroupPermissionMemberQuery {
+export interface ListMailMailgroupPermissionMemberQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface BatchCreateMailMailgroupPermissionMemberRequest {
@@ -466,11 +450,7 @@ export interface UpdateMailPublicMailboxRequest {
   name?: string
 }
 
-export interface ListMailPublicMailboxQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListMailPublicMailboxQuery extends Pagination {
 }
 
 export interface CreateMailPublicMailboxMemberRequest {
@@ -490,13 +470,9 @@ export interface GetMailPublicMailboxMemberQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListMailPublicMailboxMemberQuery {
+export interface ListMailPublicMailboxMemberQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface BatchCreateMailPublicMailboxMemberRequest {
@@ -529,11 +505,7 @@ export interface CreateMailUserMailboxAliasRequest {
   email_alias?: string
 }
 
-export interface ListMailUserMailboxAliasQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListMailUserMailboxAliasQuery extends Pagination {
 }
 
 export interface QueryMailUserRequest {
@@ -617,23 +589,6 @@ export interface GetMailMailgroupResponse {
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
 
-export interface ListMailMailgroupResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: Mailgroup[]
-}
-
-export interface ListMailMailgroupManagerResponse {
-  /** 邮件组管理员列表 */
-  items?: MailgroupManager[]
-  /** 分页标识 */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
-}
-
 export interface CreateMailMailgroupMemberResponse {
   /** The unique ID of a member in this mail group */
   member_id?: string
@@ -658,14 +613,6 @@ export interface GetMailMailgroupMemberResponse {
   department_id?: string
   /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
   type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
-}
-
-export interface ListMailMailgroupMemberResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: MailgroupMember[]
 }
 
 export interface BatchCreateMailMailgroupMemberResponse {
@@ -707,14 +654,6 @@ export interface GetMailMailgroupPermissionMemberResponse {
   email?: string
   /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
   type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
-}
-
-export interface ListMailMailgroupPermissionMemberResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: MailgroupPermissionMember[]
 }
 
 export interface BatchCreateMailMailgroupPermissionMemberResponse {
@@ -762,15 +701,6 @@ export interface GetMailPublicMailboxResponse {
   geo?: string
 }
 
-export interface ListMailPublicMailboxResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 邮箱列表 */
-  items?: PublicMailbox[]
-}
-
 export interface CreateMailPublicMailboxMemberResponse {
   /** The unique ID of a member in this public mailbox */
   member_id?: string
@@ -787,14 +717,6 @@ export interface GetMailPublicMailboxMemberResponse {
   user_id?: string
   /** The type of member. Possible values are:- USER: internal user in the team */
   type?: 'USER'
-}
-
-export interface ListMailPublicMailboxMemberResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: PublicMailboxMember[]
 }
 
 export interface BatchCreateMailPublicMailboxMemberResponse {

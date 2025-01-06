@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Account, Agency, AgencyAccount, AgencyProtection, AgencySupplier, Application, ApplicationDetailInfo, ApplicationOffer, Attachment, AttachmentInfo, BackgroundCheckOrder, BonusAmount, CheckFailedAccountInfo, CombinedJobObjectValueMap, CombinedJobResultDefaultJobPost, CommonFilter, CommonSchema, CompositeTalentAwardInfo, CompositeTalentBasicInfo, CompositeTalentCareerInfo, CompositeTalentCustomizedData, CompositeTalentEducationInfo, CompositeTalentInternshipInfo, CompositeTalentLanguageInfo, CompositeTalentProjectInfo, CompositeTalentSnsInfo, CompositeTalentWorksInfo, DiInfo, EcoAccountCustomFieldData, EcoBackgroundCheckCustomFieldData, EcoBackgroundCheckPackageAdditionalItem, EcoBackgroundCheckPackageData, EcoBackgroundCheckReportFile, EcoExamLoginInfo, EcoExamPaperData, EcoExamResultDetail, EcoExamResultReport, Employee, EmployeeConversionInfo, EmployeeOverboardInfo, Evaluation, EvaluationTask, ExamMarkingTask, ExternalApplication, ExternalBackgroundCheck, ExternalInterview, ExternalInterviewAssessment, ExternalInterviewAssessmentDimension, ExternalOffer, I18n, InternOfferOffboardingInfo, InternOfferOnboardingInfo, Interview, InterviewAppointmentConfig, InterviewExtend, InterviewFeedbackForm, InterviewRecord, InterviewRegistrationSchema, InterviewRoundType, InterviewTask, Interviewer, Job, JobConfigInterviewRoundConf, JobConfigResult, JobConfigRoundType, JobDetail, JobFunction, JobManager, JobProcesses, JobRecruiter2, JobRequirementCustomizedData, JobRequirementDto, JobRequirementSchema, JobRequirementUpdateOption, JobSchema, JobTypeInfo, Location, LocationDto, MentionEntity, Minutes, Mobile, Note, Offer, OfferApplyForm, OfferApplyFormInfo, OfferBasicInfo, OfferCustomFieldConfig, OfferCustomizedInfo, OfferListInfo, OfferSalaryInfo, OfferSchemaDetail, PortalJobPost, Questionnaire, Referral, ReferralInfo, RegistrationBasicInfo, RegistrationSchema, RegistrationSchemaInfo, ResumeSource, Role, RoleDetail, Subject, Talent, TalentBatchInfo, TalentBlock, TalentCombinedAwardInfo, TalentCombinedBasicInfo, TalentCombinedCareerInfo, TalentCombinedEducationInfo, TalentCombinedLanguageInfo, TalentCombinedProjectInfo, TalentCombinedSnsInfo, TalentCombinedWorkInfo, TalentCustomizedDataObjectValue, TalentExternalInfo, TalentFolder, TalentFolderForList, TalentInterview, TalentInterviewRegistrationSimple, TalentNote, TalentOperationLog, TalentPool, TalentResumeAttachment, TalentResumeSource, TalentSelfEvaluation, TalentSimilar, TalentTag, TargetMajorInfo, TerminationReason, Test, Todo, TradeDetail, TripartiteAgreementInfo, UserRole, Website, WebsiteChannelInfo, WebsiteDeliveryAttachmentIndentification, WebsiteDeliveryDto, WebsiteDeliveryResume, WebsiteJobPost, WebsiteUser } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,12 +7,12 @@ declare module '../internal' {
      * 查询地点列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/query
      */
-    queryHireLocation(body: QueryHireLocationRequest, query?: QueryHireLocationQuery): Promise<QueryHireLocationResponse>
+    queryHireLocation(body: QueryHireLocationRequest, query?: QueryHireLocationQuery): Promise<Paginated<LocationDto>>
     /**
      * 获取地址列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/list
      */
-    listHireLocation(query?: ListHireLocationQuery): Promise<ListHireLocationResponse>
+    listHireLocation(query?: ListHireLocationQuery): Promise<Paginated<Location>>
     /**
      * 获取角色详情
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/role/get
@@ -22,12 +22,12 @@ declare module '../internal' {
      * 获取角色列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/role/list
      */
-    listHireRole(query?: ListHireRoleQuery): Promise<ListHireRoleResponse>
+    listHireRole(query?: ListHireRoleQuery): Promise<Paginated<Role>>
     /**
      * 获取用户角色列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/user_role/list
      */
-    listHireUserRole(query?: ListHireUserRoleQuery): Promise<ListHireUserRoleResponse>
+    listHireUserRole(query?: ListHireUserRoleQuery): Promise<Paginated<UserRole>>
     /**
      * 新建职位
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/combined_create
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 获取职位列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/list
      */
-    listHireJob(query?: ListHireJobQuery): Promise<ListHireJobResponse>
+    listHireJob(query?: ListHireJobQuery): Promise<Paginated<Job>>
     /**
      * 关闭职位
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/close
@@ -87,7 +87,7 @@ declare module '../internal' {
      * 获取职位模板
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_schema/list
      */
-    listHireJobSchema(query?: ListHireJobSchemaQuery): Promise<ListHireJobSchemaResponse>
+    listHireJobSchema(query?: ListHireJobSchemaQuery): Promise<Paginated<JobSchema>>
     /**
      * 发布职位广告
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/advertisement/publish
@@ -97,17 +97,17 @@ declare module '../internal' {
      * 获取职位广告发布记录
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_publish_record/search
      */
-    searchHireJobPublishRecord(body: SearchHireJobPublishRecordRequest, query?: SearchHireJobPublishRecordQuery): Promise<SearchHireJobPublishRecordResponse>
+    searchHireJobPublishRecord(body: SearchHireJobPublishRecordRequest, query?: SearchHireJobPublishRecordQuery): Promise<Paginated<WebsiteJobPost>>
     /**
      * 获取职能分类列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_function/list
      */
-    listHireJobFunction(query?: ListHireJobFunctionQuery): Promise<ListHireJobFunctionResponse>
+    listHireJobFunction(query?: ListHireJobFunctionQuery): Promise<Paginated<JobFunction>>
     /**
      * 获取职位类别列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_type/list
      */
-    listHireJobType(query?: ListHireJobTypeQuery): Promise<ListHireJobTypeResponse>
+    listHireJobType(query?: ListHireJobTypeQuery): Promise<Paginated<JobTypeInfo>>
     /**
      * 创建招聘需求
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/create
@@ -127,7 +127,7 @@ declare module '../internal' {
      * 获取招聘需求列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/list
      */
-    listHireJobRequirement(query?: ListHireJobRequirementQuery): Promise<ListHireJobRequirementResponse>
+    listHireJobRequirement(query?: ListHireJobRequirementQuery): Promise<Paginated<JobRequirementDto>>
     /**
      * 删除招聘需求
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/delete
@@ -137,32 +137,32 @@ declare module '../internal' {
      * 获取招聘需求模板列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement_schema/list
      */
-    listHireJobRequirementSchema(query?: ListHireJobRequirementSchemaQuery): Promise<ListHireJobRequirementSchemaResponse>
+    listHireJobRequirementSchema(query?: ListHireJobRequirementSchemaQuery): Promise<Paginated<JobRequirementSchema>>
     /**
      * 获取招聘流程信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_process/list
      */
-    listHireJobProcess(query?: ListHireJobProcessQuery): Promise<ListHireJobProcessResponse>
+    listHireJobProcess(query?: ListHireJobProcessQuery): Promise<Paginated<JobProcesses>>
     /**
      * 获取项目列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/subject/list
      */
-    listHireSubject(query?: ListHireSubjectQuery): Promise<ListHireSubjectResponse>
+    listHireSubject(query?: ListHireSubjectQuery): Promise<Paginated<Subject>>
     /**
      * 获取人才标签信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_tag/list
      */
-    listHireTalentTag(query?: ListHireTalentTagQuery): Promise<ListHireTalentTagResponse>
+    listHireTalentTag(query?: ListHireTalentTagQuery): Promise<Paginated<TalentTag>>
     /**
      * 获取信息登记表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/registration_schema/list
      */
-    listHireRegistrationSchema(query?: ListHireRegistrationSchemaQuery): Promise<ListHireRegistrationSchemaResponse>
+    listHireRegistrationSchema(query?: ListHireRegistrationSchemaQuery): Promise<Paginated<RegistrationSchema>>
     /**
      * 获取面试评价表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_feedback_form/list
      */
-    listHireInterviewFeedbackForm(query?: ListHireInterviewFeedbackFormQuery): Promise<ListHireInterviewFeedbackFormResponse>
+    listHireInterviewFeedbackForm(query?: ListHireInterviewFeedbackFormQuery): Promise<Paginated<InterviewFeedbackForm>>
     /**
      * 获取面试轮次类型列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_round_type/list
@@ -172,12 +172,12 @@ declare module '../internal' {
      * 获取面试登记表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_registration_schema/list
      */
-    listHireInterviewRegistrationSchema(query?: ListHireInterviewRegistrationSchemaQuery): Promise<ListHireInterviewRegistrationSchemaResponse>
+    listHireInterviewRegistrationSchema(query?: ListHireInterviewRegistrationSchemaQuery): Promise<Paginated<InterviewRegistrationSchema>>
     /**
      * 查询面试官信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interviewer/list
      */
-    listHireInterviewer(query?: ListHireInterviewerQuery): Promise<ListHireInterviewerResponse>
+    listHireInterviewer(query?: ListHireInterviewerQuery): Promise<Paginated<Interviewer>>
     /**
      * 更新面试官信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interviewer/patch
@@ -197,7 +197,7 @@ declare module '../internal' {
      * 获取 Offer 申请表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer_application_form/list
      */
-    listHireOfferApplicationForm(query?: ListHireOfferApplicationFormQuery): Promise<ListHireOfferApplicationFormResponse>
+    listHireOfferApplicationForm(query?: ListHireOfferApplicationFormQuery): Promise<Paginated<OfferApplyForm>>
     /**
      * 查询人才内推信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral/search
@@ -207,7 +207,7 @@ declare module '../internal' {
      * 获取内推官网下职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral_website-job_post/list
      */
-    listHireReferralWebsiteJobPost(query?: ListHireReferralWebsiteJobPostQuery): Promise<ListHireReferralWebsiteJobPostResponse>
+    listHireReferralWebsiteJobPost(query?: ListHireReferralWebsiteJobPostQuery): Promise<Paginated<PortalJobPost>>
     /**
      * 获取内推官网下职位广告详情
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral_website-job_post/get
@@ -237,7 +237,7 @@ declare module '../internal' {
      * 获取招聘官网推广渠道列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-channel/list
      */
-    listHireWebsiteChannel(website_id: string, query?: ListHireWebsiteChannelQuery): Promise<ListHireWebsiteChannelResponse>
+    listHireWebsiteChannel(website_id: string, query?: ListHireWebsiteChannelQuery): Promise<Paginated<WebsiteChannelInfo, 'website_channel_list'>>
     /**
      * 新建招聘官网用户
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-site_user/create
@@ -252,12 +252,12 @@ declare module '../internal' {
      * 搜索招聘官网下的职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/search
      */
-    searchHireWebsiteJobPost(website_id: string, body: SearchHireWebsiteJobPostRequest, query?: SearchHireWebsiteJobPostQuery): Promise<SearchHireWebsiteJobPostResponse>
+    searchHireWebsiteJobPost(website_id: string, body: SearchHireWebsiteJobPostRequest, query?: SearchHireWebsiteJobPostQuery): Promise<Paginated<WebsiteJobPost>>
     /**
      * 获取招聘官网下的职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/list
      */
-    listHireWebsiteJobPost(website_id: string, query?: ListHireWebsiteJobPostQuery): Promise<ListHireWebsiteJobPostResponse>
+    listHireWebsiteJobPost(website_id: string, query?: ListHireWebsiteJobPostQuery): Promise<Paginated<WebsiteJobPost>>
     /**
      * 新建招聘官网投递
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-delivery/create_by_resume
@@ -277,7 +277,7 @@ declare module '../internal' {
      * 获取招聘官网列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website/list
      */
-    listHireWebsite(query?: ListHireWebsiteQuery): Promise<ListHireWebsiteResponse>
+    listHireWebsite(query?: ListHireWebsiteQuery): Promise<Paginated<Website>>
     /**
      * 设置猎头保护期
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/protect
@@ -302,12 +302,12 @@ declare module '../internal' {
      * 查询猎头供应商下猎头列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/get_agency_account
      */
-    getAgencyAccountHireAgency(body: GetAgencyAccountHireAgencyRequest, query?: GetAgencyAccountHireAgencyQuery): Promise<GetAgencyAccountHireAgencyResponse>
+    getAgencyAccountHireAgency(body: GetAgencyAccountHireAgencyRequest, query?: GetAgencyAccountHireAgencyQuery): Promise<Paginated<AgencyAccount>>
     /**
      * 搜索猎头供应商列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/batch_query
      */
-    batchQueryHireAgency(body: BatchQueryHireAgencyRequest, query?: BatchQueryHireAgencyQuery): Promise<BatchQueryHireAgencyResponse>
+    batchQueryHireAgency(body: BatchQueryHireAgencyRequest, query?: BatchQueryHireAgencyQuery): Promise<Paginated<AgencySupplier>>
     /**
      * 禁用/取消禁用猎头
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/operate_agency_account
@@ -337,7 +337,7 @@ declare module '../internal' {
      * 查询外部投递列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_application/list
      */
-    listHireExternalApplication(query?: ListHireExternalApplicationQuery): Promise<ListHireExternalApplicationResponse>
+    listHireExternalApplication(query?: ListHireExternalApplicationQuery): Promise<Paginated<ExternalApplication>>
     /**
      * 删除外部投递
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_application/delete
@@ -357,7 +357,7 @@ declare module '../internal' {
      * 查询外部面试列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_interview/batch_query
      */
-    batchQueryHireExternalInterview(body: BatchQueryHireExternalInterviewRequest, query?: BatchQueryHireExternalInterviewQuery): Promise<BatchQueryHireExternalInterviewResponse>
+    batchQueryHireExternalInterview(body: BatchQueryHireExternalInterviewRequest, query?: BatchQueryHireExternalInterviewQuery): Promise<Paginated<ExternalInterview>>
     /**
      * 删除外部面试
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_interview/delete
@@ -387,7 +387,7 @@ declare module '../internal' {
      * 查询外部 Offer 列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_offer/batch_query
      */
-    batchQueryHireExternalOffer(body: BatchQueryHireExternalOfferRequest, query?: BatchQueryHireExternalOfferQuery): Promise<BatchQueryHireExternalOfferResponse>
+    batchQueryHireExternalOffer(body: BatchQueryHireExternalOfferRequest, query?: BatchQueryHireExternalOfferQuery): Promise<Paginated<ExternalOffer>>
     /**
      * 删除外部 Offer
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_offer/delete
@@ -407,7 +407,7 @@ declare module '../internal' {
      * 查询外部背调列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_background_check/batch_query
      */
-    batchQueryHireExternalBackgroundCheck(body: BatchQueryHireExternalBackgroundCheckRequest, query?: BatchQueryHireExternalBackgroundCheckQuery): Promise<BatchQueryHireExternalBackgroundCheckResponse>
+    batchQueryHireExternalBackgroundCheck(body: BatchQueryHireExternalBackgroundCheckRequest, query?: BatchQueryHireExternalBackgroundCheckQuery): Promise<Paginated<ExternalBackgroundCheck>>
     /**
      * 删除外部背调
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_background_check/delete
@@ -432,7 +432,7 @@ declare module '../internal' {
      * 获取人才库列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_pool/search
      */
-    searchHireTalentPool(query?: SearchHireTalentPoolQuery): Promise<SearchHireTalentPoolResponse>
+    searchHireTalentPool(query?: SearchHireTalentPoolQuery): Promise<Paginated<TalentPool>>
     /**
      * 将人才加入人才库
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_pool/move_talent
@@ -467,7 +467,7 @@ declare module '../internal' {
      * 获取人才文件夹列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_folder/list
      */
-    listHireTalentFolder(query?: ListHireTalentFolderQuery): Promise<ListHireTalentFolderResponse>
+    listHireTalentFolder(query?: ListHireTalentFolderQuery): Promise<Paginated<TalentFolderForList>>
     /**
      * 批量获取人才ID
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/batch_get_id
@@ -477,7 +477,7 @@ declare module '../internal' {
      * 获取人才列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/list
      */
-    listHireTalent(query?: ListHireTalentQuery): Promise<ListHireTalentResponse>
+    listHireTalent(query?: ListHireTalentQuery): Promise<Paginated<Talent>>
     /**
      * 获取人才字段
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query
@@ -532,7 +532,7 @@ declare module '../internal' {
      * 获取终止投递原因
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/termination_reason/list
      */
-    listHireTerminationReason(query?: ListHireTerminationReasonQuery): Promise<ListHireTerminationReasonResponse>
+    listHireTerminationReason(query?: ListHireTerminationReasonQuery): Promise<Paginated<TerminationReason>>
     /**
      * 获取投递信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/get
@@ -542,7 +542,7 @@ declare module '../internal' {
      * 获取投递列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/list
      */
-    listHireApplication(query?: ListHireApplicationQuery): Promise<ListHireApplicationResponse>
+    listHireApplication(query?: ListHireApplicationQuery): Promise<Paginated<string>>
     /**
      * 获取申请表附加信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/diversity_inclusion/search
@@ -552,7 +552,7 @@ declare module '../internal' {
      * 获取简历评估信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation/list
      */
-    listHireEvaluation(query?: ListHireEvaluationQuery): Promise<ListHireEvaluationResponse>
+    listHireEvaluation(query?: ListHireEvaluationQuery): Promise<Paginated<Evaluation>>
     /**
      * 添加笔试结果
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/exam/create
@@ -562,12 +562,12 @@ declare module '../internal' {
      * 获取笔试列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/test/search
      */
-    searchHireTest(body: SearchHireTestRequest, query?: SearchHireTestQuery): Promise<SearchHireTestResponse>
+    searchHireTest(body: SearchHireTestRequest, query?: SearchHireTestQuery): Promise<Paginated<Test>>
     /**
      * 获取面试信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview/list
      */
-    listHireInterview(query?: ListHireInterviewQuery): Promise<ListHireInterviewResponse>
+    listHireInterview(query?: ListHireInterviewQuery): Promise<Paginated<InterviewExtend>>
     /**
      * 获取人才面试信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview/get_by_talent
@@ -587,12 +587,12 @@ declare module '../internal' {
      * 批量获取面试评价详细信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_record/list
      */
-    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<ListHireInterviewRecordResponse>
+    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<Paginated<InterviewRecord>>
     /**
      * 批量获取面试评价详细信息（新版）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/hire-v2/interview_record/list
      */
-    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<ListHireInterviewRecordResponse>
+    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<Paginated<InterviewRecord>>
     /**
      * 获取面试记录附件
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_record-attachment/get
@@ -607,7 +607,7 @@ declare module '../internal' {
      * 获取面试满意度问卷列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/questionnaire/list
      */
-    listHireQuestionnaire(query?: ListHireQuestionnaireQuery): Promise<ListHireQuestionnaireResponse>
+    listHireQuestionnaire(query?: ListHireQuestionnaireQuery): Promise<Paginated<Questionnaire>>
     /**
      * 创建 Offer
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/create
@@ -632,7 +632,7 @@ declare module '../internal' {
      * 获取 Offer 列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/list
      */
-    listHireOffer(query?: ListHireOfferQuery): Promise<ListHireOfferResponse>
+    listHireOffer(query?: ListHireOfferQuery): Promise<Paginated<OfferListInfo>>
     /**
      * 更新 Offer 状态
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/offer_status
@@ -647,7 +647,7 @@ declare module '../internal' {
      * 获取背调信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/background_check_order/list
      */
-    listHireBackgroundCheckOrder(query?: ListHireBackgroundCheckOrderQuery): Promise<ListHireBackgroundCheckOrderResponse>
+    listHireBackgroundCheckOrder(query?: ListHireBackgroundCheckOrderQuery): Promise<Paginated<BackgroundCheckOrder>>
     /**
      * 创建三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/create
@@ -657,7 +657,7 @@ declare module '../internal' {
      * 获取三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/list
      */
-    listHireTripartiteAgreement(query?: ListHireTripartiteAgreementQuery): Promise<ListHireTripartiteAgreementResponse>
+    listHireTripartiteAgreement(query?: ListHireTripartiteAgreementQuery): Promise<Paginated<TripartiteAgreementInfo>>
     /**
      * 更新三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/update
@@ -697,22 +697,22 @@ declare module '../internal' {
      * 批量获取待办事项
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/todo/list
      */
-    listHireTodo(query?: ListHireTodoQuery): Promise<ListHireTodoResponse>
+    listHireTodo(query?: ListHireTodoQuery): Promise<Paginated<Todo>>
     /**
      * 获取简历评估任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation_task/list
      */
-    listHireEvaluationTask(query?: ListHireEvaluationTaskQuery): Promise<ListHireEvaluationTaskResponse>
+    listHireEvaluationTask(query?: ListHireEvaluationTaskQuery): Promise<Paginated<EvaluationTask>>
     /**
      * 获取笔试阅卷任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/exam_marking_task/list
      */
-    listHireExamMarkingTask(query?: ListHireExamMarkingTaskQuery): Promise<ListHireExamMarkingTaskResponse>
+    listHireExamMarkingTask(query?: ListHireExamMarkingTaskQuery): Promise<Paginated<ExamMarkingTask>>
     /**
      * 获取面试任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_task/list
      */
-    listHireInterviewTask(query?: ListHireInterviewTaskQuery): Promise<ListHireInterviewTaskResponse>
+    listHireInterviewTask(query?: ListHireInterviewTaskQuery): Promise<Paginated<InterviewTask>>
     /**
      * 创建备注
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/create
@@ -732,7 +732,7 @@ declare module '../internal' {
      * 获取备注列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/list
      */
-    listHireNote(query?: ListHireNoteQuery): Promise<ListHireNoteResponse>
+    listHireNote(query?: ListHireNoteQuery): Promise<Paginated<Note>>
     /**
      * 删除备注
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/delete
@@ -742,7 +742,7 @@ declare module '../internal' {
      * 获取简历来源列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/resume_source/list
      */
-    listHireResumeSource(query?: ListHireResumeSourceQuery): Promise<ListHireResumeSourceResponse>
+    listHireResumeSource(query?: ListHireResumeSourceQuery): Promise<Paginated<ResumeSource>>
     /**
      * 创建账号自定义字段
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/eco_account_custom_field/create
@@ -877,12 +877,12 @@ declare module '../internal' {
      * 获取面试记录列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application-interview/list
      */
-    listHireApplicationInterview(application_id: string, query?: ListHireApplicationInterviewQuery): Promise<ListHireApplicationInterviewResponse>
+    listHireApplicationInterview(application_id: string, query?: ListHireApplicationInterviewQuery): Promise<Paginated<Interview>>
     /**
      * 查询人才操作记录
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/talent_operation_log/search
      */
-    searchHireTalentOperationLog(body: SearchHireTalentOperationLogRequest, query?: SearchHireTalentOperationLogQuery): Promise<SearchHireTalentOperationLogResponse>
+    searchHireTalentOperationLog(body: SearchHireTalentOperationLogRequest, query?: SearchHireTalentOperationLogQuery): Promise<Paginated<TalentOperationLog>>
     /**
      * 获取职位上的招聘人员信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job-manager/get
@@ -903,34 +903,18 @@ export interface QueryHireLocationRequest {
   location_type: 1 | 2 | 3 | 4
 }
 
-export interface QueryHireLocationQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token,下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 每页限制, 数据校验规则 1-100 */
-  page_size: number
+export interface QueryHireLocationQuery extends Pagination {
 }
 
-export interface ListHireLocationQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireLocationQuery extends Pagination {
   /** 地址类型 */
   usage: 'position_location' | 'interview_location' | 'store_location'
 }
 
-export interface ListHireRoleQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量 */
-  page_size?: number
+export interface ListHireRoleQuery extends Pagination {
 }
 
-export interface ListHireUserRoleQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
+export interface ListHireUserRoleQuery extends Pagination {
   /** 用户 ID */
   user_id?: string
   /** 角色 ID */
@@ -1169,15 +1153,11 @@ export interface ConfigHireJobQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireJobQuery {
+export interface ListHireJobQuery extends Pagination {
   /** 最早更新时间，毫秒级时间戳 */
   update_start_time?: string
   /** 最晚更新时间，毫秒级时间戳 */
   update_end_time?: string
-  /** 分页大小, 不能超过 20 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1195,11 +1175,7 @@ export interface OpenHireJobRequest {
   is_never_expired: boolean
 }
 
-export interface ListHireJobSchemaQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireJobSchemaQuery extends Pagination {
   /** 职位模板类型 */
   scenario?: 1 | 2
 }
@@ -1214,11 +1190,7 @@ export interface SearchHireJobPublishRecordRequest {
   job_channel_id: string
 }
 
-export interface SearchHireJobPublishRecordQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface SearchHireJobPublishRecordQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1229,18 +1201,10 @@ export interface SearchHireJobPublishRecordQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
 }
 
-export interface ListHireJobFunctionQuery {
-  /** 分页大小, 不能超过 50 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireJobFunctionQuery extends Pagination {
 }
 
-export interface ListHireJobTypeQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireJobTypeQuery extends Pagination {
 }
 
 export interface CreateHireJobRequirementRequest {
@@ -1405,11 +1369,7 @@ export interface ListByIdHireJobRequirementQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireJobRequirementQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireJobRequirementQuery extends Pagination {
   /** 职位ID */
   job_id?: string
   /** 起始创建时间，传入毫秒级时间戳 */
@@ -1432,32 +1392,20 @@ export interface ListHireJobRequirementQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireJobRequirementSchemaQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireJobRequirementSchemaQuery extends Pagination {
 }
 
-export interface ListHireJobProcessQuery {
-  /** 分页大小, 不能超过 100 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireJobProcessQuery extends Pagination {
 }
 
-export interface ListHireSubjectQuery {
+export interface ListHireSubjectQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 项目ID列表 */
   subject_ids?: string[]
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
 }
 
-export interface ListHireTalentTagQuery {
+export interface ListHireTalentTagQuery extends Pagination {
   /** 搜索关键词 */
   keyword?: string
   /** ID 列表 */
@@ -1466,28 +1414,16 @@ export interface ListHireTalentTagQuery {
   type?: 1 | 2
   /** 包含停用 */
   include_inactive?: boolean
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
-export interface ListHireRegistrationSchemaQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireRegistrationSchemaQuery extends Pagination {
   /** 登记表适用场景；不填表示获取全部类型信息登记表 */
   scenario?: 5 | 6 | 14
 }
 
-export interface ListHireInterviewFeedbackFormQuery {
+export interface ListHireInterviewFeedbackFormQuery extends Pagination {
   /** 面试评价表ID列表, 如果使用此字段则会忽略其他参数 */
   interview_feedback_form_ids?: string[]
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface ListHireInterviewRoundTypeQuery {
@@ -1495,18 +1431,10 @@ export interface ListHireInterviewRoundTypeQuery {
   process_type?: 1 | 2
 }
 
-export interface ListHireInterviewRegistrationSchemaQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireInterviewRegistrationSchemaQuery extends Pagination {
 }
 
-export interface ListHireInterviewerQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireInterviewerQuery extends Pagination {
   /** 面试官userID列表 */
   user_ids?: string[]
   /** 认证状态 */
@@ -1536,11 +1464,7 @@ export interface UpdateHireOfferCustomFieldRequest {
   config?: OfferCustomFieldConfig
 }
 
-export interface ListHireOfferApplicationFormQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireOfferApplicationFormQuery extends Pagination {
 }
 
 export interface SearchHireReferralRequest {
@@ -1557,13 +1481,9 @@ export interface SearchHireReferralQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireReferralWebsiteJobPostQuery {
+export interface ListHireReferralWebsiteJobPostQuery extends Pagination {
   /** 招聘流程类型 */
   process_type?: 1 | 2
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1598,11 +1518,7 @@ export interface UpdateHireWebsiteChannelRequest {
   channel_name: string
 }
 
-export interface ListHireWebsiteChannelQuery {
-  /** 每页获取记录最大数量，最大100 */
-  page_size?: string
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的 page_token */
-  page_token?: string
+export interface ListHireWebsiteChannelQuery extends Pagination {
 }
 
 export interface CreateHireWebsiteSiteUserRequest {
@@ -1648,11 +1564,7 @@ export interface SearchHireWebsiteJobPostRequest {
   create_end_time?: string
 }
 
-export interface SearchHireWebsiteJobPostQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
+export interface SearchHireWebsiteJobPostQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1661,11 +1573,7 @@ export interface SearchHireWebsiteJobPostQuery {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
 }
 
-export interface ListHireWebsiteJobPostQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
+export interface ListHireWebsiteJobPostQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1721,11 +1629,7 @@ export interface CreateByAttachmentHireWebsiteDeliveryRequest {
   identification?: WebsiteDeliveryAttachmentIndentification
 }
 
-export interface ListHireWebsiteQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
+export interface ListHireWebsiteQuery extends Pagination {
 }
 
 export interface ProtectHireAgencyRequest {
@@ -1778,13 +1682,9 @@ export interface GetAgencyAccountHireAgencyRequest {
   role?: 0 | 1
 }
 
-export interface GetAgencyAccountHireAgencyQuery {
+export interface GetAgencyAccountHireAgencyQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'union_id' | 'open_id'
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量 */
-  page_size?: number
 }
 
 export interface BatchQueryHireAgencyRequest {
@@ -1796,13 +1696,9 @@ export interface BatchQueryHireAgencyRequest {
   filter_list?: CommonFilter[]
 }
 
-export interface BatchQueryHireAgencyQuery {
+export interface BatchQueryHireAgencyQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量 */
-  page_size?: number
 }
 
 export interface OperateAgencyAccountHireAgencyRequest {
@@ -1870,13 +1766,9 @@ export interface UpdateHireExternalApplicationRequest {
   termination_type?: string
 }
 
-export interface ListHireExternalApplicationQuery {
+export interface ListHireExternalApplicationQuery extends Pagination {
   /** 人才ID */
   talent_id: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface DeleteHireExternalApplicationQuery {
@@ -1917,13 +1809,9 @@ export interface BatchQueryHireExternalInterviewRequest {
   external_interview_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalInterviewQuery {
+export interface BatchQueryHireExternalInterviewQuery extends Pagination {
   /** 外部投递 ID */
   external_application_id?: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface CreateHireExternalInterviewAssessmentRequest {
@@ -1985,13 +1873,9 @@ export interface BatchQueryHireExternalOfferRequest {
   external_offer_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalOfferQuery {
+export interface BatchQueryHireExternalOfferQuery extends Pagination {
   /** 外部投递 ID */
   external_application_id?: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface CreateHireExternalBackgroundCheckRequest {
@@ -2027,13 +1911,9 @@ export interface BatchQueryHireExternalBackgroundCheckRequest {
   external_background_check_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalBackgroundCheckQuery {
+export interface BatchQueryHireExternalBackgroundCheckQuery extends Pagination {
   /** 外部投递 ID */
   external_application_id?: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface CreateHireExternalReferralRewardRequest {
@@ -2087,11 +1967,7 @@ export interface BatchChangeTalentPoolHireTalentPoolRequest {
   option_type: 1 | 2
 }
 
-export interface SearchHireTalentPoolQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SearchHireTalentPoolQuery extends Pagination {
   /** 人才库ID列表 */
   id_list?: string[]
 }
@@ -2208,11 +2084,7 @@ export interface RemoveToFolderHireTalentRequest {
   folder_id: string
 }
 
-export interface ListHireTalentFolderQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireTalentFolderQuery extends Pagination {
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
@@ -2230,19 +2102,15 @@ export interface BatchGetIdHireTalentRequest {
   identification_number_list?: string[]
 }
 
-export interface ListHireTalentQuery {
+export interface ListHireTalentQuery extends Pagination {
   /** 搜索关键词，支持布尔语言（使用 and、or、not 连接关键词） */
   keyword?: string
   /** 最早更新时间，毫秒级时间戳 */
   update_start_time?: string
   /** 最晚更新时间，毫秒级时间戳 */
   update_end_time?: string
-  /** 分页大小, 不能超过 20 */
-  page_size?: number
   /** 排序规则 */
   sort_by?: 1 | 2 | 3 | 4
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
   /** 请求控制参数 */
@@ -2324,11 +2192,7 @@ export interface TransferStageHireApplicationRequest {
   stage_id: string
 }
 
-export interface ListHireTerminationReasonQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大10 */
-  page_size?: number
+export interface ListHireTerminationReasonQuery extends Pagination {
 }
 
 export interface GetHireApplicationQuery {
@@ -2338,7 +2202,7 @@ export interface GetHireApplicationQuery {
   options?: 'get_latest_application_on_chain'[]
 }
 
-export interface ListHireApplicationQuery {
+export interface ListHireApplicationQuery extends Pagination {
   /** 按流程过滤，招聘流程 ID，枚举值通过接口「获取招聘流程信息」接口获取 */
   process_id?: string
   /** 按招聘阶段过滤，招聘阶段 ID，枚举值通过「获取招聘流程信息」接口获取 */
@@ -2351,10 +2215,6 @@ export interface ListHireApplicationQuery {
   job_id?: string
   /** 锁定状态 */
   lock_status?: 1 | 2 | 3[]
-  /** 查询游标, 由上一页结果返回, 第一页不传 */
-  page_token?: string
-  /** 每页限制, 每页最大不超过100 */
-  page_size?: number
   /** 最早更新时间，毫秒级时间戳 */
   update_start_time?: string
   /** 最晚更新时间，毫秒级时间戳 */
@@ -2368,11 +2228,7 @@ export interface SearchHireDiversityInclusionRequest {
   application_ids?: string[]
 }
 
-export interface ListHireEvaluationQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireEvaluationQuery extends Pagination {
   /** 投递 ID */
   application_id?: string
   /** 最早更新时间，毫秒级时间戳 */
@@ -2410,20 +2266,12 @@ export interface SearchHireTestRequest {
   test_start_time_max?: string
 }
 
-export interface SearchHireTestQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface SearchHireTestQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewQuery {
-  /** 分页大小，不能超过 100 */
-  page_size?: number
-  /** 查询游标, 由上一页结果返回, 第一页不传 */
-  page_token?: string
+export interface ListHireInterviewQuery extends Pagination {
   /** 投递 ID */
   application_id?: string
   /** 面试 ID */
@@ -2457,24 +2305,16 @@ export interface GetHireInterviewRecordQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewRecordQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireInterviewRecordQuery extends Pagination {
   /** 面试评价ID列表，使用该筛选项时不会分页 */
   ids?: string[]
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewRecordQuery {
+export interface ListHireInterviewRecordQuery extends Pagination {
   /** 面试评价ID列表，使用该筛选项时不会分页 */
   ids?: string[]
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -2488,20 +2328,12 @@ export interface GetHireInterviewRecordAttachmentQuery {
   language?: 1 | 2
 }
 
-export interface GetHireMinutesQuery {
+export interface GetHireMinutesQuery extends Pagination {
   /** 面试ID */
   interview_id: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token获取查询结果 */
-  page_token?: string
-  /** 分页大小，表示本次请求获取的速记中的语句的最大数量 */
-  page_size?: number
 }
 
-export interface ListHireQuestionnaireQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireQuestionnaireQuery extends Pagination {
   /** 投递 ID */
   application_id?: string
   /** 面试 ID */
@@ -2590,11 +2422,7 @@ export interface GetHireOfferQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireOfferQuery {
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface ListHireOfferQuery extends Pagination {
   /** 人才 ID */
   talent_id: string
   /** 此次调用中使用的用户ID的类型 */
@@ -2623,13 +2451,9 @@ export interface InternOfferStatusHireOfferRequest {
   offboarding_info?: InternOfferOffboardingInfo
 }
 
-export interface ListHireBackgroundCheckOrderQuery {
+export interface ListHireBackgroundCheckOrderQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
   /** 投递 ID */
   application_id?: string
   /** 最早更新时间，毫秒级时间戳 */
@@ -2647,11 +2471,7 @@ export interface CreateHireTripartiteAgreementRequest {
   create_time: string
 }
 
-export interface ListHireTripartiteAgreementQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireTripartiteAgreementQuery extends Pagination {
   /** 投递 ID，必填投递 id 与三方协议 ID 其中之一 */
   application_id?: string
   /** 三方协议 ID，必填投递 id 与三方协议 ID 其中之一 */
@@ -2758,11 +2578,7 @@ export interface GetHireEmployeeQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireTodoQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: string
+export interface ListHireTodoQuery extends Pagination {
   /** 用户 ID，当 token 为租户 token 时，必须传入该字段，当 token 为用户 token 时，不传该字段 */
   user_id?: string
   /** 用户 ID 类型 */
@@ -2771,11 +2587,7 @@ export interface ListHireTodoQuery {
   type: 'evaluation' | 'offer' | 'exam' | 'interview'
 }
 
-export interface ListHireEvaluationTaskQuery {
-  /** 分页大小, 默认10，不能超过 20 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireEvaluationTaskQuery extends Pagination {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2784,11 +2596,7 @@ export interface ListHireEvaluationTaskQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireExamMarkingTaskQuery {
-  /** 分页大小, 默认10，不能超过 20 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireExamMarkingTaskQuery extends Pagination {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2797,11 +2605,7 @@ export interface ListHireExamMarkingTaskQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireInterviewTaskQuery {
-  /** 分页大小, 默认10，不能超过 20 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireInterviewTaskQuery extends Pagination {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2853,22 +2657,14 @@ export interface GetHireNoteQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireNoteQuery {
-  /** 每页限制, 每页最大不超过100 */
-  page_size?: number
-  /** 查询游标, 由上一页结果返回, 第一页不传 */
-  page_token?: string
+export interface ListHireNoteQuery extends Pagination {
   /** 人才ID */
   talent_id: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireResumeSourceQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireResumeSourceQuery extends Pagination {
 }
 
 export interface CreateHireEcoAccountCustomFieldRequest {
@@ -3071,11 +2867,7 @@ export interface GetHireAttachmentQuery {
   type?: 1 | 2 | 3
 }
 
-export interface ListHireApplicationInterviewQuery {
-  /** 分页大小，不能超过 50 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListHireApplicationInterviewQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
   /** 此次调用中使用的「职级 ID」的类型 */
@@ -3091,11 +2883,7 @@ export interface SearchHireTalentOperationLogRequest {
   operation_list: number[]
 }
 
-export interface SearchHireTalentOperationLogQuery {
-  /** 下一页页码 */
-  page_token?: string
-  /** 每页获取记录数量，最大100 */
-  page_size?: number
+export interface SearchHireTalentOperationLogQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -3105,45 +2893,9 @@ export interface GetHireJobManagerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryHireLocationResponse {
-  /** 地址数据列表 */
-  items?: LocationDto[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token,否则不返回 page_token */
-  page_token?: string
-}
-
-export interface ListHireLocationResponse {
-  /** 列表 */
-  items?: Location[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetHireRoleResponse {
   /** 角色详情 */
   role?: RoleDetail
-}
-
-export interface ListHireRoleResponse {
-  /** 角色列表 */
-  items?: Role[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireUserRoleResponse {
-  /** 用户角色列表 */
-  items?: UserRole[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface CombinedCreateHireJobResponse {
@@ -3202,49 +2954,6 @@ export interface ConfigHireJobResponse {
   job_config?: JobConfigResult
 }
 
-export interface ListHireJobResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: Job[]
-}
-
-export interface ListHireJobSchemaResponse {
-  /** 数据列表 */
-  items?: JobSchema[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface SearchHireJobPublishRecordResponse {
-  /** 列表 */
-  items?: WebsiteJobPost[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireJobFunctionResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: JobFunction[]
-}
-
-export interface ListHireJobTypeResponse {
-  /** 职位类别列表 */
-  items?: JobTypeInfo[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface CreateHireJobRequirementResponse {
   job_requirement?: JobRequirementDto
 }
@@ -3254,86 +2963,11 @@ export interface ListByIdHireJobRequirementResponse {
   items?: JobRequirementDto[]
 }
 
-export interface ListHireJobRequirementResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 查询的招聘需求信息 */
-  items?: JobRequirementDto[]
-}
-
-export interface ListHireJobRequirementSchemaResponse {
-  /** 列表 */
-  items?: JobRequirementSchema[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireJobProcessResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: JobProcesses[]
-}
-
-export interface ListHireSubjectResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 项目列表 */
-  items?: Subject[]
-}
-
-export interface ListHireTalentTagResponse {
-  /** 标签列表 */
-  items?: TalentTag[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface ListHireRegistrationSchemaResponse {
-  /** 信息登记表列表 */
-  items?: RegistrationSchema[]
-  /** 分页标记 */
-  page_token?: string
-  /** 是否仍有数据 */
-  has_more?: boolean
-}
-
-export interface ListHireInterviewFeedbackFormResponse {
-  items?: InterviewFeedbackForm[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface ListHireInterviewRoundTypeResponse {
   /** 是否启用面试轮次类型 */
   active_status?: 1 | 2
   /** 列表 */
   items?: InterviewRoundType[]
-}
-
-export interface ListHireInterviewRegistrationSchemaResponse {
-  /** 列表 */
-  items?: InterviewRegistrationSchema[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireInterviewerResponse {
-  items?: Interviewer[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface PatchHireInterviewerResponse {
@@ -3346,27 +2980,9 @@ export interface GetHireOfferApplicationFormResponse {
   offer_apply_form?: OfferApplyFormInfo
 }
 
-export interface ListHireOfferApplicationFormResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** Offer 申请表列表 */
-  items?: OfferApplyForm[]
-}
-
 export interface SearchHireReferralResponse {
   /** 内推信息列表 */
   items?: ReferralInfo[]
-}
-
-export interface ListHireReferralWebsiteJobPostResponse {
-  /** 列表 */
-  items?: PortalJobPost[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface GetHireReferralWebsiteJobPostResponse {
@@ -3400,39 +3016,12 @@ export interface UpdateHireWebsiteChannelResponse {
   code?: string
 }
 
-export interface ListHireWebsiteChannelResponse {
-  /** 是否有更多数据 */
-  has_more?: boolean
-  /** 分页token */
-  page_token?: string
-  /** 官网推广渠道列表 */
-  website_channel_list?: WebsiteChannelInfo[]
-}
-
 export interface CreateHireWebsiteSiteUserResponse {
   site_user?: WebsiteUser
 }
 
 export interface GetHireWebsiteJobPostResponse {
   job_post?: WebsiteJobPost
-}
-
-export interface SearchHireWebsiteJobPostResponse {
-  /** 列表 */
-  items?: WebsiteJobPost[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireWebsiteJobPostResponse {
-  /** 列表 */
-  items?: WebsiteJobPost[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface CreateByResumeHireWebsiteDeliveryResponse {
@@ -3455,15 +3044,6 @@ export interface GetHireWebsiteDeliveryTaskResponse {
   extra_info?: string
 }
 
-export interface ListHireWebsiteResponse {
-  /** 列表 */
-  items?: Website[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetHireAgencyResponse {
   /** 数据 */
   agency?: Agency
@@ -3484,22 +3064,6 @@ export interface QueryHireAgencyResponse {
   items?: Agency[]
 }
 
-export interface GetAgencyAccountHireAgencyResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  items?: AgencyAccount[]
-}
-
-export interface BatchQueryHireAgencyResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  items?: AgencySupplier[]
-}
-
 export interface CreateHireTalentExternalInfoResponse {
   /** 人才外部信息 */
   external_info?: TalentExternalInfo
@@ -3518,15 +3082,6 @@ export interface UpdateHireExternalApplicationResponse {
   external_application?: ExternalApplication
 }
 
-export interface ListHireExternalApplicationResponse {
-  /** 外部投递列表 */
-  items?: ExternalApplication[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
 export interface DeleteHireExternalApplicationResponse {
   external_application?: ExternalApplication
 }
@@ -3537,12 +3092,6 @@ export interface CreateHireExternalInterviewResponse {
 
 export interface UpdateHireExternalInterviewResponse {
   external_interview?: ExternalInterview
-}
-
-export interface BatchQueryHireExternalInterviewResponse {
-  items?: ExternalInterview[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface CreateHireExternalInterviewAssessmentResponse {
@@ -3561,12 +3110,6 @@ export interface UpdateHireExternalOfferResponse {
   external_offer?: ExternalOffer
 }
 
-export interface BatchQueryHireExternalOfferResponse {
-  items?: ExternalOffer[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface CreateHireExternalBackgroundCheckResponse {
   external_background_check?: ExternalBackgroundCheck
 }
@@ -3575,24 +3118,9 @@ export interface UpdateHireExternalBackgroundCheckResponse {
   external_background_check?: ExternalBackgroundCheck
 }
 
-export interface BatchQueryHireExternalBackgroundCheckResponse {
-  items?: ExternalBackgroundCheck[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface CreateHireExternalReferralRewardResponse {
   /** 创建的内推奖励的id */
   id?: string
-}
-
-export interface SearchHireTalentPoolResponse {
-  /** 人才库列表 */
-  items?: TalentPool[]
-  /** 分页标记 */
-  page_token?: string
-  /** 是否有剩余数据 */
-  has_more?: boolean
 }
 
 export interface MoveTalentHireTalentPoolResponse {
@@ -3634,27 +3162,9 @@ export interface RemoveToFolderHireTalentResponse {
   folder_id?: string
 }
 
-export interface ListHireTalentFolderResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 文件夹列表 */
-  items?: TalentFolderForList[]
-}
-
 export interface BatchGetIdHireTalentResponse {
   /** 人才信息列表 */
   talent_list?: TalentBatchInfo[]
-}
-
-export interface ListHireTalentResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: Talent[]
 }
 
 export interface QueryHireTalentObjectResponse {
@@ -3731,41 +3241,14 @@ export interface CreateHireApplicationResponse {
   id?: string
 }
 
-export interface ListHireTerminationReasonResponse {
-  /** 列表 */
-  items?: TerminationReason[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetHireApplicationResponse {
   /** 投递数据 */
   application?: Application
 }
 
-export interface ListHireApplicationResponse {
-  /** 投递数据列表 */
-  items?: string[]
-  /** 游标, 翻下一页数据时使用 */
-  page_token?: string
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-}
-
 export interface SearchHireDiversityInclusionResponse {
   /** 多元化与包容性信息列表 */
   items?: DiInfo[]
-}
-
-export interface ListHireEvaluationResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 简历评估信息列表 */
-  items?: Evaluation[]
 }
 
 export interface CreateHireExamResponse {
@@ -3785,24 +3268,6 @@ export interface CreateHireExamResponse {
   operate_time?: string
 }
 
-export interface SearchHireTestResponse {
-  /** 笔试列表 */
-  items?: Test[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireInterviewResponse {
-  /** 面试列表 */
-  items?: InterviewExtend[]
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
 export interface GetByTalentHireInterviewResponse {
   /** 投递面试列表 */
   items?: TalentInterview[]
@@ -3817,20 +3282,6 @@ export interface GetHireInterviewRecordResponse {
   interview_record?: InterviewRecord
 }
 
-export interface ListHireInterviewRecordResponse {
-  /** 面试评价详细信息列表 */
-  items?: InterviewRecord[]
-  page_token?: string
-  has_more?: boolean
-}
-
-export interface ListHireInterviewRecordResponse {
-  /** 面试评价详细信息列表 */
-  items?: InterviewRecord[]
-  page_token?: string
-  has_more?: boolean
-}
-
 export interface GetHireInterviewRecordAttachmentResponse {
   /** 附件信息 */
   attachment?: AttachmentInfo
@@ -3842,15 +3293,6 @@ export interface GetHireMinutesResponse {
   page_token?: string
   /** 对应面试是否还有更多项 */
   has_more?: boolean
-}
-
-export interface ListHireQuestionnaireResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 满意度评价列表 */
-  items?: Questionnaire[]
 }
 
 export interface CreateHireOfferResponse {
@@ -3892,15 +3334,6 @@ export interface GetHireOfferResponse {
   offer?: Offer
 }
 
-export interface ListHireOfferResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** Offer 列表 */
-  items?: OfferListInfo[]
-}
-
 export interface InternOfferStatusHireOfferResponse {
   /** Offer ID */
   offer_id?: string
@@ -3912,24 +3345,9 @@ export interface InternOfferStatusHireOfferResponse {
   offboarding_info?: InternOfferOffboardingInfo
 }
 
-export interface ListHireBackgroundCheckOrderResponse {
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-  /** 背调信息列表 */
-  items?: BackgroundCheckOrder[]
-}
-
 export interface CreateHireTripartiteAgreementResponse {
   /** 创建的三方协议的 id */
   id?: string
-}
-
-export interface ListHireTripartiteAgreementResponse {
-  items?: TripartiteAgreementInfo[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface UpdateHireTripartiteAgreementResponse {
@@ -3957,42 +3375,6 @@ export interface GetHireEmployeeResponse {
   employee?: Employee
 }
 
-export interface ListHireTodoResponse {
-  /** 待办信息 */
-  items?: Todo[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
-}
-
-export interface ListHireEvaluationTaskResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: EvaluationTask[]
-}
-
-export interface ListHireExamMarkingTaskResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: ExamMarkingTask[]
-}
-
-export interface ListHireInterviewTaskResponse {
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 列表 */
-  items?: InterviewTask[]
-}
-
 export interface CreateHireNoteResponse {
   note?: Note
 }
@@ -4005,21 +3387,6 @@ export interface PatchHireNoteResponse {
 export interface GetHireNoteResponse {
   /** 备注数据 */
   note?: Note
-}
-
-export interface ListHireNoteResponse {
-  /** 备注数据列表 */
-  items?: Note[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 游标, 翻下一页数据时使用 */
-  page_token?: string
-}
-
-export interface ListHireResumeSourceResponse {
-  items?: ResumeSource[]
-  page_token?: string
-  has_more?: boolean
 }
 
 export interface EnableHireReferralAccountResponse {
@@ -4069,24 +3436,6 @@ export interface GetHireAttachmentResponse {
 export interface PreviewHireAttachmentResponse {
   /** 预览链接 */
   url: string
-}
-
-export interface ListHireApplicationInterviewResponse {
-  /** 分页标志 */
-  page_token?: string
-  /** 是否有更多 */
-  has_more?: boolean
-  /** 面试列表 */
-  items?: Interview[]
-}
-
-export interface SearchHireTalentOperationLogResponse {
-  /** 列表 */
-  items?: TalentOperationLog[]
-  /** 是否还有下一页数据 */
-  has_more?: boolean
-  /** 下一页页码 */
-  page_token?: string
 }
 
 export interface GetHireJobManagerResponse {

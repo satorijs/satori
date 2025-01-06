@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { BaseMember, ExportTask, File, FileComment, FileCommentReply, FileLike, FileStatistics, FileViewRecord, ImportTask, ImportTaskMountPoint, Member, Meta, MetaFailed, PermissionPublic, Property, ReferEntity, ReplyContent, ReplyList, RequestDoc, TmpDownloadUrl, Version } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -32,7 +32,7 @@ declare module '../internal' {
      * 获取文件访问记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-view_record/list
      */
-    listDriveV1FileViewRecord(file_token: string, query?: ListDriveV1FileViewRecordQuery): Promise<ListDriveV1FileViewRecordResponse>
+    listDriveV1FileViewRecord(file_token: string, query?: ListDriveV1FileViewRecordQuery): Promise<Paginated<FileViewRecord>>
     /**
      * 复制文件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/copy
@@ -142,7 +142,7 @@ declare module '../internal' {
      * 获取文档版本列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-version/list
      */
-    listDriveV1FileVersion(file_token: string, query?: ListDriveV1FileVersionQuery): Promise<ListDriveV1FileVersionResponse>
+    listDriveV1FileVersion(file_token: string, query?: ListDriveV1FileVersionQuery): Promise<Paginated<Version>>
     /**
      * 获取文档版本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-version/get
@@ -157,7 +157,7 @@ declare module '../internal' {
      * 获取云文档的点赞者列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/file-like/list
      */
-    listDriveV2FileLike(file_token: string, query?: ListDriveV2FileLikeQuery): Promise<ListDriveV2FileLikeResponse>
+    listDriveV2FileLike(file_token: string, query?: ListDriveV2FileLikeQuery): Promise<Paginated<FileLike>>
     /**
      * 订阅云文档事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/subscribe
@@ -247,7 +247,7 @@ declare module '../internal' {
      * 获取云文档所有评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment/list
      */
-    listDriveV1FileComment(file_token: string, query?: ListDriveV1FileCommentQuery): Promise<ListDriveV1FileCommentResponse>
+    listDriveV1FileComment(file_token: string, query?: ListDriveV1FileCommentQuery): Promise<Paginated<FileComment>>
     /**
      * 批量获取评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment/batch_query
@@ -272,7 +272,7 @@ declare module '../internal' {
      * 获取回复信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/list
      */
-    listDriveV1FileCommentReply(file_token: string, comment_id: string, query?: ListDriveV1FileCommentReplyQuery): Promise<ListDriveV1FileCommentReplyResponse>
+    listDriveV1FileCommentReply(file_token: string, comment_id: string, query?: ListDriveV1FileCommentReplyQuery): Promise<Paginated<FileCommentReply>>
     /**
      * 更新回复的内容
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/update
@@ -301,11 +301,7 @@ declare module '../internal' {
   }
 }
 
-export interface ListDriveV1FileQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDriveV1FileQuery extends Pagination {
   /** 文件夹的token（若不填写该参数或填写空字符串，则默认获取用户云空间下的清单，且不支持分页） */
   folder_token?: string
   /** 排序规则 */
@@ -345,11 +341,7 @@ export interface GetDriveV1FileStatisticsQuery {
   file_type: 'doc' | 'sheet' | 'mindnote' | 'bitable' | 'wiki' | 'file' | 'docx'
 }
 
-export interface ListDriveV1FileViewRecordQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDriveV1FileViewRecordQuery extends Pagination {
   /** 文档类型 */
   file_type: 'doc' | 'docx' | 'sheet' | 'bitable' | 'mindnote' | 'wiki' | 'file'
   /** 此次调用中使用的访问者 ID 的类型 */
@@ -545,11 +537,7 @@ export interface CreateDriveV1FileVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDriveV1FileVersionQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDriveV1FileVersionQuery extends Pagination {
   /** 原文档类型 */
   obj_type: 'docx' | 'sheet'
   /** 用户id类型 */
@@ -570,13 +558,9 @@ export interface DeleteDriveV1FileVersionQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListDriveV2FileLikeQuery {
+export interface ListDriveV2FileLikeQuery extends Pagination {
   /** 文件类型，如果该值为空或者与文件实际类型不匹配，接口会返回失败。 */
   file_type: 'doc' | 'docx' | 'file'
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -769,17 +753,13 @@ export interface PatchDriveV2PermissionPublicQuery {
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
 }
 
-export interface ListDriveV1FileCommentQuery {
+export interface ListDriveV1FileCommentQuery extends Pagination {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'file' | 'docx'
   /** 是否全文评论 */
   is_whole?: boolean
   /** 是否已解决（可选） */
   is_solved?: boolean
-  /** 评论分页参数 */
-  page_token?: string
-  /** 获取满足 commen_id > page_token 的评论数量 */
-  page_size?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -825,11 +805,7 @@ export interface GetDriveV1FileCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDriveV1FileCommentReplyQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListDriveV1FileCommentReplyQuery extends Pagination {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'file' | 'docx'
   /** 此次调用中使用的用户ID的类型 */
@@ -909,15 +885,6 @@ export interface GetDriveV1FileStatisticsResponse {
   file_type?: string
   /** 文档统计信息 */
   statistics?: FileStatistics
-}
-
-export interface ListDriveV1FileViewRecordResponse {
-  /** 访问记录列表 */
-  items?: FileViewRecord[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface CopyDriveV1FileResponse {
@@ -1022,15 +989,6 @@ export interface CreateDriveV1FileVersionResponse {
   parent_type?: 'docx' | 'sheet'
 }
 
-export interface ListDriveV1FileVersionResponse {
-  /** 版本文档列表 */
-  items?: Version[]
-  /** 下一页请求token */
-  page_token?: string
-  /** 是否有下一页数据 */
-  has_more?: boolean
-}
-
 export interface GetDriveV1FileVersionResponse {
   /** 版本文档标题，最大长度 1024 个Unicode 码点。通常情况下，一个英文或中文字符对应一个码点，但是某些特殊符号可能会对应多个码点。例如，家庭组合「👨‍👩‍👧」这个表情符号对应5个码点。 */
   name?: string
@@ -1052,15 +1010,6 @@ export interface GetDriveV1FileVersionResponse {
   obj_type?: 'docx' | 'sheet'
   /** 源文档类型 */
   parent_type?: 'docx' | 'sheet'
-}
-
-export interface ListDriveV2FileLikeResponse {
-  /** 文件的点赞者列表 */
-  items?: FileLike[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多点赞记录 */
-  has_more?: boolean
 }
 
 export interface GetSubscribeDriveV1FileResponse {
@@ -1123,14 +1072,6 @@ export interface PatchDriveV2PermissionPublicResponse {
   permission_public?: PermissionPublic
 }
 
-export interface ListDriveV1FileCommentResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的 Token */
-  page_token?: string
-  items?: FileComment[]
-}
-
 export interface BatchQueryDriveV1FileCommentResponse {
   /** 评论的相关信息、回复的信息、回复分页的信息 */
   items?: FileComment[]
@@ -1188,12 +1129,6 @@ export interface GetDriveV1FileCommentResponse {
   quote?: string
   /** 评论里的回复列表 */
   reply_list?: ReplyList
-}
-
-export interface ListDriveV1FileCommentReplyResponse {
-  items?: FileCommentReply[]
-  page_token?: string
-  has_more: boolean
 }
 
 export interface GetDriveV1FileSubscriptionResponse {

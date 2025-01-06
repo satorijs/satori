@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AccessRecord, Device, Feature, Rule, User, UserExternal } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -17,7 +17,7 @@ declare module '../internal' {
      * 获取用户列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user/list
      */
-    listAcsUser(query?: ListAcsUserQuery): Promise<ListAcsUserResponse>
+    listAcsUser(query?: ListAcsUserQuery): Promise<Paginated<User>>
     /**
      * 上传人脸图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user-face/update
@@ -67,7 +67,7 @@ declare module '../internal' {
      * 获取门禁记录列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record/list
      */
-    listAcsAccessRecord(query?: ListAcsAccessRecordQuery): Promise<ListAcsAccessRecordResponse>
+    listAcsAccessRecord(query?: ListAcsAccessRecordQuery): Promise<Paginated<AccessRecord>>
     /**
      * 下载开门时的人脸识别图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record-access_photo/get
@@ -91,11 +91,7 @@ export interface GetAcsUserQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListAcsUserQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAcsUserQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -167,11 +163,7 @@ export interface CreateAcsVisitorQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListAcsAccessRecordQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListAcsAccessRecordQuery extends Pagination {
   /** 记录开始时间，单位秒 */
   from: number
   /** 记录结束时间，单位秒，时间跨度不能超过30天 */
@@ -185,14 +177,6 @@ export interface ListAcsAccessRecordQuery {
 export interface GetAcsUserResponse {
   /** 门禁用户信息 */
   user?: User
-}
-
-export interface ListAcsUserResponse {
-  items?: User[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface GetAcsRuleExternalResponse {
@@ -212,14 +196,6 @@ export interface CreateAcsVisitorResponse {
 
 export interface ListAcsDeviceResponse {
   items?: Device[]
-}
-
-export interface ListAcsAccessRecordResponse {
-  items?: AccessRecord[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 Internal.define({

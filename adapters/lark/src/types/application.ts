@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { AppContactsRangeIdList, AppRecommendRule, AppVisibilityIdList, Application, ApplicationAppContactsRange, ApplicationAppUsage, ApplicationAppVersion, ApplicationDepartmentAppUsage, ApplicationFeedback, ApplicationVisibilityDepartmentWhiteBlackInfo, ApplicationVisibilityGroupWhiteBlackInfo, ApplicationVisibilityUserWhiteBlackInfo, ClientBadgeNum, Scope } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -17,7 +17,7 @@ declare module '../internal' {
      * 获取应用版本列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/list
      */
-    listApplicationApplicationAppVersion(app_id: string, query?: ListApplicationApplicationAppVersionQuery): Promise<ListApplicationApplicationAppVersionResponse>
+    listApplicationApplicationAppVersion(app_id: string, query?: ListApplicationApplicationAppVersionQuery): Promise<Paginated<ApplicationAppVersion>>
     /**
      * 获取应用版本中开发者申请的通讯录权限范围
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/contacts_range_suggest
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 查看待审核的应用列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/underauditlist
      */
-    underauditlistApplication(query?: UnderauditlistApplicationQuery): Promise<UnderauditlistApplicationResponse>
+    underauditlistApplication(query?: UnderauditlistApplicationQuery): Promise<Paginated<Application>>
     /**
      * 更新应用审核状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/patch
@@ -82,7 +82,7 @@ declare module '../internal' {
      * 获取多部门应用使用概览
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_usage/department_overview
      */
-    departmentOverviewApplicationApplicationAppUsage(app_id: string, body: DepartmentOverviewApplicationApplicationAppUsageRequest, query?: DepartmentOverviewApplicationApplicationAppUsageQuery): Promise<DepartmentOverviewApplicationApplicationAppUsageResponse>
+    departmentOverviewApplicationApplicationAppUsage(app_id: string, body: DepartmentOverviewApplicationApplicationAppUsageRequest, query?: DepartmentOverviewApplicationApplicationAppUsageQuery): Promise<Paginated<ApplicationDepartmentAppUsage>>
     /**
      * 获取消息推送概览
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_usage/message_push_overview
@@ -102,7 +102,7 @@ declare module '../internal' {
      * 获取应用反馈列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-feedback/list
      */
-    listApplicationApplicationFeedback(app_id: string, query?: ListApplicationApplicationFeedbackQuery): Promise<ListApplicationApplicationFeedbackResponse>
+    listApplicationApplicationFeedback(app_id: string, query?: ListApplicationApplicationFeedbackQuery): Promise<Paginated<ApplicationFeedback, 'feedback_list'>>
     /**
      * 更新应用红点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_badge/set
@@ -122,7 +122,7 @@ declare module '../internal' {
      * 获取当前设置的推荐规则列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_recommend_rule/list
      */
-    listApplicationAppRecommendRule(query?: ListApplicationAppRecommendRuleQuery): Promise<ListApplicationAppRecommendRuleResponse>
+    listApplicationAppRecommendRule(query?: ListApplicationAppRecommendRuleQuery): Promise<Paginated<AppRecommendRule, 'rules'>>
   }
 }
 
@@ -140,13 +140,9 @@ export interface GetApplicationApplicationAppVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListApplicationApplicationAppVersionQuery {
+export interface ListApplicationApplicationAppVersionQuery extends Pagination {
   /** 应用信息的语言版本 */
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
   /** 0：按照时间倒序 1：按照时间正序 */
   order?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -160,11 +156,7 @@ export interface ContactsRangeSuggestApplicationApplicationAppVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListApplicationQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListApplicationQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: string
   /** 应用的图标、描述、帮助文档链接是按照应用的主语言返回；其他内容（如应用权限、应用分类）按照该参数设定返回对应的语言。可选值有： zh_cn：中文 en_us：英文 ja_jp：日文  如不填写，则按照应用的主语言返回 */
@@ -177,13 +169,9 @@ export interface ListApplicationQuery {
   owner_type?: 0 | 1 | 2
 }
 
-export interface UnderauditlistApplicationQuery {
+export interface UnderauditlistApplicationQuery extends Pagination {
   /** 指定返回的语言 */
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -212,11 +200,7 @@ export interface PatchApplicationQuery {
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
 }
 
-export interface ContactsRangeConfigurationApplicationQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ContactsRangeConfigurationApplicationQuery extends Pagination {
   /** 返回值的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 此次调用中使用的用户ID的类型 */
@@ -338,7 +322,7 @@ export interface PatchApplicationApplicationFeedbackQuery {
   operator_id: string
 }
 
-export interface ListApplicationApplicationFeedbackQuery {
+export interface ListApplicationApplicationFeedbackQuery extends Pagination {
   /** 查询的起始日期，格式为yyyy-mm-dd。不填则默认为当前日期减去180天。 */
   from_date?: string
   /** 查询的结束日期，格式为yyyy-mm-dd。不填默认为当前日期。只能查询 180 天内的数据。 */
@@ -348,10 +332,6 @@ export interface ListApplicationApplicationFeedbackQuery {
   /** 反馈处理状态，不填写则表示查询所有处理类型。 */
   status?: 0 | 1 | 2 | 3
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
-  /** 分页拉取反馈列表起始位置标示，不填表示从头开始 */
-  page_token?: string
-  /** 本次拉取反馈列表最大个数 */
-  page_size?: number
 }
 
 export interface SetApplicationAppBadgeRequest {
@@ -372,31 +352,19 @@ export interface SetApplicationAppBadgeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface FavouriteApplicationQuery {
+export interface FavouriteApplicationQuery extends Pagination {
   /** 应用信息的语言版本 */
   language?: 'zh_cn' | 'en_us' | 'ja_jp'
-  /** 分页标记,不填表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 单页需求最大个数（最大 100），不传默认10个 */
-  page_size?: number
 }
 
-export interface RecommendApplicationQuery {
+export interface RecommendApplicationQuery extends Pagination {
   /** 应用信息的语言版本 */
   language?: 'zh_cn' | 'en_us' | 'ja_jp'
   /** 推荐应用类型，默认为用户不可移除的推荐应用列表 */
   recommend_type?: 'user_unremovable' | 'user_removable'
-  /** 分页标记,不填表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 单页需求最大个数（最大 100），不传默认10个 */
-  page_size?: number
 }
 
-export interface ListApplicationAppRecommendRuleQuery {
-  /** 分页大小 */
-  page_size: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListApplicationAppRecommendRuleQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -408,15 +376,6 @@ export interface GetApplicationResponse {
 
 export interface GetApplicationApplicationAppVersionResponse {
   app_version?: ApplicationAppVersion
-}
-
-export interface ListApplicationApplicationAppVersionResponse {
-  /** 应用版本列表 */
-  items?: ApplicationAppVersion[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface ContactsRangeSuggestApplicationApplicationAppVersionResponse {
@@ -438,15 +397,6 @@ export interface ListApplicationResponse {
   total_count?: number
 }
 
-export interface UnderauditlistApplicationResponse {
-  /** 待审核应用列表 */
-  items: Application[]
-  /** 是否有下一页数据 */
-  has_more: boolean
-  /** 下一页分页的token */
-  page_token?: string
-}
-
 export interface ContactsRangeConfigurationApplicationResponse {
   contacts_range?: ApplicationAppContactsRange
   /** 是否还有更多项 */
@@ -464,15 +414,6 @@ export interface CheckWhiteBlackListApplicationApplicationVisibilityResponse {
   group_visibility_list?: ApplicationVisibilityGroupWhiteBlackInfo[]
 }
 
-export interface DepartmentOverviewApplicationApplicationAppUsageResponse {
-  /** 分页查询时返回，代表是否还有更多数据 */
-  has_more?: boolean
-  /** 分页标记，下一页分页的token */
-  page_token?: string
-  /** 部门内员工使用应用的概览数据 */
-  items?: ApplicationDepartmentAppUsage[]
-}
-
 export interface MessagePushOverviewApplicationApplicationAppUsageResponse {
   /** 消息推送情况 */
   items?: ApplicationAppUsage[]
@@ -481,15 +422,6 @@ export interface MessagePushOverviewApplicationApplicationAppUsageResponse {
 export interface OverviewApplicationApplicationAppUsageResponse {
   /** 员工使用应用概览数据 */
   items?: ApplicationAppUsage[]
-}
-
-export interface ListApplicationApplicationFeedbackResponse {
-  /** 应用的反馈列表 */
-  feedback_list?: ApplicationFeedback[]
-  /** 是否还有更多用户反馈列表，true：是，false：否 */
-  has_more: boolean
-  /** 拉取下一页应用反馈列表时使用的 page_token */
-  page_token?: string
 }
 
 export interface FavouriteApplicationResponse {
@@ -514,15 +446,6 @@ export interface RecommendApplicationResponse {
   has_more?: boolean
   /** 应用数据列表 */
   app_list?: Application[]
-}
-
-export interface ListApplicationAppRecommendRuleResponse {
-  /** 推荐规则列表 */
-  rules?: AppRecommendRule[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 Internal.define({

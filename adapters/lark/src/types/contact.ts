@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { CustomAttr, Department, DepartmentI18nName, DepartmentLeader, EmployeeTypeEnum, FunctionalRoleMember, FunctionalRoleMemberResult, Group, I18nContent, JobFamily, JobLevel, JobTitle, MemberResult, Memberlist, ResourceAcceptor, Unit, UnitDepartment, User, UserContactInfo, UserCustomAttr, UserDepartmentInfo, UserOrder, WorkCity } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,7 +37,7 @@ declare module '../internal' {
      * 获取部门直属用户列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/find_by_department
      */
-    findByDepartmentContactUser(query?: FindByDepartmentContactUserQuery): Promise<FindByDepartmentContactUserResponse>
+    findByDepartmentContactUser(query?: FindByDepartmentContactUserQuery): Promise<Paginated<User>>
     /**
      * 通过手机号或邮箱获取用户 ID
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/batch_get_id
@@ -72,12 +72,12 @@ declare module '../internal' {
      * 查询用户组列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/group/simplelist
      */
-    simplelistContactGroup(query?: SimplelistContactGroupQuery): Promise<SimplelistContactGroupResponse>
+    simplelistContactGroup(query?: SimplelistContactGroupQuery): Promise<Paginated<Group, 'grouplist'>>
     /**
      * 查询用户所属用户组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/group/member_belong
      */
-    memberBelongContactGroup(query?: MemberBelongContactGroupQuery): Promise<MemberBelongContactGroupResponse>
+    memberBelongContactGroup(query?: MemberBelongContactGroupQuery): Promise<Paginated<string, 'group_list'>>
     /**
      * 删除用户组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/group/delete
@@ -87,7 +87,7 @@ declare module '../internal' {
      * 获取企业自定义用户字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/custom_attr/list
      */
-    listContactCustomAttr(query?: ListContactCustomAttrQuery): Promise<ListContactCustomAttrResponse>
+    listContactCustomAttr(query?: ListContactCustomAttrQuery): Promise<Paginated<CustomAttr>>
     /**
      * 新增人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/employee_type_enum/create
@@ -102,7 +102,7 @@ declare module '../internal' {
      * 查询人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/employee_type_enum/list
      */
-    listContactEmployeeTypeEnum(query?: ListContactEmployeeTypeEnumQuery): Promise<ListContactEmployeeTypeEnumResponse>
+    listContactEmployeeTypeEnum(query?: ListContactEmployeeTypeEnumQuery): Promise<Paginated<EmployeeTypeEnum>>
     /**
      * 删除人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/employee_type_enum/delete
@@ -147,17 +147,17 @@ declare module '../internal' {
      * 获取子部门列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/children
      */
-    childrenContactDepartment(department_id: string, query?: ChildrenContactDepartmentQuery): Promise<ChildrenContactDepartmentResponse>
+    childrenContactDepartment(department_id: string, query?: ChildrenContactDepartmentQuery): Promise<Paginated<Department>>
     /**
      * 获取父部门信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/parent
      */
-    parentContactDepartment(query?: ParentContactDepartmentQuery): Promise<ParentContactDepartmentResponse>
+    parentContactDepartment(query?: ParentContactDepartmentQuery): Promise<Paginated<Department>>
     /**
      * 搜索部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/search
      */
-    searchContactDepartment(body: SearchContactDepartmentRequest, query?: SearchContactDepartmentQuery): Promise<SearchContactDepartmentResponse>
+    searchContactDepartment(body: SearchContactDepartmentRequest, query?: SearchContactDepartmentQuery): Promise<Paginated<Department>>
     /**
      * 删除部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/delete
@@ -187,7 +187,7 @@ declare module '../internal' {
      * 获取单位绑定的部门列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/unit/list_department
      */
-    listDepartmentContactUnit(query?: ListDepartmentContactUnitQuery): Promise<ListDepartmentContactUnitResponse>
+    listDepartmentContactUnit(query?: ListDepartmentContactUnitQuery): Promise<Paginated<UnitDepartment, 'departmentlist'>>
     /**
      * 获取单位信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/unit/get
@@ -197,7 +197,7 @@ declare module '../internal' {
      * 获取单位列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/unit/list
      */
-    listContactUnit(query?: ListContactUnitQuery): Promise<ListContactUnitResponse>
+    listContactUnit(query?: ListContactUnitQuery): Promise<Paginated<Unit, 'unitlist'>>
     /**
      * 删除单位
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/unit/delete
@@ -217,7 +217,7 @@ declare module '../internal' {
      * 查询用户组成员列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/group-member/simplelist
      */
-    simplelistContactGroupMember(group_id: string, query?: SimplelistContactGroupMemberQuery): Promise<SimplelistContactGroupMemberResponse>
+    simplelistContactGroupMember(group_id: string, query?: SimplelistContactGroupMemberQuery): Promise<Paginated<Memberlist, 'memberlist'>>
     /**
      * 移除用户组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/group-member/remove
@@ -262,7 +262,7 @@ declare module '../internal' {
      * 查询角色下的所有成员信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/functional_role-member/list
      */
-    listContactFunctionalRoleMember(role_id: string, query?: ListContactFunctionalRoleMemberQuery): Promise<ListContactFunctionalRoleMemberResponse>
+    listContactFunctionalRoleMember(role_id: string, query?: ListContactFunctionalRoleMemberQuery): Promise<Paginated<FunctionalRoleMember, 'members'>>
     /**
      * 删除角色下的成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/functional_role-member/batch_delete
@@ -287,7 +287,7 @@ declare module '../internal' {
      * 获取租户职级列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/job_level/list
      */
-    listContactJobLevel(query?: ListContactJobLevelQuery): Promise<ListContactJobLevelResponse>
+    listContactJobLevel(query?: ListContactJobLevelQuery): Promise<Paginated<JobLevel>>
     /**
      * 删除职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/job_level/delete
@@ -312,7 +312,7 @@ declare module '../internal' {
      * 获取租户序列列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/job_family/list
      */
-    listContactJobFamily(query?: ListContactJobFamilyQuery): Promise<ListContactJobFamilyResponse>
+    listContactJobFamily(query?: ListContactJobFamilyQuery): Promise<Paginated<JobFamily>>
     /**
      * 删除序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/job_family/delete
@@ -327,7 +327,7 @@ declare module '../internal' {
      * 获取租户职务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/job_title/list
      */
-    listContactJobTitle(query?: ListContactJobTitleQuery): Promise<ListContactJobTitleResponse>
+    listContactJobTitle(query?: ListContactJobTitleQuery): Promise<Paginated<JobTitle>>
     /**
      * 获取单个工作城市信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/work_city/get
@@ -337,12 +337,12 @@ declare module '../internal' {
      * 获取租户工作城市列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/work_city/list
      */
-    listContactWorkCity(query?: ListContactWorkCityQuery): Promise<ListContactWorkCityResponse>
+    listContactWorkCity(query?: ListContactWorkCityQuery): Promise<Paginated<WorkCity>>
     /**
      * 获取用户列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/list
      */
-    listContactUser(query?: ListContactUserQuery): Promise<ListContactUserResponse>
+    listContactUser(query?: ListContactUserQuery): Promise<Paginated<User>>
     /**
      * 更新用户所有信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/update
@@ -352,19 +352,15 @@ declare module '../internal' {
      * 获取部门信息列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/list
      */
-    listContactDepartment(query?: ListContactDepartmentQuery): Promise<ListContactDepartmentResponse>
+    listContactDepartment(query?: ListContactDepartmentQuery): Promise<Paginated<Department>>
   }
 }
 
-export interface ListContactScopeQuery {
+export interface ListContactScopeQuery extends Pagination {
   /** 返回值的用户ID的类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 返回值的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小，返回值所有列表长度之和不超过这个值 */
-  page_size?: number
 }
 
 export interface CreateContactUserRequest {
@@ -517,17 +513,13 @@ export interface BatchContactUserQuery {
   department_id_type?: 'open_department_id' | 'department_id'
 }
 
-export interface FindByDepartmentContactUserQuery {
+export interface FindByDepartmentContactUserQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型部门ID类型的区别参见[部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 填写该字段表示获取该部门下用户，必填。根部门的部门ID为0。ID值与查询参数中的department_id_type 对应。不同 ID 的说明与department_id的获取方式参见 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
   department_id: string
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface BatchGetIdContactUserRequest {
@@ -623,33 +615,21 @@ export interface GetContactGroupQuery {
   department_id_type?: 'open_department_id' | 'department_id'
 }
 
-export interface SimplelistContactGroupQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SimplelistContactGroupQuery extends Pagination {
   /** 用户组类型 */
   type?: 1 | 2
 }
 
-export interface MemberBelongContactGroupQuery {
+export interface MemberBelongContactGroupQuery extends Pagination {
   /** 成员ID */
   member_id: string
   /** 成员ID类型 */
   member_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 欲获取的用户组类型 */
   group_type?: 1 | 2
-  /** 分页查询大小 */
-  page_size?: number
-  /** 分页查询Token */
-  page_token?: string
 }
 
-export interface ListContactCustomAttrQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactCustomAttrQuery extends Pagination {
 }
 
 export interface CreateContactEmployeeTypeEnumRequest {
@@ -674,11 +654,7 @@ export interface UpdateContactEmployeeTypeEnumRequest {
   i18n_content?: I18nContent[]
 }
 
-export interface ListContactEmployeeTypeEnumQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface ListContactEmployeeTypeEnumQuery extends Pagination {
 }
 
 export interface CreateContactDepartmentRequest {
@@ -803,30 +779,22 @@ export interface BatchContactDepartmentQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ChildrenContactDepartmentQuery {
+export interface ChildrenContactDepartmentQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型不同 ID 的说明与department_id的获取方式参见 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 是否递归获取子部门 */
   fetch_child?: boolean
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
 }
 
-export interface ParentContactDepartmentQuery {
+export interface ParentContactDepartmentQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 部门ID */
   department_id: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface SearchContactDepartmentRequest {
@@ -834,15 +802,11 @@ export interface SearchContactDepartmentRequest {
   query: string
 }
 
-export interface SearchContactDepartmentQuery {
+export interface SearchContactDepartmentQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface DeleteContactDepartmentQuery {
@@ -882,22 +846,14 @@ export interface UnbindDepartmentContactUnitRequest {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListDepartmentContactUnitQuery {
+export interface ListDepartmentContactUnitQuery extends Pagination {
   /** 单位ID */
   unit_id: string
   /** 此次调用中预获取的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
-export interface ListContactUnitQuery {
-  /** 分页大小，默认50，取值范围 1-100 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactUnitQuery extends Pagination {
 }
 
 export interface AddContactGroupMemberRequest {
@@ -914,11 +870,7 @@ export interface BatchAddContactGroupMemberRequest {
   members?: Memberlist[]
 }
 
-export interface SimplelistContactGroupMemberQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface SimplelistContactGroupMemberQuery extends Pagination {
   /** 欲获取成员ID类型。当member_type=user时候，member_id_type表示user_id_type，枚举值open_id, union_id和user_id。当member_type=department时候，member_id_type表示department_id_type，枚举值open_id和department_id。 */
   member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'department_id'
   /** 欲获取的用户组成员类型。 */
@@ -980,11 +932,7 @@ export interface GetContactFunctionalRoleMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListContactFunctionalRoleMemberQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactFunctionalRoleMemberQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型 */
@@ -1031,11 +979,7 @@ export interface UpdateContactJobLevelRequest {
   i18n_description?: I18nContent[]
 }
 
-export interface ListContactJobLevelQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactJobLevelQuery extends Pagination {
   /** 传入该字段时，可查询指定职级名称对应的职级信息。 */
   name?: string
 }
@@ -1070,40 +1014,24 @@ export interface UpdateContactJobFamilyRequest {
   i18n_description?: I18nContent[]
 }
 
-export interface ListContactJobFamilyQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactJobFamilyQuery extends Pagination {
   /** 序列名称,传入该字段时，可查询指定序列名称对应的序列信息 */
   name?: string
 }
 
-export interface ListContactJobTitleQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactJobTitleQuery extends Pagination {
 }
 
-export interface ListContactWorkCityQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
+export interface ListContactWorkCityQuery extends Pagination {
 }
 
-export interface ListContactUserQuery {
+export interface ListContactUserQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 填写该字段表示获取部门下所有用户，选填。 */
   department_id?: string
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface UpdateContactUserRequest {
@@ -1158,7 +1086,7 @@ export interface UpdateContactUserQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListContactDepartmentQuery {
+export interface ListContactDepartmentQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
@@ -1167,10 +1095,6 @@ export interface ListContactDepartmentQuery {
   parent_department_id?: string
   /** 是否递归获取子部门 */
   fetch_child?: boolean
-  /** 分页大小 */
-  page_size?: number
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token 获取查询结果 */
-  page_token?: string
 }
 
 export interface ListContactScopeResponse {
@@ -1203,15 +1127,6 @@ export interface BatchContactUserResponse {
   items?: User[]
 }
 
-export interface FindByDepartmentContactUserResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 用户列表 */
-  items?: User[]
-}
-
 export interface BatchGetIdContactUserResponse {
   /** 手机号或者邮箱对应的用户id信息 */
   user_list?: UserContactInfo[]
@@ -1227,33 +1142,6 @@ export interface GetContactGroupResponse {
   group: Group
 }
 
-export interface SimplelistContactGroupResponse {
-  /** 用户组列表 */
-  grouplist: Group[]
-  /** 下次分页获取的page_token */
-  page_token: string
-  /** 是否还需要分页获取 */
-  has_more: boolean
-}
-
-export interface MemberBelongContactGroupResponse {
-  /** 用户组ID列表 */
-  group_list?: string[]
-  /** 分页查询Token */
-  page_token?: string
-  /** 是否有更多结果 */
-  has_more?: boolean
-}
-
-export interface ListContactCustomAttrResponse {
-  /** 自定义字段定义 */
-  items?: CustomAttr[]
-  /** 分页标记 */
-  page_token?: string
-  /** 是否还有下一页 */
-  has_more?: boolean
-}
-
 export interface CreateContactEmployeeTypeEnumResponse {
   /** 创建人员类型接口 */
   employee_type_enum?: EmployeeTypeEnum
@@ -1261,15 +1149,6 @@ export interface CreateContactEmployeeTypeEnumResponse {
 
 export interface UpdateContactEmployeeTypeEnumResponse {
   employee_type_enum?: EmployeeTypeEnum
-}
-
-export interface ListContactEmployeeTypeEnumResponse {
-  /** 雇员类型列表 */
-  items?: EmployeeTypeEnum[]
-  /** 是否下一页 */
-  has_more?: boolean
-  /** 分页token */
-  page_token?: string
 }
 
 export interface CreateContactDepartmentResponse {
@@ -1293,45 +1172,9 @@ export interface BatchContactDepartmentResponse {
   items?: Department[]
 }
 
-export interface ChildrenContactDepartmentResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 部门列表 */
-  items?: Department[]
-}
-
-export interface ParentContactDepartmentResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 部门列表 */
-  items?: Department[]
-}
-
-export interface SearchContactDepartmentResponse {
-  /** 部门列表 */
-  items?: Department[]
-  /** 翻页 token，传入返回下一页，首页不需要传入 */
-  page_token?: string
-  /** 是否还有下一页 */
-  has_more: boolean
-}
-
 export interface CreateContactUnitResponse {
   /** 单位的自定义ID */
   unit_id: string
-}
-
-export interface ListDepartmentContactUnitResponse {
-  /** 单位绑定的部门列表 */
-  departmentlist: UnitDepartment[]
-  /** 是否还有分页数据 */
-  has_more: boolean
-  /** 下次分页请求标记 */
-  page_token: string
 }
 
 export interface GetContactUnitResponse {
@@ -1339,27 +1182,9 @@ export interface GetContactUnitResponse {
   unit: Unit
 }
 
-export interface ListContactUnitResponse {
-  /** 单位列表 */
-  unitlist: Unit[]
-  /** 是否还有分页数据 */
-  has_more: boolean
-  /** 分页下次调用的page_token值 */
-  page_token: string
-}
-
 export interface BatchAddContactGroupMemberResponse {
   /** 成员添加操作结果 */
   results?: MemberResult[]
-}
-
-export interface SimplelistContactGroupMemberResponse {
-  /** 成员列表 */
-  memberlist: Memberlist[]
-  /** 下次分页获取的page_token */
-  page_token: string
-  /** 是否还需要分页获取 */
-  has_more: boolean
 }
 
 export interface CreateContactFunctionalRoleResponse {
@@ -1382,15 +1207,6 @@ export interface GetContactFunctionalRoleMemberResponse {
   member?: FunctionalRoleMember
 }
 
-export interface ListContactFunctionalRoleMemberResponse {
-  /** 角色成员列表 */
-  members?: FunctionalRoleMember[]
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 是否还有值 */
-  has_more?: boolean
-}
-
 export interface BatchDeleteContactFunctionalRoleMemberResponse {
   /** 批量新增角色成员结果集 */
   result?: FunctionalRoleMemberResult[]
@@ -1411,15 +1227,6 @@ export interface GetContactJobLevelResponse {
   job_level?: JobLevel
 }
 
-export interface ListContactJobLevelResponse {
-  /** 职级列表 */
-  items?: JobLevel[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
 export interface CreateContactJobFamilyResponse {
   /** 序列信息 */
   job_family?: JobFamily
@@ -1435,27 +1242,9 @@ export interface GetContactJobFamilyResponse {
   job_family?: JobFamily
 }
 
-export interface ListContactJobFamilyResponse {
-  /** 序列信息 */
-  items?: JobFamily[]
-  /** 下一页分页的token */
-  page_token?: string
-  /** 是否有下一页数据 */
-  has_more?: boolean
-}
-
 export interface GetContactJobTitleResponse {
   /** 职务信息 */
   job_title?: JobTitle
-}
-
-export interface ListContactJobTitleResponse {
-  /** 职务列表 */
-  items?: JobTitle[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
 }
 
 export interface GetContactWorkCityResponse {
@@ -1463,33 +1252,8 @@ export interface GetContactWorkCityResponse {
   work_city?: WorkCity
 }
 
-export interface ListContactWorkCityResponse {
-  /** 工作城市列表 */
-  items?: WorkCity[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
-export interface ListContactUserResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: User[]
-}
-
 export interface UpdateContactUserResponse {
   user?: User
-}
-
-export interface ListContactDepartmentResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  items?: Department[]
 }
 
 Internal.define({

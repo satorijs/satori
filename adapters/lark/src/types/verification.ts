@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Verification } from '.'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {

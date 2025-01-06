@@ -1,5 +1,5 @@
-import { Internal } from '../internal'
 import { Activity, AdditionalInformation, Field, ImportedMetric, Indicator, MetricField, MetricInLibrary, MetricTag, MetricTemplate, Question, ReviewProfile, ReviewTemplate, Reviewee, RevieweeMetric, Semester, SemesterBaseInfo, StageTask, Template, Unit, WriteUserGroupScopeData } from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -17,7 +17,7 @@ declare module '../internal' {
      * 批量查询补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/query
      */
-    queryPerformanceAdditionalInformation(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery): Promise<QueryPerformanceAdditionalInformationResponse>
+    queryPerformanceAdditionalInformation(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery): Promise<Paginated<AdditionalInformation, 'additional_informations'>>
     /**
      * 批量导入补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/import
@@ -42,27 +42,27 @@ declare module '../internal' {
      * 获取评估模板配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
      */
-    queryPerformanceReviewTemplate(body: QueryPerformanceReviewTemplateRequest, query?: QueryPerformanceReviewTemplateQuery): Promise<QueryPerformanceReviewTemplateResponse>
+    queryPerformanceReviewTemplate(body: QueryPerformanceReviewTemplateRequest, query?: QueryPerformanceReviewTemplateQuery): Promise<Paginated<ReviewTemplate, 'review_templates'>>
     /**
      * 获取评估项列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/indicator/query
      */
-    queryPerformanceIndicator(body: QueryPerformanceIndicatorRequest, query?: QueryPerformanceIndicatorQuery): Promise<QueryPerformanceIndicatorResponse>
+    queryPerformanceIndicator(body: QueryPerformanceIndicatorRequest, query?: QueryPerformanceIndicatorQuery): Promise<Paginated<Indicator, 'indicators'>>
     /**
      * 获取标签填写题配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/question/query
      */
-    queryPerformanceQuestion(body: QueryPerformanceQuestionRequest, query?: QueryPerformanceQuestionQuery): Promise<QueryPerformanceQuestionResponse>
+    queryPerformanceQuestion(body: QueryPerformanceQuestionRequest, query?: QueryPerformanceQuestionQuery): Promise<Paginated<Question, 'tag_based_questions'>>
     /**
      * 获取指标列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_lib/query
      */
-    queryPerformanceMetricLib(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery): Promise<QueryPerformanceMetricLibResponse>
+    queryPerformanceMetricLib(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery): Promise<Paginated<MetricInLibrary>>
     /**
      * 获取指标模板列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_template/query
      */
-    queryPerformanceMetricTemplate(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery): Promise<QueryPerformanceMetricTemplateResponse>
+    queryPerformanceMetricTemplate(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery): Promise<Paginated<MetricTemplate>>
     /**
      * 获取指标字段列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_field/query
@@ -72,7 +72,7 @@ declare module '../internal' {
      * 获取指标标签列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_tag/list
      */
-    listPerformanceMetricTag(query?: ListPerformanceMetricTagQuery): Promise<ListPerformanceMetricTagResponse>
+    listPerformanceMetricTag(query?: ListPerformanceMetricTagQuery): Promise<Paginated<MetricTag>>
     /**
      * 获取周期任务（指定用户）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/stage_task/find_by_user_list
@@ -143,12 +143,8 @@ export interface QueryPerformanceAdditionalInformationRequest {
   reviewee_user_ids?: string[]
 }
 
-export interface QueryPerformanceAdditionalInformationQuery {
+export interface QueryPerformanceAdditionalInformationQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 示例值：30 默认值：20 数据校验规则：最大值：50 */
-  page_size?: number
 }
 
 export interface ImportPerformanceAdditionalInformationRequest {
@@ -202,12 +198,8 @@ export interface QueryPerformanceRevieweeRequest {
   activity_ids?: string[]
 }
 
-export interface QueryPerformanceRevieweeQuery {
+export interface QueryPerformanceRevieweeQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface QueryPerformanceReviewTemplateRequest {
@@ -215,11 +207,7 @@ export interface QueryPerformanceReviewTemplateRequest {
   review_template_ids?: string[]
 }
 
-export interface QueryPerformanceReviewTemplateQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface QueryPerformanceReviewTemplateQuery extends Pagination {
 }
 
 export interface QueryPerformanceIndicatorRequest {
@@ -227,11 +215,7 @@ export interface QueryPerformanceIndicatorRequest {
   indicator_ids?: string[]
 }
 
-export interface QueryPerformanceIndicatorQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface QueryPerformanceIndicatorQuery extends Pagination {
 }
 
 export interface QueryPerformanceQuestionRequest {
@@ -239,11 +223,7 @@ export interface QueryPerformanceQuestionRequest {
   tag_based_question_ids?: string[]
 }
 
-export interface QueryPerformanceQuestionQuery {
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
+export interface QueryPerformanceQuestionQuery extends Pagination {
 }
 
 export interface QueryPerformanceMetricLibRequest {
@@ -259,12 +239,8 @@ export interface QueryPerformanceMetricLibRequest {
   scoring_setting_type?: 'score_manually' | 'score_by_formula'
 }
 
-export interface QueryPerformanceMetricLibQuery {
+export interface QueryPerformanceMetricLibQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface QueryPerformanceMetricTemplateRequest {
@@ -274,12 +250,8 @@ export interface QueryPerformanceMetricTemplateRequest {
   status?: 'to_be_configured' | 'to_be_activated' | 'enabled' | 'disabled'
 }
 
-export interface QueryPerformanceMetricTemplateQuery {
+export interface QueryPerformanceMetricTemplateQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取 */
-  page_token?: string
-  /** 分页大小 */
-  page_size?: number
 }
 
 export interface QueryPerformanceMetricFieldRequest {
@@ -287,11 +259,7 @@ export interface QueryPerformanceMetricFieldRequest {
   field_ids?: string[]
 }
 
-export interface ListPerformanceMetricTagQuery {
-  /** 分页大小 */
-  page_size?: number
-  /** 分页 Token */
-  page_token?: string
+export interface ListPerformanceMetricTagQuery extends Pagination {
   /** 指标标签 ID 列表 */
   tag_ids?: string[]
 }
@@ -416,15 +384,6 @@ export interface QueryPerformanceActivityResponse {
   activities?: Activity[]
 }
 
-export interface QueryPerformanceAdditionalInformationResponse {
-  /** 补充信息列表 */
-  additional_informations?: AdditionalInformation[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
 export interface ImportPerformanceAdditionalInformationResponse {
   /** 导入记录 ID */
   import_record_id?: string
@@ -453,63 +412,9 @@ export interface QueryPerformanceRevieweeResponse {
   page_token?: string
 }
 
-export interface QueryPerformanceReviewTemplateResponse {
-  /** 评估模板信息 */
-  review_templates?: ReviewTemplate[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface QueryPerformanceIndicatorResponse {
-  /** 评估项列表 */
-  indicators?: Indicator[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface QueryPerformanceQuestionResponse {
-  /** 标签填写题 */
-  tag_based_questions?: Question[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface QueryPerformanceMetricLibResponse {
-  /** 指标信息 */
-  items?: MetricInLibrary[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface QueryPerformanceMetricTemplateResponse {
-  /** 指标模板信息 */
-  items?: MetricTemplate[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
 export interface QueryPerformanceMetricFieldResponse {
   /** 指标字段信息 */
   items?: MetricField[]
-}
-
-export interface ListPerformanceMetricTagResponse {
-  /** 指标标签列表 */
-  items?: MetricTag[]
-  /** 分页 Token */
-  page_token?: string
-  /** 是否有更多数据 */
-  has_more?: boolean
 }
 
 export interface FindByUserListPerformanceStageTaskResponse {
