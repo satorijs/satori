@@ -1,9 +1,18 @@
 import { Bot, Context, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
-
+import { CreateImFileForm } from './types'
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
-import { Internal } from './types'
+import { Internal } from './internal'
 import * as Utils from './utils'
+
+const fileTypeMap: Record<Exclude<CreateImFileForm['file_type'], 'stream'>, string[]> = {
+  opus: ['audio/opus'],
+  mp4: ['video/mp4'],
+  pdf: ['application/pdf'],
+  doc: ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  xls: ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  ppt: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+}
 
 export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
   static inject = ['server', 'http']
@@ -145,9 +154,16 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   async createUpload(...uploads: Universal.Upload[]): Promise<string[]> {
     return await Promise.all(uploads.map(async (upload) => {
+      let type: CreateImFileForm['file_type'] = 'stream'
+      for (const [key, value] of Object.entries(fileTypeMap)) {
+        if (value.includes(upload.type)) {
+          type = key as CreateImFileForm['file_type']
+          break
+        }
+      }
       const response = await this.internal.createImFile({
         file_name: upload.filename,
-        file_type: upload.type,
+        file_type: type,
         file: new Blob([upload.data]),
       })
       return this.getInternalUrl(`/im/v1/files/${response.file_key}`)

@@ -1,9 +1,7 @@
 import { Adapter, Context, Logger, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
-
 import { LarkBot } from './bot'
-import { EventPayload } from './types'
-import { adaptSession, Cipher } from './utils'
+import { adaptSession, Cipher, EventPayload } from './utils'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C>> {
   static inject = ['server']

@@ -1,7 +1,8 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { CreateImFileForm, EventPayload, Lark, MessageContent } from './types'
-import { extractIdType } from './utils'
+import { CreateImFileForm, Message } from './types'
+import { EventPayload, extractIdType } from './utils'
+import { MessageContent } from './content'
 
 export class LarkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, LarkBot<C>> {
   declare referrer?: EventPayload
@@ -17,7 +18,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async post(data?: any) {
     try {
-      let resp: Lark.Message
+      let resp: Message
       let quote = this.quote
       if (!quote && this.referrer) {
         if (this.referrer.type === 'im.message.receive_v1' && this.referrer.event.message.thread_id) {
@@ -157,7 +158,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else {
       const ext = filename.split('.').pop()
       if (['doc', 'xls', 'ppt', 'pdf'].includes(ext)) {
-        file_type = ext
+        file_type = ext as any
       } else {
         file_type = 'stream'
       }

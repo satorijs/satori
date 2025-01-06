@@ -1,5 +1,5 @@
 import { Dict, HTTP, makeArray } from '@satorijs/core'
-import { LarkBot } from '../bot'
+import { LarkBot } from './bot'
 
 export interface Internal {}
 
@@ -10,9 +10,10 @@ export interface BaseResponse {
   msg: string
 }
 
-export interface InternalConfig {
+export interface InternalRoute {
+  name: string
   multipart?: boolean
-  type?: 'json-body' | 'binary'
+  type?: 'raw-json' | 'binary'
 }
 
 export class Internal {
@@ -26,7 +27,7 @@ export class Internal {
     throw error
   }
 
-  private _buildData(arg: object, options: InternalConfig) {
+  private _buildData(arg: object, options: InternalRoute) {
     if (options.multipart) {
       const form = new FormData()
       for (const [key, value] of Object.entries(arg)) {
@@ -42,12 +43,15 @@ export class Internal {
     }
   }
 
-  static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, options: InternalConfig = {}) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, string | InternalRoute>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
         const method = key as HTTP.Method
-        for (const name of makeArray(routes[path][method])) {
-          Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
+        for (let route of makeArray(routes[path][method])) {
+          if (typeof route === 'string') {
+            route = { name: route }
+          }
+          Internal.prototype[route.name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
             const url = path.replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
@@ -58,20 +62,20 @@ export class Internal {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
               } else {
-                config.data = this._buildData(args[0], options)
+                config.data = this._buildData(args[0], route)
               }
             } else if (args.length === 2 && method !== 'GET' && method !== 'DELETE') {
-              config.data = this._buildData(args[0], options)
+              config.data = this._buildData(args[0], route)
               config.params = args[1]
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            if (options.type === 'binary') {
+            if (route.type === 'binary') {
               config.responseType = 'arraybuffer'
             }
             const response = await this.bot.http(method, url, config)
             this._assertResponse(response)
-            if (options.type === 'json-body' || options.type === 'binary') {
+            if (route.type === 'raw-json' || route.type === 'binary') {
               return response.data
             } else {
               return response.data.data

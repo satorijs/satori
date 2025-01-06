@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // https://open.larksuite.com/document/server-docs/im-v1/message-content-description/create_json
 
 declare global {
