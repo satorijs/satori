@@ -86,12 +86,12 @@ export const Methods: Dict<Method> = {
   'guild.member.approve': Method('handleGuildMemberRequest', ['message_id', 'approve', 'comment']),
 }
 
-export interface List<T> {
+export interface List<T = any> {
   data: T[]
   next?: string
 }
 
-export interface TwoWayList<T> {
+export interface BidiList<T = any> {
   data: T[]
   prev?: string
   next?: string
@@ -107,7 +107,7 @@ export interface Methods {
   sendMessage(channelId: string, content: Element.Fragment, referrer?: any, options?: SendOptions): Promise<string[]>
   sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
-  getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<TwoWayList<Message>>
+  getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<BidiList<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
   editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>

@@ -202,31 +202,22 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
 
     this.defineInternalRoute('/_api/:name', async ({ bot, headers, params, method, body }) => {
       if (method !== 'POST') return { status: 405 }
-      const type = headers['content-type']
-      let args: any
-      if (type?.startsWith('multipart/form-data')) {
-        const response = new globalThis.Response(body, { headers })
-        const form = await response.formData()
-        const rawData = form.get('$') as string
-        try {
-          args = JSON.parse(rawData)
-        } catch {
-          return { status: 400 }
-        }
-        args = JsonForm.load(args, '$', form)
-      } else {
-        args = JSON.parse(new TextDecoder().decode(body))
-      }
+      const args = await JsonForm.decode({ body, headers: new Headers(headers) })
+      if (!args) return { status: 400 }
       try {
-        const result = await bot.internal[params.name](...args)
-        const body = new TextEncoder().encode(JSON.stringify(result))
-        const headers = new Headers()
-        if (body.byteLength) {
-          headers.set('content-type', 'application/json')
+        let result = bot.internal[params.name](...args)
+        if (headers['satori-pagination']) {
+          if (!result?.[Symbol.for('satori.pagination')]) {
+            return { status: 400, statusText: 'This API does not support pagination' }
+          }
+          result = await result[Symbol.for('satori.pagination')]()
+        } else {
+          result = await result
         }
-        return { body, headers, status: 200 }
+        return { ...await JsonForm.encode(result), status: 200 }
       } catch (error) {
         if (!ctx.http.isError(error) || !error.response) throw error
+        // FIXME: missing response body
         return error.response
       }
     })

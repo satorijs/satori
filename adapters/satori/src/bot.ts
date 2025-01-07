@@ -5,13 +5,47 @@ function createInternal(bot: SatoriBot, prefix = '') {
     apply(target, thisArg, args) {
       const key = prefix.slice(1)
       bot.logger.debug('[request.internal]', key, args)
-      const form = new FormData()
-      args = JsonForm.dump(args, '$', form)
-      if (![...form.entries()].length) {
-        return bot.http.post('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), args)
+
+      const impl = async (pagination = false) => {
+        const request = await JsonForm.encode(args)
+        if (pagination) {
+          request.headers.set('Satori-Pagination', 'true')
+        }
+        const response = await bot.http('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), {
+          method: 'POST',
+          headers: Object.fromEntries(request.headers.entries()),
+          data: request.body,
+          responseType: 'arraybuffer',
+        })
+        return await JsonForm.decode({ body: response.data, headers: response.headers })
       }
-      form.append('$', JSON.stringify(args))
-      return bot.http.post('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), form)
+
+      let promise: Promise<any> | undefined
+      const result = {} as Promise<any> & AsyncIterableIterator<any>
+      for (const key of ['then', 'catch', 'finally']) {
+        result[key] = (...args: any[]) => {
+          return (promise ??= impl())[key](...args)
+        }
+      }
+
+      let pagination: { data: any[]; next?: any } | undefined
+      result.next = async function () {
+        pagination ??= await impl(true)
+        if (!pagination.data) throw new Error('Invalid pagination response')
+        if (pagination.data.length) return { done: false, value: pagination.data.shift() }
+        if (!pagination.next) return { done: true, value: undefined }
+        args = pagination.next
+        pagination = await impl(true)
+        return this.next()
+      }
+      result[Symbol.asyncIterator] = function () {
+        return this
+      }
+      result[Symbol.for('satori.pagination')] = () => {
+        return impl(true)
+      }
+
+      return result
     },
     get(target, key, receiver) {
       if (typeof key === 'symbol' || key in target) {

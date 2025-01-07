@@ -132,4 +132,43 @@ export namespace JsonForm {
       return dump(value, `${path}.${key}`, form)
     })
   }
+
+  export interface Body {
+    body: ArrayBuffer
+    headers: Headers
+  }
+
+  export async function decode(body: Body) {
+    const type = body.headers.get('content-type')
+    if (type.startsWith('multipart/form-data')) {
+      const response = new globalThis.Response(body.body, { headers: body.headers })
+      const form = await response.formData()
+      const json = form.get('$') as string
+      return load(JSON.parse(json), '$', form)
+    } else if (type.startsWith('application/json')) {
+      return JSON.parse(new TextDecoder().decode(body.body))
+    }
+  }
+
+  export async function encode(data: any): Promise<Body> {
+    const form = new FormData()
+    const json = JSON.stringify(JsonForm.dump(data, '$', form))
+    if ([...form.entries()].length) {
+      form.append('$', json)
+      const request = new Request('stub:', {
+        method: 'POST',
+        body: form,
+      })
+      return {
+        body: await request.arrayBuffer(),
+        headers: request.headers,
+      }
+    } else {
+      const body = new TextEncoder().encode(json)
+      const headers = new Headers({
+        'content-type': 'application/json',
+      })
+      return { body, headers }
+    }
+  }
 }
