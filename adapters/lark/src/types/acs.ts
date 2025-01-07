@@ -17,7 +17,12 @@ declare module '../internal' {
      * 获取用户列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user/list
      */
-    listAcsUser(query?: ListAcsUserQuery): Promise<Paginated<User>>
+    listAcsUser(query?: ListAcsUserQuery & Pagination): Promise<Paginated<User>>
+    /**
+     * 获取用户列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user/list
+     */
+    listAcsUserIter(query?: ListAcsUserQuery): AsyncIterator<User>
     /**
      * 上传人脸图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/user-face/update
@@ -67,7 +72,12 @@ declare module '../internal' {
      * 获取门禁记录列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record/list
      */
-    listAcsAccessRecord(query?: ListAcsAccessRecordQuery): Promise<Paginated<AccessRecord>>
+    listAcsAccessRecord(query?: ListAcsAccessRecordQuery & Pagination): Promise<Paginated<AccessRecord>>
+    /**
+     * 获取门禁记录列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record/list
+     */
+    listAcsAccessRecordIter(query?: ListAcsAccessRecordQuery): AsyncIterator<AccessRecord>
     /**
      * 下载开门时的人脸识别图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/acs-v1/access_record-access_photo/get
@@ -91,7 +101,7 @@ export interface GetAcsUserQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListAcsUserQuery extends Pagination {
+export interface ListAcsUserQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -163,7 +173,7 @@ export interface CreateAcsVisitorQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListAcsAccessRecordQuery extends Pagination {
+export interface ListAcsAccessRecordQuery {
   /** 记录开始时间，单位秒 */
   from: number
   /** 记录结束时间，单位秒，时间跨度不能超过30天 */
@@ -204,7 +214,7 @@ Internal.define({
     GET: 'getAcsUser',
   },
   '/open-apis/acs/v1/users': {
-    GET: 'listAcsUser',
+    GET: { name: 'listAcsUser', pagination: { argIndex: 0 } },
   },
   '/open-apis/acs/v1/users/{user_id}/face': {
     PUT: { name: 'updateAcsUserFace', multipart: true },
@@ -228,7 +238,7 @@ Internal.define({
     GET: 'listAcsDevice',
   },
   '/open-apis/acs/v1/access_records': {
-    GET: 'listAcsAccessRecord',
+    GET: { name: 'listAcsAccessRecord', pagination: { argIndex: 0 } },
   },
   '/open-apis/acs/v1/access_records/{access_record_id}/access_photo': {
     GET: { name: 'getAcsAccessRecordAccessPhoto', type: 'binary' },

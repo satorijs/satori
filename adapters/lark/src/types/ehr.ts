@@ -7,7 +7,12 @@ declare module '../internal' {
      * 批量获取员工花名册信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/employee/list
      */
-    listEhrEmployee(query?: ListEhrEmployeeQuery): Promise<Paginated<Employee>>
+    listEhrEmployee(query?: ListEhrEmployeeQuery & Pagination): Promise<Paginated<Employee>>
+    /**
+     * 批量获取员工花名册信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/employee/list
+     */
+    listEhrEmployeeIter(query?: ListEhrEmployeeQuery): AsyncIterator<Employee>
     /**
      * 下载人员的附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/ehr/ehr-v1/attachment/get
@@ -16,7 +21,7 @@ declare module '../internal' {
   }
 }
 
-export interface ListEhrEmployeeQuery extends Pagination {
+export interface ListEhrEmployeeQuery {
   /** 返回数据类型 */
   view?: 'basic' | 'full'
   /** 员工状态，不传代表查询所有员工状态实际在职 = 2&4可同时查询多个状态的记录，如 status=2&status=4 */
@@ -35,7 +40,7 @@ export interface ListEhrEmployeeQuery extends Pagination {
 
 Internal.define({
   '/open-apis/ehr/v1/employees': {
-    GET: 'listEhrEmployee',
+    GET: { name: 'listEhrEmployee', pagination: { argIndex: 0 } },
   },
   '/open-apis/ehr/v1/attachments/{token}': {
     GET: { name: 'getEhrAttachment', type: 'binary' },

@@ -228,6 +228,7 @@ async function start() {
     const extras: string[] = []
     let returnType = `${apiType}Response`
 
+    let paginationRequest: { queryType?: string } | undefined
     for (const property of detail.request.path?.properties || []) {
       args.push(`${property.name}: ${formatType(property, project.imports)}`)
     }
@@ -242,20 +243,27 @@ async function start() {
       args.push(`body: ${name}`)
     }
     if (detail.request.query?.properties?.length) {
-      const name = `${apiType}Query`
+      let queryType = `${apiType}Query`
       const keys = detail.request.query.properties.map(s => s.name)
       if (keys.includes('page_token') && keys.includes('page_size')) {
         const properties = detail.request.query.properties.filter(s => s.name !== 'page_token' && s.name !== 'page_size')
-        project.requests.push(`export interface ${name} extends Pagination {\n${generateParams(properties, project.imports)}}`)
+        if (properties.length) {
+          project.requests.push(`export interface ${queryType} {\n${generateParams(properties, project.imports)}}`)
+          paginationRequest = { queryType }
+          queryType = `${queryType} & Pagination`
+        } else {
+          queryType = 'Pagination'
+          paginationRequest = {}
+        }
         project.internalImports.add('Pagination')
       } else {
-        project.requests.push(`export interface ${name} {\n${generateParams(detail.request.query.properties, project.imports)}}`)
+        project.requests.push(`export interface ${queryType} {\n${generateParams(detail.request.query.properties, project.imports)}}`)
       }
-      args.push(`query?: ${name}`)
+      args.push(`query?: ${queryType}`)
     }
 
+    let paginationResponse: { innerType: string; tokenKey: string; itemsKey: string } | undefined
     if (detail.supportFileDownload) {
-      // detail.response.contentType === ''
       returnType = 'ArrayBuffer'
       extras.push(`type: 'binary'`)
     } else {
@@ -271,23 +279,25 @@ async function start() {
           returnType = 'void'
         } else {
           const keys = (data.properties || []).map(v => v.name)
-          let pagination: [string, Schema] | undefined
-          if (keys.includes('has_more') && keys.includes('page_token') && keys.length === 3) {
-            const list = (data.properties || []).find(v => v.name !== 'has_more' && v.name !== 'page_token')!
+          let pagination: [string, string, Schema] | undefined
+          if (keys.includes('has_more') && (keys.includes('page_token') || keys.includes('next_page_token')) && keys.length === 3) {
+            const list = (data.properties || []).find(v => !['has_more', 'page_token', 'next_page_token'].includes(v.name))!
             if (list.type === 'list') {
-              pagination = [list.name, list.items!]
+              const tokenKey = keys.includes('page_token') ? 'page_token' : 'next_page_token'
+              pagination = [list.name, tokenKey, list.items!]
             }
           }
           if (pagination) {
-            const [key, item] = pagination
-            let inner = formatType(item, project.imports)
-            if (item.type === 'object' && item.properties && !item.ref) {
+            const [itemsKey, tokenKey, schema] = pagination
+            let innerType = formatType(schema, project.imports)
+            if (schema.type === 'object' && schema.properties && !schema.ref) {
               const name = `${apiType}Item`
-              project.responses.push(`export interface ${name} ${inner}`)
-              inner = name
+              project.responses.push(`export interface ${name} ${innerType}`)
+              innerType = name
             }
-            returnType = key === 'items' ? `Paginated<${inner}>` : `Paginated<${inner}, '${key}'>`
+            returnType = itemsKey === 'items' ? `Paginated<${innerType}>` : `Paginated<${innerType}, '${itemsKey}'>`
             project.internalImports.add('Paginated')
+            paginationResponse = { innerType, tokenKey, itemsKey }
           } else {
             if (detail.pagination) {
               console.log(`unsupported pagination (${keys.join(', ')}), see https://open.feishu.cn${summary.fullPath}}`)
@@ -308,6 +318,29 @@ async function start() {
        */
       ${method}(${args.join(', ')}): Promise<${returnType}>
     `)
+
+    if (paginationRequest && paginationResponse) {
+      const paginationArgs = args.slice(0, -1)
+      const argIndex = paginationArgs.length
+      if (paginationRequest.queryType) {
+        paginationArgs.push(`query?: ${paginationRequest.queryType}`)
+      }
+      project.methods.push(dedent`
+        /**
+         * ${summary.name}
+         * @see https://open.feishu.cn${summary.fullPath}
+         */
+        ${method}Iter(${paginationArgs.join(', ')}): AsyncIterator<${paginationResponse.innerType}>
+      `)
+      const props: string[] = [`argIndex: ${argIndex}`]
+      if (paginationResponse.itemsKey !== 'items') {
+        props.push(`itemsKey: '${paginationResponse.itemsKey}'`)
+      }
+      if (paginationResponse.tokenKey !== 'page_token') {
+        props.push(`tokenKey: '${paginationResponse.tokenKey}'`)
+      }
+      extras.push(`pagination: { ${props.join(', ')} }`)
+    }
 
     const path = detail.apiPath.replace(/:([0-9a-zA-Z_]+)/g, '{$1}')
     project.defines[path] ||= {}

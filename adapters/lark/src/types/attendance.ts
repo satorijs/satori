@@ -27,7 +27,12 @@ declare module '../internal' {
      * 查询所有班次
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/shift/list
      */
-    listAttendanceShift(query?: ListAttendanceShiftQuery): Promise<Paginated<Shift, 'shift_list'>>
+    listAttendanceShift(query?: Pagination): Promise<Paginated<Shift, 'shift_list'>>
+    /**
+     * 查询所有班次
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/shift/list
+     */
+    listAttendanceShiftIter(): AsyncIterator<Shift>
     /**
      * 创建或修改排班表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_daily_shift/batch_create
@@ -47,7 +52,12 @@ declare module '../internal' {
      * 查询考勤组下所有成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list_user
      */
-    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery): Promise<Paginated<UserBase, 'users'>>
+    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery & Pagination): Promise<Paginated<UserBase, 'users'>>
+    /**
+     * 查询考勤组下所有成员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list_user
+     */
+    listUserAttendanceGroupIter(group_id: string, query?: ListUserAttendanceGroupQuery): AsyncIterator<UserBase>
     /**
      * 创建或修改考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/create
@@ -72,7 +82,12 @@ declare module '../internal' {
      * 查询所有考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list
      */
-    listAttendanceGroup(query?: ListAttendanceGroupQuery): Promise<Paginated<GroupMeta, 'group_list'>>
+    listAttendanceGroup(query?: Pagination): Promise<Paginated<GroupMeta, 'group_list'>>
+    /**
+     * 查询所有考勤组
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list
+     */
+    listAttendanceGroupIter(): AsyncIterator<GroupMeta>
     /**
      * 修改用户人脸识别信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_setting/modify
@@ -162,7 +177,12 @@ declare module '../internal' {
      * 查询所有归档规则
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/archive_rule/list
      */
-    listAttendanceArchiveRule(query?: ListAttendanceArchiveRuleQuery): Promise<Paginated<ArchiveReportMeta>>
+    listAttendanceArchiveRule(query?: Pagination): Promise<Paginated<ArchiveReportMeta>>
+    /**
+     * 查询所有归档规则
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/archive_rule/list
+     */
+    listAttendanceArchiveRuleIter(): AsyncIterator<ArchiveReportMeta>
     /**
      * 导入打卡流水
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_flow/batch_create
@@ -247,9 +267,6 @@ export interface QueryAttendanceShiftQuery {
   shift_name: string
 }
 
-export interface ListAttendanceShiftQuery extends Pagination {
-}
-
 export interface BatchCreateAttendanceUserDailyShiftRequest {
   /** 班表信息列表 */
   user_daily_shifts: UserDailyShift[]
@@ -288,7 +305,7 @@ export interface BatchCreateTempAttendanceUserDailyShiftQuery {
   employee_type: 'employee_id' | 'employee_no'
 }
 
-export interface ListUserAttendanceGroupQuery extends Pagination {
+export interface ListUserAttendanceGroupQuery {
   /** 用户 ID 的类型 */
   employee_type: string
   /** 部门 ID 的类型 */
@@ -321,9 +338,6 @@ export interface GetAttendanceGroupQuery {
 export interface SearchAttendanceGroupRequest {
   /** 考勤组名称 */
   group_name: string
-}
-
-export interface ListAttendanceGroupQuery extends Pagination {
 }
 
 export interface ModifyAttendanceUserSettingRequest {
@@ -559,9 +573,6 @@ export interface DelReportAttendanceArchiveRuleRequest {
 export interface DelReportAttendanceArchiveRuleQuery {
   /** 员工工号类型 */
   employee_type: string
-}
-
-export interface ListAttendanceArchiveRuleQuery extends Pagination {
 }
 
 export interface BatchCreateAttendanceUserFlowRequest {
@@ -1055,7 +1066,7 @@ export interface PatchAttendanceLeaveAccrualRecordResponse {
 Internal.define({
   '/open-apis/attendance/v1/shifts': {
     POST: 'createAttendanceShift',
-    GET: 'listAttendanceShift',
+    GET: { name: 'listAttendanceShift', pagination: { argIndex: 0, itemsKey: 'shift_list' } },
   },
   '/open-apis/attendance/v1/shifts/{shift_id}': {
     DELETE: 'deleteAttendanceShift',
@@ -1074,11 +1085,11 @@ Internal.define({
     POST: 'batchCreateTempAttendanceUserDailyShift',
   },
   '/open-apis/attendance/v1/groups/{group_id}/list_user': {
-    GET: 'listUserAttendanceGroup',
+    GET: { name: 'listUserAttendanceGroup', pagination: { argIndex: 1, itemsKey: 'users' } },
   },
   '/open-apis/attendance/v1/groups': {
     POST: 'createAttendanceGroup',
-    GET: 'listAttendanceGroup',
+    GET: { name: 'listAttendanceGroup', pagination: { argIndex: 0, itemsKey: 'group_list' } },
   },
   '/open-apis/attendance/v1/groups/{group_id}': {
     DELETE: 'deleteAttendanceGroup',
@@ -1139,7 +1150,7 @@ Internal.define({
     POST: 'delReportAttendanceArchiveRule',
   },
   '/open-apis/attendance/v1/archive_rule': {
-    GET: 'listAttendanceArchiveRule',
+    GET: { name: 'listAttendanceArchiveRule', pagination: { argIndex: 0 } },
   },
   '/open-apis/attendance/v1/user_flows/batch_create': {
     POST: 'batchCreateAttendanceUserFlow',

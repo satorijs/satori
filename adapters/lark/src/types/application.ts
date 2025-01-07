@@ -17,7 +17,12 @@ declare module '../internal' {
      * 获取应用版本列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/list
      */
-    listApplicationApplicationAppVersion(app_id: string, query?: ListApplicationApplicationAppVersionQuery): Promise<Paginated<ApplicationAppVersion>>
+    listApplicationApplicationAppVersion(app_id: string, query?: ListApplicationApplicationAppVersionQuery & Pagination): Promise<Paginated<ApplicationAppVersion>>
+    /**
+     * 获取应用版本列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/list
+     */
+    listApplicationApplicationAppVersionIter(app_id: string, query?: ListApplicationApplicationAppVersionQuery): AsyncIterator<ApplicationAppVersion>
     /**
      * 获取应用版本中开发者申请的通讯录权限范围
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/contacts_range_suggest
@@ -37,12 +42,17 @@ declare module '../internal' {
      * 获取企业安装的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/list
      */
-    listApplication(query?: ListApplicationQuery): Promise<ListApplicationResponse>
+    listApplication(query?: ListApplicationQuery & Pagination): Promise<ListApplicationResponse>
     /**
      * 查看待审核的应用列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/underauditlist
      */
-    underauditlistApplication(query?: UnderauditlistApplicationQuery): Promise<Paginated<Application>>
+    underauditlistApplication(query?: UnderauditlistApplicationQuery & Pagination): Promise<Paginated<Application>>
+    /**
+     * 查看待审核的应用列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/underauditlist
+     */
+    underauditlistApplicationIter(query?: UnderauditlistApplicationQuery): AsyncIterator<Application>
     /**
      * 更新应用审核状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-app_version/patch
@@ -57,7 +67,7 @@ declare module '../internal' {
      * 获取应用通讯录权限范围配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/contacts_range_configuration
      */
-    contactsRangeConfigurationApplication(app_id: string, query?: ContactsRangeConfigurationApplicationQuery): Promise<ContactsRangeConfigurationApplicationResponse>
+    contactsRangeConfigurationApplication(app_id: string, query?: ContactsRangeConfigurationApplicationQuery & Pagination): Promise<ContactsRangeConfigurationApplicationResponse>
     /**
      * 更新应用通讯录权限范围配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-contacts_range/patch
@@ -102,7 +112,12 @@ declare module '../internal' {
      * 获取应用反馈列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-feedback/list
      */
-    listApplicationApplicationFeedback(app_id: string, query?: ListApplicationApplicationFeedbackQuery): Promise<Paginated<ApplicationFeedback, 'feedback_list'>>
+    listApplicationApplicationFeedback(app_id: string, query?: ListApplicationApplicationFeedbackQuery & Pagination): Promise<Paginated<ApplicationFeedback, 'feedback_list'>>
+    /**
+     * 获取应用反馈列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-feedback/list
+     */
+    listApplicationApplicationFeedbackIter(app_id: string, query?: ListApplicationApplicationFeedbackQuery): AsyncIterator<ApplicationFeedback>
     /**
      * 更新应用红点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_badge/set
@@ -112,17 +127,22 @@ declare module '../internal' {
      * 获取用户自定义常用的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v5/application/favourite
      */
-    favouriteApplication(query?: FavouriteApplicationQuery): Promise<FavouriteApplicationResponse>
+    favouriteApplication(query?: FavouriteApplicationQuery & Pagination): Promise<FavouriteApplicationResponse>
     /**
      * 获取管理员推荐的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v5/application/recommend
      */
-    recommendApplication(query?: RecommendApplicationQuery): Promise<RecommendApplicationResponse>
+    recommendApplication(query?: RecommendApplicationQuery & Pagination): Promise<RecommendApplicationResponse>
     /**
      * 获取当前设置的推荐规则列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_recommend_rule/list
      */
-    listApplicationAppRecommendRule(query?: ListApplicationAppRecommendRuleQuery): Promise<Paginated<AppRecommendRule, 'rules'>>
+    listApplicationAppRecommendRule(query?: ListApplicationAppRecommendRuleQuery & Pagination): Promise<Paginated<AppRecommendRule, 'rules'>>
+    /**
+     * 获取当前设置的推荐规则列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_recommend_rule/list
+     */
+    listApplicationAppRecommendRuleIter(query?: ListApplicationAppRecommendRuleQuery): AsyncIterator<AppRecommendRule>
   }
 }
 
@@ -140,7 +160,7 @@ export interface GetApplicationApplicationAppVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListApplicationApplicationAppVersionQuery extends Pagination {
+export interface ListApplicationApplicationAppVersionQuery {
   /** 应用信息的语言版本 */
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
   /** 0：按照时间倒序 1：按照时间正序 */
@@ -156,7 +176,7 @@ export interface ContactsRangeSuggestApplicationApplicationAppVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListApplicationQuery extends Pagination {
+export interface ListApplicationQuery {
   /** 用户 ID 类型 */
   user_id_type?: string
   /** 应用的图标、描述、帮助文档链接是按照应用的主语言返回；其他内容（如应用权限、应用分类）按照该参数设定返回对应的语言。可选值有： zh_cn：中文 en_us：英文 ja_jp：日文  如不填写，则按照应用的主语言返回 */
@@ -169,7 +189,7 @@ export interface ListApplicationQuery extends Pagination {
   owner_type?: 0 | 1 | 2
 }
 
-export interface UnderauditlistApplicationQuery extends Pagination {
+export interface UnderauditlistApplicationQuery {
   /** 指定返回的语言 */
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
   /** 此次调用中使用的用户ID的类型 */
@@ -200,7 +220,7 @@ export interface PatchApplicationQuery {
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
 }
 
-export interface ContactsRangeConfigurationApplicationQuery extends Pagination {
+export interface ContactsRangeConfigurationApplicationQuery {
   /** 返回值的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
   /** 此次调用中使用的用户ID的类型 */
@@ -322,7 +342,7 @@ export interface PatchApplicationApplicationFeedbackQuery {
   operator_id: string
 }
 
-export interface ListApplicationApplicationFeedbackQuery extends Pagination {
+export interface ListApplicationApplicationFeedbackQuery {
   /** 查询的起始日期，格式为yyyy-mm-dd。不填则默认为当前日期减去180天。 */
   from_date?: string
   /** 查询的结束日期，格式为yyyy-mm-dd。不填默认为当前日期。只能查询 180 天内的数据。 */
@@ -352,19 +372,19 @@ export interface SetApplicationAppBadgeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface FavouriteApplicationQuery extends Pagination {
+export interface FavouriteApplicationQuery {
   /** 应用信息的语言版本 */
   language?: 'zh_cn' | 'en_us' | 'ja_jp'
 }
 
-export interface RecommendApplicationQuery extends Pagination {
+export interface RecommendApplicationQuery {
   /** 应用信息的语言版本 */
   language?: 'zh_cn' | 'en_us' | 'ja_jp'
   /** 推荐应用类型，默认为用户不可移除的推荐应用列表 */
   recommend_type?: 'user_unremovable' | 'user_removable'
 }
 
-export interface ListApplicationAppRecommendRuleQuery extends Pagination {
+export interface ListApplicationAppRecommendRuleQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -458,7 +478,7 @@ Internal.define({
     PATCH: 'patchApplicationApplicationAppVersion',
   },
   '/open-apis/application/v6/applications/{app_id}/app_versions': {
-    GET: 'listApplicationApplicationAppVersion',
+    GET: { name: 'listApplicationApplicationAppVersion', pagination: { argIndex: 1 } },
   },
   '/open-apis/application/v6/applications/{app_id}/app_versions/{version_id}/contacts_range_suggest': {
     GET: 'contactsRangeSuggestApplicationApplicationAppVersion',
@@ -473,7 +493,7 @@ Internal.define({
     GET: 'listApplication',
   },
   '/open-apis/application/v6/applications/underauditlist': {
-    GET: 'underauditlistApplication',
+    GET: { name: 'underauditlistApplication', pagination: { argIndex: 0 } },
   },
   '/open-apis/application/v6/applications/{app_id}/contacts_range_configuration': {
     GET: 'contactsRangeConfigurationApplication',
@@ -503,7 +523,7 @@ Internal.define({
     PATCH: 'patchApplicationApplicationFeedback',
   },
   '/open-apis/application/v6/applications/{app_id}/feedbacks': {
-    GET: 'listApplicationApplicationFeedback',
+    GET: { name: 'listApplicationApplicationFeedback', pagination: { argIndex: 1, itemsKey: 'feedback_list' } },
   },
   '/open-apis/application/v6/app_badge/set': {
     POST: 'setApplicationAppBadge',
@@ -515,6 +535,6 @@ Internal.define({
     GET: 'recommendApplication',
   },
   '/open-apis/application/v6/app_recommend_rules': {
-    GET: 'listApplicationAppRecommendRule',
+    GET: { name: 'listApplicationAppRecommendRule', pagination: { argIndex: 0, itemsKey: 'rules' } },
   },
 })

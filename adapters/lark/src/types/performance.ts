@@ -17,7 +17,12 @@ declare module '../internal' {
      * 批量查询补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/query
      */
-    queryPerformanceAdditionalInformation(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery): Promise<Paginated<AdditionalInformation, 'additional_informations'>>
+    queryPerformanceAdditionalInformation(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery & Pagination): Promise<Paginated<AdditionalInformation, 'additional_informations'>>
+    /**
+     * 批量查询补充信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/query
+     */
+    queryPerformanceAdditionalInformationIter(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery): AsyncIterator<AdditionalInformation>
     /**
      * 批量导入补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/import
@@ -37,32 +42,57 @@ declare module '../internal' {
      * 获取被评估人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/reviewee/query
      */
-    queryPerformanceReviewee(body: QueryPerformanceRevieweeRequest, query?: QueryPerformanceRevieweeQuery): Promise<QueryPerformanceRevieweeResponse>
+    queryPerformanceReviewee(body: QueryPerformanceRevieweeRequest, query?: QueryPerformanceRevieweeQuery & Pagination): Promise<QueryPerformanceRevieweeResponse>
     /**
      * 获取评估模板配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
      */
-    queryPerformanceReviewTemplate(body: QueryPerformanceReviewTemplateRequest, query?: QueryPerformanceReviewTemplateQuery): Promise<Paginated<ReviewTemplate, 'review_templates'>>
+    queryPerformanceReviewTemplate(body: QueryPerformanceReviewTemplateRequest, query?: Pagination): Promise<Paginated<ReviewTemplate, 'review_templates'>>
+    /**
+     * 获取评估模板配置
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
+     */
+    queryPerformanceReviewTemplateIter(body: QueryPerformanceReviewTemplateRequest): AsyncIterator<ReviewTemplate>
     /**
      * 获取评估项列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/indicator/query
      */
-    queryPerformanceIndicator(body: QueryPerformanceIndicatorRequest, query?: QueryPerformanceIndicatorQuery): Promise<Paginated<Indicator, 'indicators'>>
+    queryPerformanceIndicator(body: QueryPerformanceIndicatorRequest, query?: Pagination): Promise<Paginated<Indicator, 'indicators'>>
+    /**
+     * 获取评估项列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/indicator/query
+     */
+    queryPerformanceIndicatorIter(body: QueryPerformanceIndicatorRequest): AsyncIterator<Indicator>
     /**
      * 获取标签填写题配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/question/query
      */
-    queryPerformanceQuestion(body: QueryPerformanceQuestionRequest, query?: QueryPerformanceQuestionQuery): Promise<Paginated<Question, 'tag_based_questions'>>
+    queryPerformanceQuestion(body: QueryPerformanceQuestionRequest, query?: Pagination): Promise<Paginated<Question, 'tag_based_questions'>>
+    /**
+     * 获取标签填写题配置
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/question/query
+     */
+    queryPerformanceQuestionIter(body: QueryPerformanceQuestionRequest): AsyncIterator<Question>
     /**
      * 获取指标列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_lib/query
      */
-    queryPerformanceMetricLib(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery): Promise<Paginated<MetricInLibrary>>
+    queryPerformanceMetricLib(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery & Pagination): Promise<Paginated<MetricInLibrary>>
+    /**
+     * 获取指标列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_lib/query
+     */
+    queryPerformanceMetricLibIter(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery): AsyncIterator<MetricInLibrary>
     /**
      * 获取指标模板列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_template/query
      */
-    queryPerformanceMetricTemplate(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery): Promise<Paginated<MetricTemplate>>
+    queryPerformanceMetricTemplate(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery & Pagination): Promise<Paginated<MetricTemplate>>
+    /**
+     * 获取指标模板列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_template/query
+     */
+    queryPerformanceMetricTemplateIter(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery): AsyncIterator<MetricTemplate>
     /**
      * 获取指标字段列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_field/query
@@ -72,7 +102,12 @@ declare module '../internal' {
      * 获取指标标签列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_tag/list
      */
-    listPerformanceMetricTag(query?: ListPerformanceMetricTagQuery): Promise<Paginated<MetricTag>>
+    listPerformanceMetricTag(query?: ListPerformanceMetricTagQuery & Pagination): Promise<Paginated<MetricTag>>
+    /**
+     * 获取指标标签列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_tag/list
+     */
+    listPerformanceMetricTagIter(query?: ListPerformanceMetricTagQuery): AsyncIterator<MetricTag>
     /**
      * 获取周期任务（指定用户）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/stage_task/find_by_user_list
@@ -143,7 +178,7 @@ export interface QueryPerformanceAdditionalInformationRequest {
   reviewee_user_ids?: string[]
 }
 
-export interface QueryPerformanceAdditionalInformationQuery extends Pagination {
+export interface QueryPerformanceAdditionalInformationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
@@ -198,7 +233,7 @@ export interface QueryPerformanceRevieweeRequest {
   activity_ids?: string[]
 }
 
-export interface QueryPerformanceRevieweeQuery extends Pagination {
+export interface QueryPerformanceRevieweeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
@@ -207,23 +242,14 @@ export interface QueryPerformanceReviewTemplateRequest {
   review_template_ids?: string[]
 }
 
-export interface QueryPerformanceReviewTemplateQuery extends Pagination {
-}
-
 export interface QueryPerformanceIndicatorRequest {
   /** 评估项 ID 列表，获取指定评估项的配置数据 */
   indicator_ids?: string[]
 }
 
-export interface QueryPerformanceIndicatorQuery extends Pagination {
-}
-
 export interface QueryPerformanceQuestionRequest {
   /** 标签填写题 ID 列表，获取指定标签填写题的配置数据。如果不传则返回所有 */
   tag_based_question_ids?: string[]
-}
-
-export interface QueryPerformanceQuestionQuery extends Pagination {
 }
 
 export interface QueryPerformanceMetricLibRequest {
@@ -239,7 +265,7 @@ export interface QueryPerformanceMetricLibRequest {
   scoring_setting_type?: 'score_manually' | 'score_by_formula'
 }
 
-export interface QueryPerformanceMetricLibQuery extends Pagination {
+export interface QueryPerformanceMetricLibQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
@@ -250,7 +276,7 @@ export interface QueryPerformanceMetricTemplateRequest {
   status?: 'to_be_configured' | 'to_be_activated' | 'enabled' | 'disabled'
 }
 
-export interface QueryPerformanceMetricTemplateQuery extends Pagination {
+export interface QueryPerformanceMetricTemplateQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
@@ -259,7 +285,7 @@ export interface QueryPerformanceMetricFieldRequest {
   field_ids?: string[]
 }
 
-export interface ListPerformanceMetricTagQuery extends Pagination {
+export interface ListPerformanceMetricTagQuery {
   /** 指标标签 ID 列表 */
   tag_ids?: string[]
 }
@@ -477,7 +503,7 @@ Internal.define({
     POST: 'queryPerformanceActivity',
   },
   '/open-apis/performance/v2/additional_informations/query': {
-    POST: 'queryPerformanceAdditionalInformation',
+    POST: { name: 'queryPerformanceAdditionalInformation', pagination: { argIndex: 1, itemsKey: 'additional_informations' } },
   },
   '/open-apis/performance/v2/additional_informations/import': {
     POST: 'importPerformanceAdditionalInformation',
@@ -492,25 +518,25 @@ Internal.define({
     POST: 'queryPerformanceReviewee',
   },
   '/open-apis/performance/v2/review_templates/query': {
-    POST: 'queryPerformanceReviewTemplate',
+    POST: { name: 'queryPerformanceReviewTemplate', pagination: { argIndex: 1, itemsKey: 'review_templates' } },
   },
   '/open-apis/performance/v2/indicators/query': {
-    POST: 'queryPerformanceIndicator',
+    POST: { name: 'queryPerformanceIndicator', pagination: { argIndex: 1, itemsKey: 'indicators' } },
   },
   '/open-apis/performance/v2/questions/query': {
-    POST: 'queryPerformanceQuestion',
+    POST: { name: 'queryPerformanceQuestion', pagination: { argIndex: 1, itemsKey: 'tag_based_questions' } },
   },
   '/open-apis/performance/v2/metric_libs/query': {
-    POST: 'queryPerformanceMetricLib',
+    POST: { name: 'queryPerformanceMetricLib', pagination: { argIndex: 1 } },
   },
   '/open-apis/performance/v2/metric_templates/query': {
-    POST: 'queryPerformanceMetricTemplate',
+    POST: { name: 'queryPerformanceMetricTemplate', pagination: { argIndex: 1 } },
   },
   '/open-apis/performance/v2/metric_fields/query': {
     POST: 'queryPerformanceMetricField',
   },
   '/open-apis/performance/v2/metric_tags': {
-    GET: 'listPerformanceMetricTag',
+    GET: { name: 'listPerformanceMetricTag', pagination: { argIndex: 0 } },
   },
   '/open-apis/performance/v1/stage_tasks/find_by_user_list': {
     POST: 'findByUserListPerformanceStageTask',

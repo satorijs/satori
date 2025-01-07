@@ -17,7 +17,12 @@ declare module '../internal' {
      * 获取 OKR 周期列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/period/list
      */
-    listOkrPeriod(query?: ListOkrPeriodQuery): Promise<Paginated<Period>>
+    listOkrPeriod(query?: Pagination): Promise<Paginated<Period>>
+    /**
+     * 获取 OKR 周期列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/period/list
+     */
+    listOkrPeriodIter(): AsyncIterator<Period>
     /**
      * 获取 OKR 周期规则
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/period_rule/list
@@ -76,9 +81,6 @@ export interface CreateOkrPeriodRequest {
 export interface PatchOkrPeriodRequest {
   /** 周期显示状态 */
   status: 1 | 2 | 3
-}
-
-export interface ListOkrPeriodQuery extends Pagination {
 }
 
 export interface ListOkrUserOkrQuery {
@@ -233,7 +235,7 @@ export interface QueryOkrReviewResponse {
 Internal.define({
   '/open-apis/okr/v1/periods': {
     POST: 'createOkrPeriod',
-    GET: 'listOkrPeriod',
+    GET: { name: 'listOkrPeriod', pagination: { argIndex: 0 } },
   },
   '/open-apis/okr/v1/periods/{period_id}': {
     PATCH: 'patchOkrPeriod',

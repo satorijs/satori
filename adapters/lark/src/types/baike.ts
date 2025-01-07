@@ -32,7 +32,7 @@ declare module '../internal' {
      * 获取词条列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/list
      */
-    listBaikeEntity(query?: ListBaikeEntityQuery): Promise<ListBaikeEntityResponse>
+    listBaikeEntity(query?: ListBaikeEntityQuery & Pagination): Promise<ListBaikeEntityResponse>
     /**
      * 精准搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/match
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 模糊搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/search
      */
-    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery): Promise<SearchBaikeEntityResponse>
+    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery & Pagination): Promise<SearchBaikeEntityResponse>
     /**
      * 词条高亮
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/highlight
@@ -57,7 +57,7 @@ declare module '../internal' {
      * 获取词典分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/classification/list
      */
-    listBaikeClassification(query?: ListBaikeClassificationQuery): Promise<ListBaikeClassificationResponse>
+    listBaikeClassification(query?: Pagination): Promise<ListBaikeClassificationResponse>
     /**
      * 上传图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/file/upload
@@ -162,7 +162,7 @@ export interface GetBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListBaikeEntityQuery extends Pagination {
+export interface ListBaikeEntityQuery {
   /** 相关外部系统【可用来过滤词条数据】 */
   provider?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -185,7 +185,7 @@ export interface SearchBaikeEntityRequest {
   creators?: string[]
 }
 
-export interface SearchBaikeEntityQuery extends Pagination {
+export interface SearchBaikeEntityQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -198,9 +198,6 @@ export interface HighlightBaikeEntityRequest {
 export interface ExtractBaikeEntityRequest {
   /** 需要被提取百科实体词的文本（不会过滤租户已成为百科词条的内容） */
   text?: string
-}
-
-export interface ListBaikeClassificationQuery extends Pagination {
 }
 
 export interface UploadBaikeFileForm {

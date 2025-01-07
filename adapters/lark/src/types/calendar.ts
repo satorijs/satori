@@ -32,7 +32,7 @@ declare module '../internal' {
      * 查询日历列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/list
      */
-    listCalendar(query?: ListCalendarQuery): Promise<ListCalendarResponse>
+    listCalendar(query?: ListCalendarQuery & Pagination): Promise<ListCalendarResponse>
     /**
      * 更新日历信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/patch
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 搜索日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/search
      */
-    searchCalendar(body: SearchCalendarRequest, query?: SearchCalendarQuery): Promise<SearchCalendarResponse>
+    searchCalendar(body: SearchCalendarRequest, query?: Pagination): Promise<SearchCalendarResponse>
     /**
      * 订阅日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/subscribe
@@ -77,7 +77,12 @@ declare module '../internal' {
      * 获取访问控制列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/list
      */
-    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery): Promise<Paginated<CalendarAcl, 'acls'>>
+    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery & Pagination): Promise<Paginated<CalendarAcl, 'acls'>>
+    /**
+     * 获取访问控制列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/list
+     */
+    listCalendarCalendarAclIter(calendar_id: string, query?: ListCalendarCalendarAclQuery): AsyncIterator<CalendarAcl>
     /**
      * 订阅日历访问控制变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/subscription
@@ -112,12 +117,12 @@ declare module '../internal' {
      * 获取日程列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/list
      */
-    listCalendarCalendarEvent(calendar_id: string, query?: ListCalendarCalendarEventQuery): Promise<ListCalendarCalendarEventResponse>
+    listCalendarCalendarEvent(calendar_id: string, query?: ListCalendarCalendarEventQuery & Pagination): Promise<ListCalendarCalendarEventResponse>
     /**
      * 搜索日程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/search
      */
-    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery): Promise<SearchCalendarCalendarEventResponse>
+    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery & Pagination): Promise<SearchCalendarCalendarEventResponse>
     /**
      * 订阅日程变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/subscription
@@ -137,7 +142,12 @@ declare module '../internal' {
      * 获取重复日程实例
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instances
      */
-    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): Promise<Paginated<Instance>>
+    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery & Pagination): Promise<Paginated<Instance>>
+    /**
+     * 获取重复日程实例
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instances
+     */
+    instancesCalendarCalendarEventIter(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): AsyncIterator<Instance>
     /**
      * 查询日程视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instance_view
@@ -182,12 +192,22 @@ declare module '../internal' {
      * 获取日程参与人列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/list
      */
-    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): Promise<Paginated<CalendarEventAttendee>>
+    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery & Pagination): Promise<Paginated<CalendarEventAttendee>>
+    /**
+     * 获取日程参与人列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/list
+     */
+    listCalendarCalendarEventAttendeeIter(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): AsyncIterator<CalendarEventAttendee>
     /**
      * 获取日程参与群成员列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee-chat_member/list
      */
-    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): Promise<Paginated<CalendarEventAttendeeChatMember>>
+    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery & Pagination): Promise<Paginated<CalendarEventAttendeeChatMember>>
+    /**
+     * 获取日程参与群成员列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee-chat_member/list
+     */
+    listCalendarCalendarEventAttendeeChatMemberIter(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): AsyncIterator<CalendarEventAttendeeChatMember>
     /**
      * 生成 CalDAV 配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/setting/generate_caldav_conf
@@ -249,7 +269,7 @@ export interface ListCalendarFreebusyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarQuery extends Pagination {
+export interface ListCalendarQuery {
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
   sync_token?: string
 }
@@ -272,9 +292,6 @@ export interface SearchCalendarRequest {
   query: string
 }
 
-export interface SearchCalendarQuery extends Pagination {
-}
-
 export interface CreateCalendarCalendarAclRequest {
   /** 对日历的访问权限 */
   role: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
@@ -287,7 +304,7 @@ export interface CreateCalendarCalendarAclQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarAclQuery extends Pagination {
+export interface ListCalendarCalendarAclQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -386,7 +403,7 @@ export interface GetCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventQuery extends Pagination {
+export interface ListCalendarCalendarEventQuery {
   /** 拉取anchor_time之后的日程，为timestamp */
   anchor_time?: string
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
@@ -406,7 +423,7 @@ export interface SearchCalendarCalendarEventRequest {
   filter?: EventSearchFilter
 }
 
-export interface SearchCalendarCalendarEventQuery extends Pagination {
+export interface SearchCalendarCalendarEventQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -416,7 +433,7 @@ export interface ReplyCalendarCalendarEventRequest {
   rsvp_status: 'accept' | 'decline' | 'tentative'
 }
 
-export interface InstancesCalendarCalendarEventQuery extends Pagination {
+export interface InstancesCalendarCalendarEventQuery {
   /** 日程实例开始Unix时间戳，单位为秒,日程的end_time的下限（不包含） */
   start_time: string
   /** 日程实例结束Unix时间戳，单位为秒,日程的start_time上限（不包含） */
@@ -493,14 +510,14 @@ export interface BatchDeleteCalendarCalendarEventAttendeeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventAttendeeQuery extends Pagination {
+export interface ListCalendarCalendarEventAttendeeQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 是否需要会议室表单信息 */
   need_resource_customization?: boolean
 }
 
-export interface ListCalendarCalendarEventAttendeeChatMemberQuery extends Pagination {
+export interface ListCalendarCalendarEventAttendeeChatMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -746,7 +763,7 @@ Internal.define({
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/acls': {
     POST: 'createCalendarCalendarAcl',
-    GET: 'listCalendarCalendarAcl',
+    GET: { name: 'listCalendarCalendarAcl', pagination: { argIndex: 1, itemsKey: 'acls' } },
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/acls/{acl_id}': {
     DELETE: 'deleteCalendarCalendarAcl',
@@ -779,7 +796,7 @@ Internal.define({
     POST: 'replyCalendarCalendarEvent',
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/instances': {
-    GET: 'instancesCalendarCalendarEvent',
+    GET: { name: 'instancesCalendarCalendarEvent', pagination: { argIndex: 2 } },
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/events/instance_view': {
     GET: 'instanceViewCalendarCalendarEvent',
@@ -799,13 +816,13 @@ Internal.define({
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees': {
     POST: 'createCalendarCalendarEventAttendee',
-    GET: 'listCalendarCalendarEventAttendee',
+    GET: { name: 'listCalendarCalendarEventAttendee', pagination: { argIndex: 2 } },
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/batch_delete': {
     POST: 'batchDeleteCalendarCalendarEventAttendee',
   },
   '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/{attendee_id}/chat_members': {
-    GET: 'listCalendarCalendarEventAttendeeChatMember',
+    GET: { name: 'listCalendarCalendarEventAttendeeChatMember', pagination: { argIndex: 3 } },
   },
   '/open-apis/calendar/v4/settings/generate_caldav_conf': {
     POST: 'generateCaldavConfCalendarSetting',

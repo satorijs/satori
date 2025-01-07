@@ -7,7 +7,12 @@ declare module '../internal' {
      * 获取文件夹中的文件清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/list
      */
-    listDriveV1File(query?: ListDriveV1FileQuery): Promise<ListDriveV1FileResponse>
+    listDriveV1File(query?: ListDriveV1FileQuery & Pagination): Promise<Paginated<File, 'files'>>
+    /**
+     * 获取文件夹中的文件清单
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/list
+     */
+    listDriveV1FileIter(query?: ListDriveV1FileQuery): AsyncIterator<File>
     /**
      * 新建文件夹
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/create_folder
@@ -32,7 +37,12 @@ declare module '../internal' {
      * 获取文件访问记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-view_record/list
      */
-    listDriveV1FileViewRecord(file_token: string, query?: ListDriveV1FileViewRecordQuery): Promise<Paginated<FileViewRecord>>
+    listDriveV1FileViewRecord(file_token: string, query?: ListDriveV1FileViewRecordQuery & Pagination): Promise<Paginated<FileViewRecord>>
+    /**
+     * 获取文件访问记录
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-view_record/list
+     */
+    listDriveV1FileViewRecordIter(file_token: string, query?: ListDriveV1FileViewRecordQuery): AsyncIterator<FileViewRecord>
     /**
      * 复制文件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/copy
@@ -142,7 +152,12 @@ declare module '../internal' {
      * 获取文档版本列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-version/list
      */
-    listDriveV1FileVersion(file_token: string, query?: ListDriveV1FileVersionQuery): Promise<Paginated<Version>>
+    listDriveV1FileVersion(file_token: string, query?: ListDriveV1FileVersionQuery & Pagination): Promise<Paginated<Version>>
+    /**
+     * 获取文档版本列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-version/list
+     */
+    listDriveV1FileVersionIter(file_token: string, query?: ListDriveV1FileVersionQuery): AsyncIterator<Version>
     /**
      * 获取文档版本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-version/get
@@ -157,7 +172,12 @@ declare module '../internal' {
      * 获取云文档的点赞者列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/file-like/list
      */
-    listDriveV2FileLike(file_token: string, query?: ListDriveV2FileLikeQuery): Promise<Paginated<FileLike>>
+    listDriveV2FileLike(file_token: string, query?: ListDriveV2FileLikeQuery & Pagination): Promise<Paginated<FileLike>>
+    /**
+     * 获取云文档的点赞者列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/file-like/list
+     */
+    listDriveV2FileLikeIter(file_token: string, query?: ListDriveV2FileLikeQuery): AsyncIterator<FileLike>
     /**
      * 订阅云文档事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/subscribe
@@ -247,7 +267,12 @@ declare module '../internal' {
      * 获取云文档所有评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment/list
      */
-    listDriveV1FileComment(file_token: string, query?: ListDriveV1FileCommentQuery): Promise<Paginated<FileComment>>
+    listDriveV1FileComment(file_token: string, query?: ListDriveV1FileCommentQuery & Pagination): Promise<Paginated<FileComment>>
+    /**
+     * 获取云文档所有评论
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment/list
+     */
+    listDriveV1FileCommentIter(file_token: string, query?: ListDriveV1FileCommentQuery): AsyncIterator<FileComment>
     /**
      * 批量获取评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment/batch_query
@@ -272,7 +297,12 @@ declare module '../internal' {
      * 获取回复信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/list
      */
-    listDriveV1FileCommentReply(file_token: string, comment_id: string, query?: ListDriveV1FileCommentReplyQuery): Promise<Paginated<FileCommentReply>>
+    listDriveV1FileCommentReply(file_token: string, comment_id: string, query?: ListDriveV1FileCommentReplyQuery & Pagination): Promise<Paginated<FileCommentReply>>
+    /**
+     * 获取回复信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/list
+     */
+    listDriveV1FileCommentReplyIter(file_token: string, comment_id: string, query?: ListDriveV1FileCommentReplyQuery): AsyncIterator<FileCommentReply>
     /**
      * 更新回复的内容
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/update
@@ -301,7 +331,7 @@ declare module '../internal' {
   }
 }
 
-export interface ListDriveV1FileQuery extends Pagination {
+export interface ListDriveV1FileQuery {
   /** 文件夹的token（若不填写该参数或填写空字符串，则默认获取用户云空间下的清单，且不支持分页） */
   folder_token?: string
   /** 排序规则 */
@@ -341,7 +371,7 @@ export interface GetDriveV1FileStatisticsQuery {
   file_type: 'doc' | 'sheet' | 'mindnote' | 'bitable' | 'wiki' | 'file' | 'docx'
 }
 
-export interface ListDriveV1FileViewRecordQuery extends Pagination {
+export interface ListDriveV1FileViewRecordQuery {
   /** 文档类型 */
   file_type: 'doc' | 'docx' | 'sheet' | 'bitable' | 'mindnote' | 'wiki' | 'file'
   /** 此次调用中使用的访问者 ID 的类型 */
@@ -537,7 +567,7 @@ export interface CreateDriveV1FileVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDriveV1FileVersionQuery extends Pagination {
+export interface ListDriveV1FileVersionQuery {
   /** 原文档类型 */
   obj_type: 'docx' | 'sheet'
   /** 用户id类型 */
@@ -558,7 +588,7 @@ export interface DeleteDriveV1FileVersionQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListDriveV2FileLikeQuery extends Pagination {
+export interface ListDriveV2FileLikeQuery {
   /** 文件类型，如果该值为空或者与文件实际类型不匹配，接口会返回失败。 */
   file_type: 'doc' | 'docx' | 'file'
   /** 此次调用中使用的用户ID的类型 */
@@ -753,7 +783,7 @@ export interface PatchDriveV2PermissionPublicQuery {
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
 }
 
-export interface ListDriveV1FileCommentQuery extends Pagination {
+export interface ListDriveV1FileCommentQuery {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'file' | 'docx'
   /** 是否全文评论 */
@@ -805,7 +835,7 @@ export interface GetDriveV1FileCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDriveV1FileCommentReplyQuery extends Pagination {
+export interface ListDriveV1FileCommentReplyQuery {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'file' | 'docx'
   /** 此次调用中使用的用户ID的类型 */
@@ -850,15 +880,6 @@ export interface PatchDriveV1FileSubscriptionRequest {
   is_subscribe: boolean
   /** 文档类型 */
   file_type: 'doc' | 'docx' | 'wiki'
-}
-
-export interface ListDriveV1FileResponse {
-  /** 文档详细信息 */
-  files?: File[]
-  /** 下一页分页参数 */
-  next_page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
 }
 
 export interface CreateFolderDriveV1FileResponse {
@@ -1166,7 +1187,7 @@ export interface PatchDriveV1FileSubscriptionResponse {
 
 Internal.define({
   '/open-apis/drive/v1/files': {
-    GET: 'listDriveV1File',
+    GET: { name: 'listDriveV1File', pagination: { argIndex: 0, itemsKey: 'files', tokenKey: 'next_page_token' } },
   },
   '/open-apis/drive/v1/files/create_folder': {
     POST: 'createFolderDriveV1File',
@@ -1181,7 +1202,7 @@ Internal.define({
     GET: 'getDriveV1FileStatistics',
   },
   '/open-apis/drive/v1/files/{file_token}/view_records': {
-    GET: 'listDriveV1FileViewRecord',
+    GET: { name: 'listDriveV1FileViewRecord', pagination: { argIndex: 1 } },
   },
   '/open-apis/drive/v1/files/{file_token}/copy': {
     POST: 'copyDriveV1File',
@@ -1245,14 +1266,14 @@ Internal.define({
   },
   '/open-apis/drive/v1/files/{file_token}/versions': {
     POST: 'createDriveV1FileVersion',
-    GET: 'listDriveV1FileVersion',
+    GET: { name: 'listDriveV1FileVersion', pagination: { argIndex: 1 } },
   },
   '/open-apis/drive/v1/files/{file_token}/versions/{version_id}': {
     GET: 'getDriveV1FileVersion',
     DELETE: 'deleteDriveV1FileVersion',
   },
   '/open-apis/drive/v2/files/{file_token}/likes': {
-    GET: 'listDriveV2FileLike',
+    GET: { name: 'listDriveV2FileLike', pagination: { argIndex: 1 } },
   },
   '/open-apis/drive/v1/files/{file_token}/subscribe': {
     POST: 'subscribeDriveV1File',
@@ -1294,7 +1315,7 @@ Internal.define({
     PATCH: 'patchDriveV2PermissionPublic',
   },
   '/open-apis/drive/v1/files/{file_token}/comments': {
-    GET: 'listDriveV1FileComment',
+    GET: { name: 'listDriveV1FileComment', pagination: { argIndex: 1 } },
     POST: 'createDriveV1FileComment',
   },
   '/open-apis/drive/v1/files/{file_token}/comments/batch_query': {
@@ -1305,7 +1326,7 @@ Internal.define({
     GET: 'getDriveV1FileComment',
   },
   '/open-apis/drive/v1/files/{file_token}/comments/{comment_id}/replies': {
-    GET: 'listDriveV1FileCommentReply',
+    GET: { name: 'listDriveV1FileCommentReply', pagination: { argIndex: 2 } },
   },
   '/open-apis/drive/v1/files/{file_token}/comments/{comment_id}/replies/{reply_id}': {
     PUT: 'updateDriveV1FileCommentReply',

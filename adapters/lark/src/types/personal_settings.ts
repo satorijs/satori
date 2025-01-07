@@ -22,7 +22,12 @@ declare module '../internal' {
      * 获取系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/list
      */
-    listPersonalSettingsSystemStatus(query?: ListPersonalSettingsSystemStatusQuery): Promise<Paginated<SystemStatus>>
+    listPersonalSettingsSystemStatus(query?: Pagination): Promise<Paginated<SystemStatus>>
+    /**
+     * 获取系统状态
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/list
+     */
+    listPersonalSettingsSystemStatusIter(): AsyncIterator<SystemStatus>
     /**
      * 批量开启系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/batch_open
@@ -56,9 +61,6 @@ export interface PatchPersonalSettingsSystemStatusRequest {
   system_status: SystemStatus
   /** 需要更新的字段 */
   update_fields: 'TITLE' | 'I18N_TITLE' | 'ICON' | 'COLOR' | 'PRIORITY' | 'SYNC_SETTING'[]
-}
-
-export interface ListPersonalSettingsSystemStatusQuery extends Pagination {
 }
 
 export interface BatchOpenPersonalSettingsSystemStatusRequest {
@@ -104,7 +106,7 @@ export interface BatchClosePersonalSettingsSystemStatusResponse {
 Internal.define({
   '/open-apis/personal_settings/v1/system_statuses': {
     POST: 'createPersonalSettingsSystemStatus',
-    GET: 'listPersonalSettingsSystemStatus',
+    GET: { name: 'listPersonalSettingsSystemStatus', pagination: { argIndex: 0 } },
   },
   '/open-apis/personal_settings/v1/system_statuses/{system_status_id}': {
     DELETE: 'deletePersonalSettingsSystemStatus',

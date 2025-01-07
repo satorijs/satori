@@ -24,6 +24,11 @@ export type Paginated<T, K extends string = 'items'> = {
 
 export interface InternalRoute {
   name: string
+  pagination?: {
+    argIndex: number
+    itemsKey?: string
+    tokenKey?: string
+  }
   multipart?: boolean
   type?: 'raw-json' | 'binary'
 }
@@ -91,6 +96,28 @@ export class Internal {
               return response.data
             } else {
               return response.data.data
+            }
+          }
+
+          if (route.pagination) {
+            const { argIndex, itemsKey = 'items', tokenKey = 'page_token' } = route.pagination
+            Internal.prototype[route.name + 'Iter'] = async function (this: Internal, ...args: any[]) {
+              let list: Paginated<any>
+              const getList = async () => {
+                args[argIndex] = { ...args[argIndex], page_token: list?.[tokenKey] }
+                list = await this[route.name](...args)
+              }
+              return {
+                async next() {
+                  if (list?.[itemsKey].length) return { done: false, value: list[itemsKey].shift() }
+                  if (!list.has_more) return { done: true, value: undefined }
+                  await getList()
+                  return this.next()
+                },
+                [Symbol.asyncIterator]() {
+                  return this
+                },
+              }
             }
           }
         }

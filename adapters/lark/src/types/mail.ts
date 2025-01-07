@@ -37,7 +37,12 @@ declare module '../internal' {
      * 批量获取邮件组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup/list
      */
-    listMailMailgroup(query?: ListMailMailgroupQuery): Promise<Paginated<Mailgroup>>
+    listMailMailgroup(query?: ListMailMailgroupQuery & Pagination): Promise<Paginated<Mailgroup>>
+    /**
+     * 批量获取邮件组
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup/list
+     */
+    listMailMailgroupIter(query?: ListMailMailgroupQuery): AsyncIterator<Mailgroup>
     /**
      * 批量创建邮件组管理员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-manager/batch_create
@@ -52,7 +57,12 @@ declare module '../internal' {
      * 批量获取邮件组管理员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-manager/list
      */
-    listMailMailgroupManager(mailgroup_id: string, query?: ListMailMailgroupManagerQuery): Promise<Paginated<MailgroupManager>>
+    listMailMailgroupManager(mailgroup_id: string, query?: ListMailMailgroupManagerQuery & Pagination): Promise<Paginated<MailgroupManager>>
+    /**
+     * 批量获取邮件组管理员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-manager/list
+     */
+    listMailMailgroupManagerIter(mailgroup_id: string, query?: ListMailMailgroupManagerQuery): AsyncIterator<MailgroupManager>
     /**
      * 创建邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/create
@@ -72,7 +82,12 @@ declare module '../internal' {
      * 获取所有邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/list
      */
-    listMailMailgroupMember(mailgroup_id: string, query?: ListMailMailgroupMemberQuery): Promise<Paginated<MailgroupMember>>
+    listMailMailgroupMember(mailgroup_id: string, query?: ListMailMailgroupMemberQuery & Pagination): Promise<Paginated<MailgroupMember>>
+    /**
+     * 获取所有邮件组成员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/list
+     */
+    listMailMailgroupMemberIter(mailgroup_id: string, query?: ListMailMailgroupMemberQuery): AsyncIterator<MailgroupMember>
     /**
      * 批量创建邮件组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-member/batch_create
@@ -117,7 +132,12 @@ declare module '../internal' {
      * 批量获取邮件组权限成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-permission_member/list
      */
-    listMailMailgroupPermissionMember(mailgroup_id: string, query?: ListMailMailgroupPermissionMemberQuery): Promise<Paginated<MailgroupPermissionMember>>
+    listMailMailgroupPermissionMember(mailgroup_id: string, query?: ListMailMailgroupPermissionMemberQuery & Pagination): Promise<Paginated<MailgroupPermissionMember>>
+    /**
+     * 批量获取邮件组权限成员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-permission_member/list
+     */
+    listMailMailgroupPermissionMemberIter(mailgroup_id: string, query?: ListMailMailgroupPermissionMemberQuery): AsyncIterator<MailgroupPermissionMember>
     /**
      * 批量创建邮件组权限成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup-permission_member/batch_create
@@ -152,7 +172,12 @@ declare module '../internal' {
      * 查询所有公共邮箱
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/list
      */
-    listMailPublicMailbox(query?: ListMailPublicMailboxQuery): Promise<Paginated<PublicMailbox>>
+    listMailPublicMailbox(query?: Pagination): Promise<Paginated<PublicMailbox>>
+    /**
+     * 查询所有公共邮箱
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/list
+     */
+    listMailPublicMailboxIter(): AsyncIterator<PublicMailbox>
     /**
      * 永久删除公共邮箱
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/delete
@@ -182,7 +207,12 @@ declare module '../internal' {
      * 查询所有公共邮箱成员信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox-member/list
      */
-    listMailPublicMailboxMember(public_mailbox_id: string, query?: ListMailPublicMailboxMemberQuery): Promise<Paginated<PublicMailboxMember>>
+    listMailPublicMailboxMember(public_mailbox_id: string, query?: ListMailPublicMailboxMemberQuery & Pagination): Promise<Paginated<PublicMailboxMember>>
+    /**
+     * 查询所有公共邮箱成员信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox-member/list
+     */
+    listMailPublicMailboxMemberIter(public_mailbox_id: string, query?: ListMailPublicMailboxMemberQuery): AsyncIterator<PublicMailboxMember>
     /**
      * 批量添加公共邮箱成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox-member/batch_create
@@ -227,7 +257,7 @@ declare module '../internal' {
      * 获取用户邮箱所有别名
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-alias/list
      */
-    listMailUserMailboxAlias(user_mailbox_id: string, query?: ListMailUserMailboxAliasQuery): Promise<ListMailUserMailboxAliasResponse>
+    listMailUserMailboxAlias(user_mailbox_id: string, query?: Pagination): Promise<ListMailUserMailboxAliasResponse>
     /**
      * 查询邮箱地址状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user/query
@@ -292,7 +322,7 @@ export interface UpdateMailMailgroupRequest {
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
 
-export interface ListMailMailgroupQuery extends Pagination {
+export interface ListMailMailgroupQuery {
   /** 邮件组管理员用户ID，用于获取该用户有管理权限的邮件组 */
   manager_user_id?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -319,7 +349,7 @@ export interface BatchDeleteMailMailgroupManagerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListMailMailgroupManagerQuery extends Pagination {
+export interface ListMailMailgroupManagerQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -349,7 +379,7 @@ export interface GetMailMailgroupMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListMailMailgroupMemberQuery extends Pagination {
+export interface ListMailMailgroupMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
@@ -403,7 +433,7 @@ export interface GetMailMailgroupPermissionMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListMailMailgroupPermissionMemberQuery extends Pagination {
+export interface ListMailMailgroupPermissionMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
@@ -450,9 +480,6 @@ export interface UpdateMailPublicMailboxRequest {
   name?: string
 }
 
-export interface ListMailPublicMailboxQuery extends Pagination {
-}
-
 export interface CreateMailPublicMailboxMemberRequest {
   /** The member's user id. Value is valid when type is USER */
   user_id?: string
@@ -470,7 +497,7 @@ export interface GetMailPublicMailboxMemberQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListMailPublicMailboxMemberQuery extends Pagination {
+export interface ListMailPublicMailboxMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -503,9 +530,6 @@ export interface DeleteMailUserMailboxQuery {
 export interface CreateMailUserMailboxAliasRequest {
   /** 邮箱别名 */
   email_alias?: string
-}
-
-export interface ListMailUserMailboxAliasQuery extends Pagination {
 }
 
 export interface QueryMailUserRequest {
@@ -755,7 +779,7 @@ Internal.define({
   },
   '/open-apis/mail/v1/mailgroups': {
     POST: 'createMailMailgroup',
-    GET: 'listMailMailgroup',
+    GET: { name: 'listMailMailgroup', pagination: { argIndex: 0 } },
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}': {
     DELETE: 'deleteMailMailgroup',
@@ -770,11 +794,11 @@ Internal.define({
     POST: 'batchDeleteMailMailgroupManager',
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}/managers': {
-    GET: 'listMailMailgroupManager',
+    GET: { name: 'listMailMailgroupManager', pagination: { argIndex: 1 } },
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members': {
     POST: 'createMailMailgroupMember',
-    GET: 'listMailMailgroupMember',
+    GET: { name: 'listMailMailgroupMember', pagination: { argIndex: 1 } },
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members/{member_id}': {
     DELETE: 'deleteMailMailgroupMember',
@@ -795,7 +819,7 @@ Internal.define({
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members': {
     POST: 'createMailMailgroupPermissionMember',
-    GET: 'listMailMailgroupPermissionMember',
+    GET: { name: 'listMailMailgroupPermissionMember', pagination: { argIndex: 1 } },
   },
   '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members/{permission_member_id}': {
     DELETE: 'deleteMailMailgroupPermissionMember',
@@ -809,7 +833,7 @@ Internal.define({
   },
   '/open-apis/mail/v1/public_mailboxes': {
     POST: 'createMailPublicMailbox',
-    GET: 'listMailPublicMailbox',
+    GET: { name: 'listMailPublicMailbox', pagination: { argIndex: 0 } },
   },
   '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}': {
     PATCH: 'patchMailPublicMailbox',
@@ -819,7 +843,7 @@ Internal.define({
   },
   '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members': {
     POST: 'createMailPublicMailboxMember',
-    GET: 'listMailPublicMailboxMember',
+    GET: { name: 'listMailPublicMailboxMember', pagination: { argIndex: 1 } },
   },
   '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members/{member_id}': {
     DELETE: 'deleteMailPublicMailboxMember',

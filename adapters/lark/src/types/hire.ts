@@ -7,12 +7,22 @@ declare module '../internal' {
      * 查询地点列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/query
      */
-    queryHireLocation(body: QueryHireLocationRequest, query?: QueryHireLocationQuery): Promise<Paginated<LocationDto>>
+    queryHireLocation(body: QueryHireLocationRequest, query?: Pagination): Promise<Paginated<LocationDto>>
+    /**
+     * 查询地点列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/query
+     */
+    queryHireLocationIter(body: QueryHireLocationRequest): AsyncIterator<LocationDto>
     /**
      * 获取地址列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/list
      */
-    listHireLocation(query?: ListHireLocationQuery): Promise<Paginated<Location>>
+    listHireLocation(query?: ListHireLocationQuery & Pagination): Promise<Paginated<Location>>
+    /**
+     * 获取地址列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/location/list
+     */
+    listHireLocationIter(query?: ListHireLocationQuery): AsyncIterator<Location>
     /**
      * 获取角色详情
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/role/get
@@ -22,12 +32,22 @@ declare module '../internal' {
      * 获取角色列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/role/list
      */
-    listHireRole(query?: ListHireRoleQuery): Promise<Paginated<Role>>
+    listHireRole(query?: Pagination): Promise<Paginated<Role>>
+    /**
+     * 获取角色列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/role/list
+     */
+    listHireRoleIter(): AsyncIterator<Role>
     /**
      * 获取用户角色列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/user_role/list
      */
-    listHireUserRole(query?: ListHireUserRoleQuery): Promise<Paginated<UserRole>>
+    listHireUserRole(query?: ListHireUserRoleQuery & Pagination): Promise<Paginated<UserRole>>
+    /**
+     * 获取用户角色列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/user_role/list
+     */
+    listHireUserRoleIter(query?: ListHireUserRoleQuery): AsyncIterator<UserRole>
     /**
      * 新建职位
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/combined_create
@@ -72,7 +92,12 @@ declare module '../internal' {
      * 获取职位列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/list
      */
-    listHireJob(query?: ListHireJobQuery): Promise<Paginated<Job>>
+    listHireJob(query?: ListHireJobQuery & Pagination): Promise<Paginated<Job>>
+    /**
+     * 获取职位列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/list
+     */
+    listHireJobIter(query?: ListHireJobQuery): AsyncIterator<Job>
     /**
      * 关闭职位
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job/close
@@ -87,7 +112,12 @@ declare module '../internal' {
      * 获取职位模板
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_schema/list
      */
-    listHireJobSchema(query?: ListHireJobSchemaQuery): Promise<Paginated<JobSchema>>
+    listHireJobSchema(query?: ListHireJobSchemaQuery & Pagination): Promise<Paginated<JobSchema>>
+    /**
+     * 获取职位模板
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_schema/list
+     */
+    listHireJobSchemaIter(query?: ListHireJobSchemaQuery): AsyncIterator<JobSchema>
     /**
      * 发布职位广告
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/advertisement/publish
@@ -97,17 +127,32 @@ declare module '../internal' {
      * 获取职位广告发布记录
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_publish_record/search
      */
-    searchHireJobPublishRecord(body: SearchHireJobPublishRecordRequest, query?: SearchHireJobPublishRecordQuery): Promise<Paginated<WebsiteJobPost>>
+    searchHireJobPublishRecord(body: SearchHireJobPublishRecordRequest, query?: SearchHireJobPublishRecordQuery & Pagination): Promise<Paginated<WebsiteJobPost>>
+    /**
+     * 获取职位广告发布记录
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_publish_record/search
+     */
+    searchHireJobPublishRecordIter(body: SearchHireJobPublishRecordRequest, query?: SearchHireJobPublishRecordQuery): AsyncIterator<WebsiteJobPost>
     /**
      * 获取职能分类列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_function/list
      */
-    listHireJobFunction(query?: ListHireJobFunctionQuery): Promise<Paginated<JobFunction>>
+    listHireJobFunction(query?: Pagination): Promise<Paginated<JobFunction>>
+    /**
+     * 获取职能分类列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_function/list
+     */
+    listHireJobFunctionIter(): AsyncIterator<JobFunction>
     /**
      * 获取职位类别列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_type/list
      */
-    listHireJobType(query?: ListHireJobTypeQuery): Promise<Paginated<JobTypeInfo>>
+    listHireJobType(query?: Pagination): Promise<Paginated<JobTypeInfo>>
+    /**
+     * 获取职位类别列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_type/list
+     */
+    listHireJobTypeIter(): AsyncIterator<JobTypeInfo>
     /**
      * 创建招聘需求
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/create
@@ -127,7 +172,12 @@ declare module '../internal' {
      * 获取招聘需求列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/list
      */
-    listHireJobRequirement(query?: ListHireJobRequirementQuery): Promise<Paginated<JobRequirementDto>>
+    listHireJobRequirement(query?: ListHireJobRequirementQuery & Pagination): Promise<Paginated<JobRequirementDto>>
+    /**
+     * 获取招聘需求列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/list
+     */
+    listHireJobRequirementIter(query?: ListHireJobRequirementQuery): AsyncIterator<JobRequirementDto>
     /**
      * 删除招聘需求
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement/delete
@@ -137,32 +187,62 @@ declare module '../internal' {
      * 获取招聘需求模板列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement_schema/list
      */
-    listHireJobRequirementSchema(query?: ListHireJobRequirementSchemaQuery): Promise<Paginated<JobRequirementSchema>>
+    listHireJobRequirementSchema(query?: Pagination): Promise<Paginated<JobRequirementSchema>>
+    /**
+     * 获取招聘需求模板列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_requirement_schema/list
+     */
+    listHireJobRequirementSchemaIter(): AsyncIterator<JobRequirementSchema>
     /**
      * 获取招聘流程信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_process/list
      */
-    listHireJobProcess(query?: ListHireJobProcessQuery): Promise<Paginated<JobProcesses>>
+    listHireJobProcess(query?: Pagination): Promise<Paginated<JobProcesses>>
+    /**
+     * 获取招聘流程信息
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job_process/list
+     */
+    listHireJobProcessIter(): AsyncIterator<JobProcesses>
     /**
      * 获取项目列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/subject/list
      */
-    listHireSubject(query?: ListHireSubjectQuery): Promise<Paginated<Subject>>
+    listHireSubject(query?: ListHireSubjectQuery & Pagination): Promise<Paginated<Subject>>
+    /**
+     * 获取项目列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/subject/list
+     */
+    listHireSubjectIter(query?: ListHireSubjectQuery): AsyncIterator<Subject>
     /**
      * 获取人才标签信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_tag/list
      */
-    listHireTalentTag(query?: ListHireTalentTagQuery): Promise<Paginated<TalentTag>>
+    listHireTalentTag(query?: ListHireTalentTagQuery & Pagination): Promise<Paginated<TalentTag>>
+    /**
+     * 获取人才标签信息列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_tag/list
+     */
+    listHireTalentTagIter(query?: ListHireTalentTagQuery): AsyncIterator<TalentTag>
     /**
      * 获取信息登记表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/registration_schema/list
      */
-    listHireRegistrationSchema(query?: ListHireRegistrationSchemaQuery): Promise<Paginated<RegistrationSchema>>
+    listHireRegistrationSchema(query?: ListHireRegistrationSchemaQuery & Pagination): Promise<Paginated<RegistrationSchema>>
+    /**
+     * 获取信息登记表列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/registration_schema/list
+     */
+    listHireRegistrationSchemaIter(query?: ListHireRegistrationSchemaQuery): AsyncIterator<RegistrationSchema>
     /**
      * 获取面试评价表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_feedback_form/list
      */
-    listHireInterviewFeedbackForm(query?: ListHireInterviewFeedbackFormQuery): Promise<Paginated<InterviewFeedbackForm>>
+    listHireInterviewFeedbackForm(query?: ListHireInterviewFeedbackFormQuery & Pagination): Promise<Paginated<InterviewFeedbackForm>>
+    /**
+     * 获取面试评价表列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_feedback_form/list
+     */
+    listHireInterviewFeedbackFormIter(query?: ListHireInterviewFeedbackFormQuery): AsyncIterator<InterviewFeedbackForm>
     /**
      * 获取面试轮次类型列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_round_type/list
@@ -172,12 +252,22 @@ declare module '../internal' {
      * 获取面试登记表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_registration_schema/list
      */
-    listHireInterviewRegistrationSchema(query?: ListHireInterviewRegistrationSchemaQuery): Promise<Paginated<InterviewRegistrationSchema>>
+    listHireInterviewRegistrationSchema(query?: Pagination): Promise<Paginated<InterviewRegistrationSchema>>
+    /**
+     * 获取面试登记表列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_registration_schema/list
+     */
+    listHireInterviewRegistrationSchemaIter(): AsyncIterator<InterviewRegistrationSchema>
     /**
      * 查询面试官信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interviewer/list
      */
-    listHireInterviewer(query?: ListHireInterviewerQuery): Promise<Paginated<Interviewer>>
+    listHireInterviewer(query?: ListHireInterviewerQuery & Pagination): Promise<Paginated<Interviewer>>
+    /**
+     * 查询面试官信息列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interviewer/list
+     */
+    listHireInterviewerIter(query?: ListHireInterviewerQuery): AsyncIterator<Interviewer>
     /**
      * 更新面试官信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interviewer/patch
@@ -197,7 +287,12 @@ declare module '../internal' {
      * 获取 Offer 申请表列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer_application_form/list
      */
-    listHireOfferApplicationForm(query?: ListHireOfferApplicationFormQuery): Promise<Paginated<OfferApplyForm>>
+    listHireOfferApplicationForm(query?: Pagination): Promise<Paginated<OfferApplyForm>>
+    /**
+     * 获取 Offer 申请表列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer_application_form/list
+     */
+    listHireOfferApplicationFormIter(): AsyncIterator<OfferApplyForm>
     /**
      * 查询人才内推信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral/search
@@ -207,7 +302,12 @@ declare module '../internal' {
      * 获取内推官网下职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral_website-job_post/list
      */
-    listHireReferralWebsiteJobPost(query?: ListHireReferralWebsiteJobPostQuery): Promise<Paginated<PortalJobPost>>
+    listHireReferralWebsiteJobPost(query?: ListHireReferralWebsiteJobPostQuery & Pagination): Promise<Paginated<PortalJobPost>>
+    /**
+     * 获取内推官网下职位广告列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral_website-job_post/list
+     */
+    listHireReferralWebsiteJobPostIter(query?: ListHireReferralWebsiteJobPostQuery): AsyncIterator<PortalJobPost>
     /**
      * 获取内推官网下职位广告详情
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/referral_website-job_post/get
@@ -237,7 +337,12 @@ declare module '../internal' {
      * 获取招聘官网推广渠道列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-channel/list
      */
-    listHireWebsiteChannel(website_id: string, query?: ListHireWebsiteChannelQuery): Promise<Paginated<WebsiteChannelInfo, 'website_channel_list'>>
+    listHireWebsiteChannel(website_id: string, query?: Pagination): Promise<Paginated<WebsiteChannelInfo, 'website_channel_list'>>
+    /**
+     * 获取招聘官网推广渠道列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-channel/list
+     */
+    listHireWebsiteChannelIter(website_id: string): AsyncIterator<WebsiteChannelInfo>
     /**
      * 新建招聘官网用户
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-site_user/create
@@ -252,12 +357,22 @@ declare module '../internal' {
      * 搜索招聘官网下的职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/search
      */
-    searchHireWebsiteJobPost(website_id: string, body: SearchHireWebsiteJobPostRequest, query?: SearchHireWebsiteJobPostQuery): Promise<Paginated<WebsiteJobPost>>
+    searchHireWebsiteJobPost(website_id: string, body: SearchHireWebsiteJobPostRequest, query?: SearchHireWebsiteJobPostQuery & Pagination): Promise<Paginated<WebsiteJobPost>>
+    /**
+     * 搜索招聘官网下的职位广告列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/search
+     */
+    searchHireWebsiteJobPostIter(website_id: string, body: SearchHireWebsiteJobPostRequest, query?: SearchHireWebsiteJobPostQuery): AsyncIterator<WebsiteJobPost>
     /**
      * 获取招聘官网下的职位广告列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/list
      */
-    listHireWebsiteJobPost(website_id: string, query?: ListHireWebsiteJobPostQuery): Promise<Paginated<WebsiteJobPost>>
+    listHireWebsiteJobPost(website_id: string, query?: ListHireWebsiteJobPostQuery & Pagination): Promise<Paginated<WebsiteJobPost>>
+    /**
+     * 获取招聘官网下的职位广告列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-job_post/list
+     */
+    listHireWebsiteJobPostIter(website_id: string, query?: ListHireWebsiteJobPostQuery): AsyncIterator<WebsiteJobPost>
     /**
      * 新建招聘官网投递
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website-delivery/create_by_resume
@@ -277,7 +392,12 @@ declare module '../internal' {
      * 获取招聘官网列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website/list
      */
-    listHireWebsite(query?: ListHireWebsiteQuery): Promise<Paginated<Website>>
+    listHireWebsite(query?: Pagination): Promise<Paginated<Website>>
+    /**
+     * 获取招聘官网列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/website/list
+     */
+    listHireWebsiteIter(): AsyncIterator<Website>
     /**
      * 设置猎头保护期
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/protect
@@ -302,12 +422,22 @@ declare module '../internal' {
      * 查询猎头供应商下猎头列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/get_agency_account
      */
-    getAgencyAccountHireAgency(body: GetAgencyAccountHireAgencyRequest, query?: GetAgencyAccountHireAgencyQuery): Promise<Paginated<AgencyAccount>>
+    getAgencyAccountHireAgency(body: GetAgencyAccountHireAgencyRequest, query?: GetAgencyAccountHireAgencyQuery & Pagination): Promise<Paginated<AgencyAccount>>
+    /**
+     * 查询猎头供应商下猎头列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/get_agency_account
+     */
+    getAgencyAccountHireAgencyIter(body: GetAgencyAccountHireAgencyRequest, query?: GetAgencyAccountHireAgencyQuery): AsyncIterator<AgencyAccount>
     /**
      * 搜索猎头供应商列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/batch_query
      */
-    batchQueryHireAgency(body: BatchQueryHireAgencyRequest, query?: BatchQueryHireAgencyQuery): Promise<Paginated<AgencySupplier>>
+    batchQueryHireAgency(body: BatchQueryHireAgencyRequest, query?: BatchQueryHireAgencyQuery & Pagination): Promise<Paginated<AgencySupplier>>
+    /**
+     * 搜索猎头供应商列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/batch_query
+     */
+    batchQueryHireAgencyIter(body: BatchQueryHireAgencyRequest, query?: BatchQueryHireAgencyQuery): AsyncIterator<AgencySupplier>
     /**
      * 禁用/取消禁用猎头
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/agency/operate_agency_account
@@ -337,7 +467,12 @@ declare module '../internal' {
      * 查询外部投递列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_application/list
      */
-    listHireExternalApplication(query?: ListHireExternalApplicationQuery): Promise<Paginated<ExternalApplication>>
+    listHireExternalApplication(query?: ListHireExternalApplicationQuery & Pagination): Promise<Paginated<ExternalApplication>>
+    /**
+     * 查询外部投递列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_application/list
+     */
+    listHireExternalApplicationIter(query?: ListHireExternalApplicationQuery): AsyncIterator<ExternalApplication>
     /**
      * 删除外部投递
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_application/delete
@@ -357,7 +492,12 @@ declare module '../internal' {
      * 查询外部面试列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_interview/batch_query
      */
-    batchQueryHireExternalInterview(body: BatchQueryHireExternalInterviewRequest, query?: BatchQueryHireExternalInterviewQuery): Promise<Paginated<ExternalInterview>>
+    batchQueryHireExternalInterview(body: BatchQueryHireExternalInterviewRequest, query?: BatchQueryHireExternalInterviewQuery & Pagination): Promise<Paginated<ExternalInterview>>
+    /**
+     * 查询外部面试列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_interview/batch_query
+     */
+    batchQueryHireExternalInterviewIter(body: BatchQueryHireExternalInterviewRequest, query?: BatchQueryHireExternalInterviewQuery): AsyncIterator<ExternalInterview>
     /**
      * 删除外部面试
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_interview/delete
@@ -387,7 +527,12 @@ declare module '../internal' {
      * 查询外部 Offer 列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_offer/batch_query
      */
-    batchQueryHireExternalOffer(body: BatchQueryHireExternalOfferRequest, query?: BatchQueryHireExternalOfferQuery): Promise<Paginated<ExternalOffer>>
+    batchQueryHireExternalOffer(body: BatchQueryHireExternalOfferRequest, query?: BatchQueryHireExternalOfferQuery & Pagination): Promise<Paginated<ExternalOffer>>
+    /**
+     * 查询外部 Offer 列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_offer/batch_query
+     */
+    batchQueryHireExternalOfferIter(body: BatchQueryHireExternalOfferRequest, query?: BatchQueryHireExternalOfferQuery): AsyncIterator<ExternalOffer>
     /**
      * 删除外部 Offer
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_offer/delete
@@ -407,7 +552,12 @@ declare module '../internal' {
      * 查询外部背调列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_background_check/batch_query
      */
-    batchQueryHireExternalBackgroundCheck(body: BatchQueryHireExternalBackgroundCheckRequest, query?: BatchQueryHireExternalBackgroundCheckQuery): Promise<Paginated<ExternalBackgroundCheck>>
+    batchQueryHireExternalBackgroundCheck(body: BatchQueryHireExternalBackgroundCheckRequest, query?: BatchQueryHireExternalBackgroundCheckQuery & Pagination): Promise<Paginated<ExternalBackgroundCheck>>
+    /**
+     * 查询外部背调列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_background_check/batch_query
+     */
+    batchQueryHireExternalBackgroundCheckIter(body: BatchQueryHireExternalBackgroundCheckRequest, query?: BatchQueryHireExternalBackgroundCheckQuery): AsyncIterator<ExternalBackgroundCheck>
     /**
      * 删除外部背调
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/external_background_check/delete
@@ -432,7 +582,12 @@ declare module '../internal' {
      * 获取人才库列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_pool/search
      */
-    searchHireTalentPool(query?: SearchHireTalentPoolQuery): Promise<Paginated<TalentPool>>
+    searchHireTalentPool(query?: SearchHireTalentPoolQuery & Pagination): Promise<Paginated<TalentPool>>
+    /**
+     * 获取人才库列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_pool/search
+     */
+    searchHireTalentPoolIter(query?: SearchHireTalentPoolQuery): AsyncIterator<TalentPool>
     /**
      * 将人才加入人才库
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_pool/move_talent
@@ -467,7 +622,12 @@ declare module '../internal' {
      * 获取人才文件夹列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_folder/list
      */
-    listHireTalentFolder(query?: ListHireTalentFolderQuery): Promise<Paginated<TalentFolderForList>>
+    listHireTalentFolder(query?: ListHireTalentFolderQuery & Pagination): Promise<Paginated<TalentFolderForList>>
+    /**
+     * 获取人才文件夹列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_folder/list
+     */
+    listHireTalentFolderIter(query?: ListHireTalentFolderQuery): AsyncIterator<TalentFolderForList>
     /**
      * 批量获取人才ID
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/batch_get_id
@@ -477,7 +637,12 @@ declare module '../internal' {
      * 获取人才列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/list
      */
-    listHireTalent(query?: ListHireTalentQuery): Promise<Paginated<Talent>>
+    listHireTalent(query?: ListHireTalentQuery & Pagination): Promise<Paginated<Talent>>
+    /**
+     * 获取人才列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/list
+     */
+    listHireTalentIter(query?: ListHireTalentQuery): AsyncIterator<Talent>
     /**
      * 获取人才字段
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query
@@ -532,7 +697,12 @@ declare module '../internal' {
      * 获取终止投递原因
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/termination_reason/list
      */
-    listHireTerminationReason(query?: ListHireTerminationReasonQuery): Promise<Paginated<TerminationReason>>
+    listHireTerminationReason(query?: Pagination): Promise<Paginated<TerminationReason>>
+    /**
+     * 获取终止投递原因
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/termination_reason/list
+     */
+    listHireTerminationReasonIter(): AsyncIterator<TerminationReason>
     /**
      * 获取投递信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/get
@@ -542,7 +712,12 @@ declare module '../internal' {
      * 获取投递列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/list
      */
-    listHireApplication(query?: ListHireApplicationQuery): Promise<Paginated<string>>
+    listHireApplication(query?: ListHireApplicationQuery & Pagination): Promise<Paginated<string>>
+    /**
+     * 获取投递列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/list
+     */
+    listHireApplicationIter(query?: ListHireApplicationQuery): AsyncIterator<string>
     /**
      * 获取申请表附加信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/diversity_inclusion/search
@@ -552,7 +727,12 @@ declare module '../internal' {
      * 获取简历评估信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation/list
      */
-    listHireEvaluation(query?: ListHireEvaluationQuery): Promise<Paginated<Evaluation>>
+    listHireEvaluation(query?: ListHireEvaluationQuery & Pagination): Promise<Paginated<Evaluation>>
+    /**
+     * 获取简历评估信息列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation/list
+     */
+    listHireEvaluationIter(query?: ListHireEvaluationQuery): AsyncIterator<Evaluation>
     /**
      * 添加笔试结果
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/exam/create
@@ -562,12 +742,22 @@ declare module '../internal' {
      * 获取笔试列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/test/search
      */
-    searchHireTest(body: SearchHireTestRequest, query?: SearchHireTestQuery): Promise<Paginated<Test>>
+    searchHireTest(body: SearchHireTestRequest, query?: SearchHireTestQuery & Pagination): Promise<Paginated<Test>>
+    /**
+     * 获取笔试列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/test/search
+     */
+    searchHireTestIter(body: SearchHireTestRequest, query?: SearchHireTestQuery): AsyncIterator<Test>
     /**
      * 获取面试信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview/list
      */
-    listHireInterview(query?: ListHireInterviewQuery): Promise<Paginated<InterviewExtend>>
+    listHireInterview(query?: ListHireInterviewQuery & Pagination): Promise<Paginated<InterviewExtend>>
+    /**
+     * 获取面试信息
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview/list
+     */
+    listHireInterviewIter(query?: ListHireInterviewQuery): AsyncIterator<InterviewExtend>
     /**
      * 获取人才面试信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview/get_by_talent
@@ -587,12 +777,22 @@ declare module '../internal' {
      * 批量获取面试评价详细信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_record/list
      */
-    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<Paginated<InterviewRecord>>
+    listHireInterviewRecord(query?: ListHireInterviewRecordQuery & Pagination): Promise<Paginated<InterviewRecord>>
+    /**
+     * 批量获取面试评价详细信息
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_record/list
+     */
+    listHireInterviewRecordIter(query?: ListHireInterviewRecordQuery): AsyncIterator<InterviewRecord>
     /**
      * 批量获取面试评价详细信息（新版）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/hire-v2/interview_record/list
      */
-    listHireInterviewRecord(query?: ListHireInterviewRecordQuery): Promise<Paginated<InterviewRecord>>
+    listHireInterviewRecord(query?: ListHireInterviewRecordQuery & Pagination): Promise<Paginated<InterviewRecord>>
+    /**
+     * 批量获取面试评价详细信息（新版）
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/hire-v2/interview_record/list
+     */
+    listHireInterviewRecordIter(query?: ListHireInterviewRecordQuery): AsyncIterator<InterviewRecord>
     /**
      * 获取面试记录附件
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_record-attachment/get
@@ -602,12 +802,17 @@ declare module '../internal' {
      * 获取面试速记明细
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/minutes/get
      */
-    getHireMinutes(query?: GetHireMinutesQuery): Promise<GetHireMinutesResponse>
+    getHireMinutes(query?: GetHireMinutesQuery & Pagination): Promise<GetHireMinutesResponse>
     /**
      * 获取面试满意度问卷列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/questionnaire/list
      */
-    listHireQuestionnaire(query?: ListHireQuestionnaireQuery): Promise<Paginated<Questionnaire>>
+    listHireQuestionnaire(query?: ListHireQuestionnaireQuery & Pagination): Promise<Paginated<Questionnaire>>
+    /**
+     * 获取面试满意度问卷列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/questionnaire/list
+     */
+    listHireQuestionnaireIter(query?: ListHireQuestionnaireQuery): AsyncIterator<Questionnaire>
     /**
      * 创建 Offer
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/create
@@ -632,7 +837,12 @@ declare module '../internal' {
      * 获取 Offer 列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/list
      */
-    listHireOffer(query?: ListHireOfferQuery): Promise<Paginated<OfferListInfo>>
+    listHireOffer(query?: ListHireOfferQuery & Pagination): Promise<Paginated<OfferListInfo>>
+    /**
+     * 获取 Offer 列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/list
+     */
+    listHireOfferIter(query?: ListHireOfferQuery): AsyncIterator<OfferListInfo>
     /**
      * 更新 Offer 状态
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer/offer_status
@@ -647,7 +857,12 @@ declare module '../internal' {
      * 获取背调信息列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/background_check_order/list
      */
-    listHireBackgroundCheckOrder(query?: ListHireBackgroundCheckOrderQuery): Promise<Paginated<BackgroundCheckOrder>>
+    listHireBackgroundCheckOrder(query?: ListHireBackgroundCheckOrderQuery & Pagination): Promise<Paginated<BackgroundCheckOrder>>
+    /**
+     * 获取背调信息列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/background_check_order/list
+     */
+    listHireBackgroundCheckOrderIter(query?: ListHireBackgroundCheckOrderQuery): AsyncIterator<BackgroundCheckOrder>
     /**
      * 创建三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/create
@@ -657,7 +872,12 @@ declare module '../internal' {
      * 获取三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/list
      */
-    listHireTripartiteAgreement(query?: ListHireTripartiteAgreementQuery): Promise<Paginated<TripartiteAgreementInfo>>
+    listHireTripartiteAgreement(query?: ListHireTripartiteAgreementQuery & Pagination): Promise<Paginated<TripartiteAgreementInfo>>
+    /**
+     * 获取三方协议
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/list
+     */
+    listHireTripartiteAgreementIter(query?: ListHireTripartiteAgreementQuery): AsyncIterator<TripartiteAgreementInfo>
     /**
      * 更新三方协议
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/tripartite_agreement/update
@@ -697,22 +917,42 @@ declare module '../internal' {
      * 批量获取待办事项
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/todo/list
      */
-    listHireTodo(query?: ListHireTodoQuery): Promise<Paginated<Todo>>
+    listHireTodo(query?: ListHireTodoQuery & Pagination): Promise<Paginated<Todo>>
+    /**
+     * 批量获取待办事项
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/todo/list
+     */
+    listHireTodoIter(query?: ListHireTodoQuery): AsyncIterator<Todo>
     /**
      * 获取简历评估任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation_task/list
      */
-    listHireEvaluationTask(query?: ListHireEvaluationTaskQuery): Promise<Paginated<EvaluationTask>>
+    listHireEvaluationTask(query?: ListHireEvaluationTaskQuery & Pagination): Promise<Paginated<EvaluationTask>>
+    /**
+     * 获取简历评估任务列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/evaluation_task/list
+     */
+    listHireEvaluationTaskIter(query?: ListHireEvaluationTaskQuery): AsyncIterator<EvaluationTask>
     /**
      * 获取笔试阅卷任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/exam_marking_task/list
      */
-    listHireExamMarkingTask(query?: ListHireExamMarkingTaskQuery): Promise<Paginated<ExamMarkingTask>>
+    listHireExamMarkingTask(query?: ListHireExamMarkingTaskQuery & Pagination): Promise<Paginated<ExamMarkingTask>>
+    /**
+     * 获取笔试阅卷任务列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/exam_marking_task/list
+     */
+    listHireExamMarkingTaskIter(query?: ListHireExamMarkingTaskQuery): AsyncIterator<ExamMarkingTask>
     /**
      * 获取面试任务列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_task/list
      */
-    listHireInterviewTask(query?: ListHireInterviewTaskQuery): Promise<Paginated<InterviewTask>>
+    listHireInterviewTask(query?: ListHireInterviewTaskQuery & Pagination): Promise<Paginated<InterviewTask>>
+    /**
+     * 获取面试任务列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/interview_task/list
+     */
+    listHireInterviewTaskIter(query?: ListHireInterviewTaskQuery): AsyncIterator<InterviewTask>
     /**
      * 创建备注
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/create
@@ -732,7 +972,12 @@ declare module '../internal' {
      * 获取备注列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/list
      */
-    listHireNote(query?: ListHireNoteQuery): Promise<Paginated<Note>>
+    listHireNote(query?: ListHireNoteQuery & Pagination): Promise<Paginated<Note>>
+    /**
+     * 获取备注列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/list
+     */
+    listHireNoteIter(query?: ListHireNoteQuery): AsyncIterator<Note>
     /**
      * 删除备注
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/note/delete
@@ -742,7 +987,12 @@ declare module '../internal' {
      * 获取简历来源列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/resume_source/list
      */
-    listHireResumeSource(query?: ListHireResumeSourceQuery): Promise<Paginated<ResumeSource>>
+    listHireResumeSource(query?: Pagination): Promise<Paginated<ResumeSource>>
+    /**
+     * 获取简历来源列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/resume_source/list
+     */
+    listHireResumeSourceIter(): AsyncIterator<ResumeSource>
     /**
      * 创建账号自定义字段
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/eco_account_custom_field/create
@@ -877,12 +1127,22 @@ declare module '../internal' {
      * 获取面试记录列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application-interview/list
      */
-    listHireApplicationInterview(application_id: string, query?: ListHireApplicationInterviewQuery): Promise<Paginated<Interview>>
+    listHireApplicationInterview(application_id: string, query?: ListHireApplicationInterviewQuery & Pagination): Promise<Paginated<Interview>>
+    /**
+     * 获取面试记录列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application-interview/list
+     */
+    listHireApplicationInterviewIter(application_id: string, query?: ListHireApplicationInterviewQuery): AsyncIterator<Interview>
     /**
      * 查询人才操作记录
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/talent_operation_log/search
      */
-    searchHireTalentOperationLog(body: SearchHireTalentOperationLogRequest, query?: SearchHireTalentOperationLogQuery): Promise<Paginated<TalentOperationLog>>
+    searchHireTalentOperationLog(body: SearchHireTalentOperationLogRequest, query?: SearchHireTalentOperationLogQuery & Pagination): Promise<Paginated<TalentOperationLog>>
+    /**
+     * 查询人才操作记录
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent/talent_operation_log/search
+     */
+    searchHireTalentOperationLogIter(body: SearchHireTalentOperationLogRequest, query?: SearchHireTalentOperationLogQuery): AsyncIterator<TalentOperationLog>
     /**
      * 获取职位上的招聘人员信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/job-manager/get
@@ -903,18 +1163,12 @@ export interface QueryHireLocationRequest {
   location_type: 1 | 2 | 3 | 4
 }
 
-export interface QueryHireLocationQuery extends Pagination {
-}
-
-export interface ListHireLocationQuery extends Pagination {
+export interface ListHireLocationQuery {
   /** 地址类型 */
   usage: 'position_location' | 'interview_location' | 'store_location'
 }
 
-export interface ListHireRoleQuery extends Pagination {
-}
-
-export interface ListHireUserRoleQuery extends Pagination {
+export interface ListHireUserRoleQuery {
   /** 用户 ID */
   user_id?: string
   /** 角色 ID */
@@ -1153,7 +1407,7 @@ export interface ConfigHireJobQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireJobQuery extends Pagination {
+export interface ListHireJobQuery {
   /** 最早更新时间，毫秒级时间戳 */
   update_start_time?: string
   /** 最晚更新时间，毫秒级时间戳 */
@@ -1175,7 +1429,7 @@ export interface OpenHireJobRequest {
   is_never_expired: boolean
 }
 
-export interface ListHireJobSchemaQuery extends Pagination {
+export interface ListHireJobSchemaQuery {
   /** 职位模板类型 */
   scenario?: 1 | 2
 }
@@ -1190,7 +1444,7 @@ export interface SearchHireJobPublishRecordRequest {
   job_channel_id: string
 }
 
-export interface SearchHireJobPublishRecordQuery extends Pagination {
+export interface SearchHireJobPublishRecordQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1199,12 +1453,6 @@ export interface SearchHireJobPublishRecordQuery extends Pagination {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
   /** 此次调用中使用的「序列 ID」的类型 */
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
-}
-
-export interface ListHireJobFunctionQuery extends Pagination {
-}
-
-export interface ListHireJobTypeQuery extends Pagination {
 }
 
 export interface CreateHireJobRequirementRequest {
@@ -1369,7 +1617,7 @@ export interface ListByIdHireJobRequirementQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireJobRequirementQuery extends Pagination {
+export interface ListHireJobRequirementQuery {
   /** 职位ID */
   job_id?: string
   /** 起始创建时间，传入毫秒级时间戳 */
@@ -1392,20 +1640,14 @@ export interface ListHireJobRequirementQuery extends Pagination {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireJobRequirementSchemaQuery extends Pagination {
-}
-
-export interface ListHireJobProcessQuery extends Pagination {
-}
-
-export interface ListHireSubjectQuery extends Pagination {
+export interface ListHireSubjectQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 项目ID列表 */
   subject_ids?: string[]
 }
 
-export interface ListHireTalentTagQuery extends Pagination {
+export interface ListHireTalentTagQuery {
   /** 搜索关键词 */
   keyword?: string
   /** ID 列表 */
@@ -1416,12 +1658,12 @@ export interface ListHireTalentTagQuery extends Pagination {
   include_inactive?: boolean
 }
 
-export interface ListHireRegistrationSchemaQuery extends Pagination {
+export interface ListHireRegistrationSchemaQuery {
   /** 登记表适用场景；不填表示获取全部类型信息登记表 */
   scenario?: 5 | 6 | 14
 }
 
-export interface ListHireInterviewFeedbackFormQuery extends Pagination {
+export interface ListHireInterviewFeedbackFormQuery {
   /** 面试评价表ID列表, 如果使用此字段则会忽略其他参数 */
   interview_feedback_form_ids?: string[]
 }
@@ -1431,10 +1673,7 @@ export interface ListHireInterviewRoundTypeQuery {
   process_type?: 1 | 2
 }
 
-export interface ListHireInterviewRegistrationSchemaQuery extends Pagination {
-}
-
-export interface ListHireInterviewerQuery extends Pagination {
+export interface ListHireInterviewerQuery {
   /** 面试官userID列表 */
   user_ids?: string[]
   /** 认证状态 */
@@ -1464,9 +1703,6 @@ export interface UpdateHireOfferCustomFieldRequest {
   config?: OfferCustomFieldConfig
 }
 
-export interface ListHireOfferApplicationFormQuery extends Pagination {
-}
-
 export interface SearchHireReferralRequest {
   /** 人才id */
   talent_id: string
@@ -1481,7 +1717,7 @@ export interface SearchHireReferralQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireReferralWebsiteJobPostQuery extends Pagination {
+export interface ListHireReferralWebsiteJobPostQuery {
   /** 招聘流程类型 */
   process_type?: 1 | 2
   /** 用户 ID 类型 */
@@ -1516,9 +1752,6 @@ export interface CreateHireWebsiteChannelRequest {
 export interface UpdateHireWebsiteChannelRequest {
   /** 推广渠道名称 */
   channel_name: string
-}
-
-export interface ListHireWebsiteChannelQuery extends Pagination {
 }
 
 export interface CreateHireWebsiteSiteUserRequest {
@@ -1564,7 +1797,7 @@ export interface SearchHireWebsiteJobPostRequest {
   create_end_time?: string
 }
 
-export interface SearchHireWebsiteJobPostQuery extends Pagination {
+export interface SearchHireWebsiteJobPostQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1573,7 +1806,7 @@ export interface SearchHireWebsiteJobPostQuery extends Pagination {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
 }
 
-export interface ListHireWebsiteJobPostQuery extends Pagination {
+export interface ListHireWebsiteJobPostQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1629,9 +1862,6 @@ export interface CreateByAttachmentHireWebsiteDeliveryRequest {
   identification?: WebsiteDeliveryAttachmentIndentification
 }
 
-export interface ListHireWebsiteQuery extends Pagination {
-}
-
 export interface ProtectHireAgencyRequest {
   /** 人才ID */
   talent_id: string
@@ -1682,7 +1912,7 @@ export interface GetAgencyAccountHireAgencyRequest {
   role?: 0 | 1
 }
 
-export interface GetAgencyAccountHireAgencyQuery extends Pagination {
+export interface GetAgencyAccountHireAgencyQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'union_id' | 'open_id'
 }
@@ -1696,7 +1926,7 @@ export interface BatchQueryHireAgencyRequest {
   filter_list?: CommonFilter[]
 }
 
-export interface BatchQueryHireAgencyQuery extends Pagination {
+export interface BatchQueryHireAgencyQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -1766,7 +1996,7 @@ export interface UpdateHireExternalApplicationRequest {
   termination_type?: string
 }
 
-export interface ListHireExternalApplicationQuery extends Pagination {
+export interface ListHireExternalApplicationQuery {
   /** 人才ID */
   talent_id: string
 }
@@ -1809,7 +2039,7 @@ export interface BatchQueryHireExternalInterviewRequest {
   external_interview_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalInterviewQuery extends Pagination {
+export interface BatchQueryHireExternalInterviewQuery {
   /** 外部投递 ID */
   external_application_id?: string
 }
@@ -1873,7 +2103,7 @@ export interface BatchQueryHireExternalOfferRequest {
   external_offer_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalOfferQuery extends Pagination {
+export interface BatchQueryHireExternalOfferQuery {
   /** 外部投递 ID */
   external_application_id?: string
 }
@@ -1911,7 +2141,7 @@ export interface BatchQueryHireExternalBackgroundCheckRequest {
   external_background_check_id_list?: string[]
 }
 
-export interface BatchQueryHireExternalBackgroundCheckQuery extends Pagination {
+export interface BatchQueryHireExternalBackgroundCheckQuery {
   /** 外部投递 ID */
   external_application_id?: string
 }
@@ -1967,7 +2197,7 @@ export interface BatchChangeTalentPoolHireTalentPoolRequest {
   option_type: 1 | 2
 }
 
-export interface SearchHireTalentPoolQuery extends Pagination {
+export interface SearchHireTalentPoolQuery {
   /** 人才库ID列表 */
   id_list?: string[]
 }
@@ -2084,7 +2314,7 @@ export interface RemoveToFolderHireTalentRequest {
   folder_id: string
 }
 
-export interface ListHireTalentFolderQuery extends Pagination {
+export interface ListHireTalentFolderQuery {
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
@@ -2102,7 +2332,7 @@ export interface BatchGetIdHireTalentRequest {
   identification_number_list?: string[]
 }
 
-export interface ListHireTalentQuery extends Pagination {
+export interface ListHireTalentQuery {
   /** 搜索关键词，支持布尔语言（使用 and、or、not 连接关键词） */
   keyword?: string
   /** 最早更新时间，毫秒级时间戳 */
@@ -2192,9 +2422,6 @@ export interface TransferStageHireApplicationRequest {
   stage_id: string
 }
 
-export interface ListHireTerminationReasonQuery extends Pagination {
-}
-
 export interface GetHireApplicationQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -2202,7 +2429,7 @@ export interface GetHireApplicationQuery {
   options?: 'get_latest_application_on_chain'[]
 }
 
-export interface ListHireApplicationQuery extends Pagination {
+export interface ListHireApplicationQuery {
   /** 按流程过滤，招聘流程 ID，枚举值通过接口「获取招聘流程信息」接口获取 */
   process_id?: string
   /** 按招聘阶段过滤，招聘阶段 ID，枚举值通过「获取招聘流程信息」接口获取 */
@@ -2228,7 +2455,7 @@ export interface SearchHireDiversityInclusionRequest {
   application_ids?: string[]
 }
 
-export interface ListHireEvaluationQuery extends Pagination {
+export interface ListHireEvaluationQuery {
   /** 投递 ID */
   application_id?: string
   /** 最早更新时间，毫秒级时间戳 */
@@ -2266,12 +2493,12 @@ export interface SearchHireTestRequest {
   test_start_time_max?: string
 }
 
-export interface SearchHireTestQuery extends Pagination {
+export interface SearchHireTestQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewQuery extends Pagination {
+export interface ListHireInterviewQuery {
   /** 投递 ID */
   application_id?: string
   /** 面试 ID */
@@ -2305,14 +2532,14 @@ export interface GetHireInterviewRecordQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewRecordQuery extends Pagination {
+export interface ListHireInterviewRecordQuery {
   /** 面试评价ID列表，使用该筛选项时不会分页 */
   ids?: string[]
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListHireInterviewRecordQuery extends Pagination {
+export interface ListHireInterviewRecordQuery {
   /** 面试评价ID列表，使用该筛选项时不会分页 */
   ids?: string[]
   /** 此次调用中使用的用户ID的类型 */
@@ -2328,12 +2555,12 @@ export interface GetHireInterviewRecordAttachmentQuery {
   language?: 1 | 2
 }
 
-export interface GetHireMinutesQuery extends Pagination {
+export interface GetHireMinutesQuery {
   /** 面试ID */
   interview_id: string
 }
 
-export interface ListHireQuestionnaireQuery extends Pagination {
+export interface ListHireQuestionnaireQuery {
   /** 投递 ID */
   application_id?: string
   /** 面试 ID */
@@ -2422,7 +2649,7 @@ export interface GetHireOfferQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireOfferQuery extends Pagination {
+export interface ListHireOfferQuery {
   /** 人才 ID */
   talent_id: string
   /** 此次调用中使用的用户ID的类型 */
@@ -2451,7 +2678,7 @@ export interface InternOfferStatusHireOfferRequest {
   offboarding_info?: InternOfferOffboardingInfo
 }
 
-export interface ListHireBackgroundCheckOrderQuery extends Pagination {
+export interface ListHireBackgroundCheckOrderQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 投递 ID */
@@ -2471,7 +2698,7 @@ export interface CreateHireTripartiteAgreementRequest {
   create_time: string
 }
 
-export interface ListHireTripartiteAgreementQuery extends Pagination {
+export interface ListHireTripartiteAgreementQuery {
   /** 投递 ID，必填投递 id 与三方协议 ID 其中之一 */
   application_id?: string
   /** 三方协议 ID，必填投递 id 与三方协议 ID 其中之一 */
@@ -2578,7 +2805,7 @@ export interface GetHireEmployeeQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
-export interface ListHireTodoQuery extends Pagination {
+export interface ListHireTodoQuery {
   /** 用户 ID，当 token 为租户 token 时，必须传入该字段，当 token 为用户 token 时，不传该字段 */
   user_id?: string
   /** 用户 ID 类型 */
@@ -2587,7 +2814,7 @@ export interface ListHireTodoQuery extends Pagination {
   type: 'evaluation' | 'offer' | 'exam' | 'interview'
 }
 
-export interface ListHireEvaluationTaskQuery extends Pagination {
+export interface ListHireEvaluationTaskQuery {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2596,7 +2823,7 @@ export interface ListHireEvaluationTaskQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireExamMarkingTaskQuery extends Pagination {
+export interface ListHireExamMarkingTaskQuery {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2605,7 +2832,7 @@ export interface ListHireExamMarkingTaskQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireInterviewTaskQuery extends Pagination {
+export interface ListHireInterviewTaskQuery {
   /** 用户 ID */
   user_id: string
   /** 任务状态 */
@@ -2657,14 +2884,11 @@ export interface GetHireNoteQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListHireNoteQuery extends Pagination {
+export interface ListHireNoteQuery {
   /** 人才ID */
   talent_id: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-}
-
-export interface ListHireResumeSourceQuery extends Pagination {
 }
 
 export interface CreateHireEcoAccountCustomFieldRequest {
@@ -2867,7 +3091,7 @@ export interface GetHireAttachmentQuery {
   type?: 1 | 2 | 3
 }
 
-export interface ListHireApplicationInterviewQuery extends Pagination {
+export interface ListHireApplicationInterviewQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
   /** 此次调用中使用的「职级 ID」的类型 */
@@ -2883,7 +3107,7 @@ export interface SearchHireTalentOperationLogRequest {
   operation_list: number[]
 }
 
-export interface SearchHireTalentOperationLogQuery extends Pagination {
+export interface SearchHireTalentOperationLogQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -3456,19 +3680,19 @@ export interface GetHireOfferSchemaResponse {
 
 Internal.define({
   '/open-apis/hire/v1/locations/query': {
-    POST: 'queryHireLocation',
+    POST: { name: 'queryHireLocation', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/locations': {
-    GET: 'listHireLocation',
+    GET: { name: 'listHireLocation', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/roles/{role_id}': {
     GET: 'getHireRole',
   },
   '/open-apis/hire/v1/roles': {
-    GET: 'listHireRole',
+    GET: { name: 'listHireRole', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/user_roles': {
-    GET: 'listHireUserRole',
+    GET: { name: 'listHireUserRole', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/jobs/combined_create': {
     POST: 'combinedCreateHireJob',
@@ -3495,7 +3719,7 @@ Internal.define({
     GET: 'configHireJob',
   },
   '/open-apis/hire/v1/jobs': {
-    GET: 'listHireJob',
+    GET: { name: 'listHireJob', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/jobs/{job_id}/close': {
     POST: 'closeHireJob',
@@ -3504,23 +3728,23 @@ Internal.define({
     POST: 'openHireJob',
   },
   '/open-apis/hire/v1/job_schemas': {
-    GET: 'listHireJobSchema',
+    GET: { name: 'listHireJobSchema', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/advertisements/{advertisement_id}/publish': {
     POST: 'publishHireAdvertisement',
   },
   '/open-apis/hire/v1/job_publish_records/search': {
-    POST: 'searchHireJobPublishRecord',
+    POST: { name: 'searchHireJobPublishRecord', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/job_functions': {
-    GET: 'listHireJobFunction',
+    GET: { name: 'listHireJobFunction', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/job_types': {
-    GET: 'listHireJobType',
+    GET: { name: 'listHireJobType', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/job_requirements': {
     POST: 'createHireJobRequirement',
-    GET: 'listHireJobRequirement',
+    GET: { name: 'listHireJobRequirement', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/job_requirements/{job_requirement_id}': {
     PUT: 'updateHireJobRequirement',
@@ -3530,31 +3754,31 @@ Internal.define({
     POST: 'listByIdHireJobRequirement',
   },
   '/open-apis/hire/v1/job_requirement_schemas': {
-    GET: 'listHireJobRequirementSchema',
+    GET: { name: 'listHireJobRequirementSchema', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/job_processes': {
-    GET: 'listHireJobProcess',
+    GET: { name: 'listHireJobProcess', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/subjects': {
-    GET: 'listHireSubject',
+    GET: { name: 'listHireSubject', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/talent_tags': {
-    GET: 'listHireTalentTag',
+    GET: { name: 'listHireTalentTag', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/registration_schemas': {
-    GET: 'listHireRegistrationSchema',
+    GET: { name: 'listHireRegistrationSchema', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interview_feedback_forms': {
-    GET: 'listHireInterviewFeedbackForm',
+    GET: { name: 'listHireInterviewFeedbackForm', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interview_round_types': {
     GET: 'listHireInterviewRoundType',
   },
   '/open-apis/hire/v1/interview_registration_schemas': {
-    GET: 'listHireInterviewRegistrationSchema',
+    GET: { name: 'listHireInterviewRegistrationSchema', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interviewers': {
-    GET: 'listHireInterviewer',
+    GET: { name: 'listHireInterviewer', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interviewers/{interviewer_id}': {
     PATCH: 'patchHireInterviewer',
@@ -3566,13 +3790,13 @@ Internal.define({
     GET: 'getHireOfferApplicationForm',
   },
   '/open-apis/hire/v1/offer_application_forms': {
-    GET: 'listHireOfferApplicationForm',
+    GET: { name: 'listHireOfferApplicationForm', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/referrals/search': {
     POST: 'searchHireReferral',
   },
   '/open-apis/hire/v1/referral_websites/job_posts': {
-    GET: 'listHireReferralWebsiteJobPost',
+    GET: { name: 'listHireReferralWebsiteJobPost', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/referral_websites/job_posts/{job_post_id}': {
     GET: 'getHireReferralWebsiteJobPost',
@@ -3582,7 +3806,7 @@ Internal.define({
   },
   '/open-apis/hire/v1/websites/{website_id}/channels': {
     POST: 'createHireWebsiteChannel',
-    GET: 'listHireWebsiteChannel',
+    GET: { name: 'listHireWebsiteChannel', pagination: { argIndex: 1, itemsKey: 'website_channel_list' } },
   },
   '/open-apis/hire/v1/websites/{website_id}/channels/{channel_id}': {
     DELETE: 'deleteHireWebsiteChannel',
@@ -3595,10 +3819,10 @@ Internal.define({
     GET: 'getHireWebsiteJobPost',
   },
   '/open-apis/hire/v1/websites/{website_id}/job_posts/search': {
-    POST: 'searchHireWebsiteJobPost',
+    POST: { name: 'searchHireWebsiteJobPost', pagination: { argIndex: 2 } },
   },
   '/open-apis/hire/v1/websites/{website_id}/job_posts': {
-    GET: 'listHireWebsiteJobPost',
+    GET: { name: 'listHireWebsiteJobPost', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/websites/{website_id}/deliveries/create_by_resume': {
     POST: 'createByResumeHireWebsiteDelivery',
@@ -3610,7 +3834,7 @@ Internal.define({
     GET: 'getHireWebsiteDeliveryTask',
   },
   '/open-apis/hire/v1/websites': {
-    GET: 'listHireWebsite',
+    GET: { name: 'listHireWebsite', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/agencies/protect': {
     POST: 'protectHireAgency',
@@ -3625,10 +3849,10 @@ Internal.define({
     GET: 'queryHireAgency',
   },
   '/open-apis/hire/v1/agencies/get_agency_account': {
-    POST: 'getAgencyAccountHireAgency',
+    POST: { name: 'getAgencyAccountHireAgency', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/agencies/batch_query': {
-    POST: 'batchQueryHireAgency',
+    POST: { name: 'batchQueryHireAgency', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/agencies/operate_agency_account': {
     POST: 'operateAgencyAccountHireAgency',
@@ -3639,7 +3863,7 @@ Internal.define({
   },
   '/open-apis/hire/v1/external_applications': {
     POST: 'createHireExternalApplication',
-    GET: 'listHireExternalApplication',
+    GET: { name: 'listHireExternalApplication', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/external_applications/{external_application_id}': {
     PUT: 'updateHireExternalApplication',
@@ -3653,7 +3877,7 @@ Internal.define({
     DELETE: 'deleteHireExternalInterview',
   },
   '/open-apis/hire/v1/external_interviews/batch_query': {
-    POST: 'batchQueryHireExternalInterview',
+    POST: { name: 'batchQueryHireExternalInterview', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/external_interview_assessments': {
     POST: 'createHireExternalInterviewAssessment',
@@ -3669,7 +3893,7 @@ Internal.define({
     DELETE: 'deleteHireExternalOffer',
   },
   '/open-apis/hire/v1/external_offers/batch_query': {
-    POST: 'batchQueryHireExternalOffer',
+    POST: { name: 'batchQueryHireExternalOffer', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/external_background_checks': {
     POST: 'createHireExternalBackgroundCheck',
@@ -3679,7 +3903,7 @@ Internal.define({
     DELETE: 'deleteHireExternalBackgroundCheck',
   },
   '/open-apis/hire/v1/external_background_checks/batch_query': {
-    POST: 'batchQueryHireExternalBackgroundCheck',
+    POST: { name: 'batchQueryHireExternalBackgroundCheck', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/external_referral_rewards': {
     POST: 'createHireExternalReferralReward',
@@ -3691,7 +3915,7 @@ Internal.define({
     POST: 'batchChangeTalentPoolHireTalentPool',
   },
   '/open-apis/hire/v1/talent_pools/': {
-    GET: 'searchHireTalentPool',
+    GET: { name: 'searchHireTalentPool', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/talent_pools/{talent_pool_id}/talent_relationship': {
     POST: 'moveTalentHireTalentPool',
@@ -3712,13 +3936,13 @@ Internal.define({
     POST: 'removeToFolderHireTalent',
   },
   '/open-apis/hire/v1/talent_folders': {
-    GET: 'listHireTalentFolder',
+    GET: { name: 'listHireTalentFolder', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/talents/batch_get_id': {
     POST: 'batchGetIdHireTalent',
   },
   '/open-apis/hire/v1/talents': {
-    GET: 'listHireTalent',
+    GET: { name: 'listHireTalent', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/talent_objects/query': {
     GET: 'queryHireTalentObject',
@@ -3743,7 +3967,7 @@ Internal.define({
   },
   '/open-apis/hire/v1/applications': {
     POST: 'createHireApplication',
-    GET: 'listHireApplication',
+    GET: { name: 'listHireApplication', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/applications/{application_id}/terminate': {
     POST: 'terminateHireApplication',
@@ -3752,7 +3976,7 @@ Internal.define({
     POST: 'transferStageHireApplication',
   },
   '/open-apis/hire/v1/termination_reasons': {
-    GET: 'listHireTerminationReason',
+    GET: { name: 'listHireTerminationReason', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/applications/{application_id}': {
     GET: 'getHireApplication',
@@ -3761,16 +3985,16 @@ Internal.define({
     POST: 'searchHireDiversityInclusion',
   },
   '/open-apis/hire/v1/evaluations': {
-    GET: 'listHireEvaluation',
+    GET: { name: 'listHireEvaluation', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/exams': {
     POST: 'createHireExam',
   },
   '/open-apis/hire/v1/tests/search': {
-    POST: 'searchHireTest',
+    POST: { name: 'searchHireTest', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/interviews': {
-    GET: 'listHireInterview',
+    GET: { name: 'listHireInterview', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interviews/get_by_talent': {
     GET: 'getByTalentHireInterview',
@@ -3782,10 +4006,10 @@ Internal.define({
     GET: 'getHireInterviewRecord',
   },
   '/open-apis/hire/v1/interview_records': {
-    GET: 'listHireInterviewRecord',
+    GET: { name: 'listHireInterviewRecord', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v2/interview_records': {
-    GET: 'listHireInterviewRecord',
+    GET: { name: 'listHireInterviewRecord', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interview_records/attachments': {
     GET: 'getHireInterviewRecordAttachment',
@@ -3794,11 +4018,11 @@ Internal.define({
     GET: 'getHireMinutes',
   },
   '/open-apis/hire/v1/questionnaires': {
-    GET: 'listHireQuestionnaire',
+    GET: { name: 'listHireQuestionnaire', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/offers': {
     POST: 'createHireOffer',
-    GET: 'listHireOffer',
+    GET: { name: 'listHireOffer', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/offers/{offer_id}': {
     PUT: 'updateHireOffer',
@@ -3814,11 +4038,11 @@ Internal.define({
     POST: 'internOfferStatusHireOffer',
   },
   '/open-apis/hire/v1/background_check_orders': {
-    GET: 'listHireBackgroundCheckOrder',
+    GET: { name: 'listHireBackgroundCheckOrder', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/tripartite_agreements': {
     POST: 'createHireTripartiteAgreement',
-    GET: 'listHireTripartiteAgreement',
+    GET: { name: 'listHireTripartiteAgreement', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/tripartite_agreements/{tripartite_agreement_id}': {
     PUT: 'updateHireTripartiteAgreement',
@@ -3838,20 +4062,20 @@ Internal.define({
     GET: 'getByApplicationHireEmployee',
   },
   '/open-apis/hire/v1/todos': {
-    GET: 'listHireTodo',
+    GET: { name: 'listHireTodo', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/evaluation_tasks': {
-    GET: 'listHireEvaluationTask',
+    GET: { name: 'listHireEvaluationTask', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/exam_marking_tasks': {
-    GET: 'listHireExamMarkingTask',
+    GET: { name: 'listHireExamMarkingTask', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/interview_tasks': {
-    GET: 'listHireInterviewTask',
+    GET: { name: 'listHireInterviewTask', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/notes': {
     POST: 'createHireNote',
-    GET: 'listHireNote',
+    GET: { name: 'listHireNote', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/notes/{note_id}': {
     PATCH: 'patchHireNote',
@@ -3859,7 +4083,7 @@ Internal.define({
     DELETE: 'deleteHireNote',
   },
   '/open-apis/hire/v1/resume_sources': {
-    GET: 'listHireResumeSource',
+    GET: { name: 'listHireResumeSource', pagination: { argIndex: 0 } },
   },
   '/open-apis/hire/v1/eco_account_custom_fields': {
     POST: 'createHireEcoAccountCustomField',
@@ -3940,10 +4164,10 @@ Internal.define({
     GET: 'previewHireAttachment',
   },
   '/open-apis/hire/v1/applications/{application_id}/interviews': {
-    GET: 'listHireApplicationInterview',
+    GET: { name: 'listHireApplicationInterview', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/talent_operation_logs/search': {
-    POST: 'searchHireTalentOperationLog',
+    POST: { name: 'searchHireTalentOperationLog', pagination: { argIndex: 1 } },
   },
   '/open-apis/hire/v1/jobs/{job_id}/managers/{manager_id}': {
     GET: 'getHireJobManager',

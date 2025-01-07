@@ -12,12 +12,22 @@ declare module '../internal' {
      * 获取部门维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_dept_stat/list
      */
-    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery): Promise<Paginated<AdminDeptStat>>
+    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery & Pagination): Promise<Paginated<AdminDeptStat>>
+    /**
+     * 获取部门维度的用户活跃和功能使用数据
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_dept_stat/list
+     */
+    listAdminAdminDeptStatIter(query?: ListAdminAdminDeptStatQuery): AsyncIterator<AdminDeptStat>
     /**
      * 获取用户维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_user_stat/list
      */
-    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery): Promise<Paginated<AdminUserStat>>
+    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery & Pagination): Promise<Paginated<AdminUserStat>>
+    /**
+     * 获取用户维度的用户活跃和功能使用数据
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_user_stat/list
+     */
+    listAdminAdminUserStatIter(query?: ListAdminAdminUserStatQuery): AsyncIterator<AdminUserStat>
     /**
      * 创建勋章
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/create
@@ -37,7 +47,12 @@ declare module '../internal' {
      * 获取勋章列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
      */
-    listAdminBadge(query?: ListAdminBadgeQuery): Promise<Paginated<Badge, 'badges'>>
+    listAdminBadge(query?: ListAdminBadgeQuery & Pagination): Promise<Paginated<Badge, 'badges'>>
+    /**
+     * 获取勋章列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
+     */
+    listAdminBadgeIter(query?: ListAdminBadgeQuery): AsyncIterator<Badge>
     /**
      * 获取勋章详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/get
@@ -62,7 +77,12 @@ declare module '../internal' {
      * 获取授予名单列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/list
      */
-    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery): Promise<Paginated<Grant, 'grants'>>
+    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery & Pagination): Promise<Paginated<Grant, 'grants'>>
+    /**
+     * 获取授予名单列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/list
+     */
+    listAdminBadgeGrantIter(badge_id: string, query?: ListAdminBadgeGrantQuery): AsyncIterator<Grant>
     /**
      * 获取授予名单详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/get
@@ -72,7 +92,12 @@ declare module '../internal' {
      * 获取行为审计日志数据
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uQjM5YjL0ITO24CNykjN/audit_log/audit_data_get
      */
-    listAdminAuditInfo(query?: ListAdminAuditInfoQuery): Promise<Paginated<AuditInfo>>
+    listAdminAuditInfo(query?: ListAdminAuditInfoQuery & Pagination): Promise<Paginated<AuditInfo>>
+    /**
+     * 获取行为审计日志数据
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uQjM5YjL0ITO24CNykjN/audit_log/audit_data_get
+     */
+    listAdminAuditInfoIter(query?: ListAdminAuditInfoQuery): AsyncIterator<AuditInfo>
   }
 }
 
@@ -88,7 +113,7 @@ export interface ResetAdminPasswordQuery {
   user_id_type: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListAdminAdminDeptStatQuery extends Pagination {
+export interface ListAdminAdminDeptStatQuery {
   /** 部门ID类型 */
   department_id_type: 'department_id' | 'open_department_id'
   /** 起始日期（包含），格式是YYYY-mm-dd */
@@ -105,7 +130,7 @@ export interface ListAdminAdminDeptStatQuery extends Pagination {
   with_product_version?: boolean
 }
 
-export interface ListAdminAdminUserStatQuery extends Pagination {
+export interface ListAdminAdminUserStatQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 部门ID类型 */
@@ -159,7 +184,7 @@ export interface CreateAdminBadgeImageForm {
   image_type: 1 | 2
 }
 
-export interface ListAdminBadgeQuery extends Pagination {
+export interface ListAdminBadgeQuery {
   /** 租户内唯一的勋章名称，精确匹配。 */
   name?: string
 }
@@ -216,7 +241,7 @@ export interface UpdateAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminBadgeGrantQuery extends Pagination {
+export interface ListAdminBadgeGrantQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型。 */
@@ -232,7 +257,7 @@ export interface GetAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminAuditInfoQuery extends Pagination {
+export interface ListAdminAuditInfoQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 日志时间范围: 结束时间. 格式: 秒级时间戳. 默认值: 此刻 */
@@ -297,14 +322,14 @@ Internal.define({
     POST: 'resetAdminPassword',
   },
   '/open-apis/admin/v1/admin_dept_stats': {
-    GET: 'listAdminAdminDeptStat',
+    GET: { name: 'listAdminAdminDeptStat', pagination: { argIndex: 0 } },
   },
   '/open-apis/admin/v1/admin_user_stats': {
-    GET: 'listAdminAdminUserStat',
+    GET: { name: 'listAdminAdminUserStat', pagination: { argIndex: 0 } },
   },
   '/open-apis/admin/v1/badges': {
     POST: 'createAdminBadge',
-    GET: 'listAdminBadge',
+    GET: { name: 'listAdminBadge', pagination: { argIndex: 0, itemsKey: 'badges' } },
   },
   '/open-apis/admin/v1/badges/{badge_id}': {
     PUT: 'updateAdminBadge',
@@ -315,7 +340,7 @@ Internal.define({
   },
   '/open-apis/admin/v1/badges/{badge_id}/grants': {
     POST: 'createAdminBadgeGrant',
-    GET: 'listAdminBadgeGrant',
+    GET: { name: 'listAdminBadgeGrant', pagination: { argIndex: 1, itemsKey: 'grants' } },
   },
   '/open-apis/admin/v1/badges/{badge_id}/grants/{grant_id}': {
     DELETE: 'deleteAdminBadgeGrant',
@@ -323,6 +348,6 @@ Internal.define({
     GET: 'getAdminBadgeGrant',
   },
   '/open-apis/admin/v1/audit_infos': {
-    GET: 'listAdminAuditInfo',
+    GET: { name: 'listAdminAuditInfo', pagination: { argIndex: 0 } },
   },
 })

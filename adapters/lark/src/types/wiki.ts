@@ -7,7 +7,12 @@ declare module '../internal' {
      * 获取知识空间列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/list
      */
-    listWikiSpace(query?: ListWikiSpaceQuery): Promise<Paginated<Space>>
+    listWikiSpace(query?: ListWikiSpaceQuery & Pagination): Promise<Paginated<Space>>
+    /**
+     * 获取知识空间列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/list
+     */
+    listWikiSpaceIter(query?: ListWikiSpaceQuery): AsyncIterator<Space>
     /**
      * 获取知识空间信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/get
@@ -22,7 +27,12 @@ declare module '../internal' {
      * 获取知识空间成员列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/list
      */
-    listWikiSpaceMember(space_id: string, query?: ListWikiSpaceMemberQuery): Promise<Paginated<Member, 'members'>>
+    listWikiSpaceMember(space_id: string, query?: Pagination): Promise<Paginated<Member, 'members'>>
+    /**
+     * 获取知识空间成员列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/list
+     */
+    listWikiSpaceMemberIter(space_id: string): AsyncIterator<Member>
     /**
      * 添加知识空间成员
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/create
@@ -52,7 +62,12 @@ declare module '../internal' {
      * 获取知识空间子节点列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/list
      */
-    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery): Promise<Paginated<Node>>
+    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery & Pagination): Promise<Paginated<Node>>
+    /**
+     * 获取知识空间子节点列表
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/list
+     */
+    listWikiSpaceNodeIter(space_id: string, query?: ListWikiSpaceNodeQuery): AsyncIterator<Node>
     /**
      * 移动知识空间节点
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/move
@@ -82,11 +97,16 @@ declare module '../internal' {
      * 搜索 Wiki
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uEzN0YjLxcDN24SM3QjN/search_wiki
      */
-    searchWikiNode(body: SearchWikiNodeRequest, query?: SearchWikiNodeQuery): Promise<Paginated<Node>>
+    searchWikiNode(body: SearchWikiNodeRequest, query?: Pagination): Promise<Paginated<Node>>
+    /**
+     * 搜索 Wiki
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uEzN0YjLxcDN24SM3QjN/search_wiki
+     */
+    searchWikiNodeIter(body: SearchWikiNodeRequest): AsyncIterator<Node>
   }
 }
 
-export interface ListWikiSpaceQuery extends Pagination {
+export interface ListWikiSpaceQuery {
   /** 当查询个人文档库时，指定返回的文档库名称展示语言。可选值有：zh, id, de, en, es, fr, it, pt, vi, ru, hi, th, ko, ja, zh-HK, zh-TW。 */
   lang?: 'zh' | 'id' | 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt' | 'vi' | 'ru' | 'hi' | 'th' | 'ko' | 'ja' | 'zh-HK' | 'zh-TW'
 }
@@ -103,9 +123,6 @@ export interface CreateWikiSpaceRequest {
   description?: string
   /** 表示知识空间的分享状态 */
   open_sharing?: 'open' | 'closed'
-}
-
-export interface ListWikiSpaceMemberQuery extends Pagination {
 }
 
 export interface CreateWikiSpaceMemberRequest {
@@ -160,7 +177,7 @@ export interface GetNodeWikiSpaceQuery {
   obj_type?: 'doc' | 'docx' | 'sheet' | 'mindnote' | 'bitable' | 'file' | 'slides' | 'wiki'
 }
 
-export interface ListWikiSpaceNodeQuery extends Pagination {
+export interface ListWikiSpaceNodeQuery {
   /** 父节点token */
   parent_node_token?: string
 }
@@ -209,9 +226,6 @@ export interface SearchWikiNodeRequest {
   space_id?: string
   /** wiki token，不为空搜索该节点及其所有子节点，为空搜索所有 wiki（根据 space_id 选择 space） */
   node_id?: string
-}
-
-export interface SearchWikiNodeQuery extends Pagination {
 }
 
 export interface GetWikiSpaceResponse {
@@ -275,14 +289,14 @@ export interface GetWikiTaskResponse {
 
 Internal.define({
   '/open-apis/wiki/v2/spaces': {
-    GET: 'listWikiSpace',
+    GET: { name: 'listWikiSpace', pagination: { argIndex: 0 } },
     POST: 'createWikiSpace',
   },
   '/open-apis/wiki/v2/spaces/{space_id}': {
     GET: 'getWikiSpace',
   },
   '/open-apis/wiki/v2/spaces/{space_id}/members': {
-    GET: 'listWikiSpaceMember',
+    GET: { name: 'listWikiSpaceMember', pagination: { argIndex: 1, itemsKey: 'members' } },
     POST: 'createWikiSpaceMember',
   },
   '/open-apis/wiki/v2/spaces/{space_id}/members/{member_id}': {
@@ -293,7 +307,7 @@ Internal.define({
   },
   '/open-apis/wiki/v2/spaces/{space_id}/nodes': {
     POST: 'createWikiSpaceNode',
-    GET: 'listWikiSpaceNode',
+    GET: { name: 'listWikiSpaceNode', pagination: { argIndex: 1 } },
   },
   '/open-apis/wiki/v2/spaces/get_node': {
     GET: 'getNodeWikiSpace',
@@ -314,6 +328,6 @@ Internal.define({
     GET: 'getWikiTask',
   },
   '/open-apis/wiki/v1/nodes/search': {
-    POST: 'searchWikiNode',
+    POST: { name: 'searchWikiNode', pagination: { argIndex: 1 } },
   },
 })

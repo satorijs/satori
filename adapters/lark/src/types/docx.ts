@@ -12,7 +12,12 @@ declare module '../internal' {
      * 获取群公告所有块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block/list
      */
-    listDocxChatAnnouncementBlock(chat_id: string, query?: ListDocxChatAnnouncementBlockQuery): Promise<Paginated<Block>>
+    listDocxChatAnnouncementBlock(chat_id: string, query?: ListDocxChatAnnouncementBlockQuery & Pagination): Promise<Paginated<Block>>
+    /**
+     * 获取群公告所有块
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block/list
+     */
+    listDocxChatAnnouncementBlockIter(chat_id: string, query?: ListDocxChatAnnouncementBlockQuery): AsyncIterator<Block>
     /**
      * 在群公告中创建块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/create
@@ -32,7 +37,12 @@ declare module '../internal' {
      * 获取所有子块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/get
      */
-    getDocxChatAnnouncementBlockChildren(chat_id: string, block_id: string, query?: GetDocxChatAnnouncementBlockChildrenQuery): Promise<Paginated<Block>>
+    getDocxChatAnnouncementBlockChildren(chat_id: string, block_id: string, query?: GetDocxChatAnnouncementBlockChildrenQuery & Pagination): Promise<Paginated<Block>>
+    /**
+     * 获取所有子块
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/get
+     */
+    getDocxChatAnnouncementBlockChildrenIter(chat_id: string, block_id: string, query?: GetDocxChatAnnouncementBlockChildrenQuery): AsyncIterator<Block>
     /**
      * 删除群公告中的块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/chat-announcement-block-children/batch_delete
@@ -57,7 +67,12 @@ declare module '../internal' {
      * 获取文档所有块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block/list
      */
-    listDocxDocumentBlock(document_id: string, query?: ListDocxDocumentBlockQuery): Promise<Paginated<Block>>
+    listDocxDocumentBlock(document_id: string, query?: ListDocxDocumentBlockQuery & Pagination): Promise<Paginated<Block>>
+    /**
+     * 获取文档所有块
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block/list
+     */
+    listDocxDocumentBlockIter(document_id: string, query?: ListDocxDocumentBlockQuery): AsyncIterator<Block>
     /**
      * 创建块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/create
@@ -87,7 +102,12 @@ declare module '../internal' {
      * 获取所有子块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/get
      */
-    getDocxDocumentBlockChildren(document_id: string, block_id: string, query?: GetDocxDocumentBlockChildrenQuery): Promise<Paginated<Block>>
+    getDocxDocumentBlockChildren(document_id: string, block_id: string, query?: GetDocxDocumentBlockChildrenQuery & Pagination): Promise<Paginated<Block>>
+    /**
+     * 获取所有子块
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/get
+     */
+    getDocxDocumentBlockChildrenIter(document_id: string, block_id: string, query?: GetDocxDocumentBlockChildrenQuery): AsyncIterator<Block>
     /**
      * 删除块
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document-block-children/batch_delete
@@ -101,7 +121,7 @@ export interface GetDocxChatAnnouncementQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListDocxChatAnnouncementBlockQuery extends Pagination {
+export interface ListDocxChatAnnouncementBlockQuery {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的编辑权限。 */
   revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -145,7 +165,7 @@ export interface GetDocxChatAnnouncementBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetDocxChatAnnouncementBlockChildrenQuery extends Pagination {
+export interface GetDocxChatAnnouncementBlockChildrenQuery {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的更新权限。 */
   revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -178,7 +198,7 @@ export interface RawContentDocxDocumentQuery {
   lang?: 0 | 1 | 2
 }
 
-export interface ListDocxDocumentBlockQuery extends Pagination {
+export interface ListDocxDocumentBlockQuery {
   /** 查询的文档版本，-1表示文档最新版本。若此时查询的版本为文档最新版本，则需要持有文档的阅读权限；若此时查询的版本为文档的历史版本，则需要持有文档的编辑权限。 */
   document_revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -284,7 +304,7 @@ export interface BatchUpdateDocxDocumentBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetDocxDocumentBlockChildrenQuery extends Pagination {
+export interface GetDocxDocumentBlockChildrenQuery {
   /** 操作的文档版本，-1表示文档最新版本。若此时操作的版本为文档最新版本，则需要持有文档的阅读权限；若此时操作的版本为文档的历史版本，则需要持有文档的编辑权限。 */
   document_revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
@@ -424,11 +444,11 @@ Internal.define({
     GET: 'getDocxChatAnnouncement',
   },
   '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks': {
-    GET: 'listDocxChatAnnouncementBlock',
+    GET: { name: 'listDocxChatAnnouncementBlock', pagination: { argIndex: 1 } },
   },
   '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}/children': {
     POST: 'createDocxChatAnnouncementBlockChildren',
-    GET: 'getDocxChatAnnouncementBlockChildren',
+    GET: { name: 'getDocxChatAnnouncementBlockChildren', pagination: { argIndex: 2 } },
   },
   '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/batch_update': {
     PATCH: 'batchUpdateDocxChatAnnouncementBlock',
@@ -449,11 +469,11 @@ Internal.define({
     GET: 'rawContentDocxDocument',
   },
   '/open-apis/docx/v1/documents/{document_id}/blocks': {
-    GET: 'listDocxDocumentBlock',
+    GET: { name: 'listDocxDocumentBlock', pagination: { argIndex: 1 } },
   },
   '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}/children': {
     POST: 'createDocxDocumentBlockChildren',
-    GET: 'getDocxDocumentBlockChildren',
+    GET: { name: 'getDocxDocumentBlockChildren', pagination: { argIndex: 2 } },
   },
   '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}/descendant': {
     POST: 'createDocxDocumentBlockDescendant',

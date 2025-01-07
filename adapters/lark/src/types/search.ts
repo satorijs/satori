@@ -7,12 +7,22 @@ declare module '../internal' {
      * 搜索消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/message/create
      */
-    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): Promise<Paginated<string>>
+    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery & Pagination): Promise<Paginated<string>>
+    /**
+     * 搜索消息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/message/create
+     */
+    createSearchMessageIter(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): AsyncIterator<string>
     /**
      * 搜索应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/app/create
      */
-    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): Promise<Paginated<string>>
+    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery & Pagination): Promise<Paginated<string>>
+    /**
+     * 搜索应用
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/app/create
+     */
+    createSearchAppIter(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): AsyncIterator<string>
     /**
      * 创建数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/create
@@ -37,7 +47,12 @@ declare module '../internal' {
      * 批量获取数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/list
      */
-    listSearchDataSource(query?: ListSearchDataSourceQuery): Promise<Paginated<DataSource>>
+    listSearchDataSource(query?: ListSearchDataSourceQuery & Pagination): Promise<Paginated<DataSource>>
+    /**
+     * 批量获取数据源
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/list
+     */
+    listSearchDataSourceIter(query?: ListSearchDataSourceQuery): AsyncIterator<DataSource>
     /**
      * 为指定数据项创建索引
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source-item/create
@@ -97,7 +112,7 @@ export interface CreateSearchMessageRequest {
   end_time?: string
 }
 
-export interface CreateSearchMessageQuery extends Pagination {
+export interface CreateSearchMessageQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -107,7 +122,7 @@ export interface CreateSearchAppRequest {
   query: string
 }
 
-export interface CreateSearchAppQuery extends Pagination {
+export interface CreateSearchAppQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -160,7 +175,7 @@ export interface PatchSearchDataSourceRequest {
   enable_answer?: boolean
 }
 
-export interface ListSearchDataSourceQuery extends Pagination {
+export interface ListSearchDataSourceQuery {
   /** 回包数据格式，0-全量数据；1-摘要数据。**注**：摘要数据仅包含"id"，"name"，"state"。 */
   view?: 0 | 1
 }
@@ -236,14 +251,14 @@ export interface GetSearchSchemaResponse {
 
 Internal.define({
   '/open-apis/search/v2/message': {
-    POST: 'createSearchMessage',
+    POST: { name: 'createSearchMessage', pagination: { argIndex: 1 } },
   },
   '/open-apis/search/v2/app': {
-    POST: 'createSearchApp',
+    POST: { name: 'createSearchApp', pagination: { argIndex: 1 } },
   },
   '/open-apis/search/v2/data_sources': {
     POST: 'createSearchDataSource',
-    GET: 'listSearchDataSource',
+    GET: { name: 'listSearchDataSource', pagination: { argIndex: 0 } },
   },
   '/open-apis/search/v2/data_sources/{data_source_id}': {
     DELETE: 'deleteSearchDataSource',
