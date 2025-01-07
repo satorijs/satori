@@ -101,12 +101,12 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
         for (const login of parsed.body.logins) {
           this.getBot(login.platform, login.user.id, login)
         }
-        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls)
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls ?? [])
       }
 
       if (parsed.op === Universal.Opcode.META) {
         this._metaDispose?.()
-        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls)
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls ?? [])
       }
 
       if (parsed.op === Universal.Opcode.EVENT) {
