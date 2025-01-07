@@ -10,16 +10,17 @@ export interface BaseResponse {
   msg: string
 }
 
+export type Paginated<T = any, ItemsKey extends string = 'items', TokenKey extends string = 'page_token'> =
+  & Promise<
+    & { [K in ItemsKey]: T[] }
+    & { [K in TokenKey]?: string }
+    & { has_more: boolean }
+  >
+  & AsyncIterableIterator<T>
+
 export interface Pagination {
   page_size?: number
   page_token?: string
-}
-
-export type Paginated<T, K extends string = 'items'> = {
-  [P in K]: T[];
-} & {
-  has_more: boolean
-  page_token: string
 }
 
 export interface InternalRoute {
@@ -68,7 +69,8 @@ export class Internal {
           if (typeof route === 'string') {
             route = { name: route }
           }
-          Internal.prototype[route.name] = async function (this: Internal, ...args: any[]) {
+
+          const impl = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
             const url = path.replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
@@ -99,26 +101,41 @@ export class Internal {
             }
           }
 
-          if (route.pagination) {
-            const { argIndex, itemsKey = 'items', tokenKey = 'page_token' } = route.pagination
-            Internal.prototype[route.name + 'Iter'] = async function (this: Internal, ...args: any[]) {
-              let list: Paginated<any>
-              const getList = async () => {
-                args[argIndex] = { ...args[argIndex], page_token: list?.[tokenKey] }
-                list = await this[route.name](...args)
-              }
-              return {
-                async next() {
-                  if (list?.[itemsKey].length) return { done: false, value: list[itemsKey].shift() }
-                  if (!list.has_more) return { done: true, value: undefined }
-                  await getList()
-                  return this.next()
-                },
-                [Symbol.asyncIterator]() {
-                  return this
-                },
+          Internal.prototype[route.name] = function (this: Internal, ...args: any[]) {
+            let promise: Promise<any> | undefined
+            const result = {} as Paginated
+            for (const key of ['then', 'catch', 'finally']) {
+              result[key] = (...args2: any[]) => {
+                return (promise ??= impl.apply(this, args))[key](...args2)
               }
             }
+
+            if (route.pagination) {
+              const { argIndex, itemsKey = 'items', tokenKey = 'page_token' } = route.pagination
+              const iterArgs = [...args]
+              iterArgs[argIndex] = { ...args[argIndex] }
+              let pagination: { data: any[]; next?: any } | undefined
+              result.next = async function () {
+                pagination ??= await this[Symbol.for('satori.pagination')]()
+                if (pagination.data.length) return { done: false, value: pagination.data.shift() }
+                if (!pagination.next) return { done: true, value: undefined }
+                pagination = await this[Symbol.for('satori.pagination')]()
+                return this.next()
+              }
+              result[Symbol.asyncIterator] = function () {
+                return this
+              }
+              result[Symbol.for('satori.pagination')] = async () => {
+                const data = await impl.apply(this, iterArgs)
+                iterArgs[argIndex].page_token = data[tokenKey]
+                return {
+                  data: data[itemsKey],
+                  next: data.has_more ? iterArgs : undefined,
+                }
+              }
+            }
+
+            return result
           }
         }
       }

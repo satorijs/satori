@@ -1,5 +1,5 @@
 import { Member, Node, Setting, Space, TaskResult } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,12 +7,7 @@ declare module '../internal' {
      * 获取知识空间列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/list
      */
-    listWikiSpace(query?: ListWikiSpaceQuery & Pagination): Promise<Paginated<Space>>
-    /**
-     * 获取知识空间列表
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/list
-     */
-    listWikiSpaceIter(query?: ListWikiSpaceQuery): AsyncIterator<Space>
+    listWikiSpace(query?: ListWikiSpaceQuery): Paginated<Space>
     /**
      * 获取知识空间信息
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space/get
@@ -27,12 +22,7 @@ declare module '../internal' {
      * 获取知识空间成员列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/list
      */
-    listWikiSpaceMember(space_id: string, query?: Pagination): Promise<Paginated<Member, 'members'>>
-    /**
-     * 获取知识空间成员列表
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/list
-     */
-    listWikiSpaceMemberIter(space_id: string): AsyncIterator<Member>
+    listWikiSpaceMember(space_id: string, query?: Pagination): Paginated<Member, 'members'>
     /**
      * 添加知识空间成员
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-member/create
@@ -62,12 +52,7 @@ declare module '../internal' {
      * 获取知识空间子节点列表
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/list
      */
-    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery & Pagination): Promise<Paginated<Node>>
-    /**
-     * 获取知识空间子节点列表
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/list
-     */
-    listWikiSpaceNodeIter(space_id: string, query?: ListWikiSpaceNodeQuery): AsyncIterator<Node>
+    listWikiSpaceNode(space_id: string, query?: ListWikiSpaceNodeQuery): Paginated<Node>
     /**
      * 移动知识空间节点
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/wiki-v2/space-node/move
@@ -97,16 +82,11 @@ declare module '../internal' {
      * 搜索 Wiki
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uEzN0YjLxcDN24SM3QjN/search_wiki
      */
-    searchWikiNode(body: SearchWikiNodeRequest, query?: Pagination): Promise<Paginated<Node>>
-    /**
-     * 搜索 Wiki
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uEzN0YjLxcDN24SM3QjN/search_wiki
-     */
-    searchWikiNodeIter(body: SearchWikiNodeRequest): AsyncIterator<Node>
+    searchWikiNode(body: SearchWikiNodeRequest, query?: Pagination): Paginated<Node>
   }
 }
 
-export interface ListWikiSpaceQuery {
+export interface ListWikiSpaceQuery extends Pagination {
   /** 当查询个人文档库时，指定返回的文档库名称展示语言。可选值有：zh, id, de, en, es, fr, it, pt, vi, ru, hi, th, ko, ja, zh-HK, zh-TW。 */
   lang?: 'zh' | 'id' | 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt' | 'vi' | 'ru' | 'hi' | 'th' | 'ko' | 'ja' | 'zh-HK' | 'zh-TW'
 }
@@ -177,7 +157,7 @@ export interface GetNodeWikiSpaceQuery {
   obj_type?: 'doc' | 'docx' | 'sheet' | 'mindnote' | 'bitable' | 'file' | 'slides' | 'wiki'
 }
 
-export interface ListWikiSpaceNodeQuery {
+export interface ListWikiSpaceNodeQuery extends Pagination {
   /** 父节点token */
   parent_node_token?: string
 }

@@ -1,5 +1,5 @@
 import { Classification, ClassificationFilter, Draft, Entity, EntityWord, MatchInfo, OuterInfo, Phrase, RelatedMeta, Term } from '.'
-import { Internal } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -32,7 +32,7 @@ declare module '../internal' {
      * 获取词条列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/list
      */
-    listBaikeEntity(query?: ListBaikeEntityQuery & Pagination): Promise<ListBaikeEntityResponse>
+    listBaikeEntity(query?: ListBaikeEntityQuery): Promise<ListBaikeEntityResponse>
     /**
      * 精准搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/match
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 模糊搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/search
      */
-    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery & Pagination): Promise<SearchBaikeEntityResponse>
+    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery): Promise<SearchBaikeEntityResponse>
     /**
      * 词条高亮
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/highlight
@@ -162,7 +162,7 @@ export interface GetBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListBaikeEntityQuery {
+export interface ListBaikeEntityQuery extends Pagination {
   /** 相关外部系统【可用来过滤词条数据】 */
   provider?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -185,7 +185,7 @@ export interface SearchBaikeEntityRequest {
   creators?: string[]
 }
 
-export interface SearchBaikeEntityQuery {
+export interface SearchBaikeEntityQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }

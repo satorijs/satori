@@ -23,7 +23,8 @@
     "test": "yakumo test -r esbuild-register",
     "test:text": "shx rm -rf coverage && c8 -r text yarn test",
     "test:json": "shx rm -rf coverage && c8 -r json yarn test",
-    "test:html": "shx rm -rf coverage && c8 -r html yarn test"
+    "test:html": "shx rm -rf coverage && c8 -r html yarn test",
+    "sync:lark": "node --import tsx adapters/lark/scripts/types.ts"
   },
   "license": "MIT",
   "devDependencies": {

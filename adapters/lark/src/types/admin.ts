@@ -1,5 +1,5 @@
 import { AdminDeptStat, AdminUserStat, AuditInfo, Badge, Grant, I18n, Password, RuleDetail } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -12,22 +12,12 @@ declare module '../internal' {
      * 获取部门维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_dept_stat/list
      */
-    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery & Pagination): Promise<Paginated<AdminDeptStat>>
-    /**
-     * 获取部门维度的用户活跃和功能使用数据
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_dept_stat/list
-     */
-    listAdminAdminDeptStatIter(query?: ListAdminAdminDeptStatQuery): AsyncIterator<AdminDeptStat>
+    listAdminAdminDeptStat(query?: ListAdminAdminDeptStatQuery): Paginated<AdminDeptStat>
     /**
      * 获取用户维度的用户活跃和功能使用数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_user_stat/list
      */
-    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery & Pagination): Promise<Paginated<AdminUserStat>>
-    /**
-     * 获取用户维度的用户活跃和功能使用数据
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/admin_user_stat/list
-     */
-    listAdminAdminUserStatIter(query?: ListAdminAdminUserStatQuery): AsyncIterator<AdminUserStat>
+    listAdminAdminUserStat(query?: ListAdminAdminUserStatQuery): Paginated<AdminUserStat>
     /**
      * 创建勋章
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/create
@@ -47,12 +37,7 @@ declare module '../internal' {
      * 获取勋章列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
      */
-    listAdminBadge(query?: ListAdminBadgeQuery & Pagination): Promise<Paginated<Badge, 'badges'>>
-    /**
-     * 获取勋章列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/list
-     */
-    listAdminBadgeIter(query?: ListAdminBadgeQuery): AsyncIterator<Badge>
+    listAdminBadge(query?: ListAdminBadgeQuery): Paginated<Badge, 'badges'>
     /**
      * 获取勋章详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge/get
@@ -77,12 +62,7 @@ declare module '../internal' {
      * 获取授予名单列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/list
      */
-    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery & Pagination): Promise<Paginated<Grant, 'grants'>>
-    /**
-     * 获取授予名单列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/list
-     */
-    listAdminBadgeGrantIter(badge_id: string, query?: ListAdminBadgeGrantQuery): AsyncIterator<Grant>
+    listAdminBadgeGrant(badge_id: string, query?: ListAdminBadgeGrantQuery): Paginated<Grant, 'grants'>
     /**
      * 获取授予名单详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/admin-v1/badge-grant/get
@@ -92,12 +72,7 @@ declare module '../internal' {
      * 获取行为审计日志数据
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uQjM5YjL0ITO24CNykjN/audit_log/audit_data_get
      */
-    listAdminAuditInfo(query?: ListAdminAuditInfoQuery & Pagination): Promise<Paginated<AuditInfo>>
-    /**
-     * 获取行为审计日志数据
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uQjM5YjL0ITO24CNykjN/audit_log/audit_data_get
-     */
-    listAdminAuditInfoIter(query?: ListAdminAuditInfoQuery): AsyncIterator<AuditInfo>
+    listAdminAuditInfo(query?: ListAdminAuditInfoQuery): Paginated<AuditInfo>
   }
 }
 
@@ -113,7 +88,7 @@ export interface ResetAdminPasswordQuery {
   user_id_type: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListAdminAdminDeptStatQuery {
+export interface ListAdminAdminDeptStatQuery extends Pagination {
   /** 部门ID类型 */
   department_id_type: 'department_id' | 'open_department_id'
   /** 起始日期（包含），格式是YYYY-mm-dd */
@@ -130,7 +105,7 @@ export interface ListAdminAdminDeptStatQuery {
   with_product_version?: boolean
 }
 
-export interface ListAdminAdminUserStatQuery {
+export interface ListAdminAdminUserStatQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 部门ID类型 */
@@ -184,7 +159,7 @@ export interface CreateAdminBadgeImageForm {
   image_type: 1 | 2
 }
 
-export interface ListAdminBadgeQuery {
+export interface ListAdminBadgeQuery extends Pagination {
   /** 租户内唯一的勋章名称，精确匹配。 */
   name?: string
 }
@@ -241,7 +216,7 @@ export interface UpdateAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminBadgeGrantQuery {
+export interface ListAdminBadgeGrantQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型。 */
@@ -257,7 +232,7 @@ export interface GetAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
-export interface ListAdminAuditInfoQuery {
+export interface ListAdminAuditInfoQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 日志时间范围: 结束时间. 格式: 秒级时间戳. 默认值: 此刻 */

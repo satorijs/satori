@@ -1,5 +1,5 @@
 import { SystemStatus, SystemStatusI18nName, SystemStatusSyncSetting, SystemStatusUserCloseResultEntity, SystemStatusUserOpenParam, SystemStatusUserOpenResultEntity } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -22,12 +22,7 @@ declare module '../internal' {
      * 获取系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/list
      */
-    listPersonalSettingsSystemStatus(query?: Pagination): Promise<Paginated<SystemStatus>>
-    /**
-     * 获取系统状态
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/list
-     */
-    listPersonalSettingsSystemStatusIter(): AsyncIterator<SystemStatus>
+    listPersonalSettingsSystemStatus(query?: Pagination): Paginated<SystemStatus>
     /**
      * 批量开启系统状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/personal_settings-v1/system_status/batch_open

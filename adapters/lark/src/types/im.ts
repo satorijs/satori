@@ -1,5 +1,5 @@
 import { BatchMessageReadUser, BatchMessageRecallProgress, BatchMessageSendProgress, ChatMenuItem, ChatMenuTree, ChatTab, ChatTopNotice, CreateTag, CreateTagFailReason, Emoji, FailedReason, FollowUp, I18nNames, ListChat, ListMember, ListModerator, Mention, Message, MessageBody, MessageReaction, OpenAppFeedCard, OpenAppFeedCardButtons, OpenFailedUserAppFeedCardItem, Operator, PatchTag, PatchTagFailReason, Pin, ReadUser, RestrictedModeSetting, Sender, TagInfo, TagInfoWithBindVersion, UserOpenAppFeedCardDeleter, UserOpenAppFeedCardUpdater } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -47,22 +47,12 @@ declare module '../internal' {
      * 查询消息已读信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users
      */
-    readUsersImMessage(message_id: string, query?: ReadUsersImMessageQuery & Pagination): Promise<Paginated<ReadUser>>
-    /**
-     * 查询消息已读信息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users
-     */
-    readUsersImMessageIter(message_id: string, query?: ReadUsersImMessageQuery): AsyncIterator<ReadUser>
+    readUsersImMessage(message_id: string, query?: ReadUsersImMessageQuery): Paginated<ReadUser>
     /**
      * 获取会话历史消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/list
      */
-    listImMessage(query?: ListImMessageQuery & Pagination): Promise<Paginated<Message>>
-    /**
-     * 获取会话历史消息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/list
-     */
-    listImMessageIter(query?: ListImMessageQuery): AsyncIterator<Message>
+    listImMessage(query?: ListImMessageQuery): Paginated<Message>
     /**
      * 获取消息中的资源文件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-resource/get
@@ -132,12 +122,7 @@ declare module '../internal' {
      * 获取消息表情回复
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/list
      */
-    listImMessageReaction(message_id: string, query?: ListImMessageReactionQuery & Pagination): Promise<Paginated<MessageReaction>>
-    /**
-     * 获取消息表情回复
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/list
-     */
-    listImMessageReactionIter(message_id: string, query?: ListImMessageReactionQuery): AsyncIterator<MessageReaction>
+    listImMessageReaction(message_id: string, query?: ListImMessageReactionQuery): Paginated<MessageReaction>
     /**
      * 删除消息表情回复
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/delete
@@ -157,12 +142,7 @@ declare module '../internal' {
      * 获取群内 Pin 消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/pin/list
      */
-    listImPin(query?: ListImPinQuery & Pagination): Promise<Paginated<Pin>>
-    /**
-     * 获取群内 Pin 消息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/pin/list
-     */
-    listImPinIter(query?: ListImPinQuery): AsyncIterator<Pin>
+    listImPin(query?: ListImPinQuery): Paginated<Pin>
     /**
      * 更新应用发送的消息卡片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/patch
@@ -212,27 +192,17 @@ declare module '../internal' {
      * 获取用户或机器人所在的群列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/list
      */
-    listImChat(query?: ListImChatQuery & Pagination): Promise<Paginated<ListChat>>
-    /**
-     * 获取用户或机器人所在的群列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/list
-     */
-    listImChatIter(query?: ListImChatQuery): AsyncIterator<ListChat>
+    listImChat(query?: ListImChatQuery): Paginated<ListChat>
     /**
      * 搜索对用户或机器人可见的群列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/search
      */
-    searchImChat(query?: SearchImChatQuery & Pagination): Promise<Paginated<ListChat>>
-    /**
-     * 搜索对用户或机器人可见的群列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/search
-     */
-    searchImChatIter(query?: SearchImChatQuery): AsyncIterator<ListChat>
+    searchImChat(query?: SearchImChatQuery): Paginated<ListChat>
     /**
      * 获取群成员发言权限
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-moderation/get
      */
-    getImChatModeration(chat_id: string, query?: GetImChatModerationQuery & Pagination): Promise<GetImChatModerationResponse>
+    getImChatModeration(chat_id: string, query?: GetImChatModerationQuery): Promise<GetImChatModerationResponse>
     /**
      * 获取群分享链接
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat/link
@@ -267,7 +237,7 @@ declare module '../internal' {
      * 获取群成员列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-members/get
      */
-    getImChatMembers(chat_id: string, query?: GetImChatMembersQuery & Pagination): Promise<GetImChatMembersResponse>
+    getImChatMembers(chat_id: string, query?: GetImChatMembersQuery): Promise<GetImChatMembersResponse>
     /**
      * 判断用户或机器人是否在群里
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-members/is_in_chat
@@ -468,12 +438,12 @@ export interface PushFollowUpImMessageRequest {
   follow_ups: FollowUp[]
 }
 
-export interface ReadUsersImMessageQuery {
+export interface ReadUsersImMessageQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListImMessageQuery {
+export interface ListImMessageQuery extends Pagination {
   /** 容器类型 ，目前可选值仅有"chat"，包含单聊（p2p）和群聊（group） */
   container_id_type: string
   /** 容器的id，即chat的id，详情参见[群ID 说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-id-description) */
@@ -549,7 +519,7 @@ export interface CreateImMessageReactionRequest {
   reaction_type: Emoji
 }
 
-export interface ListImMessageReactionQuery {
+export interface ListImMessageReactionQuery extends Pagination {
   /** 待查询消息reaction的类型[emoji类型列举](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/emojis-introduce)。- 不传入该参数，表示拉取所有类型reaction */
   reaction_type?: string
   /** 当操作人为用户时返回用户ID的类型 */
@@ -561,7 +531,7 @@ export interface CreateImPinRequest {
   message_id: string
 }
 
-export interface ListImPinQuery {
+export interface ListImPinQuery extends Pagination {
   /** 待获取Pin消息的Chat ID */
   chat_id: string
   /** Pin信息的起始时间（毫秒级时间戳） */
@@ -698,21 +668,21 @@ export interface PutTopNoticeImChatTopNoticeRequest {
   chat_top_notice: ChatTopNotice[]
 }
 
-export interface ListImChatQuery {
+export interface ListImChatQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 群组排序方式 */
   sort_type?: 'ByCreateTimeAsc' | 'ByActiveTimeDesc'
 }
 
-export interface SearchImChatQuery {
+export interface SearchImChatQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 关键词。注意：如果query为空值将返回空的结果 */
   query?: string
 }
 
-export interface GetImChatModerationQuery {
+export interface GetImChatModerationQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -764,7 +734,7 @@ export interface DeleteImChatMembersQuery {
   member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
 }
 
-export interface GetImChatMembersQuery {
+export interface GetImChatMembersQuery extends Pagination {
   /** 群成员 用户 ID 类型，详情参见 [用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
   member_id_type?: 'user_id' | 'union_id' | 'open_id'
 }

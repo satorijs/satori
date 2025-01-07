@@ -234,8 +234,8 @@ async function start() {
     const apiType = capitalize(method)
     const args: string[] = []
     const extras: string[] = []
-    let returnType = `${apiType}Response`
 
+    let returnType: string
     let paginationRequest: { queryType?: string } | undefined
     for (const property of detail.request.path?.properties || []) {
       args.push(`${property.name}: ${formatType(property, project.imports)}`)
@@ -256,9 +256,9 @@ async function start() {
       if (keys.includes('page_token') && keys.includes('page_size')) {
         const properties = detail.request.query.properties.filter(s => s.name !== 'page_token' && s.name !== 'page_size')
         if (properties.length) {
-          project.requests.push(`export interface ${queryType} {\n${generateParams(properties, project.imports)}}`)
+          project.internalImports.add('Pagination')
+          project.requests.push(`export interface ${queryType} extends Pagination {\n${generateParams(properties, project.imports)}}`)
           paginationRequest = { queryType }
-          queryType = `${queryType} & Pagination`
         } else {
           queryType = 'Pagination'
           paginationRequest = {}
@@ -271,7 +271,7 @@ async function start() {
 
     let paginationResponse: { innerType: string; tokenKey: string; itemsKey: string } | undefined
     if (detail.supportFileDownload) {
-      returnType = 'ArrayBuffer'
+      returnType = 'Promise<ArrayBuffer>'
       extras.push(`type: 'binary'`)
     } else {
       const keys = (detail.response.body?.properties || []).map(v => v.name)
@@ -279,12 +279,13 @@ async function start() {
         console.log(`unsupported response body: ${keys}, see https://open.feishu.cn${summary.fullPath}}`)
         return
       } else if (keys.length === 2) {
-        returnType = 'void'
+        returnType = 'Promise<void>'
       } else if (keys.length === 3 && keys.includes('data')) {
         const data = detail.response.body.properties!.find(v => v.name === 'data')!
         if (!data.properties?.length) {
-          returnType = 'void'
+          returnType = 'Promise<void>'
         } else {
+          const responseType = `${apiType}Response`
           const keys = (data.properties || []).map(v => v.name)
           let pagination: [string, string, Schema] | undefined
           if (keys.includes('has_more') && (keys.includes('page_token') || keys.includes('next_page_token')) && keys.length === 3) {
@@ -298,25 +299,26 @@ async function start() {
             const [itemsKey, tokenKey, schema] = pagination
             let innerType = formatType(schema, project.imports)
             if (schema.type === 'object' && schema.properties && !schema.ref) {
-              const name = `${apiType}Item`
-              project.responses.push(`export interface ${name} ${innerType}`)
-              innerType = name
+              project.responses.push(`export interface ${apiType}Item ${innerType}`)
+              innerType = `${apiType}Item`
             }
             returnType = itemsKey === 'items' ? `Paginated<${innerType}>` : `Paginated<${innerType}, '${itemsKey}'>`
-            project.internalImports.add('Paginated')
             paginationResponse = { innerType, tokenKey, itemsKey }
           } else {
             if (detail.pagination) {
               console.log(`unsupported pagination (${keys.join(', ')}), see https://open.feishu.cn${summary.fullPath}}`)
             }
-            project.responses.push(`export interface ${returnType} {\n${generateParams(data.properties, project.imports)}}`)
+            project.responses.push(`export interface ${responseType} {\n${generateParams(data.properties, project.imports)}}`)
+            returnType = `Promise<${responseType}>`
           }
         }
       } else {
+        const responseType = `${apiType}Response`
         const properties = detail.response.body.properties!.filter(v => !['code', 'msg'].includes(v.name))
-        project.responses.push(`export interface ${returnType} extends BaseResponse {\n${generateParams(properties, project.imports)}}`)
+        project.responses.push(`export interface ${responseType} extends BaseResponse {\n${generateParams(properties, project.imports)}}`)
         extras.push(`type: 'raw-json'`)
         project.internalImports.add('BaseResponse')
+        returnType = `Promise<${responseType}>`
       }
     }
 
@@ -325,22 +327,11 @@ async function start() {
        * ${summary.name}
        * @see https://open.feishu.cn${summary.fullPath}
        */
-      ${method}(${args.join(', ')}): Promise<${returnType}>
+      ${method}(${args.join(', ')}): ${returnType}
     `)
 
     if (paginationRequest && paginationResponse) {
-      const paginationArgs = args.slice(0, -1)
-      const argIndex = paginationArgs.length
-      if (paginationRequest.queryType) {
-        paginationArgs.push(`query?: ${paginationRequest.queryType}`)
-      }
-      project.methods.push(dedent`
-        /**
-         * ${summary.name}
-         * @see https://open.feishu.cn${summary.fullPath}
-         */
-        ${method}Iter(${paginationArgs.join(', ')}): AsyncIterator<${paginationResponse.innerType}>
-      `)
+      const argIndex = args.length - 1
       const props: string[] = [`argIndex: ${argIndex}`]
       if (paginationResponse.itemsKey !== 'items') {
         props.push(`itemsKey: '${paginationResponse.itemsKey}'`)

@@ -1,5 +1,5 @@
 import { Classification, ClassificationFilter, Draft, Entity, I18nEntryDesc, MatchInfo, OuterInfo, Phrase, RelatedMeta, Repo, Term } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,12 +37,7 @@ declare module '../internal' {
      * 获取词条列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/list
      */
-    listLingoEntity(query?: ListLingoEntityQuery & Pagination): Promise<Paginated<Entity, 'entities'>>
-    /**
-     * 获取词条列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/list
-     */
-    listLingoEntityIter(query?: ListLingoEntityQuery): AsyncIterator<Entity>
+    listLingoEntity(query?: ListLingoEntityQuery): Paginated<Entity, 'entities'>
     /**
      * 精准搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/match
@@ -52,12 +47,7 @@ declare module '../internal' {
      * 模糊搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/search
      */
-    searchLingoEntity(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery & Pagination): Promise<Paginated<Entity, 'entities'>>
-    /**
-     * 模糊搜索词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/search
-     */
-    searchLingoEntityIter(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery): AsyncIterator<Entity>
+    searchLingoEntity(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery): Paginated<Entity, 'entities'>
     /**
      * 词条高亮
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/highlight
@@ -67,12 +57,7 @@ declare module '../internal' {
      * 获取词典分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/classification/list
      */
-    listLingoClassification(query?: ListLingoClassificationQuery & Pagination): Promise<Paginated<Classification>>
-    /**
-     * 获取词典分类
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/classification/list
-     */
-    listLingoClassificationIter(query?: ListLingoClassificationQuery): AsyncIterator<Classification>
+    listLingoClassification(query?: ListLingoClassificationQuery): Paginated<Classification>
     /**
      * 获取词库列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/repo/list
@@ -201,7 +186,7 @@ export interface GetLingoEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListLingoEntityQuery {
+export interface ListLingoEntityQuery extends Pagination {
   /** 数据提供方【可用来过滤数据】 */
   provider?: string
   /** 词库 id */
@@ -231,7 +216,7 @@ export interface SearchLingoEntityRequest {
   creators?: string[]
 }
 
-export interface SearchLingoEntityQuery {
+export interface SearchLingoEntityQuery extends Pagination {
   /** 词库ID */
   repo_id?: string
   /** 此次调用中使用的用户ID的类型 */
@@ -243,7 +228,7 @@ export interface HighlightLingoEntityRequest {
   text: string
 }
 
-export interface ListLingoClassificationQuery {
+export interface ListLingoClassificationQuery extends Pagination {
   /** 词库ID */
   repo_id?: string
 }

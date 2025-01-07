@@ -1,5 +1,5 @@
 import { Attachment, Collaborator, Comment, CustomComplete, CustomField, DatetimeSetting, DocxSource, Due, Follower, InputComment, InputCustomField, InputCustomFieldValue, InputOption, InputSection, InputTask, InputTasklist, Member, MemberSetting, NumberSetting, Option, Origin, Reminder, Section, SectionSummary, SelectSetting, Start, Task, TaskDependency, TaskInTasklistInfo, Tasklist, TasklistActivitySubscription, TaskSummary, TextSetting } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,12 +37,7 @@ declare module '../internal' {
      * 列取任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/list
      */
-    listTaskV2(query?: ListTaskV2Query & Pagination): Promise<Paginated<Task>>
-    /**
-     * 列取任务列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/list
-     */
-    listTaskV2Iter(query?: ListTaskV2Query): AsyncIterator<Task>
+    listTaskV2(query?: ListTaskV2Query): Paginated<Task>
     /**
      * 列取任务所在清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/tasklists
@@ -87,12 +82,7 @@ declare module '../internal' {
      * 获取任务的子任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/list
      */
-    listTaskV2TaskSubtask(task_guid: string, query?: ListTaskV2TaskSubtaskQuery & Pagination): Promise<Paginated<Task>>
-    /**
-     * 获取任务的子任务列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/list
-     */
-    listTaskV2TaskSubtaskIter(task_guid: string, query?: ListTaskV2TaskSubtaskQuery): AsyncIterator<Task>
+    listTaskV2TaskSubtask(task_guid: string, query?: ListTaskV2TaskSubtaskQuery): Paginated<Task>
     /**
      * 创建清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/create
@@ -127,22 +117,12 @@ declare module '../internal' {
      * 获取清单任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/tasks
      */
-    tasksTaskV2Tasklist(tasklist_guid: string, query?: TasksTaskV2TasklistQuery & Pagination): Promise<Paginated<TaskSummary>>
-    /**
-     * 获取清单任务列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/tasks
-     */
-    tasksTaskV2TasklistIter(tasklist_guid: string, query?: TasksTaskV2TasklistQuery): AsyncIterator<TaskSummary>
+    tasksTaskV2Tasklist(tasklist_guid: string, query?: TasksTaskV2TasklistQuery): Paginated<TaskSummary>
     /**
      * 获取清单列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/list
      */
-    listTaskV2Tasklist(query?: ListTaskV2TasklistQuery & Pagination): Promise<Paginated<Tasklist>>
-    /**
-     * 获取清单列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist/list
-     */
-    listTaskV2TasklistIter(query?: ListTaskV2TasklistQuery): AsyncIterator<Tasklist>
+    listTaskV2Tasklist(query?: ListTaskV2TasklistQuery): Paginated<Tasklist>
     /**
      * 创建动态订阅
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/tasklist-activity_subscription/create
@@ -192,12 +172,7 @@ declare module '../internal' {
      * 获取评论列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/comment/list
      */
-    listTaskV2Comment(query?: ListTaskV2CommentQuery & Pagination): Promise<Paginated<Comment>>
-    /**
-     * 获取评论列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/comment/list
-     */
-    listTaskV2CommentIter(query?: ListTaskV2CommentQuery): AsyncIterator<Comment>
+    listTaskV2Comment(query?: ListTaskV2CommentQuery): Paginated<Comment>
     /**
      * 上传附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/upload
@@ -207,12 +182,7 @@ declare module '../internal' {
      * 列取附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/list
      */
-    listTaskV2Attachment(query?: ListTaskV2AttachmentQuery & Pagination): Promise<Paginated<Attachment>>
-    /**
-     * 列取附件
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/list
-     */
-    listTaskV2AttachmentIter(query?: ListTaskV2AttachmentQuery): AsyncIterator<Attachment>
+    listTaskV2Attachment(query?: ListTaskV2AttachmentQuery): Paginated<Attachment>
     /**
      * 获取附件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/attachment/get
@@ -247,22 +217,12 @@ declare module '../internal' {
      * 获取自定义分组列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/list
      */
-    listTaskV2Section(query?: ListTaskV2SectionQuery & Pagination): Promise<Paginated<SectionSummary>>
-    /**
-     * 获取自定义分组列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/list
-     */
-    listTaskV2SectionIter(query?: ListTaskV2SectionQuery): AsyncIterator<SectionSummary>
+    listTaskV2Section(query?: ListTaskV2SectionQuery): Paginated<SectionSummary>
     /**
      * 获取自定义分组任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/tasks
      */
-    tasksTaskV2Section(section_guid: string, query?: TasksTaskV2SectionQuery & Pagination): Promise<Paginated<TaskSummary>>
-    /**
-     * 获取自定义分组任务列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/section/tasks
-     */
-    tasksTaskV2SectionIter(section_guid: string, query?: TasksTaskV2SectionQuery): AsyncIterator<TaskSummary>
+    tasksTaskV2Section(section_guid: string, query?: TasksTaskV2SectionQuery): Paginated<TaskSummary>
     /**
      * 创建自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/create
@@ -282,12 +242,7 @@ declare module '../internal' {
      * 列取自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/list
      */
-    listTaskV2CustomField(query?: ListTaskV2CustomFieldQuery & Pagination): Promise<Paginated<CustomField>>
-    /**
-     * 列取自定义字段
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/list
-     */
-    listTaskV2CustomFieldIter(query?: ListTaskV2CustomFieldQuery): AsyncIterator<CustomField>
+    listTaskV2CustomField(query?: ListTaskV2CustomFieldQuery): Paginated<CustomField>
     /**
      * 将自定义字段加入资源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/custom_field/add
@@ -342,12 +297,7 @@ declare module '../internal' {
      * 查询所有任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/list
      */
-    listTaskV1(query?: ListTaskV1Query & Pagination): Promise<Paginated<Task>>
-    /**
-     * 查询所有任务
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/list
-     */
-    listTaskV1Iter(query?: ListTaskV1Query): AsyncIterator<Task>
+    listTaskV1(query?: ListTaskV1Query): Paginated<Task>
     /**
      * 新增提醒时间
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/create
@@ -362,12 +312,7 @@ declare module '../internal' {
      * 查询提醒时间列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/list
      */
-    listTaskV1TaskReminder(task_id: string, query?: Pagination): Promise<Paginated<Reminder>>
-    /**
-     * 查询提醒时间列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/list
-     */
-    listTaskV1TaskReminderIter(task_id: string): AsyncIterator<Reminder>
+    listTaskV1TaskReminder(task_id: string, query?: Pagination): Paginated<Reminder>
     /**
      * 创建评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/create
@@ -392,12 +337,7 @@ declare module '../internal' {
      * 获取评论列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/list
      */
-    listTaskV1TaskComment(task_id: string, query?: ListTaskV1TaskCommentQuery & Pagination): Promise<Paginated<Comment>>
-    /**
-     * 获取评论列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/list
-     */
-    listTaskV1TaskCommentIter(task_id: string, query?: ListTaskV1TaskCommentQuery): AsyncIterator<Comment>
+    listTaskV1TaskComment(task_id: string, query?: ListTaskV1TaskCommentQuery): Paginated<Comment>
     /**
      * 新增关注人
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/create
@@ -417,12 +357,7 @@ declare module '../internal' {
      * 获取关注人列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/list
      */
-    listTaskV1TaskFollower(task_id: string, query?: ListTaskV1TaskFollowerQuery & Pagination): Promise<Paginated<Follower>>
-    /**
-     * 获取关注人列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/list
-     */
-    listTaskV1TaskFollowerIter(task_id: string, query?: ListTaskV1TaskFollowerQuery): AsyncIterator<Follower>
+    listTaskV1TaskFollower(task_id: string, query?: ListTaskV1TaskFollowerQuery): Paginated<Follower>
     /**
      * 新增执行者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/create
@@ -442,12 +377,7 @@ declare module '../internal' {
      * 获取执行者列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/list
      */
-    listTaskV1TaskCollaborator(task_id: string, query?: ListTaskV1TaskCollaboratorQuery & Pagination): Promise<Paginated<Collaborator>>
-    /**
-     * 获取执行者列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/list
-     */
-    listTaskV1TaskCollaboratorIter(task_id: string, query?: ListTaskV1TaskCollaboratorQuery): AsyncIterator<Collaborator>
+    listTaskV1TaskCollaborator(task_id: string, query?: ListTaskV1TaskCollaboratorQuery): Paginated<Collaborator>
   }
 }
 
@@ -532,7 +462,7 @@ export interface RemoveMembersTaskV2Query {
   user_id_type?: string
 }
 
-export interface ListTaskV2Query {
+export interface ListTaskV2Query extends Pagination {
   /** 是否按任务完成进行过滤。不填写表示不过滤。 */
   completed?: boolean
   /** 查询任务的范围 */
@@ -635,7 +565,7 @@ export interface CreateTaskV2TaskSubtaskQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2TaskSubtaskQuery {
+export interface ListTaskV2TaskSubtaskQuery extends Pagination {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
 }
@@ -691,7 +621,7 @@ export interface RemoveMembersTaskV2TasklistQuery {
   user_id_type?: string
 }
 
-export interface TasksTaskV2TasklistQuery {
+export interface TasksTaskV2TasklistQuery extends Pagination {
   /** 只查看特定完成状态的任务，不填写表示不按完成状态过滤 */
   completed?: boolean
   /** 任务创建的起始时间戳（ms），闭区间，不填写默认为首个任务的创建时间戳 */
@@ -702,7 +632,7 @@ export interface TasksTaskV2TasklistQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2TasklistQuery {
+export interface ListTaskV2TasklistQuery extends Pagination {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
 }
@@ -780,7 +710,7 @@ export interface PatchTaskV2CommentQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2CommentQuery {
+export interface ListTaskV2CommentQuery extends Pagination {
   /** 要获取评论列表的资源类型 */
   resource_type?: string
   /** 要获取评论的资源ID。例如要获取任务的评论列表，此处应该填写任务全局唯一ID */
@@ -805,7 +735,7 @@ export interface UploadTaskV2AttachmentQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListTaskV2AttachmentQuery {
+export interface ListTaskV2AttachmentQuery extends Pagination {
   /** 附件归属的资源类型 */
   resource_type?: string
   /** 附件归属资源的id，配合resource_type使用。例如希望获取任务的附件，需要设置 resource_type为task， resource_id为任务的全局唯一ID */
@@ -854,7 +784,7 @@ export interface PatchTaskV2SectionQuery {
   user_id_type?: string
 }
 
-export interface ListTaskV2SectionQuery {
+export interface ListTaskV2SectionQuery extends Pagination {
   /** 自定义分组所属的资源类型。支持"my_tasks"(我负责的）和"tasklist"（清单）。当使用"tasklist"时，需要用resource_id提供清单GUID。 */
   resource_type: string
   /** 如`resource_type`为"tasklist"，这里需要填写要列取自定义分组的清单的GUID。 */
@@ -863,7 +793,7 @@ export interface ListTaskV2SectionQuery {
   user_id_type?: string
 }
 
-export interface TasksTaskV2SectionQuery {
+export interface TasksTaskV2SectionQuery extends Pagination {
   /** 按照任务状态过滤，如果不填写则表示不按完成状态过滤 */
   completed?: boolean
   /** 按照创建时间筛选的起始时间戳（ms)，如不填写则为首个任务的创建时刻 */
@@ -919,7 +849,7 @@ export interface PatchTaskV2CustomFieldQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
-export interface ListTaskV2CustomFieldQuery {
+export interface ListTaskV2CustomFieldQuery extends Pagination {
   /** 用户ID格式，支持open_id, user_id, union_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 资源类型，如提供表示仅查询特定资源下的自定义字段。目前只支持tasklist。 */
@@ -1011,7 +941,7 @@ export interface GetTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1Query {
+export interface ListTaskV1Query extends Pagination {
   /** 范围查询任务时，查询的起始时间。不填时默认起始时间为第一个任务的创建时间。 */
   start_create_time?: string
   /** 范围查询任务时，查询的结束时间。不填时默认结束时间为最后一个任务的创建时间。 */
@@ -1060,7 +990,7 @@ export interface GetTaskV1TaskCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskCommentQuery {
+export interface ListTaskV1TaskCommentQuery extends Pagination {
   /** 评论排序标记，可按照评论时间从小到大查询，或者评论时间从大到小查询，不填默认按照从小到大 */
   list_direction?: 0 | 1
   /** 此次调用中使用的用户ID的类型 */
@@ -1094,7 +1024,7 @@ export interface BatchDeleteFollowerTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskFollowerQuery {
+export interface ListTaskV1TaskFollowerQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -1126,7 +1056,7 @@ export interface BatchDeleteCollaboratorTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskCollaboratorQuery {
+export interface ListTaskV1TaskCollaboratorQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }

@@ -1444,8 +1444,6 @@ export interface AppRole {
 
 export interface AppRoleBlockRole {
   block_id: string
-  /** Block类型 */
-  block_type?: 'dashboard'
   /** Block权限 */
   block_perm: 0 | 1
 }
@@ -1511,8 +1509,6 @@ export interface AppRoleTableRoleRecRuleCondition {
   operator?: 'is' | 'isNot' | 'contains' | 'doesNotContain' | 'isEmpty' | 'isNotEmpty'
   /** 单选或多选字段的选项id */
   value?: string[]
-  /** 字段类型 */
-  field_type?: number
 }
 
 export interface ApprovalApproverCcer {

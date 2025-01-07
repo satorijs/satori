@@ -1,5 +1,5 @@
 import { Acl, ConnectorParam, DataSource, I18nMeta, Item, ItemContent, ItemMetadata, PatchSchemaProperty, Schema, SchemaDisplay, SchemaProperty } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,22 +7,12 @@ declare module '../internal' {
      * 搜索消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/message/create
      */
-    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery & Pagination): Promise<Paginated<string>>
-    /**
-     * 搜索消息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/message/create
-     */
-    createSearchMessageIter(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): AsyncIterator<string>
+    createSearchMessage(body: CreateSearchMessageRequest, query?: CreateSearchMessageQuery): Paginated<string>
     /**
      * 搜索应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/app/create
      */
-    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery & Pagination): Promise<Paginated<string>>
-    /**
-     * 搜索应用
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/app/create
-     */
-    createSearchAppIter(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): AsyncIterator<string>
+    createSearchApp(body: CreateSearchAppRequest, query?: CreateSearchAppQuery): Paginated<string>
     /**
      * 创建数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/create
@@ -47,12 +37,7 @@ declare module '../internal' {
      * 批量获取数据源
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/list
      */
-    listSearchDataSource(query?: ListSearchDataSourceQuery & Pagination): Promise<Paginated<DataSource>>
-    /**
-     * 批量获取数据源
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source/list
-     */
-    listSearchDataSourceIter(query?: ListSearchDataSourceQuery): AsyncIterator<DataSource>
+    listSearchDataSource(query?: ListSearchDataSourceQuery): Paginated<DataSource>
     /**
      * 为指定数据项创建索引
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/data_source-item/create
@@ -112,7 +97,7 @@ export interface CreateSearchMessageRequest {
   end_time?: string
 }
 
-export interface CreateSearchMessageQuery {
+export interface CreateSearchMessageQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -122,7 +107,7 @@ export interface CreateSearchAppRequest {
   query: string
 }
 
-export interface CreateSearchAppQuery {
+export interface CreateSearchAppQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -175,7 +160,7 @@ export interface PatchSearchDataSourceRequest {
   enable_answer?: boolean
 }
 
-export interface ListSearchDataSourceQuery {
+export interface ListSearchDataSourceQuery extends Pagination {
   /** 回包数据格式，0-全量数据；1-摘要数据。**注**：摘要数据仅包含"id"，"name"，"state"。 */
   view?: 0 | 1
 }

@@ -1,5 +1,5 @@
 import { OpenapiLog } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,7 +7,7 @@ declare module '../internal' {
      * 获取OpenAPI审计日志数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/openapi_log/list_data
      */
-    listDataSecurityAndComplianceOpenapiLog(body: ListDataSecurityAndComplianceOpenapiLogRequest): Promise<Paginated<OpenapiLog>>
+    listDataSecurityAndComplianceOpenapiLog(body: ListDataSecurityAndComplianceOpenapiLogRequest): Paginated<OpenapiLog>
   }
 }
 

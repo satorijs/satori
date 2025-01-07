@@ -1,5 +1,5 @@
 import { Alert, ApprovalConfig, Device, DisableInformConfig, Meeting, MeetingInfo, MeetingInviteStatus, MeetingParticipantResult, MeetingRecording, MeetingUser, Participant, ParticipantQuality, RecordingPermissionObject, Report, ReportTopUser, Reserve, ReserveAdminConfig, ReserveCorrectionCheckInfo, ReserveFormConfig, ReserveMeetingSetting, ReserveScopeConfig, Room, RoomConfig, RoomDigitalSignage, RoomLevel, RoomMeetingReservation, RoomStatus, ScopeConfig, TimeConfig } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -57,12 +57,7 @@ declare module '../internal' {
      * 获取与会议号关联的会议列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/list_by_no
      */
-    listByNoVcMeeting(query?: ListByNoVcMeetingQuery & Pagination): Promise<Paginated<Meeting, 'meeting_briefs'>>
-    /**
-     * 获取与会议号关联的会议列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/list_by_no
-     */
-    listByNoVcMeetingIter(query?: ListByNoVcMeetingQuery): AsyncIterator<Meeting>
+    listByNoVcMeeting(query?: ListByNoVcMeetingQuery): Paginated<Meeting, 'meeting_briefs'>
     /**
      * 开始录制
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting-recording/start
@@ -152,12 +147,7 @@ declare module '../internal' {
      * 查询会议室层级列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/list
      */
-    listVcRoomLevel(query?: ListVcRoomLevelQuery & Pagination): Promise<Paginated<RoomLevel>>
-    /**
-     * 查询会议室层级列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/list
-     */
-    listVcRoomLevelIter(query?: ListVcRoomLevelQuery): AsyncIterator<RoomLevel>
+    listVcRoomLevel(query?: ListVcRoomLevelQuery): Paginated<RoomLevel>
     /**
      * 搜索会议室层级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_level/search
@@ -192,17 +182,12 @@ declare module '../internal' {
      * 查询会议室列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room/list
      */
-    listVcRoom(query?: ListVcRoomQuery & Pagination): Promise<Paginated<Room, 'rooms'>>
-    /**
-     * 查询会议室列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room/list
-     */
-    listVcRoomIter(query?: ListVcRoomQuery): AsyncIterator<Room>
+    listVcRoom(query?: ListVcRoomQuery): Paginated<Room, 'rooms'>
     /**
      * 搜索会议室
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room/search
      */
-    searchVcRoom(body: SearchVcRoomRequest, query?: SearchVcRoomQuery): Promise<Paginated<Room, 'rooms'>>
+    searchVcRoom(body: SearchVcRoomRequest, query?: SearchVcRoomQuery): Paginated<Room, 'rooms'>
     /**
      * 查询会议室配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/scope_config/get
@@ -257,52 +242,27 @@ declare module '../internal' {
      * 查询会议明细
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting_list/get
      */
-    getVcMeetingList(query?: GetVcMeetingListQuery & Pagination): Promise<Paginated<MeetingInfo, 'meeting_list'>>
-    /**
-     * 查询会议明细
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting_list/get
-     */
-    getVcMeetingListIter(query?: GetVcMeetingListQuery): AsyncIterator<MeetingInfo>
+    getVcMeetingList(query?: GetVcMeetingListQuery): Paginated<MeetingInfo, 'meeting_list'>
     /**
      * 查询参会人明细
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_list/get
      */
-    getVcParticipantList(query?: GetVcParticipantListQuery & Pagination): Promise<Paginated<Participant, 'participants'>>
-    /**
-     * 查询参会人明细
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_list/get
-     */
-    getVcParticipantListIter(query?: GetVcParticipantListQuery): AsyncIterator<Participant>
+    getVcParticipantList(query?: GetVcParticipantListQuery): Paginated<Participant, 'participants'>
     /**
      * 查询参会人会议质量数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_quality_list/get
      */
-    getVcParticipantQualityList(query?: GetVcParticipantQualityListQuery & Pagination): Promise<Paginated<ParticipantQuality, 'participant_quality_list'>>
-    /**
-     * 查询参会人会议质量数据
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/participant_quality_list/get
-     */
-    getVcParticipantQualityListIter(query?: GetVcParticipantQualityListQuery): AsyncIterator<ParticipantQuality>
+    getVcParticipantQualityList(query?: GetVcParticipantQualityListQuery): Paginated<ParticipantQuality, 'participant_quality_list'>
     /**
      * 查询会议室预定数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/resource_reservation_list/get
      */
-    getVcResourceReservationList(query?: GetVcResourceReservationListQuery & Pagination): Promise<Paginated<RoomMeetingReservation, 'room_reservation_list'>>
-    /**
-     * 查询会议室预定数据
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/resource_reservation_list/get
-     */
-    getVcResourceReservationListIter(query?: GetVcResourceReservationListQuery): AsyncIterator<RoomMeetingReservation>
+    getVcResourceReservationList(query?: GetVcResourceReservationListQuery): Paginated<RoomMeetingReservation, 'room_reservation_list'>
     /**
      * 获取告警记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/alert/list
      */
-    listVcAlert(query?: ListVcAlertQuery & Pagination): Promise<Paginated<Alert>>
-    /**
-     * 获取告警记录
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/alert/list
-     */
-    listVcAlertIter(query?: ListVcAlertQuery): AsyncIterator<Alert>
+    listVcAlert(query?: ListVcAlertQuery): Paginated<Alert>
     /**
      * 创建签到板部署码
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/room_config/set_checkboard_access_code
@@ -405,7 +365,7 @@ export interface GetVcMeetingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListByNoVcMeetingQuery {
+export interface ListByNoVcMeetingQuery extends Pagination {
   /** 9位会议号 */
   meeting_no: string
   /** 查询开始时间（unix时间，单位sec） */
@@ -567,7 +527,7 @@ export interface MgetVcRoomLevelRequest {
   level_ids: string[]
 }
 
-export interface ListVcRoomLevelQuery {
+export interface ListVcRoomLevelQuery extends Pagination {
   /** 层级ID，不传则返回该租户下第一层级列表 */
   room_level_id?: string
 }
@@ -636,7 +596,7 @@ export interface MgetVcRoomQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListVcRoomQuery {
+export interface ListVcRoomQuery extends Pagination {
   /** 层级ID，不传则返回该租户下的所有会议室 */
   room_level_id?: string
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
@@ -768,7 +728,7 @@ export interface PatchVcReserveConfigDisableInformQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcMeetingListQuery {
+export interface GetVcMeetingListQuery extends Pagination {
   /** 查询开始时间（unix时间，单位sec） */
   start_time: string
   /** 查询结束时间（unix时间，单位sec） */
@@ -787,7 +747,7 @@ export interface GetVcMeetingListQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcParticipantListQuery {
+export interface GetVcParticipantListQuery extends Pagination {
   /** 会议开始时间（需要精确到一分钟，unix时间，单位sec） */
   meeting_start_time: string
   /** 会议结束时间（unix时间，单位sec；对于进行中会议则传0） */
@@ -804,7 +764,7 @@ export interface GetVcParticipantListQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcParticipantQualityListQuery {
+export interface GetVcParticipantQualityListQuery extends Pagination {
   /** 会议开始时间（需要精确到一分钟，unix时间，单位sec） */
   meeting_start_time: string
   /** 会议结束时间（unix时间，单位sec） */
@@ -821,7 +781,7 @@ export interface GetVcParticipantQualityListQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetVcResourceReservationListQuery {
+export interface GetVcResourceReservationListQuery extends Pagination {
   /** 层级id */
   room_level_id: string
   /** 是否展示会议主题 */
@@ -836,7 +796,7 @@ export interface GetVcResourceReservationListQuery {
   is_exclude?: boolean
 }
 
-export interface ListVcAlertQuery {
+export interface ListVcAlertQuery extends Pagination {
   /** 开始时间（unix时间，单位sec） */
   start_time: string
   /** 结束时间（unix时间，单位sec） */

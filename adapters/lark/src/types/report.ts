@@ -1,5 +1,5 @@
 import { Rule, Task } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -17,7 +17,7 @@ declare module '../internal' {
      * 查询任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/report/report-v1/task/query
      */
-    queryReportTask(body: QueryReportTaskRequest, query?: QueryReportTaskQuery): Promise<Paginated<Task>>
+    queryReportTask(body: QueryReportTaskRequest, query?: QueryReportTaskQuery): Paginated<Task>
   }
 }
 

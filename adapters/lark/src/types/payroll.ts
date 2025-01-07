@@ -1,5 +1,5 @@
 import { AcctItem, CostAllocationPlan, CostAllocationReportData, I18nContent, Paygroup } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,41 +7,26 @@ declare module '../internal' {
      * 批量查询算薪项
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/acct_item/list
      */
-    listPayrollAcctItem(query?: Pagination): Promise<Paginated<AcctItem>>
-    /**
-     * 批量查询算薪项
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/acct_item/list
-     */
-    listPayrollAcctItemIter(): AsyncIterator<AcctItem>
+    listPayrollAcctItem(query?: Pagination): Paginated<AcctItem>
     /**
      * 查询成本分摊报表汇总数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/cost_allocation_report/list
      */
-    listPayrollCostAllocationReport(query?: ListPayrollCostAllocationReportQuery & Pagination): Promise<ListPayrollCostAllocationReportResponse>
+    listPayrollCostAllocationReport(query?: ListPayrollCostAllocationReportQuery): Promise<ListPayrollCostAllocationReportResponse>
     /**
      * 批量查询成本分摊方案
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/cost_allocation_plan/list
      */
-    listPayrollCostAllocationPlan(query?: ListPayrollCostAllocationPlanQuery & Pagination): Promise<Paginated<CostAllocationPlan>>
-    /**
-     * 批量查询成本分摊方案
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/cost_allocation_plan/list
-     */
-    listPayrollCostAllocationPlanIter(query?: ListPayrollCostAllocationPlanQuery): AsyncIterator<CostAllocationPlan>
+    listPayrollCostAllocationPlan(query?: ListPayrollCostAllocationPlanQuery): Paginated<CostAllocationPlan>
     /**
      * 获取薪资组基本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list
      */
-    listPayrollPaygroup(query?: Pagination): Promise<Paginated<Paygroup>>
-    /**
-     * 获取薪资组基本信息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list
-     */
-    listPayrollPaygroupIter(): AsyncIterator<Paygroup>
+    listPayrollPaygroup(query?: Pagination): Paginated<Paygroup>
   }
 }
 
-export interface ListPayrollCostAllocationReportQuery {
+export interface ListPayrollCostAllocationReportQuery extends Pagination {
   /** 成本分摊方案ID */
   cost_allocation_plan_id: string
   /** 期间 */
@@ -50,7 +35,7 @@ export interface ListPayrollCostAllocationReportQuery {
   report_type: 0 | 1 | 2
 }
 
-export interface ListPayrollCostAllocationPlanQuery {
+export interface ListPayrollCostAllocationPlanQuery extends Pagination {
   /** 期间 */
   pay_period: string
 }

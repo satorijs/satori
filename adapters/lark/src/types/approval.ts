@@ -1,5 +1,5 @@
 import { ApprovalConfig, ApprovalCreateExternal, ApprovalCreateViewers, ApprovalForm, ApprovalNode, ApprovalNodeInfo, ApprovalSetting, ApprovalViewerInfo, CcNode, CcSearchItem, Comment, CommentAtInfo, Count, ExteranlInstanceCheck, ExteranlInstanceCheckResponse, ExternalInstance, ExternalInstanceForm, ExternalInstanceLink, ExternalInstanceTaskNode, ExternalTaskList, I18nResource, InstanceComment, InstanceSearchItem, InstanceTask, InstanceTimeline, NodeApprover, NodeAutoApproval, NodeCc, PreviewNode, Task, TaskSearchItem, TrusteeshipInstanceCacheConfig, TrusteeshipUrls } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -42,12 +42,7 @@ declare module '../internal' {
      * 批量获取审批实例 ID
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/list
      */
-    listApprovalInstance(query?: ListApprovalInstanceQuery & Pagination): Promise<Paginated<string, 'instance_code_list'>>
-    /**
-     * 批量获取审批实例 ID
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/list
-     */
-    listApprovalInstanceIter(query?: ListApprovalInstanceQuery): AsyncIterator<string>
+    listApprovalInstance(query?: ListApprovalInstanceQuery): Paginated<string, 'instance_code_list'>
     /**
      * 同意审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/approve
@@ -97,7 +92,7 @@ declare module '../internal' {
      * 获取评论
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance-comment/list
      */
-    listApprovalInstanceComment(instance_id: string, query?: ListApprovalInstanceCommentQuery & Pagination): Promise<ListApprovalInstanceCommentResponse>
+    listApprovalInstanceComment(instance_id: string, query?: ListApprovalInstanceCommentQuery): Promise<ListApprovalInstanceCommentResponse>
     /**
      * 创建三方审批定义
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/external_approval/create
@@ -122,32 +117,27 @@ declare module '../internal' {
      * 获取三方审批任务状态
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/external_task/list
      */
-    listApprovalExternalTask(body: ListApprovalExternalTaskRequest, query?: Pagination): Promise<Paginated<ExternalTaskList, 'data'>>
-    /**
-     * 获取三方审批任务状态
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/external_task/list
-     */
-    listApprovalExternalTaskIter(body: ListApprovalExternalTaskRequest): AsyncIterator<ExternalTaskList>
+    listApprovalExternalTask(body: ListApprovalExternalTaskRequest, query?: Pagination): Paginated<ExternalTaskList, 'data'>
     /**
      * 查询实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/query
      */
-    queryApprovalInstance(body: QueryApprovalInstanceRequest, query?: QueryApprovalInstanceQuery & Pagination): Promise<QueryApprovalInstanceResponse>
+    queryApprovalInstance(body: QueryApprovalInstanceRequest, query?: QueryApprovalInstanceQuery): Promise<QueryApprovalInstanceResponse>
     /**
      * 查询抄送列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/search_cc
      */
-    searchCcApprovalInstance(body: SearchCcApprovalInstanceRequest, query?: SearchCcApprovalInstanceQuery & Pagination): Promise<SearchCcApprovalInstanceResponse>
+    searchCcApprovalInstance(body: SearchCcApprovalInstanceRequest, query?: SearchCcApprovalInstanceQuery): Promise<SearchCcApprovalInstanceResponse>
     /**
      * 查询任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/search
      */
-    searchApprovalTask(body: SearchApprovalTaskRequest, query?: SearchApprovalTaskQuery & Pagination): Promise<SearchApprovalTaskResponse>
+    searchApprovalTask(body: SearchApprovalTaskRequest, query?: SearchApprovalTaskQuery): Promise<SearchApprovalTaskResponse>
     /**
      * 查询用户的任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/query
      */
-    queryApprovalTask(query?: QueryApprovalTaskQuery & Pagination): Promise<QueryApprovalTaskResponse>
+    queryApprovalTask(query?: QueryApprovalTaskQuery): Promise<QueryApprovalTaskResponse>
     /**
      * 订阅审批事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/subscribe
@@ -304,7 +294,7 @@ export interface GetApprovalInstanceQuery {
   user_id_type?: 'user_id' | 'open_id' | 'union_id'
 }
 
-export interface ListApprovalInstanceQuery {
+export interface ListApprovalInstanceQuery extends Pagination {
   /** 审批定义唯一标识 */
   approval_code: string
   /** 审批实例创建时间区间（毫秒） */
@@ -466,7 +456,7 @@ export interface RemoveApprovalInstanceCommentQuery {
   user_id?: string
 }
 
-export interface ListApprovalInstanceCommentQuery {
+export interface ListApprovalInstanceCommentQuery extends Pagination {
   /** 用户ID类型，不填默认为open_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 用户ID */
@@ -598,7 +588,7 @@ export interface QueryApprovalInstanceRequest {
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
 }
 
-export interface QueryApprovalInstanceQuery {
+export interface QueryApprovalInstanceQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -626,7 +616,7 @@ export interface SearchCcApprovalInstanceRequest {
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
 }
 
-export interface SearchCcApprovalInstanceQuery {
+export interface SearchCcApprovalInstanceQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -658,12 +648,12 @@ export interface SearchApprovalTaskRequest {
   order?: 0 | 1 | 2 | 3
 }
 
-export interface SearchApprovalTaskQuery {
+export interface SearchApprovalTaskQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface QueryApprovalTaskQuery {
+export interface QueryApprovalTaskQuery extends Pagination {
   /** 需要查询的 User ID */
   user_id: string
   /** 需要查询的任务分组主题，如「待办」、「已办」等 */

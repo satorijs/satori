@@ -1,5 +1,5 @@
 import { AilyKnowledgeAskProcessData, AilyKnowledgeFaq, AilyKnowledgeMessage, AilyMention, AilyMessage, AilyMessageContentType, AilySession, DataAsset, DataAssetTag, Run, Skill, SkillGlobalVariable } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -37,12 +37,7 @@ declare module '../internal' {
      * 列出智能伙伴消息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/list
      */
-    listAilyAilySessionAilyMessage(aily_session_id: string, query?: ListAilyAilySessionAilyMessageQuery & Pagination): Promise<Paginated<AilyMessage, 'messages'>>
-    /**
-     * 列出智能伙伴消息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/list
-     */
-    listAilyAilySessionAilyMessageIter(aily_session_id: string, query?: ListAilyAilySessionAilyMessageQuery): AsyncIterator<AilyMessage>
+    listAilyAilySessionAilyMessage(aily_session_id: string, query?: ListAilyAilySessionAilyMessageQuery): Paginated<AilyMessage, 'messages'>
     /**
      * 创建运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/create
@@ -57,12 +52,7 @@ declare module '../internal' {
      * 列出运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/list
      */
-    listAilyAilySessionRun(aily_session_id: string, query?: Pagination): Promise<Paginated<Run, 'runs'>>
-    /**
-     * 列出运行
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/list
-     */
-    listAilyAilySessionRunIter(aily_session_id: string): AsyncIterator<Run>
+    listAilyAilySessionRun(aily_session_id: string, query?: Pagination): Paginated<Run, 'runs'>
     /**
      * 取消运行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-run/cancel
@@ -82,12 +72,7 @@ declare module '../internal' {
      * 查询技能列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-skill/list
      */
-    listAilyAppSkill(app_id: string, query?: Pagination): Promise<Paginated<Skill, 'skills'>>
-    /**
-     * 查询技能列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-skill/list
-     */
-    listAilyAppSkillIter(app_id: string): AsyncIterator<Skill>
+    listAilyAppSkill(app_id: string, query?: Pagination): Paginated<Skill, 'skills'>
     /**
      * 执行数据知识问答
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-knowledge/ask
@@ -97,22 +82,12 @@ declare module '../internal' {
      * 查询数据知识列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/list
      */
-    listAilyAppDataAsset(app_id: string, query?: ListAilyAppDataAssetQuery & Pagination): Promise<Paginated<DataAsset>>
-    /**
-     * 查询数据知识列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/list
-     */
-    listAilyAppDataAssetIter(app_id: string, query?: ListAilyAppDataAssetQuery): AsyncIterator<DataAsset>
+    listAilyAppDataAsset(app_id: string, query?: ListAilyAppDataAssetQuery): Paginated<DataAsset>
     /**
      * 获取数据知识分类列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset_tag/list
      */
-    listAilyAppDataAssetTag(app_id: string, query?: ListAilyAppDataAssetTagQuery & Pagination): Promise<Paginated<DataAssetTag>>
-    /**
-     * 获取数据知识分类列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset_tag/list
-     */
-    listAilyAppDataAssetTagIter(app_id: string, query?: ListAilyAppDataAssetTagQuery): AsyncIterator<DataAssetTag>
+    listAilyAppDataAssetTag(app_id: string, query?: ListAilyAppDataAssetTagQuery): Paginated<DataAssetTag>
   }
 }
 
@@ -145,7 +120,7 @@ export interface CreateAilyAilySessionAilyMessageRequest {
   mentions?: AilyMention[]
 }
 
-export interface ListAilyAilySessionAilyMessageQuery {
+export interface ListAilyAilySessionAilyMessageQuery extends Pagination {
   /** 运行 ID */
   run_id?: string
   /** 返回生成中的消息 */
@@ -179,7 +154,7 @@ export interface AskAilyAppKnowledgeRequest {
   data_asset_tag_ids?: string[]
 }
 
-export interface ListAilyAppDataAssetQuery {
+export interface ListAilyAppDataAssetQuery extends Pagination {
   /** 模糊匹配关键词 */
   keyword?: string
   /** 根据数据知识 ID 进行过滤 */
@@ -192,7 +167,7 @@ export interface ListAilyAppDataAssetQuery {
   with_connect_status?: boolean
 }
 
-export interface ListAilyAppDataAssetTagQuery {
+export interface ListAilyAppDataAssetTagQuery extends Pagination {
   /** 模糊匹配分类名称 */
   keyword?: string
   /** 模糊匹配分类名称 */

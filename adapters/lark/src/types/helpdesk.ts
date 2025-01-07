@@ -1,5 +1,5 @@
 import { AgentSchedule, AgentScheduleUpdateInfo, AgentSkill, AgentSkillRule, Category, CustomizedFieldDisplayItem, Event, Faq, FaqCreateInfo, FaqUpdateInfo, Notification, NotificationChat, NotificationDepartment, NotificationUser, Ticket, TicketCustomizedField, TicketMessage, TicketUser, UserCustomizedField, UserQueryFaqInfo } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -142,12 +142,7 @@ declare module '../internal' {
      * 获取全部工单自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket_customized_field/list-ticket-customized-fields
      */
-    listHelpdeskTicketCustomizedField(body: ListHelpdeskTicketCustomizedFieldRequest, query?: Pagination): Promise<Paginated<TicketCustomizedField>>
-    /**
-     * 获取全部工单自定义字段
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket_customized_field/list-ticket-customized-fields
-     */
-    listHelpdeskTicketCustomizedFieldIter(body: ListHelpdeskTicketCustomizedFieldRequest): AsyncIterator<TicketCustomizedField>
+    listHelpdeskTicketCustomizedField(body: ListHelpdeskTicketCustomizedFieldRequest, query?: Pagination): Paginated<TicketCustomizedField>
     /**
      * 创建知识库
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/create
@@ -172,7 +167,7 @@ declare module '../internal' {
      * 获取全部知识库详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/list
      */
-    listHelpdeskFaq(query?: ListHelpdeskFaqQuery & Pagination): Promise<ListHelpdeskFaqResponse>
+    listHelpdeskFaq(query?: ListHelpdeskFaqQuery): Promise<ListHelpdeskFaqResponse>
     /**
      * 获取知识库图像
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/faq_image
@@ -182,12 +177,7 @@ declare module '../internal' {
      * 搜索知识库
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/search
      */
-    searchHelpdeskFaq(query?: SearchHelpdeskFaqQuery & Pagination): Promise<Paginated<Faq>>
-    /**
-     * 搜索知识库
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/search
-     */
-    searchHelpdeskFaqIter(query?: SearchHelpdeskFaqQuery): AsyncIterator<Faq>
+    searchHelpdeskFaq(query?: SearchHelpdeskFaqQuery): Paginated<Faq>
     /**
      * 创建知识库分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/category/create
@@ -471,7 +461,7 @@ export interface PatchHelpdeskFaqRequest {
   faq?: FaqUpdateInfo
 }
 
-export interface ListHelpdeskFaqQuery {
+export interface ListHelpdeskFaqQuery extends Pagination {
   /** 知识库分类ID */
   category_id?: string
   /** 搜索条件: 知识库状态 1:在线 0:删除，可恢复 2：删除，不可恢复 */
@@ -480,7 +470,7 @@ export interface ListHelpdeskFaqQuery {
   search?: string
 }
 
-export interface SearchHelpdeskFaqQuery {
+export interface SearchHelpdeskFaqQuery extends Pagination {
   /** 搜索query，query内容如果不是英文，包含中文空格等有两种编码策略：1. url编码 2. base64编码，同时加上base64=true参数 */
   query: string
   /** 是否转换为base64,输入true表示是，不填写表示否，中文需要转换为base64 */

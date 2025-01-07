@@ -1,5 +1,5 @@
 import { AclScope, Attachment, Calendar, CalendarAcl, CalendarEvent, CalendarEventAttendee, CalendarEventAttendeeChatMember, CalendarEventAttendeeId, EventLocation, EventSearchFilter, Freebusy, Instance, Reminder, Schema, TimeInfo, UserCalendar, Vchat } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -32,7 +32,7 @@ declare module '../internal' {
      * 查询日历列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/list
      */
-    listCalendar(query?: ListCalendarQuery & Pagination): Promise<ListCalendarResponse>
+    listCalendar(query?: ListCalendarQuery): Promise<ListCalendarResponse>
     /**
      * 更新日历信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/patch
@@ -77,12 +77,7 @@ declare module '../internal' {
      * 获取访问控制列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/list
      */
-    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery & Pagination): Promise<Paginated<CalendarAcl, 'acls'>>
-    /**
-     * 获取访问控制列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/list
-     */
-    listCalendarCalendarAclIter(calendar_id: string, query?: ListCalendarCalendarAclQuery): AsyncIterator<CalendarAcl>
+    listCalendarCalendarAcl(calendar_id: string, query?: ListCalendarCalendarAclQuery): Paginated<CalendarAcl, 'acls'>
     /**
      * 订阅日历访问控制变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-acl/subscription
@@ -117,12 +112,12 @@ declare module '../internal' {
      * 获取日程列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/list
      */
-    listCalendarCalendarEvent(calendar_id: string, query?: ListCalendarCalendarEventQuery & Pagination): Promise<ListCalendarCalendarEventResponse>
+    listCalendarCalendarEvent(calendar_id: string, query?: ListCalendarCalendarEventQuery): Promise<ListCalendarCalendarEventResponse>
     /**
      * 搜索日程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/search
      */
-    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery & Pagination): Promise<SearchCalendarCalendarEventResponse>
+    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery): Promise<SearchCalendarCalendarEventResponse>
     /**
      * 订阅日程变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/subscription
@@ -142,12 +137,7 @@ declare module '../internal' {
      * 获取重复日程实例
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instances
      */
-    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery & Pagination): Promise<Paginated<Instance>>
-    /**
-     * 获取重复日程实例
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instances
-     */
-    instancesCalendarCalendarEventIter(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): AsyncIterator<Instance>
+    instancesCalendarCalendarEvent(calendar_id: string, event_id: string, query?: InstancesCalendarCalendarEventQuery): Paginated<Instance>
     /**
      * 查询日程视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/instance_view
@@ -192,22 +182,12 @@ declare module '../internal' {
      * 获取日程参与人列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/list
      */
-    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery & Pagination): Promise<Paginated<CalendarEventAttendee>>
-    /**
-     * 获取日程参与人列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/list
-     */
-    listCalendarCalendarEventAttendeeIter(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): AsyncIterator<CalendarEventAttendee>
+    listCalendarCalendarEventAttendee(calendar_id: string, event_id: string, query?: ListCalendarCalendarEventAttendeeQuery): Paginated<CalendarEventAttendee>
     /**
      * 获取日程参与群成员列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee-chat_member/list
      */
-    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery & Pagination): Promise<Paginated<CalendarEventAttendeeChatMember>>
-    /**
-     * 获取日程参与群成员列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee-chat_member/list
-     */
-    listCalendarCalendarEventAttendeeChatMemberIter(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): AsyncIterator<CalendarEventAttendeeChatMember>
+    listCalendarCalendarEventAttendeeChatMember(calendar_id: string, event_id: string, attendee_id: string, query?: ListCalendarCalendarEventAttendeeChatMemberQuery): Paginated<CalendarEventAttendeeChatMember>
     /**
      * 生成 CalDAV 配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/setting/generate_caldav_conf
@@ -269,7 +249,7 @@ export interface ListCalendarFreebusyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarQuery {
+export interface ListCalendarQuery extends Pagination {
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
   sync_token?: string
 }
@@ -304,7 +284,7 @@ export interface CreateCalendarCalendarAclQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarAclQuery {
+export interface ListCalendarCalendarAclQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -403,7 +383,7 @@ export interface GetCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventQuery {
+export interface ListCalendarCalendarEventQuery extends Pagination {
   /** 拉取anchor_time之后的日程，为timestamp */
   anchor_time?: string
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
@@ -423,7 +403,7 @@ export interface SearchCalendarCalendarEventRequest {
   filter?: EventSearchFilter
 }
 
-export interface SearchCalendarCalendarEventQuery {
+export interface SearchCalendarCalendarEventQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -433,7 +413,7 @@ export interface ReplyCalendarCalendarEventRequest {
   rsvp_status: 'accept' | 'decline' | 'tentative'
 }
 
-export interface InstancesCalendarCalendarEventQuery {
+export interface InstancesCalendarCalendarEventQuery extends Pagination {
   /** 日程实例开始Unix时间戳，单位为秒,日程的end_time的下限（不包含） */
   start_time: string
   /** 日程实例结束Unix时间戳，单位为秒,日程的start_time上限（不包含） */
@@ -510,14 +490,14 @@ export interface BatchDeleteCalendarCalendarEventAttendeeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListCalendarCalendarEventAttendeeQuery {
+export interface ListCalendarCalendarEventAttendeeQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 是否需要会议室表单信息 */
   need_resource_customization?: boolean
 }
 
-export interface ListCalendarCalendarEventAttendeeChatMemberQuery {
+export interface ListCalendarCalendarEventAttendeeChatMemberQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }

@@ -1,5 +1,5 @@
 import { ApprovalInfo, ArchiveField, ArchiveReportData, ArchiveReportMeta, File, FlexibleRule, FreePunchCfg, Group, GroupMeta, LangText, LateOffLateOnRule, LateOffLateOnSetting, LeaveAccrualRecord, LeaveEmployExpireRecord, LeaveNeedPunchCfg, Location, Machine, MemberStatusChange, OvertimeClockCfg, OvertimeRule, PunchMember, PunchSpecialDateShift, PunchTimeRule, RestRule, RestTimeFlexibleConfig, Shift, ShiftAttendanceTimeConfig, ShiftMiddleTimeRule, UserAllowedRemedy, UserApproval, UserBase, UserDailyShift, UserFlow, UserSetting, UserStatsData, UserStatsField, UserStatsView, UserTask, UserTaskRemedy, UserTmpDailyShift } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -27,12 +27,7 @@ declare module '../internal' {
      * 查询所有班次
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/shift/list
      */
-    listAttendanceShift(query?: Pagination): Promise<Paginated<Shift, 'shift_list'>>
-    /**
-     * 查询所有班次
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/shift/list
-     */
-    listAttendanceShiftIter(): AsyncIterator<Shift>
+    listAttendanceShift(query?: Pagination): Paginated<Shift, 'shift_list'>
     /**
      * 创建或修改排班表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_daily_shift/batch_create
@@ -52,12 +47,7 @@ declare module '../internal' {
      * 查询考勤组下所有成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list_user
      */
-    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery & Pagination): Promise<Paginated<UserBase, 'users'>>
-    /**
-     * 查询考勤组下所有成员
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list_user
-     */
-    listUserAttendanceGroupIter(group_id: string, query?: ListUserAttendanceGroupQuery): AsyncIterator<UserBase>
+    listUserAttendanceGroup(group_id: string, query?: ListUserAttendanceGroupQuery): Paginated<UserBase, 'users'>
     /**
      * 创建或修改考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/create
@@ -82,12 +72,7 @@ declare module '../internal' {
      * 查询所有考勤组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list
      */
-    listAttendanceGroup(query?: Pagination): Promise<Paginated<GroupMeta, 'group_list'>>
-    /**
-     * 查询所有考勤组
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/group/list
-     */
-    listAttendanceGroupIter(): AsyncIterator<GroupMeta>
+    listAttendanceGroup(query?: Pagination): Paginated<GroupMeta, 'group_list'>
     /**
      * 修改用户人脸识别信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_setting/modify
@@ -177,12 +162,7 @@ declare module '../internal' {
      * 查询所有归档规则
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/archive_rule/list
      */
-    listAttendanceArchiveRule(query?: Pagination): Promise<Paginated<ArchiveReportMeta>>
-    /**
-     * 查询所有归档规则
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/archive_rule/list
-     */
-    listAttendanceArchiveRuleIter(): AsyncIterator<ArchiveReportMeta>
+    listAttendanceArchiveRule(query?: Pagination): Paginated<ArchiveReportMeta>
     /**
      * 导入打卡流水
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_flow/batch_create
@@ -305,7 +285,7 @@ export interface BatchCreateTempAttendanceUserDailyShiftQuery {
   employee_type: 'employee_id' | 'employee_no'
 }
 
-export interface ListUserAttendanceGroupQuery {
+export interface ListUserAttendanceGroupQuery extends Pagination {
   /** 用户 ID 的类型 */
   employee_type: string
   /** 部门 ID 的类型 */

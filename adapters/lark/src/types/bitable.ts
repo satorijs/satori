@@ -1,5 +1,5 @@
 import { App, AppDashboard, AppRole, AppRoleBlockRole, AppRoleMember, AppRoleMemberId, AppRoleTableRole, AppTable, AppTableField, AppTableFieldDescription, AppTableFieldForList, AppTableFieldProperty, AppTableForm, AppTableFormField, AppTableFormPatchedField, AppTableRecord, AppTableView, AppTableViewProperty, AppWorkflow, DeleteRecord, DisplayApp, DisplayAppV2, FilterInfo, ReqTable, Sort } from '.'
-import { Internal, Paginated } from '../internal'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -67,7 +67,7 @@ declare module '../internal' {
      * 列出视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-view/list
      */
-    listBitableAppTableView(app_token: string, table_id: string, query?: ListBitableAppTableViewQuery & Pagination): Promise<ListBitableAppTableViewResponse>
+    listBitableAppTableView(app_token: string, table_id: string, query?: ListBitableAppTableViewQuery): Promise<ListBitableAppTableViewResponse>
     /**
      * 获取视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-view/get
@@ -92,7 +92,7 @@ declare module '../internal' {
      * 查询记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/search
      */
-    searchBitableAppTableRecord(app_token: string, table_id: string, body: SearchBitableAppTableRecordRequest, query?: SearchBitableAppTableRecordQuery & Pagination): Promise<SearchBitableAppTableRecordResponse>
+    searchBitableAppTableRecord(app_token: string, table_id: string, body: SearchBitableAppTableRecordRequest, query?: SearchBitableAppTableRecordQuery): Promise<SearchBitableAppTableRecordResponse>
     /**
      * 删除记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/delete
@@ -132,7 +132,7 @@ declare module '../internal' {
      * 列出字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-field/list
      */
-    listBitableAppTableField(app_token: string, table_id: string, query?: ListBitableAppTableFieldQuery & Pagination): Promise<ListBitableAppTableFieldResponse>
+    listBitableAppTableField(app_token: string, table_id: string, query?: ListBitableAppTableFieldQuery): Promise<ListBitableAppTableFieldResponse>
     /**
      * 删除字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-field/delete
@@ -147,12 +147,7 @@ declare module '../internal' {
      * 列出仪表盘
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-dashboard/list
      */
-    listBitableAppDashboard(app_token: string, query?: Pagination): Promise<Paginated<AppDashboard, 'dashboards'>>
-    /**
-     * 列出仪表盘
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-dashboard/list
-     */
-    listBitableAppDashboardIter(app_token: string): AsyncIterator<AppDashboard>
+    listBitableAppDashboard(app_token: string, query?: Pagination): Paginated<AppDashboard, 'dashboards'>
     /**
      * 更新表单元数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form/patch
@@ -174,30 +169,30 @@ declare module '../internal' {
      */
     listBitableAppTableFormField(app_token: string, table_id: string, form_id: string, query?: Pagination): Promise<ListBitableAppTableFormFieldResponse>
     /**
-     * 列出自定义角色
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/list
-     */
-    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse>
-    /**
      * 新增自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/create
      */
     createBitableAppRole(app_token: string, body: CreateBitableAppRoleRequest): Promise<CreateBitableAppRoleResponse>
-    /**
-     * 删除自定义角色
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/delete
-     */
-    deleteBitableAppRole(app_token: string, role_id: string): Promise<void>
     /**
      * 更新自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/update
      */
     updateBitableAppRole(app_token: string, role_id: string, body: UpdateBitableAppRoleRequest): Promise<UpdateBitableAppRoleResponse>
     /**
-     * 批量删除协作者
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/batch_delete
+     * 列出自定义角色
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/list
      */
-    batchDeleteBitableAppRoleMember(app_token: string, role_id: string, body: BatchDeleteBitableAppRoleMemberRequest): Promise<void>
+    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse>
+    /**
+     * 删除自定义角色
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/delete
+     */
+    deleteBitableAppRole(app_token: string, role_id: string): Promise<void>
+    /**
+     * 新增协作者
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/create
+     */
+    createBitableAppRoleMember(app_token: string, role_id: string, body: CreateBitableAppRoleMemberRequest, query?: CreateBitableAppRoleMemberQuery): Promise<void>
     /**
      * 批量新增协作者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/batch_create
@@ -209,15 +204,15 @@ declare module '../internal' {
      */
     listBitableAppRoleMember(app_token: string, role_id: string, query?: Pagination): Promise<ListBitableAppRoleMemberResponse>
     /**
-     * 新增协作者
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/create
-     */
-    createBitableAppRoleMember(app_token: string, role_id: string, body: CreateBitableAppRoleMemberRequest, query?: CreateBitableAppRoleMemberQuery): Promise<void>
-    /**
      * 删除协作者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/delete
      */
     deleteBitableAppRoleMember(app_token: string, role_id: string, member_id: string, query?: DeleteBitableAppRoleMemberQuery): Promise<void>
+    /**
+     * 批量删除协作者
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/batch_delete
+     */
+    batchDeleteBitableAppRoleMember(app_token: string, role_id: string, body: BatchDeleteBitableAppRoleMemberRequest): Promise<void>
     /**
      * 列出自动化流程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-workflow/list
@@ -237,7 +232,7 @@ declare module '../internal' {
      * 列出记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/list
      */
-    listBitableAppTableRecord(app_token: string, table_id: string, query?: ListBitableAppTableRecordQuery & Pagination): Promise<ListBitableAppTableRecordResponse>
+    listBitableAppTableRecord(app_token: string, table_id: string, query?: ListBitableAppTableRecordQuery): Promise<ListBitableAppTableRecordResponse>
   }
 }
 
@@ -307,7 +302,7 @@ export interface PatchBitableAppTableViewRequest {
   property?: AppTableViewProperty
 }
 
-export interface ListBitableAppTableViewQuery {
+export interface ListBitableAppTableViewQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -351,7 +346,7 @@ export interface SearchBitableAppTableRecordRequest {
   automatic_fields?: boolean
 }
 
-export interface SearchBitableAppTableRecordQuery {
+export interface SearchBitableAppTableRecordQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -429,7 +424,7 @@ export interface UpdateBitableAppTableFieldRequest {
   ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
 }
 
-export interface ListBitableAppTableFieldQuery {
+export interface ListBitableAppTableFieldQuery extends Pagination {
   /** 视图 ID */
   view_id?: string
   /** 控制字段描述（多行文本格式）数据的返回格式, true 表示以数组富文本形式返回 */
@@ -485,16 +480,6 @@ export interface UpdateBitableAppRoleRequest {
   block_roles?: AppRoleBlockRole[]
 }
 
-export interface BatchDeleteBitableAppRoleMemberRequest {
-  /** 协作者列表 */
-  member_list: AppRoleMemberId[]
-}
-
-export interface BatchCreateBitableAppRoleMemberRequest {
-  /** 协作者列表 */
-  member_list: AppRoleMemberId[]
-}
-
 export interface CreateBitableAppRoleMemberRequest {
   /** 协作者id */
   member_id: string
@@ -505,9 +490,19 @@ export interface CreateBitableAppRoleMemberQuery {
   member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
 }
 
+export interface BatchCreateBitableAppRoleMemberRequest {
+  /** 协作者列表 */
+  member_list: AppRoleMemberId[]
+}
+
 export interface DeleteBitableAppRoleMemberQuery {
   /** 协作者id类型，与请求体中的member_id要对应 */
   member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
+}
+
+export interface BatchDeleteBitableAppRoleMemberRequest {
+  /** 协作者列表 */
+  member_list: AppRoleMemberId[]
 }
 
 export interface UpdateBitableAppWorkflowRequest {
@@ -528,7 +523,7 @@ export interface GetBitableAppTableRecordQuery {
   automatic_fields?: boolean
 }
 
-export interface ListBitableAppTableRecordQuery {
+export interface ListBitableAppTableRecordQuery extends Pagination {
   /** 视图 id注意：如 filter 或 sort 有值，view_id 会被忽略。 */
   view_id?: string
   /** 筛选参数注意：1.筛选记录的表达式不超过2000个字符。2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。3.仅支持字段在页面展示字符值进行筛选。详细请参考[记录筛选开发指南](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter) */
@@ -723,6 +718,14 @@ export interface ListBitableAppTableFormFieldResponse {
   total: number
 }
 
+export interface CreateBitableAppRoleResponse {
+  role?: AppRole
+}
+
+export interface UpdateBitableAppRoleResponse {
+  role?: AppRole
+}
+
 export interface ListBitableAppRoleResponse {
   /** 角色列表 */
   items?: AppRole[]
@@ -732,14 +735,6 @@ export interface ListBitableAppRoleResponse {
   has_more?: boolean
   /** 总数 */
   total?: number
-}
-
-export interface CreateBitableAppRoleResponse {
-  role?: AppRole
-}
-
-export interface UpdateBitableAppRoleResponse {
-  role?: AppRole
 }
 
 export interface ListBitableAppRoleMemberResponse {
@@ -855,25 +850,25 @@ Internal.define({
     GET: 'listBitableAppTableFormField',
   },
   '/bitable/v1/apps/{app_token}/roles': {
-    GET: 'listBitableAppRole',
     POST: 'createBitableAppRole',
+    GET: 'listBitableAppRole',
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}': {
-    DELETE: 'deleteBitableAppRole',
     PUT: 'updateBitableAppRole',
+    DELETE: 'deleteBitableAppRole',
   },
-  '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_delete': {
-    POST: 'batchDeleteBitableAppRoleMember',
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
+    POST: 'createBitableAppRoleMember',
+    GET: 'listBitableAppRoleMember',
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_create': {
     POST: 'batchCreateBitableAppRoleMember',
   },
-  '/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
-    GET: 'listBitableAppRoleMember',
-    POST: 'createBitableAppRoleMember',
-  },
   '/bitable/v1/apps/{app_token}/roles/{role_id}/members/{member_id}': {
     DELETE: 'deleteBitableAppRoleMember',
+  },
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_delete': {
+    POST: 'batchDeleteBitableAppRoleMember',
   },
   '/bitable/v1/apps/{app_token}/workflows': {
     GET: 'listBitableAppWorkflow',
