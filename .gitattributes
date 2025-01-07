@@ -5,3 +5,5 @@
 *.ico -text
 *.gif -text
 *.webp -text
+
+adapters/lark/src/types/*.ts linguist-generated=true

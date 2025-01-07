@@ -22,7 +22,7 @@ export interface GetMomentsPostResponse {
 }
 
 Internal.define({
-  '/open-apis/moments/v1/posts/{post_id}': {
+  '/moments/v1/posts/{post_id}': {
     GET: 'getMomentsPost',
   },
 })

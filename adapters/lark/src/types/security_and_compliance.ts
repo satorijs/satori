@@ -27,7 +27,7 @@ export interface ListDataSecurityAndComplianceOpenapiLogRequest {
 }
 
 Internal.define({
-  '/open-apis/security_and_compliance/v1/openapi_logs/list_data': {
+  '/security_and_compliance/v1/openapi_logs/list_data': {
     POST: 'listDataSecurityAndComplianceOpenapiLog',
   },
 })

@@ -1,5 +1,5 @@
 import { Classification, ClassificationFilter, Draft, Entity, I18nEntryDesc, MatchInfo, OuterInfo, Phrase, RelatedMeta, Repo, Term } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -297,40 +297,40 @@ export interface UploadLingoFileResponse {
 }
 
 Internal.define({
-  '/open-apis/lingo/v1/drafts': {
+  '/lingo/v1/drafts': {
     POST: 'createLingoDraft',
   },
-  '/open-apis/lingo/v1/drafts/{draft_id}': {
+  '/lingo/v1/drafts/{draft_id}': {
     PUT: 'updateLingoDraft',
   },
-  '/open-apis/lingo/v1/entities': {
+  '/lingo/v1/entities': {
     POST: 'createLingoEntity',
     GET: { name: 'listLingoEntity', pagination: { argIndex: 0, itemsKey: 'entities' } },
   },
-  '/open-apis/lingo/v1/entities/{entity_id}': {
+  '/lingo/v1/entities/{entity_id}': {
     PUT: 'updateLingoEntity',
     DELETE: 'deleteLingoEntity',
     GET: 'getLingoEntity',
   },
-  '/open-apis/lingo/v1/entities/match': {
+  '/lingo/v1/entities/match': {
     POST: 'matchLingoEntity',
   },
-  '/open-apis/lingo/v1/entities/search': {
+  '/lingo/v1/entities/search': {
     POST: { name: 'searchLingoEntity', pagination: { argIndex: 1, itemsKey: 'entities' } },
   },
-  '/open-apis/lingo/v1/entities/highlight': {
+  '/lingo/v1/entities/highlight': {
     POST: 'highlightLingoEntity',
   },
-  '/open-apis/lingo/v1/classifications': {
+  '/lingo/v1/classifications': {
     GET: { name: 'listLingoClassification', pagination: { argIndex: 0 } },
   },
-  '/open-apis/lingo/v1/repos': {
+  '/lingo/v1/repos': {
     GET: 'listLingoRepo',
   },
-  '/open-apis/lingo/v1/files/upload': {
+  '/lingo/v1/files/upload': {
     POST: { name: 'uploadLingoFile', multipart: true },
   },
-  '/open-apis/lingo/v1/files/{file_token}/download': {
+  '/lingo/v1/files/{file_token}/download': {
     GET: { name: 'downloadLingoFile', type: 'binary' },
   },
 })

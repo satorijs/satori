@@ -1,5 +1,5 @@
-import { Attachment, Collaborator, Comment, CustomComplete, CustomField, DatetimeSetting, DocxSource, Due, Follower, InputComment, InputCustomField, InputCustomFieldValue, InputOption, InputSection, InputTask, InputTasklist, Member, MemberSetting, NumberSetting, Option, Origin, Reminder, Section, SectionSummary, SelectSetting, Start, Task, TaskDependency, TaskInTasklistInfo, TaskSummary, Tasklist, TasklistActivitySubscription, TextSetting } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Attachment, Collaborator, Comment, CustomComplete, CustomField, DatetimeSetting, DocxSource, Due, Follower, InputComment, InputCustomField, InputCustomFieldValue, InputOption, InputSection, InputTask, InputTasklist, Member, MemberSetting, NumberSetting, Option, Origin, Reminder, Section, SectionSummary, SelectSetting, Start, Task, TaskDependency, TaskInTasklistInfo, Tasklist, TasklistActivitySubscription, TaskSummary, TextSetting } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -739,7 +739,7 @@ export interface PatchTaskV2TasklistActivitySubscriptionRequest {
   /** 要更新的订阅数据 */
   activity_subscription: TasklistActivitySubscription
   /** 要更新的字段 */
-  update_fields: 'name' | 'include_keys' | 'subscribers' | 'disabled'[]
+  update_fields: ('name' | 'include_keys' | 'subscribers' | 'disabled')[]
 }
 
 export interface PatchTaskV2TasklistActivitySubscriptionQuery {
@@ -1362,173 +1362,173 @@ export interface BatchDeleteCollaboratorTaskV1Response {
 }
 
 Internal.define({
-  '/open-apis/task/v2/tasks': {
+  '/task/v2/tasks': {
     POST: 'createTaskV2',
     GET: { name: 'listTaskV2', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/tasks/{task_guid}': {
+  '/task/v2/tasks/{task_guid}': {
     GET: 'getTaskV2',
     PATCH: 'patchTaskV2',
     DELETE: 'deleteTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/add_members': {
+  '/task/v2/tasks/{task_guid}/add_members': {
     POST: 'addMembersTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/remove_members': {
+  '/task/v2/tasks/{task_guid}/remove_members': {
     POST: 'removeMembersTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/tasklists': {
+  '/task/v2/tasks/{task_guid}/tasklists': {
     GET: 'tasklistsTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/add_tasklist': {
+  '/task/v2/tasks/{task_guid}/add_tasklist': {
     POST: 'addTasklistTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/remove_tasklist': {
+  '/task/v2/tasks/{task_guid}/remove_tasklist': {
     POST: 'removeTasklistTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/add_reminders': {
+  '/task/v2/tasks/{task_guid}/add_reminders': {
     POST: 'addRemindersTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/remove_reminders': {
+  '/task/v2/tasks/{task_guid}/remove_reminders': {
     POST: 'removeRemindersTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/add_dependencies': {
+  '/task/v2/tasks/{task_guid}/add_dependencies': {
     POST: 'addDependenciesTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/remove_dependencies': {
+  '/task/v2/tasks/{task_guid}/remove_dependencies': {
     POST: 'removeDependenciesTaskV2',
   },
-  '/open-apis/task/v2/tasks/{task_guid}/subtasks': {
+  '/task/v2/tasks/{task_guid}/subtasks': {
     POST: 'createTaskV2TaskSubtask',
     GET: { name: 'listTaskV2TaskSubtask', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v2/tasklists': {
+  '/task/v2/tasklists': {
     POST: 'createTaskV2Tasklist',
     GET: { name: 'listTaskV2Tasklist', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}': {
+  '/task/v2/tasklists/{tasklist_guid}': {
     GET: 'getTaskV2Tasklist',
     PATCH: 'patchTaskV2Tasklist',
     DELETE: 'deleteTaskV2Tasklist',
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}/add_members': {
+  '/task/v2/tasklists/{tasklist_guid}/add_members': {
     POST: 'addMembersTaskV2Tasklist',
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}/remove_members': {
+  '/task/v2/tasklists/{tasklist_guid}/remove_members': {
     POST: 'removeMembersTaskV2Tasklist',
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}/tasks': {
+  '/task/v2/tasklists/{tasklist_guid}/tasks': {
     GET: { name: 'tasksTaskV2Tasklist', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}/activity_subscriptions': {
+  '/task/v2/tasklists/{tasklist_guid}/activity_subscriptions': {
     POST: 'createTaskV2TasklistActivitySubscription',
     GET: 'listTaskV2TasklistActivitySubscription',
   },
-  '/open-apis/task/v2/tasklists/{tasklist_guid}/activity_subscriptions/{activity_subscription_guid}': {
+  '/task/v2/tasklists/{tasklist_guid}/activity_subscriptions/{activity_subscription_guid}': {
     GET: 'getTaskV2TasklistActivitySubscription',
     PATCH: 'patchTaskV2TasklistActivitySubscription',
     DELETE: 'deleteTaskV2TasklistActivitySubscription',
   },
-  '/open-apis/task/v2/comments': {
+  '/task/v2/comments': {
     POST: 'createTaskV2Comment',
     GET: { name: 'listTaskV2Comment', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/comments/{comment_id}': {
+  '/task/v2/comments/{comment_id}': {
     GET: 'getTaskV2Comment',
     PATCH: 'patchTaskV2Comment',
     DELETE: 'deleteTaskV2Comment',
   },
-  '/open-apis/task/v2/attachments/upload': {
+  '/task/v2/attachments/upload': {
     POST: { name: 'uploadTaskV2Attachment', multipart: true },
   },
-  '/open-apis/task/v2/attachments': {
+  '/task/v2/attachments': {
     GET: { name: 'listTaskV2Attachment', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/attachments/{attachment_guid}': {
+  '/task/v2/attachments/{attachment_guid}': {
     GET: 'getTaskV2Attachment',
     DELETE: 'deleteTaskV2Attachment',
   },
-  '/open-apis/task/v2/sections': {
+  '/task/v2/sections': {
     POST: 'createTaskV2Section',
     GET: { name: 'listTaskV2Section', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/sections/{section_guid}': {
+  '/task/v2/sections/{section_guid}': {
     GET: 'getTaskV2Section',
     PATCH: 'patchTaskV2Section',
     DELETE: 'deleteTaskV2Section',
   },
-  '/open-apis/task/v2/sections/{section_guid}/tasks': {
+  '/task/v2/sections/{section_guid}/tasks': {
     GET: { name: 'tasksTaskV2Section', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v2/custom_fields': {
+  '/task/v2/custom_fields': {
     POST: 'createTaskV2CustomField',
     GET: { name: 'listTaskV2CustomField', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v2/custom_fields/{custom_field_guid}': {
+  '/task/v2/custom_fields/{custom_field_guid}': {
     GET: 'getTaskV2CustomField',
     PATCH: 'patchTaskV2CustomField',
   },
-  '/open-apis/task/v2/custom_fields/{custom_field_guid}/add': {
+  '/task/v2/custom_fields/{custom_field_guid}/add': {
     POST: 'addTaskV2CustomField',
   },
-  '/open-apis/task/v2/custom_fields/{custom_field_guid}/remove': {
+  '/task/v2/custom_fields/{custom_field_guid}/remove': {
     POST: 'removeTaskV2CustomField',
   },
-  '/open-apis/task/v2/custom_fields/{custom_field_guid}/options': {
+  '/task/v2/custom_fields/{custom_field_guid}/options': {
     POST: 'createTaskV2CustomFieldOption',
   },
-  '/open-apis/task/v2/custom_fields/{custom_field_guid}/options/{option_guid}': {
+  '/task/v2/custom_fields/{custom_field_guid}/options/{option_guid}': {
     PATCH: 'patchTaskV2CustomFieldOption',
   },
-  '/open-apis/task/v1/tasks': {
+  '/task/v1/tasks': {
     POST: 'createTaskV1',
     GET: { name: 'listTaskV1', pagination: { argIndex: 0 } },
   },
-  '/open-apis/task/v1/tasks/{task_id}': {
+  '/task/v1/tasks/{task_id}': {
     DELETE: 'deleteTaskV1',
     PATCH: 'patchTaskV1',
     GET: 'getTaskV1',
   },
-  '/open-apis/task/v1/tasks/{task_id}/complete': {
+  '/task/v1/tasks/{task_id}/complete': {
     POST: 'completeTaskV1',
   },
-  '/open-apis/task/v1/tasks/{task_id}/uncomplete': {
+  '/task/v1/tasks/{task_id}/uncomplete': {
     POST: 'uncompleteTaskV1',
   },
-  '/open-apis/task/v1/tasks/{task_id}/reminders': {
+  '/task/v1/tasks/{task_id}/reminders': {
     POST: 'createTaskV1TaskReminder',
     GET: { name: 'listTaskV1TaskReminder', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v1/tasks/{task_id}/reminders/{reminder_id}': {
+  '/task/v1/tasks/{task_id}/reminders/{reminder_id}': {
     DELETE: 'deleteTaskV1TaskReminder',
   },
-  '/open-apis/task/v1/tasks/{task_id}/comments': {
+  '/task/v1/tasks/{task_id}/comments': {
     POST: 'createTaskV1TaskComment',
     GET: { name: 'listTaskV1TaskComment', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v1/tasks/{task_id}/comments/{comment_id}': {
+  '/task/v1/tasks/{task_id}/comments/{comment_id}': {
     DELETE: 'deleteTaskV1TaskComment',
     PUT: 'updateTaskV1TaskComment',
     GET: 'getTaskV1TaskComment',
   },
-  '/open-apis/task/v1/tasks/{task_id}/followers': {
+  '/task/v1/tasks/{task_id}/followers': {
     POST: 'createTaskV1TaskFollower',
     GET: { name: 'listTaskV1TaskFollower', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v1/tasks/{task_id}/followers/{follower_id}': {
+  '/task/v1/tasks/{task_id}/followers/{follower_id}': {
     DELETE: 'deleteTaskV1TaskFollower',
   },
-  '/open-apis/task/v1/tasks/{task_id}/batch_delete_follower': {
+  '/task/v1/tasks/{task_id}/batch_delete_follower': {
     POST: 'batchDeleteFollowerTaskV1',
   },
-  '/open-apis/task/v1/tasks/{task_id}/collaborators': {
+  '/task/v1/tasks/{task_id}/collaborators': {
     POST: 'createTaskV1TaskCollaborator',
     GET: { name: 'listTaskV1TaskCollaborator', pagination: { argIndex: 1 } },
   },
-  '/open-apis/task/v1/tasks/{task_id}/collaborators/{collaborator_id}': {
+  '/task/v1/tasks/{task_id}/collaborators/{collaborator_id}': {
     DELETE: 'deleteTaskV1TaskCollaborator',
   },
-  '/open-apis/task/v1/tasks/{task_id}/batch_delete_collaborator': {
+  '/task/v1/tasks/{task_id}/batch_delete_collaborator': {
     POST: 'batchDeleteCollaboratorTaskV1',
   },
 })

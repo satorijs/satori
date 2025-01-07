@@ -549,98 +549,98 @@ export interface ChatGroupApaasUserTaskResponse {
 }
 
 Internal.define({
-  '/open-apis/apaas/v1/applications/{namespace}/audit_log/audit_log_list': {
+  '/apaas/v1/applications/{namespace}/audit_log/audit_log_list': {
     GET: 'auditLogListApaasApplicationAuditLog',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/audit_log': {
+  '/apaas/v1/applications/{namespace}/audit_log': {
     GET: 'getApaasApplicationAuditLog',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_remove_authorization': {
+  '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_remove_authorization': {
     POST: 'batchRemoveAuthorizationApaasApplicationRoleMember',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_create_authorization': {
+  '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_create_authorization': {
     POST: 'batchCreateAuthorizationApaasApplicationRoleMember',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/roles/{role_api_name}/member': {
+  '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member': {
     GET: 'getApaasApplicationRoleMember',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_remove_authorization': {
+  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_remove_authorization': {
     POST: 'batchRemoveAuthorizationApaasApplicationRecordPermissionMember',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_create_authorization': {
+  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_create_authorization': {
     POST: 'batchCreateAuthorizationApaasApplicationRecordPermissionMember',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/oql_query': {
+  '/apaas/v1/applications/{namespace}/objects/oql_query': {
     POST: 'oqlQueryApaasApplicationObject',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/search': {
+  '/apaas/v1/applications/{namespace}/objects/search': {
     POST: 'searchApaasApplicationObject',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/{id}/query': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/{id}/query': {
     POST: 'queryApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/{id}': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/{id}': {
     PATCH: 'patchApaasApplicationObjectRecord',
     DELETE: 'deleteApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records': {
     POST: 'createApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_update': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_update': {
     PATCH: 'batchUpdateApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_query': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_query': {
     POST: 'batchQueryApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_delete': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_delete': {
     DELETE: 'batchDeleteApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_create': {
+  '/apaas/v1/applications/{namespace}/objects/{object_api_name}/records/batch_create': {
     POST: 'batchCreateApaasApplicationObjectRecord',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/functions/{function_api_name}/invoke': {
+  '/apaas/v1/applications/{namespace}/functions/{function_api_name}/invoke': {
     POST: 'invokeApaasApplicationFunction',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/environment_variables/query': {
+  '/apaas/v1/applications/{namespace}/environment_variables/query': {
     POST: 'queryApaasApplicationEnvironmentVariable',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/environment_variables/{environment_variable_api_name}': {
+  '/apaas/v1/applications/{namespace}/environment_variables/{environment_variable_api_name}': {
     GET: 'getApaasApplicationEnvironmentVariable',
   },
-  '/open-apis/apaas/v1/applications/{namespace}/flows/{flow_id}/execute': {
+  '/apaas/v1/applications/{namespace}/flows/{flow_id}/execute': {
     POST: 'executeApaasApplicationFlow',
   },
-  '/open-apis/apaas/v1/user_task/query': {
+  '/apaas/v1/user_task/query': {
     POST: 'queryApaasUserTask',
   },
-  '/open-apis/apaas/v1/approval_tasks/{approval_task_id}/agree': {
+  '/apaas/v1/approval_tasks/{approval_task_id}/agree': {
     POST: 'agreeApaasApprovalTask',
   },
-  '/open-apis/apaas/v1/approval_tasks/{approval_task_id}/reject': {
+  '/apaas/v1/approval_tasks/{approval_task_id}/reject': {
     POST: 'rejectApaasApprovalTask',
   },
-  '/open-apis/apaas/v1/approval_tasks/{approval_task_id}/transfer': {
+  '/apaas/v1/approval_tasks/{approval_task_id}/transfer': {
     POST: 'transferApaasApprovalTask',
   },
-  '/open-apis/apaas/v1/approval_tasks/{approval_task_id}/add_assignee': {
+  '/apaas/v1/approval_tasks/{approval_task_id}/add_assignee': {
     POST: 'addAssigneeApaasApprovalTask',
   },
-  '/open-apis/apaas/v1/user_tasks/{task_id}/cc': {
+  '/apaas/v1/user_tasks/{task_id}/cc': {
     POST: 'ccApaasUserTask',
   },
-  '/open-apis/apaas/v1/user_tasks/{task_id}/expediting': {
+  '/apaas/v1/user_tasks/{task_id}/expediting': {
     POST: 'expeditingApaasUserTask',
   },
-  '/open-apis/apaas/v1/approval_instances/{approval_instance_id}/cancel': {
+  '/apaas/v1/approval_instances/{approval_instance_id}/cancel': {
     POST: 'cancelApaasApprovalInstance',
   },
-  '/open-apis/apaas/v1/user_tasks/{task_id}/rollback_points': {
+  '/apaas/v1/user_tasks/{task_id}/rollback_points': {
     POST: 'rollbackPointsApaasUserTask',
   },
-  '/open-apis/apaas/v1/user_tasks/{task_id}/rollback': {
+  '/apaas/v1/user_tasks/{task_id}/rollback': {
     POST: 'rollbackApaasUserTask',
   },
-  '/open-apis/apaas/v1/user_tasks/{task_id}/chat_group': {
+  '/apaas/v1/user_tasks/{task_id}/chat_group': {
     POST: 'chatGroupApaasUserTask',
   },
 })

@@ -65,13 +65,13 @@ export interface QueryReportRuleResponse {
 }
 
 Internal.define({
-  '/open-apis/report/v1/rules/query': {
+  '/report/v1/rules/query': {
     GET: 'queryReportRule',
   },
-  '/open-apis/report/v1/rules/{rule_id}/views/remove': {
+  '/report/v1/rules/{rule_id}/views/remove': {
     POST: 'removeReportRuleView',
   },
-  '/open-apis/report/v1/tasks/query': {
+  '/report/v1/tasks/query': {
     POST: 'queryReportTask',
   },
 })

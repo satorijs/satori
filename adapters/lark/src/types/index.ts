@@ -815,7 +815,7 @@ export interface Alert {
   /** 告警联系人 */
   contacts?: Contact[]
   /** 通知方式 */
-  notifyMethods?: 0 | 1[]
+  notifyMethods?: (0 | 1)[]
   /** 规则名称 */
   alertRule?: string
   /** 处理时间 */
@@ -4679,7 +4679,7 @@ export interface CustomMetricConfig {
   /** 维度允许添加指标下限(包含) */
   least_metrics_size?: number
   /** 添加的指标方式 */
-  add_metric_options?: 1 | 2[]
+  add_metric_options?: (1 | 2)[]
 }
 
 export interface CustomWorkplaceAccessData {
@@ -13308,7 +13308,7 @@ export interface RegistrationSchema {
   /** 信息登记表模板名称 */
   name?: string
   /** 登记表适用场景 */
-  scenarios?: 5 | 6 | 14[]
+  scenarios?: (5 | 6 | 14)[]
   /** 模块列表 */
   objects?: CommonSchema[]
 }
@@ -15254,7 +15254,7 @@ export interface TalentCareerInfo {
   /** 经历类型 */
   career_type?: 1 | 2 | 3 | 4
   /** 工作经历标签 */
-  tag_list?: 5 | 6 | 14[]
+  tag_list?: (5 | 6 | 14)[]
 }
 
 export interface TalentCityInfo {
@@ -15487,7 +15487,7 @@ export interface TalentEducationInfo {
   /** 成绩排名 */
   academic_ranking?: 5 | 10 | 20 | 30 | 50 | -1
   /** 教育经历标签 */
-  tag_list?: 1 | 2 | 3 | 4[]
+  tag_list?: (1 | 2 | 3 | 4)[]
 }
 
 export interface TalentExternalInfo {
@@ -16484,13 +16484,13 @@ export interface UpdateTextRequest {
   /** 更新的文本样式 */
   style: TextStyle
   /** 文本样式中应更新的字段，必须至少指定一个字段。例如，要调整 Block 对齐方式，请设置 fields 为 [1]。 */
-  fields: 1 | 2 | 3 | 4 | 5 | 6 | 7[]
+  fields: (1 | 2 | 3 | 4 | 5 | 6 | 7)[]
 }
 
 export interface UpdateTextStyleRequest {
   style: TextStyle
   /** 应更新的字段，必须至少指定一个字段。例如，要调整 Block 对齐方式，请设置 fields 为 [1]。 */
-  fields: 1 | 2 | 3 | 4 | 5 | 6 | 7[]
+  fields: (1 | 2 | 3 | 4 | 5 | 6 | 7)[]
 }
 
 export interface User {
@@ -16791,7 +16791,7 @@ export interface UserOpenAppFeedCardUpdater {
   /** 用户 id */
   user_id: string
   /** 更新字段列表 */
-  update_fields: '1' | '2' | '3' | '10' | '11' | '12' | '13' | '101' | '102' | '103'[]
+  update_fields: ('1' | '2' | '3' | '10' | '11' | '12' | '13' | '101' | '102' | '103')[]
 }
 
 export interface UserOrder {

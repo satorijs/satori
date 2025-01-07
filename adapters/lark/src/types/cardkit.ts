@@ -153,30 +153,30 @@ export interface IdConvertCardkitCardResponse {
 }
 
 Internal.define({
-  '/open-apis/cardkit/v1/cards': {
+  '/cardkit/v1/cards': {
     POST: 'createCardkitCard',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}/settings': {
+  '/cardkit/v1/cards/{card_id}/settings': {
     PATCH: 'settingsCardkitCard',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}/batch_update': {
+  '/cardkit/v1/cards/{card_id}/batch_update': {
     POST: 'batchUpdateCardkitCard',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}': {
+  '/cardkit/v1/cards/{card_id}': {
     PUT: 'updateCardkitCard',
   },
-  '/open-apis/cardkit/v1/cards/id_convert': {
+  '/cardkit/v1/cards/id_convert': {
     POST: 'idConvertCardkitCard',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}/elements': {
+  '/cardkit/v1/cards/{card_id}/elements': {
     POST: 'createCardkitCardElement',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}/elements/{element_id}': {
+  '/cardkit/v1/cards/{card_id}/elements/{element_id}': {
     PUT: 'updateCardkitCardElement',
     PATCH: 'patchCardkitCardElement',
     DELETE: 'deleteCardkitCardElement',
   },
-  '/open-apis/cardkit/v1/cards/{card_id}/elements/{element_id}/content': {
+  '/cardkit/v1/cards/{card_id}/elements/{element_id}/content': {
     PUT: 'contentCardkitCardElement',
   },
 })

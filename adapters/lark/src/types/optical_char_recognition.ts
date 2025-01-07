@@ -21,7 +21,7 @@ export interface BasicRecognizeOpticalCharRecognitionImageResponse {
 }
 
 Internal.define({
-  '/open-apis/optical_char_recognition/v1/image/basic_recognize': {
+  '/optical_char_recognition/v1/image/basic_recognize': {
     POST: 'basicRecognizeOpticalCharRecognitionImage',
   },
 })

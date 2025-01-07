@@ -52,10 +52,10 @@ export interface QueryPassportSessionResponse {
 }
 
 Internal.define({
-  '/open-apis/passport/v1/sessions/query': {
+  '/passport/v1/sessions/query': {
     POST: 'queryPassportSession',
   },
-  '/open-apis/passport/v1/sessions/logout': {
+  '/passport/v1/sessions/logout': {
     POST: 'logoutPassportSession',
   },
 })

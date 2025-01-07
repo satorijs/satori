@@ -361,65 +361,65 @@ export interface QuerySheetsSpreadsheetSheetFloatImageResponse {
 }
 
 Internal.define({
-  '/open-apis/sheets/v3/spreadsheets': {
+  '/sheets/v3/spreadsheets': {
     POST: 'createSheetsSpreadsheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}': {
     PATCH: 'patchSheetsSpreadsheet',
     GET: 'getSheetsSpreadsheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/query': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/query': {
     GET: 'querySheetsSpreadsheetSheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}': {
     GET: 'getSheetsSpreadsheetSheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/move_dimension': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/move_dimension': {
     POST: 'moveDimensionSheetsSpreadsheetSheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/find': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/find': {
     POST: 'findSheetsSpreadsheetSheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/replace': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/replace': {
     POST: 'replaceSheetsSpreadsheetSheet',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter': {
     POST: 'createSheetsSpreadsheetSheetFilter',
     PUT: 'updateSheetsSpreadsheetSheetFilter',
     GET: 'getSheetsSpreadsheetSheetFilter',
     DELETE: 'deleteSheetsSpreadsheetSheetFilter',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views': {
     POST: 'createSheetsSpreadsheetSheetFilterView',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}': {
     PATCH: 'patchSheetsSpreadsheetSheetFilterView',
     GET: 'getSheetsSpreadsheetSheetFilterView',
     DELETE: 'deleteSheetsSpreadsheetSheetFilterView',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/query': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/query': {
     GET: 'querySheetsSpreadsheetSheetFilterView',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions': {
     POST: 'createSheetsSpreadsheetSheetFilterViewCondition',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/{condition_id}': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/{condition_id}': {
     PUT: 'updateSheetsSpreadsheetSheetFilterViewCondition',
     GET: 'getSheetsSpreadsheetSheetFilterViewCondition',
     DELETE: 'deleteSheetsSpreadsheetSheetFilterViewCondition',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/query': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/query': {
     GET: 'querySheetsSpreadsheetSheetFilterViewCondition',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images': {
     POST: 'createSheetsSpreadsheetSheetFloatImage',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/{float_image_id}': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/{float_image_id}': {
     PATCH: 'patchSheetsSpreadsheetSheetFloatImage',
     GET: 'getSheetsSpreadsheetSheetFloatImage',
     DELETE: 'deleteSheetsSpreadsheetSheetFloatImage',
   },
-  '/open-apis/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/query': {
+  '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/query': {
     GET: 'querySheetsSpreadsheetSheetFloatImage',
   },
 })

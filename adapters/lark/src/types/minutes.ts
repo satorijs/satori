@@ -37,10 +37,10 @@ export interface GetMinutesMinuteResponse {
 }
 
 Internal.define({
-  '/open-apis/minutes/v1/minutes/{minute_token}/statistics': {
+  '/minutes/v1/minutes/{minute_token}/statistics': {
     GET: 'getMinutesMinuteStatistics',
   },
-  '/open-apis/minutes/v1/minutes/{minute_token}': {
+  '/minutes/v1/minutes/{minute_token}': {
     GET: 'getMinutesMinute',
   },
 })

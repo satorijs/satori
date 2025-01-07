@@ -1,5 +1,5 @@
 import { AgentSchedule, AgentScheduleUpdateInfo, AgentSkill, AgentSkillRule, Category, CustomizedFieldDisplayItem, Event, Faq, FaqCreateInfo, FaqUpdateInfo, Notification, NotificationChat, NotificationDepartment, NotificationUser, Ticket, TicketCustomizedField, TicketMessage, TicketUser, UserCustomizedField, UserQueryFaqInfo } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -809,118 +809,118 @@ export interface SubmitApproveHelpdeskNotificationResponse {
 }
 
 Internal.define({
-  '/open-apis/helpdesk/v1/agents/{agent_id}': {
+  '/helpdesk/v1/agents/{agent_id}': {
     PATCH: 'patchHelpdeskAgent',
   },
-  '/open-apis/helpdesk/v1/agent_emails': {
+  '/helpdesk/v1/agent_emails': {
     GET: 'agentEmailHelpdeskAgent',
   },
-  '/open-apis/helpdesk/v1/agent_schedules': {
+  '/helpdesk/v1/agent_schedules': {
     POST: 'createHelpdeskAgentSchedule',
     GET: 'listHelpdeskAgentSchedule',
   },
-  '/open-apis/helpdesk/v1/agents/{agent_id}/schedules': {
+  '/helpdesk/v1/agents/{agent_id}/schedules': {
     DELETE: 'deleteHelpdeskAgentSchedules',
     PATCH: 'patchHelpdeskAgentSchedules',
     GET: 'getHelpdeskAgentSchedules',
   },
-  '/open-apis/helpdesk/v1/agent_skills': {
+  '/helpdesk/v1/agent_skills': {
     POST: 'createHelpdeskAgentSkill',
     GET: 'listHelpdeskAgentSkill',
   },
-  '/open-apis/helpdesk/v1/agent_skills/{agent_skill_id}': {
+  '/helpdesk/v1/agent_skills/{agent_skill_id}': {
     DELETE: 'deleteHelpdeskAgentSkill',
     PATCH: 'patchHelpdeskAgentSkill',
     GET: 'getHelpdeskAgentSkill',
   },
-  '/open-apis/helpdesk/v1/agent_skill_rules': {
+  '/helpdesk/v1/agent_skill_rules': {
     GET: 'listHelpdeskAgentSkillRule',
   },
-  '/open-apis/helpdesk/v1/start_service': {
+  '/helpdesk/v1/start_service': {
     POST: 'startServiceHelpdeskTicket',
   },
-  '/open-apis/helpdesk/v1/tickets/{ticket_id}': {
+  '/helpdesk/v1/tickets/{ticket_id}': {
     GET: 'getHelpdeskTicket',
     PUT: 'updateHelpdeskTicket',
   },
-  '/open-apis/helpdesk/v1/tickets': {
+  '/helpdesk/v1/tickets': {
     GET: 'listHelpdeskTicket',
   },
-  '/open-apis/helpdesk/v1/ticket_images': {
+  '/helpdesk/v1/ticket_images': {
     GET: { name: 'ticketImageHelpdeskTicket', type: 'binary' },
   },
-  '/open-apis/helpdesk/v1/tickets/{ticket_id}/answer_user_query': {
+  '/helpdesk/v1/tickets/{ticket_id}/answer_user_query': {
     POST: 'answerUserQueryHelpdeskTicket',
   },
-  '/open-apis/helpdesk/v1/customized_fields': {
+  '/helpdesk/v1/customized_fields': {
     GET: 'customizedFieldsHelpdeskTicket',
   },
-  '/open-apis/helpdesk/v1/tickets/{ticket_id}/messages': {
+  '/helpdesk/v1/tickets/{ticket_id}/messages': {
     POST: 'createHelpdeskTicketMessage',
     GET: 'listHelpdeskTicketMessage',
   },
-  '/open-apis/helpdesk/v1/message': {
+  '/helpdesk/v1/message': {
     POST: 'createHelpdeskBotMessage',
   },
-  '/open-apis/helpdesk/v1/ticket_customized_fields': {
+  '/helpdesk/v1/ticket_customized_fields': {
     POST: 'createHelpdeskTicketCustomizedField',
     GET: { name: 'listHelpdeskTicketCustomizedField', pagination: { argIndex: 1, tokenKey: 'next_page_token' } },
   },
-  '/open-apis/helpdesk/v1/ticket_customized_fields/{ticket_customized_field_id}': {
+  '/helpdesk/v1/ticket_customized_fields/{ticket_customized_field_id}': {
     DELETE: 'deleteHelpdeskTicketCustomizedField',
     PATCH: 'patchHelpdeskTicketCustomizedField',
     GET: 'getHelpdeskTicketCustomizedField',
   },
-  '/open-apis/helpdesk/v1/faqs': {
+  '/helpdesk/v1/faqs': {
     POST: 'createHelpdeskFaq',
     GET: 'listHelpdeskFaq',
   },
-  '/open-apis/helpdesk/v1/faqs/{id}': {
+  '/helpdesk/v1/faqs/{id}': {
     DELETE: 'deleteHelpdeskFaq',
     PATCH: 'patchHelpdeskFaq',
     GET: 'getHelpdeskFaq',
   },
-  '/open-apis/helpdesk/v1/faqs/{id}/image/{image_key}': {
+  '/helpdesk/v1/faqs/{id}/image/{image_key}': {
     GET: { name: 'faqImageHelpdeskFaq', type: 'binary' },
   },
-  '/open-apis/helpdesk/v1/faqs/search': {
+  '/helpdesk/v1/faqs/search': {
     GET: { name: 'searchHelpdeskFaq', pagination: { argIndex: 0 } },
   },
-  '/open-apis/helpdesk/v1/categories': {
+  '/helpdesk/v1/categories': {
     POST: 'createHelpdeskCategory',
     GET: 'listHelpdeskCategory',
   },
-  '/open-apis/helpdesk/v1/categories/{id}': {
+  '/helpdesk/v1/categories/{id}': {
     GET: 'getHelpdeskCategory',
     PATCH: 'patchHelpdeskCategory',
     DELETE: 'deleteHelpdeskCategory',
   },
-  '/open-apis/helpdesk/v1/notifications': {
+  '/helpdesk/v1/notifications': {
     POST: 'createHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}': {
+  '/helpdesk/v1/notifications/{notification_id}': {
     PATCH: 'patchHelpdeskNotification',
     GET: 'getHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}/preview': {
+  '/helpdesk/v1/notifications/{notification_id}/preview': {
     POST: 'previewHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}/submit_approve': {
+  '/helpdesk/v1/notifications/{notification_id}/submit_approve': {
     POST: 'submitApproveHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}/cancel_approve': {
+  '/helpdesk/v1/notifications/{notification_id}/cancel_approve': {
     POST: 'cancelApproveHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}/execute_send': {
+  '/helpdesk/v1/notifications/{notification_id}/execute_send': {
     POST: 'executeSendHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/notifications/{notification_id}/cancel_send': {
+  '/helpdesk/v1/notifications/{notification_id}/cancel_send': {
     POST: 'cancelSendHelpdeskNotification',
   },
-  '/open-apis/helpdesk/v1/events/subscribe': {
+  '/helpdesk/v1/events/subscribe': {
     POST: 'subscribeHelpdeskEvent',
   },
-  '/open-apis/helpdesk/v1/events/unsubscribe': {
+  '/helpdesk/v1/events/unsubscribe': {
     POST: 'unsubscribeHelpdeskEvent',
   },
 })

@@ -1,5 +1,5 @@
 import { ApprovalInfo, ArchiveField, ArchiveReportData, ArchiveReportMeta, File, FlexibleRule, FreePunchCfg, Group, GroupMeta, LangText, LateOffLateOnRule, LateOffLateOnSetting, LeaveAccrualRecord, LeaveEmployExpireRecord, LeaveNeedPunchCfg, Location, Machine, MemberStatusChange, OvertimeClockCfg, OvertimeRule, PunchMember, PunchSpecialDateShift, PunchTimeRule, RestRule, RestTimeFlexibleConfig, Shift, ShiftAttendanceTimeConfig, ShiftMiddleTimeRule, UserAllowedRemedy, UserApproval, UserBase, UserDailyShift, UserFlow, UserSetting, UserStatsData, UserStatsField, UserStatsView, UserTask, UserTaskRemedy, UserTmpDailyShift } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -1064,110 +1064,110 @@ export interface PatchAttendanceLeaveAccrualRecordResponse {
 }
 
 Internal.define({
-  '/open-apis/attendance/v1/shifts': {
+  '/attendance/v1/shifts': {
     POST: 'createAttendanceShift',
     GET: { name: 'listAttendanceShift', pagination: { argIndex: 0, itemsKey: 'shift_list' } },
   },
-  '/open-apis/attendance/v1/shifts/{shift_id}': {
+  '/attendance/v1/shifts/{shift_id}': {
     DELETE: 'deleteAttendanceShift',
     GET: 'getAttendanceShift',
   },
-  '/open-apis/attendance/v1/shifts/query': {
+  '/attendance/v1/shifts/query': {
     POST: 'queryAttendanceShift',
   },
-  '/open-apis/attendance/v1/user_daily_shifts/batch_create': {
+  '/attendance/v1/user_daily_shifts/batch_create': {
     POST: 'batchCreateAttendanceUserDailyShift',
   },
-  '/open-apis/attendance/v1/user_daily_shifts/query': {
+  '/attendance/v1/user_daily_shifts/query': {
     POST: 'queryAttendanceUserDailyShift',
   },
-  '/open-apis/attendance/v1/user_daily_shifts/batch_create_temp': {
+  '/attendance/v1/user_daily_shifts/batch_create_temp': {
     POST: 'batchCreateTempAttendanceUserDailyShift',
   },
-  '/open-apis/attendance/v1/groups/{group_id}/list_user': {
+  '/attendance/v1/groups/{group_id}/list_user': {
     GET: { name: 'listUserAttendanceGroup', pagination: { argIndex: 1, itemsKey: 'users' } },
   },
-  '/open-apis/attendance/v1/groups': {
+  '/attendance/v1/groups': {
     POST: 'createAttendanceGroup',
     GET: { name: 'listAttendanceGroup', pagination: { argIndex: 0, itemsKey: 'group_list' } },
   },
-  '/open-apis/attendance/v1/groups/{group_id}': {
+  '/attendance/v1/groups/{group_id}': {
     DELETE: 'deleteAttendanceGroup',
     GET: 'getAttendanceGroup',
   },
-  '/open-apis/attendance/v1/groups/search': {
+  '/attendance/v1/groups/search': {
     POST: 'searchAttendanceGroup',
   },
-  '/open-apis/attendance/v1/user_settings/modify': {
+  '/attendance/v1/user_settings/modify': {
     POST: 'modifyAttendanceUserSetting',
   },
-  '/open-apis/attendance/v1/user_settings/query': {
+  '/attendance/v1/user_settings/query': {
     GET: 'queryAttendanceUserSetting',
   },
-  '/open-apis/attendance/v1/files/upload': {
+  '/attendance/v1/files/upload': {
     POST: { name: 'uploadAttendanceFile', multipart: true },
   },
-  '/open-apis/attendance/v1/files/{file_id}/download': {
+  '/attendance/v1/files/{file_id}/download': {
     GET: { name: 'downloadAttendanceFile', type: 'binary' },
   },
-  '/open-apis/attendance/v1/user_stats_views/{user_stats_view_id}': {
+  '/attendance/v1/user_stats_views/{user_stats_view_id}': {
     PUT: 'updateAttendanceUserStatsView',
   },
-  '/open-apis/attendance/v1/user_stats_fields/query': {
+  '/attendance/v1/user_stats_fields/query': {
     POST: 'queryAttendanceUserStatsField',
   },
-  '/open-apis/attendance/v1/user_stats_views/query': {
+  '/attendance/v1/user_stats_views/query': {
     POST: 'queryAttendanceUserStatsView',
   },
-  '/open-apis/attendance/v1/user_stats_datas/query': {
+  '/attendance/v1/user_stats_datas/query': {
     POST: 'queryAttendanceUserStatsData',
   },
-  '/open-apis/attendance/v1/user_approvals/query': {
+  '/attendance/v1/user_approvals/query': {
     POST: 'queryAttendanceUserApproval',
   },
-  '/open-apis/attendance/v1/user_approvals': {
+  '/attendance/v1/user_approvals': {
     POST: 'createAttendanceUserApproval',
   },
-  '/open-apis/attendance/v1/approval_infos/process': {
+  '/attendance/v1/approval_infos/process': {
     POST: 'processAttendanceApprovalInfo',
   },
-  '/open-apis/attendance/v1/user_task_remedys': {
+  '/attendance/v1/user_task_remedys': {
     POST: 'createAttendanceUserTaskRemedy',
   },
-  '/open-apis/attendance/v1/user_task_remedys/query_user_allowed_remedys': {
+  '/attendance/v1/user_task_remedys/query_user_allowed_remedys': {
     POST: 'queryUserAllowedRemedysAttendanceUserTaskRemedy',
   },
-  '/open-apis/attendance/v1/user_task_remedys/query': {
+  '/attendance/v1/user_task_remedys/query': {
     POST: 'queryAttendanceUserTaskRemedy',
   },
-  '/open-apis/attendance/v1/archive_rule/user_stats_fields_query': {
+  '/attendance/v1/archive_rule/user_stats_fields_query': {
     POST: 'userStatsFieldsQueryAttendanceArchiveRule',
   },
-  '/open-apis/attendance/v1/archive_rule/upload_report': {
+  '/attendance/v1/archive_rule/upload_report': {
     POST: 'uploadReportAttendanceArchiveRule',
   },
-  '/open-apis/attendance/v1/archive_rule/del_report': {
+  '/attendance/v1/archive_rule/del_report': {
     POST: 'delReportAttendanceArchiveRule',
   },
-  '/open-apis/attendance/v1/archive_rule': {
+  '/attendance/v1/archive_rule': {
     GET: { name: 'listAttendanceArchiveRule', pagination: { argIndex: 0 } },
   },
-  '/open-apis/attendance/v1/user_flows/batch_create': {
+  '/attendance/v1/user_flows/batch_create': {
     POST: 'batchCreateAttendanceUserFlow',
   },
-  '/open-apis/attendance/v1/user_flows/{user_flow_id}': {
+  '/attendance/v1/user_flows/{user_flow_id}': {
     GET: 'getAttendanceUserFlow',
   },
-  '/open-apis/attendance/v1/user_flows/query': {
+  '/attendance/v1/user_flows/query': {
     POST: 'queryAttendanceUserFlow',
   },
-  '/open-apis/attendance/v1/user_tasks/query': {
+  '/attendance/v1/user_tasks/query': {
     POST: 'queryAttendanceUserTask',
   },
-  '/open-apis/attendance/v1/leave_employ_expire_records/{leave_id}': {
+  '/attendance/v1/leave_employ_expire_records/{leave_id}': {
     GET: 'getAttendanceLeaveEmployExpireRecord',
   },
-  '/open-apis/attendance/v1/leave_accrual_record/{leave_id}': {
+  '/attendance/v1/leave_accrual_record/{leave_id}': {
     PATCH: 'patchAttendanceLeaveAccrualRecord',
   },
 })

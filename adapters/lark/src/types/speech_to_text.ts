@@ -45,10 +45,10 @@ export interface StreamRecognizeSpeechToTextSpeechResponse {
 }
 
 Internal.define({
-  '/open-apis/speech_to_text/v1/speech/file_recognize': {
+  '/speech_to_text/v1/speech/file_recognize': {
     POST: 'fileRecognizeSpeechToTextSpeech',
   },
-  '/open-apis/speech_to_text/v1/speech/stream_recognize': {
+  '/speech_to_text/v1/speech/stream_recognize': {
     POST: 'streamRecognizeSpeechToTextSpeech',
   },
 })

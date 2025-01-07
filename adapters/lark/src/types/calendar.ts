@@ -1,5 +1,5 @@
 import { AclScope, Attachment, Calendar, CalendarAcl, CalendarEvent, CalendarEventAttendee, CalendarEventAttendeeChatMember, CalendarEventAttendeeId, EventLocation, EventSearchFilter, Freebusy, Instance, Reminder, Schema, TimeInfo, UserCalendar, Vchat } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -731,106 +731,106 @@ export interface GetCalendarExchangeBindingResponse {
 }
 
 Internal.define({
-  '/open-apis/calendar/v4/calendars': {
+  '/calendar/v4/calendars': {
     POST: 'createCalendar',
     GET: 'listCalendar',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}': {
+  '/calendar/v4/calendars/{calendar_id}': {
     DELETE: 'deleteCalendar',
     GET: 'getCalendar',
     PATCH: 'patchCalendar',
   },
-  '/open-apis/calendar/v4/calendars/primary': {
+  '/calendar/v4/calendars/primary': {
     POST: 'primaryCalendar',
   },
-  '/open-apis/calendar/v4/freebusy/list': {
+  '/calendar/v4/freebusy/list': {
     POST: 'listCalendarFreebusy',
   },
-  '/open-apis/calendar/v4/calendars/search': {
+  '/calendar/v4/calendars/search': {
     POST: 'searchCalendar',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/subscribe': {
+  '/calendar/v4/calendars/{calendar_id}/subscribe': {
     POST: 'subscribeCalendar',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/unsubscribe': {
+  '/calendar/v4/calendars/{calendar_id}/unsubscribe': {
     POST: 'unsubscribeCalendar',
   },
-  '/open-apis/calendar/v4/calendars/subscription': {
+  '/calendar/v4/calendars/subscription': {
     POST: 'subscriptionCalendar',
   },
-  '/open-apis/calendar/v4/calendars/unsubscription': {
+  '/calendar/v4/calendars/unsubscription': {
     POST: 'unsubscriptionCalendar',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/acls': {
+  '/calendar/v4/calendars/{calendar_id}/acls': {
     POST: 'createCalendarCalendarAcl',
     GET: { name: 'listCalendarCalendarAcl', pagination: { argIndex: 1, itemsKey: 'acls' } },
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/acls/{acl_id}': {
+  '/calendar/v4/calendars/{calendar_id}/acls/{acl_id}': {
     DELETE: 'deleteCalendarCalendarAcl',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/acls/subscription': {
+  '/calendar/v4/calendars/{calendar_id}/acls/subscription': {
     POST: 'subscriptionCalendarCalendarAcl',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/acls/unsubscription': {
+  '/calendar/v4/calendars/{calendar_id}/acls/unsubscription': {
     POST: 'unsubscriptionCalendarCalendarAcl',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events': {
+  '/calendar/v4/calendars/{calendar_id}/events': {
     POST: 'createCalendarCalendarEvent',
     GET: 'listCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}': {
     DELETE: 'deleteCalendarCalendarEvent',
     PATCH: 'patchCalendarCalendarEvent',
     GET: 'getCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/search': {
+  '/calendar/v4/calendars/{calendar_id}/events/search': {
     POST: 'searchCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/subscription': {
+  '/calendar/v4/calendars/{calendar_id}/events/subscription': {
     POST: 'subscriptionCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/unsubscription': {
+  '/calendar/v4/calendars/{calendar_id}/events/unsubscription': {
     POST: 'unsubscriptionCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/reply': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/reply': {
     POST: 'replyCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/instances': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/instances': {
     GET: { name: 'instancesCalendarCalendarEvent', pagination: { argIndex: 2 } },
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/instance_view': {
+  '/calendar/v4/calendars/{calendar_id}/events/instance_view': {
     GET: 'instanceViewCalendarCalendarEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/meeting_chat': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/meeting_chat': {
     POST: 'createCalendarCalendarEventMeetingChat',
     DELETE: 'deleteCalendarCalendarEventMeetingChat',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/meeting_minute': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/meeting_minute': {
     POST: 'createCalendarCalendarEventMeetingMinute',
   },
-  '/open-apis/calendar/v4/timeoff_events': {
+  '/calendar/v4/timeoff_events': {
     POST: 'createCalendarTimeoffEvent',
   },
-  '/open-apis/calendar/v4/timeoff_events/{timeoff_event_id}': {
+  '/calendar/v4/timeoff_events/{timeoff_event_id}': {
     DELETE: 'deleteCalendarTimeoffEvent',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees': {
     POST: 'createCalendarCalendarEventAttendee',
     GET: { name: 'listCalendarCalendarEventAttendee', pagination: { argIndex: 2 } },
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/batch_delete': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/batch_delete': {
     POST: 'batchDeleteCalendarCalendarEventAttendee',
   },
-  '/open-apis/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/{attendee_id}/chat_members': {
+  '/calendar/v4/calendars/{calendar_id}/events/{event_id}/attendees/{attendee_id}/chat_members': {
     GET: { name: 'listCalendarCalendarEventAttendeeChatMember', pagination: { argIndex: 3 } },
   },
-  '/open-apis/calendar/v4/settings/generate_caldav_conf': {
+  '/calendar/v4/settings/generate_caldav_conf': {
     POST: 'generateCaldavConfCalendarSetting',
   },
-  '/open-apis/calendar/v4/exchange_bindings': {
+  '/calendar/v4/exchange_bindings': {
     POST: 'createCalendarExchangeBinding',
   },
-  '/open-apis/calendar/v4/exchange_bindings/{exchange_binding_id}': {
+  '/calendar/v4/exchange_bindings/{exchange_binding_id}': {
     DELETE: 'deleteCalendarExchangeBinding',
     GET: 'getCalendarExchangeBinding',
   },

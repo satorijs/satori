@@ -1,5 +1,5 @@
 import { ApprovalConfig, ApprovalCreateExternal, ApprovalCreateViewers, ApprovalForm, ApprovalNode, ApprovalNodeInfo, ApprovalSetting, ApprovalViewerInfo, CcNode, CcSearchItem, Comment, CommentAtInfo, Count, ExteranlInstanceCheck, ExteranlInstanceCheckResponse, ExternalInstance, ExternalInstanceForm, ExternalInstanceLink, ExternalInstanceTaskNode, ExternalTaskList, I18nResource, InstanceComment, InstanceSearchItem, InstanceTask, InstanceTimeline, NodeApprover, NodeAutoApproval, NodeCc, PreviewNode, Task, TaskSearchItem, TrusteeshipInstanceCacheConfig, TrusteeshipUrls } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -848,87 +848,87 @@ export interface QueryApprovalTaskResponse {
 }
 
 Internal.define({
-  '/open-apis/approval/v4/approvals': {
+  '/approval/v4/approvals': {
     POST: 'createApproval',
   },
-  '/open-apis/approval/v4/approvals/{approval_code}': {
+  '/approval/v4/approvals/{approval_code}': {
     GET: 'getApproval',
   },
-  '/open-apis/approval/v4/instances': {
+  '/approval/v4/instances': {
     POST: 'createApprovalInstance',
     GET: { name: 'listApprovalInstance', pagination: { argIndex: 0, itemsKey: 'instance_code_list' } },
   },
-  '/open-apis/approval/v4/instances/cancel': {
+  '/approval/v4/instances/cancel': {
     POST: 'cancelApprovalInstance',
   },
-  '/open-apis/approval/v4/instances/cc': {
+  '/approval/v4/instances/cc': {
     POST: 'ccApprovalInstance',
   },
-  '/open-apis/approval/v4/instances/preview': {
+  '/approval/v4/instances/preview': {
     POST: 'previewApprovalInstance',
   },
-  '/open-apis/approval/v4/instances/{instance_id}': {
+  '/approval/v4/instances/{instance_id}': {
     GET: 'getApprovalInstance',
   },
-  '/open-apis/approval/v4/tasks/approve': {
+  '/approval/v4/tasks/approve': {
     POST: 'approveApprovalTask',
   },
-  '/open-apis/approval/v4/tasks/reject': {
+  '/approval/v4/tasks/reject': {
     POST: 'rejectApprovalTask',
   },
-  '/open-apis/approval/v4/tasks/transfer': {
+  '/approval/v4/tasks/transfer': {
     POST: 'transferApprovalTask',
   },
-  '/open-apis/approval/v4/instances/specified_rollback': {
+  '/approval/v4/instances/specified_rollback': {
     POST: 'specifiedRollbackApprovalInstance',
   },
-  '/open-apis/approval/v4/instances/add_sign': {
+  '/approval/v4/instances/add_sign': {
     POST: 'addSignApprovalInstance',
   },
-  '/open-apis/approval/v4/tasks/resubmit': {
+  '/approval/v4/tasks/resubmit': {
     POST: 'resubmitApprovalTask',
   },
-  '/open-apis/approval/v4/instances/{instance_id}/comments': {
+  '/approval/v4/instances/{instance_id}/comments': {
     POST: 'createApprovalInstanceComment',
     GET: 'listApprovalInstanceComment',
   },
-  '/open-apis/approval/v4/instances/{instance_id}/comments/{comment_id}': {
+  '/approval/v4/instances/{instance_id}/comments/{comment_id}': {
     DELETE: 'deleteApprovalInstanceComment',
   },
-  '/open-apis/approval/v4/instances/{instance_id}/comments/remove': {
+  '/approval/v4/instances/{instance_id}/comments/remove': {
     POST: 'removeApprovalInstanceComment',
   },
-  '/open-apis/approval/v4/external_approvals': {
+  '/approval/v4/external_approvals': {
     POST: 'createApprovalExternalApproval',
   },
-  '/open-apis/approval/v4/external_approvals/{approval_code}': {
+  '/approval/v4/external_approvals/{approval_code}': {
     GET: 'getApprovalExternalApproval',
   },
-  '/open-apis/approval/v4/external_instances': {
+  '/approval/v4/external_instances': {
     POST: 'createApprovalExternalInstance',
   },
-  '/open-apis/approval/v4/external_instances/check': {
+  '/approval/v4/external_instances/check': {
     POST: 'checkApprovalExternalInstance',
   },
-  '/open-apis/approval/v4/external_tasks': {
+  '/approval/v4/external_tasks': {
     GET: { name: 'listApprovalExternalTask', pagination: { argIndex: 1, itemsKey: 'data' } },
   },
-  '/open-apis/approval/v4/instances/query': {
+  '/approval/v4/instances/query': {
     POST: 'queryApprovalInstance',
   },
-  '/open-apis/approval/v4/instances/search_cc': {
+  '/approval/v4/instances/search_cc': {
     POST: 'searchCcApprovalInstance',
   },
-  '/open-apis/approval/v4/tasks/search': {
+  '/approval/v4/tasks/search': {
     POST: 'searchApprovalTask',
   },
-  '/open-apis/approval/v4/tasks/query': {
+  '/approval/v4/tasks/query': {
     GET: 'queryApprovalTask',
   },
-  '/open-apis/approval/v4/approvals/{approval_code}/subscribe': {
+  '/approval/v4/approvals/{approval_code}/subscribe': {
     POST: 'subscribeApproval',
   },
-  '/open-apis/approval/v4/approvals/{approval_code}/unsubscribe': {
+  '/approval/v4/approvals/{approval_code}/unsubscribe': {
     POST: 'unsubscribeApproval',
   },
 })

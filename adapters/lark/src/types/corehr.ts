@@ -1,5 +1,5 @@
-import { Address, ApprovalGroup, ApproverInfo, AssessmentForCreate, AssignedOrganizationWithCode, Bank, BankAccount, BankBranch, BasicInfo, BasicInfoUpdate, Bp, BpRoleOrganization, City, Company, Contract, CostCenter, CostCenterVersion, CountryRegion, CountryRegionSubdivision, CpstGrade, CreateTransferInfo, Currency, CustomField, CustomFieldData, DataengineI18n, Department, DepartmentChange, DepartmentCreate, DepartmentHrbp, DepartmentParents, DepartmentTimeline, DepartmentTree, Dependent, District, Education, EducationInfo, Email, EmergencyContact, Employee, EmployeeJobData, EmployeeType, EmployeesAdditionalJob, EmployeesAdditionalJobBatchReqDate, EmployeesAdditionalJobWriteResp, Employment, EmploymentBp, EmploymentCreate, EmploymentLeaveBalance, Enum, EnumFieldOption, FieldVariableValue, FormFieldVariable, HiberarchyCommon, Hrbp, I18n, IdInfo, Job, JobChange, JobData, JobFamily, JobGrade, JobLevel, Language, LeaveGrantingRecord, LeaveRequest, LeaveType, Location, ManagementScope, NationalId, NationalIdType, Nationality, Object, ObjectFieldData, Offboarding, OffboardingReason, OfferInfo, OfferInfoUpdate, OrganizationOpLog, Person, PersonInfo, PersonName, PersonalProfile, Phone, PhoneNumberAndAreaCode, PreHire, PreHireQuery, ProbationInfo, ProbationInfoForSubmit, ProcessAbstractItem, ProcessCcItem, ProcessCommentInfo, ProcessDoneItem, ProcessFormVariableV2, ProcessLink, ProcessSystemDoneItem, ProcessSystemTodoItem, ProcessTodoItem, ProfileSettingCareer, ProfileSettingDataAttachment, ProfileSettingEmploymentInfo, ProfileSettingPersonalInfo, ResidentTax, RoleAuthorization, SecurityGroup, Subdivision, Subregion, SupportCostCenterItem, TimeZone, TransferInfo, TransferReason, TransferType, WkCalendarDate, WkOption, WorkCalendarDetail, WorkExperience, WorkExperienceInfo, WorkforcePlan, WorkforcePlanDetail, WorkforcePlanDetailRow, WorkingHoursType } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Address, ApprovalGroup, ApproverInfo, AssessmentForCreate, AssignedOrganizationWithCode, Bank, BankAccount, BankBranch, BasicInfo, BasicInfoUpdate, Bp, BpRoleOrganization, City, Company, Contract, CostCenter, CostCenterVersion, CountryRegion, CountryRegionSubdivision, CpstGrade, CreateTransferInfo, Currency, CustomField, CustomFieldData, DataengineI18n, Department, DepartmentChange, DepartmentCreate, DepartmentHrbp, DepartmentParents, DepartmentTimeline, DepartmentTree, Dependent, District, Education, EducationInfo, Email, EmergencyContact, Employee, EmployeeJobData, EmployeesAdditionalJob, EmployeesAdditionalJobBatchReqDate, EmployeesAdditionalJobWriteResp, EmployeeType, Employment, EmploymentBp, EmploymentCreate, EmploymentLeaveBalance, Enum, EnumFieldOption, FieldVariableValue, FormFieldVariable, HiberarchyCommon, Hrbp, I18n, IdInfo, Job, JobChange, JobData, JobFamily, JobGrade, JobLevel, Language, LeaveGrantingRecord, LeaveRequest, LeaveType, Location, ManagementScope, NationalId, NationalIdType, Nationality, Object, ObjectFieldData, Offboarding, OffboardingReason, OfferInfo, OfferInfoUpdate, OrganizationOpLog, Person, PersonalProfile, PersonInfo, PersonName, Phone, PhoneNumberAndAreaCode, PreHire, PreHireQuery, ProbationInfo, ProbationInfoForSubmit, ProcessAbstractItem, ProcessCcItem, ProcessCommentInfo, ProcessDoneItem, ProcessFormVariableV2, ProcessLink, ProcessSystemDoneItem, ProcessSystemTodoItem, ProcessTodoItem, ProfileSettingCareer, ProfileSettingDataAttachment, ProfileSettingEmploymentInfo, ProfileSettingPersonalInfo, ResidentTax, RoleAuthorization, SecurityGroup, Subdivision, Subregion, SupportCostCenterItem, TimeZone, TransferInfo, TransferReason, TransferType, WkCalendarDate, WkOption, WorkCalendarDetail, WorkExperience, WorkExperienceInfo, WorkforcePlan, WorkforcePlanDetail, WorkforcePlanDetailRow, WorkingHoursType } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,1318 +7,1318 @@ declare module '../internal' {
      * 获取飞书人事对象列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/list_object_api_name
      */
-    listObjectApiNameCorehrCustomField(query?: Pagination): Promise<Paginated<Object>>
+    listObjectApiNameCorehrV1CustomField(query?: Pagination): Promise<Paginated<Object>>
     /**
      * 获取飞书人事对象列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/list_object_api_name
      */
-    listObjectApiNameCorehrCustomFieldIter(): AsyncIterator<Object>
+    listObjectApiNameCorehrV1CustomFieldIter(): AsyncIterator<Object>
     /**
      * 获取自定义字段列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/query
      */
-    queryCorehrCustomField(query?: QueryCorehrCustomFieldQuery): Promise<QueryCorehrCustomFieldResponse>
+    queryCorehrV1CustomField(query?: QueryCorehrV1CustomFieldQuery): Promise<QueryCorehrV1CustomFieldResponse>
     /**
      * 获取字段详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param
      */
-    getByParamCorehrCustomField(query?: GetByParamCorehrCustomFieldQuery): Promise<GetByParamCorehrCustomFieldResponse>
+    getByParamCorehrV1CustomField(query?: GetByParamCorehrV1CustomFieldQuery): Promise<GetByParamCorehrV1CustomFieldResponse>
     /**
      * 增加字段枚举值选项
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/common_data-meta_data/add_enum_option
      */
-    addEnumOptionCorehrCommonDataMetaData(body: AddEnumOptionCorehrCommonDataMetaDataRequest, query?: AddEnumOptionCorehrCommonDataMetaDataQuery): Promise<AddEnumOptionCorehrCommonDataMetaDataResponse>
+    addEnumOptionCorehrV1CommonDataMetaData(body: AddEnumOptionCorehrV1CommonDataMetaDataRequest, query?: AddEnumOptionCorehrV1CommonDataMetaDataQuery): Promise<AddEnumOptionCorehrV1CommonDataMetaDataResponse>
     /**
      * 修改字段枚举值选项
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/common_data-meta_data/edit_enum_option
      */
-    editEnumOptionCorehrCommonDataMetaData(body: EditEnumOptionCorehrCommonDataMetaDataRequest, query?: EditEnumOptionCorehrCommonDataMetaDataQuery): Promise<EditEnumOptionCorehrCommonDataMetaDataResponse>
+    editEnumOptionCorehrV1CommonDataMetaData(body: EditEnumOptionCorehrV1CommonDataMetaDataRequest, query?: EditEnumOptionCorehrV1CommonDataMetaDataQuery): Promise<EditEnumOptionCorehrV1CommonDataMetaDataResponse>
     /**
      * 查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search
      */
-    searchCorehrBasicInfoCountryRegion(body: SearchCorehrBasicInfoCountryRegionRequest, query?: Pagination): Promise<Paginated<CountryRegion>>
+    searchCorehrV2BasicInfoCountryRegion(body: SearchCorehrV2BasicInfoCountryRegionRequest, query?: Pagination): Promise<Paginated<CountryRegion>>
     /**
      * 查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search
      */
-    searchCorehrBasicInfoCountryRegionIter(body: SearchCorehrBasicInfoCountryRegionRequest): AsyncIterator<CountryRegion>
+    searchCorehrV2BasicInfoCountryRegionIter(body: SearchCorehrV2BasicInfoCountryRegionRequest): AsyncIterator<CountryRegion>
     /**
      * 查询省份/主要行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search
      */
-    searchCorehrBasicInfoCountryRegionSubdivision(body: SearchCorehrBasicInfoCountryRegionSubdivisionRequest, query?: Pagination): Promise<Paginated<CountryRegionSubdivision>>
+    searchCorehrV2BasicInfoCountryRegionSubdivision(body: SearchCorehrV2BasicInfoCountryRegionSubdivisionRequest, query?: Pagination): Promise<Paginated<CountryRegionSubdivision>>
     /**
      * 查询省份/主要行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search
      */
-    searchCorehrBasicInfoCountryRegionSubdivisionIter(body: SearchCorehrBasicInfoCountryRegionSubdivisionRequest): AsyncIterator<CountryRegionSubdivision>
+    searchCorehrV2BasicInfoCountryRegionSubdivisionIter(body: SearchCorehrV2BasicInfoCountryRegionSubdivisionRequest): AsyncIterator<CountryRegionSubdivision>
     /**
      * 查询城市信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search
      */
-    searchCorehrBasicInfoCity(body: SearchCorehrBasicInfoCityRequest, query?: Pagination): Promise<Paginated<City>>
+    searchCorehrV2BasicInfoCity(body: SearchCorehrV2BasicInfoCityRequest, query?: Pagination): Promise<Paginated<City>>
     /**
      * 查询城市信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search
      */
-    searchCorehrBasicInfoCityIter(body: SearchCorehrBasicInfoCityRequest): AsyncIterator<City>
+    searchCorehrV2BasicInfoCityIter(body: SearchCorehrV2BasicInfoCityRequest): AsyncIterator<City>
     /**
      * 查询区/县信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-district/search
      */
-    searchCorehrBasicInfoDistrict(body: SearchCorehrBasicInfoDistrictRequest, query?: Pagination): Promise<Paginated<District>>
+    searchCorehrV2BasicInfoDistrict(body: SearchCorehrV2BasicInfoDistrictRequest, query?: Pagination): Promise<Paginated<District>>
     /**
      * 查询区/县信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-district/search
      */
-    searchCorehrBasicInfoDistrictIter(body: SearchCorehrBasicInfoDistrictRequest): AsyncIterator<District>
+    searchCorehrV2BasicInfoDistrictIter(body: SearchCorehrV2BasicInfoDistrictRequest): AsyncIterator<District>
     /**
      * 查询国籍信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search
      */
-    searchCorehrBasicInfoNationality(body: SearchCorehrBasicInfoNationalityRequest, query?: Pagination): Promise<Paginated<Nationality>>
+    searchCorehrV2BasicInfoNationality(body: SearchCorehrV2BasicInfoNationalityRequest, query?: Pagination): Promise<Paginated<Nationality>>
     /**
      * 查询国籍信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search
      */
-    searchCorehrBasicInfoNationalityIter(body: SearchCorehrBasicInfoNationalityRequest): AsyncIterator<Nationality>
+    searchCorehrV2BasicInfoNationalityIter(body: SearchCorehrV2BasicInfoNationalityRequest): AsyncIterator<Nationality>
     /**
      * 创建国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/create
      */
-    createCorehrNationalIdType(body: CreateCorehrNationalIdTypeRequest, query?: CreateCorehrNationalIdTypeQuery): Promise<CreateCorehrNationalIdTypeResponse>
+    createCorehrV1NationalIdType(body: CreateCorehrV1NationalIdTypeRequest, query?: CreateCorehrV1NationalIdTypeQuery): Promise<CreateCorehrV1NationalIdTypeResponse>
     /**
      * 删除国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/delete
      */
-    deleteCorehrNationalIdType(national_id_type_id: string): Promise<void>
+    deleteCorehrV1NationalIdType(national_id_type_id: string): Promise<void>
     /**
      * 更新国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/patch
      */
-    patchCorehrNationalIdType(national_id_type_id: string, body: PatchCorehrNationalIdTypeRequest, query?: PatchCorehrNationalIdTypeQuery): Promise<PatchCorehrNationalIdTypeResponse>
+    patchCorehrV1NationalIdType(national_id_type_id: string, body: PatchCorehrV1NationalIdTypeRequest, query?: PatchCorehrV1NationalIdTypeQuery): Promise<PatchCorehrV1NationalIdTypeResponse>
     /**
      * 查询单个国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/get
      */
-    getCorehrNationalIdType(national_id_type_id: string): Promise<GetCorehrNationalIdTypeResponse>
+    getCorehrV1NationalIdType(national_id_type_id: string): Promise<GetCorehrV1NationalIdTypeResponse>
     /**
      * 批量查询国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/list
      */
-    listCorehrNationalIdType(query?: ListCorehrNationalIdTypeQuery & Pagination): Promise<Paginated<NationalIdType>>
+    listCorehrV1NationalIdType(query?: ListCorehrV1NationalIdTypeQuery & Pagination): Promise<Paginated<NationalIdType>>
     /**
      * 批量查询国家证件类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/national_id_type/list
      */
-    listCorehrNationalIdTypeIter(query?: ListCorehrNationalIdTypeQuery): AsyncIterator<NationalIdType>
+    listCorehrV1NationalIdTypeIter(query?: ListCorehrV1NationalIdTypeQuery): AsyncIterator<NationalIdType>
     /**
      * 查询银行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search
      */
-    searchCorehrBasicInfoBank(body: SearchCorehrBasicInfoBankRequest, query?: Pagination): Promise<Paginated<Bank>>
+    searchCorehrV2BasicInfoBank(body: SearchCorehrV2BasicInfoBankRequest, query?: Pagination): Promise<Paginated<Bank>>
     /**
      * 查询银行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search
      */
-    searchCorehrBasicInfoBankIter(body: SearchCorehrBasicInfoBankRequest): AsyncIterator<Bank>
+    searchCorehrV2BasicInfoBankIter(body: SearchCorehrV2BasicInfoBankRequest): AsyncIterator<Bank>
     /**
      * 查询支行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank_branch/search
      */
-    searchCorehrBasicInfoBankBranch(body: SearchCorehrBasicInfoBankBranchRequest, query?: Pagination): Promise<Paginated<BankBranch>>
+    searchCorehrV2BasicInfoBankBranch(body: SearchCorehrV2BasicInfoBankBranchRequest, query?: Pagination): Promise<Paginated<BankBranch>>
     /**
      * 查询支行信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank_branch/search
      */
-    searchCorehrBasicInfoBankBranchIter(body: SearchCorehrBasicInfoBankBranchRequest): AsyncIterator<BankBranch>
+    searchCorehrV2BasicInfoBankBranchIter(body: SearchCorehrV2BasicInfoBankBranchRequest): AsyncIterator<BankBranch>
     /**
      * 查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-currency/search
      */
-    searchCorehrBasicInfoCurrency(body: SearchCorehrBasicInfoCurrencyRequest, query?: Pagination): Promise<Paginated<Currency>>
+    searchCorehrV2BasicInfoCurrency(body: SearchCorehrV2BasicInfoCurrencyRequest, query?: Pagination): Promise<Paginated<Currency>>
     /**
      * 查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-currency/search
      */
-    searchCorehrBasicInfoCurrencyIter(body: SearchCorehrBasicInfoCurrencyRequest): AsyncIterator<Currency>
+    searchCorehrV2BasicInfoCurrencyIter(body: SearchCorehrV2BasicInfoCurrencyRequest): AsyncIterator<Currency>
     /**
      * 查询时区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-time_zone/search
      */
-    searchCorehrBasicInfoTimeZone(body: SearchCorehrBasicInfoTimeZoneRequest, query?: Pagination): Promise<Paginated<TimeZone>>
+    searchCorehrV2BasicInfoTimeZone(body: SearchCorehrV2BasicInfoTimeZoneRequest, query?: Pagination): Promise<Paginated<TimeZone>>
     /**
      * 查询时区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-time_zone/search
      */
-    searchCorehrBasicInfoTimeZoneIter(body: SearchCorehrBasicInfoTimeZoneRequest): AsyncIterator<TimeZone>
+    searchCorehrV2BasicInfoTimeZoneIter(body: SearchCorehrV2BasicInfoTimeZoneRequest): AsyncIterator<TimeZone>
     /**
      * 查询语言信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-language/search
      */
-    searchCorehrBasicInfoLanguage(body: SearchCorehrBasicInfoLanguageRequest, query?: Pagination): Promise<Paginated<Language>>
+    searchCorehrV2BasicInfoLanguage(body: SearchCorehrV2BasicInfoLanguageRequest, query?: Pagination): Promise<Paginated<Language>>
     /**
      * 查询语言信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-language/search
      */
-    searchCorehrBasicInfoLanguageIter(body: SearchCorehrBasicInfoLanguageRequest): AsyncIterator<Language>
+    searchCorehrV2BasicInfoLanguageIter(body: SearchCorehrV2BasicInfoLanguageRequest): AsyncIterator<Language>
     /**
      * 创建人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/create
      */
-    createCorehrEmployeeType(body: CreateCorehrEmployeeTypeRequest, query?: CreateCorehrEmployeeTypeQuery): Promise<CreateCorehrEmployeeTypeResponse>
+    createCorehrV1EmployeeType(body: CreateCorehrV1EmployeeTypeRequest, query?: CreateCorehrV1EmployeeTypeQuery): Promise<CreateCorehrV1EmployeeTypeResponse>
     /**
      * 删除人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/delete
      */
-    deleteCorehrEmployeeType(employee_type_id: string): Promise<void>
+    deleteCorehrV1EmployeeType(employee_type_id: string): Promise<void>
     /**
      * 更新人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/patch
      */
-    patchCorehrEmployeeType(employee_type_id: string, body: PatchCorehrEmployeeTypeRequest, query?: PatchCorehrEmployeeTypeQuery): Promise<PatchCorehrEmployeeTypeResponse>
+    patchCorehrV1EmployeeType(employee_type_id: string, body: PatchCorehrV1EmployeeTypeRequest, query?: PatchCorehrV1EmployeeTypeQuery): Promise<PatchCorehrV1EmployeeTypeResponse>
     /**
      * 查询单个人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/get
      */
-    getCorehrEmployeeType(employee_type_id: string): Promise<GetCorehrEmployeeTypeResponse>
+    getCorehrV1EmployeeType(employee_type_id: string): Promise<GetCorehrV1EmployeeTypeResponse>
     /**
      * 批量查询人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list
      */
-    listCorehrEmployeeType(query?: Pagination): Promise<Paginated<EmployeeType>>
+    listCorehrV1EmployeeType(query?: Pagination): Promise<Paginated<EmployeeType>>
     /**
      * 批量查询人员类型
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list
      */
-    listCorehrEmployeeTypeIter(): AsyncIterator<EmployeeType>
+    listCorehrV1EmployeeTypeIter(): AsyncIterator<EmployeeType>
     /**
      * 创建工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/create
      */
-    createCorehrWorkingHoursType(body: CreateCorehrWorkingHoursTypeRequest, query?: CreateCorehrWorkingHoursTypeQuery): Promise<CreateCorehrWorkingHoursTypeResponse>
+    createCorehrV1WorkingHoursType(body: CreateCorehrV1WorkingHoursTypeRequest, query?: CreateCorehrV1WorkingHoursTypeQuery): Promise<CreateCorehrV1WorkingHoursTypeResponse>
     /**
      * 删除工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/delete
      */
-    deleteCorehrWorkingHoursType(working_hours_type_id: string): Promise<void>
+    deleteCorehrV1WorkingHoursType(working_hours_type_id: string): Promise<void>
     /**
      * 更新工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/patch
      */
-    patchCorehrWorkingHoursType(working_hours_type_id: string, body: PatchCorehrWorkingHoursTypeRequest, query?: PatchCorehrWorkingHoursTypeQuery): Promise<PatchCorehrWorkingHoursTypeResponse>
+    patchCorehrV1WorkingHoursType(working_hours_type_id: string, body: PatchCorehrV1WorkingHoursTypeRequest, query?: PatchCorehrV1WorkingHoursTypeQuery): Promise<PatchCorehrV1WorkingHoursTypeResponse>
     /**
      * 查询单个工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/get
      */
-    getCorehrWorkingHoursType(working_hours_type_id: string): Promise<GetCorehrWorkingHoursTypeResponse>
+    getCorehrV1WorkingHoursType(working_hours_type_id: string): Promise<GetCorehrV1WorkingHoursTypeResponse>
     /**
      * 批量查询工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list
      */
-    listCorehrWorkingHoursType(query?: Pagination): Promise<Paginated<WorkingHoursType>>
+    listCorehrV1WorkingHoursType(query?: Pagination): Promise<Paginated<WorkingHoursType>>
     /**
      * 批量查询工时制度
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list
      */
-    listCorehrWorkingHoursTypeIter(): AsyncIterator<WorkingHoursType>
+    listCorehrV1WorkingHoursTypeIter(): AsyncIterator<WorkingHoursType>
     /**
      * ID 转换
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/common_data-id/convert
      */
-    convertCorehrCommonDataId(body: ConvertCorehrCommonDataIdRequest, query?: ConvertCorehrCommonDataIdQuery): Promise<ConvertCorehrCommonDataIdResponse>
+    convertCorehrV1CommonDataId(body: ConvertCorehrV1CommonDataIdRequest, query?: ConvertCorehrV1CommonDataIdQuery): Promise<ConvertCorehrV1CommonDataIdResponse>
     /**
      * 批量查询员工信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get
      */
-    batchGetCorehrEmployee(body: BatchGetCorehrEmployeeRequest, query?: BatchGetCorehrEmployeeQuery): Promise<BatchGetCorehrEmployeeResponse>
+    batchGetCorehrV2Employee(body: BatchGetCorehrV2EmployeeRequest, query?: BatchGetCorehrV2EmployeeQuery): Promise<BatchGetCorehrV2EmployeeResponse>
     /**
      * 搜索员工信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/search
      */
-    searchCorehrEmployee(body: SearchCorehrEmployeeRequest, query?: SearchCorehrEmployeeQuery & Pagination): Promise<Paginated<Employee>>
+    searchCorehrV2Employee(body: SearchCorehrV2EmployeeRequest, query?: SearchCorehrV2EmployeeQuery & Pagination): Promise<Paginated<Employee>>
     /**
      * 搜索员工信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/search
      */
-    searchCorehrEmployeeIter(body: SearchCorehrEmployeeRequest, query?: SearchCorehrEmployeeQuery): AsyncIterator<Employee>
+    searchCorehrV2EmployeeIter(body: SearchCorehrV2EmployeeRequest, query?: SearchCorehrV2EmployeeQuery): AsyncIterator<Employee>
     /**
      * 添加人员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/create
      */
-    createCorehrEmployee(body: CreateCorehrEmployeeRequest, query?: CreateCorehrEmployeeQuery): Promise<CreateCorehrEmployeeResponse>
+    createCorehrV2Employee(body: CreateCorehrV2EmployeeRequest, query?: CreateCorehrV2EmployeeQuery): Promise<CreateCorehrV2EmployeeResponse>
     /**
      * 创建个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/person/create
      */
-    createCorehrPerson(body: CreateCorehrPersonRequest, query?: CreateCorehrPersonQuery): Promise<CreateCorehrPersonResponse>
+    createCorehrV2Person(body: CreateCorehrV2PersonRequest, query?: CreateCorehrV2PersonQuery): Promise<CreateCorehrV2PersonResponse>
     /**
      * 更新个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/person/patch
      */
-    patchCorehrPerson(person_id: string, body: PatchCorehrPersonRequest, query?: PatchCorehrPersonQuery): Promise<PatchCorehrPersonResponse>
+    patchCorehrV2Person(person_id: string, body: PatchCorehrV2PersonRequest, query?: PatchCorehrV2PersonQuery): Promise<PatchCorehrV2PersonResponse>
     /**
      * 删除个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/delete
      */
-    deleteCorehrPerson(person_id: string): Promise<void>
+    deleteCorehrV1Person(person_id: string): Promise<void>
     /**
      * 上传文件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/upload
      */
-    uploadCorehrPerson(form: UploadCorehrPersonForm): Promise<UploadCorehrPersonResponse>
+    uploadCorehrV1Person(form: UploadCorehrV1PersonForm): Promise<UploadCorehrV1PersonResponse>
     /**
      * 下载文件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/file/get
      */
-    getCorehrFile(id: string): Promise<ArrayBuffer>
+    getCorehrV1File(id: string): Promise<ArrayBuffer>
     /**
      * 创建雇佣信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employment/create
      */
-    createCorehrEmployment(body: CreateCorehrEmploymentRequest, query?: CreateCorehrEmploymentQuery): Promise<CreateCorehrEmploymentResponse>
+    createCorehrV1Employment(body: CreateCorehrV1EmploymentRequest, query?: CreateCorehrV1EmploymentQuery): Promise<CreateCorehrV1EmploymentResponse>
     /**
      * 更新雇佣信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employment/patch
      */
-    patchCorehrEmployment(employment_id: string, body: PatchCorehrEmploymentRequest, query?: PatchCorehrEmploymentQuery): Promise<PatchCorehrEmploymentResponse>
+    patchCorehrV1Employment(employment_id: string, body: PatchCorehrV1EmploymentRequest, query?: PatchCorehrV1EmploymentQuery): Promise<PatchCorehrV1EmploymentResponse>
     /**
      * 删除雇佣信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employment/delete
      */
-    deleteCorehrEmployment(employment_id: string, query?: DeleteCorehrEmploymentQuery): Promise<void>
+    deleteCorehrV1Employment(employment_id: string, query?: DeleteCorehrV1EmploymentQuery): Promise<void>
     /**
      * 创建任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/create
      */
-    createCorehrJobData(body: CreateCorehrJobDataRequest, query?: CreateCorehrJobDataQuery): Promise<CreateCorehrJobDataResponse>
+    createCorehrV1JobData(body: CreateCorehrV1JobDataRequest, query?: CreateCorehrV1JobDataQuery): Promise<CreateCorehrV1JobDataResponse>
     /**
      * 删除任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/delete
      */
-    deleteCorehrJobData(job_data_id: string, query?: DeleteCorehrJobDataQuery): Promise<void>
+    deleteCorehrV1JobData(job_data_id: string, query?: DeleteCorehrV1JobDataQuery): Promise<void>
     /**
      * 更新任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/patch
      */
-    patchCorehrJobData(job_data_id: string, body: PatchCorehrJobDataRequest, query?: PatchCorehrJobDataQuery): Promise<PatchCorehrJobDataResponse>
+    patchCorehrV1JobData(job_data_id: string, body: PatchCorehrV1JobDataRequest, query?: PatchCorehrV1JobDataQuery): Promise<PatchCorehrV1JobDataResponse>
     /**
      * 获取任职信息列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-job_data/query
      */
-    queryCorehrEmployeesJobData(body: QueryCorehrEmployeesJobDataRequest, query?: QueryCorehrEmployeesJobDataQuery & Pagination): Promise<Paginated<EmployeeJobData>>
+    queryCorehrV2EmployeesJobData(body: QueryCorehrV2EmployeesJobDataRequest, query?: QueryCorehrV2EmployeesJobDataQuery & Pagination): Promise<Paginated<EmployeeJobData>>
     /**
      * 获取任职信息列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-job_data/query
      */
-    queryCorehrEmployeesJobDataIter(body: QueryCorehrEmployeesJobDataRequest, query?: QueryCorehrEmployeesJobDataQuery): AsyncIterator<EmployeeJobData>
+    queryCorehrV2EmployeesJobDataIter(body: QueryCorehrV2EmployeesJobDataRequest, query?: QueryCorehrV2EmployeesJobDataQuery): AsyncIterator<EmployeeJobData>
     /**
      * 批量查询员工任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-job_data/batch_get
      */
-    batchGetCorehrEmployeesJobData(body: BatchGetCorehrEmployeesJobDataRequest, query?: BatchGetCorehrEmployeesJobDataQuery): Promise<BatchGetCorehrEmployeesJobDataResponse>
+    batchGetCorehrV2EmployeesJobData(body: BatchGetCorehrV2EmployeesJobDataRequest, query?: BatchGetCorehrV2EmployeesJobDataQuery): Promise<BatchGetCorehrV2EmployeesJobDataResponse>
     /**
      * 批量查询任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/list
      */
-    listCorehrJobData(query?: ListCorehrJobDataQuery & Pagination): Promise<Paginated<JobData>>
+    listCorehrV1JobData(query?: ListCorehrV1JobDataQuery & Pagination): Promise<Paginated<JobData>>
     /**
      * 批量查询任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/list
      */
-    listCorehrJobDataIter(query?: ListCorehrJobDataQuery): AsyncIterator<JobData>
+    listCorehrV1JobDataIter(query?: ListCorehrV1JobDataQuery): AsyncIterator<JobData>
     /**
      * 查询单个任职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_data/get
      */
-    getCorehrJobData(job_data_id: string, query?: GetCorehrJobDataQuery): Promise<GetCorehrJobDataResponse>
+    getCorehrV1JobData(job_data_id: string, query?: GetCorehrV1JobDataQuery): Promise<GetCorehrV1JobDataResponse>
     /**
      * 创建兼职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/create
      */
-    createCorehrEmployeesAdditionalJob(body: CreateCorehrEmployeesAdditionalJobRequest, query?: CreateCorehrEmployeesAdditionalJobQuery): Promise<CreateCorehrEmployeesAdditionalJobResponse>
+    createCorehrV2EmployeesAdditionalJob(body: CreateCorehrV2EmployeesAdditionalJobRequest, query?: CreateCorehrV2EmployeesAdditionalJobQuery): Promise<CreateCorehrV2EmployeesAdditionalJobResponse>
     /**
      * 更新兼职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/patch
      */
-    patchCorehrEmployeesAdditionalJob(additional_job_id: string, body: PatchCorehrEmployeesAdditionalJobRequest, query?: PatchCorehrEmployeesAdditionalJobQuery): Promise<PatchCorehrEmployeesAdditionalJobResponse>
+    patchCorehrV2EmployeesAdditionalJob(additional_job_id: string, body: PatchCorehrV2EmployeesAdditionalJobRequest, query?: PatchCorehrV2EmployeesAdditionalJobQuery): Promise<PatchCorehrV2EmployeesAdditionalJobResponse>
     /**
      * 删除兼职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/delete
      */
-    deleteCorehrEmployeesAdditionalJob(additional_job_id: string): Promise<void>
+    deleteCorehrV2EmployeesAdditionalJob(additional_job_id: string): Promise<void>
     /**
      * 批量查询兼职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/batch
      */
-    batchCorehrEmployeesAdditionalJob(body: BatchCorehrEmployeesAdditionalJobRequest, query?: BatchCorehrEmployeesAdditionalJobQuery & Pagination): Promise<Paginated<EmployeesAdditionalJob>>
+    batchCorehrV2EmployeesAdditionalJob(body: BatchCorehrV2EmployeesAdditionalJobRequest, query?: BatchCorehrV2EmployeesAdditionalJobQuery & Pagination): Promise<Paginated<EmployeesAdditionalJob>>
     /**
      * 批量查询兼职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-additional_job/batch
      */
-    batchCorehrEmployeesAdditionalJobIter(body: BatchCorehrEmployeesAdditionalJobRequest, query?: BatchCorehrEmployeesAdditionalJobQuery): AsyncIterator<EmployeesAdditionalJob>
+    batchCorehrV2EmployeesAdditionalJobIter(body: BatchCorehrV2EmployeesAdditionalJobRequest, query?: BatchCorehrV2EmployeesAdditionalJobQuery): AsyncIterator<EmployeesAdditionalJob>
     /**
      * 批量查询部门操作日志
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_operation_logs
      */
-    queryOperationLogsCorehrDepartment(body: QueryOperationLogsCorehrDepartmentRequest, query?: QueryOperationLogsCorehrDepartmentQuery & Pagination): Promise<Paginated<OrganizationOpLog, 'op_logs'>>
+    queryOperationLogsCorehrV2Department(body: QueryOperationLogsCorehrV2DepartmentRequest, query?: QueryOperationLogsCorehrV2DepartmentQuery & Pagination): Promise<Paginated<OrganizationOpLog, 'op_logs'>>
     /**
      * 批量查询部门操作日志
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_operation_logs
      */
-    queryOperationLogsCorehrDepartmentIter(body: QueryOperationLogsCorehrDepartmentRequest, query?: QueryOperationLogsCorehrDepartmentQuery): AsyncIterator<OrganizationOpLog>
+    queryOperationLogsCorehrV2DepartmentIter(body: QueryOperationLogsCorehrV2DepartmentRequest, query?: QueryOperationLogsCorehrV2DepartmentQuery): AsyncIterator<OrganizationOpLog>
     /**
      * 创建部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/create
      */
-    createCorehrDepartment(body: CreateCorehrDepartmentRequest, query?: CreateCorehrDepartmentQuery): Promise<CreateCorehrDepartmentResponse>
+    createCorehrV1Department(body: CreateCorehrV1DepartmentRequest, query?: CreateCorehrV1DepartmentQuery): Promise<CreateCorehrV1DepartmentResponse>
     /**
      * 更新部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/patch
      */
-    patchCorehrDepartment(department_id: string, body: PatchCorehrDepartmentRequest, query?: PatchCorehrDepartmentQuery): Promise<void>
+    patchCorehrV2Department(department_id: string, body: PatchCorehrV2DepartmentRequest, query?: PatchCorehrV2DepartmentQuery): Promise<void>
     /**
      * 获取父部门信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/parents
      */
-    parentsCorehrDepartment(body: ParentsCorehrDepartmentRequest, query?: ParentsCorehrDepartmentQuery): Promise<ParentsCorehrDepartmentResponse>
+    parentsCorehrV2Department(body: ParentsCorehrV2DepartmentRequest, query?: ParentsCorehrV2DepartmentQuery): Promise<ParentsCorehrV2DepartmentResponse>
     /**
      * 批量查询部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get
      */
-    batchGetCorehrDepartment(body: BatchGetCorehrDepartmentRequest, query?: BatchGetCorehrDepartmentQuery): Promise<BatchGetCorehrDepartmentResponse>
+    batchGetCorehrV2Department(body: BatchGetCorehrV2DepartmentRequest, query?: BatchGetCorehrV2DepartmentQuery): Promise<BatchGetCorehrV2DepartmentResponse>
     /**
      * 查询指定时间范围内当前生效信息发生变更的部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_recent_change
      */
-    queryRecentChangeCorehrDepartment(query?: QueryRecentChangeCorehrDepartmentQuery & Pagination): Promise<QueryRecentChangeCorehrDepartmentResponse>
+    queryRecentChangeCorehrV2Department(query?: QueryRecentChangeCorehrV2DepartmentQuery & Pagination): Promise<QueryRecentChangeCorehrV2DepartmentResponse>
     /**
      * 查询指定生效日期的部门基本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_timeline
      */
-    queryTimelineCorehrDepartment(body: QueryTimelineCorehrDepartmentRequest, query?: QueryTimelineCorehrDepartmentQuery): Promise<QueryTimelineCorehrDepartmentResponse>
+    queryTimelineCorehrV2Department(body: QueryTimelineCorehrV2DepartmentRequest, query?: QueryTimelineCorehrV2DepartmentQuery): Promise<QueryTimelineCorehrV2DepartmentResponse>
     /**
      * 查询指定生效日期的部门架构树
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/tree
      */
-    treeCorehrDepartment(body: TreeCorehrDepartmentRequest, query?: TreeCorehrDepartmentQuery & Pagination): Promise<Paginated<DepartmentTree>>
+    treeCorehrV2Department(body: TreeCorehrV2DepartmentRequest, query?: TreeCorehrV2DepartmentQuery & Pagination): Promise<Paginated<DepartmentTree>>
     /**
      * 查询指定生效日期的部门架构树
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/tree
      */
-    treeCorehrDepartmentIter(body: TreeCorehrDepartmentRequest, query?: TreeCorehrDepartmentQuery): AsyncIterator<DepartmentTree>
+    treeCorehrV2DepartmentIter(body: TreeCorehrV2DepartmentRequest, query?: TreeCorehrV2DepartmentQuery): AsyncIterator<DepartmentTree>
     /**
      * 批量查询部门版本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_multi_timeline
      */
-    queryMultiTimelineCorehrDepartment(body: QueryMultiTimelineCorehrDepartmentRequest, query?: QueryMultiTimelineCorehrDepartmentQuery & Pagination): Promise<Paginated<DepartmentTimeline>>
+    queryMultiTimelineCorehrV2Department(body: QueryMultiTimelineCorehrV2DepartmentRequest, query?: QueryMultiTimelineCorehrV2DepartmentQuery & Pagination): Promise<Paginated<DepartmentTimeline>>
     /**
      * 批量查询部门版本信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_multi_timeline
      */
-    queryMultiTimelineCorehrDepartmentIter(body: QueryMultiTimelineCorehrDepartmentRequest, query?: QueryMultiTimelineCorehrDepartmentQuery): AsyncIterator<DepartmentTimeline>
+    queryMultiTimelineCorehrV2DepartmentIter(body: QueryMultiTimelineCorehrV2DepartmentRequest, query?: QueryMultiTimelineCorehrV2DepartmentQuery): AsyncIterator<DepartmentTimeline>
     /**
      * 搜索部门信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/search
      */
-    searchCorehrDepartment(body: SearchCorehrDepartmentRequest, query?: SearchCorehrDepartmentQuery & Pagination): Promise<Paginated<Department>>
+    searchCorehrV2Department(body: SearchCorehrV2DepartmentRequest, query?: SearchCorehrV2DepartmentQuery & Pagination): Promise<Paginated<Department>>
     /**
      * 搜索部门信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/search
      */
-    searchCorehrDepartmentIter(body: SearchCorehrDepartmentRequest, query?: SearchCorehrDepartmentQuery): AsyncIterator<Department>
+    searchCorehrV2DepartmentIter(body: SearchCorehrV2DepartmentRequest, query?: SearchCorehrV2DepartmentQuery): AsyncIterator<Department>
     /**
      * 删除部门 V2
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/delete
      */
-    deleteCorehrDepartment(department_id: string, query?: DeleteCorehrDepartmentQuery): Promise<void>
+    deleteCorehrV2Department(department_id: string, query?: DeleteCorehrV2DepartmentQuery): Promise<void>
     /**
      * 创建地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/create
      */
-    createCorehrLocation(body: CreateCorehrLocationRequest, query?: CreateCorehrLocationQuery): Promise<CreateCorehrLocationResponse>
+    createCorehrV1Location(body: CreateCorehrV1LocationRequest, query?: CreateCorehrV1LocationQuery): Promise<CreateCorehrV1LocationResponse>
     /**
      * 更新地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/patch
      */
-    patchCorehrLocation(location_id: string, body: PatchCorehrLocationRequest, query?: PatchCorehrLocationQuery): Promise<void>
+    patchCorehrV2Location(location_id: string, body: PatchCorehrV2LocationRequest, query?: PatchCorehrV2LocationQuery): Promise<void>
     /**
      * 查询单个地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/get
      */
-    getCorehrLocation(location_id: string): Promise<GetCorehrLocationResponse>
+    getCorehrV1Location(location_id: string): Promise<GetCorehrV1LocationResponse>
     /**
      * 查询当前生效信息发生变更的地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/query_recent_change
      */
-    queryRecentChangeCorehrLocation(query?: QueryRecentChangeCorehrLocationQuery & Pagination): Promise<QueryRecentChangeCorehrLocationResponse>
+    queryRecentChangeCorehrV2Location(query?: QueryRecentChangeCorehrV2LocationQuery & Pagination): Promise<QueryRecentChangeCorehrV2LocationResponse>
     /**
      * 通过地点 ID 批量获取地点信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/batch_get
      */
-    batchGetCorehrLocation(body: BatchGetCorehrLocationRequest): Promise<BatchGetCorehrLocationResponse>
+    batchGetCorehrV2Location(body: BatchGetCorehrV2LocationRequest): Promise<BatchGetCorehrV2LocationResponse>
     /**
      * 批量分页查询地点信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list
      */
-    listCorehrLocation(query?: Pagination): Promise<Paginated<Location>>
+    listCorehrV1Location(query?: Pagination): Promise<Paginated<Location>>
     /**
      * 批量分页查询地点信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list
      */
-    listCorehrLocationIter(): AsyncIterator<Location>
+    listCorehrV1LocationIter(): AsyncIterator<Location>
     /**
      * 启用/停用地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/active
      */
-    activeCorehrLocation(body: ActiveCorehrLocationRequest): Promise<void>
+    activeCorehrV2Location(body: ActiveCorehrV2LocationRequest): Promise<void>
     /**
      * 删除地点
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/delete
      */
-    deleteCorehrLocation(location_id: string): Promise<void>
+    deleteCorehrV1Location(location_id: string): Promise<void>
     /**
      * 删除地点地址
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location-address/delete
      */
-    deleteCorehrLocationAddress(location_id: string, address_id: string): Promise<void>
+    deleteCorehrV2LocationAddress(location_id: string, address_id: string): Promise<void>
     /**
      * 更新地点地址
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location-address/patch
      */
-    patchCorehrLocationAddress(location_id: string, address_id: string, body: PatchCorehrLocationAddressRequest, query?: PatchCorehrLocationAddressQuery): Promise<void>
+    patchCorehrV2LocationAddress(location_id: string, address_id: string, body: PatchCorehrV2LocationAddressRequest, query?: PatchCorehrV2LocationAddressQuery): Promise<void>
     /**
      * 添加地点地址
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location-address/create
      */
-    createCorehrLocationAddress(location_id: string, body: CreateCorehrLocationAddressRequest, query?: CreateCorehrLocationAddressQuery): Promise<CreateCorehrLocationAddressResponse>
+    createCorehrV2LocationAddress(location_id: string, body: CreateCorehrV2LocationAddressRequest, query?: CreateCorehrV2LocationAddressQuery): Promise<CreateCorehrV2LocationAddressResponse>
     /**
      * 创建公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/create
      */
-    createCorehrCompany(body: CreateCorehrCompanyRequest, query?: CreateCorehrCompanyQuery): Promise<CreateCorehrCompanyResponse>
+    createCorehrV1Company(body: CreateCorehrV1CompanyRequest, query?: CreateCorehrV1CompanyQuery): Promise<CreateCorehrV1CompanyResponse>
     /**
      * 更新公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/patch
      */
-    patchCorehrCompany(company_id: string, body: PatchCorehrCompanyRequest, query?: PatchCorehrCompanyQuery): Promise<PatchCorehrCompanyResponse>
+    patchCorehrV1Company(company_id: string, body: PatchCorehrV1CompanyRequest, query?: PatchCorehrV1CompanyQuery): Promise<PatchCorehrV1CompanyResponse>
     /**
      * 启用/停用公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/active
      */
-    activeCorehrCompany(body: ActiveCorehrCompanyRequest): Promise<void>
+    activeCorehrV2Company(body: ActiveCorehrV2CompanyRequest): Promise<void>
     /**
      * 查询单个公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/get
      */
-    getCorehrCompany(company_id: string): Promise<GetCorehrCompanyResponse>
+    getCorehrV1Company(company_id: string): Promise<GetCorehrV1CompanyResponse>
     /**
      * 批量查询公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list
      */
-    listCorehrCompany(query?: Pagination): Promise<Paginated<Company>>
+    listCorehrV1Company(query?: Pagination): Promise<Paginated<Company>>
     /**
      * 批量查询公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list
      */
-    listCorehrCompanyIter(): AsyncIterator<Company>
+    listCorehrV1CompanyIter(): AsyncIterator<Company>
     /**
      * 查询指定时间范围内当前生效信息发生变更的公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/query_recent_change
      */
-    queryRecentChangeCorehrCompany(query?: QueryRecentChangeCorehrCompanyQuery & Pagination): Promise<QueryRecentChangeCorehrCompanyResponse>
+    queryRecentChangeCorehrV2Company(query?: QueryRecentChangeCorehrV2CompanyQuery & Pagination): Promise<QueryRecentChangeCorehrV2CompanyResponse>
     /**
      * 通过公司 ID 批量获取公司信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/batch_get
      */
-    batchGetCorehrCompany(body: BatchGetCorehrCompanyRequest): Promise<BatchGetCorehrCompanyResponse>
+    batchGetCorehrV2Company(body: BatchGetCorehrV2CompanyRequest): Promise<BatchGetCorehrV2CompanyResponse>
     /**
      * 删除公司
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/delete
      */
-    deleteCorehrCompany(company_id: string): Promise<void>
+    deleteCorehrV1Company(company_id: string): Promise<void>
     /**
      * 创建成本中心
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/create
      */
-    createCorehrCostCenter(body: CreateCorehrCostCenterRequest, query?: CreateCorehrCostCenterQuery): Promise<CreateCorehrCostCenterResponse>
+    createCorehrV2CostCenter(body: CreateCorehrV2CostCenterRequest, query?: CreateCorehrV2CostCenterQuery): Promise<CreateCorehrV2CostCenterResponse>
     /**
      * 启用 / 停用成本中心
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/patch
      */
-    patchCorehrCostCenter(cost_center_id: string, body: PatchCorehrCostCenterRequest, query?: PatchCorehrCostCenterQuery): Promise<PatchCorehrCostCenterResponse>
+    patchCorehrV2CostCenter(cost_center_id: string, body: PatchCorehrV2CostCenterRequest, query?: PatchCorehrV2CostCenterQuery): Promise<PatchCorehrV2CostCenterResponse>
     /**
      * 查询当前生效信息发生变更的成本中心
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/query_recent_change
      */
-    queryRecentChangeCorehrCostCenter(query?: QueryRecentChangeCorehrCostCenterQuery & Pagination): Promise<QueryRecentChangeCorehrCostCenterResponse>
+    queryRecentChangeCorehrV2CostCenter(query?: QueryRecentChangeCorehrV2CostCenterQuery & Pagination): Promise<QueryRecentChangeCorehrV2CostCenterResponse>
     /**
      * 搜索成本中心信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/search
      */
-    searchCorehrCostCenter(body: SearchCorehrCostCenterRequest, query?: SearchCorehrCostCenterQuery & Pagination): Promise<Paginated<CostCenterVersion>>
+    searchCorehrV2CostCenter(body: SearchCorehrV2CostCenterRequest, query?: SearchCorehrV2CostCenterQuery & Pagination): Promise<Paginated<CostCenterVersion>>
     /**
      * 搜索成本中心信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/search
      */
-    searchCorehrCostCenterIter(body: SearchCorehrCostCenterRequest, query?: SearchCorehrCostCenterQuery): AsyncIterator<CostCenterVersion>
+    searchCorehrV2CostCenterIter(body: SearchCorehrV2CostCenterRequest, query?: SearchCorehrV2CostCenterQuery): AsyncIterator<CostCenterVersion>
     /**
      * 删除成本中心
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/delete
      */
-    deleteCorehrCostCenter(cost_center_id: string, body: DeleteCorehrCostCenterRequest): Promise<void>
+    deleteCorehrV2CostCenter(cost_center_id: string, body: DeleteCorehrV2CostCenterRequest): Promise<void>
     /**
      * 创建成本中心版本
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center-version/create
      */
-    createCorehrCostCenterVersion(cost_center_id: string, body: CreateCorehrCostCenterVersionRequest, query?: CreateCorehrCostCenterVersionQuery): Promise<CreateCorehrCostCenterVersionResponse>
+    createCorehrV2CostCenterVersion(cost_center_id: string, body: CreateCorehrV2CostCenterVersionRequest, query?: CreateCorehrV2CostCenterVersionQuery): Promise<CreateCorehrV2CostCenterVersionResponse>
     /**
      * 更正成本中心版本
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center-version/patch
      */
-    patchCorehrCostCenterVersion(cost_center_id: string, version_id: string, body: PatchCorehrCostCenterVersionRequest, query?: PatchCorehrCostCenterVersionQuery): Promise<PatchCorehrCostCenterVersionResponse>
+    patchCorehrV2CostCenterVersion(cost_center_id: string, version_id: string, body: PatchCorehrV2CostCenterVersionRequest, query?: PatchCorehrV2CostCenterVersionQuery): Promise<PatchCorehrV2CostCenterVersionResponse>
     /**
      * 撤销成本中心版本
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center-version/delete
      */
-    deleteCorehrCostCenterVersion(cost_center_id: string, version_id: string, body: DeleteCorehrCostCenterVersionRequest): Promise<void>
+    deleteCorehrV2CostCenterVersion(cost_center_id: string, version_id: string, body: DeleteCorehrV2CostCenterVersionRequest): Promise<void>
     /**
      * 根据流程 ID 查询组织架构调整记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/get
      */
-    getCorehrApprovalGroups(process_id: string, query?: GetCorehrApprovalGroupsQuery): Promise<GetCorehrApprovalGroupsResponse>
+    getCorehrV2ApprovalGroups(process_id: string, query?: GetCorehrV2ApprovalGroupsQuery): Promise<GetCorehrV2ApprovalGroupsResponse>
     /**
      * 批量查询部门调整内容
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/open_query_department_change_list_by_ids
      */
-    openQueryDepartmentChangeListByIdsCorehrApprovalGroups(body: OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsRequest, query?: OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsQuery): Promise<OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsResponse>
+    openQueryDepartmentChangeListByIdsCorehrV2ApprovalGroups(body: OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsRequest, query?: OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsQuery): Promise<OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsResponse>
     /**
      * 批量查询人员调整内容
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/open_query_job_change_list_by_ids
      */
-    openQueryJobChangeListByIdsCorehrApprovalGroups(body: OpenQueryJobChangeListByIdsCorehrApprovalGroupsRequest, query?: OpenQueryJobChangeListByIdsCorehrApprovalGroupsQuery): Promise<OpenQueryJobChangeListByIdsCorehrApprovalGroupsResponse>
+    openQueryJobChangeListByIdsCorehrV2ApprovalGroups(body: OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsRequest, query?: OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsQuery): Promise<OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsResponse>
     /**
      * 创建序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/create
      */
-    createCorehrJobFamily(body: CreateCorehrJobFamilyRequest, query?: CreateCorehrJobFamilyQuery): Promise<CreateCorehrJobFamilyResponse>
+    createCorehrV1JobFamily(body: CreateCorehrV1JobFamilyRequest, query?: CreateCorehrV1JobFamilyQuery): Promise<CreateCorehrV1JobFamilyResponse>
     /**
      * 更新序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/patch
      */
-    patchCorehrJobFamily(job_family_id: string, body: PatchCorehrJobFamilyRequest, query?: PatchCorehrJobFamilyQuery): Promise<PatchCorehrJobFamilyResponse>
+    patchCorehrV1JobFamily(job_family_id: string, body: PatchCorehrV1JobFamilyRequest, query?: PatchCorehrV1JobFamilyQuery): Promise<PatchCorehrV1JobFamilyResponse>
     /**
      * 查询单个序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/get
      */
-    getCorehrJobFamily(job_family_id: string): Promise<GetCorehrJobFamilyResponse>
+    getCorehrV1JobFamily(job_family_id: string): Promise<GetCorehrV1JobFamilyResponse>
     /**
      * 批量查询序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list
      */
-    listCorehrJobFamily(query?: Pagination): Promise<Paginated<JobFamily>>
+    listCorehrV1JobFamily(query?: Pagination): Promise<Paginated<JobFamily>>
     /**
      * 批量查询序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list
      */
-    listCorehrJobFamilyIter(): AsyncIterator<JobFamily>
+    listCorehrV1JobFamilyIter(): AsyncIterator<JobFamily>
     /**
      * 查询当前生效信息发生变更的序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_family/query_recent_change
      */
-    queryRecentChangeCorehrJobFamily(query?: QueryRecentChangeCorehrJobFamilyQuery & Pagination): Promise<QueryRecentChangeCorehrJobFamilyResponse>
+    queryRecentChangeCorehrV2JobFamily(query?: QueryRecentChangeCorehrV2JobFamilyQuery & Pagination): Promise<QueryRecentChangeCorehrV2JobFamilyResponse>
     /**
      * 通过序列 ID 批量获取序列信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_family/batch_get
      */
-    batchGetCorehrJobFamily(body: BatchGetCorehrJobFamilyRequest): Promise<BatchGetCorehrJobFamilyResponse>
+    batchGetCorehrV2JobFamily(body: BatchGetCorehrV2JobFamilyRequest): Promise<BatchGetCorehrV2JobFamilyResponse>
     /**
      * 删除序列
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/delete
      */
-    deleteCorehrJobFamily(job_family_id: string): Promise<void>
+    deleteCorehrV1JobFamily(job_family_id: string): Promise<void>
     /**
      * 新建职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/create
      */
-    createCorehrJobLevel(body: CreateCorehrJobLevelRequest, query?: CreateCorehrJobLevelQuery): Promise<CreateCorehrJobLevelResponse>
+    createCorehrV1JobLevel(body: CreateCorehrV1JobLevelRequest, query?: CreateCorehrV1JobLevelQuery): Promise<CreateCorehrV1JobLevelResponse>
     /**
      * 更新单个职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/patch
      */
-    patchCorehrJobLevel(job_level_id: string, body: PatchCorehrJobLevelRequest, query?: PatchCorehrJobLevelQuery): Promise<PatchCorehrJobLevelResponse>
+    patchCorehrV1JobLevel(job_level_id: string, body: PatchCorehrV1JobLevelRequest, query?: PatchCorehrV1JobLevelQuery): Promise<PatchCorehrV1JobLevelResponse>
     /**
      * 查询单个职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/get
      */
-    getCorehrJobLevel(job_level_id: string): Promise<GetCorehrJobLevelResponse>
+    getCorehrV1JobLevel(job_level_id: string): Promise<GetCorehrV1JobLevelResponse>
     /**
      * 批量查询职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list
      */
-    listCorehrJobLevel(query?: Pagination): Promise<Paginated<JobLevel>>
+    listCorehrV1JobLevel(query?: Pagination): Promise<Paginated<JobLevel>>
     /**
      * 批量查询职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list
      */
-    listCorehrJobLevelIter(): AsyncIterator<JobLevel>
+    listCorehrV1JobLevelIter(): AsyncIterator<JobLevel>
     /**
      * 查询当前生效信息发生变更的职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_level/query_recent_change
      */
-    queryRecentChangeCorehrJobLevel(query?: QueryRecentChangeCorehrJobLevelQuery & Pagination): Promise<QueryRecentChangeCorehrJobLevelResponse>
+    queryRecentChangeCorehrV2JobLevel(query?: QueryRecentChangeCorehrV2JobLevelQuery & Pagination): Promise<QueryRecentChangeCorehrV2JobLevelResponse>
     /**
      * 通过职级 ID 批量获取职级信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_level/batch_get
      */
-    batchGetCorehrJobLevel(body: BatchGetCorehrJobLevelRequest): Promise<BatchGetCorehrJobLevelResponse>
+    batchGetCorehrV2JobLevel(body: BatchGetCorehrV2JobLevelRequest): Promise<BatchGetCorehrV2JobLevelResponse>
     /**
      * 删除职级
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/delete
      */
-    deleteCorehrJobLevel(job_level_id: string): Promise<void>
+    deleteCorehrV1JobLevel(job_level_id: string): Promise<void>
     /**
      * 创建职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/create
      */
-    createCorehrJobGrade(body: CreateCorehrJobGradeRequest, query?: CreateCorehrJobGradeQuery): Promise<CreateCorehrJobGradeResponse>
+    createCorehrV2JobGrade(body: CreateCorehrV2JobGradeRequest, query?: CreateCorehrV2JobGradeQuery): Promise<CreateCorehrV2JobGradeResponse>
     /**
      * 更新职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/patch
      */
-    patchCorehrJobGrade(job_grade_id: string, body: PatchCorehrJobGradeRequest, query?: PatchCorehrJobGradeQuery): Promise<void>
+    patchCorehrV2JobGrade(job_grade_id: string, body: PatchCorehrV2JobGradeRequest, query?: PatchCorehrV2JobGradeQuery): Promise<void>
     /**
      * 查询职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query
      */
-    queryCorehrJobGrade(body: QueryCorehrJobGradeRequest, query?: Pagination): Promise<Paginated<JobGrade>>
+    queryCorehrV2JobGrade(body: QueryCorehrV2JobGradeRequest, query?: Pagination): Promise<Paginated<JobGrade>>
     /**
      * 查询职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query
      */
-    queryCorehrJobGradeIter(body: QueryCorehrJobGradeRequest): AsyncIterator<JobGrade>
+    queryCorehrV2JobGradeIter(body: QueryCorehrV2JobGradeRequest): AsyncIterator<JobGrade>
     /**
      * 查询当前生效信息发生变更的职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query_recent_change
      */
-    queryRecentChangeCorehrJobGrade(query?: QueryRecentChangeCorehrJobGradeQuery & Pagination): Promise<QueryRecentChangeCorehrJobGradeResponse>
+    queryRecentChangeCorehrV2JobGrade(query?: QueryRecentChangeCorehrV2JobGradeQuery & Pagination): Promise<QueryRecentChangeCorehrV2JobGradeResponse>
     /**
      * 删除职等
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/delete
      */
-    deleteCorehrJobGrade(job_grade_id: string): Promise<void>
+    deleteCorehrV2JobGrade(job_grade_id: string): Promise<void>
     /**
      * 创建职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/create
      */
-    createCorehrJob(body: CreateCorehrJobRequest, query?: CreateCorehrJobQuery): Promise<CreateCorehrJobResponse>
+    createCorehrV1Job(body: CreateCorehrV1JobRequest, query?: CreateCorehrV1JobQuery): Promise<CreateCorehrV1JobResponse>
     /**
      * 删除职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/delete
      */
-    deleteCorehrJob(job_id: string): Promise<void>
+    deleteCorehrV1Job(job_id: string): Promise<void>
     /**
      * 更新职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/patch
      */
-    patchCorehrJob(job_id: string, body: PatchCorehrJobRequest, query?: PatchCorehrJobQuery): Promise<PatchCorehrJobResponse>
+    patchCorehrV1Job(job_id: string, body: PatchCorehrV1JobRequest, query?: PatchCorehrV1JobQuery): Promise<PatchCorehrV1JobResponse>
     /**
      * 查询单个职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/get
      */
-    getCorehrJob(job_id: string): Promise<GetCorehrJobResponse>
+    getCorehrV2Job(job_id: string): Promise<GetCorehrV2JobResponse>
     /**
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list
      */
-    listCorehrJob(query?: ListCorehrJobQuery & Pagination): Promise<Paginated<Job>>
+    listCorehrV2Job(query?: ListCorehrV2JobQuery & Pagination): Promise<Paginated<Job>>
     /**
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list
      */
-    listCorehrJobIter(query?: ListCorehrJobQuery): AsyncIterator<Job>
+    listCorehrV2JobIter(query?: ListCorehrV2JobQuery): AsyncIterator<Job>
     /**
      * 撤销入职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/withdraw_onboarding
      */
-    withdrawOnboardingCorehrPreHire(body: WithdrawOnboardingCorehrPreHireRequest): Promise<WithdrawOnboardingCorehrPreHireResponse>
+    withdrawOnboardingCorehrV2PreHire(body: WithdrawOnboardingCorehrV2PreHireRequest): Promise<WithdrawOnboardingCorehrV2PreHireResponse>
     /**
      * 恢复入职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/restore_flow_instance
      */
-    restoreFlowInstanceCorehrPreHire(body: RestoreFlowInstanceCorehrPreHireRequest): Promise<RestoreFlowInstanceCorehrPreHireResponse>
+    restoreFlowInstanceCorehrV2PreHire(body: RestoreFlowInstanceCorehrV2PreHireRequest): Promise<RestoreFlowInstanceCorehrV2PreHireResponse>
     /**
      * 直接创建待入职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/create
      */
-    createCorehrPreHire(body: CreateCorehrPreHireRequest): Promise<CreateCorehrPreHireResponse>
+    createCorehrV2PreHire(body: CreateCorehrV2PreHireRequest): Promise<CreateCorehrV2PreHireResponse>
     /**
      * 更新待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/patch
      */
-    patchCorehrPreHire(pre_hire_id: string, body: PatchCorehrPreHireRequest): Promise<PatchCorehrPreHireResponse>
+    patchCorehrV2PreHire(pre_hire_id: string, body: PatchCorehrV2PreHireRequest): Promise<PatchCorehrV2PreHireResponse>
     /**
      * 删除待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/delete
      */
-    deleteCorehrPreHire(pre_hire_id: string): Promise<void>
+    deleteCorehrV2PreHire(pre_hire_id: string): Promise<void>
     /**
      * 查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/query
      */
-    queryCorehrPreHire(body: QueryCorehrPreHireRequest, query?: QueryCorehrPreHireQuery & Pagination): Promise<Paginated<PreHire>>
+    queryCorehrV2PreHire(body: QueryCorehrV2PreHireRequest, query?: QueryCorehrV2PreHireQuery & Pagination): Promise<Paginated<PreHire>>
     /**
      * 查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/query
      */
-    queryCorehrPreHireIter(body: QueryCorehrPreHireRequest, query?: QueryCorehrPreHireQuery): AsyncIterator<PreHire>
+    queryCorehrV2PreHireIter(body: QueryCorehrV2PreHireRequest, query?: QueryCorehrV2PreHireQuery): AsyncIterator<PreHire>
     /**
      * 查询单个待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/get
      */
-    getCorehrPreHire(pre_hire_id: string): Promise<GetCorehrPreHireResponse>
+    getCorehrV1PreHire(pre_hire_id: string): Promise<GetCorehrV1PreHireResponse>
     /**
      * 批量查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/list
      */
-    listCorehrPreHire(query?: ListCorehrPreHireQuery & Pagination): Promise<Paginated<PreHireQuery>>
+    listCorehrV1PreHire(query?: ListCorehrV1PreHireQuery & Pagination): Promise<Paginated<PreHireQuery>>
     /**
      * 批量查询待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/list
      */
-    listCorehrPreHireIter(query?: ListCorehrPreHireQuery): AsyncIterator<PreHireQuery>
+    listCorehrV1PreHireIter(query?: ListCorehrV1PreHireQuery): AsyncIterator<PreHireQuery>
     /**
      * 搜索待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/search
      */
-    searchCorehrPreHire(body: SearchCorehrPreHireRequest, query?: SearchCorehrPreHireQuery & Pagination): Promise<Paginated<PreHire>>
+    searchCorehrV2PreHire(body: SearchCorehrV2PreHireRequest, query?: SearchCorehrV2PreHireQuery & Pagination): Promise<Paginated<PreHire>>
     /**
      * 搜索待入职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/search
      */
-    searchCorehrPreHireIter(body: SearchCorehrPreHireRequest, query?: SearchCorehrPreHireQuery): AsyncIterator<PreHire>
+    searchCorehrV2PreHireIter(body: SearchCorehrV2PreHireRequest, query?: SearchCorehrV2PreHireQuery): AsyncIterator<PreHire>
     /**
      * 流转入职任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/transit_task
      */
-    transitTaskCorehrPreHire(pre_hire_id: string, body: TransitTaskCorehrPreHireRequest): Promise<TransitTaskCorehrPreHireResponse>
+    transitTaskCorehrV2PreHire(pre_hire_id: string, body: TransitTaskCorehrV2PreHireRequest): Promise<TransitTaskCorehrV2PreHireResponse>
     /**
      * 操作员工完成入职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/complete
      */
-    completeCorehrPreHire(pre_hire_id: string): Promise<CompleteCorehrPreHireResponse>
+    completeCorehrV2PreHire(pre_hire_id: string): Promise<CompleteCorehrV2PreHireResponse>
     /**
      * 删除待入职（不推荐）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/delete
      */
-    deleteCorehrPreHire(pre_hire_id: string): Promise<void>
+    deleteCorehrV1PreHire(pre_hire_id: string): Promise<void>
     /**
      * 更新待入职信息（不推荐）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/pre_hire/patch
      */
-    patchCorehrPreHire(pre_hire_id: string, body: PatchCorehrPreHireRequest, query?: PatchCorehrPreHireQuery): Promise<PatchCorehrPreHireResponse>
+    patchCorehrV1PreHire(pre_hire_id: string, body: PatchCorehrV1PreHireRequest, query?: PatchCorehrV1PreHireQuery): Promise<PatchCorehrV1PreHireResponse>
     /**
      * 新增试用期考核信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation-assessment/create
      */
-    createCorehrProbationAssessment(body: CreateCorehrProbationAssessmentRequest, query?: CreateCorehrProbationAssessmentQuery): Promise<CreateCorehrProbationAssessmentResponse>
+    createCorehrV2ProbationAssessment(body: CreateCorehrV2ProbationAssessmentRequest, query?: CreateCorehrV2ProbationAssessmentQuery): Promise<CreateCorehrV2ProbationAssessmentResponse>
     /**
      * 启用/停用试用期考核功能
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/enable_disable_assessment
      */
-    enableDisableAssessmentCorehrProbation(body: EnableDisableAssessmentCorehrProbationRequest): Promise<void>
+    enableDisableAssessmentCorehrV2Probation(body: EnableDisableAssessmentCorehrV2ProbationRequest): Promise<void>
     /**
      * 更新试用期考核信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation-assessment/patch
      */
-    patchCorehrProbationAssessment(assessment_id: string, body: PatchCorehrProbationAssessmentRequest, query?: PatchCorehrProbationAssessmentQuery): Promise<void>
+    patchCorehrV2ProbationAssessment(assessment_id: string, body: PatchCorehrV2ProbationAssessmentRequest, query?: PatchCorehrV2ProbationAssessmentQuery): Promise<void>
     /**
      * 搜索试用期信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/search
      */
-    searchCorehrProbation(body: SearchCorehrProbationRequest, query?: SearchCorehrProbationQuery & Pagination): Promise<Paginated<ProbationInfo>>
+    searchCorehrV2Probation(body: SearchCorehrV2ProbationRequest, query?: SearchCorehrV2ProbationQuery & Pagination): Promise<Paginated<ProbationInfo>>
     /**
      * 搜索试用期信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/search
      */
-    searchCorehrProbationIter(body: SearchCorehrProbationRequest, query?: SearchCorehrProbationQuery): AsyncIterator<ProbationInfo>
+    searchCorehrV2ProbationIter(body: SearchCorehrV2ProbationRequest, query?: SearchCorehrV2ProbationQuery): AsyncIterator<ProbationInfo>
     /**
      * 删除试用期考核信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation-assessment/delete
      */
-    deleteCorehrProbationAssessment(assessment_id: string): Promise<void>
+    deleteCorehrV2ProbationAssessment(assessment_id: string): Promise<void>
     /**
      * 发起转正
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/submit
      */
-    submitCorehrProbation(body: SubmitCorehrProbationRequest, query?: SubmitCorehrProbationQuery): Promise<SubmitCorehrProbationResponse>
+    submitCorehrV2Probation(body: SubmitCorehrV2ProbationRequest, query?: SubmitCorehrV2ProbationQuery): Promise<SubmitCorehrV2ProbationResponse>
     /**
      * 撤销转正
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/withdraw
      */
-    withdrawCorehrProbation(body: WithdrawCorehrProbationRequest, query?: WithdrawCorehrProbationQuery): Promise<void>
+    withdrawCorehrV2Probation(body: WithdrawCorehrV2ProbationRequest, query?: WithdrawCorehrV2ProbationQuery): Promise<void>
     /**
      * 发起员工异动
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/create
      */
-    createCorehrJobChange(body: CreateCorehrJobChangeRequest, query?: CreateCorehrJobChangeQuery): Promise<CreateCorehrJobChangeResponse>
+    createCorehrV2JobChange(body: CreateCorehrV2JobChangeRequest, query?: CreateCorehrV2JobChangeQuery): Promise<CreateCorehrV2JobChangeResponse>
     /**
      * 获取异动类型列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/transfer_type/query
      */
-    queryCorehrTransferType(query?: QueryCorehrTransferTypeQuery): Promise<QueryCorehrTransferTypeResponse>
+    queryCorehrV1TransferType(query?: QueryCorehrV1TransferTypeQuery): Promise<QueryCorehrV1TransferTypeResponse>
     /**
      * 获取异动原因列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/transfer_reason/query
      */
-    queryCorehrTransferReason(query?: QueryCorehrTransferReasonQuery): Promise<QueryCorehrTransferReasonResponse>
+    queryCorehrV1TransferReason(query?: QueryCorehrV1TransferReasonQuery): Promise<QueryCorehrV1TransferReasonResponse>
     /**
      * 搜索员工异动信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/search
      */
-    searchCorehrJobChange(body: SearchCorehrJobChangeRequest, query?: SearchCorehrJobChangeQuery & Pagination): Promise<Paginated<JobChange>>
+    searchCorehrV2JobChange(body: SearchCorehrV2JobChangeRequest, query?: SearchCorehrV2JobChangeQuery & Pagination): Promise<Paginated<JobChange>>
     /**
      * 搜索员工异动信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/search
      */
-    searchCorehrJobChangeIter(body: SearchCorehrJobChangeRequest, query?: SearchCorehrJobChangeQuery): AsyncIterator<JobChange>
+    searchCorehrV2JobChangeIter(body: SearchCorehrV2JobChangeRequest, query?: SearchCorehrV2JobChangeQuery): AsyncIterator<JobChange>
     /**
      * 撤销异动
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_change/revoke
      */
-    revokeCorehrJobChange(job_change_id: string, body: RevokeCorehrJobChangeRequest, query?: RevokeCorehrJobChangeQuery): Promise<void>
+    revokeCorehrV2JobChange(job_change_id: string, body: RevokeCorehrV2JobChangeRequest, query?: RevokeCorehrV2JobChangeQuery): Promise<void>
     /**
      * 发起员工异动(不推荐)
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_change/create
      */
-    createCorehrJobChange(body: CreateCorehrJobChangeRequest, query?: CreateCorehrJobChangeQuery): Promise<CreateCorehrJobChangeResponse>
+    createCorehrV1JobChange(body: CreateCorehrV1JobChangeRequest, query?: CreateCorehrV1JobChangeQuery): Promise<CreateCorehrV1JobChangeResponse>
     /**
      * 查询员工离职原因列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/query
      */
-    queryCorehrOffboarding(body: QueryCorehrOffboardingRequest): Promise<QueryCorehrOffboardingResponse>
+    queryCorehrV1Offboarding(body: QueryCorehrV1OffboardingRequest): Promise<QueryCorehrV1OffboardingResponse>
     /**
      * 操作员工离职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/offboarding/submit_v2
      */
-    submitV2CorehrOffboarding(body: SubmitV2CorehrOffboardingRequest, query?: SubmitV2CorehrOffboardingQuery): Promise<SubmitV2CorehrOffboardingResponse>
+    submitV2CorehrV2Offboarding(body: SubmitV2CorehrV2OffboardingRequest, query?: SubmitV2CorehrV2OffboardingQuery): Promise<SubmitV2CorehrV2OffboardingResponse>
     /**
      * 编辑离职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/offboarding/edit
      */
-    editCorehrOffboarding(body: EditCorehrOffboardingRequest, query?: EditCorehrOffboardingQuery): Promise<EditCorehrOffboardingResponse>
+    editCorehrV2Offboarding(body: EditCorehrV2OffboardingRequest, query?: EditCorehrV2OffboardingQuery): Promise<EditCorehrV2OffboardingResponse>
     /**
      * 撤销离职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/offboarding/revoke
      */
-    revokeCorehrOffboarding(body: RevokeCorehrOffboardingRequest, query?: RevokeCorehrOffboardingQuery): Promise<void>
+    revokeCorehrV2Offboarding(body: RevokeCorehrV2OffboardingRequest, query?: RevokeCorehrV2OffboardingQuery): Promise<void>
     /**
      * 搜索离职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/search
      */
-    searchCorehrOffboarding(body: SearchCorehrOffboardingRequest, query?: SearchCorehrOffboardingQuery & Pagination): Promise<Paginated<Offboarding>>
+    searchCorehrV1Offboarding(body: SearchCorehrV1OffboardingRequest, query?: SearchCorehrV1OffboardingQuery & Pagination): Promise<Paginated<Offboarding>>
     /**
      * 搜索离职信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/search
      */
-    searchCorehrOffboardingIter(body: SearchCorehrOffboardingRequest, query?: SearchCorehrOffboardingQuery): AsyncIterator<Offboarding>
+    searchCorehrV1OffboardingIter(body: SearchCorehrV1OffboardingRequest, query?: SearchCorehrV1OffboardingQuery): AsyncIterator<Offboarding>
     /**
      * 新建合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/create
      */
-    createCorehrContract(body: CreateCorehrContractRequest, query?: CreateCorehrContractQuery): Promise<CreateCorehrContractResponse>
+    createCorehrV1Contract(body: CreateCorehrV1ContractRequest, query?: CreateCorehrV1ContractQuery): Promise<CreateCorehrV1ContractResponse>
     /**
      * 更新合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/patch
      */
-    patchCorehrContract(contract_id: string, body: PatchCorehrContractRequest, query?: PatchCorehrContractQuery): Promise<PatchCorehrContractResponse>
+    patchCorehrV1Contract(contract_id: string, body: PatchCorehrV1ContractRequest, query?: PatchCorehrV1ContractQuery): Promise<PatchCorehrV1ContractResponse>
     /**
      * 删除合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/delete
      */
-    deleteCorehrContract(contract_id: string): Promise<void>
+    deleteCorehrV1Contract(contract_id: string): Promise<void>
     /**
      * 查询单个合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/get
      */
-    getCorehrContract(contract_id: string): Promise<GetCorehrContractResponse>
+    getCorehrV1Contract(contract_id: string): Promise<GetCorehrV1ContractResponse>
     /**
      * 批量查询合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/list
      */
-    listCorehrContract(query?: Pagination): Promise<Paginated<Contract>>
+    listCorehrV1Contract(query?: Pagination): Promise<Paginated<Contract>>
     /**
      * 批量查询合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/contract/list
      */
-    listCorehrContractIter(): AsyncIterator<Contract>
+    listCorehrV1ContractIter(): AsyncIterator<Contract>
     /**
      * 搜索合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/contract/search
      */
-    searchCorehrContract(body: SearchCorehrContractRequest, query?: SearchCorehrContractQuery & Pagination): Promise<Paginated<Contract>>
+    searchCorehrV2Contract(body: SearchCorehrV2ContractRequest, query?: SearchCorehrV2ContractQuery & Pagination): Promise<Paginated<Contract>>
     /**
      * 搜索合同
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/contract/search
      */
-    searchCorehrContractIter(body: SearchCorehrContractRequest, query?: SearchCorehrContractQuery): AsyncIterator<Contract>
+    searchCorehrV2ContractIter(body: SearchCorehrV2ContractRequest, query?: SearchCorehrV2ContractQuery): AsyncIterator<Contract>
     /**
      * 批量创建/更新明细行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/workforce_plan_detail_row/batchSave
      */
-    batchSaveCorehrWorkforcePlanDetailRow(body: BatchSaveCorehrWorkforcePlanDetailRowRequest): Promise<void>
+    batchSaveCorehrV2WorkforcePlanDetailRow(body: BatchSaveCorehrV2WorkforcePlanDetailRowRequest): Promise<void>
     /**
      * 批量删除明细行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/workforce_plan_detail_row/batchDelete
      */
-    batchDeleteCorehrWorkforcePlanDetailRow(body: BatchDeleteCorehrWorkforcePlanDetailRowRequest): Promise<void>
+    batchDeleteCorehrV2WorkforcePlanDetailRow(body: BatchDeleteCorehrV2WorkforcePlanDetailRowRequest): Promise<void>
     /**
      * 批量创建/更新填报行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/report_detail_row/batchSave
      */
-    batchSaveCorehrReportDetailRow(body: BatchSaveCorehrReportDetailRowRequest): Promise<void>
+    batchSaveCorehrV2ReportDetailRow(body: BatchSaveCorehrV2ReportDetailRowRequest): Promise<void>
     /**
      * 批量删除填报行
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/report_detail_row/batchDelete
      */
-    batchDeleteCorehrReportDetailRow(body: BatchDeleteCorehrReportDetailRowRequest): Promise<void>
+    batchDeleteCorehrV2ReportDetailRow(body: BatchDeleteCorehrV2ReportDetailRowRequest): Promise<void>
     /**
      * 查询编制规划方案
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/workforce_plan/list
      */
-    listCorehrWorkforcePlan(query?: ListCorehrWorkforcePlanQuery): Promise<ListCorehrWorkforcePlanResponse>
+    listCorehrV2WorkforcePlan(query?: ListCorehrV2WorkforcePlanQuery): Promise<ListCorehrV2WorkforcePlanResponse>
     /**
      * 查询编制规划明细信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/workforce_plan_detail/batch
      */
-    batchCorehrWorkforcePlanDetail(body: BatchCorehrWorkforcePlanDetailRequest, query?: Pagination): Promise<BatchCorehrWorkforcePlanDetailResponse>
+    batchCorehrV2WorkforcePlanDetail(body: BatchCorehrV2WorkforcePlanDetailRequest, query?: Pagination): Promise<BatchCorehrV2WorkforcePlanDetailResponse>
     /**
      * 创建假期发放记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave_granting_record/create
      */
-    createCorehrLeaveGrantingRecord(body: CreateCorehrLeaveGrantingRecordRequest, query?: CreateCorehrLeaveGrantingRecordQuery): Promise<CreateCorehrLeaveGrantingRecordResponse>
+    createCorehrV1LeaveGrantingRecord(body: CreateCorehrV1LeaveGrantingRecordRequest, query?: CreateCorehrV1LeaveGrantingRecordQuery): Promise<CreateCorehrV1LeaveGrantingRecordResponse>
     /**
      * 删除假期发放记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave_granting_record/delete
      */
-    deleteCorehrLeaveGrantingRecord(leave_granting_record_id: string): Promise<void>
+    deleteCorehrV1LeaveGrantingRecord(leave_granting_record_id: string): Promise<void>
     /**
      * 获取假期类型列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_types
      */
-    leaveTypesCorehrLeave(query?: LeaveTypesCorehrLeaveQuery & Pagination): Promise<Paginated<LeaveType, 'leave_type_list'>>
+    leaveTypesCorehrV1Leave(query?: LeaveTypesCorehrV1LeaveQuery & Pagination): Promise<Paginated<LeaveType, 'leave_type_list'>>
     /**
      * 获取假期类型列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_types
      */
-    leaveTypesCorehrLeaveIter(query?: LeaveTypesCorehrLeaveQuery): AsyncIterator<LeaveType>
+    leaveTypesCorehrV1LeaveIter(query?: LeaveTypesCorehrV1LeaveQuery): AsyncIterator<LeaveType>
     /**
      * 批量查询员工假期余额
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_balances
      */
-    leaveBalancesCorehrLeave(query?: LeaveBalancesCorehrLeaveQuery & Pagination): Promise<Paginated<EmploymentLeaveBalance, 'employment_leave_balance_list'>>
+    leaveBalancesCorehrV1Leave(query?: LeaveBalancesCorehrV1LeaveQuery & Pagination): Promise<Paginated<EmploymentLeaveBalance, 'employment_leave_balance_list'>>
     /**
      * 批量查询员工假期余额
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_balances
      */
-    leaveBalancesCorehrLeaveIter(query?: LeaveBalancesCorehrLeaveQuery): AsyncIterator<EmploymentLeaveBalance>
+    leaveBalancesCorehrV1LeaveIter(query?: LeaveBalancesCorehrV1LeaveQuery): AsyncIterator<EmploymentLeaveBalance>
     /**
      * 批量查询员工请假记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_request_history
      */
-    leaveRequestHistoryCorehrLeave(query?: LeaveRequestHistoryCorehrLeaveQuery & Pagination): Promise<Paginated<LeaveRequest, 'leave_request_list'>>
+    leaveRequestHistoryCorehrV1Leave(query?: LeaveRequestHistoryCorehrV1LeaveQuery & Pagination): Promise<Paginated<LeaveRequest, 'leave_request_list'>>
     /**
      * 批量查询员工请假记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/leave_request_history
      */
-    leaveRequestHistoryCorehrLeaveIter(query?: LeaveRequestHistoryCorehrLeaveQuery): AsyncIterator<LeaveRequest>
+    leaveRequestHistoryCorehrV1LeaveIter(query?: LeaveRequestHistoryCorehrV1LeaveQuery): AsyncIterator<LeaveRequest>
     /**
      * 获取工作日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar
      */
-    workCalendarCorehrLeave(body: WorkCalendarCorehrLeaveRequest): Promise<WorkCalendarCorehrLeaveResponse>
+    workCalendarCorehrV1Leave(body: WorkCalendarCorehrV1LeaveRequest): Promise<WorkCalendarCorehrV1LeaveResponse>
     /**
      * 根据适用条件获取工作日历 ID
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/calendar_by_scope
      */
-    calendarByScopeCorehrLeave(query?: CalendarByScopeCorehrLeaveQuery): Promise<CalendarByScopeCorehrLeaveResponse>
+    calendarByScopeCorehrV1Leave(query?: CalendarByScopeCorehrV1LeaveQuery): Promise<CalendarByScopeCorehrV1LeaveResponse>
     /**
      * 获取工作日历日期详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar_date
      */
-    workCalendarDateCorehrLeave(body: WorkCalendarDateCorehrLeaveRequest): Promise<WorkCalendarDateCorehrLeaveResponse>
+    workCalendarDateCorehrV1Leave(body: WorkCalendarDateCorehrV1LeaveRequest): Promise<WorkCalendarDateCorehrV1LeaveResponse>
     /**
      * 批量查询用户授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/query
      */
-    queryCorehrAuthorization(query?: QueryCorehrAuthorizationQuery & Pagination): Promise<Paginated<RoleAuthorization>>
+    queryCorehrV1Authorization(query?: QueryCorehrV1AuthorizationQuery & Pagination): Promise<Paginated<RoleAuthorization>>
     /**
      * 批量查询用户授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/query
      */
-    queryCorehrAuthorizationIter(query?: QueryCorehrAuthorizationQuery): AsyncIterator<RoleAuthorization>
+    queryCorehrV1AuthorizationIter(query?: QueryCorehrV1AuthorizationQuery): AsyncIterator<RoleAuthorization>
     /**
      * 查询单个用户授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/get_by_param
      */
-    getByParamCorehrAuthorization(query?: GetByParamCorehrAuthorizationQuery): Promise<GetByParamCorehrAuthorizationResponse>
+    getByParamCorehrV1Authorization(query?: GetByParamCorehrV1AuthorizationQuery): Promise<GetByParamCorehrV1AuthorizationResponse>
     /**
      * 批量获取角色列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/security_group/list
      */
-    listCorehrSecurityGroup(query?: Pagination): Promise<Paginated<SecurityGroup>>
+    listCorehrV1SecurityGroup(query?: Pagination): Promise<Paginated<SecurityGroup>>
     /**
      * 批量获取角色列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/security_group/list
      */
-    listCorehrSecurityGroupIter(): AsyncIterator<SecurityGroup>
+    listCorehrV1SecurityGroupIter(): AsyncIterator<SecurityGroup>
     /**
      * 为用户授权角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/add_role_assign
      */
-    addRoleAssignCorehrAuthorization(body: AddRoleAssignCorehrAuthorizationRequest, query?: AddRoleAssignCorehrAuthorizationQuery): Promise<AddRoleAssignCorehrAuthorizationResponse>
+    addRoleAssignCorehrV1Authorization(body: AddRoleAssignCorehrV1AuthorizationRequest, query?: AddRoleAssignCorehrV1AuthorizationQuery): Promise<AddRoleAssignCorehrV1AuthorizationResponse>
     /**
      * 更新用户被授权的数据范围
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/update_role_assign
      */
-    updateRoleAssignCorehrAuthorization(body: UpdateRoleAssignCorehrAuthorizationRequest, query?: UpdateRoleAssignCorehrAuthorizationQuery): Promise<UpdateRoleAssignCorehrAuthorizationResponse>
+    updateRoleAssignCorehrV1Authorization(body: UpdateRoleAssignCorehrV1AuthorizationRequest, query?: UpdateRoleAssignCorehrV1AuthorizationQuery): Promise<UpdateRoleAssignCorehrV1AuthorizationResponse>
     /**
      * 移除用户被授权的角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/authorization/remove_role_assign
      */
-    removeRoleAssignCorehrAuthorization(query?: RemoveRoleAssignCorehrAuthorizationQuery): Promise<RemoveRoleAssignCorehrAuthorizationResponse>
+    removeRoleAssignCorehrV1Authorization(query?: RemoveRoleAssignCorehrV1AuthorizationQuery): Promise<RemoveRoleAssignCorehrV1AuthorizationResponse>
     /**
      * 查询员工 HRBP / 属地 BP
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-bp/batch_get
      */
-    batchGetCorehrEmployeesBp(body: BatchGetCorehrEmployeesBpRequest, query?: BatchGetCorehrEmployeesBpQuery): Promise<BatchGetCorehrEmployeesBpResponse>
+    batchGetCorehrV2EmployeesBp(body: BatchGetCorehrV2EmployeesBpRequest, query?: BatchGetCorehrV2EmployeesBpQuery): Promise<BatchGetCorehrV2EmployeesBpResponse>
     /**
      * 查询部门 HRBP
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/bp/get_by_department
      */
-    getByDepartmentCorehrBp(body: GetByDepartmentCorehrBpRequest, query?: GetByDepartmentCorehrBpQuery): Promise<GetByDepartmentCorehrBpResponse>
+    getByDepartmentCorehrV2Bp(body: GetByDepartmentCorehrV2BpRequest, query?: GetByDepartmentCorehrV2BpQuery): Promise<GetByDepartmentCorehrV2BpResponse>
     /**
      * 查询部门 / 地点的 HRBP / 属地 BP
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/security_group/query
      */
-    queryCorehrSecurityGroup(body: QueryCorehrSecurityGroupRequest, query?: QueryCorehrSecurityGroupQuery): Promise<QueryCorehrSecurityGroupResponse>
+    queryCorehrV1SecurityGroup(body: QueryCorehrV1SecurityGroupRequest, query?: QueryCorehrV1SecurityGroupQuery): Promise<QueryCorehrV1SecurityGroupResponse>
     /**
      * 获取 HRBP 列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/bp/list
      */
-    listCorehrBp(query?: ListCorehrBpQuery & Pagination): Promise<Paginated<Bp>>
+    listCorehrV2Bp(query?: ListCorehrV2BpQuery & Pagination): Promise<Paginated<Bp>>
     /**
      * 获取 HRBP 列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/bp/list
      */
-    listCorehrBpIter(query?: ListCorehrBpQuery): AsyncIterator<Bp>
+    listCorehrV2BpIter(query?: ListCorehrV2BpQuery): AsyncIterator<Bp>
     /**
      * 获取组织类角色授权列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/assigned_user/search
      */
-    searchCorehrAssignedUser(body: SearchCorehrAssignedUserRequest, query?: SearchCorehrAssignedUserQuery): Promise<Paginated<RoleAuthorization>>
+    searchCorehrV1AssignedUser(body: SearchCorehrV1AssignedUserRequest, query?: SearchCorehrV1AssignedUserQuery): Promise<Paginated<RoleAuthorization>>
     /**
      * 查询流程实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/list
      */
-    listCorehrProcess(query?: ListCorehrProcessQuery & Pagination): Promise<Paginated<string, 'process_ids'>>
+    listCorehrV2Process(query?: ListCorehrV2ProcessQuery & Pagination): Promise<Paginated<string, 'process_ids'>>
     /**
      * 查询流程实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/list
      */
-    listCorehrProcessIter(query?: ListCorehrProcessQuery): AsyncIterator<string>
+    listCorehrV2ProcessIter(query?: ListCorehrV2ProcessQuery): AsyncIterator<string>
     /**
      * 获取单个流程详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/get
      */
-    getCorehrProcess(process_id: string, query?: GetCorehrProcessQuery): Promise<GetCorehrProcessResponse>
+    getCorehrV2Process(process_id: string, query?: GetCorehrV2ProcessQuery): Promise<GetCorehrV2ProcessResponse>
     /**
      * 获取流程表单数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-form_variable_data/get
      */
-    getCorehrProcessFormVariableData(process_id: string, query?: GetCorehrProcessFormVariableDataQuery): Promise<GetCorehrProcessFormVariableDataResponse>
+    getCorehrV2ProcessFormVariableData(process_id: string, query?: GetCorehrV2ProcessFormVariableDataQuery): Promise<GetCorehrV2ProcessFormVariableDataResponse>
     /**
      * 撤销流程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process_revoke/update
      */
-    updateCorehrProcessRevoke(process_id: string, body: UpdateCorehrProcessRevokeRequest, query?: UpdateCorehrProcessRevokeQuery): Promise<void>
+    updateCorehrV2ProcessRevoke(process_id: string, body: UpdateCorehrV2ProcessRevokeRequest, query?: UpdateCorehrV2ProcessRevokeQuery): Promise<void>
     /**
      * 撤回流程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process_withdraw/update
      */
-    updateCorehrProcessWithdraw(process_id: string, body: UpdateCorehrProcessWithdrawRequest, query?: UpdateCorehrProcessWithdrawQuery): Promise<void>
+    updateCorehrV2ProcessWithdraw(process_id: string, body: UpdateCorehrV2ProcessWithdrawRequest, query?: UpdateCorehrV2ProcessWithdrawQuery): Promise<void>
     /**
      * 获取指定人员审批任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approver/list
      */
-    listCorehrApprover(query?: ListCorehrApproverQuery & Pagination): Promise<Paginated<ApproverInfo, 'approver_list'>>
+    listCorehrV2Approver(query?: ListCorehrV2ApproverQuery & Pagination): Promise<Paginated<ApproverInfo, 'approver_list'>>
     /**
      * 获取指定人员审批任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approver/list
      */
-    listCorehrApproverIter(query?: ListCorehrApproverQuery): AsyncIterator<ApproverInfo>
+    listCorehrV2ApproverIter(query?: ListCorehrV2ApproverQuery): AsyncIterator<ApproverInfo>
     /**
      * 通过/拒绝审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-approver/update
      */
-    updateCorehrProcessApprover(process_id: string, approver_id: string, body: UpdateCorehrProcessApproverRequest, query?: UpdateCorehrProcessApproverQuery): Promise<UpdateCorehrProcessApproverResponse>
+    updateCorehrV2ProcessApprover(process_id: string, approver_id: string, body: UpdateCorehrV2ProcessApproverRequest, query?: UpdateCorehrV2ProcessApproverQuery): Promise<UpdateCorehrV2ProcessApproverResponse>
     /**
      * 加签审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-extra/update
      */
-    updateCorehrProcessExtra(process_id: string, body: UpdateCorehrProcessExtraRequest, query?: UpdateCorehrProcessExtraQuery): Promise<void>
+    updateCorehrV2ProcessExtra(process_id: string, body: UpdateCorehrV2ProcessExtraRequest, query?: UpdateCorehrV2ProcessExtraQuery): Promise<void>
     /**
      * 转交审批任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-transfer/update
      */
-    updateCorehrProcessTransfer(process_id: string, body: UpdateCorehrProcessTransferRequest, query?: UpdateCorehrProcessTransferQuery): Promise<void>
+    updateCorehrV2ProcessTransfer(process_id: string, body: UpdateCorehrV2ProcessTransferRequest, query?: UpdateCorehrV2ProcessTransferQuery): Promise<void>
     /**
      * 获取员工薪资标准
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/compensation_standard/match
      */
-    matchCorehrCompensationStandard(query?: MatchCorehrCompensationStandardQuery): Promise<MatchCorehrCompensationStandardResponse>
+    matchCorehrV1CompensationStandard(query?: MatchCorehrV1CompensationStandardQuery): Promise<MatchCorehrV1CompensationStandardResponse>
     /**
      * 获取流程表单数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/process-form_variable_data/get
      */
-    getCorehrProcessFormVariableData(process_id: string): Promise<GetCorehrProcessFormVariableDataResponse>
+    getCorehrV1ProcessFormVariableData(process_id: string): Promise<GetCorehrV1ProcessFormVariableDataResponse>
     /**
      * 批量查询城市/区域信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subregion/list
      */
-    listCorehrSubregion(query?: ListCorehrSubregionQuery & Pagination): Promise<Paginated<Subregion>>
+    listCorehrV1Subregion(query?: ListCorehrV1SubregionQuery & Pagination): Promise<Paginated<Subregion>>
     /**
      * 批量查询城市/区域信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subregion/list
      */
-    listCorehrSubregionIter(query?: ListCorehrSubregionQuery): AsyncIterator<Subregion>
+    listCorehrV1SubregionIter(query?: ListCorehrV1SubregionQuery): AsyncIterator<Subregion>
     /**
      * 查询单条城市/区域信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subregion/get
      */
-    getCorehrSubregion(subregion_id: string): Promise<GetCorehrSubregionResponse>
+    getCorehrV1Subregion(subregion_id: string): Promise<GetCorehrV1SubregionResponse>
     /**
      * 批量查询省份/行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subdivision/list
      */
-    listCorehrSubdivision(query?: ListCorehrSubdivisionQuery & Pagination): Promise<Paginated<Subdivision>>
+    listCorehrV1Subdivision(query?: ListCorehrV1SubdivisionQuery & Pagination): Promise<Paginated<Subdivision>>
     /**
      * 批量查询省份/行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subdivision/list
      */
-    listCorehrSubdivisionIter(query?: ListCorehrSubdivisionQuery): AsyncIterator<Subdivision>
+    listCorehrV1SubdivisionIter(query?: ListCorehrV1SubdivisionQuery): AsyncIterator<Subdivision>
     /**
      * 查询单条省份/行政区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/subdivision/get
      */
-    getCorehrSubdivision(subdivision_id: string): Promise<GetCorehrSubdivisionResponse>
+    getCorehrV1Subdivision(subdivision_id: string): Promise<GetCorehrV1SubdivisionResponse>
     /**
      * 批量查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/country_region/list
      */
-    listCorehrCountryRegion(query?: Pagination): Promise<Paginated<CountryRegion>>
+    listCorehrV1CountryRegion(query?: Pagination): Promise<Paginated<CountryRegion>>
     /**
      * 批量查询国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/country_region/list
      */
-    listCorehrCountryRegionIter(): AsyncIterator<CountryRegion>
+    listCorehrV1CountryRegionIter(): AsyncIterator<CountryRegion>
     /**
      * 查询单条国家/地区信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/country_region/get
      */
-    getCorehrCountryRegion(country_region_id: string): Promise<GetCorehrCountryRegionResponse>
+    getCorehrV1CountryRegion(country_region_id: string): Promise<GetCorehrV1CountryRegionResponse>
     /**
      * 批量查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/currency/list
      */
-    listCorehrCurrency(query?: Pagination): Promise<Paginated<Currency>>
+    listCorehrV1Currency(query?: Pagination): Promise<Paginated<Currency>>
     /**
      * 批量查询货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/currency/list
      */
-    listCorehrCurrencyIter(): AsyncIterator<Currency>
+    listCorehrV1CurrencyIter(): AsyncIterator<Currency>
     /**
      * 查询单个货币信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/currency/get
      */
-    getCorehrCurrency(currency_id: string): Promise<GetCorehrCurrencyResponse>
+    getCorehrV1Currency(currency_id: string): Promise<GetCorehrV1CurrencyResponse>
     /**
      * 查询单个职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/get
      */
-    getCorehrJob(job_id: string): Promise<GetCorehrJobResponse>
+    getCorehrV1Job(job_id: string): Promise<GetCorehrV1JobResponse>
     /**
      * 删除部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/delete
      */
-    deleteCorehrDepartment(department_id: string): Promise<void>
+    deleteCorehrV1Department(department_id: string): Promise<void>
     /**
      * 更新部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/patch
      */
-    patchCorehrDepartment(department_id: string, body: PatchCorehrDepartmentRequest, query?: PatchCorehrDepartmentQuery): Promise<PatchCorehrDepartmentResponse>
+    patchCorehrV1Department(department_id: string, body: PatchCorehrV1DepartmentRequest, query?: PatchCorehrV1DepartmentQuery): Promise<PatchCorehrV1DepartmentResponse>
     /**
      * 查询单个部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/get
      */
-    getCorehrDepartment(department_id: string, query?: GetCorehrDepartmentQuery): Promise<GetCorehrDepartmentResponse>
+    getCorehrV1Department(department_id: string, query?: GetCorehrV1DepartmentQuery): Promise<GetCorehrV1DepartmentResponse>
     /**
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/list
      */
-    listCorehrJob(query?: ListCorehrJobQuery & Pagination): Promise<Paginated<Job>>
+    listCorehrV1Job(query?: ListCorehrV1JobQuery & Pagination): Promise<Paginated<Job>>
     /**
      * 批量查询职务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/list
      */
-    listCorehrJobIter(query?: ListCorehrJobQuery): AsyncIterator<Job>
+    listCorehrV1JobIter(query?: ListCorehrV1JobQuery): AsyncIterator<Job>
     /**
      * 批量查询部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/list
      */
-    listCorehrDepartment(query?: ListCorehrDepartmentQuery & Pagination): Promise<Paginated<Department>>
+    listCorehrV1Department(query?: ListCorehrV1DepartmentQuery & Pagination): Promise<Paginated<Department>>
     /**
      * 批量查询部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/list
      */
-    listCorehrDepartmentIter(query?: ListCorehrDepartmentQuery): AsyncIterator<Department>
+    listCorehrV1DepartmentIter(query?: ListCorehrV1DepartmentQuery): AsyncIterator<Department>
     /**
      * 更新个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/patch
      */
-    patchCorehrPerson(person_id: string, body: PatchCorehrPersonRequest, query?: PatchCorehrPersonQuery): Promise<PatchCorehrPersonResponse>
+    patchCorehrV1Person(person_id: string, body: PatchCorehrV1PersonRequest, query?: PatchCorehrV1PersonQuery): Promise<PatchCorehrV1PersonResponse>
     /**
      * 创建个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/create
      */
-    createCorehrPerson(body: CreateCorehrPersonRequest, query?: CreateCorehrPersonQuery): Promise<CreateCorehrPersonResponse>
+    createCorehrV1Person(body: CreateCorehrV1PersonRequest, query?: CreateCorehrV1PersonQuery): Promise<CreateCorehrV1PersonResponse>
     /**
      * 查询单个个人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/person/get
      */
-    getCorehrPerson(person_id: string, query?: GetCorehrPersonQuery): Promise<GetCorehrPersonResponse>
+    getCorehrV1Person(person_id: string, query?: GetCorehrV1PersonQuery): Promise<GetCorehrV1PersonResponse>
     /**
      * 操作员工离职
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/submit
      */
-    submitCorehrOffboarding(body: SubmitCorehrOffboardingRequest, query?: SubmitCorehrOffboardingQuery): Promise<SubmitCorehrOffboardingResponse>
+    submitCorehrV1Offboarding(body: SubmitCorehrV1OffboardingRequest, query?: SubmitCorehrV1OffboardingQuery): Promise<SubmitCorehrV1OffboardingResponse>
   }
 }
 
-export interface QueryCorehrCustomFieldQuery {
+export interface QueryCorehrV1CustomFieldQuery {
   /** 所属对象 apiname，支持一个或多个当前数量限制为 20 个 */
   object_api_name_list: string[]
 }
 
-export interface GetByParamCorehrCustomFieldQuery {
+export interface GetByParamCorehrV1CustomFieldQuery {
   /** 所属对象 apiname */
   object_api_name: string
   /** 自定义字段 apiname */
   custom_api_name: string
 }
 
-export interface AddEnumOptionCorehrCommonDataMetaDataRequest {
+export interface AddEnumOptionCorehrV1CommonDataMetaDataRequest {
   /** 所属对象 API name，可通过[获取飞书人事对象列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
   object_api_name: string
   /** 枚举字段 API name，可通过[获取自定义字段列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
@@ -1327,12 +1327,12 @@ export interface AddEnumOptionCorehrCommonDataMetaDataRequest {
   enum_field_options: EnumFieldOption[]
 }
 
-export interface AddEnumOptionCorehrCommonDataMetaDataQuery {
+export interface AddEnumOptionCorehrV1CommonDataMetaDataQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface EditEnumOptionCorehrCommonDataMetaDataRequest {
+export interface EditEnumOptionCorehrV1CommonDataMetaDataRequest {
   /** 所属对象 API name，可通过[获取飞书人事对象列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
   object_api_name: string
   /** 枚举字段 API name，可通过[获取自定义字段列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
@@ -1341,55 +1341,55 @@ export interface EditEnumOptionCorehrCommonDataMetaDataRequest {
   enum_field_option: EnumFieldOption
 }
 
-export interface EditEnumOptionCorehrCommonDataMetaDataQuery {
+export interface EditEnumOptionCorehrV1CommonDataMetaDataQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface SearchCorehrBasicInfoCountryRegionRequest {
+export interface SearchCorehrV2BasicInfoCountryRegionRequest {
   /** 国家/地区 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.country_region_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.country_region_id` 等字段中获取 */
   country_region_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoCountryRegionSubdivisionRequest {
+export interface SearchCorehrV2BasicInfoCountryRegionSubdivisionRequest {
   /** 国家/地区 ID 列表，可通过【查询国家/地区信息】接口获取 */
   country_region_id_list?: string[]
   /** 省份/行政区 ID 列表 */
   country_region_subdivision_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoCityRequest {
+export interface SearchCorehrV2BasicInfoCityRequest {
   /** 省份/主要行政区 ID 列表，可通过[查询省份/主要行政区信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search)接口列举，或从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.region_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.region_id` 等字段中获取 */
   country_region_subdivision_id_list?: string[]
   /** 城市 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_id_v2` 等字段中获取 */
   city_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoDistrictRequest {
+export interface SearchCorehrV2BasicInfoDistrictRequest {
   /** 所属城市 ID 列表，可通过[查询城市信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search)接口列举，或从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_v2_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_v2_id` 等字段中获取 */
   city_id_list?: string[]
   /** 区/县 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.district_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.district_id_v2` 等字段中获取 */
   district_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoNationalityRequest {
+export interface SearchCorehrV2BasicInfoNationalityRequest {
   /** 国籍 ID 列表，可从[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.nationality_id_v2` 等字段中获取 */
   nationality_id_list?: string[]
   /** 国家/地区 ID 列表，可通过[查询国家/地区信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search)接口列举 */
   country_region_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface CreateCorehrNationalIdTypeRequest {
+export interface CreateCorehrV1NationalIdTypeRequest {
   /** 国家 / 地区 */
   country_region_id: string
   /** 名称 */
@@ -1408,12 +1408,12 @@ export interface CreateCorehrNationalIdTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface CreateCorehrNationalIdTypeQuery {
+export interface CreateCorehrV1NationalIdTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrNationalIdTypeRequest {
+export interface PatchCorehrV1NationalIdTypeRequest {
   /** 国家 / 地区 */
   country_region_id?: string
   /** 名称 */
@@ -1432,12 +1432,12 @@ export interface PatchCorehrNationalIdTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface PatchCorehrNationalIdTypeQuery {
+export interface PatchCorehrV1NationalIdTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface ListCorehrNationalIdTypeQuery {
+export interface ListCorehrV1NationalIdTypeQuery {
   /** 证件类型 */
   identification_type?: string
   /** 证件类型编码 */
@@ -1446,20 +1446,20 @@ export interface ListCorehrNationalIdTypeQuery {
   country_region_id?: string
 }
 
-export interface SearchCorehrBasicInfoBankRequest {
+export interface SearchCorehrV2BasicInfoBankRequest {
   /** 银行 ID 列表，可通过[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段获取 */
   bank_id_list?: string[]
   /** 银行名称列表，支持对银行名称精确搜索 */
   bank_name_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
   /** 最早更新时间 */
   update_start_time?: string
   /** 最晚更新时间 */
   update_end_time?: string
 }
 
-export interface SearchCorehrBasicInfoBankBranchRequest {
+export interface SearchCorehrV2BasicInfoBankBranchRequest {
   /** 银行 ID 列表，可通过[查询银行信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search)列举，或从[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段中获取 */
   bank_id_list?: string[]
   /** 支行 ID 列表，可通过[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_branch_id_v2` 字段获取 */
@@ -1469,35 +1469,35 @@ export interface SearchCorehrBasicInfoBankBranchRequest {
   /** 金融分支机构编码（联行号）列表，支持对金融分支机构编码精确搜索 */
   code_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
   /** 最早更新时间 */
   update_start_time?: string
   /** 最晚更新时间 */
   update_end_time?: string
 }
 
-export interface SearchCorehrBasicInfoCurrencyRequest {
+export interface SearchCorehrV2BasicInfoCurrencyRequest {
   /** 货币 ID 列表，可通过[批量查询薪资方案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)、[批量查询员工薪资档案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/archive/query)等接口返回的 `currency_id` 字段获取 */
   currency_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoTimeZoneRequest {
+export interface SearchCorehrV2BasicInfoTimeZoneRequest {
   /** 时区 ID 列表 */
   time_zone_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface SearchCorehrBasicInfoLanguageRequest {
+export interface SearchCorehrV2BasicInfoLanguageRequest {
   /** 语言 ID 列表 */
   language_id_list?: string[]
   /** 状态列表 */
-  status_list?: 1 | 0[]
+  status_list?: (1 | 0)[]
 }
 
-export interface CreateCorehrEmployeeTypeRequest {
+export interface CreateCorehrV1EmployeeTypeRequest {
   /** 名称 */
   name: I18n[]
   /** 默认雇员类型 */
@@ -1510,12 +1510,12 @@ export interface CreateCorehrEmployeeTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface CreateCorehrEmployeeTypeQuery {
+export interface CreateCorehrV1EmployeeTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrEmployeeTypeRequest {
+export interface PatchCorehrV1EmployeeTypeRequest {
   /** 名称 */
   name?: I18n[]
   /** 默认雇员类型 */
@@ -1528,12 +1528,12 @@ export interface PatchCorehrEmployeeTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface PatchCorehrEmployeeTypeQuery {
+export interface PatchCorehrV1EmployeeTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface CreateCorehrWorkingHoursTypeRequest {
+export interface CreateCorehrV1WorkingHoursTypeRequest {
   /** 编码 */
   code?: string
   /** 名称 */
@@ -1548,12 +1548,12 @@ export interface CreateCorehrWorkingHoursTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface CreateCorehrWorkingHoursTypeQuery {
+export interface CreateCorehrV1WorkingHoursTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrWorkingHoursTypeRequest {
+export interface PatchCorehrV1WorkingHoursTypeRequest {
   /** 编码 */
   code?: string
   /** 名称 */
@@ -1568,17 +1568,17 @@ export interface PatchCorehrWorkingHoursTypeRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface PatchCorehrWorkingHoursTypeQuery {
+export interface PatchCorehrV1WorkingHoursTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface ConvertCorehrCommonDataIdRequest {
+export interface ConvertCorehrV1CommonDataIdRequest {
   /** ID 列表（最多传入 100 个 ID，ID 长度限制 50 个字符） */
   ids: string[]
 }
 
-export interface ConvertCorehrCommonDataIdQuery {
+export interface ConvertCorehrV1CommonDataIdQuery {
   /** ID 转换类型 */
   id_transform_type: 1 | 2 | 3 | 4
   /** 要转换的ID类型 */
@@ -1589,7 +1589,7 @@ export interface ConvertCorehrCommonDataIdQuery {
   feishu_department_id_type?: 'open_department_id' | 'department_id'
 }
 
-export interface BatchGetCorehrEmployeeRequest {
+export interface BatchGetCorehrV2EmployeeRequest {
   /** 返回数据的字段列表，填写方式：为空时默认仅返回 ID */
   fields?: string[]
   /** 雇佣 ID 列表 */
@@ -1600,14 +1600,14 @@ export interface BatchGetCorehrEmployeeRequest {
   work_emails?: string[]
 }
 
-export interface BatchGetCorehrEmployeeQuery {
+export interface BatchGetCorehrV2EmployeeQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface SearchCorehrEmployeeRequest {
+export interface SearchCorehrV2EmployeeRequest {
   /** 返回数据的字段列表，填写方式：为空时默认仅返回 ID */
   fields?: string[]
   /** 雇佣 ID 列表 */
@@ -1690,14 +1690,14 @@ export interface SearchCorehrEmployeeRequest {
   archive_cpst_plan_id_list?: string[]
 }
 
-export interface SearchCorehrEmployeeQuery {
+export interface SearchCorehrV2EmployeeQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface CreateCorehrEmployeeRequest {
+export interface CreateCorehrV2EmployeeRequest {
   /** 个人信息 */
   personal_info?: ProfileSettingPersonalInfo
   /** 工作信息 */
@@ -1708,7 +1708,7 @@ export interface CreateCorehrEmployeeRequest {
   data_attachment?: ProfileSettingDataAttachment
 }
 
-export interface CreateCorehrEmployeeQuery {
+export interface CreateCorehrV2EmployeeQuery {
   /** 幂等标识，服务端会忽略client_token重复的请求 */
   client_token?: string
   /** 是否为离职重聘：false: 否，系统直接标为非离职重聘人员，不再做重复判断"true: 是，要求rehire_employment_id */
@@ -1721,7 +1721,7 @@ export interface CreateCorehrEmployeeQuery {
   ignore_working_hours_type_rule?: boolean
 }
 
-export interface CreateCorehrPersonRequest {
+export interface CreateCorehrV2PersonRequest {
   /** 姓名列表 */
   name_list: PersonName[]
   /** -| 性别，枚举值可查询【获取字段详情】接口获取，按如下参数查询即可： - custom_api_name：gender - object_api_name：person */
@@ -1790,12 +1790,12 @@ export interface CreateCorehrPersonRequest {
   leave_time?: string
 }
 
-export interface CreateCorehrPersonQuery {
+export interface CreateCorehrV2PersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrPersonRequest {
+export interface PatchCorehrV2PersonRequest {
   /** 姓名列表 */
   name_list?: PersonName[]
   /** -| 性别，枚举值可查询【获取字段详情】接口获取，按如下参数查询即可： - custom_api_name：gender - object_api_name：person */
@@ -1864,21 +1864,21 @@ export interface PatchCorehrPersonRequest {
   leave_time?: string
 }
 
-export interface PatchCorehrPersonQuery {
+export interface PatchCorehrV2PersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 根据no_need_query判断更新后是否做查询请求并返回个人信息 */
   no_need_query?: boolean
 }
 
-export interface UploadCorehrPersonForm {
+export interface UploadCorehrV1PersonForm {
   /** 文件二进制内容 */
   file_content: Blob
   /** 文件名称 */
   file_name: string
 }
 
-export interface CreateCorehrEmploymentRequest {
+export interface CreateCorehrV1EmploymentRequest {
   /** 资历起算日期 */
   seniority_date?: string
   /** 员工编号 */
@@ -1909,12 +1909,12 @@ export interface CreateCorehrEmploymentRequest {
   rehire_employment_id?: string
 }
 
-export interface CreateCorehrEmploymentQuery {
+export interface CreateCorehrV1EmploymentQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrEmploymentRequest {
+export interface PatchCorehrV1EmploymentRequest {
   /** 资历起算日期 */
   seniority_date?: string
   /** 员工编号 */
@@ -1935,7 +1935,7 @@ export interface PatchCorehrEmploymentRequest {
   ats_application_id?: string
 }
 
-export interface PatchCorehrEmploymentQuery {
+export interface PatchCorehrV1EmploymentQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -1944,12 +1944,12 @@ export interface PatchCorehrEmploymentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface DeleteCorehrEmploymentQuery {
+export interface DeleteCorehrV1EmploymentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface CreateCorehrJobDataRequest {
+export interface CreateCorehrV1JobDataRequest {
   /** 级别 */
   job_level_id?: string
   /** 职等ID */
@@ -1998,7 +1998,7 @@ export interface CreateCorehrJobDataRequest {
   service_company?: string
 }
 
-export interface CreateCorehrJobDataQuery {
+export interface CreateCorehrV1JobDataQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2007,12 +2007,12 @@ export interface CreateCorehrJobDataQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface DeleteCorehrJobDataQuery {
+export interface DeleteCorehrV1JobDataQuery {
   /** 需要删除的任职记录版本 ID */
   version_id?: string
 }
 
-export interface PatchCorehrJobDataRequest {
+export interface PatchCorehrV1JobDataRequest {
   /** 任职记录版本 ID */
   version_id?: string
   /** 级别 */
@@ -2061,7 +2061,7 @@ export interface PatchCorehrJobDataRequest {
   service_company?: string
 }
 
-export interface PatchCorehrJobDataQuery {
+export interface PatchCorehrV1JobDataQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2072,7 +2072,7 @@ export interface PatchCorehrJobDataQuery {
   strict_verify?: string
 }
 
-export interface QueryCorehrEmployeesJobDataRequest {
+export interface QueryCorehrV2EmployeesJobDataRequest {
   /** 是否获取所有任职记录，true 为获取员工所有版本的任职记录，false 为仅获取当前生效的任职记录，默认为 false */
   get_all_version?: boolean
   /** 查看数据日期 */
@@ -2091,14 +2091,14 @@ export interface QueryCorehrEmployeesJobDataRequest {
   assignment_start_reasons?: string[]
 }
 
-export interface QueryCorehrEmployeesJobDataQuery {
+export interface QueryCorehrV2EmployeesJobDataQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface BatchGetCorehrEmployeesJobDataRequest {
+export interface BatchGetCorehrV2EmployeesJobDataRequest {
   /** 员工雇佣 ID 列表 */
   employment_ids: string[]
   /** 是否获取所有任职记录，true 为获取员工所有版本的任职记录，false 为仅获取当前生效的任职记录，默认为 false */
@@ -2115,14 +2115,14 @@ export interface BatchGetCorehrEmployeesJobDataRequest {
   assignment_start_reasons?: string[]
 }
 
-export interface BatchGetCorehrEmployeesJobDataQuery {
+export interface BatchGetCorehrV2EmployeesJobDataQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrJobDataQuery {
+export interface ListCorehrV1JobDataQuery {
   /** 雇佣 ID */
   employment_id?: string
   /** 任职信息 ID 列表，最大 100 个（不传则默认查询全部任职信息） */
@@ -2139,14 +2139,14 @@ export interface ListCorehrJobDataQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface GetCorehrJobDataQuery {
+export interface GetCorehrV1JobDataQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface CreateCorehrEmployeesAdditionalJobRequest {
+export interface CreateCorehrV2EmployeesAdditionalJobRequest {
   /** 人员类型 ID，可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
   employee_type_id: string
   /** 工时制度 ID，可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
@@ -2187,7 +2187,7 @@ export interface CreateCorehrEmployeesAdditionalJobRequest {
   employee_subtype_id?: string
 }
 
-export interface CreateCorehrEmployeesAdditionalJobQuery {
+export interface CreateCorehrV2EmployeesAdditionalJobQuery {
   /** 操作的唯一标识，用于幂等校验。请求成功时，重复的client_token不会再创建、变更数据。 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2196,7 +2196,7 @@ export interface CreateCorehrEmployeesAdditionalJobQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface PatchCorehrEmployeesAdditionalJobRequest {
+export interface PatchCorehrV2EmployeesAdditionalJobRequest {
   /** 人员类型 ID，可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
   employee_type_id?: string
   /** 工时制度 ID，可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
@@ -2235,7 +2235,7 @@ export interface PatchCorehrEmployeesAdditionalJobRequest {
   employee_subtype_id?: string
 }
 
-export interface PatchCorehrEmployeesAdditionalJobQuery {
+export interface PatchCorehrV2EmployeesAdditionalJobQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2244,7 +2244,7 @@ export interface PatchCorehrEmployeesAdditionalJobQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface BatchCorehrEmployeesAdditionalJobRequest {
+export interface BatchCorehrV2EmployeesAdditionalJobRequest {
   /** 雇佣 ID */
   employment_ids?: string[]
   /** 兼职 ID */
@@ -2259,14 +2259,14 @@ export interface BatchCorehrEmployeesAdditionalJobRequest {
   is_effective?: boolean
 }
 
-export interface BatchCorehrEmployeesAdditionalJobQuery {
+export interface BatchCorehrV2EmployeesAdditionalJobQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryOperationLogsCorehrDepartmentRequest {
+export interface QueryOperationLogsCorehrV2DepartmentRequest {
   /** 部门ID列表 */
   department_ids: string[]
   /** 查询的起始操作日期，格式 "YYYY-MM-DD"，不带时分秒，包含start_date传入的时间，系统会以start_date的00:00:00为开始时间进行查询 */
@@ -2275,12 +2275,12 @@ export interface QueryOperationLogsCorehrDepartmentRequest {
   end_date: string
 }
 
-export interface QueryOperationLogsCorehrDepartmentQuery {
+export interface QueryOperationLogsCorehrV2DepartmentQuery {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface CreateCorehrDepartmentRequest {
+export interface CreateCorehrV1DepartmentRequest {
   /** 子类型 */
   sub_type?: Enum
   /** 部门负责人 */
@@ -2299,7 +2299,7 @@ export interface CreateCorehrDepartmentRequest {
   staffing_model?: Enum
 }
 
-export interface CreateCorehrDepartmentQuery {
+export interface CreateCorehrV1DepartmentQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2308,7 +2308,7 @@ export interface CreateCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface PatchCorehrDepartmentRequest {
+export interface PatchCorehrV2DepartmentRequest {
   /** 实体在CoreHR内部的唯一键 */
   id?: string
   /** 子类型 */
@@ -2329,7 +2329,7 @@ export interface PatchCorehrDepartmentRequest {
   staffing_model?: Enum
 }
 
-export interface PatchCorehrDepartmentQuery {
+export interface PatchCorehrV2DepartmentQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -2338,17 +2338,17 @@ export interface PatchCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ParentsCorehrDepartmentRequest {
+export interface ParentsCorehrV2DepartmentRequest {
   /** 部门 ID 列表，一次性最多传入 100 个部门 ID */
   department_id_list: string[]
 }
 
-export interface ParentsCorehrDepartmentQuery {
+export interface ParentsCorehrV2DepartmentQuery {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface BatchGetCorehrDepartmentRequest {
+export interface BatchGetCorehrV2DepartmentRequest {
   /** 部门 ID 列表 */
   department_id_list?: string[]
   /** 返回数据的字段列表 */
@@ -2357,14 +2357,14 @@ export interface BatchGetCorehrDepartmentRequest {
   department_name_list?: string[]
 }
 
-export interface BatchGetCorehrDepartmentQuery {
+export interface BatchGetCorehrV2DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryRecentChangeCorehrDepartmentQuery {
+export interface QueryRecentChangeCorehrV2DepartmentQuery {
   /** 查询的开始时间，格式 "yyyy-MM-dd"，不带时分秒，包含 start_date 传入的时间, 系统会以 start_date 的 00:00:00 查询。 */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd"，不带时分秒， 查询日期小于 end_data + 1 天的 00:00:00。 */
@@ -2373,7 +2373,7 @@ export interface QueryRecentChangeCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryTimelineCorehrDepartmentRequest {
+export interface QueryTimelineCorehrV2DepartmentRequest {
   /** 部门 ID 列表 */
   department_ids: string[]
   /** 生效日期 */
@@ -2382,14 +2382,14 @@ export interface QueryTimelineCorehrDepartmentRequest {
   fields?: string[]
 }
 
-export interface QueryTimelineCorehrDepartmentQuery {
+export interface QueryTimelineCorehrV2DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface TreeCorehrDepartmentRequest {
+export interface TreeCorehrV2DepartmentRequest {
   /** 部门 ID，默认根部门 */
   department_id?: string
   /** 是否包含失效部门，默认false */
@@ -2398,12 +2398,12 @@ export interface TreeCorehrDepartmentRequest {
   effective_date?: string
 }
 
-export interface TreeCorehrDepartmentQuery {
+export interface TreeCorehrV2DepartmentQuery {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryMultiTimelineCorehrDepartmentRequest {
+export interface QueryMultiTimelineCorehrV2DepartmentRequest {
   /** 部门 ID 列表 */
   department_ids: string[]
   /** 生效日期开始(包含) */
@@ -2414,14 +2414,14 @@ export interface QueryMultiTimelineCorehrDepartmentRequest {
   fields?: string[]
 }
 
-export interface QueryMultiTimelineCorehrDepartmentQuery {
+export interface QueryMultiTimelineCorehrV2DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface SearchCorehrDepartmentRequest {
+export interface SearchCorehrV2DepartmentRequest {
   /** 是否启用 */
   active?: boolean
   /** 当通过上级部门 ID 查询时，填写 true 返回所有子部门，填写 false 只返回直接下级部门 */
@@ -2440,19 +2440,19 @@ export interface SearchCorehrDepartmentRequest {
   fields?: string[]
 }
 
-export interface SearchCorehrDepartmentQuery {
+export interface SearchCorehrV2DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface DeleteCorehrDepartmentQuery {
+export interface DeleteCorehrV2DepartmentQuery {
   /** 此次删除中所使用的部门ID类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface CreateCorehrLocationRequest {
+export interface CreateCorehrV1LocationRequest {
   /** 层级关系，内层字段见实体 */
   hiberarchy_common: HiberarchyCommon
   /** 地点用途 */
@@ -2471,12 +2471,12 @@ export interface CreateCorehrLocationRequest {
   display_language_id?: string
 }
 
-export interface CreateCorehrLocationQuery {
+export interface CreateCorehrV1LocationQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrLocationRequest {
+export interface PatchCorehrV2LocationRequest {
   /** 上级地点 ID */
   parent_id?: string
   /** 地点名称 */
@@ -2501,24 +2501,24 @@ export interface PatchCorehrLocationRequest {
   display_language_id?: string
 }
 
-export interface PatchCorehrLocationQuery {
+export interface PatchCorehrV2LocationQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface QueryRecentChangeCorehrLocationQuery {
+export interface QueryRecentChangeCorehrV2LocationQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface BatchGetCorehrLocationRequest {
+export interface BatchGetCorehrV2LocationRequest {
   /** 地点 ID 列表 */
   location_ids: string[]
 }
 
-export interface ActiveCorehrLocationRequest {
+export interface ActiveCorehrV2LocationRequest {
   /** 地点 ID */
   location_id: string
   /** 生效时间 */
@@ -2529,7 +2529,7 @@ export interface ActiveCorehrLocationRequest {
   operation_reason: string
 }
 
-export interface PatchCorehrLocationAddressRequest {
+export interface PatchCorehrV2LocationAddressRequest {
   /** 国家 / 地区 */
   country_region_id?: string
   /** 主要行政区 */
@@ -2566,12 +2566,12 @@ export interface PatchCorehrLocationAddressRequest {
   is_public?: boolean
 }
 
-export interface PatchCorehrLocationAddressQuery {
+export interface PatchCorehrV2LocationAddressQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface CreateCorehrLocationAddressRequest {
+export interface CreateCorehrV2LocationAddressRequest {
   /** 国家 / 地区 */
   country_region_id: string
   /** 主要行政区 */
@@ -2608,12 +2608,12 @@ export interface CreateCorehrLocationAddressRequest {
   is_public?: boolean
 }
 
-export interface CreateCorehrLocationAddressQuery {
+export interface CreateCorehrV2LocationAddressQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface CreateCorehrCompanyRequest {
+export interface CreateCorehrV1CompanyRequest {
   /** 层级关系，内层字段见实体 */
   hiberarchy_common: HiberarchyCommon
   /** 性质 */
@@ -2648,12 +2648,12 @@ export interface CreateCorehrCompanyRequest {
   office_address_info?: Address
 }
 
-export interface CreateCorehrCompanyQuery {
+export interface CreateCorehrV1CompanyQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrCompanyRequest {
+export interface PatchCorehrV1CompanyRequest {
   /** 层级关系，内层字段见实体 */
   hiberarchy_common?: HiberarchyCommon
   /** 性质 */
@@ -2686,12 +2686,12 @@ export interface PatchCorehrCompanyRequest {
   office_address_info?: Address
 }
 
-export interface PatchCorehrCompanyQuery {
+export interface PatchCorehrV1CompanyQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface ActiveCorehrCompanyRequest {
+export interface ActiveCorehrV2CompanyRequest {
   /** 公司ID */
   company_id: string
   /** 生效时间 */
@@ -2702,19 +2702,19 @@ export interface ActiveCorehrCompanyRequest {
   operation_reason: string
 }
 
-export interface QueryRecentChangeCorehrCompanyQuery {
+export interface QueryRecentChangeCorehrV2CompanyQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface BatchGetCorehrCompanyRequest {
+export interface BatchGetCorehrV2CompanyRequest {
   /** 公司 ID 列表 */
   company_ids: string[]
 }
 
-export interface CreateCorehrCostCenterRequest {
+export interface CreateCorehrV2CostCenterRequest {
   /** 成本中心名称 */
   name: I18n[]
   /** 编码 */
@@ -2729,12 +2729,12 @@ export interface CreateCorehrCostCenterRequest {
   effective_time: string
 }
 
-export interface CreateCorehrCostCenterQuery {
+export interface CreateCorehrV2CostCenterQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface PatchCorehrCostCenterRequest {
+export interface PatchCorehrV2CostCenterRequest {
   /** 生效时间 */
   effective_time: string
   /** 启用停用状态 */
@@ -2743,19 +2743,19 @@ export interface PatchCorehrCostCenterRequest {
   operation_reason: string
 }
 
-export interface PatchCorehrCostCenterQuery {
+export interface PatchCorehrV2CostCenterQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface QueryRecentChangeCorehrCostCenterQuery {
+export interface QueryRecentChangeCorehrV2CostCenterQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface SearchCorehrCostCenterRequest {
+export interface SearchCorehrV2CostCenterRequest {
   /** 成本中心ID 列表 */
   cost_center_id_list?: string[]
   /** 成长中心名称列表，精确匹配 */
@@ -2768,17 +2768,17 @@ export interface SearchCorehrCostCenterRequest {
   get_all_version?: boolean
 }
 
-export interface SearchCorehrCostCenterQuery {
+export interface SearchCorehrV2CostCenterQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface DeleteCorehrCostCenterRequest {
+export interface DeleteCorehrV2CostCenterRequest {
   /** 操作原因 */
   operation_reason: string
 }
 
-export interface CreateCorehrCostCenterVersionRequest {
+export interface CreateCorehrV2CostCenterVersionRequest {
   /** 成本中心名称 */
   name: I18n[]
   /** 上级成本中心ID */
@@ -2793,12 +2793,12 @@ export interface CreateCorehrCostCenterVersionRequest {
   operation_reason: string
 }
 
-export interface CreateCorehrCostCenterVersionQuery {
+export interface CreateCorehrV2CostCenterVersionQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface PatchCorehrCostCenterVersionRequest {
+export interface PatchCorehrV2CostCenterVersionRequest {
   /** 成本中心名称 */
   name?: I18n[]
   /** 上级成本中心ID */
@@ -2813,29 +2813,29 @@ export interface PatchCorehrCostCenterVersionRequest {
   operation_reason: string
 }
 
-export interface PatchCorehrCostCenterVersionQuery {
+export interface PatchCorehrV2CostCenterVersionQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface DeleteCorehrCostCenterVersionRequest {
+export interface DeleteCorehrV2CostCenterVersionRequest {
   /** 操作原因 */
   operation_reason: string
 }
 
-export interface GetCorehrApprovalGroupsQuery {
+export interface GetCorehrV2ApprovalGroupsQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsRequest {
+export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsRequest {
   /** 部门调整记录 ID List */
   department_change_ids?: string[]
   /** 是否返回部门全路径 */
   need_department_path?: boolean
 }
 
-export interface OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsQuery {
+export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsQuery {
   /** 组织架构调整流程 ID */
   process_id: string
   /** 用户 ID 类型 */
@@ -2844,14 +2844,14 @@ export interface OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface OpenQueryJobChangeListByIdsCorehrApprovalGroupsRequest {
+export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsRequest {
   /** 人员异动记录 ID List */
   job_change_ids?: string[]
   /** 是否返回部门全路径 */
   need_department_path?: boolean
 }
 
-export interface OpenQueryJobChangeListByIdsCorehrApprovalGroupsQuery {
+export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsQuery {
   /** 组织架构调整流程 ID */
   process_id: string
   /** 用户 ID 类型 */
@@ -2860,7 +2860,7 @@ export interface OpenQueryJobChangeListByIdsCorehrApprovalGroupsQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface CreateCorehrJobFamilyRequest {
+export interface CreateCorehrV1JobFamilyRequest {
   /** 名称 */
   name: I18n[]
   /** 启用 */
@@ -2875,12 +2875,12 @@ export interface CreateCorehrJobFamilyRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface CreateCorehrJobFamilyQuery {
+export interface CreateCorehrV1JobFamilyQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrJobFamilyRequest {
+export interface PatchCorehrV1JobFamilyRequest {
   /** 名称 */
   name?: I18n[]
   /** 启用 */
@@ -2895,24 +2895,24 @@ export interface PatchCorehrJobFamilyRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface PatchCorehrJobFamilyQuery {
+export interface PatchCorehrV1JobFamilyQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface QueryRecentChangeCorehrJobFamilyQuery {
+export interface QueryRecentChangeCorehrV2JobFamilyQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface BatchGetCorehrJobFamilyRequest {
+export interface BatchGetCorehrV2JobFamilyRequest {
   /** 序列 ID 列表 */
   job_family_ids: string[]
 }
 
-export interface CreateCorehrJobLevelRequest {
+export interface CreateCorehrV1JobLevelRequest {
   /** 职级数值 */
   level_order: number
   /** 编码 */
@@ -2929,12 +2929,12 @@ export interface CreateCorehrJobLevelRequest {
   job_grade?: string[]
 }
 
-export interface CreateCorehrJobLevelQuery {
+export interface CreateCorehrV1JobLevelQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrJobLevelRequest {
+export interface PatchCorehrV1JobLevelRequest {
   /** 职级数值 */
   level_order?: number
   /** 编码 */
@@ -2951,24 +2951,24 @@ export interface PatchCorehrJobLevelRequest {
   job_grade?: string[]
 }
 
-export interface PatchCorehrJobLevelQuery {
+export interface PatchCorehrV1JobLevelQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface QueryRecentChangeCorehrJobLevelQuery {
+export interface QueryRecentChangeCorehrV2JobLevelQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface BatchGetCorehrJobLevelRequest {
+export interface BatchGetCorehrV2JobLevelRequest {
   /** 职级 ID 列表 */
   job_level_ids: string[]
 }
 
-export interface CreateCorehrJobGradeRequest {
+export interface CreateCorehrV2JobGradeRequest {
   /** 职等数值 */
   grade_order: number
   /** 编码 */
@@ -2979,12 +2979,12 @@ export interface CreateCorehrJobGradeRequest {
   descriptions?: I18n[]
 }
 
-export interface CreateCorehrJobGradeQuery {
+export interface CreateCorehrV2JobGradeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrJobGradeRequest {
+export interface PatchCorehrV2JobGradeRequest {
   /** 职等数值 */
   grade_order?: number
   /** 编码 */
@@ -2997,12 +2997,12 @@ export interface PatchCorehrJobGradeRequest {
   active?: boolean
 }
 
-export interface PatchCorehrJobGradeQuery {
+export interface PatchCorehrV2JobGradeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface QueryCorehrJobGradeRequest {
+export interface QueryCorehrV2JobGradeRequest {
   /** 职等ID列表 */
   ids?: string[]
   /** 职等code列表 */
@@ -3011,14 +3011,14 @@ export interface QueryCorehrJobGradeRequest {
   active?: boolean
 }
 
-export interface QueryRecentChangeCorehrJobGradeQuery {
+export interface QueryRecentChangeCorehrV2JobGradeQuery {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
 }
 
-export interface CreateCorehrJobRequest {
+export interface CreateCorehrV1JobRequest {
   /** 编码 */
   code?: string
   /** 名称 */
@@ -3041,12 +3041,12 @@ export interface CreateCorehrJobRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface CreateCorehrJobQuery {
+export interface CreateCorehrV1JobQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrJobRequest {
+export interface PatchCorehrV1JobRequest {
   /** 编码 */
   code?: string
   /** 名称 */
@@ -3069,33 +3069,33 @@ export interface PatchCorehrJobRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface PatchCorehrJobQuery {
+export interface PatchCorehrV1JobQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface ListCorehrJobQuery {
+export interface ListCorehrV2JobQuery {
   /** 名称 */
   name?: string
   /** 语言 */
   query_language?: string
 }
 
-export interface WithdrawOnboardingCorehrPreHireRequest {
+export interface WithdrawOnboardingCorehrV2PreHireRequest {
   /** 待入职ID，可从待入职列表接口获取 */
   pre_hire_id: string
   /** 撤销原因 */
   withdraw_reason: string
 }
 
-export interface RestoreFlowInstanceCorehrPreHireRequest {
+export interface RestoreFlowInstanceCorehrV2PreHireRequest {
   /** 待入职ID，可从待入职列表接口获取 */
   pre_hire_id: string
   /** 是否强制占编；true为强制占编；false为非强制占编 */
   confirm_workforce?: boolean
 }
 
-export interface CreateCorehrPreHireRequest {
+export interface CreateCorehrV2PreHireRequest {
   /** 个人信息 */
   basic_info: BasicInfo
   /** 职位信息 */
@@ -3110,7 +3110,7 @@ export interface CreateCorehrPreHireRequest {
   out_biz_id?: string
 }
 
-export interface PatchCorehrPreHireRequest {
+export interface PatchCorehrV2PreHireRequest {
   /** 更新个人（person）信息 */
   basic_info_update?: BasicInfoUpdate
   /** 更新待入职（prehire）信息 */
@@ -3123,26 +3123,26 @@ export interface PatchCorehrPreHireRequest {
   person_custom_update_fields?: string[]
 }
 
-export interface QueryCorehrPreHireRequest {
+export interface QueryCorehrV2PreHireRequest {
   /** 待入职人员 ID 列表；如果该字段非空，则不按照page_size、page_token分页方式查询 */
   pre_hire_ids?: string[]
   /** 返回数据的字段列表，填写方式：- 为空时只返回 pre_hire_id- 不为空时按照传入的字段返回数据，格式如下：    - person_info 字段：person_info.gender，person_info.age    - employment_info 字段：employment_info.department    - onboarding_info 字段：onboarding_info.onboarding_date    - probation_info 字段：probation_info.probation_period    - contract_info 字段：contract_info.contract_type- 如果要返回所有下级，只用传上级结构体名称，例如 person_info- 返回数据越多，查询接口性能越慢，请按需填写返回字段 */
   fields?: string[]
 }
 
-export interface QueryCorehrPreHireQuery {
+export interface QueryCorehrV2PreHireQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrPreHireQuery {
+export interface ListCorehrV1PreHireQuery {
   /** 待入职ID列表 */
   pre_hire_ids?: string[]
 }
 
-export interface SearchCorehrPreHireRequest {
+export interface SearchCorehrV2PreHireRequest {
   /** 待入职人员工号列表 */
   worker_ids?: string[]
   /** 待入职人员 ID 列表 */
@@ -3179,19 +3179,19 @@ export interface SearchCorehrPreHireRequest {
   fields?: string[]
 }
 
-export interface SearchCorehrPreHireQuery {
+export interface SearchCorehrV2PreHireQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface TransitTaskCorehrPreHireRequest {
+export interface TransitTaskCorehrV2PreHireRequest {
   /** 系统预置的职位信息和个人信息任务的task_id分别为1和2，自定义任务的task_id是一串UUID */
   task_id: string
 }
 
-export interface PatchCorehrPreHireRequest {
+export interface PatchCorehrV1PreHireRequest {
   /** 招聘系统的候选人 ID */
   ats_application_id?: string
   /** 入职日期 */
@@ -3212,33 +3212,33 @@ export interface PatchCorehrPreHireRequest {
   onboarding_status: Enum
 }
 
-export interface PatchCorehrPreHireQuery {
+export interface PatchCorehrV1PreHireQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface CreateCorehrProbationAssessmentRequest {
+export interface CreateCorehrV2ProbationAssessmentRequest {
   /** 试用期人员的雇佣 ID */
   employment_id: string
   /** 试用期考核结果列表 */
   assessments: AssessmentForCreate[]
 }
 
-export interface CreateCorehrProbationAssessmentQuery {
+export interface CreateCorehrV2ProbationAssessmentQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface EnableDisableAssessmentCorehrProbationRequest {
+export interface EnableDisableAssessmentCorehrV2ProbationRequest {
   /** 启用 / 停用状态。启用后可在试用期管理页面中可见试用期考核相关的字段。 */
   active: boolean
   /** 试用期考核系统入口链接，当启用功能时该字段必填。 */
   app_url?: string
 }
 
-export interface PatchCorehrProbationAssessmentRequest {
+export interface PatchCorehrV2ProbationAssessmentRequest {
   /** 考核状态 */
   assessment_status: 'not_started' | 'in_process' | 'completed' | 'no_need'
   /** 试用期考核结果 */
@@ -3255,12 +3255,12 @@ export interface PatchCorehrProbationAssessmentRequest {
   is_final_asssessment: boolean
 }
 
-export interface PatchCorehrProbationAssessmentQuery {
+export interface PatchCorehrV2ProbationAssessmentQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface SearchCorehrProbationRequest {
+export interface SearchCorehrV2ProbationRequest {
   /** 雇佣 ID 列表 */
   employment_ids?: string[]
   /** 部门 ID 列表 */
@@ -3289,14 +3289,14 @@ export interface SearchCorehrProbationRequest {
   final_assessment_grade?: string
 }
 
-export interface SearchCorehrProbationQuery {
+export interface SearchCorehrV2ProbationQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface SubmitCorehrProbationRequest {
+export interface SubmitCorehrV2ProbationRequest {
   /** 试用期人员的雇佣 ID */
   employment_id: string
   /** 转正方式 */
@@ -3315,26 +3315,26 @@ export interface SubmitCorehrProbationRequest {
   custom_fields?: CustomFieldData[]
 }
 
-export interface SubmitCorehrProbationQuery {
+export interface SubmitCorehrV2ProbationQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface WithdrawCorehrProbationRequest {
+export interface WithdrawCorehrV2ProbationRequest {
   /** 试用期人员的雇佣 ID */
   employment_id: string
 }
 
-export interface WithdrawCorehrProbationQuery {
+export interface WithdrawCorehrV2ProbationQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface CreateCorehrJobChangeRequest {
+export interface CreateCorehrV2JobChangeRequest {
   /** 异动方式 */
   transfer_mode: 1 | 2
   /** 雇员id */
@@ -3355,34 +3355,34 @@ export interface CreateCorehrJobChangeRequest {
   transfer_reason_unique_identifier?: string
 }
 
-export interface CreateCorehrJobChangeQuery {
+export interface CreateCorehrV2JobChangeQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryCorehrTransferTypeQuery {
+export interface QueryCorehrV1TransferTypeQuery {
   /** 异动类型状态 */
   active?: boolean
   /** 异动类型唯一标识，多条时最多数量为10 */
   transfer_type_unique_identifier?: string[]
 }
 
-export interface QueryCorehrTransferReasonQuery {
+export interface QueryCorehrV1TransferReasonQuery {
   /** 异动原因状态 */
   active?: boolean
   /** 异动原因唯一标识，多条时最多数量为10 */
   transfer_reason_unique_identifier?: string[]
 }
 
-export interface SearchCorehrJobChangeRequest {
+export interface SearchCorehrV2JobChangeRequest {
   /** 雇员 ID 列表 */
   employment_ids?: string[]
   /** 异动记录 ID 列表 */
   job_change_ids?: string[]
   /** 异动状态，多个状态之间为「或」的关系 */
-  statuses?: 'Approving' | 'Approved' | 'Transformed' | 'Rejected' | 'Cancelled' | 'NoNeedApproval'[]
+  statuses?: ('Approving' | 'Approved' | 'Transformed' | 'Rejected' | 'Cancelled' | 'NoNeedApproval')[]
   /** 异动生效日期 - 搜索范围开始，需要与搜索范围结束一同使用 */
   effective_date_start?: string
   /** 异动生效日期 - 搜索范围结束 */
@@ -3395,24 +3395,24 @@ export interface SearchCorehrJobChangeRequest {
   target_department_ids?: string[]
 }
 
-export interface SearchCorehrJobChangeQuery {
+export interface SearchCorehrV2JobChangeQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface RevokeCorehrJobChangeRequest {
+export interface RevokeCorehrV2JobChangeRequest {
   /** 操作人id */
   operator_id: string
 }
 
-export interface RevokeCorehrJobChangeQuery {
+export interface RevokeCorehrV2JobChangeQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id' | 'people_corehr_id'
 }
 
-export interface CreateCorehrJobChangeRequest {
+export interface CreateCorehrV1JobChangeRequest {
   /** 异动方式 */
   transfer_mode: 1 | 2
   /** 雇员id */
@@ -3431,21 +3431,21 @@ export interface CreateCorehrJobChangeRequest {
   initiator_id?: string
 }
 
-export interface CreateCorehrJobChangeQuery {
+export interface CreateCorehrV1JobChangeQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryCorehrOffboardingRequest {
+export interface QueryCorehrV1OffboardingRequest {
   /** 是否启用 */
   active?: boolean
   /** 离职原因唯一标识列表，用于过滤，最大20个 */
   offboarding_reason_unique_identifier?: string[]
 }
 
-export interface SubmitV2CorehrOffboardingRequest {
+export interface SubmitV2CorehrV2OffboardingRequest {
   /** 离职方式 */
   offboarding_mode: 1 | 2
   /** 雇员 id */
@@ -3472,12 +3472,12 @@ export interface SubmitV2CorehrOffboardingRequest {
   is_transfer_with_workforce?: boolean
 }
 
-export interface SubmitV2CorehrOffboardingQuery {
+export interface SubmitV2CorehrV2OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface EditCorehrOffboardingRequest {
+export interface EditCorehrV2OffboardingRequest {
   /** 离职记录 ID */
   offboarding_id: string
   /** 操作人雇佣 ID（employment_id），为空默认为系统操作。 */
@@ -3486,24 +3486,24 @@ export interface EditCorehrOffboardingRequest {
   update_data: ObjectFieldData[]
 }
 
-export interface EditCorehrOffboardingQuery {
+export interface EditCorehrV2OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface RevokeCorehrOffboardingRequest {
+export interface RevokeCorehrV2OffboardingRequest {
   /** 离职记录 ID */
   offboarding_id: string
   /** 操作人雇佣 ID（employment_id），为空默认为系统操作。 */
   operator_id?: string
 }
 
-export interface RevokeCorehrOffboardingQuery {
+export interface RevokeCorehrV2OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface SearchCorehrOffboardingRequest {
+export interface SearchCorehrV1OffboardingRequest {
   /** 雇佣 ID 列表，为空默认查询所有离职人员 */
   employment_ids?: string[]
   /** 离职审批发起时间-搜索范围开始，需要与搜索范围结束一同使用 */
@@ -3523,19 +3523,19 @@ export interface SearchCorehrOffboardingRequest {
   /** 离职日期 - 搜索范围结束 */
   offboarding_date_end?: string
   /** 离职状态，多个状态之间为「或」的关系 */
-  statuses?: 'Approving' | 'Approved' | 'Offboarded' | 'Rejected' | 'Withdrawn' | 'NoNeedApproval'[]
+  statuses?: ('Approving' | 'Approved' | 'Offboarded' | 'Rejected' | 'Withdrawn' | 'NoNeedApproval')[]
   /** 离职原因列表 , 可以通过【查询员工离职原因列表】接口获取 ，查询时不返回下级原因相关的离职信息 */
   reasons?: string[]
   /** 离职原因（员工）列表 , 可以通过【查询员工离职原因列表】接口获取，查询时不返回下级原因相关的离职信息 */
   employee_reasons?: string[]
 }
 
-export interface SearchCorehrOffboardingQuery {
+export interface SearchCorehrV1OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface CreateCorehrContractRequest {
+export interface CreateCorehrV1ContractRequest {
   /** 合同开始日期 */
   effective_time: string
   /** 实际结束日期 */
@@ -3560,12 +3560,12 @@ export interface CreateCorehrContractRequest {
   signing_type?: Enum
 }
 
-export interface CreateCorehrContractQuery {
+export interface CreateCorehrV1ContractQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface PatchCorehrContractRequest {
+export interface PatchCorehrV1ContractRequest {
   /** 合同开始日期 */
   effective_time?: string
   /** 实际结束日期 */
@@ -3590,38 +3590,38 @@ export interface PatchCorehrContractRequest {
   signing_type?: Enum
 }
 
-export interface PatchCorehrContractQuery {
+export interface PatchCorehrV1ContractQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface SearchCorehrContractRequest {
+export interface SearchCorehrV2ContractRequest {
   /** 雇佣 ID 列表 */
   employment_id_list?: string[]
   /** 合同ID列表 */
   contract_id_list?: string[]
 }
 
-export interface SearchCorehrContractQuery {
+export interface SearchCorehrV2ContractQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface BatchSaveCorehrWorkforcePlanDetailRowRequest {
+export interface BatchSaveCorehrV2WorkforcePlanDetailRowRequest {
   /** 编制规划id */
   workforce_plan_id: string
   /** 编制规划的多个明细行 */
   items: WorkforcePlanDetailRow[]
 }
 
-export interface BatchDeleteCorehrWorkforcePlanDetailRowRequest {
+export interface BatchDeleteCorehrV2WorkforcePlanDetailRowRequest {
   /** 编制规划id */
   workforce_plan_id: string
   /** 编制规划的多个明细行 */
   items: WorkforcePlanDetailRow[]
 }
 
-export interface BatchSaveCorehrReportDetailRowRequest {
+export interface BatchSaveCorehrV2ReportDetailRowRequest {
   /** 编制规划id */
   workforce_plan_id: string
   /** 集中填报id */
@@ -3630,7 +3630,7 @@ export interface BatchSaveCorehrReportDetailRowRequest {
   items: WorkforcePlanDetailRow[]
 }
 
-export interface BatchDeleteCorehrReportDetailRowRequest {
+export interface BatchDeleteCorehrV2ReportDetailRowRequest {
   /** 编制规划id */
   workforce_plan_id: string
   /** 集中填报id */
@@ -3639,14 +3639,14 @@ export interface BatchDeleteCorehrReportDetailRowRequest {
   items: WorkforcePlanDetailRow[]
 }
 
-export interface ListCorehrWorkforcePlanQuery {
+export interface ListCorehrV2WorkforcePlanQuery {
   /** 是否获取所有编制规划方案，true 所有编制规划方案列表，false 为仅获取当前生效的编制规划方案，默认为 false示例值：false */
   get_all_plan?: boolean
   /** 是否只获取已启用的方案，true 获取已启用编制规划方案，false 获取所有编制规划方案，默认为 true示例值：true */
   active?: boolean
 }
 
-export interface BatchCorehrWorkforcePlanDetailRequest {
+export interface BatchCorehrV2WorkforcePlanDetailRequest {
   /** 编制规划方案ID，ID及详细信息可通过获取编制规划方案列表接口查询获得。查询编制规划明细信息时，编制规划方案ID必填，是否为集中填报项目设置为false，不填写集中填报项目ID（是否填写不影响返回结果） */
   workforce_plan_id?: string
   /** 是否为集中填报项目。如果租户未使用集中填报功能，将此参数置空即可。如果查询集中填报明细，将此参数设置为true。 */
@@ -3669,7 +3669,7 @@ export interface BatchCorehrWorkforcePlanDetailRequest {
   cost_center_ids?: string[]
 }
 
-export interface CreateCorehrLeaveGrantingRecordRequest {
+export interface CreateCorehrV1LeaveGrantingRecordRequest {
   /** 假期类型 ID，枚举值可通过【获取假期类型列表】接口获取（若假期类型下存在假期子类，此处仅支持传入假期子类的 ID） */
   leave_type_id: string
   /** 员工 ID */
@@ -3690,19 +3690,19 @@ export interface CreateCorehrLeaveGrantingRecordRequest {
   external_id?: string
 }
 
-export interface CreateCorehrLeaveGrantingRecordQuery {
+export interface CreateCorehrV1LeaveGrantingRecordQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface LeaveTypesCorehrLeaveQuery {
+export interface LeaveTypesCorehrV1LeaveQuery {
   /** 假期类型状态（不传则为全部）可选值有：- 1：已启用- 2：已停用 */
   status?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface LeaveBalancesCorehrLeaveQuery {
+export interface LeaveBalancesCorehrV1LeaveQuery {
   /** 查询截止日期，即截止到某天余额数据的日期（不传则默认为当天） */
   as_of_date?: string
   /** 员工 ID 列表，最大 100 个（不传则默认查询全部员工） */
@@ -3715,7 +3715,7 @@ export interface LeaveBalancesCorehrLeaveQuery {
   include_offboard?: boolean
 }
 
-export interface LeaveRequestHistoryCorehrLeaveQuery {
+export interface LeaveRequestHistoryCorehrV1LeaveQuery {
   /** 员工 ID 列表，最大 100 个（不传则默认查询全部员工） */
   employment_id_list?: string[]
   /** 休假发起人 ID 列表，最大 100 个 */
@@ -3762,7 +3762,7 @@ export interface LeaveRequestHistoryCorehrLeaveQuery {
   wd_paid_type?: number
 }
 
-export interface WorkCalendarCorehrLeaveRequest {
+export interface WorkCalendarCorehrV1LeaveRequest {
   /** 工作日历ID列表 */
   wk_calendar_ids: string[]
   /** 工作日历ID大于 */
@@ -3773,7 +3773,7 @@ export interface WorkCalendarCorehrLeaveRequest {
   only_enable?: boolean
 }
 
-export interface CalendarByScopeCorehrLeaveQuery {
+export interface CalendarByScopeCorehrV1LeaveQuery {
   /** 用户所属部门的ID列表 */
   wk_department_id?: string
   /** 国家/地区 ID */
@@ -3790,7 +3790,7 @@ export interface CalendarByScopeCorehrLeaveQuery {
   wk_company_id?: string
 }
 
-export interface WorkCalendarDateCorehrLeaveRequest {
+export interface WorkCalendarDateCorehrV1LeaveRequest {
   /** 工作日历WKID列表，最多100 */
   wk_calendar_ids: string[]
   /** 日期，格式："2006-01-02"，最多50个 */
@@ -3807,7 +3807,7 @@ export interface WorkCalendarDateCorehrLeaveRequest {
   ids?: string[]
 }
 
-export interface QueryCorehrAuthorizationQuery {
+export interface QueryCorehrV1AuthorizationQuery {
   /** 员工ID列表，最大100个（不传则默认查询全部员工） */
   employment_id_list?: string[]
   /** 角色 ID 列表，最大 100 个 */
@@ -3820,19 +3820,19 @@ export interface QueryCorehrAuthorizationQuery {
   updated_at_lte?: string
 }
 
-export interface GetByParamCorehrAuthorizationQuery {
+export interface GetByParamCorehrV1AuthorizationQuery {
   /** 雇员 ID */
   employment_id: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface AddRoleAssignCorehrAuthorizationRequest {
+export interface AddRoleAssignCorehrV1AuthorizationRequest {
   /** 授权 */
   assigned_organization_items: AssignedOrganizationWithCode[][]
 }
 
-export interface AddRoleAssignCorehrAuthorizationQuery {
+export interface AddRoleAssignCorehrV1AuthorizationQuery {
   /** 雇员 ID */
   employment_id: string
   /** 用户 ID 类型 */
@@ -3841,12 +3841,12 @@ export interface AddRoleAssignCorehrAuthorizationQuery {
   role_id: string
 }
 
-export interface UpdateRoleAssignCorehrAuthorizationRequest {
+export interface UpdateRoleAssignCorehrV1AuthorizationRequest {
   /** 授权 */
   assigned_organization_items: AssignedOrganizationWithCode[][]
 }
 
-export interface UpdateRoleAssignCorehrAuthorizationQuery {
+export interface UpdateRoleAssignCorehrV1AuthorizationQuery {
   /** 雇员 ID */
   employment_id: string
   /** 用户 ID 类型 */
@@ -3855,7 +3855,7 @@ export interface UpdateRoleAssignCorehrAuthorizationQuery {
   role_id: string
 }
 
-export interface RemoveRoleAssignCorehrAuthorizationQuery {
+export interface RemoveRoleAssignCorehrV1AuthorizationQuery {
   /** 雇员 ID */
   employment_id: string
   /** 用户 ID 类型 */
@@ -3864,31 +3864,31 @@ export interface RemoveRoleAssignCorehrAuthorizationQuery {
   role_id: string
 }
 
-export interface BatchGetCorehrEmployeesBpRequest {
+export interface BatchGetCorehrV2EmployeesBpRequest {
   /** 员工雇佣 ID */
   employment_ids: string[]
   /** 是否获取全部 BP，true 为获取员工所在部门及来自上级部门的全部 HRBP 和属地 BP，false 为仅获取员工的直属 HRBP 和属地 BP（当员工所在部门、属地无 BP 时，会上钻找到最近的 BP），默认为 false */
   get_all?: boolean
 }
 
-export interface BatchGetCorehrEmployeesBpQuery {
+export interface BatchGetCorehrV2EmployeesBpQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface GetByDepartmentCorehrBpRequest {
+export interface GetByDepartmentCorehrV2BpRequest {
   /** 部门 ID */
   department_id: string
 }
 
-export interface GetByDepartmentCorehrBpQuery {
+export interface GetByDepartmentCorehrV2BpQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface QueryCorehrSecurityGroupRequest {
+export interface QueryCorehrV1SecurityGroupRequest {
   /** 角色列表，一次最多支持查询 50 个 */
   item_list: BpRoleOrganization[]
   /** 授权时间大于 */
@@ -3897,19 +3897,19 @@ export interface QueryCorehrSecurityGroupRequest {
   updated_at_lte?: string
 }
 
-export interface QueryCorehrSecurityGroupQuery {
+export interface QueryCorehrV1SecurityGroupQuery {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrBpQuery {
+export interface ListCorehrV2BpQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface SearchCorehrAssignedUserRequest {
+export interface SearchCorehrV1AssignedUserRequest {
   /** 角色 ID，仅支持组织类角色， 角色 ID 可通过【批量获取角色列表】接口获取 */
   role_id: string
   /** 管理范围信息 */
@@ -3922,12 +3922,12 @@ export interface SearchCorehrAssignedUserRequest {
   page_size: string
 }
 
-export interface SearchCorehrAssignedUserQuery {
+export interface SearchCorehrV1AssignedUserQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface ListCorehrProcessQuery {
+export interface ListCorehrV2ProcessQuery {
   /** 查询流程状态列表。 */
   statuses?: number[]
   /** 查询开始时间（unix毫秒时间戳），闭区间，开始时间和结束时间跨度不能超过31天 */
@@ -3938,19 +3938,19 @@ export interface ListCorehrProcessQuery {
   flow_definition_id?: string
 }
 
-export interface GetCorehrProcessQuery {
+export interface GetCorehrV2ProcessQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface GetCorehrProcessFormVariableDataQuery {
+export interface GetCorehrV2ProcessFormVariableDataQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface UpdateCorehrProcessRevokeRequest {
+export interface UpdateCorehrV2ProcessRevokeRequest {
   /** 按照指定的用户ID类型传递对应的用户ID。 */
   user_id?: string
   /** 原因 */
@@ -3959,12 +3959,12 @@ export interface UpdateCorehrProcessRevokeRequest {
   system_user?: boolean
 }
 
-export interface UpdateCorehrProcessRevokeQuery {
+export interface UpdateCorehrV2ProcessRevokeQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
 }
 
-export interface UpdateCorehrProcessWithdrawRequest {
+export interface UpdateCorehrV2ProcessWithdrawRequest {
   /** 按照指定的用户ID类型传递对应的用户ID。 */
   user_id?: string
   /** 原因 */
@@ -3973,12 +3973,12 @@ export interface UpdateCorehrProcessWithdrawRequest {
   system_user?: boolean
 }
 
-export interface UpdateCorehrProcessWithdrawQuery {
+export interface UpdateCorehrV2ProcessWithdrawQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
 }
 
-export interface ListCorehrApproverQuery {
+export interface ListCorehrV2ApproverQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 按user_id_type类型传递。如果system_approval为false，则必填。否则非必填。 */
@@ -3987,7 +3987,7 @@ export interface ListCorehrApproverQuery {
   approver_status?: -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 12 | 14 | 16
 }
 
-export interface UpdateCorehrProcessApproverRequest {
+export interface UpdateCorehrV2ProcessApproverRequest {
   /** 将审批任务修改为同意/拒绝 */
   status: 2 | 3
   /** 按user_id_type类型传递。如果system_approval为false，则必填。否则非必填。 */
@@ -4000,14 +4000,14 @@ export interface UpdateCorehrProcessApproverRequest {
   field_values_v2?: ProcessFormVariableV2[]
 }
 
-export interface UpdateCorehrProcessApproverQuery {
+export interface UpdateCorehrV2ProcessApproverQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface UpdateCorehrProcessExtraRequest {
+export interface UpdateCorehrV2ProcessExtraRequest {
   /** 操作人，当system_user为true时，可以不传值 */
   operator?: string
   /** 流程节点id，与approver_id二选一传入，都传以node_id为准 */
@@ -4026,12 +4026,12 @@ export interface UpdateCorehrProcessExtraRequest {
   system_user?: boolean
 }
 
-export interface UpdateCorehrProcessExtraQuery {
+export interface UpdateCorehrV2ProcessExtraQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
 }
 
-export interface UpdateCorehrProcessTransferRequest {
+export interface UpdateCorehrV2ProcessTransferRequest {
   /** 操作人，当system_user为true，可不传值 */
   operator?: string
   /** 被转交人id */
@@ -4044,12 +4044,12 @@ export interface UpdateCorehrProcessTransferRequest {
   system_user?: boolean
 }
 
-export interface UpdateCorehrProcessTransferQuery {
+export interface UpdateCorehrV2ProcessTransferQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
 }
 
-export interface MatchCorehrCompensationStandardQuery {
+export interface MatchCorehrV1CompensationStandardQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
@@ -4084,17 +4084,17 @@ export interface MatchCorehrCompensationStandardQuery {
   effective_time?: string
 }
 
-export interface ListCorehrSubregionQuery {
+export interface ListCorehrV1SubregionQuery {
   /** 省份/行政区id，填写后只查询该省份/行政区下的城市/区域 */
   subdivision_id?: string
 }
 
-export interface ListCorehrSubdivisionQuery {
+export interface ListCorehrV1SubdivisionQuery {
   /** 国家/地区id，填写后只查询该国家/地区下的省份/行政区 */
   country_region_id?: string
 }
 
-export interface PatchCorehrDepartmentRequest {
+export interface PatchCorehrV1DepartmentRequest {
   /** 实体在CoreHR内部的唯一键 */
   id?: string
   /** 子类型 */
@@ -4115,7 +4115,7 @@ export interface PatchCorehrDepartmentRequest {
   staffing_model?: Enum
 }
 
-export interface PatchCorehrDepartmentQuery {
+export interface PatchCorehrV1DepartmentQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
   /** 用户 ID 类型 */
@@ -4124,21 +4124,21 @@ export interface PatchCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface GetCorehrDepartmentQuery {
+export interface GetCorehrV1DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface ListCorehrJobQuery {
+export interface ListCorehrV1JobQuery {
   /** 名称 */
   name?: string
   /** 语言 */
   query_language?: string
 }
 
-export interface ListCorehrDepartmentQuery {
+export interface ListCorehrV1DepartmentQuery {
   /** 部门ID列表 */
   department_id_list?: string[]
   /** 部门名称列表，需精确匹配 */
@@ -4149,7 +4149,7 @@ export interface ListCorehrDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
-export interface PatchCorehrPersonRequest {
+export interface PatchCorehrV1PersonRequest {
   /** 姓名 */
   name_list?: PersonName[]
   /** 性别 */
@@ -4194,12 +4194,12 @@ export interface PatchCorehrPersonRequest {
   personal_profile?: PersonalProfile[]
 }
 
-export interface PatchCorehrPersonQuery {
+export interface PatchCorehrV1PersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface CreateCorehrPersonRequest {
+export interface CreateCorehrV1PersonRequest {
   /** 姓名 */
   name_list: PersonName[]
   /** 性别 */
@@ -4244,17 +4244,17 @@ export interface CreateCorehrPersonRequest {
   personal_profile?: PersonalProfile[]
 }
 
-export interface CreateCorehrPersonQuery {
+export interface CreateCorehrV1PersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
 }
 
-export interface GetCorehrPersonQuery {
+export interface GetCorehrV1PersonQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'people_employee_id'
 }
 
-export interface SubmitCorehrOffboardingRequest {
+export interface SubmitCorehrV1OffboardingRequest {
   /** 离职方式 */
   offboarding_mode: 1
   /** 雇员 id */
@@ -4277,85 +4277,85 @@ export interface SubmitCorehrOffboardingRequest {
   custom_fields?: ObjectFieldData[]
 }
 
-export interface SubmitCorehrOffboardingQuery {
+export interface SubmitCorehrV1OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
-export interface QueryCorehrCustomFieldResponse {
+export interface QueryCorehrV1CustomFieldResponse {
   /** 自定义字段列表 */
   items?: CustomField[]
 }
 
-export interface GetByParamCorehrCustomFieldResponse {
+export interface GetByParamCorehrV1CustomFieldResponse {
   /** 自定义字段详情 */
   data?: CustomField
 }
 
-export interface AddEnumOptionCorehrCommonDataMetaDataResponse {
+export interface AddEnumOptionCorehrV1CommonDataMetaDataResponse {
   /** 枚举字段 API name */
   enum_field_api_name?: string
   /** 枚举全部选项列表 */
   enum_field_options?: EnumFieldOption[]
 }
 
-export interface EditEnumOptionCorehrCommonDataMetaDataResponse {
+export interface EditEnumOptionCorehrV1CommonDataMetaDataResponse {
   /** 枚举字段 API name */
   enum_field_api_name?: string
   /** 枚举全部选项列表 */
   enum_field_options?: EnumFieldOption[]
 }
 
-export interface CreateCorehrNationalIdTypeResponse {
+export interface CreateCorehrV1NationalIdTypeResponse {
   national_id_type?: NationalIdType
 }
 
-export interface PatchCorehrNationalIdTypeResponse {
+export interface PatchCorehrV1NationalIdTypeResponse {
   national_id_type?: NationalIdType
 }
 
-export interface GetCorehrNationalIdTypeResponse {
+export interface GetCorehrV1NationalIdTypeResponse {
   /** 国家证件类型信息 */
   national_id_type?: NationalIdType
 }
 
-export interface CreateCorehrEmployeeTypeResponse {
+export interface CreateCorehrV1EmployeeTypeResponse {
   employee_type?: EmployeeType
 }
 
-export interface PatchCorehrEmployeeTypeResponse {
+export interface PatchCorehrV1EmployeeTypeResponse {
   employee_type?: EmployeeType
 }
 
-export interface GetCorehrEmployeeTypeResponse {
+export interface GetCorehrV1EmployeeTypeResponse {
   /** 雇员类型 */
   employee_type?: EmployeeType
 }
 
-export interface CreateCorehrWorkingHoursTypeResponse {
+export interface CreateCorehrV1WorkingHoursTypeResponse {
   working_hours_type?: WorkingHoursType
 }
 
-export interface PatchCorehrWorkingHoursTypeResponse {
+export interface PatchCorehrV1WorkingHoursTypeResponse {
   working_hours_type?: WorkingHoursType
 }
 
-export interface GetCorehrWorkingHoursTypeResponse {
+export interface GetCorehrV1WorkingHoursTypeResponse {
   /** 工时制度信息 */
   working_hours_type?: WorkingHoursType
 }
 
-export interface ConvertCorehrCommonDataIdResponse {
+export interface ConvertCorehrV1CommonDataIdResponse {
   /** ID 信息列表 */
   items?: IdInfo[]
 }
 
-export interface BatchGetCorehrEmployeeResponse {
+export interface BatchGetCorehrV2EmployeeResponse {
   /** 查询的雇佣信息 */
   items?: Employee[]
 }
 
-export interface CreateCorehrEmployeeResponse {
+export interface CreateCorehrV2EmployeeResponse {
   /** 雇佣信息 ID */
   employment_id?: string
   /** 合同 ID */
@@ -4364,68 +4364,68 @@ export interface CreateCorehrEmployeeResponse {
   job_data_id?: string
 }
 
-export interface CreateCorehrPersonResponse {
+export interface CreateCorehrV2PersonResponse {
   person?: PersonInfo
 }
 
-export interface PatchCorehrPersonResponse {
+export interface PatchCorehrV2PersonResponse {
   person?: PersonInfo
 }
 
-export interface UploadCorehrPersonResponse {
+export interface UploadCorehrV1PersonResponse {
   /** 上传文件ID */
   id?: string
 }
 
-export interface CreateCorehrEmploymentResponse {
+export interface CreateCorehrV1EmploymentResponse {
   employment?: EmploymentCreate
 }
 
-export interface PatchCorehrEmploymentResponse {
+export interface PatchCorehrV1EmploymentResponse {
   employment?: Employment
 }
 
-export interface CreateCorehrJobDataResponse {
+export interface CreateCorehrV1JobDataResponse {
   job_data?: JobData
 }
 
-export interface PatchCorehrJobDataResponse {
+export interface PatchCorehrV1JobDataResponse {
   job_data?: JobData
 }
 
-export interface BatchGetCorehrEmployeesJobDataResponse {
+export interface BatchGetCorehrV2EmployeesJobDataResponse {
   /** 查询的雇佣信息 */
   items?: EmployeeJobData[]
 }
 
-export interface GetCorehrJobDataResponse {
+export interface GetCorehrV1JobDataResponse {
   /** 任职信息 */
   job_data?: JobData
 }
 
-export interface CreateCorehrEmployeesAdditionalJobResponse {
+export interface CreateCorehrV2EmployeesAdditionalJobResponse {
   additional_job?: EmployeesAdditionalJobWriteResp
 }
 
-export interface PatchCorehrEmployeesAdditionalJobResponse {
+export interface PatchCorehrV2EmployeesAdditionalJobResponse {
   additional_job?: EmployeesAdditionalJobWriteResp
 }
 
-export interface CreateCorehrDepartmentResponse {
+export interface CreateCorehrV1DepartmentResponse {
   department?: DepartmentCreate
 }
 
-export interface ParentsCorehrDepartmentResponse {
+export interface ParentsCorehrV2DepartmentResponse {
   /** 父部门查询结果 */
   items?: DepartmentParents[]
 }
 
-export interface BatchGetCorehrDepartmentResponse {
+export interface BatchGetCorehrV2DepartmentResponse {
   /** 查询的部门信息 */
   items?: Department[]
 }
 
-export interface QueryRecentChangeCorehrDepartmentResponse {
+export interface QueryRecentChangeCorehrV2DepartmentResponse {
   /** 部门 ID 列表 */
   department_ids?: string[]
   /** 目标查询时间范围内被删除的部门列表 */
@@ -4436,21 +4436,21 @@ export interface QueryRecentChangeCorehrDepartmentResponse {
   has_more?: boolean
 }
 
-export interface QueryTimelineCorehrDepartmentResponse {
+export interface QueryTimelineCorehrV2DepartmentResponse {
   /** 部门信息 */
   items?: DepartmentTimeline[]
 }
 
-export interface CreateCorehrLocationResponse {
+export interface CreateCorehrV1LocationResponse {
   location?: Location
 }
 
-export interface GetCorehrLocationResponse {
+export interface GetCorehrV1LocationResponse {
   /** 地点信息 */
   location?: Location
 }
 
-export interface QueryRecentChangeCorehrLocationResponse {
+export interface QueryRecentChangeCorehrV2LocationResponse {
   /** 地点 ID 列表 */
   location_ids?: string[]
   /** 下一页页码 */
@@ -4461,30 +4461,30 @@ export interface QueryRecentChangeCorehrLocationResponse {
   deleted_location_ids?: string[]
 }
 
-export interface BatchGetCorehrLocationResponse {
+export interface BatchGetCorehrV2LocationResponse {
   /** 查询的地点信息 */
   items?: Location[]
 }
 
-export interface CreateCorehrLocationAddressResponse {
+export interface CreateCorehrV2LocationAddressResponse {
   /** 地址 ID */
   address_id?: string
 }
 
-export interface CreateCorehrCompanyResponse {
+export interface CreateCorehrV1CompanyResponse {
   company?: Company
 }
 
-export interface PatchCorehrCompanyResponse {
+export interface PatchCorehrV1CompanyResponse {
   company?: Company
 }
 
-export interface GetCorehrCompanyResponse {
+export interface GetCorehrV1CompanyResponse {
   /** 公司信息 */
   company?: Company
 }
 
-export interface QueryRecentChangeCorehrCompanyResponse {
+export interface QueryRecentChangeCorehrV2CompanyResponse {
   /** 公司 ID 列表 */
   company_ids?: string[]
   /** 下一页页码 */
@@ -4495,20 +4495,20 @@ export interface QueryRecentChangeCorehrCompanyResponse {
   deleted_company_ids?: string[]
 }
 
-export interface BatchGetCorehrCompanyResponse {
+export interface BatchGetCorehrV2CompanyResponse {
   /** 查询的公司信息 */
   items?: Company[]
 }
 
-export interface CreateCorehrCostCenterResponse {
+export interface CreateCorehrV2CostCenterResponse {
   cost_center?: CostCenter
 }
 
-export interface PatchCorehrCostCenterResponse {
+export interface PatchCorehrV2CostCenterResponse {
   cost_center?: CostCenter
 }
 
-export interface QueryRecentChangeCorehrCostCenterResponse {
+export interface QueryRecentChangeCorehrV2CostCenterResponse {
   /** 成本中心 ID 列表 */
   cost_center_ids?: string[]
   /** 下一页页码 */
@@ -4519,43 +4519,43 @@ export interface QueryRecentChangeCorehrCostCenterResponse {
   deleted_cost_center_ids?: string[]
 }
 
-export interface CreateCorehrCostCenterVersionResponse {
+export interface CreateCorehrV2CostCenterVersionResponse {
   version?: CostCenterVersion
 }
 
-export interface PatchCorehrCostCenterVersionResponse {
+export interface PatchCorehrV2CostCenterVersionResponse {
   version?: CostCenterVersion
 }
 
-export interface GetCorehrApprovalGroupsResponse {
+export interface GetCorehrV2ApprovalGroupsResponse {
   /** 组织架构调整流程信息 */
   approval_group?: ApprovalGroup
 }
 
-export interface OpenQueryDepartmentChangeListByIdsCorehrApprovalGroupsResponse {
+export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsResponse {
   /** 部门调整记录信息列表 */
   department_changes?: DepartmentChange[]
 }
 
-export interface OpenQueryJobChangeListByIdsCorehrApprovalGroupsResponse {
+export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsResponse {
   /** 人员异动记录信息列表 */
   job_changes?: JobChange[]
 }
 
-export interface CreateCorehrJobFamilyResponse {
+export interface CreateCorehrV1JobFamilyResponse {
   job_family?: JobFamily
 }
 
-export interface PatchCorehrJobFamilyResponse {
+export interface PatchCorehrV1JobFamilyResponse {
   job_family?: JobFamily
 }
 
-export interface GetCorehrJobFamilyResponse {
+export interface GetCorehrV1JobFamilyResponse {
   /** 职务序列信息 */
   job_family?: JobFamily
 }
 
-export interface QueryRecentChangeCorehrJobFamilyResponse {
+export interface QueryRecentChangeCorehrV2JobFamilyResponse {
   /** 序列 ID 列表 */
   job_family_ids?: string[]
   /** 下一页页码 */
@@ -4566,25 +4566,25 @@ export interface QueryRecentChangeCorehrJobFamilyResponse {
   deleted_job_family_ids?: string[]
 }
 
-export interface BatchGetCorehrJobFamilyResponse {
+export interface BatchGetCorehrV2JobFamilyResponse {
   /** 查询的序列信息 */
   items?: JobFamily[]
 }
 
-export interface CreateCorehrJobLevelResponse {
+export interface CreateCorehrV1JobLevelResponse {
   job_level?: JobLevel
 }
 
-export interface PatchCorehrJobLevelResponse {
+export interface PatchCorehrV1JobLevelResponse {
   job_level?: JobLevel
 }
 
-export interface GetCorehrJobLevelResponse {
+export interface GetCorehrV1JobLevelResponse {
   /** 职务级别信息 */
   job_level?: JobLevel
 }
 
-export interface QueryRecentChangeCorehrJobLevelResponse {
+export interface QueryRecentChangeCorehrV2JobLevelResponse {
   /** 职级 ID 列表 */
   job_level_ids?: string[]
   /** 下一页页码 */
@@ -4595,17 +4595,17 @@ export interface QueryRecentChangeCorehrJobLevelResponse {
   deleted_job_level_ids?: string[]
 }
 
-export interface BatchGetCorehrJobLevelResponse {
+export interface BatchGetCorehrV2JobLevelResponse {
   /** 查询的职级信息 */
   items?: JobLevel[]
 }
 
-export interface CreateCorehrJobGradeResponse {
+export interface CreateCorehrV2JobGradeResponse {
   /** 职等ID */
   grade_id?: string
 }
 
-export interface QueryRecentChangeCorehrJobGradeResponse {
+export interface QueryRecentChangeCorehrV2JobGradeResponse {
   /** 职等 ID 列表 */
   job_grade_ids?: string[]
   /** 下一页页码 */
@@ -4616,69 +4616,69 @@ export interface QueryRecentChangeCorehrJobGradeResponse {
   deleted_job_grade_ids?: string[]
 }
 
-export interface CreateCorehrJobResponse {
+export interface CreateCorehrV1JobResponse {
   job?: Job
 }
 
-export interface PatchCorehrJobResponse {
+export interface PatchCorehrV1JobResponse {
   job?: Job
 }
 
-export interface GetCorehrJobResponse {
+export interface GetCorehrV2JobResponse {
   /** 职务信息 */
   job?: Job
 }
 
-export interface WithdrawOnboardingCorehrPreHireResponse {
+export interface WithdrawOnboardingCorehrV2PreHireResponse {
   /** 是否成功撤销入职 */
   success?: boolean
 }
 
-export interface RestoreFlowInstanceCorehrPreHireResponse {
+export interface RestoreFlowInstanceCorehrV2PreHireResponse {
   /** 是否成功恢复入职 */
   success?: boolean
 }
 
-export interface CreateCorehrPreHireResponse {
+export interface CreateCorehrV2PreHireResponse {
   /** 待入职 ID */
   pre_hire_id?: string
 }
 
-export interface PatchCorehrPreHireResponse {
+export interface PatchCorehrV2PreHireResponse {
   /** 待入职ID */
   pre_hire_id?: string
 }
 
-export interface GetCorehrPreHireResponse {
+export interface GetCorehrV1PreHireResponse {
   /** 待入职信息 */
   pre_hire?: PreHire
 }
 
-export interface TransitTaskCorehrPreHireResponse {
+export interface TransitTaskCorehrV2PreHireResponse {
   /** 是否成功流转任务 */
   success?: boolean
 }
 
-export interface CompleteCorehrPreHireResponse {
+export interface CompleteCorehrV2PreHireResponse {
   /** 是否成功完成入职 */
   success?: boolean
 }
 
-export interface PatchCorehrPreHireResponse {
+export interface PatchCorehrV1PreHireResponse {
   pre_hire?: PreHire
 }
 
-export interface CreateCorehrProbationAssessmentResponse {
+export interface CreateCorehrV2ProbationAssessmentResponse {
   /** 创建的试用期考核记录 ID 列表，有序返回 */
   assessment_ids?: string[]
 }
 
-export interface SubmitCorehrProbationResponse {
+export interface SubmitCorehrV2ProbationResponse {
   /** 试用期信息 */
   probation_info?: ProbationInfoForSubmit
 }
 
-export interface CreateCorehrJobChangeResponse {
+export interface CreateCorehrV2JobChangeResponse {
   /** 异动记录 id */
   job_change_id?: string
   /** 雇员 id */
@@ -4703,17 +4703,17 @@ export interface CreateCorehrJobChangeResponse {
   custom_fields?: CustomFieldData[]
 }
 
-export interface QueryCorehrTransferTypeResponse {
+export interface QueryCorehrV1TransferTypeResponse {
   /** 异动类型列表 */
   items?: TransferType[]
 }
 
-export interface QueryCorehrTransferReasonResponse {
+export interface QueryCorehrV1TransferReasonResponse {
   /** 异动原因列表 */
   items?: TransferReason[]
 }
 
-export interface CreateCorehrJobChangeResponse {
+export interface CreateCorehrV1JobChangeResponse {
   /** 异动记录 id */
   job_change_id?: string
   /** 雇员 id */
@@ -4734,12 +4734,12 @@ export interface CreateCorehrJobChangeResponse {
   transfer_info?: TransferInfo
 }
 
-export interface QueryCorehrOffboardingResponse {
+export interface QueryCorehrV1OffboardingResponse {
   /** 离职原因列表 */
   items?: OffboardingReason[]
 }
 
-export interface SubmitV2CorehrOffboardingResponse {
+export interface SubmitV2CorehrV2OffboardingResponse {
   /** 离职记录 id */
   offboarding_id?: string
   /** 雇员 id */
@@ -4764,32 +4764,32 @@ export interface SubmitV2CorehrOffboardingResponse {
   is_transfer_with_workforce?: boolean
 }
 
-export interface EditCorehrOffboardingResponse {
+export interface EditCorehrV2OffboardingResponse {
   /** 编辑字段数据信息 */
   data: ObjectFieldData[]
 }
 
-export interface CreateCorehrContractResponse {
+export interface CreateCorehrV1ContractResponse {
   contract?: Contract
 }
 
-export interface PatchCorehrContractResponse {
+export interface PatchCorehrV1ContractResponse {
   contract?: Contract
 }
 
-export interface GetCorehrContractResponse {
+export interface GetCorehrV1ContractResponse {
   /** 合同信息 */
   contract?: Contract
 }
 
-export interface ListCorehrWorkforcePlanResponse {
+export interface ListCorehrV2WorkforcePlanResponse {
   /** 方案列表 */
   items?: WorkforcePlan[]
   /** 方案总数 */
   total?: number
 }
 
-export interface BatchCorehrWorkforcePlanDetailResponse {
+export interface BatchCorehrV2WorkforcePlanDetailResponse {
   /** 编制规划方案 ID */
   workforce_plan_id?: string
   /** 集中填报项目 ID */
@@ -4802,66 +4802,66 @@ export interface BatchCorehrWorkforcePlanDetailResponse {
   has_more?: boolean
 }
 
-export interface CreateCorehrLeaveGrantingRecordResponse {
+export interface CreateCorehrV1LeaveGrantingRecordResponse {
   /** 假期授予记录 */
   leave_granting_record?: LeaveGrantingRecord
 }
 
-export interface WorkCalendarCorehrLeaveResponse {
+export interface WorkCalendarCorehrV1LeaveResponse {
   /** 工作日历列表 */
   work_calendars?: WorkCalendarDetail[]
   /** 入参count=true，则返回符合条件的工作日历总数 */
   count?: number
 }
 
-export interface CalendarByScopeCorehrLeaveResponse {
+export interface CalendarByScopeCorehrV1LeaveResponse {
   /** 工作日历id */
   calendar_wk_id?: string
 }
 
-export interface WorkCalendarDateCorehrLeaveResponse {
+export interface WorkCalendarDateCorehrV1LeaveResponse {
   /** 日期类型列表 */
   calendar_dates?: WkCalendarDate[]
 }
 
-export interface GetByParamCorehrAuthorizationResponse {
+export interface GetByParamCorehrV1AuthorizationResponse {
   /** 角色授权信息 */
   role_authorization?: RoleAuthorization
 }
 
-export interface AddRoleAssignCorehrAuthorizationResponse {
+export interface AddRoleAssignCorehrV1AuthorizationResponse {
   /** 授权id */
   assign_id?: string
 }
 
-export interface UpdateRoleAssignCorehrAuthorizationResponse {
+export interface UpdateRoleAssignCorehrV1AuthorizationResponse {
   /** 授权id */
   assign_id?: string
 }
 
-export interface RemoveRoleAssignCorehrAuthorizationResponse {
+export interface RemoveRoleAssignCorehrV1AuthorizationResponse {
   /** 授权id */
   assign_id?: string
 }
 
-export interface BatchGetCorehrEmployeesBpResponse {
+export interface BatchGetCorehrV2EmployeesBpResponse {
   /** 员工直属 BP 信息，当员工所在部门、属地无 BP 时，会上钻找到最近的 BP */
   employment_direct_bps?: EmploymentBp[]
   /** 员工全部 BP 信息 */
   employment_all_bps?: EmploymentBp[]
 }
 
-export interface GetByDepartmentCorehrBpResponse {
+export interface GetByDepartmentCorehrV2BpResponse {
   /** 部门 HRBP 信息，依次为部门及各层级上级部门 */
   items?: DepartmentHrbp[]
 }
 
-export interface QueryCorehrSecurityGroupResponse {
+export interface QueryCorehrV1SecurityGroupResponse {
   /** HRBP/属地 BP 信息 */
   hrbp_list?: Hrbp[]
 }
 
-export interface GetCorehrProcessResponse {
+export interface GetCorehrV2ProcessResponse {
   /** 流程实例ID */
   process_id?: string
   /** 流程状态 */
@@ -4906,21 +4906,21 @@ export interface GetCorehrProcessResponse {
   is_last_completed_correct_process?: boolean
 }
 
-export interface GetCorehrProcessFormVariableDataResponse {
+export interface GetCorehrV2ProcessFormVariableDataResponse {
   /** 表单数据 */
   field_variable_values?: FieldVariableValue[]
   /** 流程实例id */
   process_id?: string
 }
 
-export interface UpdateCorehrProcessApproverResponse {
+export interface UpdateCorehrV2ProcessApproverResponse {
   /** 错误码，非 0 表示失败 */
   code: number
   /** 错误描述 */
   msg?: string
 }
 
-export interface MatchCorehrCompensationStandardResponse {
+export interface MatchCorehrV1CompensationStandardResponse {
   /** 薪资标准表ID */
   standard_id?: string
   /** 薪资等级 */
@@ -4929,59 +4929,59 @@ export interface MatchCorehrCompensationStandardResponse {
   effective_time?: string
 }
 
-export interface GetCorehrProcessFormVariableDataResponse {
+export interface GetCorehrV1ProcessFormVariableDataResponse {
   /** 流程变量 */
   field_variable_values?: FormFieldVariable[]
 }
 
-export interface GetCorehrSubregionResponse {
+export interface GetCorehrV1SubregionResponse {
   /** 城市/区域信息 */
   subregion?: Subregion
 }
 
-export interface GetCorehrSubdivisionResponse {
+export interface GetCorehrV1SubdivisionResponse {
   /** 国家/地址信息 */
   subdivision?: Subdivision
 }
 
-export interface GetCorehrCountryRegionResponse {
+export interface GetCorehrV1CountryRegionResponse {
   /** 国家/地址信息 */
   country_region?: CountryRegion
 }
 
-export interface GetCorehrCurrencyResponse {
+export interface GetCorehrV1CurrencyResponse {
   /** 货币信息 */
   currency?: Currency
 }
 
-export interface GetCorehrJobResponse {
+export interface GetCorehrV1JobResponse {
   /** 职务信息 */
   job?: Job
 }
 
-export interface PatchCorehrDepartmentResponse {
+export interface PatchCorehrV1DepartmentResponse {
   department?: Department
 }
 
-export interface GetCorehrDepartmentResponse {
+export interface GetCorehrV1DepartmentResponse {
   /** 部门信息 */
   department?: Department
 }
 
-export interface PatchCorehrPersonResponse {
+export interface PatchCorehrV1PersonResponse {
   person?: Person
 }
 
-export interface CreateCorehrPersonResponse {
+export interface CreateCorehrV1PersonResponse {
   person?: Person
 }
 
-export interface GetCorehrPersonResponse {
+export interface GetCorehrV1PersonResponse {
   /** 个人信息 */
   person?: Person
 }
 
-export interface SubmitCorehrOffboardingResponse {
+export interface SubmitCorehrV1OffboardingResponse {
   /** 离职记录 id */
   offboarding_id?: string
   /** 雇员 id */
@@ -5003,541 +5003,541 @@ export interface SubmitCorehrOffboardingResponse {
 }
 
 Internal.define({
-  '/open-apis/corehr/v1/custom_fields/list_object_api_name': {
-    GET: { name: 'listObjectApiNameCorehrCustomField', pagination: { argIndex: 0 } },
+  '/corehr/v1/custom_fields/list_object_api_name': {
+    GET: { name: 'listObjectApiNameCorehrV1CustomField', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/custom_fields/query': {
-    GET: 'queryCorehrCustomField',
+  '/corehr/v1/custom_fields/query': {
+    GET: 'queryCorehrV1CustomField',
   },
-  '/open-apis/corehr/v1/custom_fields/get_by_param': {
-    GET: 'getByParamCorehrCustomField',
+  '/corehr/v1/custom_fields/get_by_param': {
+    GET: 'getByParamCorehrV1CustomField',
   },
-  '/open-apis/corehr/v1/common_data/meta_data/add_enum_option': {
-    POST: 'addEnumOptionCorehrCommonDataMetaData',
+  '/corehr/v1/common_data/meta_data/add_enum_option': {
+    POST: 'addEnumOptionCorehrV1CommonDataMetaData',
   },
-  '/open-apis/corehr/v1/common_data/meta_data/edit_enum_option': {
-    POST: 'editEnumOptionCorehrCommonDataMetaData',
+  '/corehr/v1/common_data/meta_data/edit_enum_option': {
+    POST: 'editEnumOptionCorehrV1CommonDataMetaData',
   },
-  '/open-apis/corehr/v2/basic_info/country_regions/search': {
-    POST: { name: 'searchCorehrBasicInfoCountryRegion', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/country_regions/search': {
+    POST: { name: 'searchCorehrV2BasicInfoCountryRegion', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/country_region_subdivisions/search': {
-    POST: { name: 'searchCorehrBasicInfoCountryRegionSubdivision', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/country_region_subdivisions/search': {
+    POST: { name: 'searchCorehrV2BasicInfoCountryRegionSubdivision', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/cities/search': {
-    POST: { name: 'searchCorehrBasicInfoCity', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/cities/search': {
+    POST: { name: 'searchCorehrV2BasicInfoCity', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/districts/search': {
-    POST: { name: 'searchCorehrBasicInfoDistrict', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/districts/search': {
+    POST: { name: 'searchCorehrV2BasicInfoDistrict', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/nationalities/search': {
-    POST: { name: 'searchCorehrBasicInfoNationality', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/nationalities/search': {
+    POST: { name: 'searchCorehrV2BasicInfoNationality', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v1/national_id_types': {
-    POST: 'createCorehrNationalIdType',
-    GET: { name: 'listCorehrNationalIdType', pagination: { argIndex: 0 } },
+  '/corehr/v1/national_id_types': {
+    POST: 'createCorehrV1NationalIdType',
+    GET: { name: 'listCorehrV1NationalIdType', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/national_id_types/{national_id_type_id}': {
-    DELETE: 'deleteCorehrNationalIdType',
-    PATCH: 'patchCorehrNationalIdType',
-    GET: 'getCorehrNationalIdType',
+  '/corehr/v1/national_id_types/{national_id_type_id}': {
+    DELETE: 'deleteCorehrV1NationalIdType',
+    PATCH: 'patchCorehrV1NationalIdType',
+    GET: 'getCorehrV1NationalIdType',
   },
-  '/open-apis/corehr/v2/basic_info/banks/search': {
-    POST: { name: 'searchCorehrBasicInfoBank', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/banks/search': {
+    POST: { name: 'searchCorehrV2BasicInfoBank', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/bank_branchs/search': {
-    POST: { name: 'searchCorehrBasicInfoBankBranch', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/bank_branchs/search': {
+    POST: { name: 'searchCorehrV2BasicInfoBankBranch', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/currencies/search': {
-    POST: { name: 'searchCorehrBasicInfoCurrency', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/currencies/search': {
+    POST: { name: 'searchCorehrV2BasicInfoCurrency', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/time_zones/search': {
-    POST: { name: 'searchCorehrBasicInfoTimeZone', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/time_zones/search': {
+    POST: { name: 'searchCorehrV2BasicInfoTimeZone', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/basic_info/languages/search': {
-    POST: { name: 'searchCorehrBasicInfoLanguage', pagination: { argIndex: 1 } },
+  '/corehr/v2/basic_info/languages/search': {
+    POST: { name: 'searchCorehrV2BasicInfoLanguage', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v1/employee_types': {
-    POST: 'createCorehrEmployeeType',
-    GET: { name: 'listCorehrEmployeeType', pagination: { argIndex: 0 } },
+  '/corehr/v1/employee_types': {
+    POST: 'createCorehrV1EmployeeType',
+    GET: { name: 'listCorehrV1EmployeeType', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/employee_types/{employee_type_id}': {
-    DELETE: 'deleteCorehrEmployeeType',
-    PATCH: 'patchCorehrEmployeeType',
-    GET: 'getCorehrEmployeeType',
+  '/corehr/v1/employee_types/{employee_type_id}': {
+    DELETE: 'deleteCorehrV1EmployeeType',
+    PATCH: 'patchCorehrV1EmployeeType',
+    GET: 'getCorehrV1EmployeeType',
   },
-  '/open-apis/corehr/v1/working_hours_types': {
-    POST: 'createCorehrWorkingHoursType',
-    GET: { name: 'listCorehrWorkingHoursType', pagination: { argIndex: 0 } },
+  '/corehr/v1/working_hours_types': {
+    POST: 'createCorehrV1WorkingHoursType',
+    GET: { name: 'listCorehrV1WorkingHoursType', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/working_hours_types/{working_hours_type_id}': {
-    DELETE: 'deleteCorehrWorkingHoursType',
-    PATCH: 'patchCorehrWorkingHoursType',
-    GET: 'getCorehrWorkingHoursType',
+  '/corehr/v1/working_hours_types/{working_hours_type_id}': {
+    DELETE: 'deleteCorehrV1WorkingHoursType',
+    PATCH: 'patchCorehrV1WorkingHoursType',
+    GET: 'getCorehrV1WorkingHoursType',
   },
-  '/open-apis/corehr/v1/common_data/id/convert': {
-    POST: 'convertCorehrCommonDataId',
+  '/corehr/v1/common_data/id/convert': {
+    POST: 'convertCorehrV1CommonDataId',
   },
-  '/open-apis/corehr/v2/employees/batch_get': {
-    POST: 'batchGetCorehrEmployee',
+  '/corehr/v2/employees/batch_get': {
+    POST: 'batchGetCorehrV2Employee',
   },
-  '/open-apis/corehr/v2/employees/search': {
-    POST: { name: 'searchCorehrEmployee', pagination: { argIndex: 1 } },
+  '/corehr/v2/employees/search': {
+    POST: { name: 'searchCorehrV2Employee', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/employees': {
-    POST: 'createCorehrEmployee',
+  '/corehr/v2/employees': {
+    POST: 'createCorehrV2Employee',
   },
-  '/open-apis/corehr/v2/persons': {
-    POST: 'createCorehrPerson',
+  '/corehr/v2/persons': {
+    POST: 'createCorehrV2Person',
   },
-  '/open-apis/corehr/v2/persons/{person_id}': {
-    PATCH: 'patchCorehrPerson',
+  '/corehr/v2/persons/{person_id}': {
+    PATCH: 'patchCorehrV2Person',
   },
-  '/open-apis/corehr/v1/persons/{person_id}': {
-    DELETE: 'deleteCorehrPerson',
-    PATCH: 'patchCorehrPerson',
-    GET: 'getCorehrPerson',
+  '/corehr/v1/persons/{person_id}': {
+    DELETE: 'deleteCorehrV1Person',
+    PATCH: 'patchCorehrV1Person',
+    GET: 'getCorehrV1Person',
   },
-  '/open-apis/corehr/v1/persons/upload': {
-    POST: { name: 'uploadCorehrPerson', multipart: true },
+  '/corehr/v1/persons/upload': {
+    POST: { name: 'uploadCorehrV1Person', multipart: true },
   },
-  '/open-apis/corehr/v1/files/{id}': {
-    GET: { name: 'getCorehrFile', type: 'binary' },
+  '/corehr/v1/files/{id}': {
+    GET: { name: 'getCorehrV1File', type: 'binary' },
   },
-  '/open-apis/corehr/v1/employments': {
-    POST: 'createCorehrEmployment',
+  '/corehr/v1/employments': {
+    POST: 'createCorehrV1Employment',
   },
-  '/open-apis/corehr/v1/employments/{employment_id}': {
-    PATCH: 'patchCorehrEmployment',
-    DELETE: 'deleteCorehrEmployment',
+  '/corehr/v1/employments/{employment_id}': {
+    PATCH: 'patchCorehrV1Employment',
+    DELETE: 'deleteCorehrV1Employment',
   },
-  '/open-apis/corehr/v1/job_datas': {
-    POST: 'createCorehrJobData',
-    GET: { name: 'listCorehrJobData', pagination: { argIndex: 0 } },
+  '/corehr/v1/job_datas': {
+    POST: 'createCorehrV1JobData',
+    GET: { name: 'listCorehrV1JobData', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/job_datas/{job_data_id}': {
-    DELETE: 'deleteCorehrJobData',
-    PATCH: 'patchCorehrJobData',
-    GET: 'getCorehrJobData',
+  '/corehr/v1/job_datas/{job_data_id}': {
+    DELETE: 'deleteCorehrV1JobData',
+    PATCH: 'patchCorehrV1JobData',
+    GET: 'getCorehrV1JobData',
   },
-  '/open-apis/corehr/v2/employees/job_datas/query': {
-    POST: { name: 'queryCorehrEmployeesJobData', pagination: { argIndex: 1 } },
+  '/corehr/v2/employees/job_datas/query': {
+    POST: { name: 'queryCorehrV2EmployeesJobData', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/employees/job_datas/batch_get': {
-    POST: 'batchGetCorehrEmployeesJobData',
+  '/corehr/v2/employees/job_datas/batch_get': {
+    POST: 'batchGetCorehrV2EmployeesJobData',
   },
-  '/open-apis/corehr/v2/employees/additional_jobs': {
-    POST: 'createCorehrEmployeesAdditionalJob',
+  '/corehr/v2/employees/additional_jobs': {
+    POST: 'createCorehrV2EmployeesAdditionalJob',
   },
-  '/open-apis/corehr/v2/employees/additional_jobs/{additional_job_id}': {
-    PATCH: 'patchCorehrEmployeesAdditionalJob',
-    DELETE: 'deleteCorehrEmployeesAdditionalJob',
+  '/corehr/v2/employees/additional_jobs/{additional_job_id}': {
+    PATCH: 'patchCorehrV2EmployeesAdditionalJob',
+    DELETE: 'deleteCorehrV2EmployeesAdditionalJob',
   },
-  '/open-apis/corehr/v2/employees/additional_jobs/batch': {
-    POST: { name: 'batchCorehrEmployeesAdditionalJob', pagination: { argIndex: 1 } },
+  '/corehr/v2/employees/additional_jobs/batch': {
+    POST: { name: 'batchCorehrV2EmployeesAdditionalJob', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/departments/query_operation_logs': {
-    POST: { name: 'queryOperationLogsCorehrDepartment', pagination: { argIndex: 1, itemsKey: 'op_logs', tokenKey: 'next_page_token' } },
+  '/corehr/v2/departments/query_operation_logs': {
+    POST: { name: 'queryOperationLogsCorehrV2Department', pagination: { argIndex: 1, itemsKey: 'op_logs', tokenKey: 'next_page_token' } },
   },
-  '/open-apis/corehr/v1/departments': {
-    POST: 'createCorehrDepartment',
-    GET: { name: 'listCorehrDepartment', pagination: { argIndex: 0 } },
+  '/corehr/v1/departments': {
+    POST: 'createCorehrV1Department',
+    GET: { name: 'listCorehrV1Department', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v2/departments/{department_id}': {
-    PATCH: 'patchCorehrDepartment',
-    DELETE: 'deleteCorehrDepartment',
+  '/corehr/v2/departments/{department_id}': {
+    PATCH: 'patchCorehrV2Department',
+    DELETE: 'deleteCorehrV2Department',
   },
-  '/open-apis/corehr/v2/departments/parents': {
-    POST: 'parentsCorehrDepartment',
+  '/corehr/v2/departments/parents': {
+    POST: 'parentsCorehrV2Department',
   },
-  '/open-apis/corehr/v2/departments/batch_get': {
-    POST: 'batchGetCorehrDepartment',
+  '/corehr/v2/departments/batch_get': {
+    POST: 'batchGetCorehrV2Department',
   },
-  '/open-apis/corehr/v2/departments/query_recent_change': {
-    GET: 'queryRecentChangeCorehrDepartment',
+  '/corehr/v2/departments/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2Department',
   },
-  '/open-apis/corehr/v2/departments/query_timeline': {
-    POST: 'queryTimelineCorehrDepartment',
+  '/corehr/v2/departments/query_timeline': {
+    POST: 'queryTimelineCorehrV2Department',
   },
-  '/open-apis/corehr/v2/departments/tree': {
-    POST: { name: 'treeCorehrDepartment', pagination: { argIndex: 1 } },
+  '/corehr/v2/departments/tree': {
+    POST: { name: 'treeCorehrV2Department', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/departments/query_multi_timeline': {
-    POST: { name: 'queryMultiTimelineCorehrDepartment', pagination: { argIndex: 1 } },
+  '/corehr/v2/departments/query_multi_timeline': {
+    POST: { name: 'queryMultiTimelineCorehrV2Department', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/departments/search': {
-    POST: { name: 'searchCorehrDepartment', pagination: { argIndex: 1 } },
+  '/corehr/v2/departments/search': {
+    POST: { name: 'searchCorehrV2Department', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v1/locations': {
-    POST: 'createCorehrLocation',
-    GET: { name: 'listCorehrLocation', pagination: { argIndex: 0 } },
+  '/corehr/v1/locations': {
+    POST: 'createCorehrV1Location',
+    GET: { name: 'listCorehrV1Location', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v2/locations/{location_id}': {
-    PATCH: 'patchCorehrLocation',
+  '/corehr/v2/locations/{location_id}': {
+    PATCH: 'patchCorehrV2Location',
   },
-  '/open-apis/corehr/v1/locations/{location_id}': {
-    GET: 'getCorehrLocation',
-    DELETE: 'deleteCorehrLocation',
+  '/corehr/v1/locations/{location_id}': {
+    GET: 'getCorehrV1Location',
+    DELETE: 'deleteCorehrV1Location',
   },
-  '/open-apis/corehr/v2/locations/query_recent_change': {
-    GET: 'queryRecentChangeCorehrLocation',
+  '/corehr/v2/locations/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2Location',
   },
-  '/open-apis/corehr/v2/locations/batch_get': {
-    POST: 'batchGetCorehrLocation',
+  '/corehr/v2/locations/batch_get': {
+    POST: 'batchGetCorehrV2Location',
   },
-  '/open-apis/corehr/v2/locations/active': {
-    POST: 'activeCorehrLocation',
+  '/corehr/v2/locations/active': {
+    POST: 'activeCorehrV2Location',
   },
-  '/open-apis/corehr/v2/locations/{location_id}/addresses/{address_id}': {
-    DELETE: 'deleteCorehrLocationAddress',
-    PATCH: 'patchCorehrLocationAddress',
+  '/corehr/v2/locations/{location_id}/addresses/{address_id}': {
+    DELETE: 'deleteCorehrV2LocationAddress',
+    PATCH: 'patchCorehrV2LocationAddress',
   },
-  '/open-apis/corehr/v2/locations/{location_id}/addresses': {
-    POST: 'createCorehrLocationAddress',
+  '/corehr/v2/locations/{location_id}/addresses': {
+    POST: 'createCorehrV2LocationAddress',
   },
-  '/open-apis/corehr/v1/companies': {
-    POST: 'createCorehrCompany',
-    GET: { name: 'listCorehrCompany', pagination: { argIndex: 0 } },
+  '/corehr/v1/companies': {
+    POST: 'createCorehrV1Company',
+    GET: { name: 'listCorehrV1Company', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/companies/{company_id}': {
-    PATCH: 'patchCorehrCompany',
-    GET: 'getCorehrCompany',
-    DELETE: 'deleteCorehrCompany',
+  '/corehr/v1/companies/{company_id}': {
+    PATCH: 'patchCorehrV1Company',
+    GET: 'getCorehrV1Company',
+    DELETE: 'deleteCorehrV1Company',
   },
-  '/open-apis/corehr/v2/companies/active': {
-    POST: 'activeCorehrCompany',
+  '/corehr/v2/companies/active': {
+    POST: 'activeCorehrV2Company',
   },
-  '/open-apis/corehr/v2/companies/query_recent_change': {
-    GET: 'queryRecentChangeCorehrCompany',
+  '/corehr/v2/companies/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2Company',
   },
-  '/open-apis/corehr/v2/companies/batch_get': {
-    POST: 'batchGetCorehrCompany',
+  '/corehr/v2/companies/batch_get': {
+    POST: 'batchGetCorehrV2Company',
   },
-  '/open-apis/corehr/v2/cost_centers': {
-    POST: 'createCorehrCostCenter',
+  '/corehr/v2/cost_centers': {
+    POST: 'createCorehrV2CostCenter',
   },
-  '/open-apis/corehr/v2/cost_centers/{cost_center_id}': {
-    PATCH: 'patchCorehrCostCenter',
-    DELETE: 'deleteCorehrCostCenter',
+  '/corehr/v2/cost_centers/{cost_center_id}': {
+    PATCH: 'patchCorehrV2CostCenter',
+    DELETE: 'deleteCorehrV2CostCenter',
   },
-  '/open-apis/corehr/v2/cost_centers/query_recent_change': {
-    GET: 'queryRecentChangeCorehrCostCenter',
+  '/corehr/v2/cost_centers/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2CostCenter',
   },
-  '/open-apis/corehr/v2/cost_centers/search': {
-    POST: { name: 'searchCorehrCostCenter', pagination: { argIndex: 1 } },
+  '/corehr/v2/cost_centers/search': {
+    POST: { name: 'searchCorehrV2CostCenter', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/cost_centers/{cost_center_id}/versions': {
-    POST: 'createCorehrCostCenterVersion',
+  '/corehr/v2/cost_centers/{cost_center_id}/versions': {
+    POST: 'createCorehrV2CostCenterVersion',
   },
-  '/open-apis/corehr/v2/cost_centers/{cost_center_id}/versions/{version_id}': {
-    PATCH: 'patchCorehrCostCenterVersion',
-    DELETE: 'deleteCorehrCostCenterVersion',
+  '/corehr/v2/cost_centers/{cost_center_id}/versions/{version_id}': {
+    PATCH: 'patchCorehrV2CostCenterVersion',
+    DELETE: 'deleteCorehrV2CostCenterVersion',
   },
-  '/open-apis/corehr/v2/approval_groups/{process_id}': {
-    GET: 'getCorehrApprovalGroups',
+  '/corehr/v2/approval_groups/{process_id}': {
+    GET: 'getCorehrV2ApprovalGroups',
   },
-  '/open-apis/corehr/v2/approval_groups/open_query_department_change_list_by_ids': {
-    POST: 'openQueryDepartmentChangeListByIdsCorehrApprovalGroups',
+  '/corehr/v2/approval_groups/open_query_department_change_list_by_ids': {
+    POST: 'openQueryDepartmentChangeListByIdsCorehrV2ApprovalGroups',
   },
-  '/open-apis/corehr/v2/approval_groups/open_query_job_change_list_by_ids': {
-    POST: 'openQueryJobChangeListByIdsCorehrApprovalGroups',
+  '/corehr/v2/approval_groups/open_query_job_change_list_by_ids': {
+    POST: 'openQueryJobChangeListByIdsCorehrV2ApprovalGroups',
   },
-  '/open-apis/corehr/v1/job_families': {
-    POST: 'createCorehrJobFamily',
-    GET: { name: 'listCorehrJobFamily', pagination: { argIndex: 0 } },
+  '/corehr/v1/job_families': {
+    POST: 'createCorehrV1JobFamily',
+    GET: { name: 'listCorehrV1JobFamily', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/job_families/{job_family_id}': {
-    PATCH: 'patchCorehrJobFamily',
-    GET: 'getCorehrJobFamily',
-    DELETE: 'deleteCorehrJobFamily',
+  '/corehr/v1/job_families/{job_family_id}': {
+    PATCH: 'patchCorehrV1JobFamily',
+    GET: 'getCorehrV1JobFamily',
+    DELETE: 'deleteCorehrV1JobFamily',
   },
-  '/open-apis/corehr/v2/job_families/query_recent_change': {
-    GET: 'queryRecentChangeCorehrJobFamily',
+  '/corehr/v2/job_families/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2JobFamily',
   },
-  '/open-apis/corehr/v2/job_families/batch_get': {
-    POST: 'batchGetCorehrJobFamily',
+  '/corehr/v2/job_families/batch_get': {
+    POST: 'batchGetCorehrV2JobFamily',
   },
-  '/open-apis/corehr/v1/job_levels': {
-    POST: 'createCorehrJobLevel',
-    GET: { name: 'listCorehrJobLevel', pagination: { argIndex: 0 } },
+  '/corehr/v1/job_levels': {
+    POST: 'createCorehrV1JobLevel',
+    GET: { name: 'listCorehrV1JobLevel', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/job_levels/{job_level_id}': {
-    PATCH: 'patchCorehrJobLevel',
-    GET: 'getCorehrJobLevel',
-    DELETE: 'deleteCorehrJobLevel',
+  '/corehr/v1/job_levels/{job_level_id}': {
+    PATCH: 'patchCorehrV1JobLevel',
+    GET: 'getCorehrV1JobLevel',
+    DELETE: 'deleteCorehrV1JobLevel',
   },
-  '/open-apis/corehr/v2/job_levels/query_recent_change': {
-    GET: 'queryRecentChangeCorehrJobLevel',
+  '/corehr/v2/job_levels/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2JobLevel',
   },
-  '/open-apis/corehr/v2/job_levels/batch_get': {
-    POST: 'batchGetCorehrJobLevel',
+  '/corehr/v2/job_levels/batch_get': {
+    POST: 'batchGetCorehrV2JobLevel',
   },
-  '/open-apis/corehr/v2/job_grades': {
-    POST: 'createCorehrJobGrade',
+  '/corehr/v2/job_grades': {
+    POST: 'createCorehrV2JobGrade',
   },
-  '/open-apis/corehr/v2/job_grades/{job_grade_id}': {
-    PATCH: 'patchCorehrJobGrade',
-    DELETE: 'deleteCorehrJobGrade',
+  '/corehr/v2/job_grades/{job_grade_id}': {
+    PATCH: 'patchCorehrV2JobGrade',
+    DELETE: 'deleteCorehrV2JobGrade',
   },
-  '/open-apis/corehr/v2/job_grades/query': {
-    POST: { name: 'queryCorehrJobGrade', pagination: { argIndex: 1 } },
+  '/corehr/v2/job_grades/query': {
+    POST: { name: 'queryCorehrV2JobGrade', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/job_grades/query_recent_change': {
-    GET: 'queryRecentChangeCorehrJobGrade',
+  '/corehr/v2/job_grades/query_recent_change': {
+    GET: 'queryRecentChangeCorehrV2JobGrade',
   },
-  '/open-apis/corehr/v1/jobs': {
-    POST: 'createCorehrJob',
-    GET: { name: 'listCorehrJob', pagination: { argIndex: 0 } },
+  '/corehr/v1/jobs': {
+    POST: 'createCorehrV1Job',
+    GET: { name: 'listCorehrV1Job', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/jobs/{job_id}': {
-    DELETE: 'deleteCorehrJob',
-    PATCH: 'patchCorehrJob',
-    GET: 'getCorehrJob',
+  '/corehr/v1/jobs/{job_id}': {
+    DELETE: 'deleteCorehrV1Job',
+    PATCH: 'patchCorehrV1Job',
+    GET: 'getCorehrV1Job',
   },
-  '/open-apis/corehr/v2/jobs/{job_id}': {
-    GET: 'getCorehrJob',
+  '/corehr/v2/jobs/{job_id}': {
+    GET: 'getCorehrV2Job',
   },
-  '/open-apis/corehr/v2/jobs': {
-    GET: { name: 'listCorehrJob', pagination: { argIndex: 0 } },
+  '/corehr/v2/jobs': {
+    GET: { name: 'listCorehrV2Job', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v2/pre_hires/withdraw_onboarding': {
-    POST: 'withdrawOnboardingCorehrPreHire',
+  '/corehr/v2/pre_hires/withdraw_onboarding': {
+    POST: 'withdrawOnboardingCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/pre_hires/restore_flow_instance': {
-    POST: 'restoreFlowInstanceCorehrPreHire',
+  '/corehr/v2/pre_hires/restore_flow_instance': {
+    POST: 'restoreFlowInstanceCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/pre_hires': {
-    POST: 'createCorehrPreHire',
+  '/corehr/v2/pre_hires': {
+    POST: 'createCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/pre_hires/{pre_hire_id}': {
-    PATCH: 'patchCorehrPreHire',
-    DELETE: 'deleteCorehrPreHire',
+  '/corehr/v2/pre_hires/{pre_hire_id}': {
+    PATCH: 'patchCorehrV2PreHire',
+    DELETE: 'deleteCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/pre_hires/query': {
-    POST: { name: 'queryCorehrPreHire', pagination: { argIndex: 1 } },
+  '/corehr/v2/pre_hires/query': {
+    POST: { name: 'queryCorehrV2PreHire', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v1/pre_hires/{pre_hire_id}': {
-    GET: 'getCorehrPreHire',
-    DELETE: 'deleteCorehrPreHire',
-    PATCH: 'patchCorehrPreHire',
+  '/corehr/v1/pre_hires/{pre_hire_id}': {
+    GET: 'getCorehrV1PreHire',
+    DELETE: 'deleteCorehrV1PreHire',
+    PATCH: 'patchCorehrV1PreHire',
   },
-  '/open-apis/corehr/v1/pre_hires': {
-    GET: { name: 'listCorehrPreHire', pagination: { argIndex: 0 } },
+  '/corehr/v1/pre_hires': {
+    GET: { name: 'listCorehrV1PreHire', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v2/pre_hires/search': {
-    POST: { name: 'searchCorehrPreHire', pagination: { argIndex: 1 } },
+  '/corehr/v2/pre_hires/search': {
+    POST: { name: 'searchCorehrV2PreHire', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/pre_hires/{pre_hire_id}/transit_task': {
-    POST: 'transitTaskCorehrPreHire',
+  '/corehr/v2/pre_hires/{pre_hire_id}/transit_task': {
+    POST: 'transitTaskCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/pre_hires/{pre_hire_id}/complete': {
-    POST: 'completeCorehrPreHire',
+  '/corehr/v2/pre_hires/{pre_hire_id}/complete': {
+    POST: 'completeCorehrV2PreHire',
   },
-  '/open-apis/corehr/v2/probation/assessments': {
-    POST: 'createCorehrProbationAssessment',
+  '/corehr/v2/probation/assessments': {
+    POST: 'createCorehrV2ProbationAssessment',
   },
-  '/open-apis/corehr/v2/probation/enable_disable_assessment': {
-    POST: 'enableDisableAssessmentCorehrProbation',
+  '/corehr/v2/probation/enable_disable_assessment': {
+    POST: 'enableDisableAssessmentCorehrV2Probation',
   },
-  '/open-apis/corehr/v2/probation/assessments/{assessment_id}': {
-    PATCH: 'patchCorehrProbationAssessment',
-    DELETE: 'deleteCorehrProbationAssessment',
+  '/corehr/v2/probation/assessments/{assessment_id}': {
+    PATCH: 'patchCorehrV2ProbationAssessment',
+    DELETE: 'deleteCorehrV2ProbationAssessment',
   },
-  '/open-apis/corehr/v2/probation/search': {
-    POST: { name: 'searchCorehrProbation', pagination: { argIndex: 1 } },
+  '/corehr/v2/probation/search': {
+    POST: { name: 'searchCorehrV2Probation', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/probation/submit': {
-    POST: 'submitCorehrProbation',
+  '/corehr/v2/probation/submit': {
+    POST: 'submitCorehrV2Probation',
   },
-  '/open-apis/corehr/v2/probation/withdraw': {
-    POST: 'withdrawCorehrProbation',
+  '/corehr/v2/probation/withdraw': {
+    POST: 'withdrawCorehrV2Probation',
   },
-  '/open-apis/corehr/v2/job_changes': {
-    POST: 'createCorehrJobChange',
+  '/corehr/v2/job_changes': {
+    POST: 'createCorehrV2JobChange',
   },
-  '/open-apis/corehr/v1/transfer_types/query': {
-    GET: 'queryCorehrTransferType',
+  '/corehr/v1/transfer_types/query': {
+    GET: 'queryCorehrV1TransferType',
   },
-  '/open-apis/corehr/v1/transfer_reasons/query': {
-    GET: 'queryCorehrTransferReason',
+  '/corehr/v1/transfer_reasons/query': {
+    GET: 'queryCorehrV1TransferReason',
   },
-  '/open-apis/corehr/v2/job_changes/search': {
-    POST: { name: 'searchCorehrJobChange', pagination: { argIndex: 1 } },
+  '/corehr/v2/job_changes/search': {
+    POST: { name: 'searchCorehrV2JobChange', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/job_changes/{job_change_id}/revoke': {
-    POST: 'revokeCorehrJobChange',
+  '/corehr/v2/job_changes/{job_change_id}/revoke': {
+    POST: 'revokeCorehrV2JobChange',
   },
-  '/open-apis/corehr/v1/job_changes': {
-    POST: 'createCorehrJobChange',
+  '/corehr/v1/job_changes': {
+    POST: 'createCorehrV1JobChange',
   },
-  '/open-apis/corehr/v1/offboardings/query': {
-    POST: 'queryCorehrOffboarding',
+  '/corehr/v1/offboardings/query': {
+    POST: 'queryCorehrV1Offboarding',
   },
-  '/open-apis/corehr/v2/offboardings/submit_v2': {
-    POST: 'submitV2CorehrOffboarding',
+  '/corehr/v2/offboardings/submit_v2': {
+    POST: 'submitV2CorehrV2Offboarding',
   },
-  '/open-apis/corehr/v2/offboardings/edit': {
-    POST: 'editCorehrOffboarding',
+  '/corehr/v2/offboardings/edit': {
+    POST: 'editCorehrV2Offboarding',
   },
-  '/open-apis/corehr/v2/offboardings/revoke': {
-    POST: 'revokeCorehrOffboarding',
+  '/corehr/v2/offboardings/revoke': {
+    POST: 'revokeCorehrV2Offboarding',
   },
-  '/open-apis/corehr/v1/offboardings/search': {
-    POST: { name: 'searchCorehrOffboarding', pagination: { argIndex: 1 } },
+  '/corehr/v1/offboardings/search': {
+    POST: { name: 'searchCorehrV1Offboarding', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v1/contracts': {
-    POST: 'createCorehrContract',
-    GET: { name: 'listCorehrContract', pagination: { argIndex: 0 } },
+  '/corehr/v1/contracts': {
+    POST: 'createCorehrV1Contract',
+    GET: { name: 'listCorehrV1Contract', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/contracts/{contract_id}': {
-    PATCH: 'patchCorehrContract',
-    DELETE: 'deleteCorehrContract',
-    GET: 'getCorehrContract',
+  '/corehr/v1/contracts/{contract_id}': {
+    PATCH: 'patchCorehrV1Contract',
+    DELETE: 'deleteCorehrV1Contract',
+    GET: 'getCorehrV1Contract',
   },
-  '/open-apis/corehr/v2/contracts/search': {
-    POST: { name: 'searchCorehrContract', pagination: { argIndex: 1 } },
+  '/corehr/v2/contracts/search': {
+    POST: { name: 'searchCorehrV2Contract', pagination: { argIndex: 1 } },
   },
-  '/open-apis/corehr/v2/workforce_plan_detail_row/batchSave': {
-    POST: 'batchSaveCorehrWorkforcePlanDetailRow',
+  '/corehr/v2/workforce_plan_detail_row/batchSave': {
+    POST: 'batchSaveCorehrV2WorkforcePlanDetailRow',
   },
-  '/open-apis/corehr/v2/workforce_plan_detail_row/batchDelete': {
-    POST: 'batchDeleteCorehrWorkforcePlanDetailRow',
+  '/corehr/v2/workforce_plan_detail_row/batchDelete': {
+    POST: 'batchDeleteCorehrV2WorkforcePlanDetailRow',
   },
-  '/open-apis/corehr/v2/report_detail_row/batchSave': {
-    POST: 'batchSaveCorehrReportDetailRow',
+  '/corehr/v2/report_detail_row/batchSave': {
+    POST: 'batchSaveCorehrV2ReportDetailRow',
   },
-  '/open-apis/corehr/v2/report_detail_row/batchDelete': {
-    POST: 'batchDeleteCorehrReportDetailRow',
+  '/corehr/v2/report_detail_row/batchDelete': {
+    POST: 'batchDeleteCorehrV2ReportDetailRow',
   },
-  '/open-apis/corehr/v2/workforce_plans': {
-    GET: 'listCorehrWorkforcePlan',
+  '/corehr/v2/workforce_plans': {
+    GET: 'listCorehrV2WorkforcePlan',
   },
-  '/open-apis/corehr/v2/workforce_plan_details/batch': {
-    POST: 'batchCorehrWorkforcePlanDetail',
+  '/corehr/v2/workforce_plan_details/batch': {
+    POST: 'batchCorehrV2WorkforcePlanDetail',
   },
-  '/open-apis/corehr/v1/leave_granting_records': {
-    POST: 'createCorehrLeaveGrantingRecord',
+  '/corehr/v1/leave_granting_records': {
+    POST: 'createCorehrV1LeaveGrantingRecord',
   },
-  '/open-apis/corehr/v1/leave_granting_records/{leave_granting_record_id}': {
-    DELETE: 'deleteCorehrLeaveGrantingRecord',
+  '/corehr/v1/leave_granting_records/{leave_granting_record_id}': {
+    DELETE: 'deleteCorehrV1LeaveGrantingRecord',
   },
-  '/open-apis/corehr/v1/leaves/leave_types': {
-    GET: { name: 'leaveTypesCorehrLeave', pagination: { argIndex: 0, itemsKey: 'leave_type_list' } },
+  '/corehr/v1/leaves/leave_types': {
+    GET: { name: 'leaveTypesCorehrV1Leave', pagination: { argIndex: 0, itemsKey: 'leave_type_list' } },
   },
-  '/open-apis/corehr/v1/leaves/leave_balances': {
-    GET: { name: 'leaveBalancesCorehrLeave', pagination: { argIndex: 0, itemsKey: 'employment_leave_balance_list' } },
+  '/corehr/v1/leaves/leave_balances': {
+    GET: { name: 'leaveBalancesCorehrV1Leave', pagination: { argIndex: 0, itemsKey: 'employment_leave_balance_list' } },
   },
-  '/open-apis/corehr/v1/leaves/leave_request_history': {
-    GET: { name: 'leaveRequestHistoryCorehrLeave', pagination: { argIndex: 0, itemsKey: 'leave_request_list' } },
+  '/corehr/v1/leaves/leave_request_history': {
+    GET: { name: 'leaveRequestHistoryCorehrV1Leave', pagination: { argIndex: 0, itemsKey: 'leave_request_list' } },
   },
-  '/open-apis/corehr/v1/leaves/work_calendar': {
-    POST: 'workCalendarCorehrLeave',
+  '/corehr/v1/leaves/work_calendar': {
+    POST: 'workCalendarCorehrV1Leave',
   },
-  '/open-apis/corehr/v1/leaves/calendar_by_scope': {
-    GET: 'calendarByScopeCorehrLeave',
+  '/corehr/v1/leaves/calendar_by_scope': {
+    GET: 'calendarByScopeCorehrV1Leave',
   },
-  '/open-apis/corehr/v1/leaves/work_calendar_date': {
-    POST: 'workCalendarDateCorehrLeave',
+  '/corehr/v1/leaves/work_calendar_date': {
+    POST: 'workCalendarDateCorehrV1Leave',
   },
-  '/open-apis/corehr/v1/authorizations/query': {
-    GET: { name: 'queryCorehrAuthorization', pagination: { argIndex: 0 } },
+  '/corehr/v1/authorizations/query': {
+    GET: { name: 'queryCorehrV1Authorization', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/authorizations/get_by_param': {
-    GET: 'getByParamCorehrAuthorization',
+  '/corehr/v1/authorizations/get_by_param': {
+    GET: 'getByParamCorehrV1Authorization',
   },
-  '/open-apis/corehr/v1/security_groups': {
-    GET: { name: 'listCorehrSecurityGroup', pagination: { argIndex: 0 } },
+  '/corehr/v1/security_groups': {
+    GET: { name: 'listCorehrV1SecurityGroup', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/authorizations/add_role_assign': {
-    POST: 'addRoleAssignCorehrAuthorization',
+  '/corehr/v1/authorizations/add_role_assign': {
+    POST: 'addRoleAssignCorehrV1Authorization',
   },
-  '/open-apis/corehr/v1/authorizations/update_role_assign': {
-    POST: 'updateRoleAssignCorehrAuthorization',
+  '/corehr/v1/authorizations/update_role_assign': {
+    POST: 'updateRoleAssignCorehrV1Authorization',
   },
-  '/open-apis/corehr/v1/authorizations/remove_role_assign': {
-    POST: 'removeRoleAssignCorehrAuthorization',
+  '/corehr/v1/authorizations/remove_role_assign': {
+    POST: 'removeRoleAssignCorehrV1Authorization',
   },
-  '/open-apis/corehr/v2/employees/bps/batch_get': {
-    POST: 'batchGetCorehrEmployeesBp',
+  '/corehr/v2/employees/bps/batch_get': {
+    POST: 'batchGetCorehrV2EmployeesBp',
   },
-  '/open-apis/corehr/v2/bps/get_by_department': {
-    POST: 'getByDepartmentCorehrBp',
+  '/corehr/v2/bps/get_by_department': {
+    POST: 'getByDepartmentCorehrV2Bp',
   },
-  '/open-apis/corehr/v1/security_groups/query': {
-    POST: 'queryCorehrSecurityGroup',
+  '/corehr/v1/security_groups/query': {
+    POST: 'queryCorehrV1SecurityGroup',
   },
-  '/open-apis/corehr/v2/bps': {
-    GET: { name: 'listCorehrBp', pagination: { argIndex: 0 } },
+  '/corehr/v2/bps': {
+    GET: { name: 'listCorehrV2Bp', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/assigned_users/search': {
-    POST: 'searchCorehrAssignedUser',
+  '/corehr/v1/assigned_users/search': {
+    POST: 'searchCorehrV1AssignedUser',
   },
-  '/open-apis/corehr/v2/processes': {
-    GET: { name: 'listCorehrProcess', pagination: { argIndex: 0, itemsKey: 'process_ids' } },
+  '/corehr/v2/processes': {
+    GET: { name: 'listCorehrV2Process', pagination: { argIndex: 0, itemsKey: 'process_ids' } },
   },
-  '/open-apis/corehr/v2/processes/{process_id}': {
-    GET: 'getCorehrProcess',
+  '/corehr/v2/processes/{process_id}': {
+    GET: 'getCorehrV2Process',
   },
-  '/open-apis/corehr/v2/processes/{process_id}/form_variable_data': {
-    GET: 'getCorehrProcessFormVariableData',
+  '/corehr/v2/processes/{process_id}/form_variable_data': {
+    GET: 'getCorehrV2ProcessFormVariableData',
   },
-  '/open-apis/corehr/v2/process_revoke/{process_id}': {
-    PUT: 'updateCorehrProcessRevoke',
+  '/corehr/v2/process_revoke/{process_id}': {
+    PUT: 'updateCorehrV2ProcessRevoke',
   },
-  '/open-apis/corehr/v2/process_withdraw/{process_id}': {
-    PUT: 'updateCorehrProcessWithdraw',
+  '/corehr/v2/process_withdraw/{process_id}': {
+    PUT: 'updateCorehrV2ProcessWithdraw',
   },
-  '/open-apis/corehr/v2/approvers': {
-    GET: { name: 'listCorehrApprover', pagination: { argIndex: 0, itemsKey: 'approver_list' } },
+  '/corehr/v2/approvers': {
+    GET: { name: 'listCorehrV2Approver', pagination: { argIndex: 0, itemsKey: 'approver_list' } },
   },
-  '/open-apis/corehr/v2/processes/{process_id}/approvers/{approver_id}': {
-    PUT: 'updateCorehrProcessApprover',
+  '/corehr/v2/processes/{process_id}/approvers/{approver_id}': {
+    PUT: 'updateCorehrV2ProcessApprover',
   },
-  '/open-apis/corehr/v2/processes/{process_id}/extra': {
-    PUT: 'updateCorehrProcessExtra',
+  '/corehr/v2/processes/{process_id}/extra': {
+    PUT: 'updateCorehrV2ProcessExtra',
   },
-  '/open-apis/corehr/v2/processes/{process_id}/transfer': {
-    PUT: 'updateCorehrProcessTransfer',
+  '/corehr/v2/processes/{process_id}/transfer': {
+    PUT: 'updateCorehrV2ProcessTransfer',
   },
-  '/open-apis/corehr/v1/compensation_standards/match': {
-    GET: 'matchCorehrCompensationStandard',
+  '/corehr/v1/compensation_standards/match': {
+    GET: 'matchCorehrV1CompensationStandard',
   },
-  '/open-apis/corehr/v1/processes/{process_id}/form_variable_data': {
-    GET: 'getCorehrProcessFormVariableData',
+  '/corehr/v1/processes/{process_id}/form_variable_data': {
+    GET: 'getCorehrV1ProcessFormVariableData',
   },
-  '/open-apis/corehr/v1/subregions': {
-    GET: { name: 'listCorehrSubregion', pagination: { argIndex: 0 } },
+  '/corehr/v1/subregions': {
+    GET: { name: 'listCorehrV1Subregion', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/subregions/{subregion_id}': {
-    GET: 'getCorehrSubregion',
+  '/corehr/v1/subregions/{subregion_id}': {
+    GET: 'getCorehrV1Subregion',
   },
-  '/open-apis/corehr/v1/subdivisions': {
-    GET: { name: 'listCorehrSubdivision', pagination: { argIndex: 0 } },
+  '/corehr/v1/subdivisions': {
+    GET: { name: 'listCorehrV1Subdivision', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/subdivisions/{subdivision_id}': {
-    GET: 'getCorehrSubdivision',
+  '/corehr/v1/subdivisions/{subdivision_id}': {
+    GET: 'getCorehrV1Subdivision',
   },
-  '/open-apis/corehr/v1/country_regions': {
-    GET: { name: 'listCorehrCountryRegion', pagination: { argIndex: 0 } },
+  '/corehr/v1/country_regions': {
+    GET: { name: 'listCorehrV1CountryRegion', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/country_regions/{country_region_id}': {
-    GET: 'getCorehrCountryRegion',
+  '/corehr/v1/country_regions/{country_region_id}': {
+    GET: 'getCorehrV1CountryRegion',
   },
-  '/open-apis/corehr/v1/currencies': {
-    GET: { name: 'listCorehrCurrency', pagination: { argIndex: 0 } },
+  '/corehr/v1/currencies': {
+    GET: { name: 'listCorehrV1Currency', pagination: { argIndex: 0 } },
   },
-  '/open-apis/corehr/v1/currencies/{currency_id}': {
-    GET: 'getCorehrCurrency',
+  '/corehr/v1/currencies/{currency_id}': {
+    GET: 'getCorehrV1Currency',
   },
-  '/open-apis/corehr/v1/departments/{department_id}': {
-    DELETE: 'deleteCorehrDepartment',
-    PATCH: 'patchCorehrDepartment',
-    GET: 'getCorehrDepartment',
+  '/corehr/v1/departments/{department_id}': {
+    DELETE: 'deleteCorehrV1Department',
+    PATCH: 'patchCorehrV1Department',
+    GET: 'getCorehrV1Department',
   },
-  '/open-apis/corehr/v1/persons': {
-    POST: 'createCorehrPerson',
+  '/corehr/v1/persons': {
+    POST: 'createCorehrV1Person',
   },
-  '/open-apis/corehr/v1/offboardings/submit': {
-    POST: 'submitCorehrOffboarding',
+  '/corehr/v1/offboardings/submit': {
+    POST: 'submitCorehrV1Offboarding',
   },
 })

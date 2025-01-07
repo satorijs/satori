@@ -1,5 +1,5 @@
 import { Block, BlockIdRelation, DeleteGridColumnRequest, DeleteTableColumnsRequest, DeleteTableRowsRequest, Document, InsertGridColumnRequest, InsertTableColumnRequest, InsertTableRowRequest, MergeTableCellsRequest, ReplaceFileRequest, ReplaceImageRequest, UnmergeTableCellsRequest, UpdateBlockRequest, UpdateGridColumnWidthRatioRequest, UpdateTablePropertyRequest, UpdateTaskRequest, UpdateTextElementsRequest, UpdateTextRequest, UpdateTextStyleRequest } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -440,52 +440,52 @@ export interface BatchDeleteDocxDocumentBlockChildrenResponse {
 }
 
 Internal.define({
-  '/open-apis/docx/v1/chats/{chat_id}/announcement': {
+  '/docx/v1/chats/{chat_id}/announcement': {
     GET: 'getDocxChatAnnouncement',
   },
-  '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks': {
+  '/docx/v1/chats/{chat_id}/announcement/blocks': {
     GET: { name: 'listDocxChatAnnouncementBlock', pagination: { argIndex: 1 } },
   },
-  '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}/children': {
+  '/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}/children': {
     POST: 'createDocxChatAnnouncementBlockChildren',
     GET: { name: 'getDocxChatAnnouncementBlockChildren', pagination: { argIndex: 2 } },
   },
-  '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/batch_update': {
+  '/docx/v1/chats/{chat_id}/announcement/blocks/batch_update': {
     PATCH: 'batchUpdateDocxChatAnnouncementBlock',
   },
-  '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}': {
+  '/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}': {
     GET: 'getDocxChatAnnouncementBlock',
   },
-  '/open-apis/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}/children/batch_delete': {
+  '/docx/v1/chats/{chat_id}/announcement/blocks/{block_id}/children/batch_delete': {
     DELETE: 'batchDeleteDocxChatAnnouncementBlockChildren',
   },
-  '/open-apis/docx/v1/documents': {
+  '/docx/v1/documents': {
     POST: 'createDocxDocument',
   },
-  '/open-apis/docx/v1/documents/{document_id}': {
+  '/docx/v1/documents/{document_id}': {
     GET: 'getDocxDocument',
   },
-  '/open-apis/docx/v1/documents/{document_id}/raw_content': {
+  '/docx/v1/documents/{document_id}/raw_content': {
     GET: 'rawContentDocxDocument',
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks': {
+  '/docx/v1/documents/{document_id}/blocks': {
     GET: { name: 'listDocxDocumentBlock', pagination: { argIndex: 1 } },
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}/children': {
+  '/docx/v1/documents/{document_id}/blocks/{block_id}/children': {
     POST: 'createDocxDocumentBlockChildren',
     GET: { name: 'getDocxDocumentBlockChildren', pagination: { argIndex: 2 } },
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}/descendant': {
+  '/docx/v1/documents/{document_id}/blocks/{block_id}/descendant': {
     POST: 'createDocxDocumentBlockDescendant',
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}': {
+  '/docx/v1/documents/{document_id}/blocks/{block_id}': {
     PATCH: 'patchDocxDocumentBlock',
     GET: 'getDocxDocumentBlock',
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks/batch_update': {
+  '/docx/v1/documents/{document_id}/blocks/batch_update': {
     PATCH: 'batchUpdateDocxDocumentBlock',
   },
-  '/open-apis/docx/v1/documents/{document_id}/blocks/{block_id}/children/batch_delete': {
+  '/docx/v1/documents/{document_id}/blocks/{block_id}/children/batch_delete': {
     DELETE: 'batchDeleteDocxDocumentBlockChildren',
   },
 })

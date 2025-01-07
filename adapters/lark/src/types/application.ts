@@ -1,5 +1,5 @@
-import { AppContactsRangeIdList, AppRecommendRule, AppVisibilityIdList, Application, ApplicationAppContactsRange, ApplicationAppUsage, ApplicationAppVersion, ApplicationDepartmentAppUsage, ApplicationFeedback, ApplicationVisibilityDepartmentWhiteBlackInfo, ApplicationVisibilityGroupWhiteBlackInfo, ApplicationVisibilityUserWhiteBlackInfo, ClientBadgeNum, Scope } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { AppContactsRangeIdList, Application, ApplicationAppContactsRange, ApplicationAppUsage, ApplicationAppVersion, ApplicationDepartmentAppUsage, ApplicationFeedback, ApplicationVisibilityDepartmentWhiteBlackInfo, ApplicationVisibilityGroupWhiteBlackInfo, ApplicationVisibilityUserWhiteBlackInfo, AppRecommendRule, AppVisibilityIdList, ClientBadgeNum, Scope } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -469,72 +469,72 @@ export interface RecommendApplicationResponse {
 }
 
 Internal.define({
-  '/open-apis/application/v6/applications/{app_id}': {
+  '/application/v6/applications/{app_id}': {
     GET: 'getApplication',
     PATCH: 'patchApplication',
   },
-  '/open-apis/application/v6/applications/{app_id}/app_versions/{version_id}': {
+  '/application/v6/applications/{app_id}/app_versions/{version_id}': {
     GET: 'getApplicationApplicationAppVersion',
     PATCH: 'patchApplicationApplicationAppVersion',
   },
-  '/open-apis/application/v6/applications/{app_id}/app_versions': {
+  '/application/v6/applications/{app_id}/app_versions': {
     GET: { name: 'listApplicationApplicationAppVersion', pagination: { argIndex: 1 } },
   },
-  '/open-apis/application/v6/applications/{app_id}/app_versions/{version_id}/contacts_range_suggest': {
+  '/application/v6/applications/{app_id}/app_versions/{version_id}/contacts_range_suggest': {
     GET: 'contactsRangeSuggestApplicationApplicationAppVersion',
   },
-  '/open-apis/application/v6/scopes/apply': {
+  '/application/v6/scopes/apply': {
     POST: 'applyApplicationScope',
   },
-  '/open-apis/application/v6/scopes': {
+  '/application/v6/scopes': {
     GET: 'listApplicationScope',
   },
-  '/open-apis/application/v6/applications': {
+  '/application/v6/applications': {
     GET: 'listApplication',
   },
-  '/open-apis/application/v6/applications/underauditlist': {
+  '/application/v6/applications/underauditlist': {
     GET: { name: 'underauditlistApplication', pagination: { argIndex: 0 } },
   },
-  '/open-apis/application/v6/applications/{app_id}/contacts_range_configuration': {
+  '/application/v6/applications/{app_id}/contacts_range_configuration': {
     GET: 'contactsRangeConfigurationApplication',
   },
-  '/open-apis/application/v6/applications/{app_id}/contacts_range': {
+  '/application/v6/applications/{app_id}/contacts_range': {
     PATCH: 'patchApplicationApplicationContactsRange',
   },
-  '/open-apis/application/v6/applications/{app_id}/visibility/check_white_black_list': {
+  '/application/v6/applications/{app_id}/visibility/check_white_black_list': {
     POST: 'checkWhiteBlackListApplicationApplicationVisibility',
   },
-  '/open-apis/application/v6/applications/{app_id}/visibility': {
+  '/application/v6/applications/{app_id}/visibility': {
     PATCH: 'patchApplicationApplicationVisibility',
   },
-  '/open-apis/application/v6/applications/{app_id}/management': {
+  '/application/v6/applications/{app_id}/management': {
     PUT: 'updateApplicationApplicationManagement',
   },
-  '/open-apis/application/v6/applications/{app_id}/app_usage/department_overview': {
+  '/application/v6/applications/{app_id}/app_usage/department_overview': {
     POST: 'departmentOverviewApplicationApplicationAppUsage',
   },
-  '/open-apis/application/v6/applications/{app_id}/app_usage/message_push_overview': {
+  '/application/v6/applications/{app_id}/app_usage/message_push_overview': {
     POST: 'messagePushOverviewApplicationApplicationAppUsage',
   },
-  '/open-apis/application/v6/applications/{app_id}/app_usage/overview': {
+  '/application/v6/applications/{app_id}/app_usage/overview': {
     POST: 'overviewApplicationApplicationAppUsage',
   },
-  '/open-apis/application/v6/applications/{app_id}/feedbacks/{feedback_id}': {
+  '/application/v6/applications/{app_id}/feedbacks/{feedback_id}': {
     PATCH: 'patchApplicationApplicationFeedback',
   },
-  '/open-apis/application/v6/applications/{app_id}/feedbacks': {
+  '/application/v6/applications/{app_id}/feedbacks': {
     GET: { name: 'listApplicationApplicationFeedback', pagination: { argIndex: 1, itemsKey: 'feedback_list' } },
   },
-  '/open-apis/application/v6/app_badge/set': {
+  '/application/v6/app_badge/set': {
     POST: 'setApplicationAppBadge',
   },
-  '/open-apis/application/v5/applications/favourite': {
+  '/application/v5/applications/favourite': {
     GET: 'favouriteApplication',
   },
-  '/open-apis/application/v5/applications/recommend': {
+  '/application/v5/applications/recommend': {
     GET: 'recommendApplication',
   },
-  '/open-apis/application/v6/app_recommend_rules': {
+  '/application/v6/app_recommend_rules': {
     GET: { name: 'listApplicationAppRecommendRule', pagination: { argIndex: 0, itemsKey: 'rules' } },
   },
 })

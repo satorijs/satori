@@ -1,5 +1,5 @@
 import { Alert, ApprovalConfig, Device, DisableInformConfig, Meeting, MeetingInfo, MeetingInviteStatus, MeetingParticipantResult, MeetingRecording, MeetingUser, Participant, ParticipantQuality, RecordingPermissionObject, Report, ReportTopUser, Reserve, ReserveAdminConfig, ReserveCorrectionCheckInfo, ReserveFormConfig, ReserveMeetingSetting, ReserveScopeConfig, Room, RoomConfig, RoomDigitalSignage, RoomLevel, RoomMeetingReservation, RoomStatus, ScopeConfig, TimeConfig } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -1088,150 +1088,150 @@ export interface QueryVcRoomConfigResponse {
 }
 
 Internal.define({
-  '/open-apis/vc/v1/reserves/apply': {
+  '/vc/v1/reserves/apply': {
     POST: 'applyVcReserve',
   },
-  '/open-apis/vc/v1/reserves/{reserve_id}': {
+  '/vc/v1/reserves/{reserve_id}': {
     DELETE: 'deleteVcReserve',
     PUT: 'updateVcReserve',
     GET: 'getVcReserve',
   },
-  '/open-apis/vc/v1/reserves/{reserve_id}/get_active_meeting': {
+  '/vc/v1/reserves/{reserve_id}/get_active_meeting': {
     GET: 'getActiveMeetingVcReserve',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/invite': {
+  '/vc/v1/meetings/{meeting_id}/invite': {
     PATCH: 'inviteVcMeeting',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/kickout': {
+  '/vc/v1/meetings/{meeting_id}/kickout': {
     POST: 'kickoutVcMeeting',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/set_host': {
+  '/vc/v1/meetings/{meeting_id}/set_host': {
     PATCH: 'setHostVcMeeting',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/end': {
+  '/vc/v1/meetings/{meeting_id}/end': {
     PATCH: 'endVcMeeting',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}': {
+  '/vc/v1/meetings/{meeting_id}': {
     GET: 'getVcMeeting',
   },
-  '/open-apis/vc/v1/meetings/list_by_no': {
+  '/vc/v1/meetings/list_by_no': {
     GET: { name: 'listByNoVcMeeting', pagination: { argIndex: 0, itemsKey: 'meeting_briefs' } },
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/recording/start': {
+  '/vc/v1/meetings/{meeting_id}/recording/start': {
     PATCH: 'startVcMeetingRecording',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/recording/stop': {
+  '/vc/v1/meetings/{meeting_id}/recording/stop': {
     PATCH: 'stopVcMeetingRecording',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/recording': {
+  '/vc/v1/meetings/{meeting_id}/recording': {
     GET: 'getVcMeetingRecording',
   },
-  '/open-apis/vc/v1/meetings/{meeting_id}/recording/set_permission': {
+  '/vc/v1/meetings/{meeting_id}/recording/set_permission': {
     PATCH: 'setPermissionVcMeetingRecording',
   },
-  '/open-apis/vc/v1/reports/get_daily': {
+  '/vc/v1/reports/get_daily': {
     GET: 'getDailyVcReport',
   },
-  '/open-apis/vc/v1/reports/get_top_user': {
+  '/vc/v1/reports/get_top_user': {
     GET: 'getTopUserVcReport',
   },
-  '/open-apis/vc/v1/exports/meeting_list': {
+  '/vc/v1/exports/meeting_list': {
     POST: 'meetingListVcExport',
   },
-  '/open-apis/vc/v1/exports/participant_list': {
+  '/vc/v1/exports/participant_list': {
     POST: 'participantListVcExport',
   },
-  '/open-apis/vc/v1/exports/participant_quality_list': {
+  '/vc/v1/exports/participant_quality_list': {
     POST: 'participantQualityListVcExport',
   },
-  '/open-apis/vc/v1/exports/resource_reservation_list': {
+  '/vc/v1/exports/resource_reservation_list': {
     POST: 'resourceReservationListVcExport',
   },
-  '/open-apis/vc/v1/exports/{task_id}': {
+  '/vc/v1/exports/{task_id}': {
     GET: 'getVcExport',
   },
-  '/open-apis/vc/v1/exports/download': {
+  '/vc/v1/exports/download': {
     GET: { name: 'downloadVcExport', type: 'binary' },
   },
-  '/open-apis/vc/v1/room_levels': {
+  '/vc/v1/room_levels': {
     POST: 'createVcRoomLevel',
     GET: { name: 'listVcRoomLevel', pagination: { argIndex: 0 } },
   },
-  '/open-apis/vc/v1/room_levels/del': {
+  '/vc/v1/room_levels/del': {
     POST: 'delVcRoomLevel',
   },
-  '/open-apis/vc/v1/room_levels/{room_level_id}': {
+  '/vc/v1/room_levels/{room_level_id}': {
     PATCH: 'patchVcRoomLevel',
     GET: 'getVcRoomLevel',
   },
-  '/open-apis/vc/v1/room_levels/mget': {
+  '/vc/v1/room_levels/mget': {
     POST: 'mgetVcRoomLevel',
   },
-  '/open-apis/vc/v1/room_levels/search': {
+  '/vc/v1/room_levels/search': {
     GET: 'searchVcRoomLevel',
   },
-  '/open-apis/vc/v1/rooms': {
+  '/vc/v1/rooms': {
     POST: 'createVcRoom',
     GET: { name: 'listVcRoom', pagination: { argIndex: 0, itemsKey: 'rooms' } },
   },
-  '/open-apis/vc/v1/rooms/{room_id}': {
+  '/vc/v1/rooms/{room_id}': {
     DELETE: 'deleteVcRoom',
     PATCH: 'patchVcRoom',
     GET: 'getVcRoom',
   },
-  '/open-apis/vc/v1/rooms/mget': {
+  '/vc/v1/rooms/mget': {
     POST: 'mgetVcRoom',
   },
-  '/open-apis/vc/v1/rooms/search': {
+  '/vc/v1/rooms/search': {
     POST: 'searchVcRoom',
   },
-  '/open-apis/vc/v1/scope_config': {
+  '/vc/v1/scope_config': {
     GET: 'getVcScopeConfig',
     POST: 'createVcScopeConfig',
   },
-  '/open-apis/vc/v1/reserve_configs/reserve_scope': {
+  '/vc/v1/reserve_configs/reserve_scope': {
     GET: 'reserveScopeVcReserveConfig',
   },
-  '/open-apis/vc/v1/reserve_configs/{reserve_config_id}': {
+  '/vc/v1/reserve_configs/{reserve_config_id}': {
     PATCH: 'patchVcReserveConfig',
   },
-  '/open-apis/vc/v1/reserve_configs/{reserve_config_id}/form': {
+  '/vc/v1/reserve_configs/{reserve_config_id}/form': {
     GET: 'getVcReserveConfigForm',
     PATCH: 'patchVcReserveConfigForm',
   },
-  '/open-apis/vc/v1/reserve_configs/{reserve_config_id}/admin': {
+  '/vc/v1/reserve_configs/{reserve_config_id}/admin': {
     GET: 'getVcReserveConfigAdmin',
     PATCH: 'patchVcReserveConfigAdmin',
   },
-  '/open-apis/vc/v1/reserve_configs/{reserve_config_id}/disable_inform': {
+  '/vc/v1/reserve_configs/{reserve_config_id}/disable_inform': {
     GET: 'getVcReserveConfigDisableInform',
     PATCH: 'patchVcReserveConfigDisableInform',
   },
-  '/open-apis/vc/v1/meeting_list': {
+  '/vc/v1/meeting_list': {
     GET: { name: 'getVcMeetingList', pagination: { argIndex: 0, itemsKey: 'meeting_list' } },
   },
-  '/open-apis/vc/v1/participant_list': {
+  '/vc/v1/participant_list': {
     GET: { name: 'getVcParticipantList', pagination: { argIndex: 0, itemsKey: 'participants' } },
   },
-  '/open-apis/vc/v1/participant_quality_list': {
+  '/vc/v1/participant_quality_list': {
     GET: { name: 'getVcParticipantQualityList', pagination: { argIndex: 0, itemsKey: 'participant_quality_list' } },
   },
-  '/open-apis/vc/v1/resource_reservation_list': {
+  '/vc/v1/resource_reservation_list': {
     GET: { name: 'getVcResourceReservationList', pagination: { argIndex: 0, itemsKey: 'room_reservation_list' } },
   },
-  '/open-apis/vc/v1/alerts': {
+  '/vc/v1/alerts': {
     GET: { name: 'listVcAlert', pagination: { argIndex: 0 } },
   },
-  '/open-apis/vc/v1/room_configs/set_checkboard_access_code': {
+  '/vc/v1/room_configs/set_checkboard_access_code': {
     POST: 'setCheckboardAccessCodeVcRoomConfig',
   },
-  '/open-apis/vc/v1/room_configs/set_room_access_code': {
+  '/vc/v1/room_configs/set_room_access_code': {
     POST: 'setRoomAccessCodeVcRoomConfig',
   },
-  '/open-apis/vc/v1/room_configs/query': {
+  '/vc/v1/room_configs/query': {
     GET: 'queryVcRoomConfig',
   },
-  '/open-apis/vc/v1/room_configs/set': {
+  '/vc/v1/room_configs/set': {
     POST: 'setVcRoomConfig',
   },
 })

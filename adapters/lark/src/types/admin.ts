@@ -1,5 +1,5 @@
 import { AdminDeptStat, AdminUserStat, AuditInfo, Badge, Grant, I18n, Password, RuleDetail } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -318,36 +318,36 @@ export interface GetAdminBadgeGrantResponse {
 }
 
 Internal.define({
-  '/open-apis/admin/v1/password/reset': {
+  '/admin/v1/password/reset': {
     POST: 'resetAdminPassword',
   },
-  '/open-apis/admin/v1/admin_dept_stats': {
+  '/admin/v1/admin_dept_stats': {
     GET: { name: 'listAdminAdminDeptStat', pagination: { argIndex: 0 } },
   },
-  '/open-apis/admin/v1/admin_user_stats': {
+  '/admin/v1/admin_user_stats': {
     GET: { name: 'listAdminAdminUserStat', pagination: { argIndex: 0 } },
   },
-  '/open-apis/admin/v1/badges': {
+  '/admin/v1/badges': {
     POST: 'createAdminBadge',
     GET: { name: 'listAdminBadge', pagination: { argIndex: 0, itemsKey: 'badges' } },
   },
-  '/open-apis/admin/v1/badges/{badge_id}': {
+  '/admin/v1/badges/{badge_id}': {
     PUT: 'updateAdminBadge',
     GET: 'getAdminBadge',
   },
-  '/open-apis/admin/v1/badge_images': {
+  '/admin/v1/badge_images': {
     POST: { name: 'createAdminBadgeImage', multipart: true },
   },
-  '/open-apis/admin/v1/badges/{badge_id}/grants': {
+  '/admin/v1/badges/{badge_id}/grants': {
     POST: 'createAdminBadgeGrant',
     GET: { name: 'listAdminBadgeGrant', pagination: { argIndex: 1, itemsKey: 'grants' } },
   },
-  '/open-apis/admin/v1/badges/{badge_id}/grants/{grant_id}': {
+  '/admin/v1/badges/{badge_id}/grants/{grant_id}': {
     DELETE: 'deleteAdminBadgeGrant',
     PUT: 'updateAdminBadgeGrant',
     GET: 'getAdminBadgeGrant',
   },
-  '/open-apis/admin/v1/audit_infos': {
+  '/admin/v1/audit_infos': {
     GET: { name: 'listAdminAuditInfo', pagination: { argIndex: 0 } },
   },
 })

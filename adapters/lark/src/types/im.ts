@@ -1,5 +1,5 @@
 import { BatchMessageReadUser, BatchMessageRecallProgress, BatchMessageSendProgress, ChatMenuItem, ChatMenuTree, ChatTab, ChatTopNotice, CreateTag, CreateTagFailReason, Emoji, FailedReason, FollowUp, I18nNames, ListChat, ListMember, ListModerator, Mention, Message, MessageBody, MessageReaction, OpenAppFeedCard, OpenAppFeedCardButtons, OpenFailedUserAppFeedCardItem, Operator, PatchTag, PatchTagFailReason, Pin, ReadUser, RestrictedModeSetting, Sender, TagInfo, TagInfoWithBindVersion, UserOpenAppFeedCardDeleter, UserOpenAppFeedCardUpdater } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -813,7 +813,7 @@ export interface DeleteImChatMenuTreeRequest {
 
 export interface PatchImChatMenuItemRequest {
   /** 修改的字段 */
-  update_fields: 'ICON' | 'NAME' | 'I18N_NAME' | 'REDIRECT_LINK'[]
+  update_fields: ('ICON' | 'NAME' | 'I18N_NAME' | 'REDIRECT_LINK')[]
   /** 元信息 */
   chat_menu_item: ChatMenuItem
 }
@@ -1455,181 +1455,181 @@ export interface PatchImTagResponse {
 }
 
 Internal.define({
-  '/open-apis/im/v1/messages': {
+  '/im/v1/messages': {
     POST: 'createImMessage',
     GET: { name: 'listImMessage', pagination: { argIndex: 0 } },
   },
-  '/open-apis/im/v1/messages/{message_id}/reply': {
+  '/im/v1/messages/{message_id}/reply': {
     POST: 'replyImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}': {
+  '/im/v1/messages/{message_id}': {
     PUT: 'updateImMessage',
     DELETE: 'deleteImMessage',
     GET: 'getImMessage',
     PATCH: 'patchImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}/forward': {
+  '/im/v1/messages/{message_id}/forward': {
     POST: 'forwardImMessage',
   },
-  '/open-apis/im/v1/messages/merge_forward': {
+  '/im/v1/messages/merge_forward': {
     POST: 'mergeForwardImMessage',
   },
-  '/open-apis/im/v1/threads/{thread_id}/forward': {
+  '/im/v1/threads/{thread_id}/forward': {
     POST: 'forwardImThread',
   },
-  '/open-apis/im/v1/messages/{message_id}/push_follow_up': {
+  '/im/v1/messages/{message_id}/push_follow_up': {
     POST: 'pushFollowUpImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}/read_users': {
+  '/im/v1/messages/{message_id}/read_users': {
     GET: { name: 'readUsersImMessage', pagination: { argIndex: 1 } },
   },
-  '/open-apis/im/v1/messages/{message_id}/resources/{file_key}': {
+  '/im/v1/messages/{message_id}/resources/{file_key}': {
     GET: { name: 'getImMessageResource', type: 'binary' },
   },
-  '/open-apis/im/v1/batch_messages/{batch_message_id}': {
+  '/im/v1/batch_messages/{batch_message_id}': {
     DELETE: 'deleteImBatchMessage',
   },
-  '/open-apis/im/v1/batch_messages/{batch_message_id}/read_user': {
+  '/im/v1/batch_messages/{batch_message_id}/read_user': {
     GET: 'readUserImBatchMessage',
   },
-  '/open-apis/im/v1/batch_messages/{batch_message_id}/get_progress': {
+  '/im/v1/batch_messages/{batch_message_id}/get_progress': {
     GET: 'getProgressImBatchMessage',
   },
-  '/open-apis/im/v1/images': {
+  '/im/v1/images': {
     POST: { name: 'createImImage', multipart: true },
   },
-  '/open-apis/im/v1/images/{image_key}': {
+  '/im/v1/images/{image_key}': {
     GET: { name: 'getImImage', type: 'binary' },
   },
-  '/open-apis/im/v1/files': {
+  '/im/v1/files': {
     POST: { name: 'createImFile', multipart: true },
   },
-  '/open-apis/im/v1/files/{file_key}': {
+  '/im/v1/files/{file_key}': {
     GET: { name: 'getImFile', type: 'binary' },
   },
-  '/open-apis/im/v1/messages/{message_id}/urgent_app': {
+  '/im/v1/messages/{message_id}/urgent_app': {
     PATCH: 'urgentAppImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}/urgent_sms': {
+  '/im/v1/messages/{message_id}/urgent_sms': {
     PATCH: 'urgentSmsImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}/urgent_phone': {
+  '/im/v1/messages/{message_id}/urgent_phone': {
     PATCH: 'urgentPhoneImMessage',
   },
-  '/open-apis/im/v1/messages/{message_id}/reactions': {
+  '/im/v1/messages/{message_id}/reactions': {
     POST: 'createImMessageReaction',
     GET: { name: 'listImMessageReaction', pagination: { argIndex: 1 } },
   },
-  '/open-apis/im/v1/messages/{message_id}/reactions/{reaction_id}': {
+  '/im/v1/messages/{message_id}/reactions/{reaction_id}': {
     DELETE: 'deleteImMessageReaction',
   },
-  '/open-apis/im/v1/pins': {
+  '/im/v1/pins': {
     POST: 'createImPin',
     GET: { name: 'listImPin', pagination: { argIndex: 0 } },
   },
-  '/open-apis/im/v1/pins/{message_id}': {
+  '/im/v1/pins/{message_id}': {
     DELETE: 'deleteImPin',
   },
-  '/open-apis/im/v2/url_previews/batch_update': {
+  '/im/v2/url_previews/batch_update': {
     POST: 'batchUpdateImUrlPreview',
   },
-  '/open-apis/im/v1/chats': {
+  '/im/v1/chats': {
     POST: 'createImChat',
     GET: { name: 'listImChat', pagination: { argIndex: 0 } },
   },
-  '/open-apis/im/v1/chats/{chat_id}': {
+  '/im/v1/chats/{chat_id}': {
     DELETE: 'deleteImChat',
     PUT: 'updateImChat',
     GET: 'getImChat',
   },
-  '/open-apis/im/v1/chats/{chat_id}/moderation': {
+  '/im/v1/chats/{chat_id}/moderation': {
     PUT: 'updateImChatModeration',
     GET: 'getImChatModeration',
   },
-  '/open-apis/im/v1/chats/{chat_id}/top_notice/put_top_notice': {
+  '/im/v1/chats/{chat_id}/top_notice/put_top_notice': {
     POST: 'putTopNoticeImChatTopNotice',
   },
-  '/open-apis/im/v1/chats/{chat_id}/top_notice/delete_top_notice': {
+  '/im/v1/chats/{chat_id}/top_notice/delete_top_notice': {
     POST: 'deleteTopNoticeImChatTopNotice',
   },
-  '/open-apis/im/v1/chats/search': {
+  '/im/v1/chats/search': {
     GET: { name: 'searchImChat', pagination: { argIndex: 0 } },
   },
-  '/open-apis/im/v1/chats/{chat_id}/link': {
+  '/im/v1/chats/{chat_id}/link': {
     POST: 'linkImChat',
   },
-  '/open-apis/im/v1/chats/{chat_id}/managers/add_managers': {
+  '/im/v1/chats/{chat_id}/managers/add_managers': {
     POST: 'addManagersImChatManagers',
   },
-  '/open-apis/im/v1/chats/{chat_id}/managers/delete_managers': {
+  '/im/v1/chats/{chat_id}/managers/delete_managers': {
     POST: 'deleteManagersImChatManagers',
   },
-  '/open-apis/im/v1/chats/{chat_id}/members': {
+  '/im/v1/chats/{chat_id}/members': {
     POST: 'createImChatMembers',
     DELETE: 'deleteImChatMembers',
     GET: 'getImChatMembers',
   },
-  '/open-apis/im/v1/chats/{chat_id}/members/me_join': {
+  '/im/v1/chats/{chat_id}/members/me_join': {
     PATCH: 'meJoinImChatMembers',
   },
-  '/open-apis/im/v1/chats/{chat_id}/members/is_in_chat': {
+  '/im/v1/chats/{chat_id}/members/is_in_chat': {
     GET: 'isInChatImChatMembers',
   },
-  '/open-apis/im/v1/chats/{chat_id}/announcement': {
+  '/im/v1/chats/{chat_id}/announcement': {
     PATCH: 'patchImChatAnnouncement',
     GET: 'getImChatAnnouncement',
   },
-  '/open-apis/im/v1/chats/{chat_id}/chat_tabs': {
+  '/im/v1/chats/{chat_id}/chat_tabs': {
     POST: 'createImChatTab',
   },
-  '/open-apis/im/v1/chats/{chat_id}/chat_tabs/delete_tabs': {
+  '/im/v1/chats/{chat_id}/chat_tabs/delete_tabs': {
     DELETE: 'deleteTabsImChatTab',
   },
-  '/open-apis/im/v1/chats/{chat_id}/chat_tabs/update_tabs': {
+  '/im/v1/chats/{chat_id}/chat_tabs/update_tabs': {
     POST: 'updateTabsImChatTab',
   },
-  '/open-apis/im/v1/chats/{chat_id}/chat_tabs/sort_tabs': {
+  '/im/v1/chats/{chat_id}/chat_tabs/sort_tabs': {
     POST: 'sortTabsImChatTab',
   },
-  '/open-apis/im/v1/chats/{chat_id}/chat_tabs/list_tabs': {
+  '/im/v1/chats/{chat_id}/chat_tabs/list_tabs': {
     GET: 'listTabsImChatTab',
   },
-  '/open-apis/im/v1/chats/{chat_id}/menu_tree': {
+  '/im/v1/chats/{chat_id}/menu_tree': {
     POST: 'createImChatMenuTree',
     DELETE: 'deleteImChatMenuTree',
     GET: 'getImChatMenuTree',
   },
-  '/open-apis/im/v1/chats/{chat_id}/menu_items/{menu_item_id}': {
+  '/im/v1/chats/{chat_id}/menu_items/{menu_item_id}': {
     PATCH: 'patchImChatMenuItem',
   },
-  '/open-apis/im/v1/chats/{chat_id}/menu_tree/sort': {
+  '/im/v1/chats/{chat_id}/menu_tree/sort': {
     POST: 'sortImChatMenuTree',
   },
-  '/open-apis/im/v2/app_feed_card': {
+  '/im/v2/app_feed_card': {
     POST: 'createImAppFeedCard',
   },
-  '/open-apis/im/v2/app_feed_card/batch': {
+  '/im/v2/app_feed_card/batch': {
     PUT: 'updateImAppFeedCardBatch',
     DELETE: 'deleteImAppFeedCardBatch',
   },
-  '/open-apis/im/v2/feed_cards/bot_time_sentive': {
+  '/im/v2/feed_cards/bot_time_sentive': {
     PATCH: 'botTimeSentiveImFeedCard',
   },
-  '/open-apis/im/v2/chat_button': {
+  '/im/v2/chat_button': {
     PUT: 'updateImChatButton',
   },
-  '/open-apis/im/v2/feed_cards/{feed_card_id}': {
+  '/im/v2/feed_cards/{feed_card_id}': {
     PATCH: 'patchImFeedCard',
   },
-  '/open-apis/im/v2/biz_entity_tag_relation': {
+  '/im/v2/biz_entity_tag_relation': {
     GET: 'getImBizEntityTagRelation',
     POST: 'createImBizEntityTagRelation',
     PUT: 'updateImBizEntityTagRelation',
   },
-  '/open-apis/im/v2/tags': {
+  '/im/v2/tags': {
     POST: 'createImTag',
   },
-  '/open-apis/im/v2/tags/{tag_id}': {
+  '/im/v2/tags/{tag_id}': {
     PATCH: 'patchImTag',
   },
 })

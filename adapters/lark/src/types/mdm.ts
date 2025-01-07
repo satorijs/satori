@@ -48,10 +48,10 @@ export interface UnbindMdmUserAuthDataRelationQuery {
 }
 
 Internal.define({
-  '/open-apis/mdm/v1/user_auth_data_relations/bind': {
+  '/mdm/v1/user_auth_data_relations/bind': {
     POST: 'bindMdmUserAuthDataRelation',
   },
-  '/open-apis/mdm/v1/user_auth_data_relations/unbind': {
+  '/mdm/v1/user_auth_data_relations/unbind': {
     POST: 'unbindMdmUserAuthDataRelation',
   },
 })

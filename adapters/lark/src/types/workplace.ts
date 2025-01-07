@@ -1,5 +1,5 @@
 import { BlockAccessData, CustomWorkplaceAccessData, WorkplaceAccessData } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -62,13 +62,13 @@ export interface SearchWorkplaceWorkplaceBlockAccessDataQuery {
 }
 
 Internal.define({
-  '/open-apis/workplace/v1/workplace_access_data/search': {
+  '/workplace/v1/workplace_access_data/search': {
     POST: { name: 'searchWorkplaceWorkplaceAccessData', pagination: { argIndex: 0 } },
   },
-  '/open-apis/workplace/v1/custom_workplace_access_data/search': {
+  '/workplace/v1/custom_workplace_access_data/search': {
     POST: { name: 'searchWorkplaceCustomWorkplaceAccessData', pagination: { argIndex: 0 } },
   },
-  '/open-apis/workplace/v1/workplace_block_access_data/search': {
+  '/workplace/v1/workplace_block_access_data/search': {
     POST: { name: 'searchWorkplaceWorkplaceBlockAccessData', pagination: { argIndex: 0 } },
   },
 })

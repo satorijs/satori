@@ -1,5 +1,5 @@
 import { Attachment, EmailAlias, MailAddress, Mailgroup, MailgroupManager, MailgroupMember, MailgroupPermissionMember, PublicMailbox, PublicMailboxMember, User } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -774,108 +774,108 @@ export interface QueryMailUserResponse {
 }
 
 Internal.define({
-  '/open-apis/mail/v1/user_mailboxes/{user_mailbox_id}/messages/send': {
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/messages/send': {
     POST: 'sendMailUserMailboxMessage',
   },
-  '/open-apis/mail/v1/mailgroups': {
+  '/mail/v1/mailgroups': {
     POST: 'createMailMailgroup',
     GET: { name: 'listMailMailgroup', pagination: { argIndex: 0 } },
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}': {
+  '/mail/v1/mailgroups/{mailgroup_id}': {
     DELETE: 'deleteMailMailgroup',
     PATCH: 'patchMailMailgroup',
     PUT: 'updateMailMailgroup',
     GET: 'getMailMailgroup',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/managers/batch_create': {
+  '/mail/v1/mailgroups/{mailgroup_id}/managers/batch_create': {
     POST: 'batchCreateMailMailgroupManager',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/managers/batch_delete': {
+  '/mail/v1/mailgroups/{mailgroup_id}/managers/batch_delete': {
     POST: 'batchDeleteMailMailgroupManager',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/managers': {
+  '/mail/v1/mailgroups/{mailgroup_id}/managers': {
     GET: { name: 'listMailMailgroupManager', pagination: { argIndex: 1 } },
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members': {
+  '/mail/v1/mailgroups/{mailgroup_id}/members': {
     POST: 'createMailMailgroupMember',
     GET: { name: 'listMailMailgroupMember', pagination: { argIndex: 1 } },
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members/{member_id}': {
+  '/mail/v1/mailgroups/{mailgroup_id}/members/{member_id}': {
     DELETE: 'deleteMailMailgroupMember',
     GET: 'getMailMailgroupMember',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members/batch_create': {
+  '/mail/v1/mailgroups/{mailgroup_id}/members/batch_create': {
     POST: 'batchCreateMailMailgroupMember',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/members/batch_delete': {
+  '/mail/v1/mailgroups/{mailgroup_id}/members/batch_delete': {
     DELETE: 'batchDeleteMailMailgroupMember',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/aliases': {
+  '/mail/v1/mailgroups/{mailgroup_id}/aliases': {
     POST: 'createMailMailgroupAlias',
     GET: 'listMailMailgroupAlias',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/aliases/{alias_id}': {
+  '/mail/v1/mailgroups/{mailgroup_id}/aliases/{alias_id}': {
     DELETE: 'deleteMailMailgroupAlias',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members': {
+  '/mail/v1/mailgroups/{mailgroup_id}/permission_members': {
     POST: 'createMailMailgroupPermissionMember',
     GET: { name: 'listMailMailgroupPermissionMember', pagination: { argIndex: 1 } },
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members/{permission_member_id}': {
+  '/mail/v1/mailgroups/{mailgroup_id}/permission_members/{permission_member_id}': {
     DELETE: 'deleteMailMailgroupPermissionMember',
     GET: 'getMailMailgroupPermissionMember',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members/batch_create': {
+  '/mail/v1/mailgroups/{mailgroup_id}/permission_members/batch_create': {
     POST: 'batchCreateMailMailgroupPermissionMember',
   },
-  '/open-apis/mail/v1/mailgroups/{mailgroup_id}/permission_members/batch_delete': {
+  '/mail/v1/mailgroups/{mailgroup_id}/permission_members/batch_delete': {
     DELETE: 'batchDeleteMailMailgroupPermissionMember',
   },
-  '/open-apis/mail/v1/public_mailboxes': {
+  '/mail/v1/public_mailboxes': {
     POST: 'createMailPublicMailbox',
     GET: { name: 'listMailPublicMailbox', pagination: { argIndex: 0 } },
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}': {
     PATCH: 'patchMailPublicMailbox',
     PUT: 'updateMailPublicMailbox',
     GET: 'getMailPublicMailbox',
     DELETE: 'deleteMailPublicMailbox',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/members': {
     POST: 'createMailPublicMailboxMember',
     GET: { name: 'listMailPublicMailboxMember', pagination: { argIndex: 1 } },
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members/{member_id}': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/members/{member_id}': {
     DELETE: 'deleteMailPublicMailboxMember',
     GET: 'getMailPublicMailboxMember',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members/clear': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/members/clear': {
     POST: 'clearMailPublicMailboxMember',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members/batch_create': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/members/batch_create': {
     POST: 'batchCreateMailPublicMailboxMember',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/members/batch_delete': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/members/batch_delete': {
     DELETE: 'batchDeleteMailPublicMailboxMember',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/aliases': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/aliases': {
     POST: 'createMailPublicMailboxAlias',
     GET: 'listMailPublicMailboxAlias',
   },
-  '/open-apis/mail/v1/public_mailboxes/{public_mailbox_id}/aliases/{alias_id}': {
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/aliases/{alias_id}': {
     DELETE: 'deleteMailPublicMailboxAlias',
   },
-  '/open-apis/mail/v1/user_mailboxes/{user_mailbox_id}': {
+  '/mail/v1/user_mailboxes/{user_mailbox_id}': {
     DELETE: 'deleteMailUserMailbox',
   },
-  '/open-apis/mail/v1/user_mailboxes/{user_mailbox_id}/aliases': {
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/aliases': {
     POST: 'createMailUserMailboxAlias',
     GET: 'listMailUserMailboxAlias',
   },
-  '/open-apis/mail/v1/user_mailboxes/{user_mailbox_id}/aliases/{alias_id}': {
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/aliases/{alias_id}': {
     DELETE: 'deleteMailUserMailboxAlias',
   },
-  '/open-apis/mail/v1/users/query': {
+  '/mail/v1/users/query': {
     POST: 'queryMailUser',
   },
 })

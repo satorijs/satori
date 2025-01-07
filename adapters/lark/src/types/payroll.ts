@@ -1,5 +1,5 @@
 import { AcctItem, CostAllocationPlan, CostAllocationReportData, I18nContent, Paygroup } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -69,16 +69,16 @@ export interface ListPayrollCostAllocationReportResponse {
 }
 
 Internal.define({
-  '/open-apis/payroll/v1/acct_items': {
+  '/payroll/v1/acct_items': {
     GET: { name: 'listPayrollAcctItem', pagination: { argIndex: 0 } },
   },
-  '/open-apis/payroll/v1/cost_allocation_reports': {
+  '/payroll/v1/cost_allocation_reports': {
     GET: 'listPayrollCostAllocationReport',
   },
-  '/open-apis/payroll/v1/cost_allocation_plans': {
+  '/payroll/v1/cost_allocation_plans': {
     GET: { name: 'listPayrollCostAllocationPlan', pagination: { argIndex: 0 } },
   },
-  '/open-apis/payroll/v1/paygroups': {
+  '/payroll/v1/paygroups': {
     GET: { name: 'listPayrollPaygroup', pagination: { argIndex: 0 } },
   },
 })

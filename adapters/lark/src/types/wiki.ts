@@ -1,5 +1,5 @@
 import { Member, Node, Setting, Space, TaskResult } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -288,46 +288,46 @@ export interface GetWikiTaskResponse {
 }
 
 Internal.define({
-  '/open-apis/wiki/v2/spaces': {
+  '/wiki/v2/spaces': {
     GET: { name: 'listWikiSpace', pagination: { argIndex: 0 } },
     POST: 'createWikiSpace',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}': {
+  '/wiki/v2/spaces/{space_id}': {
     GET: 'getWikiSpace',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/members': {
+  '/wiki/v2/spaces/{space_id}/members': {
     GET: { name: 'listWikiSpaceMember', pagination: { argIndex: 1, itemsKey: 'members' } },
     POST: 'createWikiSpaceMember',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/members/{member_id}': {
+  '/wiki/v2/spaces/{space_id}/members/{member_id}': {
     DELETE: 'deleteWikiSpaceMember',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/setting': {
+  '/wiki/v2/spaces/{space_id}/setting': {
     PUT: 'updateWikiSpaceSetting',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/nodes': {
+  '/wiki/v2/spaces/{space_id}/nodes': {
     POST: 'createWikiSpaceNode',
     GET: { name: 'listWikiSpaceNode', pagination: { argIndex: 1 } },
   },
-  '/open-apis/wiki/v2/spaces/get_node': {
+  '/wiki/v2/spaces/get_node': {
     GET: 'getNodeWikiSpace',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/nodes/{node_token}/move': {
+  '/wiki/v2/spaces/{space_id}/nodes/{node_token}/move': {
     POST: 'moveWikiSpaceNode',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/nodes/{node_token}/update_title': {
+  '/wiki/v2/spaces/{space_id}/nodes/{node_token}/update_title': {
     POST: 'updateTitleWikiSpaceNode',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/nodes/{node_token}/copy': {
+  '/wiki/v2/spaces/{space_id}/nodes/{node_token}/copy': {
     POST: 'copyWikiSpaceNode',
   },
-  '/open-apis/wiki/v2/spaces/{space_id}/nodes/move_docs_to_wiki': {
+  '/wiki/v2/spaces/{space_id}/nodes/move_docs_to_wiki': {
     POST: 'moveDocsToWikiWikiSpaceNode',
   },
-  '/open-apis/wiki/v2/tasks/{task_id}': {
+  '/wiki/v2/tasks/{task_id}': {
     GET: 'getWikiTask',
   },
-  '/open-apis/wiki/v1/nodes/search': {
+  '/wiki/v1/nodes/search': {
     POST: { name: 'searchWikiNode', pagination: { argIndex: 1 } },
   },
 })

@@ -1,5 +1,5 @@
 import { BaseMember, ExportTask, File, FileComment, FileCommentReply, FileLike, FileStatistics, FileViewRecord, ImportTask, ImportTaskMountPoint, Member, Meta, MetaFailed, PermissionPublic, Property, ReferEntity, ReplyContent, ReplyList, RequestDoc, TmpDownloadUrl, Version } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -1186,157 +1186,157 @@ export interface PatchDriveV1FileSubscriptionResponse {
 }
 
 Internal.define({
-  '/open-apis/drive/v1/files': {
+  '/drive/v1/files': {
     GET: { name: 'listDriveV1File', pagination: { argIndex: 0, itemsKey: 'files', tokenKey: 'next_page_token' } },
   },
-  '/open-apis/drive/v1/files/create_folder': {
+  '/drive/v1/files/create_folder': {
     POST: 'createFolderDriveV1File',
   },
-  '/open-apis/drive/v1/files/task_check': {
+  '/drive/v1/files/task_check': {
     GET: 'taskCheckDriveV1File',
   },
-  '/open-apis/drive/v1/metas/batch_query': {
+  '/drive/v1/metas/batch_query': {
     POST: 'batchQueryDriveV1Meta',
   },
-  '/open-apis/drive/v1/files/{file_token}/statistics': {
+  '/drive/v1/files/{file_token}/statistics': {
     GET: 'getDriveV1FileStatistics',
   },
-  '/open-apis/drive/v1/files/{file_token}/view_records': {
+  '/drive/v1/files/{file_token}/view_records': {
     GET: { name: 'listDriveV1FileViewRecord', pagination: { argIndex: 1 } },
   },
-  '/open-apis/drive/v1/files/{file_token}/copy': {
+  '/drive/v1/files/{file_token}/copy': {
     POST: 'copyDriveV1File',
   },
-  '/open-apis/drive/v1/files/{file_token}/move': {
+  '/drive/v1/files/{file_token}/move': {
     POST: 'moveDriveV1File',
   },
-  '/open-apis/drive/v1/files/{file_token}': {
+  '/drive/v1/files/{file_token}': {
     DELETE: 'deleteDriveV1File',
   },
-  '/open-apis/drive/v1/files/create_shortcut': {
+  '/drive/v1/files/create_shortcut': {
     POST: 'createShortcutDriveV1File',
   },
-  '/open-apis/drive/v1/files/upload_all': {
+  '/drive/v1/files/upload_all': {
     POST: { name: 'uploadAllDriveV1File', multipart: true },
   },
-  '/open-apis/drive/v1/files/upload_prepare': {
+  '/drive/v1/files/upload_prepare': {
     POST: 'uploadPrepareDriveV1File',
   },
-  '/open-apis/drive/v1/files/upload_part': {
+  '/drive/v1/files/upload_part': {
     POST: { name: 'uploadPartDriveV1File', multipart: true },
   },
-  '/open-apis/drive/v1/files/upload_finish': {
+  '/drive/v1/files/upload_finish': {
     POST: 'uploadFinishDriveV1File',
   },
-  '/open-apis/drive/v1/files/{file_token}/download': {
+  '/drive/v1/files/{file_token}/download': {
     GET: { name: 'downloadDriveV1File', type: 'binary' },
   },
-  '/open-apis/drive/v1/import_tasks': {
+  '/drive/v1/import_tasks': {
     POST: 'createDriveV1ImportTask',
   },
-  '/open-apis/drive/v1/import_tasks/{ticket}': {
+  '/drive/v1/import_tasks/{ticket}': {
     GET: 'getDriveV1ImportTask',
   },
-  '/open-apis/drive/v1/export_tasks': {
+  '/drive/v1/export_tasks': {
     POST: 'createDriveV1ExportTask',
   },
-  '/open-apis/drive/v1/export_tasks/{ticket}': {
+  '/drive/v1/export_tasks/{ticket}': {
     GET: 'getDriveV1ExportTask',
   },
-  '/open-apis/drive/v1/export_tasks/file/{file_token}/download': {
+  '/drive/v1/export_tasks/file/{file_token}/download': {
     GET: { name: 'downloadDriveV1ExportTask', type: 'binary' },
   },
-  '/open-apis/drive/v1/medias/upload_all': {
+  '/drive/v1/medias/upload_all': {
     POST: { name: 'uploadAllDriveV1Media', multipart: true },
   },
-  '/open-apis/drive/v1/medias/upload_prepare': {
+  '/drive/v1/medias/upload_prepare': {
     POST: 'uploadPrepareDriveV1Media',
   },
-  '/open-apis/drive/v1/medias/upload_part': {
+  '/drive/v1/medias/upload_part': {
     POST: { name: 'uploadPartDriveV1Media', multipart: true },
   },
-  '/open-apis/drive/v1/medias/upload_finish': {
+  '/drive/v1/medias/upload_finish': {
     POST: 'uploadFinishDriveV1Media',
   },
-  '/open-apis/drive/v1/medias/{file_token}/download': {
+  '/drive/v1/medias/{file_token}/download': {
     GET: { name: 'downloadDriveV1Media', type: 'binary' },
   },
-  '/open-apis/drive/v1/medias/batch_get_tmp_download_url': {
+  '/drive/v1/medias/batch_get_tmp_download_url': {
     GET: 'batchGetTmpDownloadUrlDriveV1Media',
   },
-  '/open-apis/drive/v1/files/{file_token}/versions': {
+  '/drive/v1/files/{file_token}/versions': {
     POST: 'createDriveV1FileVersion',
     GET: { name: 'listDriveV1FileVersion', pagination: { argIndex: 1 } },
   },
-  '/open-apis/drive/v1/files/{file_token}/versions/{version_id}': {
+  '/drive/v1/files/{file_token}/versions/{version_id}': {
     GET: 'getDriveV1FileVersion',
     DELETE: 'deleteDriveV1FileVersion',
   },
-  '/open-apis/drive/v2/files/{file_token}/likes': {
+  '/drive/v2/files/{file_token}/likes': {
     GET: { name: 'listDriveV2FileLike', pagination: { argIndex: 1 } },
   },
-  '/open-apis/drive/v1/files/{file_token}/subscribe': {
+  '/drive/v1/files/{file_token}/subscribe': {
     POST: 'subscribeDriveV1File',
   },
-  '/open-apis/drive/v1/files/{file_token}/get_subscribe': {
+  '/drive/v1/files/{file_token}/get_subscribe': {
     GET: 'getSubscribeDriveV1File',
   },
-  '/open-apis/drive/v1/files/{file_token}/delete_subscribe': {
+  '/drive/v1/files/{file_token}/delete_subscribe': {
     DELETE: 'deleteSubscribeDriveV1File',
   },
-  '/open-apis/drive/v1/permissions/{token}/members/batch_create': {
+  '/drive/v1/permissions/{token}/members/batch_create': {
     POST: 'batchCreateDriveV1PermissionMember',
   },
-  '/open-apis/drive/v1/permissions/{token}/members/transfer_owner': {
+  '/drive/v1/permissions/{token}/members/transfer_owner': {
     POST: 'transferOwnerDriveV1PermissionMember',
   },
-  '/open-apis/drive/v1/permissions/{token}/members/auth': {
+  '/drive/v1/permissions/{token}/members/auth': {
     GET: 'authDriveV1PermissionMember',
   },
-  '/open-apis/drive/v1/permissions/{token}/members': {
+  '/drive/v1/permissions/{token}/members': {
     GET: 'listDriveV1PermissionMember',
     POST: 'createDriveV1PermissionMember',
   },
-  '/open-apis/drive/v1/permissions/{token}/members/{member_id}': {
+  '/drive/v1/permissions/{token}/members/{member_id}': {
     PUT: 'updateDriveV1PermissionMember',
     DELETE: 'deleteDriveV1PermissionMember',
   },
-  '/open-apis/drive/v1/permissions/{token}/public/password': {
+  '/drive/v1/permissions/{token}/public/password': {
     POST: 'createDriveV1PermissionPublicPassword',
     PUT: 'updateDriveV1PermissionPublicPassword',
     DELETE: 'deleteDriveV1PermissionPublicPassword',
   },
-  '/open-apis/drive/v1/permissions/{token}/public': {
+  '/drive/v1/permissions/{token}/public': {
     GET: 'getDriveV1PermissionPublic',
     PATCH: 'patchDriveV1PermissionPublic',
   },
-  '/open-apis/drive/v2/permissions/{token}/public': {
+  '/drive/v2/permissions/{token}/public': {
     GET: 'getDriveV2PermissionPublic',
     PATCH: 'patchDriveV2PermissionPublic',
   },
-  '/open-apis/drive/v1/files/{file_token}/comments': {
+  '/drive/v1/files/{file_token}/comments': {
     GET: { name: 'listDriveV1FileComment', pagination: { argIndex: 1 } },
     POST: 'createDriveV1FileComment',
   },
-  '/open-apis/drive/v1/files/{file_token}/comments/batch_query': {
+  '/drive/v1/files/{file_token}/comments/batch_query': {
     POST: 'batchQueryDriveV1FileComment',
   },
-  '/open-apis/drive/v1/files/{file_token}/comments/{comment_id}': {
+  '/drive/v1/files/{file_token}/comments/{comment_id}': {
     PATCH: 'patchDriveV1FileComment',
     GET: 'getDriveV1FileComment',
   },
-  '/open-apis/drive/v1/files/{file_token}/comments/{comment_id}/replies': {
+  '/drive/v1/files/{file_token}/comments/{comment_id}/replies': {
     GET: { name: 'listDriveV1FileCommentReply', pagination: { argIndex: 2 } },
   },
-  '/open-apis/drive/v1/files/{file_token}/comments/{comment_id}/replies/{reply_id}': {
+  '/drive/v1/files/{file_token}/comments/{comment_id}/replies/{reply_id}': {
     PUT: 'updateDriveV1FileCommentReply',
     DELETE: 'deleteDriveV1FileCommentReply',
   },
-  '/open-apis/drive/v1/files/{file_token}/subscriptions/{subscription_id}': {
+  '/drive/v1/files/{file_token}/subscriptions/{subscription_id}': {
     GET: 'getDriveV1FileSubscription',
     PATCH: 'patchDriveV1FileSubscription',
   },
-  '/open-apis/drive/v1/files/{file_token}/subscriptions': {
+  '/drive/v1/files/{file_token}/subscriptions': {
     POST: 'createDriveV1FileSubscription',
   },
 })

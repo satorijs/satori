@@ -43,10 +43,10 @@ export interface TranslateTranslationTextResponse {
 }
 
 Internal.define({
-  '/open-apis/translation/v1/text/detect': {
+  '/translation/v1/text/detect': {
     POST: 'detectTranslationText',
   },
-  '/open-apis/translation/v1/text/translate': {
+  '/translation/v1/text/translate': {
     POST: 'translateTranslationText',
   },
 })

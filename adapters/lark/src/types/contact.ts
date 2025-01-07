@@ -1,5 +1,5 @@
-import { CustomAttr, Department, DepartmentI18nName, DepartmentLeader, EmployeeTypeEnum, FunctionalRoleMember, FunctionalRoleMemberResult, Group, I18nContent, JobFamily, JobLevel, JobTitle, MemberResult, Memberlist, ResourceAcceptor, Unit, UnitDepartment, User, UserContactInfo, UserCustomAttr, UserDepartmentInfo, UserOrder, WorkCity } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { CustomAttr, Department, DepartmentI18nName, DepartmentLeader, EmployeeTypeEnum, FunctionalRoleMember, FunctionalRoleMemberResult, Group, I18nContent, JobFamily, JobLevel, JobTitle, Memberlist, MemberResult, ResourceAcceptor, Unit, UnitDepartment, User, UserContactInfo, UserCustomAttr, UserDepartmentInfo, UserOrder, WorkCity } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -1332,170 +1332,170 @@ export interface UpdateContactUserResponse {
 }
 
 Internal.define({
-  '/open-apis/contact/v3/scopes': {
+  '/contact/v3/scopes': {
     GET: 'listContactScope',
   },
-  '/open-apis/contact/v3/users': {
+  '/contact/v3/users': {
     POST: 'createContactUser',
     GET: { name: 'listContactUser', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/users/{user_id}': {
+  '/contact/v3/users/{user_id}': {
     PATCH: 'patchContactUser',
     GET: 'getContactUser',
     DELETE: 'deleteContactUser',
     PUT: 'updateContactUser',
   },
-  '/open-apis/contact/v3/users/{user_id}/update_user_id': {
+  '/contact/v3/users/{user_id}/update_user_id': {
     PATCH: 'updateUserIdContactUser',
   },
-  '/open-apis/contact/v3/users/batch': {
+  '/contact/v3/users/batch': {
     GET: 'batchContactUser',
   },
-  '/open-apis/contact/v3/users/find_by_department': {
+  '/contact/v3/users/find_by_department': {
     GET: { name: 'findByDepartmentContactUser', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/users/batch_get_id': {
+  '/contact/v3/users/batch_get_id': {
     POST: 'batchGetIdContactUser',
   },
-  '/open-apis/contact/v3/users/{user_id}/resurrect': {
+  '/contact/v3/users/{user_id}/resurrect': {
     POST: 'resurrectContactUser',
   },
-  '/open-apis/contact/v3/group': {
+  '/contact/v3/group': {
     POST: 'createContactGroup',
   },
-  '/open-apis/contact/v3/group/{group_id}': {
+  '/contact/v3/group/{group_id}': {
     PATCH: 'patchContactGroup',
     GET: 'getContactGroup',
     DELETE: 'deleteContactGroup',
   },
-  '/open-apis/contact/v3/group/simplelist': {
+  '/contact/v3/group/simplelist': {
     GET: { name: 'simplelistContactGroup', pagination: { argIndex: 0, itemsKey: 'grouplist' } },
   },
-  '/open-apis/contact/v3/group/member_belong': {
+  '/contact/v3/group/member_belong': {
     GET: { name: 'memberBelongContactGroup', pagination: { argIndex: 0, itemsKey: 'group_list' } },
   },
-  '/open-apis/contact/v3/custom_attrs': {
+  '/contact/v3/custom_attrs': {
     GET: { name: 'listContactCustomAttr', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/employee_type_enums': {
+  '/contact/v3/employee_type_enums': {
     POST: 'createContactEmployeeTypeEnum',
     GET: { name: 'listContactEmployeeTypeEnum', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/employee_type_enums/{enum_id}': {
+  '/contact/v3/employee_type_enums/{enum_id}': {
     PUT: 'updateContactEmployeeTypeEnum',
     DELETE: 'deleteContactEmployeeTypeEnum',
   },
-  '/open-apis/contact/v3/departments': {
+  '/contact/v3/departments': {
     POST: 'createContactDepartment',
     GET: { name: 'listContactDepartment', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/departments/{department_id}': {
+  '/contact/v3/departments/{department_id}': {
     PATCH: 'patchContactDepartment',
     PUT: 'updateContactDepartment',
     GET: 'getContactDepartment',
     DELETE: 'deleteContactDepartment',
   },
-  '/open-apis/contact/v3/departments/{department_id}/update_department_id': {
+  '/contact/v3/departments/{department_id}/update_department_id': {
     PATCH: 'updateDepartmentIdContactDepartment',
   },
-  '/open-apis/contact/v3/departments/unbind_department_chat': {
+  '/contact/v3/departments/unbind_department_chat': {
     POST: 'unbindDepartmentChatContactDepartment',
   },
-  '/open-apis/contact/v3/departments/batch': {
+  '/contact/v3/departments/batch': {
     GET: 'batchContactDepartment',
   },
-  '/open-apis/contact/v3/departments/{department_id}/children': {
+  '/contact/v3/departments/{department_id}/children': {
     GET: { name: 'childrenContactDepartment', pagination: { argIndex: 1 } },
   },
-  '/open-apis/contact/v3/departments/parent': {
+  '/contact/v3/departments/parent': {
     GET: { name: 'parentContactDepartment', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/departments/search': {
+  '/contact/v3/departments/search': {
     POST: { name: 'searchContactDepartment', pagination: { argIndex: 1 } },
   },
-  '/open-apis/contact/v3/unit': {
+  '/contact/v3/unit': {
     POST: 'createContactUnit',
     GET: { name: 'listContactUnit', pagination: { argIndex: 0, itemsKey: 'unitlist' } },
   },
-  '/open-apis/contact/v3/unit/{unit_id}': {
+  '/contact/v3/unit/{unit_id}': {
     PATCH: 'patchContactUnit',
     GET: 'getContactUnit',
     DELETE: 'deleteContactUnit',
   },
-  '/open-apis/contact/v3/unit/bind_department': {
+  '/contact/v3/unit/bind_department': {
     POST: 'bindDepartmentContactUnit',
   },
-  '/open-apis/contact/v3/unit/unbind_department': {
+  '/contact/v3/unit/unbind_department': {
     POST: 'unbindDepartmentContactUnit',
   },
-  '/open-apis/contact/v3/unit/list_department': {
+  '/contact/v3/unit/list_department': {
     GET: { name: 'listDepartmentContactUnit', pagination: { argIndex: 0, itemsKey: 'departmentlist' } },
   },
-  '/open-apis/contact/v3/group/{group_id}/member/add': {
+  '/contact/v3/group/{group_id}/member/add': {
     POST: 'addContactGroupMember',
   },
-  '/open-apis/contact/v3/group/{group_id}/member/batch_add': {
+  '/contact/v3/group/{group_id}/member/batch_add': {
     POST: 'batchAddContactGroupMember',
   },
-  '/open-apis/contact/v3/group/{group_id}/member/simplelist': {
+  '/contact/v3/group/{group_id}/member/simplelist': {
     GET: { name: 'simplelistContactGroupMember', pagination: { argIndex: 1, itemsKey: 'memberlist' } },
   },
-  '/open-apis/contact/v3/group/{group_id}/member/remove': {
+  '/contact/v3/group/{group_id}/member/remove': {
     POST: 'removeContactGroupMember',
   },
-  '/open-apis/contact/v3/group/{group_id}/member/batch_remove': {
+  '/contact/v3/group/{group_id}/member/batch_remove': {
     POST: 'batchRemoveContactGroupMember',
   },
-  '/open-apis/contact/v3/functional_roles': {
+  '/contact/v3/functional_roles': {
     POST: 'createContactFunctionalRole',
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}': {
+  '/contact/v3/functional_roles/{role_id}': {
     PUT: 'updateContactFunctionalRole',
     DELETE: 'deleteContactFunctionalRole',
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}/members/batch_create': {
+  '/contact/v3/functional_roles/{role_id}/members/batch_create': {
     POST: 'batchCreateContactFunctionalRoleMember',
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}/members/scopes': {
+  '/contact/v3/functional_roles/{role_id}/members/scopes': {
     PATCH: 'scopesContactFunctionalRoleMember',
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}/members/{member_id}': {
+  '/contact/v3/functional_roles/{role_id}/members/{member_id}': {
     GET: 'getContactFunctionalRoleMember',
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}/members': {
+  '/contact/v3/functional_roles/{role_id}/members': {
     GET: { name: 'listContactFunctionalRoleMember', pagination: { argIndex: 1, itemsKey: 'members' } },
   },
-  '/open-apis/contact/v3/functional_roles/{role_id}/members/batch_delete': {
+  '/contact/v3/functional_roles/{role_id}/members/batch_delete': {
     PATCH: 'batchDeleteContactFunctionalRoleMember',
   },
-  '/open-apis/contact/v3/job_levels': {
+  '/contact/v3/job_levels': {
     POST: 'createContactJobLevel',
     GET: { name: 'listContactJobLevel', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/job_levels/{job_level_id}': {
+  '/contact/v3/job_levels/{job_level_id}': {
     PUT: 'updateContactJobLevel',
     GET: 'getContactJobLevel',
     DELETE: 'deleteContactJobLevel',
   },
-  '/open-apis/contact/v3/job_families': {
+  '/contact/v3/job_families': {
     POST: 'createContactJobFamily',
     GET: { name: 'listContactJobFamily', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/job_families/{job_family_id}': {
+  '/contact/v3/job_families/{job_family_id}': {
     PUT: 'updateContactJobFamily',
     GET: 'getContactJobFamily',
     DELETE: 'deleteContactJobFamily',
   },
-  '/open-apis/contact/v3/job_titles/{job_title_id}': {
+  '/contact/v3/job_titles/{job_title_id}': {
     GET: 'getContactJobTitle',
   },
-  '/open-apis/contact/v3/job_titles': {
+  '/contact/v3/job_titles': {
     GET: { name: 'listContactJobTitle', pagination: { argIndex: 0 } },
   },
-  '/open-apis/contact/v3/work_cities/{work_city_id}': {
+  '/contact/v3/work_cities/{work_city_id}': {
     GET: 'getContactWorkCity',
   },
-  '/open-apis/contact/v3/work_cities': {
+  '/contact/v3/work_cities': {
     GET: { name: 'listContactWorkCity', pagination: { argIndex: 0 } },
   },
 })

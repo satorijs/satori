@@ -1,5 +1,5 @@
 import { AccessRecord, Device, Feature, Rule, User, UserExternal } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -209,38 +209,38 @@ export interface ListAcsDeviceResponse {
 }
 
 Internal.define({
-  '/open-apis/acs/v1/users/{user_id}': {
+  '/acs/v1/users/{user_id}': {
     PATCH: 'patchAcsUser',
     GET: 'getAcsUser',
   },
-  '/open-apis/acs/v1/users': {
+  '/acs/v1/users': {
     GET: { name: 'listAcsUser', pagination: { argIndex: 0 } },
   },
-  '/open-apis/acs/v1/users/{user_id}/face': {
+  '/acs/v1/users/{user_id}/face': {
     PUT: { name: 'updateAcsUserFace', multipart: true },
     GET: { name: 'getAcsUserFace', type: 'binary' },
   },
-  '/open-apis/acs/v1/rule_external/device_bind': {
+  '/acs/v1/rule_external/device_bind': {
     POST: 'deviceBindAcsRuleExternal',
   },
-  '/open-apis/acs/v1/rule_external': {
+  '/acs/v1/rule_external': {
     GET: 'getAcsRuleExternal',
     DELETE: 'deleteAcsRuleExternal',
     POST: 'createAcsRuleExternal',
   },
-  '/open-apis/acs/v1/visitors/{visitor_id}': {
+  '/acs/v1/visitors/{visitor_id}': {
     DELETE: 'deleteAcsVisitor',
   },
-  '/open-apis/acs/v1/visitors': {
+  '/acs/v1/visitors': {
     POST: 'createAcsVisitor',
   },
-  '/open-apis/acs/v1/devices': {
+  '/acs/v1/devices': {
     GET: 'listAcsDevice',
   },
-  '/open-apis/acs/v1/access_records': {
+  '/acs/v1/access_records': {
     GET: { name: 'listAcsAccessRecord', pagination: { argIndex: 0 } },
   },
-  '/open-apis/acs/v1/access_records/{access_record_id}/access_photo': {
+  '/acs/v1/access_records/{access_record_id}/access_photo': {
     GET: { name: 'getAcsAccessRecordAccessPhoto', type: 'binary' },
   },
 })

@@ -1,5 +1,5 @@
 import { Employee } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -25,9 +25,9 @@ export interface ListEhrEmployeeQuery {
   /** 返回数据类型 */
   view?: 'basic' | 'full'
   /** 员工状态，不传代表查询所有员工状态实际在职 = 2&4可同时查询多个状态的记录，如 status=2&status=4 */
-  status?: 1 | 2 | 3 | 4 | 5[]
+  status?: (1 | 2 | 3 | 4 | 5)[]
   /** 雇员类型，不传代表查询所有雇员类型 */
-  type?: 1 | 2 | 3 | 4 | 5[]
+  type?: (1 | 2 | 3 | 4 | 5)[]
   /** 查询开始时间（创建时间 &gt;= 此时间） */
   start_time?: string
   /** 查询结束时间（创建时间 &lt;= 此时间） */
@@ -39,10 +39,10 @@ export interface ListEhrEmployeeQuery {
 }
 
 Internal.define({
-  '/open-apis/ehr/v1/employees': {
+  '/ehr/v1/employees': {
     GET: { name: 'listEhrEmployee', pagination: { argIndex: 0 } },
   },
-  '/open-apis/ehr/v1/attachments/{token}': {
+  '/ehr/v1/attachments/{token}': {
     GET: { name: 'getEhrAttachment', type: 'binary' },
   },
 })

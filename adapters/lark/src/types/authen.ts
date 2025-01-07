@@ -202,19 +202,19 @@ export interface CreateAuthenRefreshAccessTokenResponse {
 }
 
 Internal.define({
-  '/open-apis/authen/v1/user_info': {
+  '/authen/v1/user_info': {
     GET: 'getAuthenUserInfo',
   },
-  '/open-apis/authen/v1/oidc/access_token': {
+  '/authen/v1/oidc/access_token': {
     POST: 'createAuthenOidcAccessToken',
   },
-  '/open-apis/authen/v1/oidc/refresh_access_token': {
+  '/authen/v1/oidc/refresh_access_token': {
     POST: 'createAuthenOidcRefreshAccessToken',
   },
-  '/open-apis/authen/v1/access_token': {
+  '/authen/v1/access_token': {
     POST: 'createAuthenAccessToken',
   },
-  '/open-apis/authen/v1/refresh_access_token': {
+  '/authen/v1/refresh_access_token': {
     POST: 'createAuthenRefreshAccessToken',
   },
 })

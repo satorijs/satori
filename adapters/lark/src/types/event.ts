@@ -1,4 +1,4 @@
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -16,7 +16,7 @@ declare module '../internal' {
 }
 
 Internal.define({
-  '/open-apis/event/v1/outbound_ip': {
+  '/event/v1/outbound_ip': {
     GET: { name: 'listEventOutboundIp', pagination: { argIndex: 0, itemsKey: 'ip_list' } },
   },
 })

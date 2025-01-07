@@ -27,7 +27,7 @@ export interface GetDocsContentResponse {
 }
 
 Internal.define({
-  '/open-apis/docs/v1/content': {
+  '/docs/v1/content': {
     GET: 'getDocsContent',
   },
 })

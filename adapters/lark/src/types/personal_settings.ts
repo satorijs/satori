@@ -1,5 +1,5 @@
 import { SystemStatus, SystemStatusI18nName, SystemStatusSyncSetting, SystemStatusUserCloseResultEntity, SystemStatusUserOpenParam, SystemStatusUserOpenResultEntity } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -60,7 +60,7 @@ export interface PatchPersonalSettingsSystemStatusRequest {
   /** 系统状态 */
   system_status: SystemStatus
   /** 需要更新的字段 */
-  update_fields: 'TITLE' | 'I18N_TITLE' | 'ICON' | 'COLOR' | 'PRIORITY' | 'SYNC_SETTING'[]
+  update_fields: ('TITLE' | 'I18N_TITLE' | 'ICON' | 'COLOR' | 'PRIORITY' | 'SYNC_SETTING')[]
 }
 
 export interface BatchOpenPersonalSettingsSystemStatusRequest {
@@ -104,18 +104,18 @@ export interface BatchClosePersonalSettingsSystemStatusResponse {
 }
 
 Internal.define({
-  '/open-apis/personal_settings/v1/system_statuses': {
+  '/personal_settings/v1/system_statuses': {
     POST: 'createPersonalSettingsSystemStatus',
     GET: { name: 'listPersonalSettingsSystemStatus', pagination: { argIndex: 0 } },
   },
-  '/open-apis/personal_settings/v1/system_statuses/{system_status_id}': {
+  '/personal_settings/v1/system_statuses/{system_status_id}': {
     DELETE: 'deletePersonalSettingsSystemStatus',
     PATCH: 'patchPersonalSettingsSystemStatus',
   },
-  '/open-apis/personal_settings/v1/system_statuses/{system_status_id}/batch_open': {
+  '/personal_settings/v1/system_statuses/{system_status_id}/batch_open': {
     POST: 'batchOpenPersonalSettingsSystemStatus',
   },
-  '/open-apis/personal_settings/v1/system_statuses/{system_status_id}/batch_close': {
+  '/personal_settings/v1/system_statuses/{system_status_id}/batch_close': {
     POST: 'batchClosePersonalSettingsSystemStatus',
   },
 })

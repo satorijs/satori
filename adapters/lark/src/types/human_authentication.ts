@@ -32,7 +32,7 @@ export interface CreateHumanAuthenticationIdentityResponse {
 }
 
 Internal.define({
-  '/open-apis/human_authentication/v1/identities': {
+  '/human_authentication/v1/identities': {
     POST: 'createHumanAuthenticationIdentity',
   },
 })

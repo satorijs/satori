@@ -1,5 +1,5 @@
 import { Acl, ConnectorParam, DataSource, I18nMeta, Item, ItemContent, ItemMetadata, PatchSchemaProperty, Schema, SchemaDisplay, SchemaProperty } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -250,32 +250,32 @@ export interface GetSearchSchemaResponse {
 }
 
 Internal.define({
-  '/open-apis/search/v2/message': {
+  '/search/v2/message': {
     POST: { name: 'createSearchMessage', pagination: { argIndex: 1 } },
   },
-  '/open-apis/search/v2/app': {
+  '/search/v2/app': {
     POST: { name: 'createSearchApp', pagination: { argIndex: 1 } },
   },
-  '/open-apis/search/v2/data_sources': {
+  '/search/v2/data_sources': {
     POST: 'createSearchDataSource',
     GET: { name: 'listSearchDataSource', pagination: { argIndex: 0 } },
   },
-  '/open-apis/search/v2/data_sources/{data_source_id}': {
+  '/search/v2/data_sources/{data_source_id}': {
     DELETE: 'deleteSearchDataSource',
     PATCH: 'patchSearchDataSource',
     GET: 'getSearchDataSource',
   },
-  '/open-apis/search/v2/data_sources/{data_source_id}/items': {
+  '/search/v2/data_sources/{data_source_id}/items': {
     POST: 'createSearchDataSourceItem',
   },
-  '/open-apis/search/v2/data_sources/{data_source_id}/items/{item_id}': {
+  '/search/v2/data_sources/{data_source_id}/items/{item_id}': {
     DELETE: 'deleteSearchDataSourceItem',
     GET: 'getSearchDataSourceItem',
   },
-  '/open-apis/search/v2/schemas': {
+  '/search/v2/schemas': {
     POST: 'createSearchSchema',
   },
-  '/open-apis/search/v2/schemas/{schema_id}': {
+  '/search/v2/schemas/{schema_id}': {
     DELETE: 'deleteSearchSchema',
     PATCH: 'patchSearchSchema',
     GET: 'getSearchSchema',

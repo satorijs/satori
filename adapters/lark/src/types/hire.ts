@@ -1,5 +1,5 @@
-import { Account, Agency, AgencyAccount, AgencyProtection, AgencySupplier, Application, ApplicationDetailInfo, ApplicationOffer, Attachment, AttachmentInfo, BackgroundCheckOrder, BonusAmount, CheckFailedAccountInfo, CombinedJobObjectValueMap, CombinedJobResultDefaultJobPost, CommonFilter, CommonSchema, CompositeTalentAwardInfo, CompositeTalentBasicInfo, CompositeTalentCareerInfo, CompositeTalentCustomizedData, CompositeTalentEducationInfo, CompositeTalentInternshipInfo, CompositeTalentLanguageInfo, CompositeTalentProjectInfo, CompositeTalentSnsInfo, CompositeTalentWorksInfo, DiInfo, EcoAccountCustomFieldData, EcoBackgroundCheckCustomFieldData, EcoBackgroundCheckPackageAdditionalItem, EcoBackgroundCheckPackageData, EcoBackgroundCheckReportFile, EcoExamLoginInfo, EcoExamPaperData, EcoExamResultDetail, EcoExamResultReport, Employee, EmployeeConversionInfo, EmployeeOverboardInfo, Evaluation, EvaluationTask, ExamMarkingTask, ExternalApplication, ExternalBackgroundCheck, ExternalInterview, ExternalInterviewAssessment, ExternalInterviewAssessmentDimension, ExternalOffer, I18n, InternOfferOffboardingInfo, InternOfferOnboardingInfo, Interview, InterviewAppointmentConfig, InterviewExtend, InterviewFeedbackForm, InterviewRecord, InterviewRegistrationSchema, InterviewRoundType, InterviewTask, Interviewer, Job, JobConfigInterviewRoundConf, JobConfigResult, JobConfigRoundType, JobDetail, JobFunction, JobManager, JobProcesses, JobRecruiter2, JobRequirementCustomizedData, JobRequirementDto, JobRequirementSchema, JobRequirementUpdateOption, JobSchema, JobTypeInfo, Location, LocationDto, MentionEntity, Minutes, Mobile, Note, Offer, OfferApplyForm, OfferApplyFormInfo, OfferBasicInfo, OfferCustomFieldConfig, OfferCustomizedInfo, OfferListInfo, OfferSalaryInfo, OfferSchemaDetail, PortalJobPost, Questionnaire, Referral, ReferralInfo, RegistrationBasicInfo, RegistrationSchema, RegistrationSchemaInfo, ResumeSource, Role, RoleDetail, Subject, Talent, TalentBatchInfo, TalentBlock, TalentCombinedAwardInfo, TalentCombinedBasicInfo, TalentCombinedCareerInfo, TalentCombinedEducationInfo, TalentCombinedLanguageInfo, TalentCombinedProjectInfo, TalentCombinedSnsInfo, TalentCombinedWorkInfo, TalentCustomizedDataObjectValue, TalentExternalInfo, TalentFolder, TalentFolderForList, TalentInterview, TalentInterviewRegistrationSimple, TalentNote, TalentOperationLog, TalentPool, TalentResumeAttachment, TalentResumeSource, TalentSelfEvaluation, TalentSimilar, TalentTag, TargetMajorInfo, TerminationReason, Test, Todo, TradeDetail, TripartiteAgreementInfo, UserRole, Website, WebsiteChannelInfo, WebsiteDeliveryAttachmentIndentification, WebsiteDeliveryDto, WebsiteDeliveryResume, WebsiteJobPost, WebsiteUser } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Account, Agency, AgencyAccount, AgencyProtection, AgencySupplier, Application, ApplicationDetailInfo, ApplicationOffer, Attachment, AttachmentInfo, BackgroundCheckOrder, BonusAmount, CheckFailedAccountInfo, CombinedJobObjectValueMap, CombinedJobResultDefaultJobPost, CommonFilter, CommonSchema, CompositeTalentAwardInfo, CompositeTalentBasicInfo, CompositeTalentCareerInfo, CompositeTalentCustomizedData, CompositeTalentEducationInfo, CompositeTalentInternshipInfo, CompositeTalentLanguageInfo, CompositeTalentProjectInfo, CompositeTalentSnsInfo, CompositeTalentWorksInfo, DiInfo, EcoAccountCustomFieldData, EcoBackgroundCheckCustomFieldData, EcoBackgroundCheckPackageAdditionalItem, EcoBackgroundCheckPackageData, EcoBackgroundCheckReportFile, EcoExamLoginInfo, EcoExamPaperData, EcoExamResultDetail, EcoExamResultReport, Employee, EmployeeConversionInfo, EmployeeOverboardInfo, Evaluation, EvaluationTask, ExamMarkingTask, ExternalApplication, ExternalBackgroundCheck, ExternalInterview, ExternalInterviewAssessment, ExternalInterviewAssessmentDimension, ExternalOffer, I18n, InternOfferOffboardingInfo, InternOfferOnboardingInfo, Interview, InterviewAppointmentConfig, Interviewer, InterviewExtend, InterviewFeedbackForm, InterviewRecord, InterviewRegistrationSchema, InterviewRoundType, InterviewTask, Job, JobConfigInterviewRoundConf, JobConfigResult, JobConfigRoundType, JobDetail, JobFunction, JobManager, JobProcesses, JobRecruiter2, JobRequirementCustomizedData, JobRequirementDto, JobRequirementSchema, JobRequirementUpdateOption, JobSchema, JobTypeInfo, Location, LocationDto, MentionEntity, Minutes, Mobile, Note, Offer, OfferApplyForm, OfferApplyFormInfo, OfferBasicInfo, OfferCustomFieldConfig, OfferCustomizedInfo, OfferListInfo, OfferSalaryInfo, OfferSchemaDetail, PortalJobPost, Questionnaire, Referral, ReferralInfo, RegistrationBasicInfo, RegistrationSchema, RegistrationSchemaInfo, ResumeSource, Role, RoleDetail, Subject, Talent, TalentBatchInfo, TalentBlock, TalentCombinedAwardInfo, TalentCombinedBasicInfo, TalentCombinedCareerInfo, TalentCombinedEducationInfo, TalentCombinedLanguageInfo, TalentCombinedProjectInfo, TalentCombinedSnsInfo, TalentCombinedWorkInfo, TalentCustomizedDataObjectValue, TalentExternalInfo, TalentFolder, TalentFolderForList, TalentInterview, TalentInterviewRegistrationSimple, TalentNote, TalentOperationLog, TalentPool, TalentResumeAttachment, TalentResumeSource, TalentSelfEvaluation, TalentSimilar, TalentTag, TargetMajorInfo, TerminationReason, Test, Todo, TradeDetail, TripartiteAgreementInfo, UserRole, Website, WebsiteChannelInfo, WebsiteDeliveryAttachmentIndentification, WebsiteDeliveryDto, WebsiteDeliveryResume, WebsiteJobPost, WebsiteUser } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -1331,7 +1331,7 @@ export interface UpdateConfigHireJobRequest {
   /** 建议评估人 ID 列表 */
   recommended_evaluator_id_list?: string[]
   /** 更新选项，传入要更新的配置项 */
-  update_option_list: 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 | 10 | 11 | 12[]
+  update_option_list: (1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 | 10 | 11 | 12)[]
   /** 面试评价表，枚举通过接口「获取面试评价表列表」获取 */
   assessment_template_biz_id?: string
   /** 建议面试官列表 */
@@ -1365,7 +1365,7 @@ export interface BatchUpdateHireJobManagerRequest {
   /** 用人经理 ID */
   hiring_manager_id_list?: string[]
   /** 更新的人员类型，可选值：1=招聘负责人; 2=招聘协助人; 3=用人经理； */
-  update_option_list: 1 | 2 | 3[]
+  update_option_list: (1 | 2 | 3)[]
   /** 操作者 ID */
   creator_id?: string
 }
@@ -2387,7 +2387,7 @@ export interface GetDetailHireApplicationQuery {
   /** 此次调用中使用的「人员类型 ID」的类型 */
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
   /** 请求控制参数，用于控制获取哪些关联实体信息。 */
-  options?: 'with_job' | 'with_talent' | 'with_interview' | 'with_offer' | 'with_evaluation' | 'with_employee' | 'with_agency' | 'with_referral' | 'with_portal'[]
+  options?: ('with_job' | 'with_talent' | 'with_interview' | 'with_offer' | 'with_evaluation' | 'with_employee' | 'with_agency' | 'with_referral' | 'with_portal')[]
 }
 
 export interface CreateHireApplicationRequest {
@@ -2426,7 +2426,7 @@ export interface GetHireApplicationQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 请求控制参数，用于控制接口响应逻辑。如需一次查询多个用户ID，可通过将同一参数名多次传递，并且每次传递不同的参数值。 */
-  options?: 'get_latest_application_on_chain'[]
+  options?: ('get_latest_application_on_chain')[]
 }
 
 export interface ListHireApplicationQuery {
@@ -2441,7 +2441,7 @@ export interface ListHireApplicationQuery {
   /** 职位 ID */
   job_id?: string
   /** 锁定状态 */
-  lock_status?: 1 | 2 | 3[]
+  lock_status?: (1 | 2 | 3)[]
   /** 最早更新时间，毫秒级时间戳 */
   update_start_time?: string
   /** 最晚更新时间，毫秒级时间戳 */
@@ -3072,7 +3072,7 @@ export interface DeactivateHireReferralAccountQuery {
 
 export interface WithdrawHireReferralAccountRequest {
   /** 请求提现的奖励类型 */
-  withdraw_bonus_type: 1 | 2[]
+  withdraw_bonus_type: (1 | 2)[]
   /** 提现单ID，请求时由请求方提供，后续关于本次提现操作的交互都以此提现单ID为标识进行，需要保证唯一,用于保证提现的幂等性，传入重复ID会返回对应提现单提取的金额明细 */
   external_order_id: string
 }
@@ -3679,500 +3679,500 @@ export interface GetHireOfferSchemaResponse {
 }
 
 Internal.define({
-  '/open-apis/hire/v1/locations/query': {
+  '/hire/v1/locations/query': {
     POST: { name: 'queryHireLocation', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/locations': {
+  '/hire/v1/locations': {
     GET: { name: 'listHireLocation', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/roles/{role_id}': {
+  '/hire/v1/roles/{role_id}': {
     GET: 'getHireRole',
   },
-  '/open-apis/hire/v1/roles': {
+  '/hire/v1/roles': {
     GET: { name: 'listHireRole', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/user_roles': {
+  '/hire/v1/user_roles': {
     GET: { name: 'listHireUserRole', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/jobs/combined_create': {
+  '/hire/v1/jobs/combined_create': {
     POST: 'combinedCreateHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/combined_update': {
+  '/hire/v1/jobs/{job_id}/combined_update': {
     POST: 'combinedUpdateHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/update_config': {
+  '/hire/v1/jobs/{job_id}/update_config': {
     POST: 'updateConfigHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/managers/batch_update': {
+  '/hire/v1/jobs/{job_id}/managers/batch_update': {
     POST: 'batchUpdateHireJobManager',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/get_detail': {
+  '/hire/v1/jobs/{job_id}/get_detail': {
     GET: 'getDetailHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}': {
+  '/hire/v1/jobs/{job_id}': {
     GET: 'getHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/recruiter': {
+  '/hire/v1/jobs/{job_id}/recruiter': {
     GET: 'recruiterHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/config': {
+  '/hire/v1/jobs/{job_id}/config': {
     GET: 'configHireJob',
   },
-  '/open-apis/hire/v1/jobs': {
+  '/hire/v1/jobs': {
     GET: { name: 'listHireJob', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/jobs/{job_id}/close': {
+  '/hire/v1/jobs/{job_id}/close': {
     POST: 'closeHireJob',
   },
-  '/open-apis/hire/v1/jobs/{job_id}/open': {
+  '/hire/v1/jobs/{job_id}/open': {
     POST: 'openHireJob',
   },
-  '/open-apis/hire/v1/job_schemas': {
+  '/hire/v1/job_schemas': {
     GET: { name: 'listHireJobSchema', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/advertisements/{advertisement_id}/publish': {
+  '/hire/v1/advertisements/{advertisement_id}/publish': {
     POST: 'publishHireAdvertisement',
   },
-  '/open-apis/hire/v1/job_publish_records/search': {
+  '/hire/v1/job_publish_records/search': {
     POST: { name: 'searchHireJobPublishRecord', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/job_functions': {
+  '/hire/v1/job_functions': {
     GET: { name: 'listHireJobFunction', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/job_types': {
+  '/hire/v1/job_types': {
     GET: { name: 'listHireJobType', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/job_requirements': {
+  '/hire/v1/job_requirements': {
     POST: 'createHireJobRequirement',
     GET: { name: 'listHireJobRequirement', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/job_requirements/{job_requirement_id}': {
+  '/hire/v1/job_requirements/{job_requirement_id}': {
     PUT: 'updateHireJobRequirement',
     DELETE: 'deleteHireJobRequirement',
   },
-  '/open-apis/hire/v1/job_requirements/search': {
+  '/hire/v1/job_requirements/search': {
     POST: 'listByIdHireJobRequirement',
   },
-  '/open-apis/hire/v1/job_requirement_schemas': {
+  '/hire/v1/job_requirement_schemas': {
     GET: { name: 'listHireJobRequirementSchema', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/job_processes': {
+  '/hire/v1/job_processes': {
     GET: { name: 'listHireJobProcess', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/subjects': {
+  '/hire/v1/subjects': {
     GET: { name: 'listHireSubject', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/talent_tags': {
+  '/hire/v1/talent_tags': {
     GET: { name: 'listHireTalentTag', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/registration_schemas': {
+  '/hire/v1/registration_schemas': {
     GET: { name: 'listHireRegistrationSchema', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interview_feedback_forms': {
+  '/hire/v1/interview_feedback_forms': {
     GET: { name: 'listHireInterviewFeedbackForm', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interview_round_types': {
+  '/hire/v1/interview_round_types': {
     GET: 'listHireInterviewRoundType',
   },
-  '/open-apis/hire/v1/interview_registration_schemas': {
+  '/hire/v1/interview_registration_schemas': {
     GET: { name: 'listHireInterviewRegistrationSchema', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interviewers': {
+  '/hire/v1/interviewers': {
     GET: { name: 'listHireInterviewer', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interviewers/{interviewer_id}': {
+  '/hire/v1/interviewers/{interviewer_id}': {
     PATCH: 'patchHireInterviewer',
   },
-  '/open-apis/hire/v1/offer_custom_fields/{offer_custom_field_id}': {
+  '/hire/v1/offer_custom_fields/{offer_custom_field_id}': {
     PUT: 'updateHireOfferCustomField',
   },
-  '/open-apis/hire/v1/offer_application_forms/{offer_application_form_id}': {
+  '/hire/v1/offer_application_forms/{offer_application_form_id}': {
     GET: 'getHireOfferApplicationForm',
   },
-  '/open-apis/hire/v1/offer_application_forms': {
+  '/hire/v1/offer_application_forms': {
     GET: { name: 'listHireOfferApplicationForm', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/referrals/search': {
+  '/hire/v1/referrals/search': {
     POST: 'searchHireReferral',
   },
-  '/open-apis/hire/v1/referral_websites/job_posts': {
+  '/hire/v1/referral_websites/job_posts': {
     GET: { name: 'listHireReferralWebsiteJobPost', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/referral_websites/job_posts/{job_post_id}': {
+  '/hire/v1/referral_websites/job_posts/{job_post_id}': {
     GET: 'getHireReferralWebsiteJobPost',
   },
-  '/open-apis/hire/v1/referrals/get_by_application': {
+  '/hire/v1/referrals/get_by_application': {
     GET: 'getByApplicationHireReferral',
   },
-  '/open-apis/hire/v1/websites/{website_id}/channels': {
+  '/hire/v1/websites/{website_id}/channels': {
     POST: 'createHireWebsiteChannel',
     GET: { name: 'listHireWebsiteChannel', pagination: { argIndex: 1, itemsKey: 'website_channel_list' } },
   },
-  '/open-apis/hire/v1/websites/{website_id}/channels/{channel_id}': {
+  '/hire/v1/websites/{website_id}/channels/{channel_id}': {
     DELETE: 'deleteHireWebsiteChannel',
     PUT: 'updateHireWebsiteChannel',
   },
-  '/open-apis/hire/v1/websites/{website_id}/site_users': {
+  '/hire/v1/websites/{website_id}/site_users': {
     POST: 'createHireWebsiteSiteUser',
   },
-  '/open-apis/hire/v1/websites/{website_id}/job_posts/{job_post_id}': {
+  '/hire/v1/websites/{website_id}/job_posts/{job_post_id}': {
     GET: 'getHireWebsiteJobPost',
   },
-  '/open-apis/hire/v1/websites/{website_id}/job_posts/search': {
+  '/hire/v1/websites/{website_id}/job_posts/search': {
     POST: { name: 'searchHireWebsiteJobPost', pagination: { argIndex: 2 } },
   },
-  '/open-apis/hire/v1/websites/{website_id}/job_posts': {
+  '/hire/v1/websites/{website_id}/job_posts': {
     GET: { name: 'listHireWebsiteJobPost', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/websites/{website_id}/deliveries/create_by_resume': {
+  '/hire/v1/websites/{website_id}/deliveries/create_by_resume': {
     POST: 'createByResumeHireWebsiteDelivery',
   },
-  '/open-apis/hire/v1/websites/{website_id}/deliveries/create_by_attachment': {
+  '/hire/v1/websites/{website_id}/deliveries/create_by_attachment': {
     POST: 'createByAttachmentHireWebsiteDelivery',
   },
-  '/open-apis/hire/v1/websites/{website_id}/delivery_tasks/{delivery_task_id}': {
+  '/hire/v1/websites/{website_id}/delivery_tasks/{delivery_task_id}': {
     GET: 'getHireWebsiteDeliveryTask',
   },
-  '/open-apis/hire/v1/websites': {
+  '/hire/v1/websites': {
     GET: { name: 'listHireWebsite', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/agencies/protect': {
+  '/hire/v1/agencies/protect': {
     POST: 'protectHireAgency',
   },
-  '/open-apis/hire/v1/agencies/{agency_id}': {
+  '/hire/v1/agencies/{agency_id}': {
     GET: 'getHireAgency',
   },
-  '/open-apis/hire/v1/agencies/protection_period/search': {
+  '/hire/v1/agencies/protection_period/search': {
     POST: 'protectSearchHireAgency',
   },
-  '/open-apis/hire/v1/agencies/query': {
+  '/hire/v1/agencies/query': {
     GET: 'queryHireAgency',
   },
-  '/open-apis/hire/v1/agencies/get_agency_account': {
+  '/hire/v1/agencies/get_agency_account': {
     POST: { name: 'getAgencyAccountHireAgency', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/agencies/batch_query': {
+  '/hire/v1/agencies/batch_query': {
     POST: { name: 'batchQueryHireAgency', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/agencies/operate_agency_account': {
+  '/hire/v1/agencies/operate_agency_account': {
     POST: 'operateAgencyAccountHireAgency',
   },
-  '/open-apis/hire/v1/talents/{talent_id}/external_info': {
+  '/hire/v1/talents/{talent_id}/external_info': {
     POST: 'createHireTalentExternalInfo',
     PUT: 'updateHireTalentExternalInfo',
   },
-  '/open-apis/hire/v1/external_applications': {
+  '/hire/v1/external_applications': {
     POST: 'createHireExternalApplication',
     GET: { name: 'listHireExternalApplication', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/external_applications/{external_application_id}': {
+  '/hire/v1/external_applications/{external_application_id}': {
     PUT: 'updateHireExternalApplication',
     DELETE: 'deleteHireExternalApplication',
   },
-  '/open-apis/hire/v1/external_interviews': {
+  '/hire/v1/external_interviews': {
     POST: 'createHireExternalInterview',
   },
-  '/open-apis/hire/v1/external_interviews/{external_interview_id}': {
+  '/hire/v1/external_interviews/{external_interview_id}': {
     PUT: 'updateHireExternalInterview',
     DELETE: 'deleteHireExternalInterview',
   },
-  '/open-apis/hire/v1/external_interviews/batch_query': {
+  '/hire/v1/external_interviews/batch_query': {
     POST: { name: 'batchQueryHireExternalInterview', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/external_interview_assessments': {
+  '/hire/v1/external_interview_assessments': {
     POST: 'createHireExternalInterviewAssessment',
   },
-  '/open-apis/hire/v1/external_interview_assessments/{external_interview_assessment_id}': {
+  '/hire/v1/external_interview_assessments/{external_interview_assessment_id}': {
     PATCH: 'patchHireExternalInterviewAssessment',
   },
-  '/open-apis/hire/v1/external_offers': {
+  '/hire/v1/external_offers': {
     POST: 'createHireExternalOffer',
   },
-  '/open-apis/hire/v1/external_offers/{external_offer_id}': {
+  '/hire/v1/external_offers/{external_offer_id}': {
     PUT: 'updateHireExternalOffer',
     DELETE: 'deleteHireExternalOffer',
   },
-  '/open-apis/hire/v1/external_offers/batch_query': {
+  '/hire/v1/external_offers/batch_query': {
     POST: { name: 'batchQueryHireExternalOffer', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/external_background_checks': {
+  '/hire/v1/external_background_checks': {
     POST: 'createHireExternalBackgroundCheck',
   },
-  '/open-apis/hire/v1/external_background_checks/{external_background_check_id}': {
+  '/hire/v1/external_background_checks/{external_background_check_id}': {
     PUT: 'updateHireExternalBackgroundCheck',
     DELETE: 'deleteHireExternalBackgroundCheck',
   },
-  '/open-apis/hire/v1/external_background_checks/batch_query': {
+  '/hire/v1/external_background_checks/batch_query': {
     POST: { name: 'batchQueryHireExternalBackgroundCheck', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/external_referral_rewards': {
+  '/hire/v1/external_referral_rewards': {
     POST: 'createHireExternalReferralReward',
   },
-  '/open-apis/hire/v1/external_referral_rewards/{external_referral_reward_id}': {
+  '/hire/v1/external_referral_rewards/{external_referral_reward_id}': {
     DELETE: 'deleteHireExternalReferralReward',
   },
-  '/open-apis/hire/v1/talent_pools/{talent_pool_id}/batch_change_talent_pool': {
+  '/hire/v1/talent_pools/{talent_pool_id}/batch_change_talent_pool': {
     POST: 'batchChangeTalentPoolHireTalentPool',
   },
-  '/open-apis/hire/v1/talent_pools/': {
+  '/hire/v1/talent_pools/': {
     GET: { name: 'searchHireTalentPool', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/talent_pools/{talent_pool_id}/talent_relationship': {
+  '/hire/v1/talent_pools/{talent_pool_id}/talent_relationship': {
     POST: 'moveTalentHireTalentPool',
   },
-  '/open-apis/hire/v1/talents/{talent_id}/tag': {
+  '/hire/v1/talents/{talent_id}/tag': {
     POST: 'tagHireTalent',
   },
-  '/open-apis/hire/v1/talents/combined_create': {
+  '/hire/v1/talents/combined_create': {
     POST: 'combinedCreateHireTalent',
   },
-  '/open-apis/hire/v1/talents/combined_update': {
+  '/hire/v1/talents/combined_update': {
     POST: 'combinedUpdateHireTalent',
   },
-  '/open-apis/hire/v1/talents/add_to_folder': {
+  '/hire/v1/talents/add_to_folder': {
     POST: 'addToFolderHireTalent',
   },
-  '/open-apis/hire/v1/talents/remove_to_folder': {
+  '/hire/v1/talents/remove_to_folder': {
     POST: 'removeToFolderHireTalent',
   },
-  '/open-apis/hire/v1/talent_folders': {
+  '/hire/v1/talent_folders': {
     GET: { name: 'listHireTalentFolder', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/talents/batch_get_id': {
+  '/hire/v1/talents/batch_get_id': {
     POST: 'batchGetIdHireTalent',
   },
-  '/open-apis/hire/v1/talents': {
+  '/hire/v1/talents': {
     GET: { name: 'listHireTalent', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/talent_objects/query': {
+  '/hire/v1/talent_objects/query': {
     GET: 'queryHireTalentObject',
   },
-  '/open-apis/hire/v1/talents/{talent_id}': {
+  '/hire/v1/talents/{talent_id}': {
     GET: 'getHireTalent',
   },
-  '/open-apis/hire/v2/talents/{talent_id}': {
+  '/hire/v2/talents/{talent_id}': {
     GET: 'getHireTalent',
   },
-  '/open-apis/hire/v1/talents/{talent_id}/onboard_status': {
+  '/hire/v1/talents/{talent_id}/onboard_status': {
     POST: 'onboardStatusHireTalent',
   },
-  '/open-apis/hire/v1/talent_blocklist/change_talent_block': {
+  '/hire/v1/talent_blocklist/change_talent_block': {
     POST: 'changeTalentBlockHireTalentBlocklist',
   },
-  '/open-apis/hire/v1/applications/{application_id}/get_detail': {
+  '/hire/v1/applications/{application_id}/get_detail': {
     GET: 'getDetailHireApplication',
   },
-  '/open-apis/hire/v1/applications/{application_id}/recover': {
+  '/hire/v1/applications/{application_id}/recover': {
     POST: 'recoverHireApplication',
   },
-  '/open-apis/hire/v1/applications': {
+  '/hire/v1/applications': {
     POST: 'createHireApplication',
     GET: { name: 'listHireApplication', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/applications/{application_id}/terminate': {
+  '/hire/v1/applications/{application_id}/terminate': {
     POST: 'terminateHireApplication',
   },
-  '/open-apis/hire/v1/applications/{application_id}/transfer_stage': {
+  '/hire/v1/applications/{application_id}/transfer_stage': {
     POST: 'transferStageHireApplication',
   },
-  '/open-apis/hire/v1/termination_reasons': {
+  '/hire/v1/termination_reasons': {
     GET: { name: 'listHireTerminationReason', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/applications/{application_id}': {
+  '/hire/v1/applications/{application_id}': {
     GET: 'getHireApplication',
   },
-  '/open-apis/hire/v1/applications/diversity_inclusions/search': {
+  '/hire/v1/applications/diversity_inclusions/search': {
     POST: 'searchHireDiversityInclusion',
   },
-  '/open-apis/hire/v1/evaluations': {
+  '/hire/v1/evaluations': {
     GET: { name: 'listHireEvaluation', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/exams': {
+  '/hire/v1/exams': {
     POST: 'createHireExam',
   },
-  '/open-apis/hire/v1/tests/search': {
+  '/hire/v1/tests/search': {
     POST: { name: 'searchHireTest', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/interviews': {
+  '/hire/v1/interviews': {
     GET: { name: 'listHireInterview', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interviews/get_by_talent': {
+  '/hire/v1/interviews/get_by_talent': {
     GET: 'getByTalentHireInterview',
   },
-  '/open-apis/hire/v1/interview_records/{interview_record_id}': {
+  '/hire/v1/interview_records/{interview_record_id}': {
     GET: 'getHireInterviewRecord',
   },
-  '/open-apis/hire/v2/interview_records/{interview_record_id}': {
+  '/hire/v2/interview_records/{interview_record_id}': {
     GET: 'getHireInterviewRecord',
   },
-  '/open-apis/hire/v1/interview_records': {
+  '/hire/v1/interview_records': {
     GET: { name: 'listHireInterviewRecord', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v2/interview_records': {
+  '/hire/v2/interview_records': {
     GET: { name: 'listHireInterviewRecord', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interview_records/attachments': {
+  '/hire/v1/interview_records/attachments': {
     GET: 'getHireInterviewRecordAttachment',
   },
-  '/open-apis/hire/v1/minutes': {
+  '/hire/v1/minutes': {
     GET: 'getHireMinutes',
   },
-  '/open-apis/hire/v1/questionnaires': {
+  '/hire/v1/questionnaires': {
     GET: { name: 'listHireQuestionnaire', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/offers': {
+  '/hire/v1/offers': {
     POST: 'createHireOffer',
     GET: { name: 'listHireOffer', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/offers/{offer_id}': {
+  '/hire/v1/offers/{offer_id}': {
     PUT: 'updateHireOffer',
     GET: 'getHireOffer',
   },
-  '/open-apis/hire/v1/applications/{application_id}/offer': {
+  '/hire/v1/applications/{application_id}/offer': {
     GET: 'offerHireApplication',
   },
-  '/open-apis/hire/v1/offers/{offer_id}/offer_status': {
+  '/hire/v1/offers/{offer_id}/offer_status': {
     PATCH: 'offerStatusHireOffer',
   },
-  '/open-apis/hire/v1/offers/{offer_id}/intern_offer_status': {
+  '/hire/v1/offers/{offer_id}/intern_offer_status': {
     POST: 'internOfferStatusHireOffer',
   },
-  '/open-apis/hire/v1/background_check_orders': {
+  '/hire/v1/background_check_orders': {
     GET: { name: 'listHireBackgroundCheckOrder', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/tripartite_agreements': {
+  '/hire/v1/tripartite_agreements': {
     POST: 'createHireTripartiteAgreement',
     GET: { name: 'listHireTripartiteAgreement', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/tripartite_agreements/{tripartite_agreement_id}': {
+  '/hire/v1/tripartite_agreements/{tripartite_agreement_id}': {
     PUT: 'updateHireTripartiteAgreement',
     DELETE: 'deleteHireTripartiteAgreement',
   },
-  '/open-apis/hire/v1/ehr_import_tasks/{ehr_import_task_id}': {
+  '/hire/v1/ehr_import_tasks/{ehr_import_task_id}': {
     PATCH: 'patchHireEhrImportTask',
   },
-  '/open-apis/hire/v1/applications/{application_id}/transfer_onboard': {
+  '/hire/v1/applications/{application_id}/transfer_onboard': {
     POST: 'transferOnboardHireApplication',
   },
-  '/open-apis/hire/v1/employees/{employee_id}': {
+  '/hire/v1/employees/{employee_id}': {
     PATCH: 'patchHireEmployee',
     GET: 'getHireEmployee',
   },
-  '/open-apis/hire/v1/employees/get_by_application': {
+  '/hire/v1/employees/get_by_application': {
     GET: 'getByApplicationHireEmployee',
   },
-  '/open-apis/hire/v1/todos': {
+  '/hire/v1/todos': {
     GET: { name: 'listHireTodo', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/evaluation_tasks': {
+  '/hire/v1/evaluation_tasks': {
     GET: { name: 'listHireEvaluationTask', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/exam_marking_tasks': {
+  '/hire/v1/exam_marking_tasks': {
     GET: { name: 'listHireExamMarkingTask', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/interview_tasks': {
+  '/hire/v1/interview_tasks': {
     GET: { name: 'listHireInterviewTask', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/notes': {
+  '/hire/v1/notes': {
     POST: 'createHireNote',
     GET: { name: 'listHireNote', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/notes/{note_id}': {
+  '/hire/v1/notes/{note_id}': {
     PATCH: 'patchHireNote',
     GET: 'getHireNote',
     DELETE: 'deleteHireNote',
   },
-  '/open-apis/hire/v1/resume_sources': {
+  '/hire/v1/resume_sources': {
     GET: { name: 'listHireResumeSource', pagination: { argIndex: 0 } },
   },
-  '/open-apis/hire/v1/eco_account_custom_fields': {
+  '/hire/v1/eco_account_custom_fields': {
     POST: 'createHireEcoAccountCustomField',
   },
-  '/open-apis/hire/v1/eco_account_custom_fields/batch_update': {
+  '/hire/v1/eco_account_custom_fields/batch_update': {
     PATCH: 'batchUpdateHireEcoAccountCustomField',
   },
-  '/open-apis/hire/v1/eco_account_custom_fields/batch_delete': {
+  '/hire/v1/eco_account_custom_fields/batch_delete': {
     POST: 'batchDeleteHireEcoAccountCustomField',
   },
-  '/open-apis/hire/v1/eco_background_check_custom_fields': {
+  '/hire/v1/eco_background_check_custom_fields': {
     POST: 'createHireEcoBackgroundCheckCustomField',
   },
-  '/open-apis/hire/v1/eco_background_check_custom_fields/batch_update': {
+  '/hire/v1/eco_background_check_custom_fields/batch_update': {
     PATCH: 'batchUpdateHireEcoBackgroundCheckCustomField',
   },
-  '/open-apis/hire/v1/eco_background_check_custom_fields/batch_delete': {
+  '/hire/v1/eco_background_check_custom_fields/batch_delete': {
     POST: 'batchDeleteHireEcoBackgroundCheckCustomField',
   },
-  '/open-apis/hire/v1/eco_background_check_packages': {
+  '/hire/v1/eco_background_check_packages': {
     POST: 'createHireEcoBackgroundCheckPackage',
   },
-  '/open-apis/hire/v1/eco_background_check_packages/batch_update': {
+  '/hire/v1/eco_background_check_packages/batch_update': {
     PATCH: 'batchUpdateHireEcoBackgroundCheckPackage',
   },
-  '/open-apis/hire/v1/eco_background_check_packages/batch_delete': {
+  '/hire/v1/eco_background_check_packages/batch_delete': {
     POST: 'batchDeleteHireEcoBackgroundCheckPackage',
   },
-  '/open-apis/hire/v1/eco_background_checks/update_progress': {
+  '/hire/v1/eco_background_checks/update_progress': {
     POST: 'updateProgressHireEcoBackgroundCheck',
   },
-  '/open-apis/hire/v1/eco_background_checks/update_result': {
+  '/hire/v1/eco_background_checks/update_result': {
     POST: 'updateResultHireEcoBackgroundCheck',
   },
-  '/open-apis/hire/v1/eco_background_checks/cancel': {
+  '/hire/v1/eco_background_checks/cancel': {
     POST: 'cancelHireEcoBackgroundCheck',
   },
-  '/open-apis/hire/v1/eco_exam_papers': {
+  '/hire/v1/eco_exam_papers': {
     POST: 'createHireEcoExamPaper',
   },
-  '/open-apis/hire/v1/eco_exam_papers/batch_update': {
+  '/hire/v1/eco_exam_papers/batch_update': {
     PATCH: 'batchUpdateHireEcoExamPaper',
   },
-  '/open-apis/hire/v1/eco_exam_papers/batch_delete': {
+  '/hire/v1/eco_exam_papers/batch_delete': {
     POST: 'batchDeleteHireEcoExamPaper',
   },
-  '/open-apis/hire/v1/eco_exams/{exam_id}/login_info': {
+  '/hire/v1/eco_exams/{exam_id}/login_info': {
     POST: 'loginInfoHireEcoExam',
   },
-  '/open-apis/hire/v1/eco_exams/{exam_id}/update_result': {
+  '/hire/v1/eco_exams/{exam_id}/update_result': {
     POST: 'updateResultHireEcoExam',
   },
-  '/open-apis/hire/v1/referral_account/enable': {
+  '/hire/v1/referral_account/enable': {
     POST: 'enableHireReferralAccount',
   },
-  '/open-apis/hire/v1/referral_account/get_account_assets': {
+  '/hire/v1/referral_account/get_account_assets': {
     GET: 'getAccountAssetsHireReferralAccount',
   },
-  '/open-apis/hire/v1/referral_account': {
+  '/hire/v1/referral_account': {
     POST: 'createHireReferralAccount',
   },
-  '/open-apis/hire/v1/referral_account/{referral_account_id}/deactivate': {
+  '/hire/v1/referral_account/{referral_account_id}/deactivate': {
     POST: 'deactivateHireReferralAccount',
   },
-  '/open-apis/hire/v1/referral_account/{referral_account_id}/withdraw': {
+  '/hire/v1/referral_account/{referral_account_id}/withdraw': {
     POST: 'withdrawHireReferralAccount',
   },
-  '/open-apis/hire/v1/referral_account/reconciliation': {
+  '/hire/v1/referral_account/reconciliation': {
     POST: 'reconciliationHireReferralAccount',
   },
-  '/open-apis/hire/v1/attachments': {
+  '/hire/v1/attachments': {
     POST: 'createHireAttachment',
   },
-  '/open-apis/hire/v1/attachments/{attachment_id}': {
+  '/hire/v1/attachments/{attachment_id}': {
     GET: 'getHireAttachment',
   },
-  '/open-apis/hire/v1/attachments/{attachment_id}/preview': {
+  '/hire/v1/attachments/{attachment_id}/preview': {
     GET: 'previewHireAttachment',
   },
-  '/open-apis/hire/v1/applications/{application_id}/interviews': {
+  '/hire/v1/applications/{application_id}/interviews': {
     GET: { name: 'listHireApplicationInterview', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/talent_operation_logs/search': {
+  '/hire/v1/talent_operation_logs/search': {
     POST: { name: 'searchHireTalentOperationLog', pagination: { argIndex: 1 } },
   },
-  '/open-apis/hire/v1/jobs/{job_id}/managers/{manager_id}': {
+  '/hire/v1/jobs/{job_id}/managers/{manager_id}': {
     GET: 'getHireJobManager',
   },
-  '/open-apis/hire/v1/offer_schemas/{offer_schema_id}': {
+  '/hire/v1/offer_schemas/{offer_schema_id}': {
     GET: 'getHireOfferSchema',
   },
 })

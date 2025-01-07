@@ -1,5 +1,5 @@
 import { Classification, ClassificationFilter, Draft, Entity, EntityWord, MatchInfo, OuterInfo, Phrase, RelatedMeta, Term } from '.'
-import { Internal, Pagination } from '../internal'
+import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -268,39 +268,39 @@ export interface UploadBaikeFileResponse {
 }
 
 Internal.define({
-  '/open-apis/baike/v1/drafts': {
+  '/baike/v1/drafts': {
     POST: 'createBaikeDraft',
   },
-  '/open-apis/baike/v1/drafts/{draft_id}': {
+  '/baike/v1/drafts/{draft_id}': {
     PUT: 'updateBaikeDraft',
   },
-  '/open-apis/baike/v1/entities': {
+  '/baike/v1/entities': {
     POST: 'createBaikeEntity',
     GET: 'listBaikeEntity',
   },
-  '/open-apis/baike/v1/entities/{entity_id}': {
+  '/baike/v1/entities/{entity_id}': {
     PUT: 'updateBaikeEntity',
     GET: 'getBaikeEntity',
   },
-  '/open-apis/baike/v1/entities/match': {
+  '/baike/v1/entities/match': {
     POST: 'matchBaikeEntity',
   },
-  '/open-apis/baike/v1/entities/search': {
+  '/baike/v1/entities/search': {
     POST: 'searchBaikeEntity',
   },
-  '/open-apis/baike/v1/entities/highlight': {
+  '/baike/v1/entities/highlight': {
     POST: 'highlightBaikeEntity',
   },
-  '/open-apis/baike/v1/entities/extract': {
+  '/baike/v1/entities/extract': {
     POST: 'extractBaikeEntity',
   },
-  '/open-apis/baike/v1/classifications': {
+  '/baike/v1/classifications': {
     GET: 'listBaikeClassification',
   },
-  '/open-apis/baike/v1/files/upload': {
+  '/baike/v1/files/upload': {
     POST: { name: 'uploadBaikeFile', multipart: true },
   },
-  '/open-apis/baike/v1/files/{file_token}/download': {
+  '/baike/v1/files/{file_token}/download': {
     GET: { name: 'downloadBaikeFile', type: 'binary' },
   },
 })

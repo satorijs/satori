@@ -27,10 +27,10 @@ export interface QueryTenantResponse {
 }
 
 Internal.define({
-  '/open-apis/tenant/v2/tenant/assign_info_list/query': {
+  '/tenant/v2/tenant/assign_info_list/query': {
     GET: 'queryTenantTenantProductAssignInfo',
   },
-  '/open-apis/tenant/v2/tenant/query': {
+  '/tenant/v2/tenant/query': {
     GET: 'queryTenant',
   },
 })

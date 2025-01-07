@@ -1,5 +1,5 @@
 import { App, AppDashboard, AppRole, AppRoleBlockRole, AppRoleMember, AppRoleMemberId, AppRoleTableRole, AppTable, AppTableField, AppTableFieldDescription, AppTableFieldForList, AppTableFieldProperty, AppTableForm, AppTableFormField, AppTableFormPatchedField, AppTableRecord, AppTableView, AppTableViewProperty, AppWorkflow, DeleteRecord, DisplayApp, DisplayAppV2, FilterInfo, ReqTable, Sort } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -773,112 +773,112 @@ export interface ListBitableAppTableRecordResponse {
 }
 
 Internal.define({
-  '/open-apis/bitable/v1/apps': {
+  '/bitable/v1/apps': {
     POST: 'createBitableApp',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/copy': {
+  '/bitable/v1/apps/{app_token}/copy': {
     POST: 'copyBitableApp',
   },
-  '/open-apis/bitable/v1/apps/{app_token}': {
+  '/bitable/v1/apps/{app_token}': {
     GET: 'getBitableApp',
     PUT: 'updateBitableApp',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables': {
+  '/bitable/v1/apps/{app_token}/tables': {
     POST: 'createBitableAppTable',
     GET: 'listBitableAppTable',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/batch_create': {
+  '/bitable/v1/apps/{app_token}/tables/batch_create': {
     POST: 'batchCreateBitableAppTable',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}': {
     PATCH: 'patchBitableAppTable',
     DELETE: 'deleteBitableAppTable',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/batch_delete': {
+  '/bitable/v1/apps/{app_token}/tables/batch_delete': {
     POST: 'batchDeleteBitableAppTable',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/views': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/views': {
     POST: 'createBitableAppTableView',
     GET: 'listBitableAppTableView',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/views/{view_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/views/{view_id}': {
     PATCH: 'patchBitableAppTableView',
     GET: 'getBitableAppTableView',
     DELETE: 'deleteBitableAppTableView',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records': {
     POST: 'createBitableAppTableRecord',
     GET: 'listBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/{record_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/{record_id}': {
     PUT: 'updateBitableAppTableRecord',
     DELETE: 'deleteBitableAppTableRecord',
     GET: 'getBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/search': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/search': {
     POST: 'searchBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_create': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_create': {
     POST: 'batchCreateBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_update': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_update': {
     POST: 'batchUpdateBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_get': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_get': {
     POST: 'batchGetBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_delete': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_delete': {
     POST: 'batchDeleteBitableAppTableRecord',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/fields': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/fields': {
     POST: 'createBitableAppTableField',
     GET: 'listBitableAppTableField',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/fields/{field_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/fields/{field_id}': {
     PUT: 'updateBitableAppTableField',
     DELETE: 'deleteBitableAppTableField',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/dashboards/{block_id}/copy': {
+  '/bitable/v1/apps/{app_token}/dashboards/{block_id}/copy': {
     POST: 'copyBitableAppDashboard',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/dashboards': {
+  '/bitable/v1/apps/{app_token}/dashboards': {
     GET: { name: 'listBitableAppDashboard', pagination: { argIndex: 1, itemsKey: 'dashboards' } },
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}': {
     PATCH: 'patchBitableAppTableForm',
     GET: 'getBitableAppTableForm',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields/{field_id}': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields/{field_id}': {
     PATCH: 'patchBitableAppTableFormField',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields': {
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields': {
     GET: 'listBitableAppTableFormField',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles': {
+  '/bitable/v1/apps/{app_token}/roles': {
     GET: 'listBitableAppRole',
     POST: 'createBitableAppRole',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles/{role_id}': {
+  '/bitable/v1/apps/{app_token}/roles/{role_id}': {
     DELETE: 'deleteBitableAppRole',
     PUT: 'updateBitableAppRole',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_delete': {
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_delete': {
     POST: 'batchDeleteBitableAppRoleMember',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_create': {
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_create': {
     POST: 'batchCreateBitableAppRoleMember',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
     GET: 'listBitableAppRoleMember',
     POST: 'createBitableAppRoleMember',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/roles/{role_id}/members/{member_id}': {
+  '/bitable/v1/apps/{app_token}/roles/{role_id}/members/{member_id}': {
     DELETE: 'deleteBitableAppRoleMember',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/workflows': {
+  '/bitable/v1/apps/{app_token}/workflows': {
     GET: 'listBitableAppWorkflow',
   },
-  '/open-apis/bitable/v1/apps/{app_token}/workflows/{workflow_id}': {
+  '/bitable/v1/apps/{app_token}/workflows/{workflow_id}': {
     PUT: 'updateBitableAppWorkflow',
   },
 })

@@ -1,5 +1,5 @@
 import { AilyKnowledgeAskProcessData, AilyKnowledgeFaq, AilyKnowledgeMessage, AilyMention, AilyMessage, AilyMessageContentType, AilySession, DataAsset, DataAssetTag, Run, Skill, SkillGlobalVariable } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -267,47 +267,47 @@ export interface AskAilyAppKnowledgeResponse {
 }
 
 Internal.define({
-  '/open-apis/aily/v1/sessions': {
+  '/aily/v1/sessions': {
     POST: 'createAilyAilySession',
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}': {
+  '/aily/v1/sessions/{aily_session_id}': {
     PUT: 'updateAilyAilySession',
     GET: 'getAilyAilySession',
     DELETE: 'deleteAilyAilySession',
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}/messages': {
+  '/aily/v1/sessions/{aily_session_id}/messages': {
     POST: 'createAilyAilySessionAilyMessage',
     GET: { name: 'listAilyAilySessionAilyMessage', pagination: { argIndex: 1, itemsKey: 'messages' } },
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}/messages/{aily_message_id}': {
+  '/aily/v1/sessions/{aily_session_id}/messages/{aily_message_id}': {
     GET: 'getAilyAilySessionAilyMessage',
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}/runs': {
+  '/aily/v1/sessions/{aily_session_id}/runs': {
     POST: 'createAilyAilySessionRun',
     GET: { name: 'listAilyAilySessionRun', pagination: { argIndex: 1, itemsKey: 'runs' } },
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}/runs/{run_id}': {
+  '/aily/v1/sessions/{aily_session_id}/runs/{run_id}': {
     GET: 'getAilyAilySessionRun',
   },
-  '/open-apis/aily/v1/sessions/{aily_session_id}/runs/{run_id}/cancel': {
+  '/aily/v1/sessions/{aily_session_id}/runs/{run_id}/cancel': {
     POST: 'cancelAilyAilySessionRun',
   },
-  '/open-apis/aily/v1/apps/{app_id}/skills/{skill_id}/start': {
+  '/aily/v1/apps/{app_id}/skills/{skill_id}/start': {
     POST: 'startAilyAppSkill',
   },
-  '/open-apis/aily/v1/apps/{app_id}/skills/{skill_id}': {
+  '/aily/v1/apps/{app_id}/skills/{skill_id}': {
     GET: 'getAilyAppSkill',
   },
-  '/open-apis/aily/v1/apps/{app_id}/skills': {
+  '/aily/v1/apps/{app_id}/skills': {
     GET: { name: 'listAilyAppSkill', pagination: { argIndex: 1, itemsKey: 'skills' } },
   },
-  '/open-apis/aily/v1/apps/{app_id}/knowledges/ask': {
+  '/aily/v1/apps/{app_id}/knowledges/ask': {
     POST: 'askAilyAppKnowledge',
   },
-  '/open-apis/aily/v1/apps/{app_id}/data_assets': {
+  '/aily/v1/apps/{app_id}/data_assets': {
     GET: { name: 'listAilyAppDataAsset', pagination: { argIndex: 1 } },
   },
-  '/open-apis/aily/v1/apps/{app_id}/data_asset_tags': {
+  '/aily/v1/apps/{app_id}/data_asset_tags': {
     GET: { name: 'listAilyAppDataAssetTag', pagination: { argIndex: 1 } },
   },
 })

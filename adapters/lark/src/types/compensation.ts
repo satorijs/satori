@@ -1,5 +1,5 @@
 import { ArchiveDetail, ChangeReason, Indicator, Item, ItemCategory, PlanDetail } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -88,22 +88,22 @@ export interface ListCompensationItemQuery {
 }
 
 Internal.define({
-  '/open-apis/compensation/v1/archives/query': {
+  '/compensation/v1/archives/query': {
     POST: { name: 'queryCompensationArchive', pagination: { argIndex: 1 } },
   },
-  '/open-apis/compensation/v1/items': {
+  '/compensation/v1/items': {
     GET: { name: 'listCompensationItem', pagination: { argIndex: 0 } },
   },
-  '/open-apis/compensation/v1/indicators': {
+  '/compensation/v1/indicators': {
     GET: { name: 'listCompensationIndicator', pagination: { argIndex: 0 } },
   },
-  '/open-apis/compensation/v1/item_categories': {
+  '/compensation/v1/item_categories': {
     GET: { name: 'listCompensationItemCategory', pagination: { argIndex: 0 } },
   },
-  '/open-apis/compensation/v1/plans': {
+  '/compensation/v1/plans': {
     GET: { name: 'listCompensationPlan', pagination: { argIndex: 0 } },
   },
-  '/open-apis/compensation/v1/change_reasons': {
+  '/compensation/v1/change_reasons': {
     GET: { name: 'listCompensationChangeReason', pagination: { argIndex: 0 } },
   },
 })

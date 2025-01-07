@@ -1,5 +1,5 @@
-import { Activity, AdditionalInformation, Field, ImportedMetric, Indicator, MetricField, MetricInLibrary, MetricTag, MetricTemplate, Question, ReviewProfile, ReviewTemplate, Reviewee, RevieweeMetric, Semester, SemesterBaseInfo, StageTask, Template, Unit, WriteUserGroupScopeData } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Activity, AdditionalInformation, Field, ImportedMetric, Indicator, MetricField, MetricInLibrary, MetricTag, MetricTemplate, Question, Reviewee, RevieweeMetric, ReviewProfile, ReviewTemplate, Semester, SemesterBaseInfo, StageTask, Template, Unit, WriteUserGroupScopeData } from '.'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -7,141 +7,141 @@ declare module '../internal' {
      * 获取周期列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/semester/list
      */
-    listPerformanceSemester(query?: ListPerformanceSemesterQuery): Promise<ListPerformanceSemesterResponse>
+    listPerformanceV1Semester(query?: ListPerformanceV1SemesterQuery): Promise<ListPerformanceV1SemesterResponse>
     /**
      * 获取项目列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/activity/query
      */
-    queryPerformanceActivity(body: QueryPerformanceActivityRequest, query?: QueryPerformanceActivityQuery): Promise<QueryPerformanceActivityResponse>
+    queryPerformanceV2Activity(body: QueryPerformanceV2ActivityRequest, query?: QueryPerformanceV2ActivityQuery): Promise<QueryPerformanceV2ActivityResponse>
     /**
      * 批量查询补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/query
      */
-    queryPerformanceAdditionalInformation(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery & Pagination): Promise<Paginated<AdditionalInformation, 'additional_informations'>>
+    queryPerformanceV2AdditionalInformation(body: QueryPerformanceV2AdditionalInformationRequest, query?: QueryPerformanceV2AdditionalInformationQuery & Pagination): Promise<Paginated<AdditionalInformation, 'additional_informations'>>
     /**
      * 批量查询补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/query
      */
-    queryPerformanceAdditionalInformationIter(body: QueryPerformanceAdditionalInformationRequest, query?: QueryPerformanceAdditionalInformationQuery): AsyncIterator<AdditionalInformation>
+    queryPerformanceV2AdditionalInformationIter(body: QueryPerformanceV2AdditionalInformationRequest, query?: QueryPerformanceV2AdditionalInformationQuery): AsyncIterator<AdditionalInformation>
     /**
      * 批量导入补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_information/import
      */
-    importPerformanceAdditionalInformation(body: ImportPerformanceAdditionalInformationRequest, query?: ImportPerformanceAdditionalInformationQuery): Promise<ImportPerformanceAdditionalInformationResponse>
+    importPerformanceV2AdditionalInformation(body: ImportPerformanceV2AdditionalInformationRequest, query?: ImportPerformanceV2AdditionalInformationQuery): Promise<ImportPerformanceV2AdditionalInformationResponse>
     /**
      * 批量删除补充信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/additional_informations-batch/delete
      */
-    deletePerformanceAdditionalInformationsBatch(body: DeletePerformanceAdditionalInformationsBatchRequest, query?: DeletePerformanceAdditionalInformationsBatchQuery): Promise<DeletePerformanceAdditionalInformationsBatchResponse>
+    deletePerformanceV2AdditionalInformationsBatch(body: DeletePerformanceV2AdditionalInformationsBatchRequest, query?: DeletePerformanceV2AdditionalInformationsBatchQuery): Promise<DeletePerformanceV2AdditionalInformationsBatchResponse>
     /**
      * 更新人员组成员
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/user_group_user_rel/write
      */
-    writePerformanceUserGroupUserRel(body: WritePerformanceUserGroupUserRelRequest, query?: WritePerformanceUserGroupUserRelQuery): Promise<WritePerformanceUserGroupUserRelResponse>
+    writePerformanceV2UserGroupUserRel(body: WritePerformanceV2UserGroupUserRelRequest, query?: WritePerformanceV2UserGroupUserRelQuery): Promise<WritePerformanceV2UserGroupUserRelResponse>
     /**
      * 获取被评估人信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/reviewee/query
      */
-    queryPerformanceReviewee(body: QueryPerformanceRevieweeRequest, query?: QueryPerformanceRevieweeQuery & Pagination): Promise<QueryPerformanceRevieweeResponse>
+    queryPerformanceV2Reviewee(body: QueryPerformanceV2RevieweeRequest, query?: QueryPerformanceV2RevieweeQuery & Pagination): Promise<QueryPerformanceV2RevieweeResponse>
     /**
      * 获取评估模板配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
      */
-    queryPerformanceReviewTemplate(body: QueryPerformanceReviewTemplateRequest, query?: Pagination): Promise<Paginated<ReviewTemplate, 'review_templates'>>
+    queryPerformanceV2ReviewTemplate(body: QueryPerformanceV2ReviewTemplateRequest, query?: Pagination): Promise<Paginated<ReviewTemplate, 'review_templates'>>
     /**
      * 获取评估模板配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
      */
-    queryPerformanceReviewTemplateIter(body: QueryPerformanceReviewTemplateRequest): AsyncIterator<ReviewTemplate>
+    queryPerformanceV2ReviewTemplateIter(body: QueryPerformanceV2ReviewTemplateRequest): AsyncIterator<ReviewTemplate>
     /**
      * 获取评估项列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/indicator/query
      */
-    queryPerformanceIndicator(body: QueryPerformanceIndicatorRequest, query?: Pagination): Promise<Paginated<Indicator, 'indicators'>>
+    queryPerformanceV2Indicator(body: QueryPerformanceV2IndicatorRequest, query?: Pagination): Promise<Paginated<Indicator, 'indicators'>>
     /**
      * 获取评估项列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/indicator/query
      */
-    queryPerformanceIndicatorIter(body: QueryPerformanceIndicatorRequest): AsyncIterator<Indicator>
+    queryPerformanceV2IndicatorIter(body: QueryPerformanceV2IndicatorRequest): AsyncIterator<Indicator>
     /**
      * 获取标签填写题配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/question/query
      */
-    queryPerformanceQuestion(body: QueryPerformanceQuestionRequest, query?: Pagination): Promise<Paginated<Question, 'tag_based_questions'>>
+    queryPerformanceV2Question(body: QueryPerformanceV2QuestionRequest, query?: Pagination): Promise<Paginated<Question, 'tag_based_questions'>>
     /**
      * 获取标签填写题配置
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/question/query
      */
-    queryPerformanceQuestionIter(body: QueryPerformanceQuestionRequest): AsyncIterator<Question>
+    queryPerformanceV2QuestionIter(body: QueryPerformanceV2QuestionRequest): AsyncIterator<Question>
     /**
      * 获取指标列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_lib/query
      */
-    queryPerformanceMetricLib(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery & Pagination): Promise<Paginated<MetricInLibrary>>
+    queryPerformanceV2MetricLib(body: QueryPerformanceV2MetricLibRequest, query?: QueryPerformanceV2MetricLibQuery & Pagination): Promise<Paginated<MetricInLibrary>>
     /**
      * 获取指标列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_lib/query
      */
-    queryPerformanceMetricLibIter(body: QueryPerformanceMetricLibRequest, query?: QueryPerformanceMetricLibQuery): AsyncIterator<MetricInLibrary>
+    queryPerformanceV2MetricLibIter(body: QueryPerformanceV2MetricLibRequest, query?: QueryPerformanceV2MetricLibQuery): AsyncIterator<MetricInLibrary>
     /**
      * 获取指标模板列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_template/query
      */
-    queryPerformanceMetricTemplate(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery & Pagination): Promise<Paginated<MetricTemplate>>
+    queryPerformanceV2MetricTemplate(body: QueryPerformanceV2MetricTemplateRequest, query?: QueryPerformanceV2MetricTemplateQuery & Pagination): Promise<Paginated<MetricTemplate>>
     /**
      * 获取指标模板列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_template/query
      */
-    queryPerformanceMetricTemplateIter(body: QueryPerformanceMetricTemplateRequest, query?: QueryPerformanceMetricTemplateQuery): AsyncIterator<MetricTemplate>
+    queryPerformanceV2MetricTemplateIter(body: QueryPerformanceV2MetricTemplateRequest, query?: QueryPerformanceV2MetricTemplateQuery): AsyncIterator<MetricTemplate>
     /**
      * 获取指标字段列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_field/query
      */
-    queryPerformanceMetricField(body: QueryPerformanceMetricFieldRequest): Promise<QueryPerformanceMetricFieldResponse>
+    queryPerformanceV2MetricField(body: QueryPerformanceV2MetricFieldRequest): Promise<QueryPerformanceV2MetricFieldResponse>
     /**
      * 获取指标标签列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_tag/list
      */
-    listPerformanceMetricTag(query?: ListPerformanceMetricTagQuery & Pagination): Promise<Paginated<MetricTag>>
+    listPerformanceV2MetricTag(query?: ListPerformanceV2MetricTagQuery & Pagination): Promise<Paginated<MetricTag>>
     /**
      * 获取指标标签列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_tag/list
      */
-    listPerformanceMetricTagIter(query?: ListPerformanceMetricTagQuery): AsyncIterator<MetricTag>
+    listPerformanceV2MetricTagIter(query?: ListPerformanceV2MetricTagQuery): AsyncIterator<MetricTag>
     /**
      * 获取周期任务（指定用户）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/stage_task/find_by_user_list
      */
-    findByUserListPerformanceStageTask(body: FindByUserListPerformanceStageTaskRequest, query?: FindByUserListPerformanceStageTaskQuery): Promise<FindByUserListPerformanceStageTaskResponse>
+    findByUserListPerformanceV1StageTask(body: FindByUserListPerformanceV1StageTaskRequest, query?: FindByUserListPerformanceV1StageTaskQuery): Promise<FindByUserListPerformanceV1StageTaskResponse>
     /**
      * 获取周期任务（全部用户）
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/stage_task/find_by_page
      */
-    findByPagePerformanceStageTask(body: FindByPagePerformanceStageTaskRequest, query?: FindByPagePerformanceStageTaskQuery): Promise<FindByPagePerformanceStageTaskResponse>
+    findByPagePerformanceV1StageTask(body: FindByPagePerformanceV1StageTaskRequest, query?: FindByPagePerformanceV1StageTaskQuery): Promise<FindByPagePerformanceV1StageTaskResponse>
     /**
      * 获取被评估人关键指标结果
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_detail/query
      */
-    queryPerformanceMetricDetail(body: QueryPerformanceMetricDetailRequest, query?: QueryPerformanceMetricDetailQuery): Promise<QueryPerformanceMetricDetailResponse>
+    queryPerformanceV2MetricDetail(body: QueryPerformanceV2MetricDetailRequest, query?: QueryPerformanceV2MetricDetailQuery): Promise<QueryPerformanceV2MetricDetailResponse>
     /**
      * 录入被评估人关键指标数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/metric_detail/import
      */
-    importPerformanceMetricDetail(body: ImportPerformanceMetricDetailRequest, query?: ImportPerformanceMetricDetailQuery): Promise<ImportPerformanceMetricDetailResponse>
+    importPerformanceV2MetricDetail(body: ImportPerformanceV2MetricDetailRequest, query?: ImportPerformanceV2MetricDetailQuery): Promise<ImportPerformanceV2MetricDetailResponse>
     /**
      * 获取绩效结果
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v1/review_data/query
      */
-    queryPerformanceReviewData(body: QueryPerformanceReviewDataRequest, query?: QueryPerformanceReviewDataQuery): Promise<QueryPerformanceReviewDataResponse>
+    queryPerformanceV1ReviewData(body: QueryPerformanceV1ReviewDataRequest, query?: QueryPerformanceV1ReviewDataQuery): Promise<QueryPerformanceV1ReviewDataResponse>
     /**
      * 获取绩效详情数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_data/query
      */
-    queryPerformanceReviewData(body: QueryPerformanceReviewDataRequest, query?: QueryPerformanceReviewDataQuery): Promise<QueryPerformanceReviewDataResponse>
+    queryPerformanceV2ReviewData(body: QueryPerformanceV2ReviewDataRequest, query?: QueryPerformanceV2ReviewDataQuery): Promise<QueryPerformanceV2ReviewDataResponse>
   }
 }
 
-export interface ListPerformanceSemesterQuery {
+export interface ListPerformanceV1SemesterQuery {
   /** 周期开始时间 */
   start_time?: string
   /** 周期结束时间 */
@@ -156,18 +156,18 @@ export interface ListPerformanceSemesterQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface QueryPerformanceActivityRequest {
+export interface QueryPerformanceV2ActivityRequest {
   /** 评估周期 ID 列表，获取指定评估周期的项目 ID，semester_id 可通过【获取周期】接口获得 */
   semester_ids?: string[]
   /** 项目 ID 列表，如果同时传了「semester_ids」，则优先以「activity_ids」进行查询 */
   activity_ids?: string[]
 }
 
-export interface QueryPerformanceActivityQuery {
+export interface QueryPerformanceV2ActivityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface QueryPerformanceAdditionalInformationRequest {
+export interface QueryPerformanceV2AdditionalInformationRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 事项 ID 列表，获取指定事项 ID 的信息。以下请求参数中「item_ids」、「external_ids」、「reviewee_user_ids」均为空时，返回该评估周期的所有补充信息。若单次请求中多个请求参数有值，按照【item_ids > external_ids > reviewee_user_ids】的顺序只识别第一个有值的请求参数 */
@@ -178,11 +178,11 @@ export interface QueryPerformanceAdditionalInformationRequest {
   reviewee_user_ids?: string[]
 }
 
-export interface QueryPerformanceAdditionalInformationQuery {
+export interface QueryPerformanceV2AdditionalInformationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ImportPerformanceAdditionalInformationRequest {
+export interface ImportPerformanceV2AdditionalInformationRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 补充信息列表，一次最多 1000 个 */
@@ -191,24 +191,24 @@ export interface ImportPerformanceAdditionalInformationRequest {
   import_record_name?: string
 }
 
-export interface ImportPerformanceAdditionalInformationQuery {
+export interface ImportPerformanceV2AdditionalInformationQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token: string
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface DeletePerformanceAdditionalInformationsBatchRequest {
+export interface DeletePerformanceV2AdditionalInformationsBatchRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 补充信息列表，一次最多 100 个 */
   additional_informations: string[]
 }
 
-export interface DeletePerformanceAdditionalInformationsBatchQuery {
+export interface DeletePerformanceV2AdditionalInformationsBatchQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface WritePerformanceUserGroupUserRelRequest {
+export interface WritePerformanceV2UserGroupUserRelRequest {
   /** 分组id key */
   group_id?: string
   /** 人员组查看人员名单可见性配置 */
@@ -217,14 +217,14 @@ export interface WritePerformanceUserGroupUserRelRequest {
   user_ids?: string[]
 }
 
-export interface WritePerformanceUserGroupUserRelQuery {
+export interface WritePerformanceV2UserGroupUserRelQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token: string
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceRevieweeRequest {
+export interface QueryPerformanceV2RevieweeRequest {
   /** 周期 ID，1 次只允许查询 1 个周期，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 用户 ID，类型需要与查询参数中的user_id_type保持一致。不传则默认返回该周期所有被评估人的信息。 */
@@ -233,26 +233,26 @@ export interface QueryPerformanceRevieweeRequest {
   activity_ids?: string[]
 }
 
-export interface QueryPerformanceRevieweeQuery {
+export interface QueryPerformanceV2RevieweeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceReviewTemplateRequest {
+export interface QueryPerformanceV2ReviewTemplateRequest {
   /** 评估模板 ID 列表，获取指定评估模板的配置数据。如果不传则返回所有 */
   review_template_ids?: string[]
 }
 
-export interface QueryPerformanceIndicatorRequest {
+export interface QueryPerformanceV2IndicatorRequest {
   /** 评估项 ID 列表，获取指定评估项的配置数据 */
   indicator_ids?: string[]
 }
 
-export interface QueryPerformanceQuestionRequest {
+export interface QueryPerformanceV2QuestionRequest {
   /** 标签填写题 ID 列表，获取指定标签填写题的配置数据。如果不传则返回所有 */
   tag_based_question_ids?: string[]
 }
 
-export interface QueryPerformanceMetricLibRequest {
+export interface QueryPerformanceV2MetricLibRequest {
   /** 状态是否为启用 */
   is_active?: boolean
   /** 指标所属的标签 ID */
@@ -265,32 +265,32 @@ export interface QueryPerformanceMetricLibRequest {
   scoring_setting_type?: 'score_manually' | 'score_by_formula'
 }
 
-export interface QueryPerformanceMetricLibQuery {
+export interface QueryPerformanceV2MetricLibQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceMetricTemplateRequest {
+export interface QueryPerformanceV2MetricTemplateRequest {
   /** 指标模板 ID 列表，metrics_template_id 可以通过指标模板的后台配置详情页的 url 获取，也可通过本接口的返回值获取。不填写则默认返回所有指标模板 */
   metrics_template_ids?: string[]
   /** 状态 */
   status?: 'to_be_configured' | 'to_be_activated' | 'enabled' | 'disabled'
 }
 
-export interface QueryPerformanceMetricTemplateQuery {
+export interface QueryPerformanceV2MetricTemplateQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceMetricFieldRequest {
+export interface QueryPerformanceV2MetricFieldRequest {
   /** 指标的字段 ID，不传则默认获取全部字段信息 */
   field_ids?: string[]
 }
 
-export interface ListPerformanceMetricTagQuery {
+export interface ListPerformanceV2MetricTagQuery {
   /** 指标标签 ID 列表 */
   tag_ids?: string[]
 }
 
-export interface FindByUserListPerformanceStageTaskRequest {
+export interface FindByUserListPerformanceV1StageTaskRequest {
   /** 周期ID，可以通过「查询周期」接口获得 */
   semester_id: string
   /** 用户ID列表 */
@@ -303,12 +303,12 @@ export interface FindByUserListPerformanceStageTaskRequest {
   before_time?: string
 }
 
-export interface FindByUserListPerformanceStageTaskQuery {
+export interface FindByUserListPerformanceV1StageTaskQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface FindByPagePerformanceStageTaskRequest {
+export interface FindByPagePerformanceV1StageTaskRequest {
   /** 周期ID，可以通过「查询周期」接口获得 */
   semester_id: string
   /** 任务分类(不传默认包含所有) */
@@ -323,23 +323,23 @@ export interface FindByPagePerformanceStageTaskRequest {
   page_size?: number
 }
 
-export interface FindByPagePerformanceStageTaskQuery {
+export interface FindByPagePerformanceV1StageTaskQuery {
   /** 调用结果中用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceMetricDetailRequest {
+export interface QueryPerformanceV2MetricDetailRequest {
   /** 周期 ID，1 次只允许查询 1 个周期，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 被评估人 ID 列表。如果不传则返回该周期所有参与的被评估人的关键指标详情 */
   reviewee_user_ids: string[]
 }
 
-export interface QueryPerformanceMetricDetailQuery {
+export interface QueryPerformanceV2MetricDetailQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ImportPerformanceMetricDetailRequest {
+export interface ImportPerformanceV2MetricDetailRequest {
   /** 周期 ID，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
   /** 录入记录名称，数据源录入人在录入记录页面可以查看该记录名称。如果不传则默认为「API 录入」 */
@@ -348,22 +348,22 @@ export interface ImportPerformanceMetricDetailRequest {
   imported_metrics: ImportedMetric[]
 }
 
-export interface ImportPerformanceMetricDetailQuery {
+export interface ImportPerformanceV2MetricDetailQuery {
   /** 根据 client_token 是否一致来判断是否为同一请求 */
   client_token: string
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceReviewDataRequest {
+export interface QueryPerformanceV1ReviewDataRequest {
   /** 查询范围的开始日期，毫秒级时间戳，开始日期不能晚于截止日期 */
   start_time: string
   /** 查询范围的截止日期，毫秒级时间戳，截止日期不能早于开始日期 */
   end_time: string
   /** 评估环节类型，目前仅支持上级评估环节和结果沟通环节（不传默认包含所有的环节）**可选值有**：- `leader_review`：上级评估环节- `communication_and_open_result`：结果沟通环节 */
-  stage_types: 'leader_review' | 'communication_and_open_result' | 'view_result'[]
+  stage_types: ('leader_review' | 'communication_and_open_result' | 'view_result')[]
   /** 评估环节状态（不传默认包含所有的状态）**可选值有**：- `0`：未开始，任务的开始时间未到达- `1`：待完成，任务的开始时间到达而截止时间未到达，且任务未完成- `2`：已截止，任务的截止时间已到达，且任务未完成- `3`：已完成，任务已完成 */
-  stage_progress?: 0 | 1 | 2 | 3 | 4[]
+  stage_progress?: (0 | 1 | 2 | 3 | 4)[]
   /** 评估周期 ID 列表，semester_id 是一个评估周期的唯一标识，可以通过「我的评估」页面 url 获取，也可通过本接口的返回值获取 */
   semester_id_list?: string[]
   /** 被评估人 ID 列表 */
@@ -372,20 +372,20 @@ export interface QueryPerformanceReviewDataRequest {
   updated_later_than?: string
 }
 
-export interface QueryPerformanceReviewDataQuery {
+export interface QueryPerformanceV1ReviewDataQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface QueryPerformanceReviewDataRequest {
+export interface QueryPerformanceV2ReviewDataRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】 */
   semester_ids: string[]
   /** 被评估人 ID 列表 */
   reviewee_user_ids: string[]
   /** 环节类型 */
-  stage_types?: 'summarize_key_outputs' | 'review' | 'communication_and_open_result' | 'view_result' | 'reconsideration' | 'leader_review'[]
+  stage_types?: ('summarize_key_outputs' | 'review' | 'communication_and_open_result' | 'view_result' | 'reconsideration' | 'leader_review')[]
   /** 评估型环节的执行人角色，不传默认包含所有的执行人角色。当传入的环节类型中有评估型环节时，返回指定执行人角色的评估型环节数据 */
-  review_stage_roles?: 'reviewee' | 'invited_reviewer' | 'solid_line_leader' | 'dotted_line_leader' | 'secondary_solid_line_leader' | 'direct_project_leader' | 'custom_review_role' | 'metric_reviewer'[]
+  review_stage_roles?: ('reviewee' | 'invited_reviewer' | 'solid_line_leader' | 'dotted_line_leader' | 'secondary_solid_line_leader' | 'direct_project_leader' | 'custom_review_role' | 'metric_reviewer')[]
   /** 环节 ID，如果同时传了环节 ID 和环节类型，优先返回环节 ID 对应的绩效数据 */
   stage_ids?: string[]
   /** 当要获取的绩效数据的环节类型包含终评环节时，可指定是否需要返回绩效终评数据的具体环节来源。不填则默认不返回 返回的来源枚举值为： 枚举值： review 产生终评结果的评估型环节 calibaration 校准环节 reconsideration 结果复议环节 */
@@ -396,38 +396,38 @@ export interface QueryPerformanceReviewDataRequest {
   stage_progresses?: number[]
 }
 
-export interface QueryPerformanceReviewDataQuery {
+export interface QueryPerformanceV2ReviewDataQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface ListPerformanceSemesterResponse {
+export interface ListPerformanceV1SemesterResponse {
   /** 周期meta信息列表 */
   items?: Semester[]
 }
 
-export interface QueryPerformanceActivityResponse {
+export interface QueryPerformanceV2ActivityResponse {
   /** 绩效评估项目列表。 */
   activities?: Activity[]
 }
 
-export interface ImportPerformanceAdditionalInformationResponse {
+export interface ImportPerformanceV2AdditionalInformationResponse {
   /** 导入记录 ID */
   import_record_id?: string
   /** 成功导入后的补充信息列表 */
   additional_informations?: AdditionalInformation[]
 }
 
-export interface DeletePerformanceAdditionalInformationsBatchResponse {
+export interface DeletePerformanceV2AdditionalInformationsBatchResponse {
   /** 被删除的补充信息列表 */
   additional_informations?: string[]
 }
 
-export interface WritePerformanceUserGroupUserRelResponse {
+export interface WritePerformanceV2UserGroupUserRelResponse {
   /** 写入员工范围响应 */
   data?: WriteUserGroupScopeData
 }
 
-export interface QueryPerformanceRevieweeResponse {
+export interface QueryPerformanceV2RevieweeResponse {
   /** 周期ID */
   semester_id?: string
   /** 被评估人列表 */
@@ -438,19 +438,19 @@ export interface QueryPerformanceRevieweeResponse {
   page_token?: string
 }
 
-export interface QueryPerformanceMetricFieldResponse {
+export interface QueryPerformanceV2MetricFieldResponse {
   /** 指标字段信息 */
   items?: MetricField[]
 }
 
-export interface FindByUserListPerformanceStageTaskResponse {
+export interface FindByUserListPerformanceV1StageTaskResponse {
   /** 周期基础信息 */
   base?: SemesterBaseInfo
   /** 周期环节信息列表 */
   items?: StageTask[]
 }
 
-export interface FindByPagePerformanceStageTaskResponse {
+export interface FindByPagePerformanceV1StageTaskResponse {
   /** 周期基础信息 */
   base?: SemesterBaseInfo
   /** 周期环节信息列表 */
@@ -461,19 +461,19 @@ export interface FindByPagePerformanceStageTaskResponse {
   page_token?: string
 }
 
-export interface QueryPerformanceMetricDetailResponse {
+export interface QueryPerformanceV2MetricDetailResponse {
   /** 周期ID */
   semester_id?: string
   /** 指标明细列表 */
   reviewee_metrics?: RevieweeMetric[]
 }
 
-export interface ImportPerformanceMetricDetailResponse {
+export interface ImportPerformanceV2MetricDetailResponse {
   /** 成功时返回导入记录 ID，失败时则为 null */
   import_record_id?: string
 }
 
-export interface QueryPerformanceReviewDataResponse {
+export interface QueryPerformanceV1ReviewDataResponse {
   /** 绩效评估周期列表 */
   semesters?: Semester[]
   /** 绩效评估项目列表 */
@@ -490,70 +490,70 @@ export interface QueryPerformanceReviewDataResponse {
   datas?: ReviewProfile[]
 }
 
-export interface QueryPerformanceReviewDataResponse {
+export interface QueryPerformanceV2ReviewDataResponse {
   /** 评估数据列表 */
   datas?: ReviewProfile[]
 }
 
 Internal.define({
-  '/open-apis/performance/v1/semesters': {
-    GET: 'listPerformanceSemester',
+  '/performance/v1/semesters': {
+    GET: 'listPerformanceV1Semester',
   },
-  '/open-apis/performance/v2/activity/query': {
-    POST: 'queryPerformanceActivity',
+  '/performance/v2/activity/query': {
+    POST: 'queryPerformanceV2Activity',
   },
-  '/open-apis/performance/v2/additional_informations/query': {
-    POST: { name: 'queryPerformanceAdditionalInformation', pagination: { argIndex: 1, itemsKey: 'additional_informations' } },
+  '/performance/v2/additional_informations/query': {
+    POST: { name: 'queryPerformanceV2AdditionalInformation', pagination: { argIndex: 1, itemsKey: 'additional_informations' } },
   },
-  '/open-apis/performance/v2/additional_informations/import': {
-    POST: 'importPerformanceAdditionalInformation',
+  '/performance/v2/additional_informations/import': {
+    POST: 'importPerformanceV2AdditionalInformation',
   },
-  '/open-apis/performance/v2/additional_informations/batch': {
-    DELETE: 'deletePerformanceAdditionalInformationsBatch',
+  '/performance/v2/additional_informations/batch': {
+    DELETE: 'deletePerformanceV2AdditionalInformationsBatch',
   },
-  '/open-apis/performance/v2/user_group_user_rels/write': {
-    POST: 'writePerformanceUserGroupUserRel',
+  '/performance/v2/user_group_user_rels/write': {
+    POST: 'writePerformanceV2UserGroupUserRel',
   },
-  '/open-apis/performance/v2/reviewees/query': {
-    POST: 'queryPerformanceReviewee',
+  '/performance/v2/reviewees/query': {
+    POST: 'queryPerformanceV2Reviewee',
   },
-  '/open-apis/performance/v2/review_templates/query': {
-    POST: { name: 'queryPerformanceReviewTemplate', pagination: { argIndex: 1, itemsKey: 'review_templates' } },
+  '/performance/v2/review_templates/query': {
+    POST: { name: 'queryPerformanceV2ReviewTemplate', pagination: { argIndex: 1, itemsKey: 'review_templates' } },
   },
-  '/open-apis/performance/v2/indicators/query': {
-    POST: { name: 'queryPerformanceIndicator', pagination: { argIndex: 1, itemsKey: 'indicators' } },
+  '/performance/v2/indicators/query': {
+    POST: { name: 'queryPerformanceV2Indicator', pagination: { argIndex: 1, itemsKey: 'indicators' } },
   },
-  '/open-apis/performance/v2/questions/query': {
-    POST: { name: 'queryPerformanceQuestion', pagination: { argIndex: 1, itemsKey: 'tag_based_questions' } },
+  '/performance/v2/questions/query': {
+    POST: { name: 'queryPerformanceV2Question', pagination: { argIndex: 1, itemsKey: 'tag_based_questions' } },
   },
-  '/open-apis/performance/v2/metric_libs/query': {
-    POST: { name: 'queryPerformanceMetricLib', pagination: { argIndex: 1 } },
+  '/performance/v2/metric_libs/query': {
+    POST: { name: 'queryPerformanceV2MetricLib', pagination: { argIndex: 1 } },
   },
-  '/open-apis/performance/v2/metric_templates/query': {
-    POST: { name: 'queryPerformanceMetricTemplate', pagination: { argIndex: 1 } },
+  '/performance/v2/metric_templates/query': {
+    POST: { name: 'queryPerformanceV2MetricTemplate', pagination: { argIndex: 1 } },
   },
-  '/open-apis/performance/v2/metric_fields/query': {
-    POST: 'queryPerformanceMetricField',
+  '/performance/v2/metric_fields/query': {
+    POST: 'queryPerformanceV2MetricField',
   },
-  '/open-apis/performance/v2/metric_tags': {
-    GET: { name: 'listPerformanceMetricTag', pagination: { argIndex: 0 } },
+  '/performance/v2/metric_tags': {
+    GET: { name: 'listPerformanceV2MetricTag', pagination: { argIndex: 0 } },
   },
-  '/open-apis/performance/v1/stage_tasks/find_by_user_list': {
-    POST: 'findByUserListPerformanceStageTask',
+  '/performance/v1/stage_tasks/find_by_user_list': {
+    POST: 'findByUserListPerformanceV1StageTask',
   },
-  '/open-apis/performance/v1/stage_tasks/find_by_page': {
-    POST: 'findByPagePerformanceStageTask',
+  '/performance/v1/stage_tasks/find_by_page': {
+    POST: 'findByPagePerformanceV1StageTask',
   },
-  '/open-apis/performance/v2/metric_details/query': {
-    POST: 'queryPerformanceMetricDetail',
+  '/performance/v2/metric_details/query': {
+    POST: 'queryPerformanceV2MetricDetail',
   },
-  '/open-apis/performance/v2/metric_details/import': {
-    POST: 'importPerformanceMetricDetail',
+  '/performance/v2/metric_details/import': {
+    POST: 'importPerformanceV2MetricDetail',
   },
-  '/open-apis/performance/v1/review_datas/query': {
-    POST: 'queryPerformanceReviewData',
+  '/performance/v1/review_datas/query': {
+    POST: 'queryPerformanceV1ReviewData',
   },
-  '/open-apis/performance/v2/review_datas/query': {
-    POST: 'queryPerformanceReviewData',
+  '/performance/v2/review_datas/query': {
+    POST: 'queryPerformanceV2ReviewData',
   },
 })

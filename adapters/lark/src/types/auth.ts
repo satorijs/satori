@@ -1,4 +1,4 @@
-import { Internal } from '../internal'
+import { BaseResponse, Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -68,8 +68,6 @@ export interface TenantAccessTokenAuthRequest {
 }
 
 export interface TenantAccessTokenInternalAuthResponse extends BaseResponse {
-  code?: number
-  msg?: string
   /** 访问 token */
   tenant_access_token?: string
   /** app_access_token 过期时间 */
@@ -77,8 +75,6 @@ export interface TenantAccessTokenInternalAuthResponse extends BaseResponse {
 }
 
 export interface AppAccessTokenInternalAuthResponse extends BaseResponse {
-  code?: number
-  msg?: string
   /** 访问 token */
   app_access_token?: string
   /** app_access_token 过期时间 */
@@ -86,8 +82,6 @@ export interface AppAccessTokenInternalAuthResponse extends BaseResponse {
 }
 
 export interface AppAccessTokenAuthResponse extends BaseResponse {
-  code?: number
-  msg?: string
   /** 访问 token */
   app_access_token?: string
   /** app_access_token 过期时间 */
@@ -95,8 +89,6 @@ export interface AppAccessTokenAuthResponse extends BaseResponse {
 }
 
 export interface TenantAccessTokenAuthResponse extends BaseResponse {
-  code?: number
-  msg?: string
   /** 访问 token */
   tenant_access_token?: string
   /** app_access_token 过期时间 */
@@ -104,19 +96,19 @@ export interface TenantAccessTokenAuthResponse extends BaseResponse {
 }
 
 Internal.define({
-  '/open-apis/auth/v3/tenant_access_token/internal': {
+  '/auth/v3/tenant_access_token/internal': {
     POST: { name: 'tenantAccessTokenInternalAuth', type: 'raw-json' },
   },
-  '/open-apis/auth/v3/app_access_token/internal': {
+  '/auth/v3/app_access_token/internal': {
     POST: { name: 'appAccessTokenInternalAuth', type: 'raw-json' },
   },
-  '/open-apis/auth/v3/app_ticket/resend': {
+  '/auth/v3/app_ticket/resend': {
     POST: 'appTicketResendAuth',
   },
-  '/open-apis/auth/v3/app_access_token': {
+  '/auth/v3/app_access_token': {
     POST: { name: 'appAccessTokenAuth', type: 'raw-json' },
   },
-  '/open-apis/auth/v3/tenant_access_token': {
+  '/auth/v3/tenant_access_token': {
     POST: { name: 'tenantAccessTokenAuth', type: 'raw-json' },
   },
 })

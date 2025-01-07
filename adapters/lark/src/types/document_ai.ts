@@ -295,58 +295,58 @@ export interface RecognizeDocumentAiBusinessCardResponse {
 }
 
 Internal.define({
-  '/open-apis/document_ai/v1/resume/parse': {
+  '/document_ai/v1/resume/parse': {
     POST: { name: 'parseDocumentAiResume', multipart: true },
   },
-  '/open-apis/document_ai/v1/vehicle_invoice/recognize': {
+  '/document_ai/v1/vehicle_invoice/recognize': {
     POST: { name: 'recognizeDocumentAiVehicleInvoice', multipart: true },
   },
-  '/open-apis/document_ai/v1/health_certificate/recognize': {
+  '/document_ai/v1/health_certificate/recognize': {
     POST: { name: 'recognizeDocumentAiHealthCertificate', multipart: true },
   },
-  '/open-apis/document_ai/v1/hkm_mainland_travel_permit/recognize': {
+  '/document_ai/v1/hkm_mainland_travel_permit/recognize': {
     POST: { name: 'recognizeDocumentAiHkmMainlandTravelPermit', multipart: true },
   },
-  '/open-apis/document_ai/v1/tw_mainland_travel_permit/recognize': {
+  '/document_ai/v1/tw_mainland_travel_permit/recognize': {
     POST: { name: 'recognizeDocumentAiTwMainlandTravelPermit', multipart: true },
   },
-  '/open-apis/document_ai/v1/chinese_passport/recognize': {
+  '/document_ai/v1/chinese_passport/recognize': {
     POST: { name: 'recognizeDocumentAiChinesePassport', multipart: true },
   },
-  '/open-apis/document_ai/v1/bank_card/recognize': {
+  '/document_ai/v1/bank_card/recognize': {
     POST: { name: 'recognizeDocumentAiBankCard', multipart: true },
   },
-  '/open-apis/document_ai/v1/vehicle_license/recognize': {
+  '/document_ai/v1/vehicle_license/recognize': {
     POST: { name: 'recognizeDocumentAiVehicleLicense', multipart: true },
   },
-  '/open-apis/document_ai/v1/train_invoice/recognize': {
+  '/document_ai/v1/train_invoice/recognize': {
     POST: { name: 'recognizeDocumentAiTrainInvoice', multipart: true },
   },
-  '/open-apis/document_ai/v1/taxi_invoice/recognize': {
+  '/document_ai/v1/taxi_invoice/recognize': {
     POST: { name: 'recognizeDocumentAiTaxiInvoice', multipart: true },
   },
-  '/open-apis/document_ai/v1/id_card/recognize': {
+  '/document_ai/v1/id_card/recognize': {
     POST: { name: 'recognizeDocumentAiIdCard', multipart: true },
   },
-  '/open-apis/document_ai/v1/food_produce_license/recognize': {
+  '/document_ai/v1/food_produce_license/recognize': {
     POST: { name: 'recognizeDocumentAiFoodProduceLicense', multipart: true },
   },
-  '/open-apis/document_ai/v1/food_manage_license/recognize': {
+  '/document_ai/v1/food_manage_license/recognize': {
     POST: { name: 'recognizeDocumentAiFoodManageLicense', multipart: true },
   },
-  '/open-apis/document_ai/v1/driving_license/recognize': {
+  '/document_ai/v1/driving_license/recognize': {
     POST: { name: 'recognizeDocumentAiDrivingLicense', multipart: true },
   },
-  '/open-apis/document_ai/v1/vat_invoice/recognize': {
+  '/document_ai/v1/vat_invoice/recognize': {
     POST: { name: 'recognizeDocumentAiVatInvoice', multipart: true },
   },
-  '/open-apis/document_ai/v1/business_license/recognize': {
+  '/document_ai/v1/business_license/recognize': {
     POST: { name: 'recognizeDocumentAiBusinessLicense', multipart: true },
   },
-  '/open-apis/document_ai/v1/contract/field_extraction': {
+  '/document_ai/v1/contract/field_extraction': {
     POST: { name: 'fieldExtractionDocumentAiContract', multipart: true },
   },
-  '/open-apis/document_ai/v1/business_card/recognize': {
+  '/document_ai/v1/business_card/recognize': {
     POST: { name: 'recognizeDocumentAiBusinessCard', multipart: true },
   },
 })

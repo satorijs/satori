@@ -131,8 +131,8 @@ function toHump(name: string) {
   })
 }
 
-function formatType(schema: Schema, imports: Set<string>) {
-  if (!schema.ref) return _formatType(schema, imports)
+function formatType(schema: Schema, imports: Set<string>, inArray?: boolean) {
+  if (!schema.ref) return _formatType(schema, imports, inArray)
   const name = capitalize(toHump(schema.ref))
   imports.add(name)
   if (refs[name]) return name
@@ -142,11 +142,12 @@ function formatType(schema: Schema, imports: Set<string>) {
   return name
 }
 
-function _formatType(schema: Schema, imports = new Set<string>()) {
+function _formatType(schema: Schema, imports = new Set<string>(), inArray?: boolean) {
   if (schema.type === 'file') return 'Blob'
   if (schema.type === 'int') {
     if (schema.options) {
-      return schema.options.map(v => v.value).join(' | ')
+      const output = schema.options.map(v => v.value).join(' | ')
+      return inArray ? `(${output})` : output
     } else {
       return 'number'
     }
@@ -154,7 +155,8 @@ function _formatType(schema: Schema, imports = new Set<string>()) {
   if (schema.type === 'float') return 'number'
   if (schema.type === 'string') {
     if (schema.options) {
-      return schema.options.map(v => `'${v.value}'`).join(' | ')
+      const output = schema.options.map(v => `'${v.value}'`).join(' | ')
+      return inArray ? `(${output})` : output
     } else {
       return 'string'
     }
@@ -164,7 +166,7 @@ function _formatType(schema: Schema, imports = new Set<string>()) {
     if (!schema.properties) return 'unknown'
     return `{\n${generateParams(schema.properties, imports)}}`
   } else if (schema.type === 'list') {
-    return formatType(schema.items!, imports) + '[]'
+    return formatType(schema.items!, imports, true) + '[]'
   }
   return 'unknown'
 }
@@ -179,7 +181,7 @@ function generateParams(properties: Schema[], imports: Set<string>): string {
 
 function getApiName(detail: ApiDetail) {
   let project = detail.project
-  if (project === 'task' || project === 'drive') {
+  if (project === 'task' || project === 'drive' || project === 'performance' || project === 'corehr') {
     project = project + detail.version.toUpperCase()
   }
   if (detail.project === detail.resource) {
@@ -209,6 +211,12 @@ async function start() {
   const details = await pMap(data.apis, getDetail, {
     concurrency: 10,
   })
+
+  const projectVersions: Record<string, Set<string>> = {}
+  data.apis.forEach(api => {
+    (projectVersions[api.meta.Project] ??= new Set()).add(api.meta.Version)
+  })
+  console.log(projectVersions)
 
   details.forEach((detail, index) => {
     const summary = data.apis[index]
@@ -255,7 +263,6 @@ async function start() {
           queryType = 'Pagination'
           paginationRequest = {}
         }
-        project.internalImports.add('Pagination')
       } else {
         project.requests.push(`export interface ${queryType} {\n${generateParams(detail.request.query.properties, project.imports)}}`)
       }
@@ -306,8 +313,10 @@ async function start() {
           }
         }
       } else {
-        project.responses.push(`export interface ${returnType} extends BaseResponse {\n${generateParams(detail.response.body.properties!, project.imports)}}`)
+        const properties = detail.response.body.properties!.filter(v => !['code', 'msg'].includes(v.name))
+        project.responses.push(`export interface ${returnType} extends BaseResponse {\n${generateParams(properties, project.imports)}}`)
         extras.push(`type: 'raw-json'`)
+        project.internalImports.add('BaseResponse')
       }
     }
 
@@ -342,7 +351,9 @@ async function start() {
       extras.push(`pagination: { ${props.join(', ')} }`)
     }
 
-    const path = detail.apiPath.replace(/:([0-9a-zA-Z_]+)/g, '{$1}')
+    const path = detail.apiPath
+      .slice('/open-apis'.length)
+      .replace(/:([0-9a-zA-Z_]+)/g, '{$1}')
     project.defines[path] ||= {}
     project.defines[path][detail.httpMethod] = extras.length
       ? `{ name: '${method}', ${extras.join(', ')} }`
@@ -357,9 +368,13 @@ async function start() {
       }).join('\n')
       return `'${path}': {\n${content}\n  },`
     }).join('\n  ')
-    const imports = [`import { ${[...project.internalImports].sort().join(', ')} } from '../internal'`]
+    const imports = [`import { ${[...project.internalImports]
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      .join(', ')} } from '../internal'`]
     if (project.imports.size) {
-      imports.unshift(`import { ${[...project.imports].sort().join(', ')} } from '.'`)
+      imports.unshift(`import { ${[...project.imports]
+        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+        .join(', ')} } from '.'`)
     }
     await writeFile(path, [
       imports.join('\n'),

@@ -17,7 +17,7 @@ export interface GetVerificationResponse {
 }
 
 Internal.define({
-  '/open-apis/verification/v1/verification': {
+  '/verification/v1/verification': {
     GET: 'getVerification',
   },
 })

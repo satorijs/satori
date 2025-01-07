@@ -1,5 +1,5 @@
 import { ContentBlock, OkrBatch, OkrReview, Period, PeriodRule } from '.'
-import { Internal, Paginated, Pagination } from '../internal'
+import { Internal, Paginated } from '../internal'
 
 declare module '../internal' {
   interface Internal {
@@ -233,34 +233,34 @@ export interface QueryOkrReviewResponse {
 }
 
 Internal.define({
-  '/open-apis/okr/v1/periods': {
+  '/okr/v1/periods': {
     POST: 'createOkrPeriod',
     GET: { name: 'listOkrPeriod', pagination: { argIndex: 0 } },
   },
-  '/open-apis/okr/v1/periods/{period_id}': {
+  '/okr/v1/periods/{period_id}': {
     PATCH: 'patchOkrPeriod',
   },
-  '/open-apis/okr/v1/period_rules': {
+  '/okr/v1/period_rules': {
     GET: 'listOkrPeriodRule',
   },
-  '/open-apis/okr/v1/users/{user_id}/okrs': {
+  '/okr/v1/users/{user_id}/okrs': {
     GET: 'listOkrUserOkr',
   },
-  '/open-apis/okr/v1/okrs/batch_get': {
+  '/okr/v1/okrs/batch_get': {
     GET: 'batchGetOkr',
   },
-  '/open-apis/okr/v1/progress_records': {
+  '/okr/v1/progress_records': {
     POST: 'createOkrProgressRecord',
   },
-  '/open-apis/okr/v1/progress_records/{progress_id}': {
+  '/okr/v1/progress_records/{progress_id}': {
     DELETE: 'deleteOkrProgressRecord',
     PUT: 'updateOkrProgressRecord',
     GET: 'getOkrProgressRecord',
   },
-  '/open-apis/okr/v1/images/upload': {
+  '/okr/v1/images/upload': {
     POST: { name: 'uploadOkrImage', multipart: true },
   },
-  '/open-apis/okr/v1/reviews/query': {
+  '/okr/v1/reviews/query': {
     GET: 'queryOkrReview',
   },
 })

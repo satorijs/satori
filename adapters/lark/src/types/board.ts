@@ -22,10 +22,10 @@ export interface ListBoardWhiteboardNodeResponse {
 }
 
 Internal.define({
-  '/open-apis/board/v1/whiteboards/{whiteboard_id}/nodes': {
+  '/board/v1/whiteboards/{whiteboard_id}/nodes': {
     GET: 'listBoardWhiteboardNode',
   },
-  '/open-apis/board/v1/whiteboards/{whiteboard_id}/download_as_image': {
+  '/board/v1/whiteboards/{whiteboard_id}/download_as_image': {
     GET: { name: 'downloadAsImageBoardWhiteboard', type: 'binary' },
   },
 })
