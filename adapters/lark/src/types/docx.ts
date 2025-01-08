@@ -101,6 +101,25 @@ export interface GetDocxChatAnnouncementQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetDocxChatAnnouncementResponse {
+  /** 当前版本号 */
+  revision_id?: number
+  /** 群公告生成的时间戳（秒） */
+  create_time?: string
+  /** 群公告更新的时间戳（秒） */
+  update_time?: string
+  /** 群公告所有者 ID，ID 值与 owner_id_type 中的ID类型对应 */
+  owner_id?: string
+  /** 群公告所有者的 ID 类型 */
+  owner_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 群公告最新修改者 ID，ID 值与 modifier_id_type 中的ID类型对应 */
+  modifier_id?: string
+  /** 群公告最新修改者 id 类型 */
+  modifier_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 群公告类型 */
+  announcement_type?: 'docx' | 'doc'
+}
+
 export interface ListDocxChatAnnouncementBlockQuery extends Pagination {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的编辑权限。 */
   revision_id?: number
@@ -124,6 +143,15 @@ export interface CreateDocxChatAnnouncementBlockChildrenQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateDocxChatAnnouncementBlockChildrenResponse {
+  /** 所添加的孩子的 Block 信息 */
+  children?: Block[]
+  /** 当前 Block Children 创建成功后群公告的版本号 */
+  revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token?: string
+}
+
 export interface BatchUpdateDocxChatAnnouncementBlockRequest {
   /** 批量更新 Block */
   requests?: UpdateBlockRequest[]
@@ -138,11 +166,25 @@ export interface BatchUpdateDocxChatAnnouncementBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface BatchUpdateDocxChatAnnouncementBlockResponse {
+  /** 批量更新的 Block */
+  blocks?: Block[]
+  /** 当前更新成功后群公告的版本号 */
+  revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token?: string
+}
+
 export interface GetDocxChatAnnouncementBlockQuery {
   /** 查询的群公告版本，-1 表示群公告最新版本。群公告创建后，版本为 1。若查询的版本为群公告最新版本，则需要持有群公告的阅读权限；若查询的版本为群公告的历史版本，则需要持有群公告的更新权限 */
   revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetDocxChatAnnouncementBlockResponse {
+  /** 查询的 Block 的信息 */
+  block?: Block
 }
 
 export interface GetDocxChatAnnouncementBlockChildrenQuery extends Pagination {
@@ -166,6 +208,13 @@ export interface BatchDeleteDocxChatAnnouncementBlockChildrenQuery {
   client_token?: string
 }
 
+export interface BatchDeleteDocxChatAnnouncementBlockChildrenResponse {
+  /** 当前删除操作成功后群公告的版本号 */
+  revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token?: string
+}
+
 export interface CreateDocxDocumentRequest {
   /** 文件夹 token，获取方式见云文档接口快速入门；空表示根目录，tenant_access_token应用权限仅允许操作应用创建的目录 */
   folder_token?: string
@@ -173,9 +222,33 @@ export interface CreateDocxDocumentRequest {
   title?: string
 }
 
+export interface CreateDocxDocumentResponse {
+  /** 新建文档的文档信息 */
+  document?: Document
+}
+
+export interface GetDocxDocumentResponse {
+  /** 文档信息 */
+  document?: Document
+}
+
+export const enum RawContentDocxDocumentQueryLang {
+  /** 中文 */
+  ZH = 0,
+  /** 英文 */
+  EN = 1,
+  /** 日文 */
+  JP = 2,
+}
+
 export interface RawContentDocxDocumentQuery {
   /** 语言（用于 MentionUser 语言的选取） */
-  lang?: 0 | 1 | 2
+  lang?: RawContentDocxDocumentQueryLang
+}
+
+export interface RawContentDocxDocumentResponse {
+  /** 文档纯文本 */
+  content?: string
 }
 
 export interface ListDocxDocumentBlockQuery extends Pagination {
@@ -201,6 +274,15 @@ export interface CreateDocxDocumentBlockChildrenQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateDocxDocumentBlockChildrenResponse {
+  /** 所添加的孩子的 Block 信息 */
+  children?: Block[]
+  /** 当前 block children 创建成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+
 export interface CreateDocxDocumentBlockDescendantRequest {
   /** 添加的孩子 BlockID 列表 */
   children_id: string[]
@@ -217,6 +299,17 @@ export interface CreateDocxDocumentBlockDescendantQuery {
   client_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateDocxDocumentBlockDescendantResponse {
+  /** 所添加的孩子的 Block 信息 */
+  children?: Block[]
+  /** 当前提交的 Block 创建成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token?: string
+  /** 传入的临时 BlockID 与真实 BlockID 映射关系 */
+  block_id_relations?: BlockIdRelation[]
 }
 
 export interface PatchDocxDocumentBlockRequest {
@@ -263,11 +356,25 @@ export interface PatchDocxDocumentBlockQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface PatchDocxDocumentBlockResponse {
+  /** 更新后的 block 信息 */
+  block?: Block
+  /** 当前更新成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
+}
+
 export interface GetDocxDocumentBlockQuery {
   /** 查询的文档版本，-1表示文档最新版本。若此时查询的版本为文档最新版本，则需要持有文档的阅读权限；若此时查询的版本为文档的历史版本，则需要持有文档的编辑权限。 */
   document_revision_id?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetDocxDocumentBlockResponse {
+  /** 查询的 Block 的信息 */
+  block?: Block
 }
 
 export interface BatchUpdateDocxDocumentBlockRequest {
@@ -282,6 +389,15 @@ export interface BatchUpdateDocxDocumentBlockQuery {
   client_token?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface BatchUpdateDocxDocumentBlockResponse {
+  /** 批量更新的 Block */
+  blocks?: Block[]
+  /** 当前更新成功后文档的版本号 */
+  document_revision_id?: number
+  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
+  client_token: string
 }
 
 export interface GetDocxDocumentBlockChildrenQuery extends Pagination {
@@ -303,113 +419,6 @@ export interface BatchDeleteDocxDocumentBlockChildrenQuery {
   document_revision_id?: number
   /** 操作的唯一标识，与接口返回值的 client_token 相对应，用于幂等的进行更新操作。此值为空表示将发起一次新的请求，此值非空表示幂等的进行更新操作。 */
   client_token?: string
-}
-
-export interface GetDocxChatAnnouncementResponse {
-  /** 当前版本号 */
-  revision_id?: number
-  /** 群公告生成的时间戳（秒） */
-  create_time?: string
-  /** 群公告更新的时间戳（秒） */
-  update_time?: string
-  /** 群公告所有者 ID，ID 值与 owner_id_type 中的ID类型对应 */
-  owner_id?: string
-  /** 群公告所有者的 ID 类型 */
-  owner_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 群公告最新修改者 ID，ID 值与 modifier_id_type 中的ID类型对应 */
-  modifier_id?: string
-  /** 群公告最新修改者 id 类型 */
-  modifier_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 群公告类型 */
-  announcement_type?: 'docx' | 'doc'
-}
-
-export interface CreateDocxChatAnnouncementBlockChildrenResponse {
-  /** 所添加的孩子的 Block 信息 */
-  children?: Block[]
-  /** 当前 Block Children 创建成功后群公告的版本号 */
-  revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token?: string
-}
-
-export interface BatchUpdateDocxChatAnnouncementBlockResponse {
-  /** 批量更新的 Block */
-  blocks?: Block[]
-  /** 当前更新成功后群公告的版本号 */
-  revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token?: string
-}
-
-export interface GetDocxChatAnnouncementBlockResponse {
-  /** 查询的 Block 的信息 */
-  block?: Block
-}
-
-export interface BatchDeleteDocxChatAnnouncementBlockChildrenResponse {
-  /** 当前删除操作成功后群公告的版本号 */
-  revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token?: string
-}
-
-export interface CreateDocxDocumentResponse {
-  /** 新建文档的文档信息 */
-  document?: Document
-}
-
-export interface GetDocxDocumentResponse {
-  /** 文档信息 */
-  document?: Document
-}
-
-export interface RawContentDocxDocumentResponse {
-  /** 文档纯文本 */
-  content?: string
-}
-
-export interface CreateDocxDocumentBlockChildrenResponse {
-  /** 所添加的孩子的 Block 信息 */
-  children?: Block[]
-  /** 当前 block children 创建成功后文档的版本号 */
-  document_revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token: string
-}
-
-export interface CreateDocxDocumentBlockDescendantResponse {
-  /** 所添加的孩子的 Block 信息 */
-  children?: Block[]
-  /** 当前提交的 Block 创建成功后文档的版本号 */
-  document_revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token?: string
-  /** 传入的临时 BlockID 与真实 BlockID 映射关系 */
-  block_id_relations?: BlockIdRelation[]
-}
-
-export interface PatchDocxDocumentBlockResponse {
-  /** 更新后的 block 信息 */
-  block?: Block
-  /** 当前更新成功后文档的版本号 */
-  document_revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token: string
-}
-
-export interface GetDocxDocumentBlockResponse {
-  /** 查询的 Block 的信息 */
-  block?: Block
-}
-
-export interface BatchUpdateDocxDocumentBlockResponse {
-  /** 批量更新的 Block */
-  blocks?: Block[]
-  /** 当前更新成功后文档的版本号 */
-  document_revision_id?: number
-  /** 操作的唯一标识，更新请求中使用此值表示幂等的进行此次更新 */
-  client_token: string
 }
 
 export interface BatchDeleteDocxDocumentBlockChildrenResponse {

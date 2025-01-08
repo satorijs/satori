@@ -26,11 +26,25 @@ export interface QueryPassportSessionQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
+export interface QueryPassportSessionResponse {
+  /** session信息 */
+  mask_sessions?: MaskSession[]
+}
+
+export const enum LogoutPassportSessionRequestLogoutType {
+  /** UserID */
+  UserID = 1,
+  /** IdpCredentialID */
+  IdpCredentialID = 2,
+  /** Session 标识符 */
+  SessionUUID = 3,
+}
+
 export interface LogoutPassportSessionRequest {
   /** idp 侧的唯一标识 */
   idp_credential_id?: string
   /** 登出的方式 */
-  logout_type: 1 | 2 | 3
+  logout_type: LogoutPassportSessionRequestLogoutType
   /** 登出的客户端类型，默认全部登出，1-桌面端，2-网页端，3-安卓移动端，4-Apple移动端 5-服务端 6-旧版小程序端 8-其他移动端 */
   terminal_type?: number[]
   /** user_id */
@@ -44,11 +58,6 @@ export interface LogoutPassportSessionRequest {
 export interface LogoutPassportSessionQuery {
   /** user_id_type */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
-}
-
-export interface QueryPassportSessionResponse {
-  /** session信息 */
-  mask_sessions?: MaskSession[]
 }
 
 Internal.define({

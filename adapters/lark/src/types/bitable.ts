@@ -42,7 +42,7 @@ declare module '../internal' {
      * 列出数据表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table/list
      */
-    listBitableAppTable(app_token: string, query?: Pagination): Promise<ListBitableAppTableResponse>
+    listBitableAppTable(app_token: string, query?: Pagination): Promise<ListBitableAppTableResponse> & AsyncIterableIterator<AppTable>
     /**
      * 删除一个数据表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table/delete
@@ -67,7 +67,7 @@ declare module '../internal' {
      * 列出视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-view/list
      */
-    listBitableAppTableView(app_token: string, table_id: string, query?: ListBitableAppTableViewQuery): Promise<ListBitableAppTableViewResponse>
+    listBitableAppTableView(app_token: string, table_id: string, query?: ListBitableAppTableViewQuery): Promise<ListBitableAppTableViewResponse> & AsyncIterableIterator<AppTableView>
     /**
      * 获取视图
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-view/get
@@ -92,7 +92,7 @@ declare module '../internal' {
      * 查询记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/search
      */
-    searchBitableAppTableRecord(app_token: string, table_id: string, body: SearchBitableAppTableRecordRequest, query?: SearchBitableAppTableRecordQuery): Promise<SearchBitableAppTableRecordResponse>
+    searchBitableAppTableRecord(app_token: string, table_id: string, body: SearchBitableAppTableRecordRequest, query?: SearchBitableAppTableRecordQuery): Promise<SearchBitableAppTableRecordResponse> & AsyncIterableIterator<AppTableRecord>
     /**
      * 删除记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/delete
@@ -132,7 +132,7 @@ declare module '../internal' {
      * 列出字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-field/list
      */
-    listBitableAppTableField(app_token: string, table_id: string, query?: ListBitableAppTableFieldQuery): Promise<ListBitableAppTableFieldResponse>
+    listBitableAppTableField(app_token: string, table_id: string, query?: ListBitableAppTableFieldQuery): Promise<ListBitableAppTableFieldResponse> & AsyncIterableIterator<AppTableFieldForList>
     /**
      * 删除字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-field/delete
@@ -167,7 +167,7 @@ declare module '../internal' {
      * 列出表单问题
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form-field/list
      */
-    listBitableAppTableFormField(app_token: string, table_id: string, form_id: string, query?: Pagination): Promise<ListBitableAppTableFormFieldResponse>
+    listBitableAppTableFormField(app_token: string, table_id: string, form_id: string, query?: Pagination): Promise<ListBitableAppTableFormFieldResponse> & AsyncIterableIterator<AppTableFormField>
     /**
      * 新增自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/create
@@ -182,7 +182,7 @@ declare module '../internal' {
      * 列出自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/list
      */
-    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse>
+    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse> & AsyncIterableIterator<AppRole>
     /**
      * 删除自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/delete
@@ -202,7 +202,7 @@ declare module '../internal' {
      * 列出协作者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/list
      */
-    listBitableAppRoleMember(app_token: string, role_id: string, query?: Pagination): Promise<ListBitableAppRoleMemberResponse>
+    listBitableAppRoleMember(app_token: string, role_id: string, query?: Pagination): Promise<ListBitableAppRoleMemberResponse> & AsyncIterableIterator<AppRoleMember>
     /**
      * 删除协作者
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role-member/delete
@@ -232,7 +232,7 @@ declare module '../internal' {
      * 列出记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/list
      */
-    listBitableAppTableRecord(app_token: string, table_id: string, query?: ListBitableAppTableRecordQuery): Promise<ListBitableAppTableRecordResponse>
+    listBitableAppTableRecord(app_token: string, table_id: string, query?: ListBitableAppTableRecordQuery): Promise<ListBitableAppTableRecordResponse> & AsyncIterableIterator<AppTableRecord>
   }
 }
 
@@ -243,6 +243,10 @@ export interface CreateBitableAppRequest {
   folder_token?: string
   /** 文档时区，说明见：https://bytedance.feishu.cn/docx/YKRndTM7VoyDqpxqqeEcd67MnEf */
   time_zone?: string
+}
+
+export interface CreateBitableAppResponse {
+  app?: App
 }
 
 export interface CopyBitableAppRequest {
@@ -256,6 +260,14 @@ export interface CopyBitableAppRequest {
   time_zone?: string
 }
 
+export interface CopyBitableAppResponse {
+  app?: App
+}
+
+export interface GetBitableAppResponse {
+  app?: DisplayApp
+}
+
 export interface UpdateBitableAppRequest {
   /** 新的多维表格名字 */
   name?: string
@@ -263,9 +275,22 @@ export interface UpdateBitableAppRequest {
   is_advanced?: boolean
 }
 
+export interface UpdateBitableAppResponse {
+  app?: DisplayAppV2
+}
+
 export interface CreateBitableAppTableRequest {
   /** 数据表 */
   table?: ReqTable
+}
+
+export interface CreateBitableAppTableResponse {
+  /** 数据表的唯一标识id */
+  table_id?: string
+  /** 默认表格视图的id，该字段仅在请求参数中填写了default_view_name或fields才会返回 */
+  default_view_id?: string
+  /** 数据表初始字段的id列表，该字段仅在请求参数中填写了fields才会返回 */
+  field_id_list?: string[]
 }
 
 export interface BatchCreateBitableAppTableRequest {
@@ -278,9 +303,28 @@ export interface BatchCreateBitableAppTableQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface BatchCreateBitableAppTableResponse {
+  table_ids?: string[]
+}
+
 export interface PatchBitableAppTableRequest {
   /** 数据表的新名称 */
   name?: string
+}
+
+export interface PatchBitableAppTableResponse {
+  /** 数据表的名称 */
+  name?: string
+}
+
+export interface ListBitableAppTableResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+  /** 总数 */
+  total?: number
+  items?: AppTable[]
 }
 
 export interface BatchDeleteBitableAppTableRequest {
@@ -295,6 +339,10 @@ export interface CreateBitableAppTableViewRequest {
   view_type?: 'grid' | 'kanban' | 'gallery' | 'gantt' | 'form'
 }
 
+export interface CreateBitableAppTableViewResponse {
+  view?: AppTableView
+}
+
 export interface PatchBitableAppTableViewRequest {
   /** 视图名称 */
   view_name?: string
@@ -302,14 +350,33 @@ export interface PatchBitableAppTableViewRequest {
   property?: AppTableViewProperty
 }
 
+export interface PatchBitableAppTableViewResponse {
+  view?: AppTableView
+}
+
 export interface ListBitableAppTableViewQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListBitableAppTableViewResponse {
+  /** 视图列表 */
+  items?: AppTableView[]
+  /** 下一页分页的token */
+  page_token?: string
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 总数 */
+  total?: number
+}
+
+export interface GetBitableAppTableViewResponse {
+  view?: AppTableView
+}
+
 export interface CreateBitableAppTableRecordRequest {
   /** 记录字段 */
-  fields: unknown
+  fields: Record<string, unknown>
 }
 
 export interface CreateBitableAppTableRecordQuery {
@@ -321,9 +388,13 @@ export interface CreateBitableAppTableRecordQuery {
   ignore_consistency_check?: boolean
 }
 
+export interface CreateBitableAppTableRecordResponse {
+  record?: AppTableRecord
+}
+
 export interface UpdateBitableAppTableRecordRequest {
   /** 记录字段 */
-  fields: unknown
+  fields: Record<string, unknown>
 }
 
 export interface UpdateBitableAppTableRecordQuery {
@@ -331,6 +402,10 @@ export interface UpdateBitableAppTableRecordQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 用于控制一致性读写，默认开启检查 */
   ignore_consistency_check?: boolean
+}
+
+export interface UpdateBitableAppTableRecordResponse {
+  record?: AppTableRecord
 }
 
 export interface SearchBitableAppTableRecordRequest {
@@ -351,272 +426,6 @@ export interface SearchBitableAppTableRecordQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface BatchCreateBitableAppTableRecordRequest {
-  /** 记录 */
-  records: AppTableRecord[]
-}
-
-export interface BatchCreateBitableAppTableRecordQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 格式为标准的 uuid，操作的唯一标识，用于幂等的进行更新操作。此值为空表示将发起一次新的请求，此值非空表示幂等的进行更新操作。 */
-  client_token?: string
-  /** 用于控制一致性读写，默认开启检查 */
-  ignore_consistency_check?: boolean
-}
-
-export interface BatchUpdateBitableAppTableRecordRequest {
-  /** 记录 */
-  records: AppTableRecord[]
-}
-
-export interface BatchUpdateBitableAppTableRecordQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 用于控制一致性读写，默认开启检查 */
-  ignore_consistency_check?: boolean
-}
-
-export interface BatchGetBitableAppTableRecordRequest {
-  /** 记录 id 列表 */
-  record_ids: string[]
-  /** 此次调用中使用的用户 id 的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 控制是否返回记录的分享链接，true 表示返回分享链接 */
-  with_shared_url?: boolean
-  /** 控制是否返回自动计算的字段，true 表示返回 */
-  automatic_fields?: boolean
-}
-
-export interface BatchDeleteBitableAppTableRecordRequest {
-  /** 删除的多条记录id列表 */
-  records: string[]
-}
-
-export interface CreateBitableAppTableFieldRequest {
-  /** 字段名 */
-  field_name: string
-  /** 字段类型 */
-  type: 1 | 2 | 3 | 4 | 5 | 7 | 11 | 13 | 15 | 17 | 18 | 20 | 21 | 22 | 23 | 1001 | 1002 | 1003 | 1004 | 1005
-  /** 字段属性 */
-  property?: AppTableFieldProperty
-  /** 字段的描述 */
-  description?: AppTableFieldDescription
-  /** 字段在界面上的展示类型，例如进度字段是数字的一种展示形态 */
-  ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
-}
-
-export interface CreateBitableAppTableFieldQuery {
-  /** 格式为标准的 uuid，操作的唯一标识，用于幂等的进行更新操作。此值为空表示将发起一次新的请求，此值非空表示幂等的进行更新操作。 */
-  client_token?: string
-}
-
-export interface UpdateBitableAppTableFieldRequest {
-  /** 字段名 */
-  field_name: string
-  /** 字段类型 */
-  type: 1 | 2 | 3 | 4 | 5 | 7 | 11 | 13 | 15 | 17 | 18 | 20 | 21 | 22 | 23 | 1001 | 1002 | 1003 | 1004 | 1005
-  /** 字段属性 */
-  property?: AppTableFieldProperty
-  /** 字段的描述 */
-  description?: AppTableFieldDescription
-  /** 字段在界面上的展示类型，例如进度字段是数字的一种展示形态 */
-  ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
-}
-
-export interface ListBitableAppTableFieldQuery extends Pagination {
-  /** 视图 ID */
-  view_id?: string
-  /** 控制字段描述（多行文本格式）数据的返回格式, true 表示以数组富文本形式返回 */
-  text_field_as_array?: boolean
-}
-
-export interface CopyBitableAppDashboardRequest {
-  /** 仪表盘名称 */
-  name: string
-}
-
-export interface PatchBitableAppTableFormRequest {
-  /** 表单名称 */
-  name?: string
-  /** 表单描述 */
-  description?: string
-  /** 是否开启共享 */
-  shared?: boolean
-  /** 分享范围限制 */
-  shared_limit?: 'off' | 'tenant_editable' | 'anyone_editable'
-  /** 填写次数限制一次 */
-  submit_limit_once?: boolean
-}
-
-export interface PatchBitableAppTableFormFieldRequest {
-  /** 上一个表单问题 ID */
-  pre_field_id?: string
-  /** 表单问题 */
-  title?: string
-  /** 问题描述 */
-  description?: string
-  /** 是否必填 */
-  required?: boolean
-  /** 是否可见 */
-  visible?: boolean
-}
-
-export interface CreateBitableAppRoleRequest {
-  /** 自定义权限的名字 */
-  role_name: string
-  /** 数据表权限 */
-  table_roles: AppRoleTableRole[]
-  /** block权限 */
-  block_roles?: AppRoleBlockRole[]
-}
-
-export interface UpdateBitableAppRoleRequest {
-  /** 自定义权限的名字 */
-  role_name: string
-  /** 数据表权限 */
-  table_roles: AppRoleTableRole[]
-  /** block权限 */
-  block_roles?: AppRoleBlockRole[]
-}
-
-export interface CreateBitableAppRoleMemberRequest {
-  /** 协作者id */
-  member_id: string
-}
-
-export interface CreateBitableAppRoleMemberQuery {
-  /** 协作者id类型，与请求体中的member_id要对应 */
-  member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
-}
-
-export interface BatchCreateBitableAppRoleMemberRequest {
-  /** 协作者列表 */
-  member_list: AppRoleMemberId[]
-}
-
-export interface DeleteBitableAppRoleMemberQuery {
-  /** 协作者id类型，与请求体中的member_id要对应 */
-  member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
-}
-
-export interface BatchDeleteBitableAppRoleMemberRequest {
-  /** 协作者列表 */
-  member_list: AppRoleMemberId[]
-}
-
-export interface UpdateBitableAppWorkflowRequest {
-  /** 自动化状态 */
-  status: string
-}
-
-export interface GetBitableAppTableRecordQuery {
-  /** 控制多行文本字段数据的返回格式, true 表示以数组形式返回 */
-  text_field_as_array?: boolean
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 控制公式、查找引用是否显示完整的原样返回结果 */
-  display_formula_ref?: boolean
-  /** 控制是否返回该记录的链接 */
-  with_shared_url?: boolean
-  /** 控制是否返回自动计算的字段，例如 `created_by`/`created_time`/`last_modified_by`/`last_modified_time`，true 表示返回 */
-  automatic_fields?: boolean
-}
-
-export interface ListBitableAppTableRecordQuery extends Pagination {
-  /** 视图 id注意：如 filter 或 sort 有值，view_id 会被忽略。 */
-  view_id?: string
-  /** 筛选参数注意：1.筛选记录的表达式不超过2000个字符。2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。3.仅支持字段在页面展示字符值进行筛选。详细请参考[记录筛选开发指南](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter) */
-  filter?: string
-  /** 排序参数注意：1.表达式需要不超过1000字符。2.不支持对带“公式”和“关联字段”的表的使用。3.使用引号将字段名称和顺序逆序连接起来。 */
-  sort?: string
-  /** 字段名称 */
-  field_names?: string
-  /** 控制多行文本字段数据的返回格式，true 表示以数组形式返回。注意：1.多行文本中如果有超链接部分，则会返回链接的 URL。2.目前可以返回多行文本中 URL 类型为多维表格链接、飞书 doc、飞书 sheet的URL类型以及@人员的数据结构。 */
-  text_field_as_array?: boolean
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 控制公式、查找引用是否显示完整的原样返回结果 */
-  display_formula_ref?: boolean
-  /** 控制是否返回自动计算的字段，例如 `created_by`/`created_time`/`last_modified_by`/`last_modified_time`，true 表示返回 */
-  automatic_fields?: boolean
-}
-
-export interface CreateBitableAppResponse {
-  app?: App
-}
-
-export interface CopyBitableAppResponse {
-  app?: App
-}
-
-export interface GetBitableAppResponse {
-  app?: DisplayApp
-}
-
-export interface UpdateBitableAppResponse {
-  app?: DisplayAppV2
-}
-
-export interface CreateBitableAppTableResponse {
-  /** 数据表的唯一标识id */
-  table_id?: string
-  /** 默认表格视图的id，该字段仅在请求参数中填写了default_view_name或fields才会返回 */
-  default_view_id?: string
-  /** 数据表初始字段的id列表，该字段仅在请求参数中填写了fields才会返回 */
-  field_id_list?: string[]
-}
-
-export interface BatchCreateBitableAppTableResponse {
-  table_ids?: string[]
-}
-
-export interface PatchBitableAppTableResponse {
-  /** 数据表的名称 */
-  name?: string
-}
-
-export interface ListBitableAppTableResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-  /** 总数 */
-  total?: number
-  items?: AppTable[]
-}
-
-export interface CreateBitableAppTableViewResponse {
-  view?: AppTableView
-}
-
-export interface PatchBitableAppTableViewResponse {
-  view?: AppTableView
-}
-
-export interface ListBitableAppTableViewResponse {
-  /** 视图列表 */
-  items?: AppTableView[]
-  /** 下一页分页的token */
-  page_token?: string
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 总数 */
-  total?: number
-}
-
-export interface GetBitableAppTableViewResponse {
-  view?: AppTableView
-}
-
-export interface CreateBitableAppTableRecordResponse {
-  record?: AppTableRecord
-}
-
-export interface UpdateBitableAppTableRecordResponse {
-  record?: AppTableRecord
-}
-
 export interface SearchBitableAppTableRecordResponse {
   /** record 结果 */
   items?: AppTableRecord[]
@@ -635,14 +444,51 @@ export interface DeleteBitableAppTableRecordResponse {
   record_id?: string
 }
 
+export interface BatchCreateBitableAppTableRecordRequest {
+  /** 记录 */
+  records: AppTableRecord[]
+}
+
+export interface BatchCreateBitableAppTableRecordQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 格式为标准的 uuid，操作的唯一标识，用于幂等的进行更新操作。此值为空表示将发起一次新的请求，此值非空表示幂等的进行更新操作。 */
+  client_token?: string
+  /** 用于控制一致性读写，默认开启检查 */
+  ignore_consistency_check?: boolean
+}
+
 export interface BatchCreateBitableAppTableRecordResponse {
   /** 本次请求新增的记录列表 */
   records?: AppTableRecord[]
 }
 
+export interface BatchUpdateBitableAppTableRecordRequest {
+  /** 记录 */
+  records: AppTableRecord[]
+}
+
+export interface BatchUpdateBitableAppTableRecordQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 用于控制一致性读写，默认开启检查 */
+  ignore_consistency_check?: boolean
+}
+
 export interface BatchUpdateBitableAppTableRecordResponse {
   /** 更新后的记录 */
   records?: AppTableRecord[]
+}
+
+export interface BatchGetBitableAppTableRecordRequest {
+  /** 记录 id 列表 */
+  record_ids: string[]
+  /** 此次调用中使用的用户 id 的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 控制是否返回记录的分享链接，true 表示返回分享链接 */
+  with_shared_url?: boolean
+  /** 控制是否返回自动计算的字段，true 表示返回 */
+  automatic_fields?: boolean
 }
 
 export interface BatchGetBitableAppTableRecordResponse {
@@ -654,17 +500,146 @@ export interface BatchGetBitableAppTableRecordResponse {
   absent_record_ids?: string[]
 }
 
+export interface BatchDeleteBitableAppTableRecordRequest {
+  /** 删除的多条记录id列表 */
+  records: string[]
+}
+
 export interface BatchDeleteBitableAppTableRecordResponse {
   /** 记录删除结果 */
   records?: DeleteRecord[]
+}
+
+export const enum CreateBitableAppTableFieldRequestType {
+  /** 多行文本（默认值）、条码 */
+  Text = 1,
+  /** 数字（默认值）、进度、货币、评分 */
+  Number = 2,
+  /** 单选 */
+  SingleSelect = 3,
+  /** 多选 */
+  MultiSelect = 4,
+  /** 日期 */
+  DateTime = 5,
+  /** 复选框 */
+  Checkbox = 7,
+  /** 人员 */
+  User = 11,
+  /** 电话号码 */
+  PhoneNumber = 13,
+  /** 超链接 */
+  Url = 15,
+  /** 附件 */
+  Attachment = 17,
+  /** 单向关联 */
+  Link = 18,
+  /** 公式 */
+  Formula = 20,
+  /** 双向关联 */
+  DuplexLink = 21,
+  /** 地理位置 */
+  Location = 22,
+  /** 群组 */
+  GroupChat = 23,
+  /** 创建时间 */
+  CreatedTime = 1001,
+  /** 最后更新时间 */
+  ModifiedTime = 1002,
+  /** 创建人 */
+  CreatedUser = 1003,
+  /** 修改人 */
+  ModifiedUser = 1004,
+  /** 自动编号 */
+  AutoSerial = 1005,
+}
+
+export interface CreateBitableAppTableFieldRequest {
+  /** 字段名 */
+  field_name: string
+  /** 字段类型 */
+  type: CreateBitableAppTableFieldRequestType
+  /** 字段属性 */
+  property?: AppTableFieldProperty
+  /** 字段的描述 */
+  description?: AppTableFieldDescription
+  /** 字段在界面上的展示类型，例如进度字段是数字的一种展示形态 */
+  ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
+}
+
+export interface CreateBitableAppTableFieldQuery {
+  /** 格式为标准的 uuid，操作的唯一标识，用于幂等的进行更新操作。此值为空表示将发起一次新的请求，此值非空表示幂等的进行更新操作。 */
+  client_token?: string
 }
 
 export interface CreateBitableAppTableFieldResponse {
   field?: AppTableField
 }
 
+export const enum UpdateBitableAppTableFieldRequestType {
+  /** 多行文本（默认值）、条码 */
+  Text = 1,
+  /** 数字（默认值）、进度、货币、评分 */
+  Number = 2,
+  /** 单选 */
+  SingleSelect = 3,
+  /** 多选 */
+  MultiSelect = 4,
+  /** 日期 */
+  DateTime = 5,
+  /** 复选框 */
+  Checkbox = 7,
+  /** 人员 */
+  User = 11,
+  /** 电话号码 */
+  PhoneNumber = 13,
+  /** 超链接 */
+  Url = 15,
+  /** 附件 */
+  Attachment = 17,
+  /** 单向关联 */
+  Link = 18,
+  /** 公式 */
+  Formula = 20,
+  /** 双向关联 */
+  DuplexLink = 21,
+  /** 地理位置 */
+  Location = 22,
+  /** 群组 */
+  GroupChat = 23,
+  /** 创建时间 */
+  CreatedTime = 1001,
+  /** 最后更新时间 */
+  ModifiedTime = 1002,
+  /** 创建人 */
+  CreatedUser = 1003,
+  /** 修改人 */
+  ModifiedUser = 1004,
+  /** 自动编号 */
+  AutoSerial = 1005,
+}
+
+export interface UpdateBitableAppTableFieldRequest {
+  /** 字段名 */
+  field_name: string
+  /** 字段类型 */
+  type: UpdateBitableAppTableFieldRequestType
+  /** 字段属性 */
+  property?: AppTableFieldProperty
+  /** 字段的描述 */
+  description?: AppTableFieldDescription
+  /** 字段在界面上的展示类型，例如进度字段是数字的一种展示形态 */
+  ui_type?: 'Text' | 'Email' | 'Barcode' | 'Number' | 'Progress' | 'Currency' | 'Rating' | 'SingleSelect' | 'MultiSelect' | 'DateTime' | 'Checkbox' | 'User' | 'GroupChat' | 'Phone' | 'Url' | 'Attachment' | 'SingleLink' | 'Formula' | 'DuplexLink' | 'Location' | 'CreatedTime' | 'ModifiedTime' | 'CreatedUser' | 'ModifiedUser' | 'AutoNumber'
+}
+
 export interface UpdateBitableAppTableFieldResponse {
   field?: AppTableField
+}
+
+export interface ListBitableAppTableFieldQuery extends Pagination {
+  /** 视图 ID */
+  view_id?: string
+  /** 控制字段描述（多行文本格式）数据的返回格式, true 表示以数组富文本形式返回 */
+  text_field_as_array?: boolean
 }
 
 export interface ListBitableAppTableFieldResponse {
@@ -685,11 +660,29 @@ export interface DeleteBitableAppTableFieldResponse {
   deleted?: boolean
 }
 
+export interface CopyBitableAppDashboardRequest {
+  /** 仪表盘名称 */
+  name: string
+}
+
 export interface CopyBitableAppDashboardResponse {
   /** 多维表格 block_id */
   block_id?: string
   /** block 名称 */
   name?: string
+}
+
+export interface PatchBitableAppTableFormRequest {
+  /** 表单名称 */
+  name?: string
+  /** 表单描述 */
+  description?: string
+  /** 是否开启共享 */
+  shared?: boolean
+  /** 分享范围限制 */
+  shared_limit?: 'off' | 'tenant_editable' | 'anyone_editable'
+  /** 填写次数限制一次 */
+  submit_limit_once?: boolean
 }
 
 export interface PatchBitableAppTableFormResponse {
@@ -700,6 +693,19 @@ export interface PatchBitableAppTableFormResponse {
 export interface GetBitableAppTableFormResponse {
   /** 表单元数据信息 */
   form: AppTableForm
+}
+
+export interface PatchBitableAppTableFormFieldRequest {
+  /** 上一个表单问题 ID */
+  pre_field_id?: string
+  /** 表单问题 */
+  title?: string
+  /** 问题描述 */
+  description?: string
+  /** 是否必填 */
+  required?: boolean
+  /** 是否可见 */
+  visible?: boolean
 }
 
 export interface PatchBitableAppTableFormFieldResponse {
@@ -718,8 +724,26 @@ export interface ListBitableAppTableFormFieldResponse {
   total: number
 }
 
+export interface CreateBitableAppRoleRequest {
+  /** 自定义权限的名字 */
+  role_name: string
+  /** 数据表权限 */
+  table_roles: AppRoleTableRole[]
+  /** block权限 */
+  block_roles?: AppRoleBlockRole[]
+}
+
 export interface CreateBitableAppRoleResponse {
   role?: AppRole
+}
+
+export interface UpdateBitableAppRoleRequest {
+  /** 自定义权限的名字 */
+  role_name: string
+  /** 数据表权限 */
+  table_roles: AppRoleTableRole[]
+  /** block权限 */
+  block_roles?: AppRoleBlockRole[]
 }
 
 export interface UpdateBitableAppRoleResponse {
@@ -737,6 +761,21 @@ export interface ListBitableAppRoleResponse {
   total?: number
 }
 
+export interface CreateBitableAppRoleMemberRequest {
+  /** 协作者id */
+  member_id: string
+}
+
+export interface CreateBitableAppRoleMemberQuery {
+  /** 协作者id类型，与请求体中的member_id要对应 */
+  member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
+}
+
+export interface BatchCreateBitableAppRoleMemberRequest {
+  /** 协作者列表 */
+  member_list: AppRoleMemberId[]
+}
+
 export interface ListBitableAppRoleMemberResponse {
   /** 协作者列表 */
   items?: AppRoleMember[]
@@ -748,13 +787,60 @@ export interface ListBitableAppRoleMemberResponse {
   total?: number
 }
 
+export interface DeleteBitableAppRoleMemberQuery {
+  /** 协作者id类型，与请求体中的member_id要对应 */
+  member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'chat_id' | 'department_id' | 'open_department_id'
+}
+
+export interface BatchDeleteBitableAppRoleMemberRequest {
+  /** 协作者列表 */
+  member_list: AppRoleMemberId[]
+}
+
 export interface ListBitableAppWorkflowResponse {
   /** 自动化工作流信息 */
   workflows: AppWorkflow[]
 }
 
+export interface UpdateBitableAppWorkflowRequest {
+  /** 自动化状态 */
+  status: string
+}
+
+export interface GetBitableAppTableRecordQuery {
+  /** 控制多行文本字段数据的返回格式, true 表示以数组形式返回 */
+  text_field_as_array?: boolean
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 控制公式、查找引用是否显示完整的原样返回结果 */
+  display_formula_ref?: boolean
+  /** 控制是否返回该记录的链接 */
+  with_shared_url?: boolean
+  /** 控制是否返回自动计算的字段，例如 `created_by`/`created_time`/`last_modified_by`/`last_modified_time`，true 表示返回 */
+  automatic_fields?: boolean
+}
+
 export interface GetBitableAppTableRecordResponse {
   record?: AppTableRecord
+}
+
+export interface ListBitableAppTableRecordQuery extends Pagination {
+  /** 视图 id注意：如 filter 或 sort 有值，view_id 会被忽略。 */
+  view_id?: string
+  /** 筛选参数注意：1.筛选记录的表达式不超过2000个字符。2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。3.仅支持字段在页面展示字符值进行筛选。详细请参考[记录筛选开发指南](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter) */
+  filter?: string
+  /** 排序参数注意：1.表达式需要不超过1000字符。2.不支持对带“公式”和“关联字段”的表的使用。3.使用引号将字段名称和顺序逆序连接起来。 */
+  sort?: string
+  /** 字段名称 */
+  field_names?: string
+  /** 控制多行文本字段数据的返回格式，true 表示以数组形式返回。注意：1.多行文本中如果有超链接部分，则会返回链接的 URL。2.目前可以返回多行文本中 URL 类型为多维表格链接、飞书 doc、飞书 sheet的URL类型以及@人员的数据结构。 */
+  text_field_as_array?: boolean
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 控制公式、查找引用是否显示完整的原样返回结果 */
+  display_formula_ref?: boolean
+  /** 控制是否返回自动计算的字段，例如 `created_by`/`created_time`/`last_modified_by`/`last_modified_time`，true 表示返回 */
+  automatic_fields?: boolean
 }
 
 export interface ListBitableAppTableRecordResponse {
@@ -780,7 +866,7 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/tables': {
     POST: 'createBitableAppTable',
-    GET: 'listBitableAppTable',
+    GET: { name: 'listBitableAppTable', pagination: { argIndex: 1 } },
   },
   '/bitable/v1/apps/{app_token}/tables/batch_create': {
     POST: 'batchCreateBitableAppTable',
@@ -794,7 +880,7 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/views': {
     POST: 'createBitableAppTableView',
-    GET: 'listBitableAppTableView',
+    GET: { name: 'listBitableAppTableView', pagination: { argIndex: 2 } },
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/views/{view_id}': {
     PATCH: 'patchBitableAppTableView',
@@ -803,7 +889,7 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/records': {
     POST: 'createBitableAppTableRecord',
-    GET: 'listBitableAppTableRecord',
+    GET: { name: 'listBitableAppTableRecord', pagination: { argIndex: 2 } },
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/records/{record_id}': {
     PUT: 'updateBitableAppTableRecord',
@@ -811,7 +897,7 @@ Internal.define({
     GET: 'getBitableAppTableRecord',
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/records/search': {
-    POST: 'searchBitableAppTableRecord',
+    POST: { name: 'searchBitableAppTableRecord', pagination: { argIndex: 3 } },
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/records/batch_create': {
     POST: 'batchCreateBitableAppTableRecord',
@@ -827,7 +913,7 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/fields': {
     POST: 'createBitableAppTableField',
-    GET: 'listBitableAppTableField',
+    GET: { name: 'listBitableAppTableField', pagination: { argIndex: 2 } },
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/fields/{field_id}': {
     PUT: 'updateBitableAppTableField',
@@ -847,11 +933,11 @@ Internal.define({
     PATCH: 'patchBitableAppTableFormField',
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields': {
-    GET: 'listBitableAppTableFormField',
+    GET: { name: 'listBitableAppTableFormField', pagination: { argIndex: 3 } },
   },
   '/bitable/v1/apps/{app_token}/roles': {
     POST: 'createBitableAppRole',
-    GET: 'listBitableAppRole',
+    GET: { name: 'listBitableAppRole', pagination: { argIndex: 1 } },
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}': {
     PUT: 'updateBitableAppRole',
@@ -859,7 +945,7 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
     POST: 'createBitableAppRoleMember',
-    GET: 'listBitableAppRoleMember',
+    GET: { name: 'listBitableAppRoleMember', pagination: { argIndex: 2 } },
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}/members/batch_create': {
     POST: 'batchCreateBitableAppRoleMember',

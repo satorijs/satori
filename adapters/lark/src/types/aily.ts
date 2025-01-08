@@ -98,11 +98,26 @@ export interface CreateAilyAilySessionRequest {
   metadata?: string
 }
 
+export interface CreateAilyAilySessionResponse {
+  /** 创建的会话信息 */
+  session?: AilySession
+}
+
 export interface UpdateAilyAilySessionRequest {
   /** 渠道上下文 */
   channel_context?: string
   /** 其他透传信息 */
   metadata?: string
+}
+
+export interface UpdateAilyAilySessionResponse {
+  /** 会话信息 */
+  session?: AilySession
+}
+
+export interface GetAilyAilySessionResponse {
+  /** 会话信息 */
+  session?: AilySession
 }
 
 export interface CreateAilyAilySessionAilyMessageRequest {
@@ -118,6 +133,16 @@ export interface CreateAilyAilySessionAilyMessageRequest {
   quote_message_id?: string
   /** 被@的实体 */
   mentions?: AilyMention[]
+}
+
+export interface CreateAilyAilySessionAilyMessageResponse {
+  /** 消息信息 */
+  message?: AilyMessage
+}
+
+export interface GetAilyAilySessionAilyMessageResponse {
+  /** 消息信息 */
+  message?: AilyMessage
 }
 
 export interface ListAilyAilySessionAilyMessageQuery extends Pagination {
@@ -138,11 +163,38 @@ export interface CreateAilyAilySessionRunRequest {
   metadata?: string
 }
 
+export interface CreateAilyAilySessionRunResponse {
+  /** 运行信息 */
+  run?: Run
+}
+
+export interface GetAilyAilySessionRunResponse {
+  /** 运行信息 */
+  run?: Run
+}
+
+export interface CancelAilyAilySessionRunResponse {
+  /** 运行信息 */
+  run?: Run
+}
+
 export interface StartAilyAppSkillRequest {
   /** 技能的全局变量 */
   global_variable?: SkillGlobalVariable
   /** 技能的自定义变量 */
   input?: string
+}
+
+export interface StartAilyAppSkillResponse {
+  /** 技能的输出 */
+  output?: string
+  /** 技能的执行状态 */
+  status?: string
+}
+
+export interface GetAilyAppSkillResponse {
+  /** 技能信息 */
+  skill?: Skill
 }
 
 export interface AskAilyAppKnowledgeRequest {
@@ -152,6 +204,21 @@ export interface AskAilyAppKnowledgeRequest {
   data_asset_ids?: string[]
   /** 控制知识问答所依据的数据知识分类范围 */
   data_asset_tag_ids?: string[]
+}
+
+export interface AskAilyAppKnowledgeResponse {
+  /** 响应状态，枚举值 */
+  status?: 'processing' | 'finished'
+  /** 结束类型，枚举值 */
+  finish_type?: 'qa' | 'faq'
+  /** 响应消息 */
+  message?: AilyKnowledgeMessage
+  /** 知识问答运行过程结构化数据，status=finished 且 finish_type=qa 时返回 */
+  process_data?: AilyKnowledgeAskProcessData
+  /** 匹配标准问答对结果，status=finished 且 finish_type=faq时返回 */
+  faq_result?: AilyKnowledgeFaq
+  /** 是否有结果，true 则 代表 message 中的内容是通过配置知识而生成的 */
+  has_answer?: boolean
 }
 
 export interface ListAilyAppDataAssetQuery extends Pagination {
@@ -172,73 +239,6 @@ export interface ListAilyAppDataAssetTagQuery extends Pagination {
   keyword?: string
   /** 模糊匹配分类名称 */
   data_asset_tag_ids?: string[]
-}
-
-export interface CreateAilyAilySessionResponse {
-  /** 创建的会话信息 */
-  session?: AilySession
-}
-
-export interface UpdateAilyAilySessionResponse {
-  /** 会话信息 */
-  session?: AilySession
-}
-
-export interface GetAilyAilySessionResponse {
-  /** 会话信息 */
-  session?: AilySession
-}
-
-export interface CreateAilyAilySessionAilyMessageResponse {
-  /** 消息信息 */
-  message?: AilyMessage
-}
-
-export interface GetAilyAilySessionAilyMessageResponse {
-  /** 消息信息 */
-  message?: AilyMessage
-}
-
-export interface CreateAilyAilySessionRunResponse {
-  /** 运行信息 */
-  run?: Run
-}
-
-export interface GetAilyAilySessionRunResponse {
-  /** 运行信息 */
-  run?: Run
-}
-
-export interface CancelAilyAilySessionRunResponse {
-  /** 运行信息 */
-  run?: Run
-}
-
-export interface StartAilyAppSkillResponse {
-  /** 技能的输出 */
-  output?: string
-  /** 技能的执行状态 */
-  status?: string
-}
-
-export interface GetAilyAppSkillResponse {
-  /** 技能信息 */
-  skill?: Skill
-}
-
-export interface AskAilyAppKnowledgeResponse {
-  /** 响应状态，枚举值 */
-  status?: 'processing' | 'finished'
-  /** 结束类型，枚举值 */
-  finish_type?: 'qa' | 'faq'
-  /** 响应消息 */
-  message?: AilyKnowledgeMessage
-  /** 知识问答运行过程结构化数据，status=finished 且 finish_type=qa 时返回 */
-  process_data?: AilyKnowledgeAskProcessData
-  /** 匹配标准问答对结果，status=finished 且 finish_type=faq时返回 */
-  faq_result?: AilyKnowledgeFaq
-  /** 是否有结果，true 则 代表 message 中的内容是通过配置知识而生成的 */
-  has_answer?: boolean
 }
 
 Internal.define({

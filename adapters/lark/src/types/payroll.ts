@@ -26,18 +26,22 @@ declare module '../internal' {
   }
 }
 
+export const enum ListPayrollCostAllocationReportQueryReportType {
+  /** 默认 */
+  Default = 0,
+  /** 计提 */
+  Accrued = 1,
+  /** 实发 */
+  Paid = 2,
+}
+
 export interface ListPayrollCostAllocationReportQuery extends Pagination {
   /** 成本分摊方案ID */
   cost_allocation_plan_id: string
   /** 期间 */
   pay_period: string
   /** 报表类型 */
-  report_type: 0 | 1 | 2
-}
-
-export interface ListPayrollCostAllocationPlanQuery extends Pagination {
-  /** 期间 */
-  pay_period: string
+  report_type: ListPayrollCostAllocationReportQueryReportType
 }
 
 export interface ListPayrollCostAllocationReportResponse {
@@ -51,6 +55,11 @@ export interface ListPayrollCostAllocationReportResponse {
   cost_allocation_report_names?: I18nContent[]
   /** 汇总数据 */
   cost_allocation_report_datas?: CostAllocationReportData[]
+}
+
+export interface ListPayrollCostAllocationPlanQuery extends Pagination {
+  /** 期间 */
+  pay_period: string
 }
 
 Internal.define({

@@ -23,16 +23,16 @@ export interface FileRecognizeSpeechToTextSpeechRequest {
   config: FileConfig
 }
 
+export interface FileRecognizeSpeechToTextSpeechResponse {
+  /** 语音识别后的文本信息 */
+  recognition_text: string
+}
+
 export interface StreamRecognizeSpeechToTextSpeechRequest {
   /** 语音资源 */
   speech: Speech
   /** 配置属性 */
   config: StreamConfig
-}
-
-export interface FileRecognizeSpeechToTextSpeechResponse {
-  /** 语音识别后的文本信息 */
-  recognition_text: string
 }
 
 export interface StreamRecognizeSpeechToTextSpeechResponse {

@@ -91,6 +91,11 @@ export interface GetAcsUserQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetAcsUserResponse {
+  /** 门禁用户信息 */
+  user?: User
+}
+
 export interface ListAcsUserQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -131,6 +136,11 @@ export interface GetAcsRuleExternalQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetAcsRuleExternalResponse {
+  /** 设备权限组信息 */
+  rules: Rule[]
+}
+
 export interface DeleteAcsRuleExternalQuery {
   /** 权限组id */
   rule_id: string
@@ -148,6 +158,11 @@ export interface CreateAcsRuleExternalQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateAcsRuleExternalResponse {
+  /** 权限组id */
+  rule_id: string
+}
+
 export interface DeleteAcsVisitorQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -163,6 +178,15 @@ export interface CreateAcsVisitorQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateAcsVisitorResponse {
+  /** 访客的id */
+  visitor_id: string
+}
+
+export interface ListAcsDeviceResponse {
+  items?: Device[]
+}
+
 export interface ListAcsAccessRecordQuery extends Pagination {
   /** 记录开始时间，单位秒 */
   from: number
@@ -172,30 +196,6 @@ export interface ListAcsAccessRecordQuery extends Pagination {
   device_id?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface GetAcsUserResponse {
-  /** 门禁用户信息 */
-  user?: User
-}
-
-export interface GetAcsRuleExternalResponse {
-  /** 设备权限组信息 */
-  rules: Rule[]
-}
-
-export interface CreateAcsRuleExternalResponse {
-  /** 权限组id */
-  rule_id: string
-}
-
-export interface CreateAcsVisitorResponse {
-  /** 访客的id */
-  visitor_id: string
-}
-
-export interface ListAcsDeviceResponse {
-  items?: Device[]
 }
 
 Internal.define({

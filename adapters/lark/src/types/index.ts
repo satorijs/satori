@@ -745,7 +745,18 @@ export interface AilyMessage {
   status?: AilyMessageStatus
 }
 
-export type AilyMessageContentType = 'MDX' | 'TEXT' | 'CLIP' | 'SmartCard' | 'JSON'
+export const enum AilyMessageContentType {
+  /** MDX */
+  ContentTypeMDX = 'MDX',
+  /** TEXT */
+  ContentTypeText = 'TEXT',
+  /** GUI 卡片 */
+  ContentTypeClip = 'CLIP',
+  /** SmartCard */
+  ContentTypeSmartCard = 'SmartCard',
+  /** JSON */
+  ContentTypeJSON = 'JSON',
+}
 
 export interface AilyMessageFile {
   /** 文件 ID */
@@ -769,7 +780,12 @@ export interface AilyMessageFilePreview {
   expired_at?: string
 }
 
-export type AilyMessageStatus = 'IN_PROGRESS' | 'COMPLETED'
+export const enum AilyMessageStatus {
+  /** 生成中 */
+  MessageStatusInProgress = 'IN_PROGRESS',
+  /** 已完成 */
+  MessageStatusCompleted = 'COMPLETED',
+}
 
 export interface AilySender {
   /** 实体 ID */
@@ -782,7 +798,12 @@ export interface AilySender {
   aily_id?: string
 }
 
-export type AilySenderType = 'USER' | 'ASSISTANT'
+export const enum AilySenderType {
+  /** 用户 */
+  SenderTypeUser = 'USER',
+  /** 应用 */
+  SenderTypeAssistant = 'ASSISTANT',
+}
 
 export interface AilySession {
   /** 会话 ID */
@@ -1486,7 +1507,7 @@ export interface AppRoleTableRole {
   /** 记录筛选条件，在table_perm为1或2时有意义，用于指定可编辑或可阅读某些记录 */
   rec_rule?: AppRoleTableRoleRecRule
   /** 字段权限，仅在table_perm为2时有意义，设置字段可编辑或可阅读 */
-  field_perm?: unknown
+  field_perm?: Record<string, number>
   /** 新增记录权限，仅在table_perm为2时有意义，用于设置记录是否可以新增 */
   allow_add_record?: boolean
   /** 删除记录权限，仅在table_perm为2时有意义，用于设置记录是否可以删除 */
@@ -1902,17 +1923,17 @@ export interface AppTableFormPatchedField {
 
 export interface AppTableRecord {
   /** 记录字段 */
-  fields: unknown
+  fields: Record<string, unknown>
   /** 记录Id */
   record_id?: string
   /** 创建人 */
   created_by?: Person
   /** 创建时间 */
-  created_time?: unknown
+  created_time?: number
   /** 修改人 */
   last_modified_by?: Person
   /** 最近更新时间 */
-  last_modified_time?: unknown
+  last_modified_time?: number
   /** 记录分享链接(批量获取记录接口将返回该字段) */
   shared_url?: string
   /** 记录链接(检索记录接口将返回该字段) */
@@ -4277,7 +4298,7 @@ export interface Contract {
 }
 
 export interface ContractCompany {
-  id?: unknown
+  id?: number
   name?: string
 }
 
@@ -4693,9 +4714,9 @@ export interface DataAsset {
   /** 数据知识ID */
   data_asset_id?: string
   /** 数据知识标题 */
-  label?: unknown
+  label?: Record<string, string>
   /** 数据知识描述 */
-  description?: unknown
+  description?: Record<string, string>
   /** 数据资源类型 */
   data_source_type?: 'excel' | 'pdf' | 'pptx' | 'txt' | 'docx' | 'mysql' | 'postgresql' | 'larkbase' | 'salesforce' | 'fenxiangxiaoke' | 'qianchuan' | 'clickhouse' | 'databricks' | 'servicedesk' | 'larkbiz_wiki' | 'larkbiz_doc' | 'larkbiz_docs' | 'larkbiz_docx' | 'larkbiz_pdf' | 'larkbiz_word' | 'larkbiz_pptx' | 'larkbiz_sheets' | 'larkbiz_base' | 'larkbiz_personalfolder' | 'larkbiz_sharedfolder' | 'object'
   /** 数据连接状态 */
@@ -4720,9 +4741,9 @@ export interface DataAssetItem {
   /** 数据知识项标识 */
   api_name?: string
   /** 数据知识项标题 */
-  label?: unknown
+  label?: Record<string, string>
   /** 数据知识项描述 */
-  description?: unknown
+  description?: Record<string, string>
   /** 数据知识资源 */
   resources?: DataAssetResource[]
 }
@@ -5426,7 +5447,9 @@ export interface EducationInfo {
   custom_fields?: ObjectFieldData[]
 }
 
-export type EeKunlunCommonI18nI18nText = unknown
+export type EeKunlunCommonI18nI18nText = Record<EeKunlunCommonI18nLanguageCode, string>
+
+export type EeKunlunCommonI18nLanguageCode = string
 
 export interface Email {
   /** 邮箱地址 */
@@ -7268,7 +7291,12 @@ export interface IdEntity {
   value?: string
 }
 
-export type IdentityProvider = 'AILY' | 'FEISHU'
+export const enum IdentityProvider {
+  /** Aily 账号体系 */
+  IdentityProviderAily = 'AILY',
+  /** 飞书账号体系 */
+  IdentityProviderFeishu = 'FEISHU',
+}
 
 export interface IdInfo {
   /** 传入的 ID */
@@ -8088,7 +8116,7 @@ export interface JiraIssue {
 }
 
 export interface Job {
-  id?: unknown
+  id?: number
   name?: string
 }
 
@@ -11105,7 +11133,7 @@ export interface OpenAppFeedCardButton {
   /** 按钮类型 */
   button_type?: 'default' | 'primary' | 'success'
   /** action 字典 */
-  action_map?: unknown
+  action_map?: Record<string, string>
 }
 
 export interface OpenAppFeedCardButtons {
@@ -14199,7 +14227,22 @@ export interface RunError {
   message: string
 }
 
-export type RunStatus = 'QUEUED' | 'IN_PROGRESS' | 'REQUIRES_MESSAGE' | 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'EXPIRED'
+export const enum RunStatus {
+  /** 排队中 */
+  RunStatusQueued = 'QUEUED',
+  /** 执行中 */
+  RunStatusInProgress = 'IN_PROGRESS',
+  /** 等待补充消息输入 */
+  RunStatusRequiresMessage = 'REQUIRES_MESSAGE',
+  /** 已取消 */
+  RunStatusCancelled = 'CANCELLED',
+  /** 已完成 */
+  RunStatusCompleted = 'COMPLETED',
+  /** 已失败 */
+  RunStatusFailed = 'FAILED',
+  /** 已过期 */
+  RunStatusExpired = 'EXPIRED',
+}
 
 export interface Schema {
   /** UI项名称 TODO文档 */
@@ -14963,9 +15006,9 @@ export interface SystemFields {
   /** 入职登记表状态 */
   employee_form_status?: 1 | 2 | 3
   /** 创建时间 */
-  create_time?: unknown
+  create_time?: number
   /** 更新时间 */
-  update_time?: unknown
+  update_time?: number
 }
 
 export interface SystemStatus {
@@ -16052,11 +16095,11 @@ export interface Ticket {
   /** ticket score */
   score?: number
   /** the time when the ticket is created */
-  created_at?: unknown
+  created_at?: number
   /** the time when the ticket is updated */
-  updated_at?: unknown
+  updated_at?: number
   /** the time when the ticket is closed */
-  closed_at?: unknown
+  closed_at?: number
   /** 不满意原因 */
   dissatisfaction_reason?: I18n
   /** agents of this ticket */
@@ -16074,19 +16117,19 @@ export interface Ticket {
   /** 客服服务时长，客服最后一次回复时间距离客服进入时间间隔，单位秒 */
   agent_service_duration?: number
   /** 客服首次回复时间距离客服进入时间的间隔，单位秒 */
-  agent_first_response_duration?: unknown
+  agent_first_response_duration?: number
   /** 机器人服务时间：客服进入时间距离工单创建时间的间隔，单位秒 */
-  bot_service_duration?: unknown
+  bot_service_duration?: number
   /** 客服解决时长，关单时间距离客服进入时间的间隔，单位秒 */
-  agent_resolution_time?: unknown
+  agent_resolution_time?: number
   /** 工单实际处理时间：从客服进入到关单，单位秒 */
-  actual_processing_time?: unknown
+  actual_processing_time?: number
   /** 客服进入时间，单位毫秒 */
-  agent_entry_time?: unknown
+  agent_entry_time?: number
   /** 客服首次回复时间，单位毫秒 */
-  agent_first_response_time?: unknown
+  agent_first_response_time?: number
   /** 客服最后回复时间，单位毫秒 */
-  agent_last_response_time?: unknown
+  agent_last_response_time?: number
   /** 主责客服 */
   agent_owner?: TicketUser
 }
@@ -17722,7 +17765,7 @@ export interface WorkingHoursType {
 }
 
 export interface WorkLocation {
-  id?: unknown
+  id?: number
   name?: string
 }
 

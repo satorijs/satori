@@ -96,6 +96,11 @@ export interface GetWikiSpaceQuery {
   lang?: 'zh' | 'id' | 'de' | 'en' | 'es' | 'fr' | 'it' | 'pt' | 'vi' | 'ru' | 'hi' | 'th' | 'ko' | 'ja' | 'zh-HK' | 'zh-TW'
 }
 
+export interface GetWikiSpaceResponse {
+  /** 知识空间 */
+  space?: Space
+}
+
 export interface CreateWikiSpaceRequest {
   /** 知识空间名称 */
   name?: string
@@ -103,6 +108,11 @@ export interface CreateWikiSpaceRequest {
   description?: string
   /** 表示知识空间的分享状态 */
   open_sharing?: 'open' | 'closed'
+}
+
+export interface CreateWikiSpaceResponse {
+  /** 知识空间信息 */
+  space?: Space
 }
 
 export interface CreateWikiSpaceMemberRequest {
@@ -119,6 +129,11 @@ export interface CreateWikiSpaceMemberQuery {
   need_notification?: boolean
 }
 
+export interface CreateWikiSpaceMemberResponse {
+  /** 知识库协作者 */
+  member?: Member
+}
+
 export interface DeleteWikiSpaceMemberRequest {
   /** 知识库协作者 ID 类型 */
   member_type: string
@@ -128,6 +143,11 @@ export interface DeleteWikiSpaceMemberRequest {
   type?: 'user' | 'chat' | 'department'
 }
 
+export interface DeleteWikiSpaceMemberResponse {
+  /** 成员信息 */
+  member: Member
+}
+
 export interface UpdateWikiSpaceSettingRequest {
   /** 谁可以创建空间的一级页面： "admin_and_member" = 管理员和成员 "admin"  - 仅管理员 */
   create_setting?: string
@@ -135,6 +155,11 @@ export interface UpdateWikiSpaceSettingRequest {
   security_setting?: string
   /** 可阅读用户可否评论： "allow" - 允许 "not_allow" - 不允许 */
   comment_setting?: string
+}
+
+export interface UpdateWikiSpaceSettingResponse {
+  /** 空间设置 */
+  setting?: Setting
 }
 
 export interface CreateWikiSpaceNodeRequest {
@@ -150,11 +175,21 @@ export interface CreateWikiSpaceNodeRequest {
   title?: string
 }
 
+export interface CreateWikiSpaceNodeResponse {
+  /** 节点 */
+  node?: Node
+}
+
 export interface GetNodeWikiSpaceQuery {
   /** 文档的wiki token */
   token: string
   /** 文档类型 */
   obj_type?: 'doc' | 'docx' | 'sheet' | 'mindnote' | 'bitable' | 'file' | 'slides' | 'wiki'
+}
+
+export interface GetNodeWikiSpaceResponse {
+  /** 节点信息 */
+  node?: Node
 }
 
 export interface ListWikiSpaceNodeQuery extends Pagination {
@@ -167,6 +202,11 @@ export interface MoveWikiSpaceNodeRequest {
   target_parent_token?: string
   /** 移动到的知识空间ID */
   target_space_id?: string
+}
+
+export interface MoveWikiSpaceNodeResponse {
+  /** 移动后的节点信息 */
+  node?: Node
 }
 
 export interface UpdateTitleWikiSpaceNodeRequest {
@@ -183,6 +223,11 @@ export interface CopyWikiSpaceNodeRequest {
   title?: string
 }
 
+export interface CopyWikiSpaceNodeResponse {
+  /** copy后的节点 */
+  node: Node
+}
+
 export interface MoveDocsToWikiWikiSpaceNodeRequest {
   /** 节点的父亲token */
   parent_wiki_token?: string
@@ -194,65 +239,6 @@ export interface MoveDocsToWikiWikiSpaceNodeRequest {
   apply?: boolean
 }
 
-export interface GetWikiTaskQuery {
-  /** 任务类型 */
-  task_type: 'move'
-}
-
-export interface SearchWikiNodeRequest {
-  /** 搜索关键词 */
-  query: string
-  /** 文档所属的知识空间ID，为空搜索所有 wiki */
-  space_id?: string
-  /** wiki token，不为空搜索该节点及其所有子节点，为空搜索所有 wiki（根据 space_id 选择 space） */
-  node_id?: string
-}
-
-export interface GetWikiSpaceResponse {
-  /** 知识空间 */
-  space?: Space
-}
-
-export interface CreateWikiSpaceResponse {
-  /** 知识空间信息 */
-  space?: Space
-}
-
-export interface CreateWikiSpaceMemberResponse {
-  /** 知识库协作者 */
-  member?: Member
-}
-
-export interface DeleteWikiSpaceMemberResponse {
-  /** 成员信息 */
-  member: Member
-}
-
-export interface UpdateWikiSpaceSettingResponse {
-  /** 空间设置 */
-  setting?: Setting
-}
-
-export interface CreateWikiSpaceNodeResponse {
-  /** 节点 */
-  node?: Node
-}
-
-export interface GetNodeWikiSpaceResponse {
-  /** 节点信息 */
-  node?: Node
-}
-
-export interface MoveWikiSpaceNodeResponse {
-  /** 移动后的节点信息 */
-  node?: Node
-}
-
-export interface CopyWikiSpaceNodeResponse {
-  /** copy后的节点 */
-  node: Node
-}
-
 export interface MoveDocsToWikiWikiSpaceNodeResponse {
   /** 移动后的知识库token */
   wiki_token?: string
@@ -262,9 +248,23 @@ export interface MoveDocsToWikiWikiSpaceNodeResponse {
   applied?: boolean
 }
 
+export interface GetWikiTaskQuery {
+  /** 任务类型 */
+  task_type: 'move'
+}
+
 export interface GetWikiTaskResponse {
   /** 任务结果 */
   task: TaskResult
+}
+
+export interface SearchWikiNodeRequest {
+  /** 搜索关键词 */
+  query: string
+  /** 文档所属的知识空间ID，为空搜索所有 wiki */
+  space_id?: string
+  /** wiki token，不为空搜索该节点及其所有子节点，为空搜索所有 wiki（根据 space_id 选择 space） */
+  node_id?: string
 }
 
 Internal.define({

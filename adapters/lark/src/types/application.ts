@@ -37,7 +37,7 @@ declare module '../internal' {
      * 获取企业安装的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/list
      */
-    listApplication(query?: ListApplicationQuery): Promise<ListApplicationResponse>
+    listApplication(query?: ListApplicationQuery): Promise<ListApplicationResponse> & AsyncIterableIterator<Application>
     /**
      * 查看待审核的应用列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/underauditlist
@@ -112,12 +112,12 @@ declare module '../internal' {
      * 获取用户自定义常用的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v5/application/favourite
      */
-    favouriteApplication(query?: FavouriteApplicationQuery): Promise<FavouriteApplicationResponse>
+    favouriteApplication(query?: FavouriteApplicationQuery): Promise<FavouriteApplicationResponse> & AsyncIterableIterator<Application>
     /**
      * 获取管理员推荐的应用
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v5/application/recommend
      */
-    recommendApplication(query?: RecommendApplicationQuery): Promise<RecommendApplicationResponse>
+    recommendApplication(query?: RecommendApplicationQuery): Promise<RecommendApplicationResponse> & AsyncIterableIterator<Application>
     /**
      * 获取当前设置的推荐规则列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/app_recommend_rule/list
@@ -133,11 +133,20 @@ export interface GetApplicationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetApplicationResponse {
+  /** 应用数据 */
+  app?: Application
+}
+
 export interface GetApplicationApplicationAppVersionQuery {
   /** 应用信息的语言版本 */
   lang: 'zh_cn' | 'en_us' | 'ja_jp'
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetApplicationApplicationAppVersionResponse {
+  app_version?: ApplicationAppVersion
 }
 
 export interface ListApplicationApplicationAppVersionQuery extends Pagination {
@@ -156,17 +165,61 @@ export interface ContactsRangeSuggestApplicationApplicationAppVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ContactsRangeSuggestApplicationApplicationAppVersionResponse {
+  contacts_range?: ApplicationAppContactsRange
+}
+
+export interface ListApplicationScopeResponse {
+  scopes?: Scope[]
+}
+
+export const enum ListApplicationQueryStatus {
+  /** 停用 */
+  AvailabilityStopped = 0,
+  /** 启用 */
+  AvailabilityActivated = 1,
+  /** 未启用 */
+  AvailabilityUnactivated = 2,
+}
+
+export const enum ListApplicationQueryPaymentType {
+  /** 免费 */
+  Free = 0,
+  /** 付费 */
+  Paid = 1,
+}
+
+export const enum ListApplicationQueryOwnerType {
+  /** 飞书科技 */
+  FeishuTechnology = 0,
+  /** 飞书合作伙伴 */
+  FeishuThirdParty = 1,
+  /** 企业内成员 */
+  EnterpriseMember = 2,
+}
+
 export interface ListApplicationQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: string
   /** 应用的图标、描述、帮助文档链接是按照应用的主语言返回；其他内容（如应用权限、应用分类）按照该参数设定返回对应的语言。可选值有： zh_cn：中文 en_us：英文 ja_jp：日文  如不填写，则按照应用的主语言返回 */
   lang: string
   /** 不传入代表全部返回。传入则按照这种应用状态返回。应用状态可选值有：0：停用状态1：启用状态 2：未启用状态 */
-  status?: 0 | 1 | 2
+  status?: ListApplicationQueryStatus
   /** 不传入代表全部返回。传入则按照这种应用状态返回。 付费类型 可选值： 0：免费 1：付费 */
-  payment_type?: 0 | 1
+  payment_type?: ListApplicationQueryPaymentType
   /** 不传入代表全部返回。传入则按照这种应用状态返回。所有者类型，可选值： 0：飞书科技 1：飞书合作伙伴 2：企业内成员 */
-  owner_type?: 0 | 1 | 2
+  owner_type?: ListApplicationQueryOwnerType
+}
+
+export interface ListApplicationResponse {
+  /** 应用列表 */
+  app_list?: Application[]
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 应用状态=启用的应用总数 */
+  total_count?: number
 }
 
 export interface UnderauditlistApplicationQuery extends Pagination {
@@ -176,9 +229,22 @@ export interface UnderauditlistApplicationQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum PatchApplicationApplicationAppVersionRequestStatus {
+  /** 未知状态 */
+  Unknown = 0,
+  /** 审核通过 */
+  Audited = 1,
+  /** 审核拒绝 */
+  Reject = 2,
+  /** 审核中 */
+  UnderAudit = 3,
+  /** 未提交审核 */
+  Unaudit = 4,
+}
+
 export interface PatchApplicationApplicationAppVersionRequest {
   /** 版本状态 */
-  status?: 0 | 1 | 2 | 3 | 4
+  status?: PatchApplicationApplicationAppVersionRequestStatus
 }
 
 export interface PatchApplicationApplicationAppVersionQuery {
@@ -205,6 +271,14 @@ export interface ContactsRangeConfigurationApplicationQuery extends Pagination {
   department_id_type?: 'department_id' | 'open_department_id'
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface ContactsRangeConfigurationApplicationResponse {
+  contacts_range?: ApplicationAppContactsRange
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
 }
 
 export interface PatchApplicationApplicationContactsRangeRequest {
@@ -239,6 +313,15 @@ export interface CheckWhiteBlackListApplicationApplicationVisibilityQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface CheckWhiteBlackListApplicationApplicationVisibilityResponse {
+  /** 用户可见性信息列表 */
+  user_visibility_list?: ApplicationVisibilityUserWhiteBlackInfo[]
+  /** 部门可见性信息列表 */
+  department_visibility_list?: ApplicationVisibilityDepartmentWhiteBlackInfo[]
+  /** 用户组可见性信息列表 */
+  group_visibility_list?: ApplicationVisibilityGroupWhiteBlackInfo[]
+}
+
 export interface PatchApplicationApplicationVisibilityRequest {
   /** 添加可用人员名单 */
   add_visible_list?: AppVisibilityIdList
@@ -264,11 +347,20 @@ export interface UpdateApplicationApplicationManagementRequest {
   enable?: boolean
 }
 
+export const enum DepartmentOverviewApplicationApplicationAppUsageRequestCycleType {
+  /** 日活 */
+  Day = 1,
+  /** 周活， date字段应该填自然周周一的日期 */
+  Week = 2,
+  /** 月活， date字段应该填自然月1号的日期 */
+  Month = 3,
+}
+
 export interface DepartmentOverviewApplicationApplicationAppUsageRequest {
   /** 查询日期，格式为yyyy-mm-dd，若cycle_type为1，date可以为任何自然日；若cycle_type为2，则输入的date必须为周一； 若cycle_type为3，则输入的date必须为每月1号 */
   date: string
   /** 活跃周期的统计类型 */
-  cycle_type: 1 | 2 | 3
+  cycle_type: DepartmentOverviewApplicationApplicationAppUsageRequestCycleType
   /** 查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户） 以及多级子部门的使用数据。-  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。- 若不填写则返回整个租户的数据 */
   department_id?: string
   /** 是否需要查询部门下多层子部门的数据。未设置或为0时，仅查询department_id对应的部门。设置为n时，查询department_id及其n级子部门的数据。仅在department_id参数传递时有效，最大值为4。 */
@@ -284,11 +376,20 @@ export interface DepartmentOverviewApplicationApplicationAppUsageQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export const enum MessagePushOverviewApplicationApplicationAppUsageRequestCycleType {
+  /** 日活 */
+  Day = 1,
+  /** 周活， date字段应该填自然周周一的日期 */
+  Week = 2,
+  /** 月活， date字段应该填自然月1号的日期 */
+  Month = 3,
+}
+
 export interface MessagePushOverviewApplicationApplicationAppUsageRequest {
   /** 查询日期，若cycle_type为week，则输入的date必须为周一； 若cycle_type为month，则输入的date必须为每月1号 */
   date: string
   /** 枚举值：day，week，month；week指自然周，返回当前日期所在周的数据；不满一周则从周一到当前日期算。month指自然月，返回当前日期所在月的数据。 */
-  cycle_type: 1 | 2 | 3
+  cycle_type: MessagePushOverviewApplicationApplicationAppUsageRequestCycleType
   /** 需要查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）； -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。返回当前部门的使用数据； 若不填写，则返回当前租户的使用数据 */
   department_id?: string
 }
@@ -298,11 +399,25 @@ export interface MessagePushOverviewApplicationApplicationAppUsageQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface MessagePushOverviewApplicationApplicationAppUsageResponse {
+  /** 消息推送情况 */
+  items?: ApplicationAppUsage[]
+}
+
+export const enum OverviewApplicationApplicationAppUsageRequestCycleType {
+  /** 日活 */
+  Day = 1,
+  /** 周活， date字段应该填自然周周一的日期 */
+  Week = 2,
+  /** 月活， date字段应该填自然月1号的日期 */
+  Month = 3,
+}
+
 export interface OverviewApplicationApplicationAppUsageRequest {
   /** 查询日期，格式为yyyy-mm-dd，若cycle_type为1，date可以为任何自然日；若cycle_type为2，则输入的date必须为周一； 若cycle_type为3，则输入的date必须为每月1号 */
   date: string
   /** 活跃周期的统计类型 */
-  cycle_type: 1 | 2 | 3
+  cycle_type: OverviewApplicationApplicationAppUsageRequestCycleType
   /** 查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）； -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。 */
   department_id?: string
   /** 能力类型，按能力类型进行筛选，返回对应能力的活跃数据 */
@@ -314,12 +429,46 @@ export interface OverviewApplicationApplicationAppUsageQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface OverviewApplicationApplicationAppUsageResponse {
+  /** 员工使用应用概览数据 */
+  items?: ApplicationAppUsage[]
+}
+
+export const enum PatchApplicationApplicationFeedbackQueryStatus {
+  /** 反馈未处理 */
+  Unmarked = 0,
+  /** 反馈已处理 */
+  Marked = 1,
+  /** 反馈处理中 */
+  Processing = 2,
+  /** 反馈已关闭 */
+  Closed = 3,
+}
+
 export interface PatchApplicationApplicationFeedbackQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 反馈处理状态 */
-  status: 0 | 1 | 2 | 3
+  status: PatchApplicationApplicationFeedbackQueryStatus
   /** 反馈处理人员id，租户内用户的唯一标识， ID值与查询参数中的user_id_type 对应 */
   operator_id: string
+}
+
+export const enum ListApplicationApplicationFeedbackQueryFeedbackType {
+  /** 故障反馈 */
+  Fault = 1,
+  /** 产品建议 */
+  Advice = 2,
+}
+
+export const enum ListApplicationApplicationFeedbackQueryStatus {
+  /** 反馈未处理 */
+  Unmarked = 0,
+  /** 反馈已处理 */
+  Marked = 1,
+  /** 反馈处理中 */
+  Processing = 2,
+  /** 反馈已关闭 */
+  Closed = 3,
 }
 
 export interface ListApplicationApplicationFeedbackQuery extends Pagination {
@@ -328,9 +477,9 @@ export interface ListApplicationApplicationFeedbackQuery extends Pagination {
   /** 查询的结束日期，格式为yyyy-mm-dd。不填默认为当前日期。只能查询 180 天内的数据。 */
   to_date?: string
   /** 反馈类型，不填写则表示查询所有反馈类型。 */
-  feedback_type?: 1 | 2
+  feedback_type?: ListApplicationApplicationFeedbackQueryFeedbackType
   /** 反馈处理状态，不填写则表示查询所有处理类型。 */
-  status?: 0 | 1 | 2 | 3
+  status?: ListApplicationApplicationFeedbackQueryStatus
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
@@ -357,73 +506,6 @@ export interface FavouriteApplicationQuery extends Pagination {
   language?: 'zh_cn' | 'en_us' | 'ja_jp'
 }
 
-export interface RecommendApplicationQuery extends Pagination {
-  /** 应用信息的语言版本 */
-  language?: 'zh_cn' | 'en_us' | 'ja_jp'
-  /** 推荐应用类型，默认为用户不可移除的推荐应用列表 */
-  recommend_type?: 'user_unremovable' | 'user_removable'
-}
-
-export interface ListApplicationAppRecommendRuleQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface GetApplicationResponse {
-  /** 应用数据 */
-  app?: Application
-}
-
-export interface GetApplicationApplicationAppVersionResponse {
-  app_version?: ApplicationAppVersion
-}
-
-export interface ContactsRangeSuggestApplicationApplicationAppVersionResponse {
-  contacts_range?: ApplicationAppContactsRange
-}
-
-export interface ListApplicationScopeResponse {
-  scopes?: Scope[]
-}
-
-export interface ListApplicationResponse {
-  /** 应用列表 */
-  app_list?: Application[]
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 应用状态=启用的应用总数 */
-  total_count?: number
-}
-
-export interface ContactsRangeConfigurationApplicationResponse {
-  contacts_range?: ApplicationAppContactsRange
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface CheckWhiteBlackListApplicationApplicationVisibilityResponse {
-  /** 用户可见性信息列表 */
-  user_visibility_list?: ApplicationVisibilityUserWhiteBlackInfo[]
-  /** 部门可见性信息列表 */
-  department_visibility_list?: ApplicationVisibilityDepartmentWhiteBlackInfo[]
-  /** 用户组可见性信息列表 */
-  group_visibility_list?: ApplicationVisibilityGroupWhiteBlackInfo[]
-}
-
-export interface MessagePushOverviewApplicationApplicationAppUsageResponse {
-  /** 消息推送情况 */
-  items?: ApplicationAppUsage[]
-}
-
-export interface OverviewApplicationApplicationAppUsageResponse {
-  /** 员工使用应用概览数据 */
-  items?: ApplicationAppUsage[]
-}
-
 export interface FavouriteApplicationResponse {
   /** 分页的token */
   page_token?: string
@@ -433,6 +515,13 @@ export interface FavouriteApplicationResponse {
   has_more?: boolean
   /** 应用数据列表 */
   app_list?: Application[]
+}
+
+export interface RecommendApplicationQuery extends Pagination {
+  /** 应用信息的语言版本 */
+  language?: 'zh_cn' | 'en_us' | 'ja_jp'
+  /** 推荐应用类型，默认为用户不可移除的推荐应用列表 */
+  recommend_type?: 'user_unremovable' | 'user_removable'
 }
 
 export interface RecommendApplicationResponse {
@@ -446,6 +535,11 @@ export interface RecommendApplicationResponse {
   has_more?: boolean
   /** 应用数据列表 */
   app_list?: Application[]
+}
+
+export interface ListApplicationAppRecommendRuleQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 Internal.define({
@@ -470,7 +564,7 @@ Internal.define({
     GET: 'listApplicationScope',
   },
   '/application/v6/applications': {
-    GET: 'listApplication',
+    GET: { name: 'listApplication', pagination: { argIndex: 0, itemsKey: 'app_list' } },
   },
   '/application/v6/applications/underauditlist': {
     GET: { name: 'underauditlistApplication', pagination: { argIndex: 0 } },
@@ -509,10 +603,10 @@ Internal.define({
     POST: 'setApplicationAppBadge',
   },
   '/application/v5/applications/favourite': {
-    GET: 'favouriteApplication',
+    GET: { name: 'favouriteApplication', pagination: { argIndex: 0, itemsKey: 'app_list' } },
   },
   '/application/v5/applications/recommend': {
-    GET: 'recommendApplication',
+    GET: { name: 'recommendApplication', pagination: { argIndex: 0, itemsKey: 'app_list' } },
   },
   '/application/v6/app_recommend_rules': {
     GET: { name: 'listApplicationAppRecommendRule', pagination: { argIndex: 0, itemsKey: 'rules' } },

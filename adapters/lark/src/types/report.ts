@@ -21,13 +21,25 @@ declare module '../internal' {
   }
 }
 
+export const enum QueryReportRuleQueryIncludeDeleted {
+  /** 不包括已删除 */
+  Exclude = 0,
+  /** 包括已删除 */
+  Include = 1,
+}
+
 export interface QueryReportRuleQuery {
   /** 规则名称 */
   rule_name: string
   /** 是否包括已删除，默认未删除 */
-  include_deleted?: 0 | 1
+  include_deleted?: QueryReportRuleQueryIncludeDeleted
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface QueryReportRuleResponse {
+  /** 规则列表 */
+  rules?: Rule[]
 }
 
 export interface RemoveReportRuleViewRequest {
@@ -57,11 +69,6 @@ export interface QueryReportTaskRequest {
 export interface QueryReportTaskQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface QueryReportRuleResponse {
-  /** 规则列表 */
-  rules?: Rule[]
 }
 
 Internal.define({

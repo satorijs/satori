@@ -21,14 +21,14 @@ export interface GetMinutesMinuteStatisticsQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetMinutesMinuteQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
 export interface GetMinutesMinuteStatisticsResponse {
   /** 妙记浏览信息统计 */
   statistics?: Statictics
+}
+
+export interface GetMinutesMinuteQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface GetMinutesMinuteResponse {

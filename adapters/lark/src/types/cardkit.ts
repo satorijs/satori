@@ -63,6 +63,11 @@ export interface CreateCardkitCardRequest {
   data: string
 }
 
+export interface CreateCardkitCardResponse {
+  /** 卡片ID */
+  card_id: string
+}
+
 export interface SettingsCardkitCardRequest {
   /** 卡片设置 */
   settings: string
@@ -93,6 +98,11 @@ export interface UpdateCardkitCardRequest {
 export interface IdConvertCardkitCardRequest {
   /** 消息ID */
   message_id: string
+}
+
+export interface IdConvertCardkitCardResponse {
+  /** 消息 ID 对应的卡片 ID */
+  card_id?: string
 }
 
 export interface CreateCardkitCardElementRequest {
@@ -140,16 +150,6 @@ export interface DeleteCardkitCardElementRequest {
   uuid?: string
   /** 卡片处于流式更新模式时，进行卡片操作的顺序序号，用于保证多次更新的时序性。值为正整数，一次流式状态的多次更新操作（streaming_mode 一次从 true 到 false 期间）需要保证 sequence 递增，否则将报错。推荐使用时间戳。 */
   sequence: number
-}
-
-export interface CreateCardkitCardResponse {
-  /** 卡片ID */
-  card_id: string
-}
-
-export interface IdConvertCardkitCardResponse {
-  /** 消息 ID 对应的卡片 ID */
-  card_id?: string
 }
 
 Internal.define({

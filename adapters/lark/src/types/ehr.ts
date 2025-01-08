@@ -16,13 +16,39 @@ declare module '../internal' {
   }
 }
 
+export const enum ListEhrEmployeeQueryStatus {
+  /** 待入职 */
+  ToBeOnboarded = 1,
+  /** 在职 */
+  Active = 2,
+  /** 已取消入职 */
+  OnboardingCancelled = 3,
+  /** 待离职 */
+  Offboarding = 4,
+  /** 已离职 */
+  Offboarded = 5,
+}
+
+export const enum ListEhrEmployeeQueryType {
+  /** 全职 */
+  Regular = 1,
+  /** 实习 */
+  Intern = 2,
+  /** 顾问 */
+  Consultant = 3,
+  /** 外包 */
+  Outsourcing = 4,
+  /** 劳务 */
+  Contractor = 5,
+}
+
 export interface ListEhrEmployeeQuery extends Pagination {
   /** 返回数据类型 */
   view?: 'basic' | 'full'
   /** 员工状态，不传代表查询所有员工状态实际在职 = 2&4可同时查询多个状态的记录，如 status=2&status=4 */
-  status?: (1 | 2 | 3 | 4 | 5)[]
+  status?: ListEhrEmployeeQueryStatus[]
   /** 雇员类型，不传代表查询所有雇员类型 */
-  type?: (1 | 2 | 3 | 4 | 5)[]
+  type?: ListEhrEmployeeQueryType[]
   /** 查询开始时间（创建时间 &gt;= 此时间） */
   start_time?: string
   /** 查询结束时间（创建时间 &lt;= 此时间） */

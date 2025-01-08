@@ -7,7 +7,7 @@ declare module '../internal' {
      * 获取文件夹中的文件清单
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/list
      */
-    listDriveV1File(query?: ListDriveV1FileQuery): Paginated<File, 'files'>
+    listDriveV1File(query?: ListDriveV1FileQuery): Promise<ListDriveV1FileResponse> & AsyncIterableIterator<File>
     /**
      * 新建文件夹
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file/create_folder
@@ -312,6 +312,15 @@ export interface ListDriveV1FileQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListDriveV1FileResponse {
+  /** 文档详细信息 */
+  files?: File[]
+  /** 下一页分页参数 */
+  next_page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+}
+
 export interface CreateFolderDriveV1FileRequest {
   /** 文件夹名称 */
   name: string
@@ -319,9 +328,21 @@ export interface CreateFolderDriveV1FileRequest {
   folder_token: string
 }
 
+export interface CreateFolderDriveV1FileResponse {
+  /** 新创建的文件夹 Token */
+  token?: string
+  /** 创建文件夹的访问 URL */
+  url?: string
+}
+
 export interface TaskCheckDriveV1FileQuery {
   /** 文件相关异步任务id */
   task_id: string
+}
+
+export interface TaskCheckDriveV1FileResponse {
+  /** 异步任务的执行状态 */
+  status?: string
 }
 
 export interface BatchQueryDriveV1MetaRequest {
@@ -336,9 +357,23 @@ export interface BatchQueryDriveV1MetaQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface BatchQueryDriveV1MetaResponse {
+  metas: Meta[]
+  failed_list?: MetaFailed[]
+}
+
 export interface GetDriveV1FileStatisticsQuery {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'mindnote' | 'bitable' | 'wiki' | 'file' | 'docx'
+}
+
+export interface GetDriveV1FileStatisticsResponse {
+  /** 文档token */
+  file_token?: string
+  /** 文档类型 */
+  file_type?: string
+  /** 文档统计信息 */
+  statistics?: FileStatistics
 }
 
 export interface ListDriveV1FileViewRecordQuery extends Pagination {
@@ -364,6 +399,11 @@ export interface CopyDriveV1FileQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CopyDriveV1FileResponse {
+  /** 复制后的文件资源 */
+  file?: File
+}
+
 export interface MoveDriveV1FileRequest {
   /** 文件类型，如果该值为空或者与文件实际类型不匹配，接口会返回失败。 */
   type?: 'file' | 'docx' | 'bitable' | 'doc' | 'sheet' | 'mindnote' | 'folder' | 'slides'
@@ -371,9 +411,19 @@ export interface MoveDriveV1FileRequest {
   folder_token?: string
 }
 
+export interface MoveDriveV1FileResponse {
+  /** 异步任务id，移动文件夹时返回 */
+  task_id?: string
+}
+
 export interface DeleteDriveV1FileQuery {
   /** 被删除文件的类型 */
   type: 'file' | 'docx' | 'bitable' | 'folder' | 'doc' | 'sheet' | 'mindnote' | 'shortcut' | 'slides'
+}
+
+export interface DeleteDriveV1FileResponse {
+  /** 异步任务id，删除文件夹时返回 */
+  task_id?: string
 }
 
 export interface CreateShortcutDriveV1FileRequest {
@@ -386,6 +436,11 @@ export interface CreateShortcutDriveV1FileRequest {
 export interface CreateShortcutDriveV1FileQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateShortcutDriveV1FileResponse {
+  /** 返回创建成功的shortcut节点 */
+  succ_shortcut_node?: File
 }
 
 export interface UploadAllDriveV1FileForm {
@@ -403,6 +458,10 @@ export interface UploadAllDriveV1FileForm {
   file: Blob
 }
 
+export interface UploadAllDriveV1FileResponse {
+  file_token?: string
+}
+
 export interface UploadPrepareDriveV1FileRequest {
   /** 文件名 */
   file_name: string
@@ -412,6 +471,15 @@ export interface UploadPrepareDriveV1FileRequest {
   parent_node: string
   /** 文件大小 */
   size: number
+}
+
+export interface UploadPrepareDriveV1FileResponse {
+  /** 分片上传事务ID */
+  upload_id?: string
+  /** 分片大小策略 */
+  block_size?: number
+  /** 分片数量 */
+  block_num?: number
 }
 
 export interface UploadPartDriveV1FileForm {
@@ -434,6 +502,10 @@ export interface UploadFinishDriveV1FileRequest {
   block_num: number
 }
 
+export interface UploadFinishDriveV1FileResponse {
+  file_token?: string
+}
+
 export interface CreateDriveV1ImportTaskRequest {
   /** 导入文件格式后缀 */
   file_extension: string
@@ -447,6 +519,16 @@ export interface CreateDriveV1ImportTaskRequest {
   point: ImportTaskMountPoint
 }
 
+export interface CreateDriveV1ImportTaskResponse {
+  /** 导入任务ID */
+  ticket?: string
+}
+
+export interface GetDriveV1ImportTaskResponse {
+  /** 导入任务 */
+  result?: ImportTask
+}
+
 export interface CreateDriveV1ExportTaskRequest {
   /** 导出文件扩展名 */
   file_extension: 'docx' | 'pdf' | 'xlsx' | 'csv'
@@ -458,9 +540,19 @@ export interface CreateDriveV1ExportTaskRequest {
   sub_id?: string
 }
 
+export interface CreateDriveV1ExportTaskResponse {
+  /** 导出任务ID */
+  ticket?: string
+}
+
 export interface GetDriveV1ExportTaskQuery {
   /** 导出文档的 token */
   token: string
+}
+
+export interface GetDriveV1ExportTaskResponse {
+  /** 导出结果 */
+  result?: ExportTask
 }
 
 export interface UploadAllDriveV1MediaForm {
@@ -480,6 +572,10 @@ export interface UploadAllDriveV1MediaForm {
   file: Blob
 }
 
+export interface UploadAllDriveV1MediaResponse {
+  file_token?: string
+}
+
 export interface UploadPrepareDriveV1MediaRequest {
   /** 文件名 */
   file_name: string
@@ -491,6 +587,15 @@ export interface UploadPrepareDriveV1MediaRequest {
   parent_node?: string
   /** 扩展信息(可选) */
   extra?: string
+}
+
+export interface UploadPrepareDriveV1MediaResponse {
+  /** 分片上传事务ID */
+  upload_id?: string
+  /** 分片大小策略 */
+  block_size?: number
+  /** 分片数量 */
+  block_num?: number
 }
 
 export interface UploadPartDriveV1MediaForm {
@@ -513,6 +618,10 @@ export interface UploadFinishDriveV1MediaRequest {
   block_num: number
 }
 
+export interface UploadFinishDriveV1MediaResponse {
+  file_token?: string
+}
+
 export interface DownloadDriveV1MediaQuery {
   /** 扩展信息 */
   extra?: string
@@ -523,6 +632,11 @@ export interface BatchGetTmpDownloadUrlDriveV1MediaQuery {
   file_tokens: string[]
   /** 拓展信息(可选) */
   extra?: string
+}
+
+export interface BatchGetTmpDownloadUrlDriveV1MediaResponse {
+  /** 临时下载列表 */
+  tmp_download_urls?: TmpDownloadUrl[]
 }
 
 export interface CreateDriveV1FileVersionRequest {
@@ -537,6 +651,29 @@ export interface CreateDriveV1FileVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateDriveV1FileVersionResponse {
+  /** 版本文档标题，最大长度 1024 个Unicode 码点。通常情况下，一个英文或中文字符对应一个码点，但是某些特殊符号可能会对应多个码点。例如，家庭组合「👨‍👩‍👧」这个表情符号对应5个码点。 */
+  name?: string
+  /** 版本文档版本号 */
+  version?: string
+  /** 源文档token */
+  parent_token?: string
+  /** 版本文档所有者id */
+  owner_id?: string
+  /** 版本文档创建者id */
+  creator_id?: string
+  /** 版本文档创建时间 */
+  create_time?: string
+  /** 版本文档更新时间 */
+  update_time?: string
+  /** 版本文档状态 */
+  status?: '0' | '1' | '2'
+  /** 版本文档类型 */
+  obj_type?: 'docx' | 'sheet'
+  /** 源文档类型 */
+  parent_type?: 'docx' | 'sheet'
+}
+
 export interface ListDriveV1FileVersionQuery extends Pagination {
   /** 原文档类型 */
   obj_type: 'docx' | 'sheet'
@@ -549,6 +686,29 @@ export interface GetDriveV1FileVersionQuery {
   obj_type: 'docx' | 'sheet'
   /** 用户ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface GetDriveV1FileVersionResponse {
+  /** 版本文档标题，最大长度 1024 个Unicode 码点。通常情况下，一个英文或中文字符对应一个码点，但是某些特殊符号可能会对应多个码点。例如，家庭组合「👨‍👩‍👧」这个表情符号对应5个码点。 */
+  name?: string
+  /** 版本文档版本号 */
+  version?: string
+  /** 源文档token */
+  parent_token?: string
+  /** 版本文档所有者id */
+  owner_id?: string
+  /** 版本文档创建者id */
+  creator_id?: string
+  /** 版本文档创建时间 */
+  create_time?: string
+  /** 版本文档更新时间 */
+  update_time?: string
+  /** 版本文档状态 */
+  status?: '0' | '1' | '2'
+  /** 版本文档类型 */
+  obj_type?: 'docx' | 'sheet'
+  /** 源文档类型 */
+  parent_type?: 'docx' | 'sheet'
 }
 
 export interface DeleteDriveV1FileVersionQuery {
@@ -579,6 +739,11 @@ export interface GetSubscribeDriveV1FileQuery {
   event_type?: string
 }
 
+export interface GetSubscribeDriveV1FileResponse {
+  /** 是否有订阅，取值 true 表示已订阅；false 表示未订阅 */
+  is_subscribe?: boolean
+}
+
 export interface DeleteSubscribeDriveV1FileQuery {
   /** 文档类型 */
   file_type: 'doc' | 'docx' | 'sheet' | 'bitable' | 'file' | 'folder'
@@ -596,6 +761,11 @@ export interface BatchCreateDriveV1PermissionMemberQuery {
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'folder' | 'mindnote' | 'minutes' | 'slides'
   /** 添加权限后是否通知对方 */
   need_notification?: boolean
+}
+
+export interface BatchCreateDriveV1PermissionMemberResponse {
+  /** 协作者列表 */
+  members?: BaseMember[]
 }
 
 export interface TransferOwnerDriveV1PermissionMemberRequest {
@@ -625,6 +795,11 @@ export interface AuthDriveV1PermissionMemberQuery {
   action: 'view' | 'edit' | 'share' | 'comment' | 'export' | 'copy' | 'print' | 'manage_public'
 }
 
+export interface AuthDriveV1PermissionMemberResponse {
+  /** 是否有权限 */
+  auth_result: boolean
+}
+
 export interface ListDriveV1PermissionMemberQuery {
   /** 文件类型，需要与文件的 token 相匹配 */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
@@ -632,6 +807,11 @@ export interface ListDriveV1PermissionMemberQuery {
   fields?: string
   /** 协作者的权限角色类型 */
   perm_type?: 'container' | 'single_page'
+}
+
+export interface ListDriveV1PermissionMemberResponse {
+  /** 返回的列表数据 */
+  items?: Member[]
 }
 
 export interface CreateDriveV1PermissionMemberRequest {
@@ -654,6 +834,11 @@ export interface CreateDriveV1PermissionMemberQuery {
   need_notification?: boolean
 }
 
+export interface CreateDriveV1PermissionMemberResponse {
+  /** 本次添加权限的用户信息 */
+  member?: BaseMember
+}
+
 export interface UpdateDriveV1PermissionMemberRequest {
   /** 协作者ID类型 */
   member_type: 'email' | 'openid' | 'unionid' | 'openchat' | 'opendepartmentid' | 'userid' | 'groupid' | 'wikispaceid'
@@ -670,6 +855,11 @@ export interface UpdateDriveV1PermissionMemberQuery {
   need_notification?: boolean
   /** 文件类型，放于query参数中，如：`?type=doc` */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+}
+
+export interface UpdateDriveV1PermissionMemberResponse {
+  /** 本次更新权限的用户信息 */
+  member?: BaseMember
 }
 
 export interface DeleteDriveV1PermissionMemberRequest {
@@ -691,9 +881,19 @@ export interface CreateDriveV1PermissionPublicPasswordQuery {
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
 }
 
+export interface CreateDriveV1PermissionPublicPasswordResponse {
+  /** 密码 */
+  password?: string
+}
+
 export interface UpdateDriveV1PermissionPublicPasswordQuery {
   /** 文件类型，需要与文件的 token 相匹配 */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+}
+
+export interface UpdateDriveV1PermissionPublicPasswordResponse {
+  /** 密码 */
+  password?: string
 }
 
 export interface DeleteDriveV1PermissionPublicPasswordQuery {
@@ -704,6 +904,11 @@ export interface DeleteDriveV1PermissionPublicPasswordQuery {
 export interface GetDriveV1PermissionPublicQuery {
   /** 文件类型，放于query参数中，如：`?type=doc` */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+}
+
+export interface GetDriveV1PermissionPublicResponse {
+  /** 返回的文档公共设置 */
+  permission_public?: PermissionPublic
 }
 
 export interface PatchDriveV1PermissionPublicRequest {
@@ -726,9 +931,19 @@ export interface PatchDriveV1PermissionPublicQuery {
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
 }
 
+export interface PatchDriveV1PermissionPublicResponse {
+  /** 本次更新后的文档公共设置 */
+  permission_public?: PermissionPublic
+}
+
 export interface GetDriveV2PermissionPublicQuery {
   /** 文件类型，需要与文件的 token 相匹配 */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+}
+
+export interface GetDriveV2PermissionPublicResponse {
+  /** 返回的文档公共设置 */
+  permission_public?: PermissionPublic
 }
 
 export interface PatchDriveV2PermissionPublicRequest {
@@ -751,6 +966,11 @@ export interface PatchDriveV2PermissionPublicRequest {
 export interface PatchDriveV2PermissionPublicQuery {
   /** 文件类型，需要与文件的 token 相匹配 */
   type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+}
+
+export interface PatchDriveV2PermissionPublicResponse {
+  /** 本次更新后文档公共设置 */
+  permission_public?: PermissionPublic
 }
 
 export interface ListDriveV1FileCommentQuery extends Pagination {
@@ -776,6 +996,11 @@ export interface BatchQueryDriveV1FileCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface BatchQueryDriveV1FileCommentResponse {
+  /** 评论的相关信息、回复的信息、回复分页的信息 */
+  items?: FileComment[]
+}
+
 export interface PatchDriveV1FileCommentRequest {
   /** 评论解决标志 */
   is_solved: boolean
@@ -798,11 +1023,65 @@ export interface CreateDriveV1FileCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateDriveV1FileCommentResponse {
+  /** 评论 ID */
+  comment_id?: string
+  /** 用户 ID */
+  user_id?: string
+  /** 创建时间 */
+  create_time?: number
+  /** 更新时间 */
+  update_time?: number
+  /** 是否已解决 */
+  is_solved?: boolean
+  /** 解决评论时间 */
+  solved_time?: number
+  /** 解决评论者的用户 ID */
+  solver_user_id?: string
+  /** 是否有更多回复 */
+  has_more?: boolean
+  /** 回复分页标记 */
+  page_token?: string
+  /** 是否是全文评论 */
+  is_whole?: boolean
+  /** 局部评论的引用字段 */
+  quote?: string
+  /** 评论里的回复列表 */
+  reply_list?: ReplyList
+}
+
 export interface GetDriveV1FileCommentQuery {
   /** 文档类型 */
   file_type: 'doc' | 'sheet' | 'file' | 'docx'
   /** 此次调用中使用的用户 ID 的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetDriveV1FileCommentResponse {
+  /** 评论 ID */
+  comment_id?: string
+  /** 用户 ID */
+  user_id?: string
+  /** 创建时间 */
+  create_time?: number
+  /** 更新时间 */
+  update_time?: number
+  /** 是否已解决 */
+  is_solved?: boolean
+  /** 解决评论时间 */
+  solved_time?: number
+  /** 解决评论者的用户 ID */
+  solver_user_id?: string
+  /** 是否有更多回复 */
+  has_more?: boolean
+  /** 回复分页标记 */
+  page_token?: string
+  /** 是否是全文评论 */
+  is_whole?: boolean
+  /** 局部评论的引用字段 */
+  quote?: string
+  /** 评论里的回复列表 */
+  reply_list?: ReplyList
 }
 
 export interface ListDriveV1FileCommentReplyQuery extends Pagination {
@@ -834,294 +1113,6 @@ export interface GetDriveV1FileSubscriptionRequest {
   file_type: 'doc' | 'docx' | 'wiki'
 }
 
-export interface CreateDriveV1FileSubscriptionRequest {
-  /** 订阅关系ID */
-  subscription_id?: string
-  /** 订阅类型 */
-  subscription_type: 'comment_update'
-  /** 是否订阅 */
-  is_subcribe?: boolean
-  /** 文档类型 */
-  file_type: 'doc' | 'docx' | 'wiki'
-}
-
-export interface PatchDriveV1FileSubscriptionRequest {
-  /** 是否订阅 */
-  is_subscribe: boolean
-  /** 文档类型 */
-  file_type: 'doc' | 'docx' | 'wiki'
-}
-
-export interface CreateFolderDriveV1FileResponse {
-  /** 新创建的文件夹 Token */
-  token?: string
-  /** 创建文件夹的访问 URL */
-  url?: string
-}
-
-export interface TaskCheckDriveV1FileResponse {
-  /** 异步任务的执行状态 */
-  status?: string
-}
-
-export interface BatchQueryDriveV1MetaResponse {
-  metas: Meta[]
-  failed_list?: MetaFailed[]
-}
-
-export interface GetDriveV1FileStatisticsResponse {
-  /** 文档token */
-  file_token?: string
-  /** 文档类型 */
-  file_type?: string
-  /** 文档统计信息 */
-  statistics?: FileStatistics
-}
-
-export interface CopyDriveV1FileResponse {
-  /** 复制后的文件资源 */
-  file?: File
-}
-
-export interface MoveDriveV1FileResponse {
-  /** 异步任务id，移动文件夹时返回 */
-  task_id?: string
-}
-
-export interface DeleteDriveV1FileResponse {
-  /** 异步任务id，删除文件夹时返回 */
-  task_id?: string
-}
-
-export interface CreateShortcutDriveV1FileResponse {
-  /** 返回创建成功的shortcut节点 */
-  succ_shortcut_node?: File
-}
-
-export interface UploadAllDriveV1FileResponse {
-  file_token?: string
-}
-
-export interface UploadPrepareDriveV1FileResponse {
-  /** 分片上传事务ID */
-  upload_id?: string
-  /** 分片大小策略 */
-  block_size?: number
-  /** 分片数量 */
-  block_num?: number
-}
-
-export interface UploadFinishDriveV1FileResponse {
-  file_token?: string
-}
-
-export interface CreateDriveV1ImportTaskResponse {
-  /** 导入任务ID */
-  ticket?: string
-}
-
-export interface GetDriveV1ImportTaskResponse {
-  /** 导入任务 */
-  result?: ImportTask
-}
-
-export interface CreateDriveV1ExportTaskResponse {
-  /** 导出任务ID */
-  ticket?: string
-}
-
-export interface GetDriveV1ExportTaskResponse {
-  /** 导出结果 */
-  result?: ExportTask
-}
-
-export interface UploadAllDriveV1MediaResponse {
-  file_token?: string
-}
-
-export interface UploadPrepareDriveV1MediaResponse {
-  /** 分片上传事务ID */
-  upload_id?: string
-  /** 分片大小策略 */
-  block_size?: number
-  /** 分片数量 */
-  block_num?: number
-}
-
-export interface UploadFinishDriveV1MediaResponse {
-  file_token?: string
-}
-
-export interface BatchGetTmpDownloadUrlDriveV1MediaResponse {
-  /** 临时下载列表 */
-  tmp_download_urls?: TmpDownloadUrl[]
-}
-
-export interface CreateDriveV1FileVersionResponse {
-  /** 版本文档标题，最大长度 1024 个Unicode 码点。通常情况下，一个英文或中文字符对应一个码点，但是某些特殊符号可能会对应多个码点。例如，家庭组合「👨‍👩‍👧」这个表情符号对应5个码点。 */
-  name?: string
-  /** 版本文档版本号 */
-  version?: string
-  /** 源文档token */
-  parent_token?: string
-  /** 版本文档所有者id */
-  owner_id?: string
-  /** 版本文档创建者id */
-  creator_id?: string
-  /** 版本文档创建时间 */
-  create_time?: string
-  /** 版本文档更新时间 */
-  update_time?: string
-  /** 版本文档状态 */
-  status?: '0' | '1' | '2'
-  /** 版本文档类型 */
-  obj_type?: 'docx' | 'sheet'
-  /** 源文档类型 */
-  parent_type?: 'docx' | 'sheet'
-}
-
-export interface GetDriveV1FileVersionResponse {
-  /** 版本文档标题，最大长度 1024 个Unicode 码点。通常情况下，一个英文或中文字符对应一个码点，但是某些特殊符号可能会对应多个码点。例如，家庭组合「👨‍👩‍👧」这个表情符号对应5个码点。 */
-  name?: string
-  /** 版本文档版本号 */
-  version?: string
-  /** 源文档token */
-  parent_token?: string
-  /** 版本文档所有者id */
-  owner_id?: string
-  /** 版本文档创建者id */
-  creator_id?: string
-  /** 版本文档创建时间 */
-  create_time?: string
-  /** 版本文档更新时间 */
-  update_time?: string
-  /** 版本文档状态 */
-  status?: '0' | '1' | '2'
-  /** 版本文档类型 */
-  obj_type?: 'docx' | 'sheet'
-  /** 源文档类型 */
-  parent_type?: 'docx' | 'sheet'
-}
-
-export interface GetSubscribeDriveV1FileResponse {
-  /** 是否有订阅，取值 true 表示已订阅；false 表示未订阅 */
-  is_subscribe?: boolean
-}
-
-export interface BatchCreateDriveV1PermissionMemberResponse {
-  /** 协作者列表 */
-  members?: BaseMember[]
-}
-
-export interface AuthDriveV1PermissionMemberResponse {
-  /** 是否有权限 */
-  auth_result: boolean
-}
-
-export interface ListDriveV1PermissionMemberResponse {
-  /** 返回的列表数据 */
-  items?: Member[]
-}
-
-export interface CreateDriveV1PermissionMemberResponse {
-  /** 本次添加权限的用户信息 */
-  member?: BaseMember
-}
-
-export interface UpdateDriveV1PermissionMemberResponse {
-  /** 本次更新权限的用户信息 */
-  member?: BaseMember
-}
-
-export interface CreateDriveV1PermissionPublicPasswordResponse {
-  /** 密码 */
-  password?: string
-}
-
-export interface UpdateDriveV1PermissionPublicPasswordResponse {
-  /** 密码 */
-  password?: string
-}
-
-export interface GetDriveV1PermissionPublicResponse {
-  /** 返回的文档公共设置 */
-  permission_public?: PermissionPublic
-}
-
-export interface PatchDriveV1PermissionPublicResponse {
-  /** 本次更新后的文档公共设置 */
-  permission_public?: PermissionPublic
-}
-
-export interface GetDriveV2PermissionPublicResponse {
-  /** 返回的文档公共设置 */
-  permission_public?: PermissionPublic
-}
-
-export interface PatchDriveV2PermissionPublicResponse {
-  /** 本次更新后文档公共设置 */
-  permission_public?: PermissionPublic
-}
-
-export interface BatchQueryDriveV1FileCommentResponse {
-  /** 评论的相关信息、回复的信息、回复分页的信息 */
-  items?: FileComment[]
-}
-
-export interface CreateDriveV1FileCommentResponse {
-  /** 评论 ID */
-  comment_id?: string
-  /** 用户 ID */
-  user_id?: string
-  /** 创建时间 */
-  create_time?: number
-  /** 更新时间 */
-  update_time?: number
-  /** 是否已解决 */
-  is_solved?: boolean
-  /** 解决评论时间 */
-  solved_time?: number
-  /** 解决评论者的用户 ID */
-  solver_user_id?: string
-  /** 是否有更多回复 */
-  has_more?: boolean
-  /** 回复分页标记 */
-  page_token?: string
-  /** 是否是全文评论 */
-  is_whole?: boolean
-  /** 局部评论的引用字段 */
-  quote?: string
-  /** 评论里的回复列表 */
-  reply_list?: ReplyList
-}
-
-export interface GetDriveV1FileCommentResponse {
-  /** 评论 ID */
-  comment_id?: string
-  /** 用户 ID */
-  user_id?: string
-  /** 创建时间 */
-  create_time?: number
-  /** 更新时间 */
-  update_time?: number
-  /** 是否已解决 */
-  is_solved?: boolean
-  /** 解决评论时间 */
-  solved_time?: number
-  /** 解决评论者的用户 ID */
-  solver_user_id?: string
-  /** 是否有更多回复 */
-  has_more?: boolean
-  /** 回复分页标记 */
-  page_token?: string
-  /** 是否是全文评论 */
-  is_whole?: boolean
-  /** 局部评论的引用字段 */
-  quote?: string
-  /** 评论里的回复列表 */
-  reply_list?: ReplyList
-}
-
 export interface GetDriveV1FileSubscriptionResponse {
   /** 订阅关系ID */
   subscription_id: string
@@ -1133,6 +1124,17 @@ export interface GetDriveV1FileSubscriptionResponse {
   file_type?: 'doc' | 'docx' | 'wiki'
 }
 
+export interface CreateDriveV1FileSubscriptionRequest {
+  /** 订阅关系ID */
+  subscription_id?: string
+  /** 订阅类型 */
+  subscription_type: 'comment_update'
+  /** 是否订阅 */
+  is_subcribe?: boolean
+  /** 文档类型 */
+  file_type: 'doc' | 'docx' | 'wiki'
+}
+
 export interface CreateDriveV1FileSubscriptionResponse {
   /** 订阅关系ID */
   subscription_id?: string
@@ -1142,6 +1144,13 @@ export interface CreateDriveV1FileSubscriptionResponse {
   is_subcribe?: boolean
   /** 文档类型 */
   file_type?: 'doc' | 'docx' | 'wiki'
+}
+
+export interface PatchDriveV1FileSubscriptionRequest {
+  /** 是否订阅 */
+  is_subscribe: boolean
+  /** 文档类型 */
+  file_type: 'doc' | 'docx' | 'wiki'
 }
 
 export interface PatchDriveV1FileSubscriptionResponse {

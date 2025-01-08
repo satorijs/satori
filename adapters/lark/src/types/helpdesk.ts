@@ -142,7 +142,7 @@ declare module '../internal' {
      * 获取全部工单自定义字段
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket_customized_field/list-ticket-customized-fields
      */
-    listHelpdeskTicketCustomizedField(body: ListHelpdeskTicketCustomizedFieldRequest, query?: Pagination): Paginated<TicketCustomizedField>
+    listHelpdeskTicketCustomizedField(body: ListHelpdeskTicketCustomizedFieldRequest, query?: Pagination): Promise<ListHelpdeskTicketCustomizedFieldResponse> & AsyncIterableIterator<TicketCustomizedField>
     /**
      * 创建知识库
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/create
@@ -167,7 +167,7 @@ declare module '../internal' {
      * 获取全部知识库详情
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/list
      */
-    listHelpdeskFaq(query?: ListHelpdeskFaqQuery): Promise<ListHelpdeskFaqResponse>
+    listHelpdeskFaq(query?: ListHelpdeskFaqQuery): Promise<ListHelpdeskFaqResponse> & AsyncIterableIterator<Faq>
     /**
      * 获取知识库图像
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/faq/faq_image
@@ -261,6 +261,11 @@ export interface PatchHelpdeskAgentRequest {
   status?: number
 }
 
+export interface AgentEmailHelpdeskAgentResponse {
+  /** agent emails */
+  agents?: string
+}
+
 export interface CreateHelpdeskAgentScheduleRequest {
   /** 新客服日程 */
   agent_schedules?: AgentScheduleUpdateInfo[]
@@ -271,9 +276,19 @@ export interface PatchHelpdeskAgentSchedulesRequest {
   agent_schedule?: AgentScheduleUpdateInfo
 }
 
+export interface GetHelpdeskAgentSchedulesResponse {
+  /** schedules of an agent */
+  agent_schedule?: AgentSchedule
+}
+
 export interface ListHelpdeskAgentScheduleQuery {
   /** 筛选条件, 1 - online客服, 2 - offline(手动)客服, 3 - off duty(下班)客服, 4 - 移除客服 */
   status: number[]
+}
+
+export interface ListHelpdeskAgentScheduleResponse {
+  /** schedule of all agent */
+  agent_schedules?: AgentSchedule[]
 }
 
 export interface CreateHelpdeskAgentSkillRequest {
@@ -285,9 +300,28 @@ export interface CreateHelpdeskAgentSkillRequest {
   agent_ids?: string[]
 }
 
+export interface CreateHelpdeskAgentSkillResponse {
+  agent_skill_id?: string
+}
+
 export interface PatchHelpdeskAgentSkillRequest {
   /** 更新技能 */
   agent_skill?: AgentSkill
+}
+
+export interface GetHelpdeskAgentSkillResponse {
+  /** agent skill */
+  agent_skill?: AgentSkill
+}
+
+export interface ListHelpdeskAgentSkillResponse {
+  /** list of agent groups */
+  agent_skills?: AgentSkill[]
+}
+
+export interface ListHelpdeskAgentSkillRuleResponse {
+  /** all rules for agent skill */
+  rules?: AgentSkillRule[]
 }
 
 export interface StartServiceHelpdeskTicketRequest {
@@ -299,6 +333,16 @@ export interface StartServiceHelpdeskTicketRequest {
   open_id: string
   /** 工单来源自定义信息，长度限制1024字符，如设置，[获取工单详情](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket/get)会返回此信息 */
   customized_info?: string
+}
+
+export interface StartServiceHelpdeskTicketResponse {
+  /** chat id */
+  chat_id: string
+}
+
+export interface GetHelpdeskTicketResponse {
+  /** ticket detail */
+  ticket?: Ticket
 }
 
 export interface UpdateHelpdeskTicketRequest {
@@ -355,6 +399,12 @@ export interface ListHelpdeskTicketQuery {
   update_time_end?: number
 }
 
+export interface ListHelpdeskTicketResponse {
+  /** the total count */
+  total?: number
+  tickets?: Ticket[]
+}
+
 export interface TicketImageHelpdeskTicketQuery {
   /** 工单ID */
   ticket_id: string
@@ -376,11 +426,23 @@ export interface CustomizedFieldsHelpdeskTicketQuery {
   visible_only?: boolean
 }
 
+export interface CustomizedFieldsHelpdeskTicketResponse {
+  /** user customized fields */
+  user_customized_fields?: UserCustomizedField[]
+  /** ticket customized fields */
+  ticket_customized_fields?: TicketCustomizedField[]
+}
+
 export interface CreateHelpdeskTicketMessageRequest {
   /** 消息类型；text：纯文本；post：富文本 */
   msg_type: string
   /** - 纯文本，参考[发送文本消息](/ssl:ttdoc/ukTMukTMukTM/uUjNz4SN2MjL1YzM)中的content；- 富文本，参考[发送富文本消息](/ssl:ttdoc/ukTMukTMukTM/uMDMxEjLzATMx4yMwETM)中的content */
   content: string
+}
+
+export interface CreateHelpdeskTicketMessageResponse {
+  /** chat消息open ID */
+  message_id?: string
 }
 
 export interface ListHelpdeskTicketMessageQuery {
@@ -392,6 +454,13 @@ export interface ListHelpdeskTicketMessageQuery {
   page?: number
   /** 消息数量，最大200，默认20 */
   page_size?: number
+}
+
+export interface ListHelpdeskTicketMessageResponse {
+  /** list of ticket messages */
+  messages?: TicketMessage[]
+  /** total number of messages */
+  total?: number
 }
 
 export interface CreateHelpdeskBotMessageRequest {
@@ -408,6 +477,10 @@ export interface CreateHelpdeskBotMessageRequest {
 export interface CreateHelpdeskBotMessageQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateHelpdeskBotMessageResponse {
+  message_id?: string
 }
 
 export interface CreateHelpdeskTicketCustomizedFieldRequest {
@@ -446,9 +519,51 @@ export interface PatchHelpdeskTicketCustomizedFieldRequest {
   required?: boolean
 }
 
+export interface GetHelpdeskTicketCustomizedFieldResponse {
+  /** ticket customized field id */
+  ticket_customized_field_id: string
+  /** help desk id */
+  helpdesk_id: string
+  /** key name */
+  key_name: string
+  /** display name */
+  display_name: string
+  /** the position of ticket customized field in the page */
+  position: string
+  /** type of the field */
+  field_type: string
+  /** description of the field */
+  description: string
+  /** if the field is visible */
+  visible: boolean
+  /** if the field is editable */
+  editable: boolean
+  /** if the field is required */
+  required: boolean
+  /** the time when the field is created */
+  created_at?: string
+  /** the time when the field is updated */
+  updated_at?: string
+  /** the user who created the ticket customized field */
+  created_by?: TicketUser
+  /** the user who recently updated the ticket customized field */
+  updated_by?: TicketUser
+  /** if the dropdown field supports multi-select */
+  dropdown_allow_multiple?: boolean
+}
+
 export interface ListHelpdeskTicketCustomizedFieldRequest {
   /** 是否可见 */
   visible?: boolean
+}
+
+export interface ListHelpdeskTicketCustomizedFieldResponse {
+  /** whether there is more data */
+  has_more?: boolean
+  /** the next page token */
+  next_page_token?: string
+  /** all the ticket customized fields */
+  items?: TicketCustomizedField[]
 }
 
 export interface CreateHelpdeskFaqRequest {
@@ -456,9 +571,19 @@ export interface CreateHelpdeskFaqRequest {
   faq?: FaqCreateInfo
 }
 
+export interface CreateHelpdeskFaqResponse {
+  /** faq detail */
+  faq?: Faq
+}
+
 export interface PatchHelpdeskFaqRequest {
   /** 修改的知识库内容 */
   faq?: FaqUpdateInfo
+}
+
+export interface GetHelpdeskFaqResponse {
+  /** faq detail */
+  faq?: Faq
 }
 
 export interface ListHelpdeskFaqQuery extends Pagination {
@@ -468,6 +593,18 @@ export interface ListHelpdeskFaqQuery extends Pagination {
   status?: string
   /** 搜索条件: 关键词，匹配问题标题，问题关键字，用户姓名 */
   search?: string
+}
+
+export interface ListHelpdeskFaqResponse {
+  /** if there's next page */
+  has_more?: boolean
+  /** the next page token */
+  page_token?: string
+  /** the page size */
+  page_size?: number
+  /** the total count */
+  total?: number
+  items?: Faq[]
 }
 
 export interface SearchHelpdeskFaqQuery extends Pagination {
@@ -486,6 +623,24 @@ export interface CreateHelpdeskCategoryRequest {
   language?: string
 }
 
+export interface CreateHelpdeskCategoryResponse {
+  /** category */
+  category?: Category
+}
+
+export interface GetHelpdeskCategoryResponse {
+  /** category id */
+  category_id: string
+  /** category id, for backward compatibility */
+  id: string
+  /** category name */
+  name: string
+  /** helpdesk id */
+  helpdesk_id: string
+  /** category language */
+  language?: string
+}
+
 export interface PatchHelpdeskCategoryRequest {
   /** category name */
   name?: string
@@ -500,6 +655,11 @@ export interface ListHelpdeskCategoryQuery {
   order_by?: number
   /** 顺序。true: 正序；false：反序 */
   asc?: boolean
+}
+
+export interface ListHelpdeskCategoryResponse {
+  /** list of categories */
+  categories?: Category[]
 }
 
 export interface CreateHelpdeskNotificationRequest {
@@ -548,6 +708,13 @@ export interface CreateHelpdeskNotificationRequest {
 export interface CreateHelpdeskNotificationQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateHelpdeskNotificationResponse {
+  /** 创建成功后的唯一id */
+  notification_id?: string
+  /** 当前状态 */
+  status?: number
 }
 
 export interface PatchHelpdeskNotificationRequest {
@@ -603,9 +770,21 @@ export interface GetHelpdeskNotificationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetHelpdeskNotificationResponse {
+  /** push任务详情 */
+  notification?: Notification
+  /** 审批链接 */
+  approval_app_link?: string
+}
+
 export interface SubmitApproveHelpdeskNotificationRequest {
   /** 提交审批理由 */
   reason: string
+}
+
+export interface SubmitApproveHelpdeskNotificationResponse {
+  /** 是否有权限创建或者管理审批流程 （有两种情况会导致没有权限： 1：用户没有安装服务台小程序，需要在https://app.feishu.cn/app/cli_9f9f8825d53b900d或者https://ftest.feishu.cn/admin/appCenter/manage/cli_9f9f8825d53b900d?lang=zh-CN 安装小程序 2：用户安装的服务台小程序版本过低） */
+  has_access?: boolean
 }
 
 export interface ExecuteSendHelpdeskNotificationRequest {
@@ -626,176 +805,6 @@ export interface SubscribeHelpdeskEventRequest {
 export interface UnsubscribeHelpdeskEventRequest {
   /** event list to unsubscribe */
   events: Event[]
-}
-
-export interface AgentEmailHelpdeskAgentResponse {
-  /** agent emails */
-  agents?: string
-}
-
-export interface GetHelpdeskAgentSchedulesResponse {
-  /** schedules of an agent */
-  agent_schedule?: AgentSchedule
-}
-
-export interface ListHelpdeskAgentScheduleResponse {
-  /** schedule of all agent */
-  agent_schedules?: AgentSchedule[]
-}
-
-export interface CreateHelpdeskAgentSkillResponse {
-  agent_skill_id?: string
-}
-
-export interface GetHelpdeskAgentSkillResponse {
-  /** agent skill */
-  agent_skill?: AgentSkill
-}
-
-export interface ListHelpdeskAgentSkillResponse {
-  /** list of agent groups */
-  agent_skills?: AgentSkill[]
-}
-
-export interface ListHelpdeskAgentSkillRuleResponse {
-  /** all rules for agent skill */
-  rules?: AgentSkillRule[]
-}
-
-export interface StartServiceHelpdeskTicketResponse {
-  /** chat id */
-  chat_id: string
-}
-
-export interface GetHelpdeskTicketResponse {
-  /** ticket detail */
-  ticket?: Ticket
-}
-
-export interface ListHelpdeskTicketResponse {
-  /** the total count */
-  total?: number
-  tickets?: Ticket[]
-}
-
-export interface CustomizedFieldsHelpdeskTicketResponse {
-  /** user customized fields */
-  user_customized_fields?: UserCustomizedField[]
-  /** ticket customized fields */
-  ticket_customized_fields?: TicketCustomizedField[]
-}
-
-export interface CreateHelpdeskTicketMessageResponse {
-  /** chat消息open ID */
-  message_id?: string
-}
-
-export interface ListHelpdeskTicketMessageResponse {
-  /** list of ticket messages */
-  messages?: TicketMessage[]
-  /** total number of messages */
-  total?: number
-}
-
-export interface CreateHelpdeskBotMessageResponse {
-  message_id?: string
-}
-
-export interface GetHelpdeskTicketCustomizedFieldResponse {
-  /** ticket customized field id */
-  ticket_customized_field_id: string
-  /** help desk id */
-  helpdesk_id: string
-  /** key name */
-  key_name: string
-  /** display name */
-  display_name: string
-  /** the position of ticket customized field in the page */
-  position: string
-  /** type of the field */
-  field_type: string
-  /** description of the field */
-  description: string
-  /** if the field is visible */
-  visible: boolean
-  /** if the field is editable */
-  editable: boolean
-  /** if the field is required */
-  required: boolean
-  /** the time when the field is created */
-  created_at?: string
-  /** the time when the field is updated */
-  updated_at?: string
-  /** the user who created the ticket customized field */
-  created_by?: TicketUser
-  /** the user who recently updated the ticket customized field */
-  updated_by?: TicketUser
-  /** if the dropdown field supports multi-select */
-  dropdown_allow_multiple?: boolean
-}
-
-export interface CreateHelpdeskFaqResponse {
-  /** faq detail */
-  faq?: Faq
-}
-
-export interface GetHelpdeskFaqResponse {
-  /** faq detail */
-  faq?: Faq
-}
-
-export interface ListHelpdeskFaqResponse {
-  /** if there's next page */
-  has_more?: boolean
-  /** the next page token */
-  page_token?: string
-  /** the page size */
-  page_size?: number
-  /** the total count */
-  total?: number
-  items?: Faq[]
-}
-
-export interface CreateHelpdeskCategoryResponse {
-  /** category */
-  category?: Category
-}
-
-export interface GetHelpdeskCategoryResponse {
-  /** category id */
-  category_id: string
-  /** category id, for backward compatibility */
-  id: string
-  /** category name */
-  name: string
-  /** helpdesk id */
-  helpdesk_id: string
-  /** category language */
-  language?: string
-}
-
-export interface ListHelpdeskCategoryResponse {
-  /** list of categories */
-  categories?: Category[]
-}
-
-export interface CreateHelpdeskNotificationResponse {
-  /** 创建成功后的唯一id */
-  notification_id?: string
-  /** 当前状态 */
-  status?: number
-}
-
-export interface GetHelpdeskNotificationResponse {
-  /** push任务详情 */
-  notification?: Notification
-  /** 审批链接 */
-  approval_app_link?: string
-}
-
-export interface SubmitApproveHelpdeskNotificationResponse {
-  /** 是否有权限创建或者管理审批流程 （有两种情况会导致没有权限： 1：用户没有安装服务台小程序，需要在https://app.feishu.cn/app/cli_9f9f8825d53b900d或者https://ftest.feishu.cn/admin/appCenter/manage/cli_9f9f8825d53b900d?lang=zh-CN 安装小程序 2：用户安装的服务台小程序版本过低） */
-  has_access?: boolean
 }
 
 Internal.define({
@@ -863,7 +872,7 @@ Internal.define({
   },
   '/helpdesk/v1/faqs': {
     POST: 'createHelpdeskFaq',
-    GET: 'listHelpdeskFaq',
+    GET: { name: 'listHelpdeskFaq', pagination: { argIndex: 0 } },
   },
   '/helpdesk/v1/faqs/{id}': {
     DELETE: 'deleteHelpdeskFaq',

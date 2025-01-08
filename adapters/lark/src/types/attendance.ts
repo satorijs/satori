@@ -242,412 +242,6 @@ export interface CreateAttendanceShiftQuery {
   employee_type?: 'employee_id' | 'employee_no'
 }
 
-export interface QueryAttendanceShiftQuery {
-  /** 班次名称 */
-  shift_name: string
-}
-
-export interface BatchCreateAttendanceUserDailyShiftRequest {
-  /** 班表信息列表 */
-  user_daily_shifts: UserDailyShift[]
-  /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
-  operator_id?: string
-}
-
-export interface BatchCreateAttendanceUserDailyShiftQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserDailyShiftRequest {
-  /** employee_no 或 employee_id 列表 */
-  user_ids: string[]
-  /** 查询的起始工作日 */
-  check_date_from: number
-  /** 查询的结束工作日 */
-  check_date_to: number
-}
-
-export interface QueryAttendanceUserDailyShiftQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface BatchCreateTempAttendanceUserDailyShiftRequest {
-  /** 临时班表信息列表（数量限制50以内） */
-  user_tmp_daily_shifts: UserTmpDailyShift[]
-  /** 操作人uid */
-  operator_id?: string
-}
-
-export interface BatchCreateTempAttendanceUserDailyShiftQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface ListUserAttendanceGroupQuery extends Pagination {
-  /** 用户 ID 的类型 */
-  employee_type: string
-  /** 部门 ID 的类型 */
-  dept_type: string
-  /** 打卡类型 */
-  member_clock_type: number
-}
-
-export interface CreateAttendanceGroupRequest {
-  /** 6921319402260496386 */
-  group: Group
-  /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
-  operator_id?: string
-}
-
-export interface CreateAttendanceGroupQuery {
-  /** 用户 ID 的类型 */
-  employee_type: 'employee_id' | 'employee_no'
-  /** 部门 ID 的类型 */
-  dept_type: 'open_id'
-}
-
-export interface GetAttendanceGroupQuery {
-  /** 用户 ID 的类型 */
-  employee_type: 'employee_id' | 'employee_no'
-  /** 部门 ID 的类型 */
-  dept_type: 'open_id'
-}
-
-export interface SearchAttendanceGroupRequest {
-  /** 考勤组名称 */
-  group_name: string
-}
-
-export interface ModifyAttendanceUserSettingRequest {
-  /** 用户设置 */
-  user_setting?: UserSetting
-}
-
-export interface ModifyAttendanceUserSettingQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserSettingRequest {
-  /** employee_no 或 employee_id 列表 */
-  user_ids: string[]
-}
-
-export interface QueryAttendanceUserSettingQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface UploadAttendanceFileForm {
-  /** 文件内容 */
-  file?: Blob
-}
-
-export interface UploadAttendanceFileQuery {
-  /** 带后缀的文件名 */
-  file_name: string
-}
-
-export interface UpdateAttendanceUserStatsViewRequest {
-  /** 统计设置 */
-  view: UserStatsView
-}
-
-export interface UpdateAttendanceUserStatsViewQuery {
-  /** 员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserStatsFieldRequest {
-  /** 语言类型 */
-  locale: 'en' | 'ja' | 'zh'
-  /** 统计类型 */
-  stats_type: 'daily' | 'month'
-  /** 开始时间 */
-  start_date: number
-  /** 结束时间（时间间隔不超过 40 天） */
-  end_date: number
-}
-
-export interface QueryAttendanceUserStatsFieldQuery {
-  /** 响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserStatsViewRequest {
-  /** 语言类型 */
-  locale: 'en' | 'ja' | 'zh'
-  /** 统计类型 */
-  stats_type: 'daily' | 'month'
-  /** 查询用户id，同【查询统计数据】、【更新统计设置】user_id */
-  user_id?: string
-}
-
-export interface QueryAttendanceUserStatsViewQuery {
-  /** 响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserStatsDataRequest {
-  /** 语言类型 */
-  locale: 'en' | 'ja' | 'zh'
-  /** 统计类型 */
-  stats_type: 'daily' | 'month'
-  /** 开始时间 */
-  start_date: number
-  /** 结束时间（时间间隔不超过 40 天） */
-  end_date: number
-  /** 查询的用户 ID 列表（用户数量不超过 200） */
-  user_ids?: string[]
-  /** 是否需要历史数据 */
-  need_history?: boolean
-  /** 只展示当前考勤组 */
-  current_group_only?: boolean
-  /** 查询用户id，同【更新统计设置】、【查询统计设置】user_id */
-  user_id?: string
-}
-
-export interface QueryAttendanceUserStatsDataQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserApprovalRequest {
-  /** employee_no 或 employee_id 列表 */
-  user_ids: string[]
-  /** 查询的起始工作日 */
-  check_date_from: number
-  /** 查询的结束工作日，与 check_date_from 的时间间隔不超过 30 天 */
-  check_date_to: number
-  /** 查询依据的时间类型（不填默认依据PeriodTime） */
-  check_date_type?: 'PeriodTime' | 'CreateTime' | 'UpdateTime'
-  /** 查询状态（不填默认查询已通过状态） */
-  status?: 0 | 1 | 2 | 3 | 4
-  /** 查询的起始时间，精确到秒的时间戳 */
-  check_time_from?: string
-  /** 查询的结束时间，精确到秒的时间戳 */
-  check_time_to?: string
-}
-
-export interface QueryAttendanceUserApprovalQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no' | 'open_id'
-}
-
-export interface CreateAttendanceUserApprovalRequest {
-  /** 审批信息 */
-  user_approval?: UserApproval
-}
-
-export interface CreateAttendanceUserApprovalQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no' | 'open_id'
-}
-
-export interface ProcessAttendanceApprovalInfoRequest {
-  /** 审批实例 ID，获取方式：1）[获取审批通过数据](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/query) 2）[写入审批结果](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/create) 3）[通知补卡审批发起（补卡情况下）](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_task_remedy/create) */
-  approval_id: string
-  /** 审批类型，leave：请假，out：外出，overtime：加班，trip：出差，remedy：补卡 */
-  approval_type: string
-  /** 审批状态，1：不通过，2：通过，4：撤销 */
-  status: number
-}
-
-export interface CreateAttendanceUserTaskRemedyRequest {
-  /** 用户工号 */
-  user_id: string
-  /** 补卡日期 */
-  remedy_date: number
-  /** 第几次上下班，可能值0，1，2 */
-  punch_no: number
-  /** 上班/下班，1是上班，2是下班 */
-  work_type: number
-  /** 补卡时间 */
-  remedy_time: string
-  /** 补卡原因 */
-  reason: string
-  /** 补卡时间戳，精确到秒的时间戳 */
-  time?: string
-}
-
-export interface CreateAttendanceUserTaskRemedyQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyRequest {
-  /** 用户 ID */
-  user_id: string
-  /** 补卡日期 */
-  remedy_date: number
-}
-
-export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyQuery {
-  /** 请求体和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserTaskRemedyRequest {
-  /** employee_no 或 employee_id 列表 */
-  user_ids: string[]
-  /** 查询的起始时间，精确到秒的时间戳 */
-  check_time_from: string
-  /** 查询的结束时间，精确到秒的时间戳 */
-  check_time_to: string
-  /** 查询依据的时间类型（不填默认依据PeriodTime） */
-  check_date_type?: 'PeriodTime' | 'CreateTime' | 'UpdateTime'
-  /** 查询状态（不填默认查询已通过状态） */
-  status?: 0 | 1 | 2 | 3 | 4
-}
-
-export interface QueryAttendanceUserTaskRemedyQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface UserStatsFieldsQueryAttendanceArchiveRuleRequest {
-  /** 语言类型 */
-  locale?: string
-  /** 月份 */
-  month: string
-  /** 归档规则id */
-  archive_rule_id: string
-  /** 操作者id */
-  operator_id: string
-}
-
-export interface UserStatsFieldsQueryAttendanceArchiveRuleQuery {
-  /** 用户 ID 的类型 */
-  employee_type: string
-}
-
-export interface UploadReportAttendanceArchiveRuleRequest {
-  /** 月份 */
-  month: string
-  /** 操作者ID */
-  operator_id: string
-  /** 归档报表内容(不超过50个) */
-  archive_report_datas?: ArchiveReportData[]
-  /** 归档规则id */
-  archive_rule_id: string
-}
-
-export interface UploadReportAttendanceArchiveRuleQuery {
-  /** 用户 ID 的类型 */
-  employee_type: string
-}
-
-export interface DelReportAttendanceArchiveRuleRequest {
-  /** 月份 */
-  month: string
-  /** 操作者ID */
-  operator_id: string
-  /** 归档规则id */
-  archive_rule_id: string
-  /** 用户id */
-  user_ids?: string[]
-}
-
-export interface DelReportAttendanceArchiveRuleQuery {
-  /** 员工工号类型 */
-  employee_type: string
-}
-
-export interface BatchCreateAttendanceUserFlowRequest {
-  /** 打卡流水记录列表 */
-  flow_records: UserFlow[]
-}
-
-export interface BatchCreateAttendanceUserFlowQuery {
-  /** 请求体和响应体中的 user_id 和 creator_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface GetAttendanceUserFlowQuery {
-  /** 响应体中的 user_id 和 creator_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-}
-
-export interface QueryAttendanceUserFlowRequest {
-  /** employee_no 或 employee_id 列表，长度不超过 50 */
-  user_ids: string[]
-  /** 查询的起始时间，时间戳 */
-  check_time_from: string
-  /** 查询的结束时间，时间戳 */
-  check_time_to: string
-}
-
-export interface QueryAttendanceUserFlowQuery {
-  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-  /** 由于新入职用户可以复用已离职用户的employee_no/employee_id。如果true，返回employee_no/employee_id对应的所有在职+离职用户数据；如果false，只返回employee_no/employee_id对应的在职或最近一个离职用户数据 */
-  include_terminated_user?: boolean
-}
-
-export interface QueryAttendanceUserTaskRequest {
-  /** employee_no 或 employee_id 列表 */
-  user_ids: string[]
-  /** 查询的起始工作日 */
-  check_date_from: number
-  /** 查询的结束工作日 */
-  check_date_to: number
-  /** 是否需要加班班段打卡结果 */
-  need_overtime_result?: boolean
-}
-
-export interface QueryAttendanceUserTaskQuery {
-  /** 员工工号类型 */
-  employee_type: 'employee_id' | 'employee_no'
-  /** 是否忽略无效和没有权限的用户。如果 true，则返回有效用户的信息，并告知无效和没有权限的用户信息；如果 false，且 user_ids 中存在无效或没有权限的用户，则返回错误 */
-  ignore_invalid_users?: boolean
-  /** 由于新入职员工可以复用已离职员工的 employee_no/employee_id，如果 true，则返回 employee_no/employee_id 对应的所有在职 + 离职员工的数据；如果 false，则只返回 employee_no/employee_id 对应的在职或最近一个离职员工的数据 */
-  include_terminated_user?: boolean
-}
-
-export interface GetAttendanceLeaveEmployExpireRecordRequest {
-  /** 员工ID */
-  employment_id: string
-  /** 假期类型ID */
-  leave_type_id: string
-  /** 失效最早日期  2023-04-10 格式 */
-  start_expiration_date: string
-  /** 失效最晚日期 2023-05-10 格式 */
-  end_expiration_date: string
-  /** 时间偏移，东八区：480    8*60， 如果没有这个参数，默认东八区 */
-  time_offset?: number
-}
-
-export interface GetAttendanceLeaveEmployExpireRecordQuery {
-  /** 用户 ID 类型 */
-  user_id_type?: 'open_id' | 'people_corehr_id' | 'union_id' | 'user_id'
-}
-
-export interface PatchAttendanceLeaveAccrualRecordRequest {
-  /** 授予记录的唯一ID */
-  leave_granting_record_id: string
-  /** 员工ID */
-  employment_id: string
-  /** 假期类型ID */
-  leave_type_id: string
-  /** 修改授予记录原因 */
-  reason: LangText[]
-  /** 时间偏移，东八区：480    8*60 */
-  time_offset?: number
-  /** 失效日期，格式"2020-01-01" */
-  expiration_date?: string
-  /** 修改source 余额 */
-  quantity?: string
-  /** 是否参与清算 */
-  section_type?: number
-}
-
-export interface PatchAttendanceLeaveAccrualRecordQuery {
-  /** 用户 ID 类型 */
-  user_id_type?: 'open_id' | 'people_corehr_id' | 'union_id' | 'user_id'
-}
-
 export interface CreateAttendanceShiftResponse {
   /** 班次 */
   shift?: Shift
@@ -696,6 +290,11 @@ export interface GetAttendanceShiftResponse {
   rest_time_flexible_configs?: RestTimeFlexibleConfig[]
 }
 
+export interface QueryAttendanceShiftQuery {
+  /** 班次名称 */
+  shift_name: string
+}
+
 export interface QueryAttendanceShiftResponse {
   /** 班次Id */
   shift_id: string
@@ -739,9 +338,35 @@ export interface QueryAttendanceShiftResponse {
   rest_time_flexible_configs?: RestTimeFlexibleConfig[]
 }
 
+export interface BatchCreateAttendanceUserDailyShiftRequest {
+  /** 班表信息列表 */
+  user_daily_shifts: UserDailyShift[]
+  /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
+  operator_id?: string
+}
+
+export interface BatchCreateAttendanceUserDailyShiftQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface BatchCreateAttendanceUserDailyShiftResponse {
   /** 班表信息列表 */
   user_daily_shifts?: UserDailyShift[]
+}
+
+export interface QueryAttendanceUserDailyShiftRequest {
+  /** employee_no 或 employee_id 列表 */
+  user_ids: string[]
+  /** 查询的起始工作日 */
+  check_date_from: number
+  /** 查询的结束工作日 */
+  check_date_to: number
+}
+
+export interface QueryAttendanceUserDailyShiftQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface QueryAttendanceUserDailyShiftResponse {
@@ -749,13 +374,55 @@ export interface QueryAttendanceUserDailyShiftResponse {
   user_daily_shifts?: UserDailyShift[]
 }
 
+export interface BatchCreateTempAttendanceUserDailyShiftRequest {
+  /** 临时班表信息列表（数量限制50以内） */
+  user_tmp_daily_shifts: UserTmpDailyShift[]
+  /** 操作人uid */
+  operator_id?: string
+}
+
+export interface BatchCreateTempAttendanceUserDailyShiftQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface BatchCreateTempAttendanceUserDailyShiftResponse {
   /** 临时班表信息列表 */
   user_tmp_daily_shifts?: UserTmpDailyShift[]
 }
 
+export interface ListUserAttendanceGroupQuery extends Pagination {
+  /** 用户 ID 的类型 */
+  employee_type: string
+  /** 部门 ID 的类型 */
+  dept_type: string
+  /** 打卡类型 */
+  member_clock_type: number
+}
+
+export interface CreateAttendanceGroupRequest {
+  /** 6921319402260496386 */
+  group: Group
+  /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
+  operator_id?: string
+}
+
+export interface CreateAttendanceGroupQuery {
+  /** 用户 ID 的类型 */
+  employee_type: 'employee_id' | 'employee_no'
+  /** 部门 ID 的类型 */
+  dept_type: 'open_id'
+}
+
 export interface CreateAttendanceGroupResponse {
   group?: Group
+}
+
+export interface GetAttendanceGroupQuery {
+  /** 用户 ID 的类型 */
+  employee_type: 'employee_id' | 'employee_no'
+  /** 部门 ID 的类型 */
+  dept_type: 'open_id'
 }
 
 export interface GetAttendanceGroupResponse {
@@ -898,9 +565,24 @@ export interface GetAttendanceGroupResponse {
   allow_apply_punch?: boolean
 }
 
+export interface SearchAttendanceGroupRequest {
+  /** 考勤组名称 */
+  group_name: string
+}
+
 export interface SearchAttendanceGroupResponse {
   /** 考勤组列表 */
   group_list?: GroupMeta[]
+}
+
+export interface ModifyAttendanceUserSettingRequest {
+  /** 用户设置 */
+  user_setting?: UserSetting
+}
+
+export interface ModifyAttendanceUserSettingQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface ModifyAttendanceUserSettingResponse {
@@ -908,13 +590,43 @@ export interface ModifyAttendanceUserSettingResponse {
   user_setting?: UserSetting
 }
 
+export interface QueryAttendanceUserSettingRequest {
+  /** employee_no 或 employee_id 列表 */
+  user_ids: string[]
+}
+
+export interface QueryAttendanceUserSettingQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface QueryAttendanceUserSettingResponse {
   /** 用户设置信息列表 */
   user_settings?: UserSetting[]
 }
 
+export interface UploadAttendanceFileForm {
+  /** 文件内容 */
+  file?: Blob
+}
+
+export interface UploadAttendanceFileQuery {
+  /** 带后缀的文件名 */
+  file_name: string
+}
+
 export interface UploadAttendanceFileResponse {
   file?: File
+}
+
+export interface UpdateAttendanceUserStatsViewRequest {
+  /** 统计设置 */
+  view: UserStatsView
+}
+
+export interface UpdateAttendanceUserStatsViewQuery {
+  /** 员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface UpdateAttendanceUserStatsViewResponse {
@@ -922,12 +634,66 @@ export interface UpdateAttendanceUserStatsViewResponse {
   view?: UserStatsView
 }
 
+export interface QueryAttendanceUserStatsFieldRequest {
+  /** 语言类型 */
+  locale: 'en' | 'ja' | 'zh'
+  /** 统计类型 */
+  stats_type: 'daily' | 'month'
+  /** 开始时间 */
+  start_date: number
+  /** 结束时间（时间间隔不超过 40 天） */
+  end_date: number
+}
+
+export interface QueryAttendanceUserStatsFieldQuery {
+  /** 响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface QueryAttendanceUserStatsFieldResponse {
   user_stats_field?: UserStatsField
 }
 
+export interface QueryAttendanceUserStatsViewRequest {
+  /** 语言类型 */
+  locale: 'en' | 'ja' | 'zh'
+  /** 统计类型 */
+  stats_type: 'daily' | 'month'
+  /** 查询用户id，同【查询统计数据】、【更新统计设置】user_id */
+  user_id?: string
+}
+
+export interface QueryAttendanceUserStatsViewQuery {
+  /** 响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface QueryAttendanceUserStatsViewResponse {
   view?: UserStatsView
+}
+
+export interface QueryAttendanceUserStatsDataRequest {
+  /** 语言类型 */
+  locale: 'en' | 'ja' | 'zh'
+  /** 统计类型 */
+  stats_type: 'daily' | 'month'
+  /** 开始时间 */
+  start_date: number
+  /** 结束时间（时间间隔不超过 40 天） */
+  end_date: number
+  /** 查询的用户 ID 列表（用户数量不超过 200） */
+  user_ids?: string[]
+  /** 是否需要历史数据 */
+  need_history?: boolean
+  /** 只展示当前考勤组 */
+  current_group_only?: boolean
+  /** 查询用户id，同【更新统计设置】、【查询统计设置】user_id */
+  user_id?: string
+}
+
+export interface QueryAttendanceUserStatsDataQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface QueryAttendanceUserStatsDataResponse {
@@ -937,9 +703,54 @@ export interface QueryAttendanceUserStatsDataResponse {
   invalid_user_list?: string[]
 }
 
+export const enum QueryAttendanceUserApprovalRequestStatus {
+  /** 待审批 */
+  Todo = 0,
+  /** 审批未通过 */
+  Rejected = 1,
+  /** 审批通过 */
+  Approved = 2,
+  /** 审批已取消 */
+  Canceled = 3,
+  /** 已撤回 */
+  Reverted = 4,
+}
+
+export interface QueryAttendanceUserApprovalRequest {
+  /** employee_no 或 employee_id 列表 */
+  user_ids: string[]
+  /** 查询的起始工作日 */
+  check_date_from: number
+  /** 查询的结束工作日，与 check_date_from 的时间间隔不超过 30 天 */
+  check_date_to: number
+  /** 查询依据的时间类型（不填默认依据PeriodTime） */
+  check_date_type?: 'PeriodTime' | 'CreateTime' | 'UpdateTime'
+  /** 查询状态（不填默认查询已通过状态） */
+  status?: QueryAttendanceUserApprovalRequestStatus
+  /** 查询的起始时间，精确到秒的时间戳 */
+  check_time_from?: string
+  /** 查询的结束时间，精确到秒的时间戳 */
+  check_time_to?: string
+}
+
+export interface QueryAttendanceUserApprovalQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no' | 'open_id'
+}
+
 export interface QueryAttendanceUserApprovalResponse {
   /** 审批结果列表 */
   user_approvals?: UserApproval[]
+}
+
+export interface CreateAttendanceUserApprovalRequest {
+  /** 审批信息 */
+  user_approval?: UserApproval
+}
+
+export interface CreateAttendanceUserApprovalQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no' | 'open_id'
 }
 
 export interface CreateAttendanceUserApprovalResponse {
@@ -947,9 +758,40 @@ export interface CreateAttendanceUserApprovalResponse {
   user_approval?: UserApproval
 }
 
+export interface ProcessAttendanceApprovalInfoRequest {
+  /** 审批实例 ID，获取方式：1）[获取审批通过数据](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/query) 2）[写入审批结果](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/create) 3）[通知补卡审批发起（补卡情况下）](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_task_remedy/create) */
+  approval_id: string
+  /** 审批类型，leave：请假，out：外出，overtime：加班，trip：出差，remedy：补卡 */
+  approval_type: string
+  /** 审批状态，1：不通过，2：通过，4：撤销 */
+  status: number
+}
+
 export interface ProcessAttendanceApprovalInfoResponse {
   /** 审批信息 */
   approval_info?: ApprovalInfo
+}
+
+export interface CreateAttendanceUserTaskRemedyRequest {
+  /** 用户工号 */
+  user_id: string
+  /** 补卡日期 */
+  remedy_date: number
+  /** 第几次上下班，可能值0，1，2 */
+  punch_no: number
+  /** 上班/下班，1是上班，2是下班 */
+  work_type: number
+  /** 补卡时间 */
+  remedy_time: string
+  /** 补卡原因 */
+  reason: string
+  /** 补卡时间戳，精确到秒的时间戳 */
+  time?: string
+}
+
+export interface CreateAttendanceUserTaskRemedyQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface CreateAttendanceUserTaskRemedyResponse {
@@ -957,9 +799,52 @@ export interface CreateAttendanceUserTaskRemedyResponse {
   user_remedy?: UserTaskRemedy
 }
 
+export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyRequest {
+  /** 用户 ID */
+  user_id: string
+  /** 补卡日期 */
+  remedy_date: number
+}
+
+export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyQuery {
+  /** 请求体和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface QueryUserAllowedRemedysAttendanceUserTaskRemedyResponse {
   /** 用户可补卡时间 */
   user_allowed_remedys?: UserAllowedRemedy[]
+}
+
+export const enum QueryAttendanceUserTaskRemedyRequestStatus {
+  /** 待审批 */
+  Pending = 0,
+  /** 未通过 */
+  Rejected = 1,
+  /** 已通过 */
+  Pass = 2,
+  /** 已取消 */
+  Cancel = 3,
+  /** 已撤回 */
+  Withdraw = 4,
+}
+
+export interface QueryAttendanceUserTaskRemedyRequest {
+  /** employee_no 或 employee_id 列表 */
+  user_ids: string[]
+  /** 查询的起始时间，精确到秒的时间戳 */
+  check_time_from: string
+  /** 查询的结束时间，精确到秒的时间戳 */
+  check_time_to: string
+  /** 查询依据的时间类型（不填默认依据PeriodTime） */
+  check_date_type?: 'PeriodTime' | 'CreateTime' | 'UpdateTime'
+  /** 查询状态（不填默认查询已通过状态） */
+  status?: QueryAttendanceUserTaskRemedyRequestStatus
+}
+
+export interface QueryAttendanceUserTaskRemedyQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
 }
 
 export interface QueryAttendanceUserTaskRemedyResponse {
@@ -967,9 +852,41 @@ export interface QueryAttendanceUserTaskRemedyResponse {
   user_remedys?: UserTaskRemedy[]
 }
 
+export interface UserStatsFieldsQueryAttendanceArchiveRuleRequest {
+  /** 语言类型 */
+  locale?: string
+  /** 月份 */
+  month: string
+  /** 归档规则id */
+  archive_rule_id: string
+  /** 操作者id */
+  operator_id: string
+}
+
+export interface UserStatsFieldsQueryAttendanceArchiveRuleQuery {
+  /** 用户 ID 的类型 */
+  employee_type: string
+}
+
 export interface UserStatsFieldsQueryAttendanceArchiveRuleResponse {
   /** 统计数据表头 */
   archive_report_fields?: ArchiveField[]
+}
+
+export interface UploadReportAttendanceArchiveRuleRequest {
+  /** 月份 */
+  month: string
+  /** 操作者ID */
+  operator_id: string
+  /** 归档报表内容(不超过50个) */
+  archive_report_datas?: ArchiveReportData[]
+  /** 归档规则id */
+  archive_rule_id: string
+}
+
+export interface UploadReportAttendanceArchiveRuleQuery {
+  /** 用户 ID 的类型 */
+  employee_type: string
 }
 
 export interface UploadReportAttendanceArchiveRuleResponse {
@@ -979,9 +896,59 @@ export interface UploadReportAttendanceArchiveRuleResponse {
   invalid_member_id?: string[]
 }
 
+export interface DelReportAttendanceArchiveRuleRequest {
+  /** 月份 */
+  month: string
+  /** 操作者ID */
+  operator_id: string
+  /** 归档规则id */
+  archive_rule_id: string
+  /** 用户id */
+  user_ids?: string[]
+}
+
+export interface DelReportAttendanceArchiveRuleQuery {
+  /** 员工工号类型 */
+  employee_type: string
+}
+
+export interface BatchCreateAttendanceUserFlowRequest {
+  /** 打卡流水记录列表 */
+  flow_records: UserFlow[]
+}
+
+export interface BatchCreateAttendanceUserFlowQuery {
+  /** 请求体和响应体中的 user_id 和 creator_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
 export interface BatchCreateAttendanceUserFlowResponse {
   /** 打卡流水记录列表 */
   flow_records?: UserFlow[]
+}
+
+export interface GetAttendanceUserFlowQuery {
+  /** 响应体中的 user_id 和 creator_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+}
+
+export const enum GetAttendanceUserFlowResponseType {
+  /** 用户自己打卡 */
+  Self = 0,
+  /** 管理员修改 */
+  ManagerModification = 1,
+  /** 用户补卡 */
+  Remedy = 2,
+  /** 系统自动生成 */
+  System = 3,
+  /** 下班免打卡 */
+  Free = 4,
+  /** 考勤机 */
+  Machine = 5,
+  /** 极速打卡 */
+  Quick = 6,
+  /** 考勤开放平台导入 */
+  Import = 7,
 }
 
 export interface GetAttendanceUserFlowResponse {
@@ -1006,7 +973,7 @@ export interface GetAttendanceUserFlowResponse {
   /** 是否为wifi打卡 */
   is_wifi?: boolean
   /** 记录生成方式 */
-  type?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+  type?: GetAttendanceUserFlowResponseType
   /** 打卡照片列表 */
   photo_urls?: string[]
   /** 打卡设备ID */
@@ -1019,9 +986,45 @@ export interface GetAttendanceUserFlowResponse {
   idempotent_id?: string
 }
 
+export interface QueryAttendanceUserFlowRequest {
+  /** employee_no 或 employee_id 列表，长度不超过 50 */
+  user_ids: string[]
+  /** 查询的起始时间，时间戳 */
+  check_time_from: string
+  /** 查询的结束时间，时间戳 */
+  check_time_to: string
+}
+
+export interface QueryAttendanceUserFlowQuery {
+  /** 请求体中的 user_ids 和响应体中的 user_id 的员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+  /** 由于新入职用户可以复用已离职用户的employee_no/employee_id。如果true，返回employee_no/employee_id对应的所有在职+离职用户数据；如果false，只返回employee_no/employee_id对应的在职或最近一个离职用户数据 */
+  include_terminated_user?: boolean
+}
+
 export interface QueryAttendanceUserFlowResponse {
   /** 打卡记录列表 */
   user_flow_results?: UserFlow[]
+}
+
+export interface QueryAttendanceUserTaskRequest {
+  /** employee_no 或 employee_id 列表 */
+  user_ids: string[]
+  /** 查询的起始工作日 */
+  check_date_from: number
+  /** 查询的结束工作日 */
+  check_date_to: number
+  /** 是否需要加班班段打卡结果 */
+  need_overtime_result?: boolean
+}
+
+export interface QueryAttendanceUserTaskQuery {
+  /** 员工工号类型 */
+  employee_type: 'employee_id' | 'employee_no'
+  /** 是否忽略无效和没有权限的用户。如果 true，则返回有效用户的信息，并告知无效和没有权限的用户信息；如果 false，且 user_ids 中存在无效或没有权限的用户，则返回错误 */
+  ignore_invalid_users?: boolean
+  /** 由于新入职员工可以复用已离职员工的 employee_no/employee_id，如果 true，则返回 employee_no/employee_id 对应的所有在职 + 离职员工的数据；如果 false，则只返回 employee_no/employee_id 对应的在职或最近一个离职员工的数据 */
+  include_terminated_user?: boolean
 }
 
 export interface QueryAttendanceUserTaskResponse {
@@ -1033,9 +1036,51 @@ export interface QueryAttendanceUserTaskResponse {
   unauthorized_user_ids?: string[]
 }
 
+export interface GetAttendanceLeaveEmployExpireRecordRequest {
+  /** 员工ID */
+  employment_id: string
+  /** 假期类型ID */
+  leave_type_id: string
+  /** 失效最早日期  2023-04-10 格式 */
+  start_expiration_date: string
+  /** 失效最晚日期 2023-05-10 格式 */
+  end_expiration_date: string
+  /** 时间偏移，东八区：480    8*60， 如果没有这个参数，默认东八区 */
+  time_offset?: number
+}
+
+export interface GetAttendanceLeaveEmployExpireRecordQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'people_corehr_id' | 'union_id' | 'user_id'
+}
+
 export interface GetAttendanceLeaveEmployExpireRecordResponse {
   /** 员工过期日期的授予记录 */
   records: LeaveEmployExpireRecord[]
+}
+
+export interface PatchAttendanceLeaveAccrualRecordRequest {
+  /** 授予记录的唯一ID */
+  leave_granting_record_id: string
+  /** 员工ID */
+  employment_id: string
+  /** 假期类型ID */
+  leave_type_id: string
+  /** 修改授予记录原因 */
+  reason: LangText[]
+  /** 时间偏移，东八区：480    8*60 */
+  time_offset?: number
+  /** 失效日期，格式"2020-01-01" */
+  expiration_date?: string
+  /** 修改source 余额 */
+  quantity?: string
+  /** 是否参与清算 */
+  section_type?: number
+}
+
+export interface PatchAttendanceLeaveAccrualRecordQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'people_corehr_id' | 'union_id' | 'user_id'
 }
 
 export interface PatchAttendanceLeaveAccrualRecordResponse {

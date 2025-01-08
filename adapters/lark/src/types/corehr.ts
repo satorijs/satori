@@ -272,7 +272,7 @@ declare module '../internal' {
      * 批量查询部门操作日志
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/query_operation_logs
      */
-    queryOperationLogsCorehrV2Department(body: QueryOperationLogsCorehrV2DepartmentRequest, query?: QueryOperationLogsCorehrV2DepartmentQuery): Paginated<OrganizationOpLog, 'op_logs'>
+    queryOperationLogsCorehrV2Department(body: QueryOperationLogsCorehrV2DepartmentRequest, query?: QueryOperationLogsCorehrV2DepartmentQuery): Promise<QueryOperationLogsCorehrV2DepartmentResponse> & AsyncIterableIterator<OrganizationOpLog>
     /**
      * 创建部门
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/create
@@ -1056,11 +1056,21 @@ export interface QueryCorehrV1CustomFieldQuery {
   object_api_name_list: string[]
 }
 
+export interface QueryCorehrV1CustomFieldResponse {
+  /** 自定义字段列表 */
+  items?: CustomField[]
+}
+
 export interface GetByParamCorehrV1CustomFieldQuery {
   /** 所属对象 apiname */
   object_api_name: string
   /** 自定义字段 apiname */
   custom_api_name: string
+}
+
+export interface GetByParamCorehrV1CustomFieldResponse {
+  /** 自定义字段详情 */
+  data?: CustomField
 }
 
 export interface AddEnumOptionCorehrV1CommonDataMetaDataRequest {
@@ -1077,6 +1087,13 @@ export interface AddEnumOptionCorehrV1CommonDataMetaDataQuery {
   client_token?: string
 }
 
+export interface AddEnumOptionCorehrV1CommonDataMetaDataResponse {
+  /** 枚举字段 API name */
+  enum_field_api_name?: string
+  /** 枚举全部选项列表 */
+  enum_field_options?: EnumFieldOption[]
+}
+
 export interface EditEnumOptionCorehrV1CommonDataMetaDataRequest {
   /** 所属对象 API name，可通过[获取飞书人事对象列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
   object_api_name: string
@@ -1091,11 +1108,32 @@ export interface EditEnumOptionCorehrV1CommonDataMetaDataQuery {
   client_token?: string
 }
 
+export interface EditEnumOptionCorehrV1CommonDataMetaDataResponse {
+  /** 枚举字段 API name */
+  enum_field_api_name?: string
+  /** 枚举全部选项列表 */
+  enum_field_options?: EnumFieldOption[]
+}
+
+export const enum SearchCorehrV2BasicInfoCountryRegionRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
+}
+
 export interface SearchCorehrV2BasicInfoCountryRegionRequest {
   /** 国家/地区 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.country_region_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.country_region_id` 等字段中获取 */
   country_region_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoCountryRegionRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoCountryRegionSubdivisionRequestStatus {
+  /** 生效 */
+  Effective = 1,
+  /** 失效 */
+  Expiration = 0,
 }
 
 export interface SearchCorehrV2BasicInfoCountryRegionSubdivisionRequest {
@@ -1104,7 +1142,14 @@ export interface SearchCorehrV2BasicInfoCountryRegionSubdivisionRequest {
   /** 省份/行政区 ID 列表 */
   country_region_subdivision_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoCountryRegionSubdivisionRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoCityRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoCityRequest {
@@ -1113,7 +1158,14 @@ export interface SearchCorehrV2BasicInfoCityRequest {
   /** 城市 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_id_v2` 等字段中获取 */
   city_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoCityRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoDistrictRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoDistrictRequest {
@@ -1122,7 +1174,14 @@ export interface SearchCorehrV2BasicInfoDistrictRequest {
   /** 区/县 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.district_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.district_id_v2` 等字段中获取 */
   district_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoDistrictRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoNationalityRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoNationalityRequest {
@@ -1131,7 +1190,7 @@ export interface SearchCorehrV2BasicInfoNationalityRequest {
   /** 国家/地区 ID 列表，可通过[查询国家/地区信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search)接口列举 */
   country_region_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoNationalityRequestStatus[]
 }
 
 export interface CreateCorehrV1NationalIdTypeRequest {
@@ -1158,6 +1217,10 @@ export interface CreateCorehrV1NationalIdTypeQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1NationalIdTypeResponse {
+  national_id_type?: NationalIdType
+}
+
 export interface PatchCorehrV1NationalIdTypeRequest {
   /** 国家 / 地区 */
   country_region_id?: string
@@ -1182,6 +1245,15 @@ export interface PatchCorehrV1NationalIdTypeQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1NationalIdTypeResponse {
+  national_id_type?: NationalIdType
+}
+
+export interface GetCorehrV1NationalIdTypeResponse {
+  /** 国家证件类型信息 */
+  national_id_type?: NationalIdType
+}
+
 export interface ListCorehrV1NationalIdTypeQuery extends Pagination {
   /** 证件类型 */
   identification_type?: string
@@ -1191,17 +1263,31 @@ export interface ListCorehrV1NationalIdTypeQuery extends Pagination {
   country_region_id?: string
 }
 
+export const enum SearchCorehrV2BasicInfoBankRequestStatus {
+  /** 生效 */
+  Enabled = 1,
+  /** 失效 */
+  Disabled = 0,
+}
+
 export interface SearchCorehrV2BasicInfoBankRequest {
   /** 银行 ID 列表，可通过[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段获取 */
   bank_id_list?: string[]
   /** 银行名称列表，支持对银行名称精确搜索 */
   bank_name_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoBankRequestStatus[]
   /** 最早更新时间 */
   update_start_time?: string
   /** 最晚更新时间 */
   update_end_time?: string
+}
+
+export const enum SearchCorehrV2BasicInfoBankBranchRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoBankBranchRequest {
@@ -1214,32 +1300,53 @@ export interface SearchCorehrV2BasicInfoBankBranchRequest {
   /** 金融分支机构编码（联行号）列表，支持对金融分支机构编码精确搜索 */
   code_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoBankBranchRequestStatus[]
   /** 最早更新时间 */
   update_start_time?: string
   /** 最晚更新时间 */
   update_end_time?: string
 }
 
+export const enum SearchCorehrV2BasicInfoCurrencyRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
+}
+
 export interface SearchCorehrV2BasicInfoCurrencyRequest {
   /** 货币 ID 列表，可通过[批量查询薪资方案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)、[批量查询员工薪资档案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/archive/query)等接口返回的 `currency_id` 字段获取 */
   currency_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoCurrencyRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoTimeZoneRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoTimeZoneRequest {
   /** 时区 ID 列表 */
   time_zone_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoTimeZoneRequestStatus[]
+}
+
+export const enum SearchCorehrV2BasicInfoLanguageRequestStatus {
+  /** 生效 */
+  Active = 1,
+  /** 失效 */
+  Inactive = 0,
 }
 
 export interface SearchCorehrV2BasicInfoLanguageRequest {
   /** 语言 ID 列表 */
   language_id_list?: string[]
   /** 状态列表 */
-  status_list?: (1 | 0)[]
+  status_list?: SearchCorehrV2BasicInfoLanguageRequestStatus[]
 }
 
 export interface CreateCorehrV1EmployeeTypeRequest {
@@ -1260,6 +1367,10 @@ export interface CreateCorehrV1EmployeeTypeQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1EmployeeTypeResponse {
+  employee_type?: EmployeeType
+}
+
 export interface PatchCorehrV1EmployeeTypeRequest {
   /** 名称 */
   name?: I18n[]
@@ -1276,6 +1387,15 @@ export interface PatchCorehrV1EmployeeTypeRequest {
 export interface PatchCorehrV1EmployeeTypeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+
+export interface PatchCorehrV1EmployeeTypeResponse {
+  employee_type?: EmployeeType
+}
+
+export interface GetCorehrV1EmployeeTypeResponse {
+  /** 雇员类型 */
+  employee_type?: EmployeeType
 }
 
 export interface CreateCorehrV1WorkingHoursTypeRequest {
@@ -1298,6 +1418,10 @@ export interface CreateCorehrV1WorkingHoursTypeQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1WorkingHoursTypeResponse {
+  working_hours_type?: WorkingHoursType
+}
+
 export interface PatchCorehrV1WorkingHoursTypeRequest {
   /** 编码 */
   code?: string
@@ -1318,20 +1442,45 @@ export interface PatchCorehrV1WorkingHoursTypeQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1WorkingHoursTypeResponse {
+  working_hours_type?: WorkingHoursType
+}
+
+export interface GetCorehrV1WorkingHoursTypeResponse {
+  /** 工时制度信息 */
+  working_hours_type?: WorkingHoursType
+}
+
 export interface ConvertCorehrV1CommonDataIdRequest {
   /** ID 列表（最多传入 100 个 ID，ID 长度限制 50 个字符） */
   ids: string[]
 }
 
+export const enum ConvertCorehrV1CommonDataIdQueryIdTransformType {
+  /** 飞书人事 -> 飞书通讯录 */
+  CoreHR2Feishu = 1,
+  /** 飞书通讯录 -> 飞书人事 */
+  Feishu2CoreHR = 2,
+  /** people admin -> 飞书人事 */
+  Admin2Feishu = 3,
+  /** people admin -> 飞书通讯录 */
+  Admin2CoreHR = 4,
+}
+
 export interface ConvertCorehrV1CommonDataIdQuery {
   /** ID 转换类型 */
-  id_transform_type: 1 | 2 | 3 | 4
+  id_transform_type: ConvertCorehrV1CommonDataIdQueryIdTransformType
   /** 要转换的ID类型 */
   id_type: 'user_id' | 'department_id' | 'job_level_id' | 'job_family_id' | 'employee_type_id'
   /** 用户 ID 类型 */
   feishu_user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 类型 */
   feishu_department_id_type?: 'open_department_id' | 'department_id'
+}
+
+export interface ConvertCorehrV1CommonDataIdResponse {
+  /** ID 信息列表 */
+  items?: IdInfo[]
 }
 
 export interface BatchGetCorehrV2EmployeeRequest {
@@ -1350,6 +1499,11 @@ export interface BatchGetCorehrV2EmployeeQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface BatchGetCorehrV2EmployeeResponse {
+  /** 查询的雇佣信息 */
+  items?: Employee[]
 }
 
 export interface SearchCorehrV2EmployeeRequest {
@@ -1466,6 +1620,15 @@ export interface CreateCorehrV2EmployeeQuery {
   ignore_working_hours_type_rule?: boolean
 }
 
+export interface CreateCorehrV2EmployeeResponse {
+  /** 雇佣信息 ID */
+  employment_id?: string
+  /** 合同 ID */
+  contract_id?: string
+  /** 任职信息 ID */
+  job_data_id?: string
+}
+
 export interface CreateCorehrV2PersonRequest {
   /** 姓名列表 */
   name_list: PersonName[]
@@ -1538,6 +1701,10 @@ export interface CreateCorehrV2PersonRequest {
 export interface CreateCorehrV2PersonQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+
+export interface CreateCorehrV2PersonResponse {
+  person?: PersonInfo
 }
 
 export interface PatchCorehrV2PersonRequest {
@@ -1616,11 +1783,20 @@ export interface PatchCorehrV2PersonQuery {
   no_need_query?: boolean
 }
 
+export interface PatchCorehrV2PersonResponse {
+  person?: PersonInfo
+}
+
 export interface UploadCorehrV1PersonForm {
   /** 文件二进制内容 */
   file_content: Blob
   /** 文件名称 */
   file_name: string
+}
+
+export interface UploadCorehrV1PersonResponse {
+  /** 上传文件ID */
+  id?: string
 }
 
 export interface CreateCorehrV1EmploymentRequest {
@@ -1659,6 +1835,10 @@ export interface CreateCorehrV1EmploymentQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1EmploymentResponse {
+  employment?: EmploymentCreate
+}
+
 export interface PatchCorehrV1EmploymentRequest {
   /** 资历起算日期 */
   seniority_date?: string
@@ -1687,6 +1867,10 @@ export interface PatchCorehrV1EmploymentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface PatchCorehrV1EmploymentResponse {
+  employment?: Employment
 }
 
 export interface DeleteCorehrV1EmploymentQuery {
@@ -1750,6 +1934,10 @@ export interface CreateCorehrV1JobDataQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface CreateCorehrV1JobDataResponse {
+  job_data?: JobData
 }
 
 export interface DeleteCorehrV1JobDataQuery {
@@ -1817,6 +2005,10 @@ export interface PatchCorehrV1JobDataQuery {
   strict_verify?: string
 }
 
+export interface PatchCorehrV1JobDataResponse {
+  job_data?: JobData
+}
+
 export interface QueryCorehrV2EmployeesJobDataRequest {
   /** 是否获取所有任职记录，true 为获取员工所有版本的任职记录，false 为仅获取当前生效的任职记录，默认为 false */
   get_all_version?: boolean
@@ -1867,6 +2059,11 @@ export interface BatchGetCorehrV2EmployeesJobDataQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface BatchGetCorehrV2EmployeesJobDataResponse {
+  /** 查询的雇佣信息 */
+  items?: EmployeeJobData[]
+}
+
 export interface ListCorehrV1JobDataQuery extends Pagination {
   /** 雇佣 ID */
   employment_id?: string
@@ -1889,6 +2086,11 @@ export interface GetCorehrV1JobDataQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface GetCorehrV1JobDataResponse {
+  /** 任职信息 */
+  job_data?: JobData
 }
 
 export interface CreateCorehrV2EmployeesAdditionalJobRequest {
@@ -1941,6 +2143,10 @@ export interface CreateCorehrV2EmployeesAdditionalJobQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface CreateCorehrV2EmployeesAdditionalJobResponse {
+  additional_job?: EmployeesAdditionalJobWriteResp
+}
+
 export interface PatchCorehrV2EmployeesAdditionalJobRequest {
   /** 人员类型 ID，可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
   employee_type_id?: string
@@ -1989,6 +2195,10 @@ export interface PatchCorehrV2EmployeesAdditionalJobQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface PatchCorehrV2EmployeesAdditionalJobResponse {
+  additional_job?: EmployeesAdditionalJobWriteResp
+}
+
 export interface BatchCorehrV2EmployeesAdditionalJobRequest {
   /** 雇佣 ID */
   employment_ids?: string[]
@@ -2025,6 +2235,15 @@ export interface QueryOperationLogsCorehrV2DepartmentQuery extends Pagination {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface QueryOperationLogsCorehrV2DepartmentResponse {
+  /** 操作日志列表 */
+  op_logs?: OrganizationOpLog[]
+  /** 下一页token */
+  next_page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+}
+
 export interface CreateCorehrV1DepartmentRequest {
   /** 子类型 */
   sub_type?: Enum
@@ -2051,6 +2270,10 @@ export interface CreateCorehrV1DepartmentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface CreateCorehrV1DepartmentResponse {
+  department?: DepartmentCreate
 }
 
 export interface PatchCorehrV2DepartmentRequest {
@@ -2093,6 +2316,11 @@ export interface ParentsCorehrV2DepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface ParentsCorehrV2DepartmentResponse {
+  /** 父部门查询结果 */
+  items?: DepartmentParents[]
+}
+
 export interface BatchGetCorehrV2DepartmentRequest {
   /** 部门 ID 列表 */
   department_id_list?: string[]
@@ -2109,6 +2337,11 @@ export interface BatchGetCorehrV2DepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface BatchGetCorehrV2DepartmentResponse {
+  /** 查询的部门信息 */
+  items?: Department[]
+}
+
 export interface QueryRecentChangeCorehrV2DepartmentQuery extends Pagination {
   /** 查询的开始时间，格式 "yyyy-MM-dd"，不带时分秒，包含 start_date 传入的时间, 系统会以 start_date 的 00:00:00 查询。 */
   start_date: string
@@ -2116,6 +2349,17 @@ export interface QueryRecentChangeCorehrV2DepartmentQuery extends Pagination {
   end_date: string
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface QueryRecentChangeCorehrV2DepartmentResponse {
+  /** 部门 ID 列表 */
+  department_ids?: string[]
+  /** 目标查询时间范围内被删除的部门列表 */
+  deleted_department_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
 }
 
 export interface QueryTimelineCorehrV2DepartmentRequest {
@@ -2132,6 +2376,11 @@ export interface QueryTimelineCorehrV2DepartmentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface QueryTimelineCorehrV2DepartmentResponse {
+  /** 部门信息 */
+  items?: DepartmentTimeline[]
 }
 
 export interface TreeCorehrV2DepartmentRequest {
@@ -2221,6 +2470,10 @@ export interface CreateCorehrV1LocationQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1LocationResponse {
+  location?: Location
+}
+
 export interface PatchCorehrV2LocationRequest {
   /** 上级地点 ID */
   parent_id?: string
@@ -2251,6 +2504,11 @@ export interface PatchCorehrV2LocationQuery {
   client_token?: string
 }
 
+export interface GetCorehrV1LocationResponse {
+  /** 地点信息 */
+  location?: Location
+}
+
 export interface QueryRecentChangeCorehrV2LocationQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
@@ -2258,9 +2516,25 @@ export interface QueryRecentChangeCorehrV2LocationQuery extends Pagination {
   end_date: string
 }
 
+export interface QueryRecentChangeCorehrV2LocationResponse {
+  /** 地点 ID 列表 */
+  location_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的地点 ID 列表 */
+  deleted_location_ids?: string[]
+}
+
 export interface BatchGetCorehrV2LocationRequest {
   /** 地点 ID 列表 */
   location_ids: string[]
+}
+
+export interface BatchGetCorehrV2LocationResponse {
+  /** 查询的地点信息 */
+  items?: Location[]
 }
 
 export interface ActiveCorehrV2LocationRequest {
@@ -2358,6 +2632,11 @@ export interface CreateCorehrV2LocationAddressQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV2LocationAddressResponse {
+  /** 地址 ID */
+  address_id?: string
+}
+
 export interface CreateCorehrV1CompanyRequest {
   /** 层级关系，内层字段见实体 */
   hiberarchy_common: HiberarchyCommon
@@ -2398,6 +2677,10 @@ export interface CreateCorehrV1CompanyQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1CompanyResponse {
+  company?: Company
+}
+
 export interface PatchCorehrV1CompanyRequest {
   /** 层级关系，内层字段见实体 */
   hiberarchy_common?: HiberarchyCommon
@@ -2436,6 +2719,10 @@ export interface PatchCorehrV1CompanyQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1CompanyResponse {
+  company?: Company
+}
+
 export interface ActiveCorehrV2CompanyRequest {
   /** 公司ID */
   company_id: string
@@ -2447,6 +2734,11 @@ export interface ActiveCorehrV2CompanyRequest {
   operation_reason: string
 }
 
+export interface GetCorehrV1CompanyResponse {
+  /** 公司信息 */
+  company?: Company
+}
+
 export interface QueryRecentChangeCorehrV2CompanyQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
@@ -2454,9 +2746,25 @@ export interface QueryRecentChangeCorehrV2CompanyQuery extends Pagination {
   end_date: string
 }
 
+export interface QueryRecentChangeCorehrV2CompanyResponse {
+  /** 公司 ID 列表 */
+  company_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的公司 ID 列表 */
+  deleted_company_ids?: string[]
+}
+
 export interface BatchGetCorehrV2CompanyRequest {
   /** 公司 ID 列表 */
   company_ids: string[]
+}
+
+export interface BatchGetCorehrV2CompanyResponse {
+  /** 查询的公司信息 */
+  items?: Company[]
 }
 
 export interface CreateCorehrV2CostCenterRequest {
@@ -2479,6 +2787,10 @@ export interface CreateCorehrV2CostCenterQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface CreateCorehrV2CostCenterResponse {
+  cost_center?: CostCenter
+}
+
 export interface PatchCorehrV2CostCenterRequest {
   /** 生效时间 */
   effective_time: string
@@ -2493,11 +2805,26 @@ export interface PatchCorehrV2CostCenterQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface PatchCorehrV2CostCenterResponse {
+  cost_center?: CostCenter
+}
+
 export interface QueryRecentChangeCorehrV2CostCenterQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
   /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
   end_date: string
+}
+
+export interface QueryRecentChangeCorehrV2CostCenterResponse {
+  /** 成本中心 ID 列表 */
+  cost_center_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的成本中心 ID 列表 */
+  deleted_cost_center_ids?: string[]
 }
 
 export interface SearchCorehrV2CostCenterRequest {
@@ -2543,6 +2870,10 @@ export interface CreateCorehrV2CostCenterVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface CreateCorehrV2CostCenterVersionResponse {
+  version?: CostCenterVersion
+}
+
 export interface PatchCorehrV2CostCenterVersionRequest {
   /** 成本中心名称 */
   name?: I18n[]
@@ -2563,6 +2894,10 @@ export interface PatchCorehrV2CostCenterVersionQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface PatchCorehrV2CostCenterVersionResponse {
+  version?: CostCenterVersion
+}
+
 export interface DeleteCorehrV2CostCenterVersionRequest {
   /** 操作原因 */
   operation_reason: string
@@ -2571,6 +2906,11 @@ export interface DeleteCorehrV2CostCenterVersionRequest {
 export interface GetCorehrV2ApprovalGroupsQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+}
+
+export interface GetCorehrV2ApprovalGroupsResponse {
+  /** 组织架构调整流程信息 */
+  approval_group?: ApprovalGroup
 }
 
 export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsRequest {
@@ -2589,6 +2929,11 @@ export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsResponse {
+  /** 部门调整记录信息列表 */
+  department_changes?: DepartmentChange[]
+}
+
 export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsRequest {
   /** 人员异动记录 ID List */
   job_change_ids?: string[]
@@ -2603,6 +2948,11 @@ export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsResponse {
+  /** 人员异动记录信息列表 */
+  job_changes?: JobChange[]
 }
 
 export interface CreateCorehrV1JobFamilyRequest {
@@ -2625,6 +2975,10 @@ export interface CreateCorehrV1JobFamilyQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1JobFamilyResponse {
+  job_family?: JobFamily
+}
+
 export interface PatchCorehrV1JobFamilyRequest {
   /** 名称 */
   name?: I18n[]
@@ -2645,6 +2999,15 @@ export interface PatchCorehrV1JobFamilyQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1JobFamilyResponse {
+  job_family?: JobFamily
+}
+
+export interface GetCorehrV1JobFamilyResponse {
+  /** 职务序列信息 */
+  job_family?: JobFamily
+}
+
 export interface QueryRecentChangeCorehrV2JobFamilyQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
@@ -2652,9 +3015,25 @@ export interface QueryRecentChangeCorehrV2JobFamilyQuery extends Pagination {
   end_date: string
 }
 
+export interface QueryRecentChangeCorehrV2JobFamilyResponse {
+  /** 序列 ID 列表 */
+  job_family_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的序列 ID 列表 */
+  deleted_job_family_ids?: string[]
+}
+
 export interface BatchGetCorehrV2JobFamilyRequest {
   /** 序列 ID 列表 */
   job_family_ids: string[]
+}
+
+export interface BatchGetCorehrV2JobFamilyResponse {
+  /** 查询的序列信息 */
+  items?: JobFamily[]
 }
 
 export interface CreateCorehrV1JobLevelRequest {
@@ -2679,6 +3058,10 @@ export interface CreateCorehrV1JobLevelQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1JobLevelResponse {
+  job_level?: JobLevel
+}
+
 export interface PatchCorehrV1JobLevelRequest {
   /** 职级数值 */
   level_order?: number
@@ -2701,6 +3084,15 @@ export interface PatchCorehrV1JobLevelQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1JobLevelResponse {
+  job_level?: JobLevel
+}
+
+export interface GetCorehrV1JobLevelResponse {
+  /** 职务级别信息 */
+  job_level?: JobLevel
+}
+
 export interface QueryRecentChangeCorehrV2JobLevelQuery extends Pagination {
   /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
   start_date: string
@@ -2708,9 +3100,25 @@ export interface QueryRecentChangeCorehrV2JobLevelQuery extends Pagination {
   end_date: string
 }
 
+export interface QueryRecentChangeCorehrV2JobLevelResponse {
+  /** 职级 ID 列表 */
+  job_level_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的职级 ID 列表 */
+  deleted_job_level_ids?: string[]
+}
+
 export interface BatchGetCorehrV2JobLevelRequest {
   /** 职级 ID 列表 */
   job_level_ids: string[]
+}
+
+export interface BatchGetCorehrV2JobLevelResponse {
+  /** 查询的职级信息 */
+  items?: JobLevel[]
 }
 
 export interface CreateCorehrV2JobGradeRequest {
@@ -2727,6 +3135,11 @@ export interface CreateCorehrV2JobGradeRequest {
 export interface CreateCorehrV2JobGradeQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+
+export interface CreateCorehrV2JobGradeResponse {
+  /** 职等ID */
+  grade_id?: string
 }
 
 export interface PatchCorehrV2JobGradeRequest {
@@ -2763,6 +3176,17 @@ export interface QueryRecentChangeCorehrV2JobGradeQuery extends Pagination {
   end_date: string
 }
 
+export interface QueryRecentChangeCorehrV2JobGradeResponse {
+  /** 职等 ID 列表 */
+  job_grade_ids?: string[]
+  /** 下一页页码 */
+  page_token?: string
+  /** 是否有下一页 */
+  has_more?: boolean
+  /** 删除的职等 ID 列表 */
+  deleted_job_grade_ids?: string[]
+}
+
 export interface CreateCorehrV1JobRequest {
   /** 编码 */
   code?: string
@@ -2789,6 +3213,10 @@ export interface CreateCorehrV1JobRequest {
 export interface CreateCorehrV1JobQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+
+export interface CreateCorehrV1JobResponse {
+  job?: Job
 }
 
 export interface PatchCorehrV1JobRequest {
@@ -2819,6 +3247,15 @@ export interface PatchCorehrV1JobQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1JobResponse {
+  job?: Job
+}
+
+export interface GetCorehrV2JobResponse {
+  /** 职务信息 */
+  job?: Job
+}
+
 export interface ListCorehrV2JobQuery extends Pagination {
   /** 名称 */
   name?: string
@@ -2833,11 +3270,21 @@ export interface WithdrawOnboardingCorehrV2PreHireRequest {
   withdraw_reason: string
 }
 
+export interface WithdrawOnboardingCorehrV2PreHireResponse {
+  /** 是否成功撤销入职 */
+  success?: boolean
+}
+
 export interface RestoreFlowInstanceCorehrV2PreHireRequest {
   /** 待入职ID，可从待入职列表接口获取 */
   pre_hire_id: string
   /** 是否强制占编；true为强制占编；false为非强制占编 */
   confirm_workforce?: boolean
+}
+
+export interface RestoreFlowInstanceCorehrV2PreHireResponse {
+  /** 是否成功恢复入职 */
+  success?: boolean
 }
 
 export interface CreateCorehrV2PreHireRequest {
@@ -2855,6 +3302,11 @@ export interface CreateCorehrV2PreHireRequest {
   out_biz_id?: string
 }
 
+export interface CreateCorehrV2PreHireResponse {
+  /** 待入职 ID */
+  pre_hire_id?: string
+}
+
 export interface PatchCorehrV2PreHireRequest {
   /** 更新个人（person）信息 */
   basic_info_update?: BasicInfoUpdate
@@ -2866,6 +3318,11 @@ export interface PatchCorehrV2PreHireRequest {
   custom_update_fields?: string[]
   /** 指定需要更新的Person对象上的自定义字段，格式如下： - custom_field1__c */
   person_custom_update_fields?: string[]
+}
+
+export interface PatchCorehrV2PreHireResponse {
+  /** 待入职ID */
+  pre_hire_id?: string
 }
 
 export interface QueryCorehrV2PreHireRequest {
@@ -2880,6 +3337,11 @@ export interface QueryCorehrV2PreHireQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface GetCorehrV1PreHireResponse {
+  /** 待入职信息 */
+  pre_hire?: PreHire
 }
 
 export interface ListCorehrV1PreHireQuery extends Pagination {
@@ -2936,6 +3398,16 @@ export interface TransitTaskCorehrV2PreHireRequest {
   task_id: string
 }
 
+export interface TransitTaskCorehrV2PreHireResponse {
+  /** 是否成功流转任务 */
+  success?: boolean
+}
+
+export interface CompleteCorehrV2PreHireResponse {
+  /** 是否成功完成入职 */
+  success?: boolean
+}
+
 export interface PatchCorehrV1PreHireRequest {
   /** 招聘系统的候选人 ID */
   ats_application_id?: string
@@ -2962,6 +3434,10 @@ export interface PatchCorehrV1PreHireQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1PreHireResponse {
+  pre_hire?: PreHire
+}
+
 export interface CreateCorehrV2ProbationAssessmentRequest {
   /** 试用期人员的雇佣 ID */
   employment_id: string
@@ -2974,6 +3450,11 @@ export interface CreateCorehrV2ProbationAssessmentQuery {
   client_token?: string
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+}
+
+export interface CreateCorehrV2ProbationAssessmentResponse {
+  /** 创建的试用期考核记录 ID 列表，有序返回 */
+  assessment_ids?: string[]
 }
 
 export interface EnableDisableAssessmentCorehrV2ProbationRequest {
@@ -3067,6 +3548,11 @@ export interface SubmitCorehrV2ProbationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface SubmitCorehrV2ProbationResponse {
+  /** 试用期信息 */
+  probation_info?: ProbationInfoForSubmit
+}
+
 export interface WithdrawCorehrV2ProbationRequest {
   /** 试用期人员的雇佣 ID */
   employment_id: string
@@ -3079,9 +3565,16 @@ export interface WithdrawCorehrV2ProbationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export const enum CreateCorehrV2JobChangeRequestTransferMode {
+  /** 直接异动 */
+  Type1 = 1,
+  /** 发起异动 */
+  Type2 = 2,
+}
+
 export interface CreateCorehrV2JobChangeRequest {
   /** 异动方式 */
-  transfer_mode: 1 | 2
+  transfer_mode: CreateCorehrV2JobChangeRequestTransferMode
   /** 雇员id */
   employment_id: string
   /** 异动类型唯一标识 */
@@ -3107,6 +3600,31 @@ export interface CreateCorehrV2JobChangeQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface CreateCorehrV2JobChangeResponse {
+  /** 异动记录 id */
+  job_change_id?: string
+  /** 雇员 id */
+  employment_id?: string
+  /** 异动状态 */
+  status?: 'Approving' | 'Approved' | 'Transformed' | 'Rejected' | 'Cancelled' | 'NoNeedApproval'
+  /** 异动类型 */
+  transfer_type_unique_identifier?: string
+  /** 异动原因 */
+  transfer_reason_unique_identifier?: string
+  /** 异动流程 id */
+  process_id?: string
+  /** 生效时间 */
+  effective_date?: string
+  /** 创建时间 */
+  created_time?: string
+  /** 异动详细信息 */
+  transfer_info?: TransferInfo
+  /** 是否调整薪酬 */
+  is_adjust_salary?: boolean
+  /** 异动自定义字段 */
+  custom_fields?: CustomFieldData[]
+}
+
 export interface QueryCorehrV1TransferTypeQuery {
   /** 异动类型状态 */
   active?: boolean
@@ -3114,11 +3632,21 @@ export interface QueryCorehrV1TransferTypeQuery {
   transfer_type_unique_identifier?: string[]
 }
 
+export interface QueryCorehrV1TransferTypeResponse {
+  /** 异动类型列表 */
+  items?: TransferType[]
+}
+
 export interface QueryCorehrV1TransferReasonQuery {
   /** 异动原因状态 */
   active?: boolean
   /** 异动原因唯一标识，多条时最多数量为10 */
   transfer_reason_unique_identifier?: string[]
+}
+
+export interface QueryCorehrV1TransferReasonResponse {
+  /** 异动原因列表 */
+  items?: TransferReason[]
 }
 
 export interface SearchCorehrV2JobChangeRequest {
@@ -3183,6 +3711,42 @@ export interface CreateCorehrV1JobChangeQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export const enum CreateCorehrV1JobChangeResponseStatus {
+  /** Approving  审批中 */
+  Approving = 0,
+  /** Approved  审批通过 */
+  Approved = 1,
+  /** Transformed  已异动 */
+  Transformed = 2,
+  /** Rejected  已拒绝 */
+  Rejected = 3,
+  /** Cancelled  已撤销 */
+  Cancelled = 4,
+  /** NoNeedApproval  无需审批 */
+  NoNeedApproval = 5,
+}
+
+export interface CreateCorehrV1JobChangeResponse {
+  /** 异动记录 id */
+  job_change_id?: string
+  /** 雇员 id */
+  employment_id?: string
+  /** 异动状态 */
+  status?: CreateCorehrV1JobChangeResponseStatus
+  /** 异动类型 */
+  transfer_type_unique_identifier?: string
+  /** 异动原因 */
+  transfer_reason_unique_identifier?: string
+  /** 异动流程 id */
+  process_id?: string
+  /** 生效时间 */
+  effective_date?: string
+  /** 创建时间 */
+  created_time?: string
+  /** 异动详细信息 */
+  transfer_info?: TransferInfo
+}
+
 export interface QueryCorehrV1OffboardingRequest {
   /** 是否启用 */
   active?: boolean
@@ -3190,9 +3754,21 @@ export interface QueryCorehrV1OffboardingRequest {
   offboarding_reason_unique_identifier?: string[]
 }
 
+export interface QueryCorehrV1OffboardingResponse {
+  /** 离职原因列表 */
+  items?: OffboardingReason[]
+}
+
+export const enum SubmitV2CorehrV2OffboardingRequestOffboardingMode {
+  /** 直接离职 */
+  TerminationOfDismissal = 1,
+  /** 发起离职审批 */
+  OffboardingWithProcess = 2,
+}
+
 export interface SubmitV2CorehrV2OffboardingRequest {
   /** 离职方式 */
-  offboarding_mode: 1 | 2
+  offboarding_mode: SubmitV2CorehrV2OffboardingRequestOffboardingMode
   /** 雇员 id */
   employment_id: string
   /** 离职日期 */
@@ -3222,6 +3798,31 @@ export interface SubmitV2CorehrV2OffboardingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface SubmitV2CorehrV2OffboardingResponse {
+  /** 离职记录 id */
+  offboarding_id?: string
+  /** 雇员 id */
+  employment_id?: string
+  /** 离职原因 */
+  offboarding_reason_unique_identifier?: string
+  /** 离职日期 */
+  offboarding_date?: string
+  /** 离职原因说明 */
+  offboarding_reason_explanation?: string
+  /** 是否加入离职屏蔽名单 */
+  add_block_list?: boolean
+  /** 屏蔽原因 */
+  block_reason?: string
+  /** 屏蔽原因说明 */
+  block_reason_explanation?: string
+  /** 创建时间 */
+  created_time?: string
+  /** 离职是否保留飞书账号 */
+  retain_account?: boolean
+  /** 编制随人员一起调整 */
+  is_transfer_with_workforce?: boolean
+}
+
 export interface EditCorehrV2OffboardingRequest {
   /** 离职记录 ID */
   offboarding_id: string
@@ -3234,6 +3835,11 @@ export interface EditCorehrV2OffboardingRequest {
 export interface EditCorehrV2OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+}
+
+export interface EditCorehrV2OffboardingResponse {
+  /** 编辑字段数据信息 */
+  data: ObjectFieldData[]
 }
 
 export interface RevokeCorehrV2OffboardingRequest {
@@ -3310,6 +3916,10 @@ export interface CreateCorehrV1ContractQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1ContractResponse {
+  contract?: Contract
+}
+
 export interface PatchCorehrV1ContractRequest {
   /** 合同开始日期 */
   effective_time?: string
@@ -3338,6 +3948,15 @@ export interface PatchCorehrV1ContractRequest {
 export interface PatchCorehrV1ContractQuery {
   /** 根据client_token是否一致来判断是否为同一请求 */
   client_token?: string
+}
+
+export interface PatchCorehrV1ContractResponse {
+  contract?: Contract
+}
+
+export interface GetCorehrV1ContractResponse {
+  /** 合同信息 */
+  contract?: Contract
 }
 
 export interface SearchCorehrV2ContractRequest {
@@ -3391,6 +4010,13 @@ export interface ListCorehrV2WorkforcePlanQuery {
   active?: boolean
 }
 
+export interface ListCorehrV2WorkforcePlanResponse {
+  /** 方案列表 */
+  items?: WorkforcePlan[]
+  /** 方案总数 */
+  total?: number
+}
+
 export interface BatchCorehrV2WorkforcePlanDetailRequest {
   /** 编制规划方案ID，ID及详细信息可通过获取编制规划方案列表接口查询获得。查询编制规划明细信息时，编制规划方案ID必填，是否为集中填报项目设置为false，不填写集中填报项目ID（是否填写不影响返回结果） */
   workforce_plan_id?: string
@@ -3412,6 +4038,19 @@ export interface BatchCorehrV2WorkforcePlanDetailRequest {
   job_ids?: string[]
   /** 成本中心 ID 列表，可以通过搜索成本中心信息接口获取对应的成本中心信息 */
   cost_center_ids?: string[]
+}
+
+export interface BatchCorehrV2WorkforcePlanDetailResponse {
+  /** 编制规划方案 ID */
+  workforce_plan_id?: string
+  /** 集中填报项目 ID */
+  centralized_reporting_project_id?: string
+  /** 编制规划明细信息 */
+  items?: WorkforcePlanDetail[]
+  /** 分页标识 */
+  page_token?: string
+  /** 是否还有更多项 */
+  has_more?: boolean
 }
 
 export interface CreateCorehrV1LeaveGrantingRecordRequest {
@@ -3438,6 +4077,11 @@ export interface CreateCorehrV1LeaveGrantingRecordRequest {
 export interface CreateCorehrV1LeaveGrantingRecordQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+}
+
+export interface CreateCorehrV1LeaveGrantingRecordResponse {
+  /** 假期授予记录 */
+  leave_granting_record?: LeaveGrantingRecord
 }
 
 export interface LeaveTypesCorehrV1LeaveQuery extends Pagination {
@@ -3518,6 +4162,13 @@ export interface WorkCalendarCorehrV1LeaveRequest {
   only_enable?: boolean
 }
 
+export interface WorkCalendarCorehrV1LeaveResponse {
+  /** 工作日历列表 */
+  work_calendars?: WorkCalendarDetail[]
+  /** 入参count=true，则返回符合条件的工作日历总数 */
+  count?: number
+}
+
 export interface CalendarByScopeCorehrV1LeaveQuery {
   /** 用户所属部门的ID列表 */
   wk_department_id?: string
@@ -3535,6 +4186,11 @@ export interface CalendarByScopeCorehrV1LeaveQuery {
   wk_company_id?: string
 }
 
+export interface CalendarByScopeCorehrV1LeaveResponse {
+  /** 工作日历id */
+  calendar_wk_id?: string
+}
+
 export interface WorkCalendarDateCorehrV1LeaveRequest {
   /** 工作日历WKID列表，最多100 */
   wk_calendar_ids: string[]
@@ -3550,6 +4206,11 @@ export interface WorkCalendarDateCorehrV1LeaveRequest {
   limit?: number
   /** 日期id，与其他筛选参数互斥，传了该参数，其他筛选参数不起效 */
   ids?: string[]
+}
+
+export interface WorkCalendarDateCorehrV1LeaveResponse {
+  /** 日期类型列表 */
+  calendar_dates?: WkCalendarDate[]
 }
 
 export interface QueryCorehrV1AuthorizationQuery extends Pagination {
@@ -3572,6 +4233,11 @@ export interface GetByParamCorehrV1AuthorizationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface GetByParamCorehrV1AuthorizationResponse {
+  /** 角色授权信息 */
+  role_authorization?: RoleAuthorization
+}
+
 export interface AddRoleAssignCorehrV1AuthorizationRequest {
   /** 授权 */
   assigned_organization_items: AssignedOrganizationWithCode[][]
@@ -3584,6 +4250,11 @@ export interface AddRoleAssignCorehrV1AuthorizationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 角色 ID */
   role_id: string
+}
+
+export interface AddRoleAssignCorehrV1AuthorizationResponse {
+  /** 授权id */
+  assign_id?: string
 }
 
 export interface UpdateRoleAssignCorehrV1AuthorizationRequest {
@@ -3600,6 +4271,11 @@ export interface UpdateRoleAssignCorehrV1AuthorizationQuery {
   role_id: string
 }
 
+export interface UpdateRoleAssignCorehrV1AuthorizationResponse {
+  /** 授权id */
+  assign_id?: string
+}
+
 export interface RemoveRoleAssignCorehrV1AuthorizationQuery {
   /** 雇员 ID */
   employment_id: string
@@ -3607,6 +4283,11 @@ export interface RemoveRoleAssignCorehrV1AuthorizationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 角色 ID */
   role_id: string
+}
+
+export interface RemoveRoleAssignCorehrV1AuthorizationResponse {
+  /** 授权id */
+  assign_id?: string
 }
 
 export interface BatchGetCorehrV2EmployeesBpRequest {
@@ -3621,6 +4302,13 @@ export interface BatchGetCorehrV2EmployeesBpQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export interface BatchGetCorehrV2EmployeesBpResponse {
+  /** 员工直属 BP 信息，当员工所在部门、属地无 BP 时，会上钻找到最近的 BP */
+  employment_direct_bps?: EmploymentBp[]
+  /** 员工全部 BP 信息 */
+  employment_all_bps?: EmploymentBp[]
+}
+
 export interface GetByDepartmentCorehrV2BpRequest {
   /** 部门 ID */
   department_id: string
@@ -3631,6 +4319,11 @@ export interface GetByDepartmentCorehrV2BpQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface GetByDepartmentCorehrV2BpResponse {
+  /** 部门 HRBP 信息，依次为部门及各层级上级部门 */
+  items?: DepartmentHrbp[]
 }
 
 export interface QueryCorehrV1SecurityGroupRequest {
@@ -3645,6 +4338,11 @@ export interface QueryCorehrV1SecurityGroupRequest {
 export interface QueryCorehrV1SecurityGroupQuery {
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface QueryCorehrV1SecurityGroupResponse {
+  /** HRBP/属地 BP 信息 */
+  hrbp_list?: Hrbp[]
 }
 
 export interface ListCorehrV2BpQuery extends Pagination {
@@ -3688,11 +4386,85 @@ export interface GetCorehrV2ProcessQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
 }
 
+export const enum GetCorehrV2ProcessResponseStatus {
+  /** 进行中 */
+  Running = 1,
+  /** 拒绝 */
+  Reject = 2,
+  /** 撤回 */
+  Withdraw = 4,
+  /** 撤销 */
+  Revoke = 8,
+  /** 已完成 */
+  Complete = 9,
+}
+
+export const enum GetCorehrV2ProcessResponseProperties {
+  /** 普通流程 */
+  Common = 1,
+  /** 撤销流程 */
+  CheXiao = 2,
+  /** 更正流程 */
+  Correct = 3,
+}
+
+export interface GetCorehrV2ProcessResponse {
+  /** 流程实例ID */
+  process_id?: string
+  /** 流程状态 */
+  status?: GetCorehrV2ProcessResponseStatus
+  /** 业务类型ID */
+  flow_template_id?: string
+  /** 业务类型名称 */
+  flow_template_name?: DataengineI18n
+  /** 流程定义ID */
+  flow_definition_id?: string
+  /** 流程定义名称 */
+  flow_definition_name?: DataengineI18n
+  /** 流程发起人ID */
+  initiator_id?: string
+  /** 流程发起人姓名 */
+  initiator_name?: DataengineI18n
+  /** 流程发起时间，Unix毫秒时间戳 */
+  create_time?: string
+  /** 流程结束时间，Unix毫秒时间戳 */
+  complete_time?: string
+  /** 发起单据地址 */
+  start_links?: ProcessLink
+  /** 流程摘要，会随着流程流转发生变化 */
+  abstracts?: ProcessAbstractItem[]
+  /** 待办列表 */
+  todos?: ProcessTodoItem[]
+  /** 抄送列表 */
+  cc_list?: ProcessCcItem[]
+  /** 已办列表 */
+  done_list?: ProcessDoneItem[]
+  /** 普通流程或撤销流程等 */
+  properties?: GetCorehrV2ProcessResponseProperties
+  /** 系统待办列表 */
+  system_todos?: ProcessSystemTodoItem[]
+  /** 系统已办列表 */
+  system_done_list?: ProcessSystemDoneItem[]
+  /** 评论列表 */
+  comment_infos?: ProcessCommentInfo[]
+  /** 更正流程原流程ID */
+  original_process_id?: string
+  /** 是否最新的「已完成」的更正流程 */
+  is_last_completed_correct_process?: boolean
+}
+
 export interface GetCorehrV2ProcessFormVariableDataQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface GetCorehrV2ProcessFormVariableDataResponse {
+  /** 表单数据 */
+  field_variable_values?: FieldVariableValue[]
+  /** 流程实例id */
+  process_id?: string
 }
 
 export interface UpdateCorehrV2ProcessRevokeRequest {
@@ -3732,9 +4504,16 @@ export interface ListCorehrV2ApproverQuery extends Pagination {
   approver_status?: -2 | -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 12 | 14 | 16
 }
 
+export const enum UpdateCorehrV2ProcessApproverRequestStatus {
+  /** 拒绝 */
+  Approved = 2,
+  /** 通过 */
+  Rejected = 3,
+}
+
 export interface UpdateCorehrV2ProcessApproverRequest {
   /** 将审批任务修改为同意/拒绝 */
-  status: 2 | 3
+  status: UpdateCorehrV2ProcessApproverRequestStatus
   /** 按user_id_type类型传递。如果system_approval为false，则必填。否则非必填。 */
   user_id?: string
   /** true - 使用系统身份审批 */
@@ -3752,6 +4531,29 @@ export interface UpdateCorehrV2ProcessApproverQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface UpdateCorehrV2ProcessApproverResponse {
+  /** 错误码，非 0 表示失败 */
+  code: number
+  /** 错误描述 */
+  msg?: string
+}
+
+export const enum UpdateCorehrV2ProcessExtraRequestExtraType {
+  /** 前加签 */
+  PreExtra = 0,
+  /** 并加签 */
+  CurrentExtra = 1,
+  /** 后加签 */
+  PostExtra = 2,
+}
+
+export const enum UpdateCorehrV2ProcessExtraRequestApprovalType {
+  /** 或签 */
+  OR = 0,
+  /** 会签 */
+  AND = 1,
+}
+
 export interface UpdateCorehrV2ProcessExtraRequest {
   /** 操作人，当system_user为true时，可以不传值 */
   operator?: string
@@ -3760,9 +4562,9 @@ export interface UpdateCorehrV2ProcessExtraRequest {
   /** 审批任务id，与node_id二选一传入，都传以node_id为准 */
   approver_id?: string
   /** 加签方式 */
-  extra_type: 0 | 1 | 2
+  extra_type: UpdateCorehrV2ProcessExtraRequestExtraType
   /** 多人加签时的审批方式 */
-  approval_type?: 0 | 1
+  approval_type?: UpdateCorehrV2ProcessExtraRequestApprovalType
   /** 加签人员id列表 */
   extra_user_ids: string[]
   /** 备注 */
@@ -3829,14 +4631,53 @@ export interface MatchCorehrV1CompensationStandardQuery {
   effective_time?: string
 }
 
+export interface MatchCorehrV1CompensationStandardResponse {
+  /** 薪资标准表ID */
+  standard_id?: string
+  /** 薪资等级 */
+  grade?: CpstGrade
+  /** 生效时间 */
+  effective_time?: string
+}
+
+export interface GetCorehrV1ProcessFormVariableDataResponse {
+  /** 流程变量 */
+  field_variable_values?: FormFieldVariable[]
+}
+
 export interface ListCorehrV1SubregionQuery extends Pagination {
   /** 省份/行政区id，填写后只查询该省份/行政区下的城市/区域 */
   subdivision_id?: string
 }
 
+export interface GetCorehrV1SubregionResponse {
+  /** 城市/区域信息 */
+  subregion?: Subregion
+}
+
 export interface ListCorehrV1SubdivisionQuery extends Pagination {
   /** 国家/地区id，填写后只查询该国家/地区下的省份/行政区 */
   country_region_id?: string
+}
+
+export interface GetCorehrV1SubdivisionResponse {
+  /** 国家/地址信息 */
+  subdivision?: Subdivision
+}
+
+export interface GetCorehrV1CountryRegionResponse {
+  /** 国家/地址信息 */
+  country_region?: CountryRegion
+}
+
+export interface GetCorehrV1CurrencyResponse {
+  /** 货币信息 */
+  currency?: Currency
+}
+
+export interface GetCorehrV1JobResponse {
+  /** 职务信息 */
+  job?: Job
 }
 
 export interface PatchCorehrV1DepartmentRequest {
@@ -3869,11 +4710,20 @@ export interface PatchCorehrV1DepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
 }
 
+export interface PatchCorehrV1DepartmentResponse {
+  department?: Department
+}
+
 export interface GetCorehrV1DepartmentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
   /** 此次调用中使用的部门 ID 类型 */
   department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+}
+
+export interface GetCorehrV1DepartmentResponse {
+  /** 部门信息 */
+  department?: Department
 }
 
 export interface ListCorehrV1JobQuery extends Pagination {
@@ -3944,6 +4794,10 @@ export interface PatchCorehrV1PersonQuery {
   client_token?: string
 }
 
+export interface PatchCorehrV1PersonResponse {
+  person?: Person
+}
+
 export interface CreateCorehrV1PersonRequest {
   /** 姓名 */
   name_list: PersonName[]
@@ -3994,14 +4848,28 @@ export interface CreateCorehrV1PersonQuery {
   client_token?: string
 }
 
+export interface CreateCorehrV1PersonResponse {
+  person?: Person
+}
+
 export interface GetCorehrV1PersonQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'people_employee_id'
 }
 
+export interface GetCorehrV1PersonResponse {
+  /** 个人信息 */
+  person?: Person
+}
+
+export const enum SubmitCorehrV1OffboardingRequestOffboardingMode {
+  /** 直接离职 */
+  TerminationOfDismissal = 1,
+}
+
 export interface SubmitCorehrV1OffboardingRequest {
   /** 离职方式 */
-  offboarding_mode: 1
+  offboarding_mode: SubmitCorehrV1OffboardingRequestOffboardingMode
   /** 雇员 id */
   employment_id: string
   /** 离职日期 */
@@ -4025,705 +4893,6 @@ export interface SubmitCorehrV1OffboardingRequest {
 export interface SubmitCorehrV1OffboardingQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
-}
-
-export interface QueryCorehrV1CustomFieldResponse {
-  /** 自定义字段列表 */
-  items?: CustomField[]
-}
-
-export interface GetByParamCorehrV1CustomFieldResponse {
-  /** 自定义字段详情 */
-  data?: CustomField
-}
-
-export interface AddEnumOptionCorehrV1CommonDataMetaDataResponse {
-  /** 枚举字段 API name */
-  enum_field_api_name?: string
-  /** 枚举全部选项列表 */
-  enum_field_options?: EnumFieldOption[]
-}
-
-export interface EditEnumOptionCorehrV1CommonDataMetaDataResponse {
-  /** 枚举字段 API name */
-  enum_field_api_name?: string
-  /** 枚举全部选项列表 */
-  enum_field_options?: EnumFieldOption[]
-}
-
-export interface CreateCorehrV1NationalIdTypeResponse {
-  national_id_type?: NationalIdType
-}
-
-export interface PatchCorehrV1NationalIdTypeResponse {
-  national_id_type?: NationalIdType
-}
-
-export interface GetCorehrV1NationalIdTypeResponse {
-  /** 国家证件类型信息 */
-  national_id_type?: NationalIdType
-}
-
-export interface CreateCorehrV1EmployeeTypeResponse {
-  employee_type?: EmployeeType
-}
-
-export interface PatchCorehrV1EmployeeTypeResponse {
-  employee_type?: EmployeeType
-}
-
-export interface GetCorehrV1EmployeeTypeResponse {
-  /** 雇员类型 */
-  employee_type?: EmployeeType
-}
-
-export interface CreateCorehrV1WorkingHoursTypeResponse {
-  working_hours_type?: WorkingHoursType
-}
-
-export interface PatchCorehrV1WorkingHoursTypeResponse {
-  working_hours_type?: WorkingHoursType
-}
-
-export interface GetCorehrV1WorkingHoursTypeResponse {
-  /** 工时制度信息 */
-  working_hours_type?: WorkingHoursType
-}
-
-export interface ConvertCorehrV1CommonDataIdResponse {
-  /** ID 信息列表 */
-  items?: IdInfo[]
-}
-
-export interface BatchGetCorehrV2EmployeeResponse {
-  /** 查询的雇佣信息 */
-  items?: Employee[]
-}
-
-export interface CreateCorehrV2EmployeeResponse {
-  /** 雇佣信息 ID */
-  employment_id?: string
-  /** 合同 ID */
-  contract_id?: string
-  /** 任职信息 ID */
-  job_data_id?: string
-}
-
-export interface CreateCorehrV2PersonResponse {
-  person?: PersonInfo
-}
-
-export interface PatchCorehrV2PersonResponse {
-  person?: PersonInfo
-}
-
-export interface UploadCorehrV1PersonResponse {
-  /** 上传文件ID */
-  id?: string
-}
-
-export interface CreateCorehrV1EmploymentResponse {
-  employment?: EmploymentCreate
-}
-
-export interface PatchCorehrV1EmploymentResponse {
-  employment?: Employment
-}
-
-export interface CreateCorehrV1JobDataResponse {
-  job_data?: JobData
-}
-
-export interface PatchCorehrV1JobDataResponse {
-  job_data?: JobData
-}
-
-export interface BatchGetCorehrV2EmployeesJobDataResponse {
-  /** 查询的雇佣信息 */
-  items?: EmployeeJobData[]
-}
-
-export interface GetCorehrV1JobDataResponse {
-  /** 任职信息 */
-  job_data?: JobData
-}
-
-export interface CreateCorehrV2EmployeesAdditionalJobResponse {
-  additional_job?: EmployeesAdditionalJobWriteResp
-}
-
-export interface PatchCorehrV2EmployeesAdditionalJobResponse {
-  additional_job?: EmployeesAdditionalJobWriteResp
-}
-
-export interface CreateCorehrV1DepartmentResponse {
-  department?: DepartmentCreate
-}
-
-export interface ParentsCorehrV2DepartmentResponse {
-  /** 父部门查询结果 */
-  items?: DepartmentParents[]
-}
-
-export interface BatchGetCorehrV2DepartmentResponse {
-  /** 查询的部门信息 */
-  items?: Department[]
-}
-
-export interface QueryRecentChangeCorehrV2DepartmentResponse {
-  /** 部门 ID 列表 */
-  department_ids?: string[]
-  /** 目标查询时间范围内被删除的部门列表 */
-  deleted_department_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-}
-
-export interface QueryTimelineCorehrV2DepartmentResponse {
-  /** 部门信息 */
-  items?: DepartmentTimeline[]
-}
-
-export interface CreateCorehrV1LocationResponse {
-  location?: Location
-}
-
-export interface GetCorehrV1LocationResponse {
-  /** 地点信息 */
-  location?: Location
-}
-
-export interface QueryRecentChangeCorehrV2LocationResponse {
-  /** 地点 ID 列表 */
-  location_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的地点 ID 列表 */
-  deleted_location_ids?: string[]
-}
-
-export interface BatchGetCorehrV2LocationResponse {
-  /** 查询的地点信息 */
-  items?: Location[]
-}
-
-export interface CreateCorehrV2LocationAddressResponse {
-  /** 地址 ID */
-  address_id?: string
-}
-
-export interface CreateCorehrV1CompanyResponse {
-  company?: Company
-}
-
-export interface PatchCorehrV1CompanyResponse {
-  company?: Company
-}
-
-export interface GetCorehrV1CompanyResponse {
-  /** 公司信息 */
-  company?: Company
-}
-
-export interface QueryRecentChangeCorehrV2CompanyResponse {
-  /** 公司 ID 列表 */
-  company_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的公司 ID 列表 */
-  deleted_company_ids?: string[]
-}
-
-export interface BatchGetCorehrV2CompanyResponse {
-  /** 查询的公司信息 */
-  items?: Company[]
-}
-
-export interface CreateCorehrV2CostCenterResponse {
-  cost_center?: CostCenter
-}
-
-export interface PatchCorehrV2CostCenterResponse {
-  cost_center?: CostCenter
-}
-
-export interface QueryRecentChangeCorehrV2CostCenterResponse {
-  /** 成本中心 ID 列表 */
-  cost_center_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的成本中心 ID 列表 */
-  deleted_cost_center_ids?: string[]
-}
-
-export interface CreateCorehrV2CostCenterVersionResponse {
-  version?: CostCenterVersion
-}
-
-export interface PatchCorehrV2CostCenterVersionResponse {
-  version?: CostCenterVersion
-}
-
-export interface GetCorehrV2ApprovalGroupsResponse {
-  /** 组织架构调整流程信息 */
-  approval_group?: ApprovalGroup
-}
-
-export interface OpenQueryDepartmentChangeListByIdsCorehrV2ApprovalGroupsResponse {
-  /** 部门调整记录信息列表 */
-  department_changes?: DepartmentChange[]
-}
-
-export interface OpenQueryJobChangeListByIdsCorehrV2ApprovalGroupsResponse {
-  /** 人员异动记录信息列表 */
-  job_changes?: JobChange[]
-}
-
-export interface CreateCorehrV1JobFamilyResponse {
-  job_family?: JobFamily
-}
-
-export interface PatchCorehrV1JobFamilyResponse {
-  job_family?: JobFamily
-}
-
-export interface GetCorehrV1JobFamilyResponse {
-  /** 职务序列信息 */
-  job_family?: JobFamily
-}
-
-export interface QueryRecentChangeCorehrV2JobFamilyResponse {
-  /** 序列 ID 列表 */
-  job_family_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的序列 ID 列表 */
-  deleted_job_family_ids?: string[]
-}
-
-export interface BatchGetCorehrV2JobFamilyResponse {
-  /** 查询的序列信息 */
-  items?: JobFamily[]
-}
-
-export interface CreateCorehrV1JobLevelResponse {
-  job_level?: JobLevel
-}
-
-export interface PatchCorehrV1JobLevelResponse {
-  job_level?: JobLevel
-}
-
-export interface GetCorehrV1JobLevelResponse {
-  /** 职务级别信息 */
-  job_level?: JobLevel
-}
-
-export interface QueryRecentChangeCorehrV2JobLevelResponse {
-  /** 职级 ID 列表 */
-  job_level_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的职级 ID 列表 */
-  deleted_job_level_ids?: string[]
-}
-
-export interface BatchGetCorehrV2JobLevelResponse {
-  /** 查询的职级信息 */
-  items?: JobLevel[]
-}
-
-export interface CreateCorehrV2JobGradeResponse {
-  /** 职等ID */
-  grade_id?: string
-}
-
-export interface QueryRecentChangeCorehrV2JobGradeResponse {
-  /** 职等 ID 列表 */
-  job_grade_ids?: string[]
-  /** 下一页页码 */
-  page_token?: string
-  /** 是否有下一页 */
-  has_more?: boolean
-  /** 删除的职等 ID 列表 */
-  deleted_job_grade_ids?: string[]
-}
-
-export interface CreateCorehrV1JobResponse {
-  job?: Job
-}
-
-export interface PatchCorehrV1JobResponse {
-  job?: Job
-}
-
-export interface GetCorehrV2JobResponse {
-  /** 职务信息 */
-  job?: Job
-}
-
-export interface WithdrawOnboardingCorehrV2PreHireResponse {
-  /** 是否成功撤销入职 */
-  success?: boolean
-}
-
-export interface RestoreFlowInstanceCorehrV2PreHireResponse {
-  /** 是否成功恢复入职 */
-  success?: boolean
-}
-
-export interface CreateCorehrV2PreHireResponse {
-  /** 待入职 ID */
-  pre_hire_id?: string
-}
-
-export interface PatchCorehrV2PreHireResponse {
-  /** 待入职ID */
-  pre_hire_id?: string
-}
-
-export interface GetCorehrV1PreHireResponse {
-  /** 待入职信息 */
-  pre_hire?: PreHire
-}
-
-export interface TransitTaskCorehrV2PreHireResponse {
-  /** 是否成功流转任务 */
-  success?: boolean
-}
-
-export interface CompleteCorehrV2PreHireResponse {
-  /** 是否成功完成入职 */
-  success?: boolean
-}
-
-export interface PatchCorehrV1PreHireResponse {
-  pre_hire?: PreHire
-}
-
-export interface CreateCorehrV2ProbationAssessmentResponse {
-  /** 创建的试用期考核记录 ID 列表，有序返回 */
-  assessment_ids?: string[]
-}
-
-export interface SubmitCorehrV2ProbationResponse {
-  /** 试用期信息 */
-  probation_info?: ProbationInfoForSubmit
-}
-
-export interface CreateCorehrV2JobChangeResponse {
-  /** 异动记录 id */
-  job_change_id?: string
-  /** 雇员 id */
-  employment_id?: string
-  /** 异动状态 */
-  status?: 'Approving' | 'Approved' | 'Transformed' | 'Rejected' | 'Cancelled' | 'NoNeedApproval'
-  /** 异动类型 */
-  transfer_type_unique_identifier?: string
-  /** 异动原因 */
-  transfer_reason_unique_identifier?: string
-  /** 异动流程 id */
-  process_id?: string
-  /** 生效时间 */
-  effective_date?: string
-  /** 创建时间 */
-  created_time?: string
-  /** 异动详细信息 */
-  transfer_info?: TransferInfo
-  /** 是否调整薪酬 */
-  is_adjust_salary?: boolean
-  /** 异动自定义字段 */
-  custom_fields?: CustomFieldData[]
-}
-
-export interface QueryCorehrV1TransferTypeResponse {
-  /** 异动类型列表 */
-  items?: TransferType[]
-}
-
-export interface QueryCorehrV1TransferReasonResponse {
-  /** 异动原因列表 */
-  items?: TransferReason[]
-}
-
-export interface CreateCorehrV1JobChangeResponse {
-  /** 异动记录 id */
-  job_change_id?: string
-  /** 雇员 id */
-  employment_id?: string
-  /** 异动状态 */
-  status?: 0 | 1 | 2 | 3 | 4 | 5
-  /** 异动类型 */
-  transfer_type_unique_identifier?: string
-  /** 异动原因 */
-  transfer_reason_unique_identifier?: string
-  /** 异动流程 id */
-  process_id?: string
-  /** 生效时间 */
-  effective_date?: string
-  /** 创建时间 */
-  created_time?: string
-  /** 异动详细信息 */
-  transfer_info?: TransferInfo
-}
-
-export interface QueryCorehrV1OffboardingResponse {
-  /** 离职原因列表 */
-  items?: OffboardingReason[]
-}
-
-export interface SubmitV2CorehrV2OffboardingResponse {
-  /** 离职记录 id */
-  offboarding_id?: string
-  /** 雇员 id */
-  employment_id?: string
-  /** 离职原因 */
-  offboarding_reason_unique_identifier?: string
-  /** 离职日期 */
-  offboarding_date?: string
-  /** 离职原因说明 */
-  offboarding_reason_explanation?: string
-  /** 是否加入离职屏蔽名单 */
-  add_block_list?: boolean
-  /** 屏蔽原因 */
-  block_reason?: string
-  /** 屏蔽原因说明 */
-  block_reason_explanation?: string
-  /** 创建时间 */
-  created_time?: string
-  /** 离职是否保留飞书账号 */
-  retain_account?: boolean
-  /** 编制随人员一起调整 */
-  is_transfer_with_workforce?: boolean
-}
-
-export interface EditCorehrV2OffboardingResponse {
-  /** 编辑字段数据信息 */
-  data: ObjectFieldData[]
-}
-
-export interface CreateCorehrV1ContractResponse {
-  contract?: Contract
-}
-
-export interface PatchCorehrV1ContractResponse {
-  contract?: Contract
-}
-
-export interface GetCorehrV1ContractResponse {
-  /** 合同信息 */
-  contract?: Contract
-}
-
-export interface ListCorehrV2WorkforcePlanResponse {
-  /** 方案列表 */
-  items?: WorkforcePlan[]
-  /** 方案总数 */
-  total?: number
-}
-
-export interface BatchCorehrV2WorkforcePlanDetailResponse {
-  /** 编制规划方案 ID */
-  workforce_plan_id?: string
-  /** 集中填报项目 ID */
-  centralized_reporting_project_id?: string
-  /** 编制规划明细信息 */
-  items?: WorkforcePlanDetail[]
-  /** 分页标识 */
-  page_token?: string
-  /** 是否还有更多项 */
-  has_more?: boolean
-}
-
-export interface CreateCorehrV1LeaveGrantingRecordResponse {
-  /** 假期授予记录 */
-  leave_granting_record?: LeaveGrantingRecord
-}
-
-export interface WorkCalendarCorehrV1LeaveResponse {
-  /** 工作日历列表 */
-  work_calendars?: WorkCalendarDetail[]
-  /** 入参count=true，则返回符合条件的工作日历总数 */
-  count?: number
-}
-
-export interface CalendarByScopeCorehrV1LeaveResponse {
-  /** 工作日历id */
-  calendar_wk_id?: string
-}
-
-export interface WorkCalendarDateCorehrV1LeaveResponse {
-  /** 日期类型列表 */
-  calendar_dates?: WkCalendarDate[]
-}
-
-export interface GetByParamCorehrV1AuthorizationResponse {
-  /** 角色授权信息 */
-  role_authorization?: RoleAuthorization
-}
-
-export interface AddRoleAssignCorehrV1AuthorizationResponse {
-  /** 授权id */
-  assign_id?: string
-}
-
-export interface UpdateRoleAssignCorehrV1AuthorizationResponse {
-  /** 授权id */
-  assign_id?: string
-}
-
-export interface RemoveRoleAssignCorehrV1AuthorizationResponse {
-  /** 授权id */
-  assign_id?: string
-}
-
-export interface BatchGetCorehrV2EmployeesBpResponse {
-  /** 员工直属 BP 信息，当员工所在部门、属地无 BP 时，会上钻找到最近的 BP */
-  employment_direct_bps?: EmploymentBp[]
-  /** 员工全部 BP 信息 */
-  employment_all_bps?: EmploymentBp[]
-}
-
-export interface GetByDepartmentCorehrV2BpResponse {
-  /** 部门 HRBP 信息，依次为部门及各层级上级部门 */
-  items?: DepartmentHrbp[]
-}
-
-export interface QueryCorehrV1SecurityGroupResponse {
-  /** HRBP/属地 BP 信息 */
-  hrbp_list?: Hrbp[]
-}
-
-export interface GetCorehrV2ProcessResponse {
-  /** 流程实例ID */
-  process_id?: string
-  /** 流程状态 */
-  status?: 1 | 2 | 4 | 8 | 9
-  /** 业务类型ID */
-  flow_template_id?: string
-  /** 业务类型名称 */
-  flow_template_name?: DataengineI18n
-  /** 流程定义ID */
-  flow_definition_id?: string
-  /** 流程定义名称 */
-  flow_definition_name?: DataengineI18n
-  /** 流程发起人ID */
-  initiator_id?: string
-  /** 流程发起人姓名 */
-  initiator_name?: DataengineI18n
-  /** 流程发起时间，Unix毫秒时间戳 */
-  create_time?: string
-  /** 流程结束时间，Unix毫秒时间戳 */
-  complete_time?: string
-  /** 发起单据地址 */
-  start_links?: ProcessLink
-  /** 流程摘要，会随着流程流转发生变化 */
-  abstracts?: ProcessAbstractItem[]
-  /** 待办列表 */
-  todos?: ProcessTodoItem[]
-  /** 抄送列表 */
-  cc_list?: ProcessCcItem[]
-  /** 已办列表 */
-  done_list?: ProcessDoneItem[]
-  /** 普通流程或撤销流程等 */
-  properties?: 1 | 2 | 3
-  /** 系统待办列表 */
-  system_todos?: ProcessSystemTodoItem[]
-  /** 系统已办列表 */
-  system_done_list?: ProcessSystemDoneItem[]
-  /** 评论列表 */
-  comment_infos?: ProcessCommentInfo[]
-  /** 更正流程原流程ID */
-  original_process_id?: string
-  /** 是否最新的「已完成」的更正流程 */
-  is_last_completed_correct_process?: boolean
-}
-
-export interface GetCorehrV2ProcessFormVariableDataResponse {
-  /** 表单数据 */
-  field_variable_values?: FieldVariableValue[]
-  /** 流程实例id */
-  process_id?: string
-}
-
-export interface UpdateCorehrV2ProcessApproverResponse {
-  /** 错误码，非 0 表示失败 */
-  code: number
-  /** 错误描述 */
-  msg?: string
-}
-
-export interface MatchCorehrV1CompensationStandardResponse {
-  /** 薪资标准表ID */
-  standard_id?: string
-  /** 薪资等级 */
-  grade?: CpstGrade
-  /** 生效时间 */
-  effective_time?: string
-}
-
-export interface GetCorehrV1ProcessFormVariableDataResponse {
-  /** 流程变量 */
-  field_variable_values?: FormFieldVariable[]
-}
-
-export interface GetCorehrV1SubregionResponse {
-  /** 城市/区域信息 */
-  subregion?: Subregion
-}
-
-export interface GetCorehrV1SubdivisionResponse {
-  /** 国家/地址信息 */
-  subdivision?: Subdivision
-}
-
-export interface GetCorehrV1CountryRegionResponse {
-  /** 国家/地址信息 */
-  country_region?: CountryRegion
-}
-
-export interface GetCorehrV1CurrencyResponse {
-  /** 货币信息 */
-  currency?: Currency
-}
-
-export interface GetCorehrV1JobResponse {
-  /** 职务信息 */
-  job?: Job
-}
-
-export interface PatchCorehrV1DepartmentResponse {
-  department?: Department
-}
-
-export interface GetCorehrV1DepartmentResponse {
-  /** 部门信息 */
-  department?: Department
-}
-
-export interface PatchCorehrV1PersonResponse {
-  person?: Person
-}
-
-export interface CreateCorehrV1PersonResponse {
-  person?: Person
-}
-
-export interface GetCorehrV1PersonResponse {
-  /** 个人信息 */
-  person?: Person
 }
 
 export interface SubmitCorehrV1OffboardingResponse {

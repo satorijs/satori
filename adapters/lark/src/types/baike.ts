@@ -32,7 +32,7 @@ declare module '../internal' {
      * 获取词条列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/list
      */
-    listBaikeEntity(query?: ListBaikeEntityQuery): Promise<ListBaikeEntityResponse>
+    listBaikeEntity(query?: ListBaikeEntityQuery): Promise<ListBaikeEntityResponse> & AsyncIterableIterator<Entity>
     /**
      * 精准搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/match
@@ -42,7 +42,7 @@ declare module '../internal' {
      * 模糊搜索词条
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/search
      */
-    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery): Promise<SearchBaikeEntityResponse>
+    searchBaikeEntity(body: SearchBaikeEntityRequest, query?: SearchBaikeEntityQuery): Promise<SearchBaikeEntityResponse> & AsyncIterableIterator<Entity>
     /**
      * 词条高亮
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/entity/highlight
@@ -57,7 +57,7 @@ declare module '../internal' {
      * 获取词典分类
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/classification/list
      */
-    listBaikeClassification(query?: Pagination): Promise<ListBaikeClassificationResponse>
+    listBaikeClassification(query?: Pagination): Promise<ListBaikeClassificationResponse> & AsyncIterableIterator<Classification>
     /**
      * 上传图片
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/file/upload
@@ -93,6 +93,10 @@ export interface CreateBaikeDraftQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateBaikeDraftResponse {
+  draft?: Draft
+}
+
 export interface UpdateBaikeDraftRequest {
   /** 实体词 Id */
   id?: string
@@ -111,6 +115,10 @@ export interface UpdateBaikeDraftRequest {
 export interface UpdateBaikeDraftQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface UpdateBaikeDraftResponse {
+  draft?: Draft
 }
 
 export interface CreateBaikeEntityRequest {
@@ -133,6 +141,10 @@ export interface CreateBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateBaikeEntityResponse {
+  entity?: Entity
+}
+
 export interface UpdateBaikeEntityRequest {
   /** 词条名 */
   main_keys: Term[]
@@ -153,6 +165,10 @@ export interface UpdateBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UpdateBaikeEntityResponse {
+  entity?: Entity
+}
+
 export interface GetBaikeEntityQuery {
   /** 外部系统 */
   provider?: string
@@ -162,6 +178,11 @@ export interface GetBaikeEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetBaikeEntityResponse {
+  /** 实体词 */
+  entity?: Entity
+}
+
 export interface ListBaikeEntityQuery extends Pagination {
   /** 相关外部系统【可用来过滤词条数据】 */
   provider?: string
@@ -169,9 +190,20 @@ export interface ListBaikeEntityQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListBaikeEntityResponse {
+  entities?: Entity[]
+  /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
+  page_token?: string
+}
+
 export interface MatchBaikeEntityRequest {
   /** 搜索关键词，将与词条名、别名进行精准匹配 */
   word: string
+}
+
+export interface MatchBaikeEntityResponse {
+  /** 匹配结果 */
+  results?: MatchInfo[]
 }
 
 export interface SearchBaikeEntityRequest {
@@ -190,55 +222,6 @@ export interface SearchBaikeEntityQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface HighlightBaikeEntityRequest {
-  /** 需要识别百科词条的内容（不超过1000字） */
-  text: string
-}
-
-export interface ExtractBaikeEntityRequest {
-  /** 需要被提取百科实体词的文本（不会过滤租户已成为百科词条的内容） */
-  text?: string
-}
-
-export interface UploadBaikeFileForm {
-  /** 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp */
-  name: string
-  /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
-  file: Blob
-}
-
-export interface CreateBaikeDraftResponse {
-  draft?: Draft
-}
-
-export interface UpdateBaikeDraftResponse {
-  draft?: Draft
-}
-
-export interface CreateBaikeEntityResponse {
-  entity?: Entity
-}
-
-export interface UpdateBaikeEntityResponse {
-  entity?: Entity
-}
-
-export interface GetBaikeEntityResponse {
-  /** 实体词 */
-  entity?: Entity
-}
-
-export interface ListBaikeEntityResponse {
-  entities?: Entity[]
-  /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
-  page_token?: string
-}
-
-export interface MatchBaikeEntityResponse {
-  /** 匹配结果 */
-  results?: MatchInfo[]
-}
-
 export interface SearchBaikeEntityResponse {
   /** 数据数组 */
   entities?: Entity[]
@@ -246,9 +229,19 @@ export interface SearchBaikeEntityResponse {
   page_token?: string
 }
 
+export interface HighlightBaikeEntityRequest {
+  /** 需要识别百科词条的内容（不超过1000字） */
+  text: string
+}
+
 export interface HighlightBaikeEntityResponse {
   /** 返回识别到的实体词信息 */
   phrases?: Phrase[]
+}
+
+export interface ExtractBaikeEntityRequest {
+  /** 需要被提取百科实体词的文本（不会过滤租户已成为百科词条的内容） */
+  text?: string
 }
 
 export interface ExtractBaikeEntityResponse {
@@ -260,6 +253,13 @@ export interface ListBaikeClassificationResponse {
   items?: Classification[]
   /** 分页标记，当还有下一页时会返回新的 page_token，否则 page_token 为空 */
   page_token?: string
+}
+
+export interface UploadBaikeFileForm {
+  /** 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp */
+  name: string
+  /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
+  file: Blob
 }
 
 export interface UploadBaikeFileResponse {
@@ -276,7 +276,7 @@ Internal.define({
   },
   '/baike/v1/entities': {
     POST: 'createBaikeEntity',
-    GET: 'listBaikeEntity',
+    GET: { name: 'listBaikeEntity', pagination: { argIndex: 0, itemsKey: 'entities' } },
   },
   '/baike/v1/entities/{entity_id}': {
     PUT: 'updateBaikeEntity',
@@ -286,7 +286,7 @@ Internal.define({
     POST: 'matchBaikeEntity',
   },
   '/baike/v1/entities/search': {
-    POST: 'searchBaikeEntity',
+    POST: { name: 'searchBaikeEntity', pagination: { argIndex: 1, itemsKey: 'entities' } },
   },
   '/baike/v1/entities/highlight': {
     POST: 'highlightBaikeEntity',
@@ -295,7 +295,7 @@ Internal.define({
     POST: 'extractBaikeEntity',
   },
   '/baike/v1/classifications': {
-    GET: 'listBaikeClassification',
+    GET: { name: 'listBaikeClassification', pagination: { argIndex: 0 } },
   },
   '/baike/v1/files/upload': {
     POST: { name: 'uploadBaikeFile', multipart: true },

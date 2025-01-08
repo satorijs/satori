@@ -42,7 +42,7 @@ declare module '../internal' {
      * 搜索日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/search
      */
-    searchCalendar(body: SearchCalendarRequest, query?: Pagination): Promise<SearchCalendarResponse>
+    searchCalendar(body: SearchCalendarRequest, query?: Pagination): Promise<SearchCalendarResponse> & AsyncIterableIterator<Calendar>
     /**
      * 订阅日历
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/subscribe
@@ -117,7 +117,7 @@ declare module '../internal' {
      * 搜索日程
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/search
      */
-    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery): Promise<SearchCalendarCalendarEventResponse>
+    searchCalendarCalendarEvent(calendar_id: string, body: SearchCalendarCalendarEventRequest, query?: SearchCalendarCalendarEventQuery): Promise<SearchCalendarCalendarEventResponse> & AsyncIterableIterator<CalendarEvent>
     /**
      * 订阅日程变更事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event/subscription
@@ -224,9 +224,42 @@ export interface CreateCalendarRequest {
   summary_alias?: string
 }
 
+export interface CreateCalendarResponse {
+  /** 日历信息 */
+  calendar?: Calendar
+}
+
 export interface PrimaryCalendarQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface PrimaryCalendarResponse {
+  /** 主日历列表 */
+  calendars?: UserCalendar[]
+}
+
+export interface GetCalendarResponse {
+  /** 日历OpenId */
+  calendar_id: string
+  /** 日历标题 */
+  summary?: string
+  /** 日历描述 */
+  description?: string
+  /** 权限 */
+  permissions?: 'private' | 'show_only_free_busy' | 'public'
+  /** 日历颜色，颜色RGB值的int32表示。客户端展示时会映射到色板上最接近的一种颜色。仅对当前身份生效 */
+  color?: number
+  /** 日历类型 */
+  type?: 'unknown' | 'primary' | 'shared' | 'google' | 'resource' | 'exchange'
+  /** 日历备注名，修改或添加后仅对当前身份生效 */
+  summary_alias?: string
+  /** 对于当前身份，日历是否已经被标记为删除 */
+  is_deleted?: boolean
+  /** 当前日历是否是第三方数据；三方日历及日程只支持读，不支持写入 */
+  is_third_party?: boolean
+  /** 当前身份对于该日历的访问权限 */
+  role?: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
 }
 
 export interface ListCalendarFreebusyRequest {
@@ -249,9 +282,25 @@ export interface ListCalendarFreebusyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListCalendarFreebusyResponse {
+  /** 日历上请求时间区间内的忙闲信息 */
+  freebusy_list?: Freebusy[]
+}
+
 export interface ListCalendarQuery extends Pagination {
   /** 上次请求Response返回的增量同步标记，分页请求未结束时为空 */
   sync_token?: string
+}
+
+export interface ListCalendarResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下次请求需要带上的分页标记，90 天有效期 */
+  page_token?: string
+  /** 下次请求需要带上的增量同步标记，90 天有效期 */
+  sync_token?: string
+  /** 分页加载的日历数据列表 */
+  calendar_list?: Calendar[]
 }
 
 export interface PatchCalendarRequest {
@@ -267,9 +316,26 @@ export interface PatchCalendarRequest {
   summary_alias?: string
 }
 
+export interface PatchCalendarResponse {
+  /** 日历信息 */
+  calendar?: Calendar
+}
+
 export interface SearchCalendarRequest {
   /** 搜索关键字 */
   query: string
+}
+
+export interface SearchCalendarResponse {
+  /** 搜索命中的日历列表 */
+  items?: Calendar[]
+  /** 下次请求需要带上的分页标记 */
+  page_token?: string
+}
+
+export interface SubscribeCalendarResponse {
+  /** 日历信息 */
+  calendar?: Calendar
 }
 
 export interface CreateCalendarCalendarAclRequest {
@@ -282,6 +348,15 @@ export interface CreateCalendarCalendarAclRequest {
 export interface CreateCalendarCalendarAclQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateCalendarCalendarAclResponse {
+  /** acl资源ID */
+  acl_id: string
+  /** 对日历的访问权限 */
+  role: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
+  /** 权限范围 */
+  scope: AclScope
 }
 
 export interface ListCalendarCalendarAclQuery extends Pagination {
@@ -329,6 +404,11 @@ export interface CreateCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateCalendarCalendarEventResponse {
+  /** 日程信息 */
+  event?: CalendarEvent
+}
+
 export interface DeleteCalendarCalendarEventQuery {
   /** 删除日程是否给日程参与人发送bot通知，默认为true */
   need_notification?: 'true' | 'false'
@@ -372,6 +452,11 @@ export interface PatchCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface PatchCalendarCalendarEventResponse {
+  /** 日程信息 */
+  event?: CalendarEvent
+}
+
 export interface GetCalendarCalendarEventQuery {
   /** 是否需要返回会前设置 */
   need_meeting_settings?: boolean
@@ -381,6 +466,11 @@ export interface GetCalendarCalendarEventQuery {
   max_attendee_num?: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetCalendarCalendarEventResponse {
+  /** 日程信息 */
+  event?: CalendarEvent
 }
 
 export interface ListCalendarCalendarEventQuery extends Pagination {
@@ -396,6 +486,17 @@ export interface ListCalendarCalendarEventQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListCalendarCalendarEventResponse {
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下次请求需要带上的分页标记，90 天有效期 */
+  page_token?: string
+  /** 下次请求需要带上的增量同步标记，90 天有效期 */
+  sync_token?: string
+  /** 日程列表 */
+  items?: CalendarEvent[]
+}
+
 export interface SearchCalendarCalendarEventRequest {
   /** 搜索关键字 */
   query: string
@@ -406,6 +507,13 @@ export interface SearchCalendarCalendarEventRequest {
 export interface SearchCalendarCalendarEventQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface SearchCalendarCalendarEventResponse {
+  /** 搜索命中的日程列表 */
+  items?: CalendarEvent[]
+  /** 下次请求需要带上的分页标记 */
+  page_token?: string
 }
 
 export interface ReplyCalendarCalendarEventRequest {
@@ -429,9 +537,26 @@ export interface InstanceViewCalendarCalendarEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface InstanceViewCalendarCalendarEventResponse {
+  /** 日程instance列表 */
+  items?: Instance[]
+}
+
+export interface CreateCalendarCalendarEventMeetingChatResponse {
+  /** 会议群ID */
+  meeting_chat_id?: string
+  /** 群分享链接 */
+  applink?: string
+}
+
 export interface DeleteCalendarCalendarEventMeetingChatQuery {
   /** 会议群ID */
   meeting_chat_id: string
+}
+
+export interface CreateCalendarCalendarEventMeetingMinuteResponse {
+  /** 文档URL */
+  doc_url?: string
 }
 
 export interface CreateCalendarTimeoffEventRequest {
@@ -454,6 +579,23 @@ export interface CreateCalendarTimeoffEventQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateCalendarTimeoffEventResponse {
+  /** 休假申请的唯一标识id */
+  timeoff_event_id: string
+  /** 用户的user id */
+  user_id: string
+  /** 休假人的时区 */
+  timezone: string
+  /** 休假开始时间（时间戳）/日期（2021-01-01），为日期时将生成全天日程，且与end_time对应，不符合将返回错误 */
+  start_time: string
+  /** 休假结束时间（时间戳）/日期（2021-01-01），为日期时将生成全天日程，与start_time对应，不符合将返回错误 */
+  end_time: string
+  /** 休假日程标题，可自定义例如："请假中(全天) / 1-Day Time Off"，"请假中(半天) / 0.5-Day Time Off"，"长期休假中 / Leave of Absence"，"请假中" */
+  title?: string
+  /** 休假日程描述，可自定义,例如："若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked." */
+  description?: string
+}
+
 export interface CreateCalendarCalendarEventAttendeeRequest {
   /** 新增参与人列表；<br>- 单次请求会议室的数量限制为100。 */
   attendees?: CalendarEventAttendee[]
@@ -470,6 +612,11 @@ export interface CreateCalendarCalendarEventAttendeeRequest {
 export interface CreateCalendarCalendarEventAttendeeQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateCalendarCalendarEventAttendeeResponse {
+  /** 被添加的参与人列表 */
+  attendees?: CalendarEventAttendee[]
 }
 
 export interface BatchDeleteCalendarCalendarEventAttendeeRequest {
@@ -507,6 +654,17 @@ export interface GenerateCaldavConfCalendarSettingRequest {
   device_name?: string
 }
 
+export interface GenerateCaldavConfCalendarSettingResponse {
+  /** caldav密码 */
+  password?: string
+  /** caldav用户名 */
+  user_name?: string
+  /** 服务器地址 */
+  server_address?: string
+  /** 设备名 */
+  device_name?: string
+}
+
 export interface CreateCalendarExchangeBindingRequest {
   /** admin账户 */
   admin_account?: string
@@ -521,169 +679,6 @@ export interface CreateCalendarExchangeBindingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface GetCalendarExchangeBindingQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface CreateCalendarResponse {
-  /** 日历信息 */
-  calendar?: Calendar
-}
-
-export interface PrimaryCalendarResponse {
-  /** 主日历列表 */
-  calendars?: UserCalendar[]
-}
-
-export interface GetCalendarResponse {
-  /** 日历OpenId */
-  calendar_id: string
-  /** 日历标题 */
-  summary?: string
-  /** 日历描述 */
-  description?: string
-  /** 权限 */
-  permissions?: 'private' | 'show_only_free_busy' | 'public'
-  /** 日历颜色，颜色RGB值的int32表示。客户端展示时会映射到色板上最接近的一种颜色。仅对当前身份生效 */
-  color?: number
-  /** 日历类型 */
-  type?: 'unknown' | 'primary' | 'shared' | 'google' | 'resource' | 'exchange'
-  /** 日历备注名，修改或添加后仅对当前身份生效 */
-  summary_alias?: string
-  /** 对于当前身份，日历是否已经被标记为删除 */
-  is_deleted?: boolean
-  /** 当前日历是否是第三方数据；三方日历及日程只支持读，不支持写入 */
-  is_third_party?: boolean
-  /** 当前身份对于该日历的访问权限 */
-  role?: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
-}
-
-export interface ListCalendarFreebusyResponse {
-  /** 日历上请求时间区间内的忙闲信息 */
-  freebusy_list?: Freebusy[]
-}
-
-export interface ListCalendarResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下次请求需要带上的分页标记，90 天有效期 */
-  page_token?: string
-  /** 下次请求需要带上的增量同步标记，90 天有效期 */
-  sync_token?: string
-  /** 分页加载的日历数据列表 */
-  calendar_list?: Calendar[]
-}
-
-export interface PatchCalendarResponse {
-  /** 日历信息 */
-  calendar?: Calendar
-}
-
-export interface SearchCalendarResponse {
-  /** 搜索命中的日历列表 */
-  items?: Calendar[]
-  /** 下次请求需要带上的分页标记 */
-  page_token?: string
-}
-
-export interface SubscribeCalendarResponse {
-  /** 日历信息 */
-  calendar?: Calendar
-}
-
-export interface CreateCalendarCalendarAclResponse {
-  /** acl资源ID */
-  acl_id: string
-  /** 对日历的访问权限 */
-  role: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
-  /** 权限范围 */
-  scope: AclScope
-}
-
-export interface CreateCalendarCalendarEventResponse {
-  /** 日程信息 */
-  event?: CalendarEvent
-}
-
-export interface PatchCalendarCalendarEventResponse {
-  /** 日程信息 */
-  event?: CalendarEvent
-}
-
-export interface GetCalendarCalendarEventResponse {
-  /** 日程信息 */
-  event?: CalendarEvent
-}
-
-export interface ListCalendarCalendarEventResponse {
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下次请求需要带上的分页标记，90 天有效期 */
-  page_token?: string
-  /** 下次请求需要带上的增量同步标记，90 天有效期 */
-  sync_token?: string
-  /** 日程列表 */
-  items?: CalendarEvent[]
-}
-
-export interface SearchCalendarCalendarEventResponse {
-  /** 搜索命中的日程列表 */
-  items?: CalendarEvent[]
-  /** 下次请求需要带上的分页标记 */
-  page_token?: string
-}
-
-export interface InstanceViewCalendarCalendarEventResponse {
-  /** 日程instance列表 */
-  items?: Instance[]
-}
-
-export interface CreateCalendarCalendarEventMeetingChatResponse {
-  /** 会议群ID */
-  meeting_chat_id?: string
-  /** 群分享链接 */
-  applink?: string
-}
-
-export interface CreateCalendarCalendarEventMeetingMinuteResponse {
-  /** 文档URL */
-  doc_url?: string
-}
-
-export interface CreateCalendarTimeoffEventResponse {
-  /** 休假申请的唯一标识id */
-  timeoff_event_id: string
-  /** 用户的user id */
-  user_id: string
-  /** 休假人的时区 */
-  timezone: string
-  /** 休假开始时间（时间戳）/日期（2021-01-01），为日期时将生成全天日程，且与end_time对应，不符合将返回错误 */
-  start_time: string
-  /** 休假结束时间（时间戳）/日期（2021-01-01），为日期时将生成全天日程，与start_time对应，不符合将返回错误 */
-  end_time: string
-  /** 休假日程标题，可自定义例如："请假中(全天) / 1-Day Time Off"，"请假中(半天) / 0.5-Day Time Off"，"长期休假中 / Leave of Absence"，"请假中" */
-  title?: string
-  /** 休假日程描述，可自定义,例如："若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked." */
-  description?: string
-}
-
-export interface CreateCalendarCalendarEventAttendeeResponse {
-  /** 被添加的参与人列表 */
-  attendees?: CalendarEventAttendee[]
-}
-
-export interface GenerateCaldavConfCalendarSettingResponse {
-  /** caldav密码 */
-  password?: string
-  /** caldav用户名 */
-  user_name?: string
-  /** 服务器地址 */
-  server_address?: string
-  /** 设备名 */
-  device_name?: string
-}
-
 export interface CreateCalendarExchangeBindingResponse {
   /** admin账户 */
   admin_account?: string
@@ -695,6 +690,11 @@ export interface CreateCalendarExchangeBindingResponse {
   status?: 'doing' | 'cal_done' | 'timespan_done' | 'done' | 'err'
   /** exchange绑定唯一标识id */
   exchange_binding_id: string
+}
+
+export interface GetCalendarExchangeBindingQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface GetCalendarExchangeBindingResponse {
@@ -727,7 +727,7 @@ Internal.define({
     POST: 'listCalendarFreebusy',
   },
   '/calendar/v4/calendars/search': {
-    POST: 'searchCalendar',
+    POST: { name: 'searchCalendar', pagination: { argIndex: 1 } },
   },
   '/calendar/v4/calendars/{calendar_id}/subscribe': {
     POST: 'subscribeCalendar',
@@ -764,7 +764,7 @@ Internal.define({
     GET: 'getCalendarCalendarEvent',
   },
   '/calendar/v4/calendars/{calendar_id}/events/search': {
-    POST: 'searchCalendarCalendarEvent',
+    POST: { name: 'searchCalendarCalendarEvent', pagination: { argIndex: 2 } },
   },
   '/calendar/v4/calendars/{calendar_id}/events/subscription': {
     POST: 'subscriptionCalendarCalendarEvent',

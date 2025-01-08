@@ -377,6 +377,37 @@ export interface CreateImMessageQuery {
   receive_id_type: 'open_id' | 'user_id' | 'union_id' | 'email' | 'chat_id'
 }
 
+export interface CreateImMessageResponse {
+  /** 消息id open_message_id */
+  message_id?: string
+  /** 根消息id open_message_id */
+  root_id?: string
+  /** 父消息的id open_message_id */
+  parent_id?: string
+  /** 消息所属的话题 ID */
+  thread_id?: string
+  /** 消息类型 text post card image等等 */
+  msg_type?: string
+  /** 消息生成的时间戳(毫秒) */
+  create_time?: string
+  /** 消息更新的时间戳 */
+  update_time?: string
+  /** 消息是否被撤回 */
+  deleted?: boolean
+  /** 消息是否被更新 */
+  updated?: boolean
+  /** 所属的群 */
+  chat_id?: string
+  /** 发送者，可以是用户或应用 */
+  sender?: Sender
+  /** 消息内容,json结构 */
+  body?: MessageBody
+  /** 被艾特的人或应用的id */
+  mentions?: Mention[]
+  /** 合并消息的上一层级消息id open_message_id */
+  upper_message_id?: string
+}
+
 export interface ReplyImMessageRequest {
   /** 消息内容 json 格式，格式说明参考: [发送消息content说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json) */
   content: string
@@ -388,11 +419,73 @@ export interface ReplyImMessageRequest {
   uuid?: string
 }
 
+export interface ReplyImMessageResponse {
+  /** 消息id open_message_id */
+  message_id?: string
+  /** 根消息id open_message_id */
+  root_id?: string
+  /** 父消息的id open_message_id */
+  parent_id?: string
+  /** 消息所属的话题 ID */
+  thread_id?: string
+  /** 消息类型 text post card image等等 */
+  msg_type?: string
+  /** 消息生成的时间戳(毫秒) */
+  create_time?: string
+  /** 消息更新的时间戳 */
+  update_time?: string
+  /** 消息是否被撤回 */
+  deleted?: boolean
+  /** 消息是否被更新 */
+  updated?: boolean
+  /** 所属的群 */
+  chat_id?: string
+  /** 发送者，可以是用户或应用 */
+  sender?: Sender
+  /** 消息内容,json结构 */
+  body?: MessageBody
+  /** 被艾特的人或应用的id */
+  mentions?: Mention[]
+  /** 合并消息的上一层级消息id open_message_id */
+  upper_message_id?: string
+}
+
 export interface UpdateImMessageRequest {
   /** 消息的类型，仅支持文本(text)和富文本(post)类型 */
   msg_type: string
   /** 消息内容，JSON 格式 */
   content: string
+}
+
+export interface UpdateImMessageResponse {
+  /** 消息id open_message_id */
+  message_id?: string
+  /** 根消息id open_message_id */
+  root_id?: string
+  /** 父消息的id open_message_id */
+  parent_id?: string
+  /** 消息所属的话题 ID */
+  thread_id?: string
+  /** 消息类型 text post card image等等 */
+  msg_type?: string
+  /** 消息生成的时间戳(毫秒) */
+  create_time?: string
+  /** 消息更新的时间戳 */
+  update_time?: string
+  /** 消息是否被撤回 */
+  deleted?: boolean
+  /** 消息是否被更新 */
+  updated?: boolean
+  /** 所属的群 */
+  chat_id?: string
+  /** 发送者，可以是用户或应用 */
+  sender?: Sender
+  /** 消息内容,json结构 */
+  body?: MessageBody
+  /** 被艾特的人或应用的id */
+  mentions?: Mention[]
+  /** 合并消息的上一层级消息id open_message_id */
+  upper_message_id?: string
 }
 
 export interface ForwardImMessageRequest {
@@ -405,6 +498,37 @@ export interface ForwardImMessageQuery {
   receive_id_type: 'open_id' | 'user_id' | 'union_id' | 'email' | 'chat_id' | 'thread_id'
   /** 由开发者生成的唯一字符串序列，用于转发消息请求去重；持有相同uuid的请求在1小时内向同一个目标的转发只可成功一次。 */
   uuid?: string
+}
+
+export interface ForwardImMessageResponse {
+  /** 消息id open_message_id */
+  message_id?: string
+  /** 根消息id open_message_id */
+  root_id?: string
+  /** 父消息的id open_message_id */
+  parent_id?: string
+  /** 消息所属的话题 ID */
+  thread_id?: string
+  /** 消息类型 text post card image等等 */
+  msg_type?: string
+  /** 消息生成的时间戳(毫秒) */
+  create_time?: string
+  /** 消息更新的时间戳 */
+  update_time?: string
+  /** 消息是否被撤回 */
+  deleted?: boolean
+  /** 消息是否被更新 */
+  updated?: boolean
+  /** 所属的群 */
+  chat_id?: string
+  /** 发送者，可以是用户或应用 */
+  sender?: Sender
+  /** 消息内容,json结构 */
+  body?: MessageBody
+  /** 被艾特的人或应用的id */
+  mentions?: Mention[]
+  /** 合并消息的上一层级消息id open_message_id */
+  upper_message_id?: string
 }
 
 export interface MergeForwardImMessageRequest {
@@ -421,6 +545,13 @@ export interface MergeForwardImMessageQuery {
   uuid?: string
 }
 
+export interface MergeForwardImMessageResponse {
+  /** 合并转发生成的新消息 */
+  message?: Message
+  /** 无效的消息ID列表 */
+  invalid_message_id_list?: string[]
+}
+
 export interface ForwardImThreadRequest {
   /** 依据receive_id_type的值，填写对应的转发目标的ID */
   receive_id: string
@@ -431,6 +562,37 @@ export interface ForwardImThreadQuery {
   receive_id_type: 'open_id' | 'user_id' | 'union_id' | 'email' | 'chat_id' | 'thread_id'
   /** 由开发者生成的唯一字符串序列，用于转发消息请求去重；持有相同uuid的请求在1小时内向同一个目标的转发只可成功一次。 */
   uuid?: string
+}
+
+export interface ForwardImThreadResponse {
+  /** 消息id open_message_id */
+  message_id?: string
+  /** 根消息id open_message_id */
+  root_id?: string
+  /** 父消息的id open_message_id */
+  parent_id?: string
+  /** 消息所属的话题 ID */
+  thread_id?: string
+  /** 消息类型 text post card image等等 */
+  msg_type?: string
+  /** 消息生成的时间戳(毫秒) */
+  create_time?: string
+  /** 消息更新的时间戳 */
+  update_time?: string
+  /** 消息是否被撤回 */
+  deleted?: boolean
+  /** 消息是否被更新 */
+  updated?: boolean
+  /** 所属的群 */
+  chat_id?: string
+  /** 发送者，可以是用户或应用 */
+  sender?: Sender
+  /** 消息内容,json结构 */
+  body?: MessageBody
+  /** 被艾特的人或应用的id */
+  mentions?: Mention[]
+  /** 合并消息的上一层级消息id open_message_id */
+  upper_message_id?: string
 }
 
 export interface PushFollowUpImMessageRequest {
@@ -466,11 +628,32 @@ export interface GetImMessageQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetImMessageResponse {
+  /** message[] */
+  items?: Message[]
+}
+
+export interface ReadUserImBatchMessageResponse {
+  read_user?: BatchMessageReadUser
+}
+
+export interface GetProgressImBatchMessageResponse {
+  /** 消息发送进度 */
+  batch_message_send_progress?: BatchMessageSendProgress
+  /** 消息撤回进度 */
+  batch_message_recall_progress?: BatchMessageRecallProgress
+}
+
 export interface CreateImImageForm {
   /** 图片类型 */
   image_type: 'message' | 'avatar'
   /** 图片内容 **注意：** 上传的图片大小不能超过10MB */
   image: Blob
+}
+
+export interface CreateImImageResponse {
+  /** 图片的key */
+  image_key?: string
 }
 
 export interface CreateImFileForm {
@@ -484,6 +667,11 @@ export interface CreateImFileForm {
   file: Blob
 }
 
+export interface CreateImFileResponse {
+  /** 文件的key */
+  file_key?: string
+}
+
 export interface UrgentAppImMessageRequest {
   /** 该字段标识目标用户的id类型 */
   user_id_list: string[]
@@ -492,6 +680,11 @@ export interface UrgentAppImMessageRequest {
 export interface UrgentAppImMessageQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface UrgentAppImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
 }
 
 export interface UrgentSmsImMessageRequest {
@@ -504,6 +697,11 @@ export interface UrgentSmsImMessageQuery {
   user_id_type: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UrgentSmsImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
+}
+
 export interface UrgentPhoneImMessageRequest {
   /** 该字段标识目标用户的id类型 */
   user_id_list: string[]
@@ -514,9 +712,25 @@ export interface UrgentPhoneImMessageQuery {
   user_id_type: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UrgentPhoneImMessageResponse {
+  /** 无效的用户id */
+  invalid_user_id_list: string[]
+}
+
 export interface CreateImMessageReactionRequest {
   /** reaction资源类型 */
   reaction_type: Emoji
+}
+
+export interface CreateImMessageReactionResponse {
+  /** reaction资源ID */
+  reaction_id?: string
+  /** 添加reaction的操作人 */
+  operator?: Operator
+  /** reaction动作的的unix timestamp(单位:ms) */
+  action_time?: string
+  /** reaction资源类型 */
+  reaction_type?: Emoji
 }
 
 export interface ListImMessageReactionQuery extends Pagination {
@@ -526,9 +740,24 @@ export interface ListImMessageReactionQuery extends Pagination {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
+export interface DeleteImMessageReactionResponse {
+  /** reaction资源ID */
+  reaction_id?: string
+  /** 添加reaction的操作人 */
+  operator?: Operator
+  /** reaction动作的的unix timestamp(单位:ms) */
+  action_time?: string
+  /** reaction资源类型 */
+  reaction_type?: Emoji
+}
+
 export interface CreateImPinRequest {
   /** 待Pin的消息ID */
   message_id: string
+}
+
+export interface CreateImPinResponse {
+  pin?: Pin
 }
 
 export interface ListImPinQuery extends Pagination {
@@ -600,6 +829,59 @@ export interface CreateImChatQuery {
   uuid?: string
 }
 
+export interface CreateImChatResponse {
+  /** 群ID */
+  chat_id?: string
+  /** 群头像URL */
+  avatar?: string
+  /** 群名称 */
+  name?: string
+  /** 群描述 */
+  description?: string
+  /** 群国际化名称 */
+  i18n_names?: I18nNames
+  /** 群主 ID */
+  owner_id?: string
+  /** 群主 ID 类型 */
+  owner_id_type?: string
+  /** 谁可以加急 */
+  urgent_setting?: 'only_owner' | 'all_members'
+  /** 谁可以发起视频会议 */
+  video_conference_setting?: 'only_owner' | 'all_members'
+  /** 加user/bot入群权限(all_members/only_owner) */
+  add_member_permission?: string
+  /** 群分享权限(allowed/not_allowed) */
+  share_card_permission?: string
+  /** at所有人权限(all_members/only_owner) */
+  at_all_permission?: string
+  /** 群编辑权限(all_members/only_owner) */
+  edit_permission?: string
+  /** 群消息模式 */
+  group_message_type?: string
+  /** 群模式 */
+  chat_mode?: string
+  /** 群类型 */
+  chat_type?: string
+  /** 优先级最高的一个群tag */
+  chat_tag?: string
+  /** 是否是外部群 */
+  external?: boolean
+  /** tenant key */
+  tenant_key?: string
+  /** 入群消息可见性 */
+  join_message_visibility?: string
+  /** 出群消息可见性 */
+  leave_message_visibility?: string
+  /** 加群审批 */
+  membership_approval?: string
+  /** 发言权限 */
+  moderation_permission?: string
+  /** 防泄密模式设置 */
+  restricted_mode_setting?: RestrictedModeSetting
+  /** 隐藏群成员人数设置 */
+  hide_member_count_setting?: 'all_members' | 'only_owner'
+}
+
 export interface UpdateImChatRequest {
   /** 群头像对应的 Image Key，可通过[上传图片](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create)获取（注意：上传图片的 ==image_type== 需要指定为 ==avatar==） */
   avatar?: string
@@ -663,523 +945,6 @@ export interface GetImChatQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface PutTopNoticeImChatTopNoticeRequest {
-  /** 要进行发布的群置顶 */
-  chat_top_notice: ChatTopNotice[]
-}
-
-export interface ListImChatQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 群组排序方式 */
-  sort_type?: 'ByCreateTimeAsc' | 'ByActiveTimeDesc'
-}
-
-export interface SearchImChatQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-  /** 关键词。注意：如果query为空值将返回空的结果 */
-  query?: string
-}
-
-export interface GetImChatModerationQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface LinkImChatRequest {
-  /** 群分享链接有效时长，可选值week、year、permanently，分别表示7天、1年以及永久有效 */
-  validity_period?: 'week' | 'year' | 'permanently'
-}
-
-export interface AddManagersImChatManagersRequest {
-  /** 要增加的 manager_id */
-  manager_ids?: string[]
-}
-
-export interface AddManagersImChatManagersQuery {
-  /** 群成员 id 类型 open_id/user_id/union_id/app_id */
-  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
-}
-
-export interface DeleteManagersImChatManagersRequest {
-  /** 要删除的 manager_id */
-  manager_ids?: string[]
-}
-
-export interface DeleteManagersImChatManagersQuery {
-  /** 群成员 id 类型 open_id/user_id/union_id/app_id */
-  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
-}
-
-export interface CreateImChatMembersRequest {
-  /** 成员列表<b>注意：</b>每次请求，最多拉50个用户或者5个机器人，并且群组最多容纳15个机器人 */
-  id_list?: string[]
-}
-
-export interface CreateImChatMembersQuery {
-  /** 进群成员 id 类型 open_id/user_id/union_id/app_id<b>注意：</b>拉机器人入群请使用 ==app_id== */
-  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
-  /** 出现不可用ID后的处理方式 0/1/2 */
-  succeed_type?: 0 | 1 | 2
-}
-
-export interface DeleteImChatMembersRequest {
-  /** 成员列表 */
-  id_list?: string[]
-}
-
-export interface DeleteImChatMembersQuery {
-  /** 出群成员 id 类型 open_id/user_id/union_id/app_id */
-  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
-}
-
-export interface GetImChatMembersQuery extends Pagination {
-  /** 群成员 用户 ID 类型，详情参见 [用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
-  member_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface PatchImChatAnnouncementRequest {
-  /** 文档当前版本号 int64 类型，get 接口会返回 */
-  revision: string
-  /** 修改文档请求的序列化字段更新公告信息的格式和更新[云文档](/ssl:ttdoc/ukTMukTMukTM/uYDM2YjL2AjN24iNwYjN)格式相同 */
-  requests?: string[]
-}
-
-export interface GetImChatAnnouncementQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface CreateImChatTabRequest {
-  /** 会话标签页 */
-  chat_tabs: ChatTab[]
-}
-
-export interface DeleteTabsImChatTabRequest {
-  /** 会话标签页id列表 */
-  tab_ids: string[]
-}
-
-export interface UpdateTabsImChatTabRequest {
-  /** 会话标签页 */
-  chat_tabs?: ChatTab[]
-}
-
-export interface SortTabsImChatTabRequest {
-  /** 会话标签页ID列表 */
-  tab_ids?: string[]
-}
-
-export interface CreateImChatMenuTreeRequest {
-  /** 要向群内追加的菜单 */
-  menu_tree: ChatMenuTree
-}
-
-export interface DeleteImChatMenuTreeRequest {
-  /** 要删除的一级菜单ID列表 */
-  chat_menu_top_level_ids: string[]
-}
-
-export interface PatchImChatMenuItemRequest {
-  /** 修改的字段 */
-  update_fields: ('ICON' | 'NAME' | 'I18N_NAME' | 'REDIRECT_LINK')[]
-  /** 元信息 */
-  chat_menu_item: ChatMenuItem
-}
-
-export interface SortImChatMenuTreeRequest {
-  /** 一级菜单id列表 */
-  chat_menu_top_level_ids: string[]
-}
-
-export interface CreateImAppFeedCardRequest {
-  /** 应用消息卡片 */
-  app_feed_card?: OpenAppFeedCard
-  /** 用户 ID */
-  user_ids?: string[]
-}
-
-export interface CreateImAppFeedCardQuery {
-  /** 用户 ID 类型 */
-  user_id_type?: 'open_id' | 'union_id' | 'user_id'
-}
-
-export interface UpdateImAppFeedCardBatchRequest {
-  /** 应用消息卡片 */
-  feed_cards?: UserOpenAppFeedCardUpdater[]
-}
-
-export interface UpdateImAppFeedCardBatchQuery {
-  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
-  user_id_type?: 'open_id' | 'user_id' | 'union_id'
-}
-
-export interface DeleteImAppFeedCardBatchRequest {
-  /** 应用消息卡片 */
-  feed_cards?: UserOpenAppFeedCardDeleter[]
-}
-
-export interface DeleteImAppFeedCardBatchQuery {
-  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
-  user_id_type?: 'open_id' | 'user_id' | 'union_id'
-}
-
-export interface BotTimeSentiveImFeedCardRequest {
-  /** 临时置顶状态，true-打开，false-关闭 */
-  time_sensitive: boolean
-  /** 用户id 列表 */
-  user_ids: string[]
-}
-
-export interface BotTimeSentiveImFeedCardQuery {
-  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
-  user_id_type: 'open_id' | 'user_id' | 'union_id'
-}
-
-export interface UpdateImChatButtonRequest {
-  /** 用户 ID 列表 */
-  user_ids?: string[]
-  /** 群 ID */
-  chat_id: string
-  /** 按钮 */
-  buttons?: OpenAppFeedCardButtons
-}
-
-export interface UpdateImChatButtonQuery {
-  /** 用户 ID 类型 */
-  user_id_type?: 'open_id' | 'union_id' | 'user_id'
-}
-
-export interface PatchImFeedCardRequest {
-  /** 临时置顶状态，true-打开，false-关闭 */
-  time_sensitive: boolean
-  /** 用户id 列表 */
-  user_ids: string[]
-}
-
-export interface PatchImFeedCardQuery {
-  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
-  user_id_type: 'open_id' | 'user_id' | 'union_id'
-}
-
-export interface GetImBizEntityTagRelationQuery {
-  /** 业务类型 */
-  tag_biz_type: 'chat'
-  /** 业务实体id */
-  biz_entity_id: string
-}
-
-export interface CreateImTagRequest {
-  /** 创建标签 */
-  create_tag: CreateTag
-}
-
-export interface PatchImTagRequest {
-  /** 编辑标签 */
-  patch_tag?: PatchTag
-}
-
-export interface CreateImBizEntityTagRelationRequest {
-  /** 业务类型 */
-  tag_biz_type: 'chat'
-  /** 业务实体id */
-  biz_entity_id: string
-  /** 标签id */
-  tag_ids?: string[]
-}
-
-export interface UpdateImBizEntityTagRelationRequest {
-  /** 业务类型 */
-  tag_biz_type: 'chat'
-  /** 业务实体id */
-  biz_entity_id: string
-  /** 标签id */
-  tag_ids?: string[]
-}
-
-export interface CreateImMessageResponse {
-  /** 消息id open_message_id */
-  message_id?: string
-  /** 根消息id open_message_id */
-  root_id?: string
-  /** 父消息的id open_message_id */
-  parent_id?: string
-  /** 消息所属的话题 ID */
-  thread_id?: string
-  /** 消息类型 text post card image等等 */
-  msg_type?: string
-  /** 消息生成的时间戳(毫秒) */
-  create_time?: string
-  /** 消息更新的时间戳 */
-  update_time?: string
-  /** 消息是否被撤回 */
-  deleted?: boolean
-  /** 消息是否被更新 */
-  updated?: boolean
-  /** 所属的群 */
-  chat_id?: string
-  /** 发送者，可以是用户或应用 */
-  sender?: Sender
-  /** 消息内容,json结构 */
-  body?: MessageBody
-  /** 被艾特的人或应用的id */
-  mentions?: Mention[]
-  /** 合并消息的上一层级消息id open_message_id */
-  upper_message_id?: string
-}
-
-export interface ReplyImMessageResponse {
-  /** 消息id open_message_id */
-  message_id?: string
-  /** 根消息id open_message_id */
-  root_id?: string
-  /** 父消息的id open_message_id */
-  parent_id?: string
-  /** 消息所属的话题 ID */
-  thread_id?: string
-  /** 消息类型 text post card image等等 */
-  msg_type?: string
-  /** 消息生成的时间戳(毫秒) */
-  create_time?: string
-  /** 消息更新的时间戳 */
-  update_time?: string
-  /** 消息是否被撤回 */
-  deleted?: boolean
-  /** 消息是否被更新 */
-  updated?: boolean
-  /** 所属的群 */
-  chat_id?: string
-  /** 发送者，可以是用户或应用 */
-  sender?: Sender
-  /** 消息内容,json结构 */
-  body?: MessageBody
-  /** 被艾特的人或应用的id */
-  mentions?: Mention[]
-  /** 合并消息的上一层级消息id open_message_id */
-  upper_message_id?: string
-}
-
-export interface UpdateImMessageResponse {
-  /** 消息id open_message_id */
-  message_id?: string
-  /** 根消息id open_message_id */
-  root_id?: string
-  /** 父消息的id open_message_id */
-  parent_id?: string
-  /** 消息所属的话题 ID */
-  thread_id?: string
-  /** 消息类型 text post card image等等 */
-  msg_type?: string
-  /** 消息生成的时间戳(毫秒) */
-  create_time?: string
-  /** 消息更新的时间戳 */
-  update_time?: string
-  /** 消息是否被撤回 */
-  deleted?: boolean
-  /** 消息是否被更新 */
-  updated?: boolean
-  /** 所属的群 */
-  chat_id?: string
-  /** 发送者，可以是用户或应用 */
-  sender?: Sender
-  /** 消息内容,json结构 */
-  body?: MessageBody
-  /** 被艾特的人或应用的id */
-  mentions?: Mention[]
-  /** 合并消息的上一层级消息id open_message_id */
-  upper_message_id?: string
-}
-
-export interface ForwardImMessageResponse {
-  /** 消息id open_message_id */
-  message_id?: string
-  /** 根消息id open_message_id */
-  root_id?: string
-  /** 父消息的id open_message_id */
-  parent_id?: string
-  /** 消息所属的话题 ID */
-  thread_id?: string
-  /** 消息类型 text post card image等等 */
-  msg_type?: string
-  /** 消息生成的时间戳(毫秒) */
-  create_time?: string
-  /** 消息更新的时间戳 */
-  update_time?: string
-  /** 消息是否被撤回 */
-  deleted?: boolean
-  /** 消息是否被更新 */
-  updated?: boolean
-  /** 所属的群 */
-  chat_id?: string
-  /** 发送者，可以是用户或应用 */
-  sender?: Sender
-  /** 消息内容,json结构 */
-  body?: MessageBody
-  /** 被艾特的人或应用的id */
-  mentions?: Mention[]
-  /** 合并消息的上一层级消息id open_message_id */
-  upper_message_id?: string
-}
-
-export interface MergeForwardImMessageResponse {
-  /** 合并转发生成的新消息 */
-  message?: Message
-  /** 无效的消息ID列表 */
-  invalid_message_id_list?: string[]
-}
-
-export interface ForwardImThreadResponse {
-  /** 消息id open_message_id */
-  message_id?: string
-  /** 根消息id open_message_id */
-  root_id?: string
-  /** 父消息的id open_message_id */
-  parent_id?: string
-  /** 消息所属的话题 ID */
-  thread_id?: string
-  /** 消息类型 text post card image等等 */
-  msg_type?: string
-  /** 消息生成的时间戳(毫秒) */
-  create_time?: string
-  /** 消息更新的时间戳 */
-  update_time?: string
-  /** 消息是否被撤回 */
-  deleted?: boolean
-  /** 消息是否被更新 */
-  updated?: boolean
-  /** 所属的群 */
-  chat_id?: string
-  /** 发送者，可以是用户或应用 */
-  sender?: Sender
-  /** 消息内容,json结构 */
-  body?: MessageBody
-  /** 被艾特的人或应用的id */
-  mentions?: Mention[]
-  /** 合并消息的上一层级消息id open_message_id */
-  upper_message_id?: string
-}
-
-export interface GetImMessageResponse {
-  /** message[] */
-  items?: Message[]
-}
-
-export interface ReadUserImBatchMessageResponse {
-  read_user?: BatchMessageReadUser
-}
-
-export interface GetProgressImBatchMessageResponse {
-  /** 消息发送进度 */
-  batch_message_send_progress?: BatchMessageSendProgress
-  /** 消息撤回进度 */
-  batch_message_recall_progress?: BatchMessageRecallProgress
-}
-
-export interface CreateImImageResponse {
-  /** 图片的key */
-  image_key?: string
-}
-
-export interface CreateImFileResponse {
-  /** 文件的key */
-  file_key?: string
-}
-
-export interface UrgentAppImMessageResponse {
-  /** 无效的用户id */
-  invalid_user_id_list: string[]
-}
-
-export interface UrgentSmsImMessageResponse {
-  /** 无效的用户id */
-  invalid_user_id_list: string[]
-}
-
-export interface UrgentPhoneImMessageResponse {
-  /** 无效的用户id */
-  invalid_user_id_list: string[]
-}
-
-export interface CreateImMessageReactionResponse {
-  /** reaction资源ID */
-  reaction_id?: string
-  /** 添加reaction的操作人 */
-  operator?: Operator
-  /** reaction动作的的unix timestamp(单位:ms) */
-  action_time?: string
-  /** reaction资源类型 */
-  reaction_type?: Emoji
-}
-
-export interface DeleteImMessageReactionResponse {
-  /** reaction资源ID */
-  reaction_id?: string
-  /** 添加reaction的操作人 */
-  operator?: Operator
-  /** reaction动作的的unix timestamp(单位:ms) */
-  action_time?: string
-  /** reaction资源类型 */
-  reaction_type?: Emoji
-}
-
-export interface CreateImPinResponse {
-  pin?: Pin
-}
-
-export interface CreateImChatResponse {
-  /** 群ID */
-  chat_id?: string
-  /** 群头像URL */
-  avatar?: string
-  /** 群名称 */
-  name?: string
-  /** 群描述 */
-  description?: string
-  /** 群国际化名称 */
-  i18n_names?: I18nNames
-  /** 群主 ID */
-  owner_id?: string
-  /** 群主 ID 类型 */
-  owner_id_type?: string
-  /** 谁可以加急 */
-  urgent_setting?: 'only_owner' | 'all_members'
-  /** 谁可以发起视频会议 */
-  video_conference_setting?: 'only_owner' | 'all_members'
-  /** 加user/bot入群权限(all_members/only_owner) */
-  add_member_permission?: string
-  /** 群分享权限(allowed/not_allowed) */
-  share_card_permission?: string
-  /** at所有人权限(all_members/only_owner) */
-  at_all_permission?: string
-  /** 群编辑权限(all_members/only_owner) */
-  edit_permission?: string
-  /** 群消息模式 */
-  group_message_type?: string
-  /** 群模式 */
-  chat_mode?: string
-  /** 群类型 */
-  chat_type?: string
-  /** 优先级最高的一个群tag */
-  chat_tag?: string
-  /** 是否是外部群 */
-  external?: boolean
-  /** tenant key */
-  tenant_key?: string
-  /** 入群消息可见性 */
-  join_message_visibility?: string
-  /** 出群消息可见性 */
-  leave_message_visibility?: string
-  /** 加群审批 */
-  membership_approval?: string
-  /** 发言权限 */
-  moderation_permission?: string
-  /** 防泄密模式设置 */
-  restricted_mode_setting?: RestrictedModeSetting
-  /** 隐藏群成员人数设置 */
-  hide_member_count_setting?: 'all_members' | 'only_owner'
-}
-
 export interface GetImChatResponse {
   /** 群头像URL */
   avatar?: string
@@ -1241,6 +1006,30 @@ export interface GetImChatResponse {
   chat_status?: 'normal' | 'dissolved' | 'dissolved_save'
 }
 
+export interface PutTopNoticeImChatTopNoticeRequest {
+  /** 要进行发布的群置顶 */
+  chat_top_notice: ChatTopNotice[]
+}
+
+export interface ListImChatQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 群组排序方式 */
+  sort_type?: 'ByCreateTimeAsc' | 'ByActiveTimeDesc'
+}
+
+export interface SearchImChatQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  /** 关键词。注意：如果query为空值将返回空的结果 */
+  query?: string
+}
+
+export interface GetImChatModerationQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
 export interface GetImChatModerationResponse {
   /** 群发言模式 */
   moderation_setting?: string
@@ -1252,6 +1041,11 @@ export interface GetImChatModerationResponse {
   items?: ListModerator[]
 }
 
+export interface LinkImChatRequest {
+  /** 群分享链接有效时长，可选值week、year、permanently，分别表示7天、1年以及永久有效 */
+  validity_period?: 'week' | 'year' | 'permanently'
+}
+
 export interface LinkImChatResponse {
   /** 群分享链接 */
   share_link?: string
@@ -1261,6 +1055,16 @@ export interface LinkImChatResponse {
   is_permanent?: boolean
 }
 
+export interface AddManagersImChatManagersRequest {
+  /** 要增加的 manager_id */
+  manager_ids?: string[]
+}
+
+export interface AddManagersImChatManagersQuery {
+  /** 群成员 id 类型 open_id/user_id/union_id/app_id */
+  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
+}
+
 export interface AddManagersImChatManagersResponse {
   /** 群目前的管理员id */
   chat_managers?: string[]
@@ -1268,11 +1072,33 @@ export interface AddManagersImChatManagersResponse {
   chat_bot_managers?: string[]
 }
 
+export interface DeleteManagersImChatManagersRequest {
+  /** 要删除的 manager_id */
+  manager_ids?: string[]
+}
+
+export interface DeleteManagersImChatManagersQuery {
+  /** 群成员 id 类型 open_id/user_id/union_id/app_id */
+  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
+}
+
 export interface DeleteManagersImChatManagersResponse {
   /** 群目前的管理员id */
   chat_managers?: string[]
   /** 群目前的管理员bot id */
   chat_bot_managers?: string[]
+}
+
+export interface CreateImChatMembersRequest {
+  /** 成员列表<b>注意：</b>每次请求，最多拉50个用户或者5个机器人，并且群组最多容纳15个机器人 */
+  id_list?: string[]
+}
+
+export interface CreateImChatMembersQuery {
+  /** 进群成员 id 类型 open_id/user_id/union_id/app_id<b>注意：</b>拉机器人入群请使用 ==app_id== */
+  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
+  /** 出现不可用ID后的处理方式 0/1/2 */
+  succeed_type?: 0 | 1 | 2
 }
 
 export interface CreateImChatMembersResponse {
@@ -1284,9 +1110,24 @@ export interface CreateImChatMembersResponse {
   pending_approval_id_list?: string[]
 }
 
+export interface DeleteImChatMembersRequest {
+  /** 成员列表 */
+  id_list?: string[]
+}
+
+export interface DeleteImChatMembersQuery {
+  /** 出群成员 id 类型 open_id/user_id/union_id/app_id */
+  member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
+}
+
 export interface DeleteImChatMembersResponse {
   /** 无效成员列表 */
   invalid_id_list?: string[]
+}
+
+export interface GetImChatMembersQuery extends Pagination {
+  /** 群成员 用户 ID 类型，详情参见 [用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
+  member_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface GetImChatMembersResponse {
@@ -1303,6 +1144,18 @@ export interface GetImChatMembersResponse {
 export interface IsInChatImChatMembersResponse {
   /** 用户或者机器人是否在群中 */
   is_in_chat?: boolean
+}
+
+export interface PatchImChatAnnouncementRequest {
+  /** 文档当前版本号 int64 类型，get 接口会返回 */
+  revision: string
+  /** 修改文档请求的序列化字段更新公告信息的格式和更新[云文档](/ssl:ttdoc/ukTMukTMukTM/uYDM2YjL2AjN24iNwYjN)格式相同 */
+  requests?: string[]
+}
+
+export interface GetImChatAnnouncementQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface GetImChatAnnouncementResponse {
@@ -1324,9 +1177,19 @@ export interface GetImChatAnnouncementResponse {
   modifier_id?: string
 }
 
+export interface CreateImChatTabRequest {
+  /** 会话标签页 */
+  chat_tabs: ChatTab[]
+}
+
 export interface CreateImChatTabResponse {
   /** 群标签列表 */
   chat_tabs?: ChatTab[]
+}
+
+export interface DeleteTabsImChatTabRequest {
+  /** 会话标签页id列表 */
+  tab_ids: string[]
 }
 
 export interface DeleteTabsImChatTabResponse {
@@ -1334,9 +1197,19 @@ export interface DeleteTabsImChatTabResponse {
   chat_tabs?: ChatTab[]
 }
 
+export interface UpdateTabsImChatTabRequest {
+  /** 会话标签页 */
+  chat_tabs?: ChatTab[]
+}
+
 export interface UpdateTabsImChatTabResponse {
   /** 群标签列表 */
   chat_tabs?: ChatTab[]
+}
+
+export interface SortTabsImChatTabRequest {
+  /** 会话标签页ID列表 */
+  tab_ids?: string[]
 }
 
 export interface SortTabsImChatTabResponse {
@@ -1349,9 +1222,19 @@ export interface ListTabsImChatTabResponse {
   chat_tabs?: ChatTab[]
 }
 
+export interface CreateImChatMenuTreeRequest {
+  /** 要向群内追加的菜单 */
+  menu_tree: ChatMenuTree
+}
+
 export interface CreateImChatMenuTreeResponse {
   /** 追加后群内现有菜单 */
   menu_tree?: ChatMenuTree
+}
+
+export interface DeleteImChatMenuTreeRequest {
+  /** 要删除的一级菜单ID列表 */
+  chat_menu_top_level_ids: string[]
 }
 
 export interface DeleteImChatMenuTreeResponse {
@@ -1359,8 +1242,20 @@ export interface DeleteImChatMenuTreeResponse {
   menu_tree?: ChatMenuTree
 }
 
+export interface PatchImChatMenuItemRequest {
+  /** 修改的字段 */
+  update_fields: ('ICON' | 'NAME' | 'I18N_NAME' | 'REDIRECT_LINK')[]
+  /** 元信息 */
+  chat_menu_item: ChatMenuItem
+}
+
 export interface PatchImChatMenuItemResponse {
   chat_menu_item?: ChatMenuItem
+}
+
+export interface SortImChatMenuTreeRequest {
+  /** 一级菜单id列表 */
+  chat_menu_top_level_ids: string[]
 }
 
 export interface SortImChatMenuTreeResponse {
@@ -1373,6 +1268,18 @@ export interface GetImChatMenuTreeResponse {
   menu_tree?: ChatMenuTree
 }
 
+export interface CreateImAppFeedCardRequest {
+  /** 应用消息卡片 */
+  app_feed_card?: OpenAppFeedCard
+  /** 用户 ID */
+  user_ids?: string[]
+}
+
+export interface CreateImAppFeedCardQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
 export interface CreateImAppFeedCardResponse {
   /** 失败的卡片 */
   failed_cards?: OpenFailedUserAppFeedCardItem[]
@@ -1380,9 +1287,29 @@ export interface CreateImAppFeedCardResponse {
   biz_id?: string
 }
 
+export interface UpdateImAppFeedCardBatchRequest {
+  /** 应用消息卡片 */
+  feed_cards?: UserOpenAppFeedCardUpdater[]
+}
+
+export interface UpdateImAppFeedCardBatchQuery {
+  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
+  user_id_type?: 'open_id' | 'user_id' | 'union_id'
+}
+
 export interface UpdateImAppFeedCardBatchResponse {
   /** 失败的卡片 */
   failed_cards?: OpenFailedUserAppFeedCardItem[]
+}
+
+export interface DeleteImAppFeedCardBatchRequest {
+  /** 应用消息卡片 */
+  feed_cards?: UserOpenAppFeedCardDeleter[]
+}
+
+export interface DeleteImAppFeedCardBatchQuery {
+  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
+  user_id_type?: 'open_id' | 'user_id' | 'union_id'
 }
 
 export interface DeleteImAppFeedCardBatchResponse {
@@ -1390,9 +1317,35 @@ export interface DeleteImAppFeedCardBatchResponse {
   failed_cards?: OpenFailedUserAppFeedCardItem[]
 }
 
+export interface BotTimeSentiveImFeedCardRequest {
+  /** 临时置顶状态，true-打开，false-关闭 */
+  time_sensitive: boolean
+  /** 用户id 列表 */
+  user_ids: string[]
+}
+
+export interface BotTimeSentiveImFeedCardQuery {
+  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
+  user_id_type: 'open_id' | 'user_id' | 'union_id'
+}
+
 export interface BotTimeSentiveImFeedCardResponse {
   /** 失败原因 */
   failed_user_reasons?: FailedReason[]
+}
+
+export interface UpdateImChatButtonRequest {
+  /** 用户 ID 列表 */
+  user_ids?: string[]
+  /** 群 ID */
+  chat_id: string
+  /** 按钮 */
+  buttons?: OpenAppFeedCardButtons
+}
+
+export interface UpdateImChatButtonQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
 export interface UpdateImChatButtonResponse {
@@ -1400,14 +1353,38 @@ export interface UpdateImChatButtonResponse {
   failed_user_reasons?: FailedReason[]
 }
 
+export interface PatchImFeedCardRequest {
+  /** 临时置顶状态，true-打开，false-关闭 */
+  time_sensitive: boolean
+  /** 用户id 列表 */
+  user_ids: string[]
+}
+
+export interface PatchImFeedCardQuery {
+  /** 此次调用中使用的用户ID的类型 可选值有:     - open_id: 以open_id来识别用户     - user_id: 以user_id来识别用户     - union_id: 以union_id来识别用户 */
+  user_id_type: 'open_id' | 'user_id' | 'union_id'
+}
+
 export interface PatchImFeedCardResponse {
   /** 失败原因 */
   failed_user_reasons?: FailedReason[]
 }
 
+export interface GetImBizEntityTagRelationQuery {
+  /** 业务类型 */
+  tag_biz_type: 'chat'
+  /** 业务实体id */
+  biz_entity_id: string
+}
+
 export interface GetImBizEntityTagRelationResponse {
   /** 标签内容及绑定时间 */
   tag_info_with_bind_versions?: TagInfoWithBindVersion[]
+}
+
+export interface CreateImTagRequest {
+  /** 创建标签 */
+  create_tag: CreateTag
 }
 
 export interface CreateImTagResponse {
@@ -1417,11 +1394,34 @@ export interface CreateImTagResponse {
   create_tag_fail_reason?: CreateTagFailReason
 }
 
+export interface PatchImTagRequest {
+  /** 编辑标签 */
+  patch_tag?: PatchTag
+}
+
 export interface PatchImTagResponse {
   /** 编辑后的taginfo */
   tag_info?: TagInfo
   /** 修改失败原因 */
   patch_tag_fail_reason?: PatchTagFailReason
+}
+
+export interface CreateImBizEntityTagRelationRequest {
+  /** 业务类型 */
+  tag_biz_type: 'chat'
+  /** 业务实体id */
+  biz_entity_id: string
+  /** 标签id */
+  tag_ids?: string[]
+}
+
+export interface UpdateImBizEntityTagRelationRequest {
+  /** 业务类型 */
+  tag_biz_type: 'chat'
+  /** 业务实体id */
+  biz_entity_id: string
+  /** 标签id */
+  tag_ids?: string[]
 }
 
 Internal.define({

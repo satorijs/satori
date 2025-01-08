@@ -137,6 +137,11 @@ export interface CreateAdminBadgeRequest {
   i18n_explanation?: I18n
 }
 
+export interface CreateAdminBadgeResponse {
+  /** 勋章的信息 */
+  badge?: Badge
+}
+
 export interface UpdateAdminBadgeRequest {
   /** 租户内唯一的勋章名称，最多30个字符。 */
   name: string
@@ -152,11 +157,28 @@ export interface UpdateAdminBadgeRequest {
   i18n_explanation?: I18n
 }
 
+export interface UpdateAdminBadgeResponse {
+  /** 勋章信息 */
+  badge?: Badge
+}
+
+export const enum CreateAdminBadgeImageFormImageType {
+  /** 勋章详情图 */
+  Detail = 1,
+  /** 勋章挂饰图 */
+  Show = 2,
+}
+
 export interface CreateAdminBadgeImageForm {
   /** 勋章图片的文件，仅支持 PNG 格式，320 x 320 像素，大小不超过 1024 KB。 */
   image_file: Blob
   /** 图片的类型 */
-  image_type: 1 | 2
+  image_type: CreateAdminBadgeImageFormImageType
+}
+
+export interface CreateAdminBadgeImageResponse {
+  /** 图片的key */
+  image_key?: string
 }
 
 export interface ListAdminBadgeQuery extends Pagination {
@@ -164,11 +186,23 @@ export interface ListAdminBadgeQuery extends Pagination {
   name?: string
 }
 
+export interface GetAdminBadgeResponse {
+  /** 勋章信息 */
+  badge?: Badge
+}
+
+export const enum CreateAdminBadgeGrantRequestGrantType {
+  /** 手动选择有效期 */
+  Manual = 0,
+  /** 匹配系统入职时间 */
+  JoinTime = 1,
+}
+
 export interface CreateAdminBadgeGrantRequest {
   /** 授予名单名称，最多100个字符。 */
   name: string
   /** 勋章下唯一的授予事项 */
-  grant_type: 0 | 1
+  grant_type: CreateAdminBadgeGrantRequestGrantType
   /** 授予名单的生效时间对应的时区，用于检查RuleDetail的时间戳的取值是否规范，取值范围为TZ database name */
   time_zone: string
   /** 规则详情 */
@@ -190,11 +224,23 @@ export interface CreateAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface CreateAdminBadgeGrantResponse {
+  /** 授予名单的信息 */
+  grant?: Grant
+}
+
+export const enum UpdateAdminBadgeGrantRequestGrantType {
+  /** 手动选择有效期 */
+  Manual = 0,
+  /** 匹配系统入职时间 */
+  JoinTime = 1,
+}
+
 export interface UpdateAdminBadgeGrantRequest {
   /** 授予名单名称，最多100个字符。 */
   name: string
   /** 勋章下唯一的授予事项 */
-  grant_type: 0 | 1
+  grant_type: UpdateAdminBadgeGrantRequestGrantType
   /** 授予名单的生效时间对应的时区，用于检查RuleDetail的时间戳的取值是否规范，取值范围为TZ database name */
   time_zone: string
   /** 规则详情 */
@@ -216,6 +262,11 @@ export interface UpdateAdminBadgeGrantQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface UpdateAdminBadgeGrantResponse {
+  /** 授予名单 */
+  grant?: Grant
+}
+
 export interface ListAdminBadgeGrantQuery extends Pagination {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
@@ -230,6 +281,20 @@ export interface GetAdminBadgeGrantQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型。 */
   department_id_type?: 'department_id' | 'open_department_id'
+}
+
+export interface GetAdminBadgeGrantResponse {
+  /** 授予名单信息 */
+  grant?: Grant
+}
+
+export const enum ListAdminAuditInfoQueryUserType {
+  /** 互联网上的任何人 */
+  All = 0,
+  /** 组织内成员 */
+  NormalUser = 1,
+  /** 组织外成员 */
+  ExternalUser = 2,
 }
 
 export interface ListAdminAuditInfoQuery extends Pagination {
@@ -248,48 +313,13 @@ export interface ListAdminAuditInfoQuery extends Pagination {
   /** 过滤模块 */
   event_module?: number
   /** 过滤用户类型. 仅当 operator_type=user 时生效 */
-  user_type?: 0 | 1 | 2
+  user_type?: ListAdminAuditInfoQueryUserType
   /** 过滤操作对象: 操作对象类型. 与object_value配合使用 */
   object_type?: number
   /** 过滤操作对象: 操作对象ID. 与object_type配合使用 */
   object_value?: string
   /** 增强过滤操作对象: 操作对象ID，支持云文档侧泛token过滤。会覆盖object_type和object_value查询条件 */
   ext_filter_object_by_ccm_token?: string
-}
-
-export interface CreateAdminBadgeResponse {
-  /** 勋章的信息 */
-  badge?: Badge
-}
-
-export interface UpdateAdminBadgeResponse {
-  /** 勋章信息 */
-  badge?: Badge
-}
-
-export interface CreateAdminBadgeImageResponse {
-  /** 图片的key */
-  image_key?: string
-}
-
-export interface GetAdminBadgeResponse {
-  /** 勋章信息 */
-  badge?: Badge
-}
-
-export interface CreateAdminBadgeGrantResponse {
-  /** 授予名单的信息 */
-  grant?: Grant
-}
-
-export interface UpdateAdminBadgeGrantResponse {
-  /** 授予名单 */
-  grant?: Grant
-}
-
-export interface GetAdminBadgeGrantResponse {
-  /** 授予名单信息 */
-  grant?: Grant
 }
 
 Internal.define({

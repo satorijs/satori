@@ -191,9 +191,21 @@ export interface AuditLogListApaasApplicationAuditLogQuery {
   app_type?: string
 }
 
+export interface AuditLogListApaasApplicationAuditLogResponse {
+  /** 审计日志查询结果列表详情信息 */
+  items?: AuditLogEsField[]
+  /** 审计日志查询总条数 */
+  total?: string
+}
+
 export interface GetApaasApplicationAuditLogQuery {
   /** 审计日志ID信息 */
   log_id: string
+}
+
+export interface GetApaasApplicationAuditLogResponse {
+  /** 审计日志详情信息 */
+  data?: AuditLogDetail
 }
 
 export interface BatchRemoveAuthorizationApaasApplicationRoleMemberRequest {
@@ -217,6 +229,11 @@ export interface GetApaasApplicationRoleMemberQuery {
   use_api_id?: boolean
 }
 
+export interface GetApaasApplicationRoleMemberResponse {
+  /** 角色成员 */
+  role_member?: RoleMember
+}
+
 export interface BatchRemoveAuthorizationApaasApplicationRecordPermissionMemberRequest {
   /** 需要删除的用户 ID 列表 */
   user_ids?: string[]
@@ -236,6 +253,13 @@ export interface OqlQueryApaasApplicationObjectRequest {
   named_args?: string
 }
 
+export interface OqlQueryApaasApplicationObjectResponse {
+  /** 每一列的标题 */
+  columns: string[]
+  /** 每一行的值，以「key-value」的形式返回 */
+  rows: string
+}
+
 export interface SearchApaasApplicationObjectRequest {
   /** 搜索词 */
   q?: string
@@ -249,9 +273,25 @@ export interface SearchApaasApplicationObjectRequest {
   metadata?: 'Label' | 'SearchLayout'
 }
 
+export interface SearchApaasApplicationObjectResponse {
+  /** 搜索结果列表 */
+  records?: string
+  /** 是否还有更多数据 */
+  has_more?: boolean
+  /** 分页标记，当 HasMore 为 true 时，会同时返回新的 NextPageToken */
+  next_page_token?: string
+  /** 对象信息 */
+  objects?: ObjectMeta[]
+}
+
 export interface QueryApaasApplicationObjectRecordRequest {
   /** 需要获取的字段，使用字段唯一标识符进行查询，关联字段可使用 . 进行下钻 */
   select?: string[]
+}
+
+export interface QueryApaasApplicationObjectRecordResponse {
+  /** 记录详情,格式为 Map<string, ANY> */
+  item: string
 }
 
 export interface PatchApaasApplicationObjectRecordRequest {
@@ -264,9 +304,19 @@ export interface CreateApaasApplicationObjectRecordRequest {
   record: string
 }
 
+export interface CreateApaasApplicationObjectRecordResponse {
+  /** 记录 ID */
+  id?: string
+}
+
 export interface BatchUpdateApaasApplicationObjectRecordRequest {
   /** 记录详情列表，格式为 List<Map<string, ANY>>，操作记录数上限为 500 条 */
   records: string
+}
+
+export interface BatchUpdateApaasApplicationObjectRecordResponse {
+  /** 处理结果 */
+  items?: RecordResult[]
 }
 
 export interface BatchQueryApaasApplicationObjectRecordRequest {
@@ -290,9 +340,25 @@ export interface BatchQueryApaasApplicationObjectRecordRequest {
   need_total_count?: boolean
 }
 
+export interface BatchQueryApaasApplicationObjectRecordResponse {
+  /** 符合条件的记录列表 */
+  items: string
+  /** 符合条件的记录数 */
+  total?: number
+  /** 下一页的起始位置 Token ，访问至末尾时不返回 */
+  next_page_token?: string
+  /** 是否还有数据 */
+  has_more?: boolean
+}
+
 export interface BatchDeleteApaasApplicationObjectRecordRequest {
   /** 记录 ID 列表，操作记录数上限为 500 */
   ids: string[]
+}
+
+export interface BatchDeleteApaasApplicationObjectRecordResponse {
+  /** 处理结果 */
+  items?: RecordResult[]
 }
 
 export interface BatchCreateApaasApplicationObjectRecordRequest {
@@ -300,9 +366,19 @@ export interface BatchCreateApaasApplicationObjectRecordRequest {
   records: string
 }
 
+export interface BatchCreateApaasApplicationObjectRecordResponse {
+  /** 处理结果 */
+  items?: RecordResult[]
+}
+
 export interface InvokeApaasApplicationFunctionRequest {
   /** 函数输入参数（JSON 序列化后的字符串） */
   params?: string
+}
+
+export interface InvokeApaasApplicationFunctionResponse {
+  /** 函数执行的返回结果（JSON 序列化后的字符串） */
+  result?: string
 }
 
 export interface QueryApaasApplicationEnvironmentVariableRequest {
@@ -312,6 +388,18 @@ export interface QueryApaasApplicationEnvironmentVariableRequest {
   limit?: number
   /** 返回记录的偏移量，默认为 0，即从查询到的第一个记录开始返回 */
   offset?: number
+}
+
+export interface QueryApaasApplicationEnvironmentVariableResponse {
+  /** 环境变量列表 */
+  items?: EnvironmentVariable[]
+  /** 符合查询条件的环境变量的总数 */
+  total: number
+}
+
+export interface GetApaasApplicationEnvironmentVariableResponse {
+  /** 环境变量详情 */
+  item?: EnvironmentVariable
 }
 
 export interface ExecuteApaasApplicationFlowRequest {
@@ -325,6 +413,19 @@ export interface ExecuteApaasApplicationFlowRequest {
   params?: string
   /** 操作人 */
   operator: string
+}
+
+export interface ExecuteApaasApplicationFlowResponse {
+  /** 状态 */
+  status?: string
+  /** 输出参数 */
+  out_params?: string
+  /** 执行id */
+  execution_id?: string
+  /** 错误信息 */
+  error_msg?: string
+  /** code */
+  code?: string
 }
 
 export interface QueryApaasUserTaskRequest {
@@ -344,6 +445,13 @@ export interface QueryApaasUserTaskRequest {
   api_ids?: string[]
   /** kunlunUserID */
   kunlun_user_id: string
+}
+
+export interface QueryApaasUserTaskResponse {
+  /** 总任务条数 */
+  count?: string
+  /** 任务信息 */
+  tasks?: UserTask[]
 }
 
 export interface AgreeApaasApprovalTaskRequest {
@@ -410,6 +518,11 @@ export interface RollbackPointsApaasUserTaskRequest {
   operator_user_id: string
 }
 
+export interface RollbackPointsApaasUserTaskResponse {
+  /** 任务列表 */
+  tasks?: AllowedRollbaclkTaskItemType[]
+}
+
 export interface RollbackApaasUserTaskRequest {
   /** 操作人kunlunUserID */
   operator_user_id: string
@@ -428,119 +541,6 @@ export interface ChatGroupApaasUserTaskRequest {
   chat_id?: string
   /** 要加入的群名称，当chat_id为空时用该名称创建群聊 */
   chat_name?: string
-}
-
-export interface AuditLogListApaasApplicationAuditLogResponse {
-  /** 审计日志查询结果列表详情信息 */
-  items?: AuditLogEsField[]
-  /** 审计日志查询总条数 */
-  total?: string
-}
-
-export interface GetApaasApplicationAuditLogResponse {
-  /** 审计日志详情信息 */
-  data?: AuditLogDetail
-}
-
-export interface GetApaasApplicationRoleMemberResponse {
-  /** 角色成员 */
-  role_member?: RoleMember
-}
-
-export interface OqlQueryApaasApplicationObjectResponse {
-  /** 每一列的标题 */
-  columns: string[]
-  /** 每一行的值，以「key-value」的形式返回 */
-  rows: string
-}
-
-export interface SearchApaasApplicationObjectResponse {
-  /** 搜索结果列表 */
-  records?: string
-  /** 是否还有更多数据 */
-  has_more?: boolean
-  /** 分页标记，当 HasMore 为 true 时，会同时返回新的 NextPageToken */
-  next_page_token?: string
-  /** 对象信息 */
-  objects?: ObjectMeta[]
-}
-
-export interface QueryApaasApplicationObjectRecordResponse {
-  /** 记录详情,格式为 Map<string, ANY> */
-  item: string
-}
-
-export interface CreateApaasApplicationObjectRecordResponse {
-  /** 记录 ID */
-  id?: string
-}
-
-export interface BatchUpdateApaasApplicationObjectRecordResponse {
-  /** 处理结果 */
-  items?: RecordResult[]
-}
-
-export interface BatchQueryApaasApplicationObjectRecordResponse {
-  /** 符合条件的记录列表 */
-  items: string
-  /** 符合条件的记录数 */
-  total?: number
-  /** 下一页的起始位置 Token ，访问至末尾时不返回 */
-  next_page_token?: string
-  /** 是否还有数据 */
-  has_more?: boolean
-}
-
-export interface BatchDeleteApaasApplicationObjectRecordResponse {
-  /** 处理结果 */
-  items?: RecordResult[]
-}
-
-export interface BatchCreateApaasApplicationObjectRecordResponse {
-  /** 处理结果 */
-  items?: RecordResult[]
-}
-
-export interface InvokeApaasApplicationFunctionResponse {
-  /** 函数执行的返回结果（JSON 序列化后的字符串） */
-  result?: string
-}
-
-export interface QueryApaasApplicationEnvironmentVariableResponse {
-  /** 环境变量列表 */
-  items?: EnvironmentVariable[]
-  /** 符合查询条件的环境变量的总数 */
-  total: number
-}
-
-export interface GetApaasApplicationEnvironmentVariableResponse {
-  /** 环境变量详情 */
-  item?: EnvironmentVariable
-}
-
-export interface ExecuteApaasApplicationFlowResponse {
-  /** 状态 */
-  status?: string
-  /** 输出参数 */
-  out_params?: string
-  /** 执行id */
-  execution_id?: string
-  /** 错误信息 */
-  error_msg?: string
-  /** code */
-  code?: string
-}
-
-export interface QueryApaasUserTaskResponse {
-  /** 总任务条数 */
-  count?: string
-  /** 任务信息 */
-  tasks?: UserTask[]
-}
-
-export interface RollbackPointsApaasUserTaskResponse {
-  /** 任务列表 */
-  tasks?: AllowedRollbaclkTaskItemType[]
 }
 
 export interface ChatGroupApaasUserTaskResponse {

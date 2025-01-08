@@ -908,6 +908,11 @@ export interface ListHireLocationQuery extends Pagination {
   usage: 'position_location' | 'interview_location' | 'store_location'
 }
 
+export interface GetHireRoleResponse {
+  /** 角色详情 */
+  role?: RoleDetail
+}
+
 export interface ListHireUserRoleQuery extends Pagination {
   /** 用户 ID */
   user_id?: string
@@ -921,11 +926,65 @@ export interface ListHireUserRoleQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum CombinedCreateHireJobRequestExperience {
+  /** 不限 */
+  NoLimit = 1,
+  /** 应届毕业生 */
+  Graduate = 2,
+  /** 1年以下 */
+  UnderOneYear = 3,
+  /** 1-3年 */
+  OneToThreeYear = 4,
+  /** 3-5年 */
+  ThreeToFiveYear = 5,
+  /** 5-7年 */
+  FiveToSevenYear = 6,
+  /** 7-10年 */
+  SevenToTenYear = 7,
+  /** 10年以上 */
+  OverTenYear = 8,
+}
+
+export const enum CombinedCreateHireJobRequestProcessType {
+  /** 社招 */
+  SocialProcess = 1,
+  /** 校招 */
+  CampusProcess = 2,
+}
+
+export const enum CombinedCreateHireJobRequestRequiredDegree {
+  /** 小学及以上 */
+  PrimaryEducation = 1,
+  /** 初中及以上 */
+  JuniorMiddleSchoolEducation = 2,
+  /** 专职及以上 */
+  Secondary = 3,
+  /** 高中及以上 */
+  SeniorSchoolGraduates = 4,
+  /** 大专及以上 */
+  Associate = 5,
+  /** 本科及以上 */
+  Bachelor = 6,
+  /** 硕士及以上 */
+  Master = 7,
+  /** 博士及以上 */
+  Phd = 8,
+  /** 不限 */
+  NoLimit = 20,
+}
+
+export const enum CombinedCreateHireJobRequestJobAttribute {
+  /** 实体职位 */
+  Concrete = 1,
+  /** 虚拟职位 */
+  Virtual = 2,
+}
+
 export interface CombinedCreateHireJobRequest {
   /** 职位编号，可传入职位的「职位编号」、「职位 ID」或者「职位序号」，将以传入的参数作为职位编号，以便双方系统的数据映射 */
   code?: string
   /** 工作年限 */
-  experience?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+  experience?: CombinedCreateHireJobRequestExperience
   /** 到期日期，请使用 */
   expiry_time?: number
   /** 自定义字段 */
@@ -941,7 +1000,7 @@ export interface CombinedCreateHireJobRequest {
   /** 招聘流程，枚举通过接口「获取招聘流程信息」获取 */
   job_process_id: string
   /** 职位流程类型 */
-  process_type: 1 | 2
+  process_type: CombinedCreateHireJobRequestProcessType
   /** 项目，枚举通过「获取项目列表」获取 */
   subject_id?: string
   /** 职能分类，通过「获取职能分类」获取 */
@@ -967,13 +1026,13 @@ export interface CombinedCreateHireJobRequest {
   /** 雇佣类型 */
   recruitment_type_id: string
   /** 学历要求 */
-  required_degree?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 20
+  required_degree?: CombinedCreateHireJobRequestRequiredDegree
   /** 序列 */
   job_category_id?: string
   /** 工作地点，枚举通过接口「获取地址列表」获取，选择地点用途为「职位地址」 */
   address_id_list?: string[]
   /** 职位属性，1是实体职位，2是虚拟职位 */
-  job_attribute?: 1 | 2
+  job_attribute?: CombinedCreateHireJobRequestJobAttribute
   /** 到期日期的毫秒时间戳 */
   expiry_timestamp?: string
   /** 面试登记表ID */
@@ -997,11 +1056,75 @@ export interface CombinedCreateHireJobQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
 }
 
+export interface CombinedCreateHireJobResponse {
+  /** 职位广告 */
+  default_job_post?: CombinedJobResultDefaultJobPost
+  /** 职位 */
+  job?: Job
+  /** 职位负责人 */
+  job_manager?: JobManager
+  /** 面试登记表 */
+  interview_registration_schema_info?: RegistrationSchemaInfo
+  /** 入职登记表 */
+  onboard_registration_schema_info?: RegistrationSchemaInfo
+  /** 目标专业 */
+  target_major_list?: TargetMajorInfo[]
+  /** 官网申请表 */
+  portal_website_apply_form_schema_info?: RegistrationSchemaInfo
+}
+
+export const enum CombinedUpdateHireJobRequestExperience {
+  /** 不限 */
+  NoLimit = 1,
+  /** 应届毕业生 */
+  Graduate = 2,
+  /** 1年以下 */
+  UnderOneYear = 3,
+  /** 1-3年 */
+  OneToThreeYear = 4,
+  /** 3-5年 */
+  ThreeToFiveYear = 5,
+  /** 5-7年 */
+  FiveToSevenYear = 6,
+  /** 7-10年 */
+  SevenToTenYear = 7,
+  /** 10年以上 */
+  OverTenYear = 8,
+}
+
+export const enum CombinedUpdateHireJobRequestRequiredDegree {
+  /** 小学及以上 */
+  PrimaryEducation = 1,
+  /** 初中及以上 */
+  JuniorMiddleSchoolEducation = 2,
+  /** 专职及以上 */
+  Secondary = 3,
+  /** 高中及以上 */
+  SeniorSchoolGraduates = 4,
+  /** 大专及以上 */
+  Associate = 5,
+  /** 本科及以上 */
+  Bachelor = 6,
+  /** 硕士及以上 */
+  Master = 7,
+  /** 博士及以上 */
+  Phd = 8,
+  /** 不限 */
+  NoLimit = 20,
+}
+
+export const enum CombinedUpdateHireJobRequestJobAttribute {
+  /** 实体职位 */
+  Concrete = 1,
+  /** 虚拟职位 */
+  Virtual = 2,
+}
+
 export interface CombinedUpdateHireJobRequest {
   /** 职位 ID */
   id?: string
   /** 工作年限 */
-  experience?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+  experience?: CombinedUpdateHireJobRequestExperience
   /** 到期日期，请使用 */
   expiry_time?: number
   /** 自定义字段 */
@@ -1039,13 +1162,13 @@ export interface CombinedUpdateHireJobRequest {
   /** 最高职级，枚举通过接口「获取职级列表」获取 */
   max_level_id?: string
   /** 学历要求 */
-  required_degree?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 20
+  required_degree?: CombinedUpdateHireJobRequestRequiredDegree
   /** 序列 */
   job_category_id?: string
   /** 工作地点，枚举通过接口「获取地址列表」获取，选择地点用途为「职位地址」 */
   address_id_list?: string[]
   /** 职位属性，1是实体职位，2是虚拟职位 */
-  job_attribute?: 1 | 2
+  job_attribute?: CombinedUpdateHireJobRequestJobAttribute
   /** 到期日期的毫秒时间戳 */
   expiry_timestamp?: string
   /** 目标专业ID List */
@@ -1061,6 +1184,17 @@ export interface CombinedUpdateHireJobQuery {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
   /** 此次调用中使用的「序列 ID」的类型 */
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
+}
+
+export interface CombinedUpdateHireJobResponse {
+  /** 职位广告 */
+  default_job_post?: CombinedJobResultDefaultJobPost
+  /** 职位 */
+  job?: Job
+  /** 职位负责人 */
+  job_manager?: JobManager
+  /** 官网申请表 */
+  portal_website_apply_form_schema_info?: RegistrationSchemaInfo
 }
 
 export interface UpdateConfigHireJobRequest {
@@ -1097,6 +1231,19 @@ export interface UpdateConfigHireJobQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UpdateConfigHireJobResponse {
+  job_config?: JobConfigResult
+}
+
+export const enum BatchUpdateHireJobManagerRequestUpdateOption {
+  /** 招聘负责人 */
+  JobManager = 1,
+  /** 招聘协助人 */
+  Assistant = 2,
+  /** 用人经理 */
+  HireManager = 3,
+}
+
 export interface BatchUpdateHireJobManagerRequest {
   /** 招聘负责人 ID */
   recruiter_id?: string
@@ -1105,7 +1252,7 @@ export interface BatchUpdateHireJobManagerRequest {
   /** 用人经理 ID */
   hiring_manager_id_list?: string[]
   /** 更新的人员类型，可选值：1=招聘负责人; 2=招聘协助人; 3=用人经理； */
-  update_option_list: (1 | 2 | 3)[]
+  update_option_list: BatchUpdateHireJobManagerRequestUpdateOption[]
   /** 操作者 ID */
   creator_id?: string
 }
@@ -1113,6 +1260,11 @@ export interface BatchUpdateHireJobManagerRequest {
 export interface BatchUpdateHireJobManagerQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface BatchUpdateHireJobManagerResponse {
+  /** 职位负责人 */
+  job_manager?: JobManager
 }
 
 export interface GetDetailHireJobQuery {
@@ -1126,6 +1278,11 @@ export interface GetDetailHireJobQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
 }
 
+export interface GetDetailHireJobResponse {
+  /** 职位详情数据 */
+  job_detail?: JobDetail
+}
+
 export interface GetHireJobQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
@@ -1137,14 +1294,28 @@ export interface GetHireJobQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
 }
 
+export interface GetHireJobResponse {
+  /** 职位数据 */
+  job?: Job
+}
+
 export interface RecruiterHireJobQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface RecruiterHireJobResponse {
+  /** 职位负责人 */
+  info?: JobRecruiter2
+}
+
 export interface ConfigHireJobQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface ConfigHireJobResponse {
+  job_config?: JobConfigResult
 }
 
 export interface ListHireJobQuery extends Pagination {
@@ -1195,13 +1366,72 @@ export interface SearchHireJobPublishRecordQuery extends Pagination {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
 }
 
+export const enum CreateHireJobRequirementRequestDisplayProgress {
+  /** 待启动 */
+  WaitingStart = 1,
+  /** 进行中 */
+  OnGoing = 2,
+  /** 已取消 */
+  Canceled = 3,
+  /** 已暂停 */
+  Suspended = 4,
+  /** 已完成 */
+  Completed = 5,
+  /** 已超期 */
+  Expired = 6,
+}
+
+export const enum CreateHireJobRequirementRequestCategory {
+  /** 新增 */
+  Addition = 1,
+  /** 替换 */
+  Replacement = 2,
+}
+
+export const enum CreateHireJobRequirementRequestPriority {
+  /** 高 */
+  High = 1,
+  /** 中 */
+  Medium = 2,
+  /** 低 */
+  Low = 3,
+}
+
+export const enum CreateHireJobRequirementRequestRequiredDegree {
+  /** 小学及以上 */
+  PrimaryEducation = 1,
+  /** 初中及以上 */
+  JuniorMiddleSchoolEducation = 2,
+  /** 专职及以上 */
+  Secondary = 3,
+  /** 高中及以上 */
+  SeniorSchoolGraduates = 4,
+  /** 大专及以上 */
+  Associate = 5,
+  /** 本科及以上 */
+  Bachelor = 6,
+  /** 硕士及以上 */
+  Master = 7,
+  /** 博士及以上 */
+  Phd = 8,
+  /** 不限 */
+  NoLimit = 20,
+}
+
+export const enum CreateHireJobRequirementRequestProcessType {
+  /** 社招 */
+  Social = 1,
+  /** 校招 */
+  Campus = 2,
+}
+
 export interface CreateHireJobRequirementRequest {
   /** 招聘需求编号 */
   short_code: string
   /** 需求名称 */
   name: string
   /** 需求状态 */
-  display_progress: 1 | 2 | 3 | 4 | 5 | 6
+  display_progress: CreateHireJobRequirementRequestDisplayProgress
   /** 需求人数 */
   head_count: number
   /** 职位性质 ID */
@@ -1215,7 +1445,7 @@ export interface CreateHireJobRequirementRequest {
   /** 职位序列 ID */
   sequence_id?: string
   /** 需求类型 */
-  category?: 1 | 2
+  category?: CreateHireJobRequirementRequestCategory
   /** 需求部门 ID */
   department_id?: string
   /** 需求负责人 ID 列表 */
@@ -1229,9 +1459,9 @@ export interface CreateHireJobRequirementRequest {
   /** 预计完成日期，毫秒级时间戳 */
   deadline?: string
   /** 招聘优先级 */
-  priority?: 1 | 2 | 3
+  priority?: CreateHireJobRequirementRequestPriority
   /** 学历要求 */
-  required_degree?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 20
+  required_degree?: CreateHireJobRequirementRequestRequiredDegree
   /** 最高薪资 */
   max_salary?: string
   /** 最低薪资 */
@@ -1243,7 +1473,7 @@ export interface CreateHireJobRequirementRequest {
   /** 自定义字段 */
   customized_data_list?: JobRequirementCustomizedData[]
   /** 支持的招聘类型列表 */
-  process_type?: 1 | 2
+  process_type?: CreateHireJobRequirementRequestProcessType
   /** 招聘需求中的职位类别 */
   job_type_id?: string
   /** 关联的职位 ID 列表 */
@@ -1267,11 +1497,74 @@ export interface CreateHireJobRequirementQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface CreateHireJobRequirementResponse {
+  job_requirement?: JobRequirementDto
+}
+
+export const enum UpdateHireJobRequirementRequestDisplayProgress {
+  /** 待启动 */
+  WaitingStart = 1,
+  /** 进行中 */
+  OnGoing = 2,
+  /** 已取消 */
+  Canceled = 3,
+  /** 已暂停 */
+  Suspended = 4,
+  /** 已完成 */
+  Completed = 5,
+  /** 已超期 */
+  Expired = 6,
+}
+
+export const enum UpdateHireJobRequirementRequestCategory {
+  /** 新增 */
+  Addition = 1,
+  /** 替换 */
+  Replacement = 2,
+}
+
+export const enum UpdateHireJobRequirementRequestPriority {
+  /** 高 */
+  High = 1,
+  /** 中 */
+  Medium = 2,
+  /** 低 */
+  Low = 3,
+}
+
+export const enum UpdateHireJobRequirementRequestRequiredDegree {
+  /** 小学及以上 */
+  PrimaryEducation = 1,
+  /** 初中及以上 */
+  JuniorMiddleSchoolEducation = 2,
+  /** 专职及以上 */
+  Secondary = 3,
+  /** 高中及以上 */
+  SeniorSchoolGraduates = 4,
+  /** 大专及以上 */
+  Associate = 5,
+  /** 本科及以上 */
+  Bachelor = 6,
+  /** 硕士及以上 */
+  Master = 7,
+  /** 博士及以上 */
+  Phd = 8,
+  /** 不限 */
+  NoLimit = 20,
+}
+
+export const enum UpdateHireJobRequirementRequestProcessType {
+  /** 社招 */
+  Social = 1,
+  /** 校招 */
+  Campus = 2,
+}
+
 export interface UpdateHireJobRequirementRequest {
   /** 需求名称 */
   name: string
   /** 需求状态 */
-  display_progress: 1 | 2 | 3 | 4 | 5 | 6
+  display_progress: UpdateHireJobRequirementRequestDisplayProgress
   /** 需求人数 */
   head_count: number
   /** 职位性质 ID */
@@ -1285,7 +1578,7 @@ export interface UpdateHireJobRequirementRequest {
   /** 职位序列 ID */
   sequence_id?: string
   /** 需求类型 */
-  category?: 1 | 2
+  category?: UpdateHireJobRequirementRequestCategory
   /** 需求部门 ID */
   department_id?: string
   /** 需求负责人 ID 列表 */
@@ -1299,9 +1592,9 @@ export interface UpdateHireJobRequirementRequest {
   /** 预计完成日期，毫秒级时间戳 */
   deadline?: string
   /** 招聘优先级 */
-  priority?: 1 | 2 | 3
+  priority?: UpdateHireJobRequirementRequestPriority
   /** 学历要求 */
-  required_degree?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 20
+  required_degree?: UpdateHireJobRequirementRequestRequiredDegree
   /** 最高薪资 */
   max_salary?: string
   /** 最低薪资 */
@@ -1313,7 +1606,7 @@ export interface UpdateHireJobRequirementRequest {
   /** 自定义字段 */
   customized_data_list?: JobRequirementCustomizedData[]
   /** 支持的招聘类型列表 */
-  process_type?: 1 | 2
+  process_type?: UpdateHireJobRequirementRequestProcessType
   /** 招聘需求中的职位类别 */
   job_type_id?: string
   /** 关联的职位 ID 列表 */
@@ -1357,6 +1650,11 @@ export interface ListByIdHireJobRequirementQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface ListByIdHireJobRequirementResponse {
+  /** 招聘需求列表 */
+  items?: JobRequirementDto[]
+}
+
 export interface ListHireJobRequirementQuery extends Pagination {
   /** 职位ID */
   job_id?: string
@@ -1398,9 +1696,18 @@ export interface ListHireTalentTagQuery extends Pagination {
   include_inactive?: boolean
 }
 
+export const enum ListHireRegistrationSchemaQueryScenario {
+  /** 面试登记表 */
+  InterviewRegistration = 5,
+  /** 入职登记表 */
+  OnboardRegistration = 6,
+  /** 人才信息登记表 */
+  InfoUpdateRegistration = 14,
+}
+
 export interface ListHireRegistrationSchemaQuery extends Pagination {
   /** 登记表适用场景；不填表示获取全部类型信息登记表 */
-  scenario?: 5 | 6 | 14
+  scenario?: ListHireRegistrationSchemaQueryScenario
 }
 
 export interface ListHireInterviewFeedbackFormQuery extends Pagination {
@@ -1413,11 +1720,23 @@ export interface ListHireInterviewRoundTypeQuery {
   process_type?: 1 | 2
 }
 
+export interface ListHireInterviewRoundTypeResponse {
+  /** 是否启用面试轮次类型 */
+  active_status?: 1 | 2
+  /** 列表 */
+  items?: InterviewRoundType[]
+}
+
+export const enum ListHireInterviewerQueryVerifyStatus {
+  NotVarified = 1,
+  Varified = 2,
+}
+
 export interface ListHireInterviewerQuery extends Pagination {
   /** 面试官userID列表 */
   user_ids?: string[]
   /** 认证状态 */
-  verify_status?: 1 | 2
+  verify_status?: ListHireInterviewerQueryVerifyStatus
   /** 最早更新时间，毫秒时间戳 */
   earliest_update_time?: string
   /** 最晚更新时间，毫秒时间戳 */
@@ -1436,11 +1755,21 @@ export interface PatchHireInterviewerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface PatchHireInterviewerResponse {
+  /** 面试官信息 */
+  interviewer?: Interviewer
+}
+
 export interface UpdateHireOfferCustomFieldRequest {
   /** 自定义字段名称 */
   name: I18n
   /** 配置信息 */
   config?: OfferCustomFieldConfig
+}
+
+export interface GetHireOfferApplicationFormResponse {
+  /** Offer 申请表详情 */
+  offer_apply_form?: OfferApplyFormInfo
 }
 
 export interface SearchHireReferralRequest {
@@ -1457,9 +1786,21 @@ export interface SearchHireReferralQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface SearchHireReferralResponse {
+  /** 内推信息列表 */
+  items?: ReferralInfo[]
+}
+
+export const enum ListHireReferralWebsiteJobPostQueryProcessType {
+  /** 社招 */
+  SocialProcess = 1,
+  /** 校招 */
+  CampusProcess = 2,
+}
+
 export interface ListHireReferralWebsiteJobPostQuery extends Pagination {
   /** 招聘流程类型 */
-  process_type?: 1 | 2
+  process_type?: ListHireReferralWebsiteJobPostQueryProcessType
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门 ID 的类型 */
@@ -1477,6 +1818,10 @@ export interface GetHireReferralWebsiteJobPostQuery {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
 }
 
+export interface GetHireReferralWebsiteJobPostResponse {
+  job_post?: PortalJobPost
+}
+
 export interface GetByApplicationHireReferralQuery {
   /** 投递的 ID */
   application_id: string
@@ -1484,14 +1829,41 @@ export interface GetByApplicationHireReferralQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface GetByApplicationHireReferralResponse {
+  /** 内推信息 */
+  referral?: Referral
+}
+
 export interface CreateHireWebsiteChannelRequest {
   /** 推广渠道名称 */
   channel_name: string
 }
 
+export interface CreateHireWebsiteChannelResponse {
+  /** 推广渠道 ID */
+  id?: string
+  /** 推广渠道名称 */
+  name?: string
+  /** 推广渠道链接 */
+  link?: string
+  /** 推广渠道推广码 */
+  code?: string
+}
+
 export interface UpdateHireWebsiteChannelRequest {
   /** 推广渠道名称 */
   channel_name: string
+}
+
+export interface UpdateHireWebsiteChannelResponse {
+  /** 推广渠道 ID */
+  id?: string
+  /** 推广渠道名称 */
+  name?: string
+  /** 推广渠道链接 */
+  link?: string
+  /** 推广渠道推广码 */
+  code?: string
 }
 
 export interface CreateHireWebsiteSiteUserRequest {
@@ -1507,6 +1879,10 @@ export interface CreateHireWebsiteSiteUserRequest {
   mobile_country_code?: string
 }
 
+export interface CreateHireWebsiteSiteUserResponse {
+  site_user?: WebsiteUser
+}
+
 export interface GetHireWebsiteJobPostQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -1514,6 +1890,10 @@ export interface GetHireWebsiteJobPostQuery {
   department_id_type?: 'open_department_id' | 'department_id'
   /** 此次调用中使用的「职级 ID」的类型 */
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
+}
+
+export interface GetHireWebsiteJobPostResponse {
+  job_post?: WebsiteJobPost
 }
 
 export interface SearchHireWebsiteJobPostRequest {
@@ -1581,6 +1961,10 @@ export interface CreateByResumeHireWebsiteDeliveryQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateByResumeHireWebsiteDeliveryResponse {
+  delivery?: WebsiteDeliveryDto
+}
+
 export interface CreateByAttachmentHireWebsiteDeliveryRequest {
   /** 职位广告 ID */
   job_post_id: string
@@ -1600,6 +1984,22 @@ export interface CreateByAttachmentHireWebsiteDeliveryRequest {
   email?: string
   /** 身份证件号码（当该参数值与简历附件中的相关值不一致时，将以该参数值为准） */
   identification?: WebsiteDeliveryAttachmentIndentification
+}
+
+export interface CreateByAttachmentHireWebsiteDeliveryResponse {
+  /** 异步任务 ID */
+  task_id?: string
+}
+
+export interface GetHireWebsiteDeliveryTaskResponse {
+  /** 任务状态 */
+  status?: 0 | 1 | 2 | 3
+  /** 官网投递信息 */
+  delivery?: WebsiteDeliveryDto
+  /** 状态信息，仅 status 为 3 时返回 */
+  status_msg?: string
+  /** 附加信息，当前返回投递 ID，仅当 status 为 3 且 status_msg 标识为重复投递时，将返回重复投递的 ID */
+  extra_info?: string
 }
 
 export interface ProtectHireAgencyRequest {
@@ -1631,9 +2031,25 @@ export interface GetHireAgencyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface GetHireAgencyResponse {
+  /** 数据 */
+  agency?: Agency
+}
+
 export interface ProtectSearchHireAgencyRequest {
   /** 人才id */
   talent_id: string
+}
+
+export interface ProtectSearchHireAgencyResponse {
+  /** 是否已入职 */
+  is_onboarded?: boolean
+  /** 是否在猎头保护期内入职 */
+  onboarded_in_protection?: boolean
+  /** 入职所在保护期 */
+  onboarded_protection?: AgencyProtection
+  /** 人才保护信息 */
+  protection_list?: AgencyProtection[]
 }
 
 export interface QueryHireAgencyQuery {
@@ -1643,13 +2059,33 @@ export interface QueryHireAgencyQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface QueryHireAgencyResponse {
+  items?: Agency[]
+}
+
+export const enum GetAgencyAccountHireAgencyRequestStatus {
+  /** 正常 */
+  Normal = 0,
+  /** 已禁用 */
+  Enabled = 1,
+  /** 已被猎头停用 */
+  DisabledBySupplier = 2,
+}
+
+export const enum GetAgencyAccountHireAgencyRequestRole {
+  /** 管理员 */
+  Manager = 0,
+  /** 顾问 */
+  Consultant = 1,
+}
+
 export interface GetAgencyAccountHireAgencyRequest {
   /** 猎头供应商 ID */
   supplier_id: string
   /** 猎头状态 */
-  status?: 0 | 1 | 2
+  status?: GetAgencyAccountHireAgencyRequestStatus
   /** 角色 */
-  role?: 0 | 1
+  role?: GetAgencyAccountHireAgencyRequestRole
 }
 
 export interface GetAgencyAccountHireAgencyQuery extends Pagination {
@@ -1671,9 +2107,16 @@ export interface BatchQueryHireAgencyQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum OperateAgencyAccountHireAgencyRequestOption {
+  /** 禁用 */
+  Add = 1,
+  /** 取消禁用 */
+  Remove = 2,
+}
+
 export interface OperateAgencyAccountHireAgencyRequest {
   /** 操作类型 */
-  option: 1 | 2
+  option: OperateAgencyAccountHireAgencyRequestOption
   /** 猎头 ID */
   id: string
   /** 禁用原因，仅当禁用操作时，必填 */
@@ -1685,16 +2128,44 @@ export interface CreateHireTalentExternalInfoRequest {
   external_create_time: string
 }
 
+export interface CreateHireTalentExternalInfoResponse {
+  /** 人才外部信息 */
+  external_info?: TalentExternalInfo
+}
+
 export interface UpdateHireTalentExternalInfoRequest {
   /** 人才在外部系统创建时间 */
   external_create_time: string
+}
+
+export interface UpdateHireTalentExternalInfoResponse {
+  /** 人才外部信息 */
+  external_info?: TalentExternalInfo
+}
+
+export const enum CreateHireExternalApplicationRequestJobRecruitmentType {
+  /** 社招 */
+  SocialRecruitment = 1,
+  /** 校招 */
+  CampusRecruitment = 2,
+}
+
+export const enum CreateHireExternalApplicationRequestDeliveryType {
+  /** HR 寻访 */
+  HRVisit = 1,
+  /** 候选人主动投递 */
+  CandidateDelivery = 2,
+  /** 人才推荐 */
+  TalentRecommend = 3,
+  /** 其他 */
+  Others = 4,
 }
 
 export interface CreateHireExternalApplicationRequest {
   /** 外部系统背调主键 （仅用于幂等） */
   external_id?: string
   /** 职位招聘类型 */
-  job_recruitment_type?: 1 | 2
+  job_recruitment_type?: CreateHireExternalApplicationRequestJobRecruitmentType
   /** 职位名称 */
   job_title?: string
   /** 简历来源 */
@@ -1706,7 +2177,7 @@ export interface CreateHireExternalApplicationRequest {
   /** 终止原因 */
   termination_reason?: string
   /** 投递类型 */
-  delivery_type?: 1 | 2 | 3 | 4
+  delivery_type?: CreateHireExternalApplicationRequestDeliveryType
   /** 更新时间，招聘系统内用作投递在外部系统终止时间 */
   modify_time?: number
   /** 投递在外部系统创建时间 */
@@ -1715,9 +2186,31 @@ export interface CreateHireExternalApplicationRequest {
   termination_type?: string
 }
 
+export interface CreateHireExternalApplicationResponse {
+  external_application?: ExternalApplication
+}
+
+export const enum UpdateHireExternalApplicationRequestJobRecruitmentType {
+  /** 社招 */
+  SocialRecruitment = 1,
+  /** 校招 */
+  CampusRecruitment = 2,
+}
+
+export const enum UpdateHireExternalApplicationRequestDeliveryType {
+  /** HR 寻访 */
+  HRVisit = 1,
+  /** 候选人主动投递 */
+  CandidateDelivery = 2,
+  /** 人才推荐 */
+  TalentRecommend = 3,
+  /** 其他 */
+  Others = 4,
+}
+
 export interface UpdateHireExternalApplicationRequest {
   /** 职位招聘类型 */
-  job_recruitment_type?: 1 | 2
+  job_recruitment_type?: UpdateHireExternalApplicationRequestJobRecruitmentType
   /** 职位名称 */
   job_title?: string
   /** 简历来源 */
@@ -1727,13 +2220,17 @@ export interface UpdateHireExternalApplicationRequest {
   /** 终止原因 */
   termination_reason?: string
   /** 投递类型 */
-  delivery_type?: 1 | 2 | 3 | 4
+  delivery_type?: UpdateHireExternalApplicationRequestDeliveryType
   /** 更新时间，招聘系统内用作投递在外部系统终止时间 */
   modify_time?: number
   /** 投递在外部系统创建时间 */
   create_time?: number
   /** 终止类型 */
   termination_type?: string
+}
+
+export interface UpdateHireExternalApplicationResponse {
+  external_application?: ExternalApplication
 }
 
 export interface ListHireExternalApplicationQuery extends Pagination {
@@ -1746,13 +2243,26 @@ export interface DeleteHireExternalApplicationQuery {
   talent_id?: string
 }
 
+export interface DeleteHireExternalApplicationResponse {
+  external_application?: ExternalApplication
+}
+
+export const enum CreateHireExternalInterviewRequestParticipateStatus {
+  /** 未参与 */
+  NotStart = 1,
+  /** 参与 */
+  Participated = 2,
+  /** 爽约 */
+  NotPaticipated = 3,
+}
+
 export interface CreateHireExternalInterviewRequest {
   /** 外部系统面试主键 （仅用于幂等） */
   external_id?: string
   /** 外部投递 ID */
   external_application_id: string
   /** 参与状态 */
-  participate_status?: 1 | 2 | 3
+  participate_status?: CreateHireExternalInterviewRequestParticipateStatus
   /** 开始时间 */
   begin_time?: number
   /** 结束时间 */
@@ -1761,17 +2271,34 @@ export interface CreateHireExternalInterviewRequest {
   interview_assessments?: ExternalInterviewAssessment[]
 }
 
+export interface CreateHireExternalInterviewResponse {
+  external_interview?: ExternalInterview
+}
+
+export const enum UpdateHireExternalInterviewRequestParticipateStatus {
+  /** 未参与 */
+  NotStart = 1,
+  /** 参与 */
+  Participated = 2,
+  /** 爽约 */
+  NotPaticipated = 3,
+}
+
 export interface UpdateHireExternalInterviewRequest {
   /** 外部投递 ID */
   external_application_id: string
   /** 参与状态 */
-  participate_status?: 1 | 2 | 3
+  participate_status?: UpdateHireExternalInterviewRequestParticipateStatus
   /** 开始时间 */
   begin_time?: number
   /** 结束时间 */
   end_time?: number
   /** 面试评价列表 */
   interview_assessments?: ExternalInterviewAssessment[]
+}
+
+export interface UpdateHireExternalInterviewResponse {
+  external_interview?: ExternalInterview
 }
 
 export interface BatchQueryHireExternalInterviewRequest {
@@ -1784,13 +2311,22 @@ export interface BatchQueryHireExternalInterviewQuery extends Pagination {
   external_application_id?: string
 }
 
+export const enum CreateHireExternalInterviewAssessmentRequestConclusion {
+  /** 不通过 */
+  Fail = 1,
+  /** 通过 */
+  Pass = 2,
+  /** 待定 */
+  ToBeDetermined = 3,
+}
+
 export interface CreateHireExternalInterviewAssessmentRequest {
   /** 外部系统面评主键（仅用于幂等） */
   external_id?: string
   /** 面试官姓名 */
   username?: string
   /** 面试结果 */
-  conclusion?: 1 | 2 | 3
+  conclusion?: CreateHireExternalInterviewAssessmentRequestConclusion
   /** 评价维度列表 */
   assessment_dimension_list?: ExternalInterviewAssessmentDimension[]
   /** 综合记录 */
@@ -1799,15 +2335,32 @@ export interface CreateHireExternalInterviewAssessmentRequest {
   external_interview_id?: string
 }
 
+export interface CreateHireExternalInterviewAssessmentResponse {
+  external_interview_assessment?: ExternalInterviewAssessment
+}
+
+export const enum PatchHireExternalInterviewAssessmentRequestConclusion {
+  /** 不通过 */
+  Fail = 1,
+  /** 通过 */
+  Pass = 2,
+  /** 待定 */
+  ToBeDetermined = 3,
+}
+
 export interface PatchHireExternalInterviewAssessmentRequest {
   /** 面试官姓名 */
   username?: string
   /** 面试结果 */
-  conclusion?: 1 | 2 | 3
+  conclusion?: PatchHireExternalInterviewAssessmentRequestConclusion
   /** 评价维度列表 */
   assessment_dimension_list?: ExternalInterviewAssessmentDimension[]
   /** 综合记录 */
   content?: string
+}
+
+export interface PatchHireExternalInterviewAssessmentResponse {
+  external_interview_assessment?: ExternalInterviewAssessment
 }
 
 export interface CreateHireExternalOfferRequest {
@@ -1825,6 +2378,10 @@ export interface CreateHireExternalOfferRequest {
   attachment_id_list?: string[]
 }
 
+export interface CreateHireExternalOfferResponse {
+  external_offer?: ExternalOffer
+}
+
 export interface UpdateHireExternalOfferRequest {
   /** 外部投递 ID */
   external_application_id: string
@@ -1836,6 +2393,10 @@ export interface UpdateHireExternalOfferRequest {
   offer_status?: string
   /** Offer详情附件ID列表 */
   attachment_id_list?: string[]
+}
+
+export interface UpdateHireExternalOfferResponse {
+  external_offer?: ExternalOffer
 }
 
 export interface BatchQueryHireExternalOfferRequest {
@@ -1863,6 +2424,10 @@ export interface CreateHireExternalBackgroundCheckRequest {
   attachment_id_list?: string[]
 }
 
+export interface CreateHireExternalBackgroundCheckResponse {
+  external_background_check?: ExternalBackgroundCheck
+}
+
 export interface UpdateHireExternalBackgroundCheckRequest {
   /** 外部投递 ID */
   external_application_id: string
@@ -1876,6 +2441,10 @@ export interface UpdateHireExternalBackgroundCheckRequest {
   attachment_id_list?: string[]
 }
 
+export interface UpdateHireExternalBackgroundCheckResponse {
+  external_background_check?: ExternalBackgroundCheck
+}
+
 export interface BatchQueryHireExternalBackgroundCheckRequest {
   /** 外部背调 ID 列表,当传递此值时,以此值为准 */
   external_background_check_id_list?: string[]
@@ -1884,6 +2453,28 @@ export interface BatchQueryHireExternalBackgroundCheckRequest {
 export interface BatchQueryHireExternalBackgroundCheckQuery extends Pagination {
   /** 外部投递 ID */
   external_application_id?: string
+}
+
+export const enum CreateHireExternalReferralRewardRequestRuleType {
+  /** 入职奖励，候选人入职或转正后产生的奖励 */
+  Onboard = 1,
+  /** 过程奖励，入职奖励外，若候选人有阶段性进展，则给予内推人对应的奖励 */
+  Processe = 2,
+  /** 活动奖励，额外奖励，用于支持内推周期性活动 */
+  Active = 3,
+  /** 开源奖励，若内推候选人首次进入人才库，且在被推荐后一段时间内，入职了规则内的任意职位的奖励 */
+  OpenSource = 4,
+  /** 其他奖励，以上奖励无法覆盖的奖励 */
+  Other = 5,
+}
+
+export const enum CreateHireExternalReferralRewardRequestStage {
+  /** 待确认 */
+  ToBeConfirmed = 1,
+  /** 已确认 */
+  Confirmed = 2,
+  /** 已发放 */
+  Paid = 3,
 }
 
 export interface CreateHireExternalReferralRewardRequest {
@@ -1906,11 +2497,11 @@ export interface CreateHireExternalReferralRewardRequest {
   /** 奖励原因 */
   reason?: string
   /** 导入的奖励规则类型，将展示在内推奖励明细中，管理员与内推人可见 */
-  rule_type: 1 | 2 | 3 | 4 | 5
+  rule_type: CreateHireExternalReferralRewardRequestRuleType
   /** 奖励数据 */
   bonus: BonusAmount
   /** 导入的内推奖励状态 */
-  stage: 1 | 2 | 3
+  stage: CreateHireExternalReferralRewardRequestStage
   /** 奖励产生时间，内推奖励触发时间，若未传入，取接口传入时间 */
   create_time?: string
   /** 奖励确认时间，若导入的「内推奖励状态」为「已确认」可传入，若未传入，取接口传入时间 */
@@ -1930,11 +2521,23 @@ export interface CreateHireExternalReferralRewardQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateHireExternalReferralRewardResponse {
+  /** 创建的内推奖励的id */
+  id?: string
+}
+
+export const enum BatchChangeTalentPoolHireTalentPoolRequestOptionType {
+  /** 加入人才库操作 */
+  Add = 1,
+  /** 从指定人才库移除 */
+  Remove = 2,
+}
+
 export interface BatchChangeTalentPoolHireTalentPoolRequest {
   /** 人才 ID 列表 */
   talent_id_list: string[]
   /** 操作类型 */
-  option_type: 1 | 2
+  option_type: BatchChangeTalentPoolHireTalentPoolRequestOptionType
 }
 
 export interface SearchHireTalentPoolQuery extends Pagination {
@@ -1942,11 +2545,25 @@ export interface SearchHireTalentPoolQuery extends Pagination {
   id_list?: string[]
 }
 
+export const enum MoveTalentHireTalentPoolRequestAddType {
+  /** 仅加入指定人才库 */
+  OnlyAdd = 1,
+  /** 加入指定人才库并从所有原库移除 */
+  AddAndRemoveFromOrigin = 2,
+}
+
 export interface MoveTalentHireTalentPoolRequest {
   /** 人才ID */
   talent_id: string
   /** 操作类型 */
-  add_type: 1 | 2
+  add_type: MoveTalentHireTalentPoolRequestAddType
+}
+
+export interface MoveTalentHireTalentPoolResponse {
+  /** 人才库ID */
+  talent_pool_id?: string
+  /** 人才ID */
+  talent_id?: string
 }
 
 export interface TagHireTalentRequest {
@@ -1998,6 +2615,15 @@ export interface CombinedCreateHireTalentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface CombinedCreateHireTalentResponse {
+  /** 人才 ID */
+  talent_id?: string
+  /** 创建人 ID */
+  creator_id?: string
+  /** 创建人类型 */
+  creator_account_type?: 1 | 3
+}
+
 export interface CombinedUpdateHireTalentRequest {
   /** 人才 ID */
   talent_id: string
@@ -2040,6 +2666,15 @@ export interface CombinedUpdateHireTalentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface CombinedUpdateHireTalentResponse {
+  /** 人才 ID */
+  talent_id?: string
+  /** 更新人 ID */
+  operator_id?: string
+  /** 更新人类型 */
+  operator_account_type?: 1 | 3
+}
+
 export interface AddToFolderHireTalentRequest {
   /** 人才 ID 列表 */
   talent_id_list: string[]
@@ -2047,11 +2682,25 @@ export interface AddToFolderHireTalentRequest {
   folder_id: string
 }
 
+export interface AddToFolderHireTalentResponse {
+  /** 人才 ID 列表 */
+  talent_id_list?: string[]
+  /** 文件夹 ID */
+  folder_id?: string
+}
+
 export interface RemoveToFolderHireTalentRequest {
   /** 人才 ID 列表 */
   talent_id_list: string[]
   /** 文件夹 ID */
   folder_id: string
+}
+
+export interface RemoveToFolderHireTalentResponse {
+  /** 人才 ID 列表 */
+  talent_id_list?: string[]
+  /** 文件夹 ID */
+  folder_id?: string
 }
 
 export interface ListHireTalentFolderQuery extends Pagination {
@@ -2072,6 +2721,11 @@ export interface BatchGetIdHireTalentRequest {
   identification_number_list?: string[]
 }
 
+export interface BatchGetIdHireTalentResponse {
+  /** 人才信息列表 */
+  talent_list?: TalentBatchInfo[]
+}
+
 export interface ListHireTalentQuery extends Pagination {
   /** 搜索关键词，支持布尔语言（使用 and、or、not 连接关键词） */
   keyword?: string
@@ -2087,30 +2741,108 @@ export interface ListHireTalentQuery extends Pagination {
   query_option?: 'ignore_empty_error'
 }
 
-export interface GetHireTalentQuery {
-  /** 用户 ID 类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+export interface QueryHireTalentObjectResponse {
+  items?: CommonSchema[]
 }
 
 export interface GetHireTalentQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface GetHireTalentResponse {
+  /** 人才信息 */
+  talent?: Talent
+}
+
+export interface GetHireTalentQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface GetHireTalentResponse {
+  /** ID */
+  talent_id?: string
+  /** 基础信息 */
+  basic_info?: CompositeTalentBasicInfo
+  /** 教育经历 */
+  education_list?: CompositeTalentEducationInfo[]
+  /** 工作经历 */
+  career_list?: CompositeTalentCareerInfo[]
+  /** 项目经历 */
+  project_list?: CompositeTalentProjectInfo[]
+  /** 作品集 */
+  works_list?: CompositeTalentWorksInfo[]
+  /** 获奖列表 */
+  award_list?: CompositeTalentAwardInfo[]
+  /** 语言列表 */
+  language_list?: CompositeTalentLanguageInfo[]
+  /** SNS列表 */
+  sns_list?: CompositeTalentSnsInfo[]
+  /** 简历来源 */
+  resume_source_list?: TalentResumeSource[]
+  /** 实习经历 */
+  internship_list?: CompositeTalentInternshipInfo[]
+  /** 自定义字段 */
+  customized_data_list?: CompositeTalentCustomizedData[]
+  /** 简历附件id列表（按照简历创建时间降序）（废弃，请使用resume_attachment_list代替） */
+  resume_attachment_id_list?: string[]
+  /** 简历附件列表（按照简历创建时间降序） */
+  resume_attachment_list?: TalentResumeAttachment[]
+  /** 面试登记表 */
+  interview_registration_list?: TalentInterviewRegistrationSimple[]
+  /** 登记表列表 */
+  registration_list?: RegistrationBasicInfo[]
+  /** 是否已入职 */
+  is_onboarded?: boolean
+  /** 是否在猎头保护期 */
+  is_in_agency_period?: boolean
+  /** 最高学历 参考 DegreeType 枚举 */
+  top_degree?: number
+  /** 人才已加入的人才库列表 */
+  talent_pool_id_list?: string[]
+  /** 文件夹列表 */
+  talent_folder_ref_list_v2?: TalentFolder[]
+  /** 标签列表 */
+  tag_list?: TalentTag[]
+  /** 相似人才信息 */
+  similar_info_v2?: TalentSimilar
+  /** 人才黑名单详情 */
+  block_info?: TalentBlock
+  /** 人才已经加入的人才库列表 */
+  talent_pool_ref_list_v2?: TalentPool[]
+  /** 备注列表 */
+  note_list_v2?: TalentNote[]
+}
+
+export const enum OnboardStatusHireTalentRequestOperation {
+  /** 入职 */
+  Onboard = 1,
+  /** 离职 */
+  Overboard = 2,
 }
 
 export interface OnboardStatusHireTalentRequest {
   /** 操作类型 1:入职 2:离职 */
-  operation: 1 | 2
+  operation: OnboardStatusHireTalentRequestOperation
   /** 毫秒时间戳 */
   onboard_time?: string
   /** 毫秒时间戳 */
   overboard_time?: string
 }
 
+export const enum ChangeTalentBlockHireTalentBlocklistRequestOption {
+  /** 加入屏蔽名单操作 */
+  Add = 1,
+  /** 从屏蔽名单中移除 */
+  Remove = 2,
+}
+
 export interface ChangeTalentBlockHireTalentBlocklistRequest {
   /** 人才 ID */
   talent_id: string
   /** 操作类型 */
-  option: 1 | 2
+  option: ChangeTalentBlockHireTalentBlocklistRequestOption
   /** 原因，当执行加入屏蔽名单操作时必填 */
   reason?: string
 }
@@ -2130,6 +2862,11 @@ export interface GetDetailHireApplicationQuery {
   options?: ('with_job' | 'with_talent' | 'with_interview' | 'with_offer' | 'with_evaluation' | 'with_employee' | 'with_agency' | 'with_referral' | 'with_portal')[]
 }
 
+export interface GetDetailHireApplicationResponse {
+  /** 投递详情 */
+  application_detail?: ApplicationDetailInfo
+}
+
 export interface CreateHireApplicationRequest {
   /** 人才ID */
   talent_id: string
@@ -2146,6 +2883,11 @@ export interface CreateHireApplicationRequest {
 export interface CreateHireApplicationQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateHireApplicationResponse {
+  /** 投递ID */
+  id?: string
 }
 
 export interface TerminateHireApplicationRequest {
@@ -2167,6 +2909,11 @@ export interface GetHireApplicationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 请求控制参数，用于控制接口响应逻辑。如需一次查询多个用户ID，可通过将同一参数名多次传递，并且每次传递不同的参数值。 */
   options?: ('get_latest_application_on_chain')[]
+}
+
+export interface GetHireApplicationResponse {
+  /** 投递数据 */
+  application?: Application
 }
 
 export interface ListHireApplicationQuery extends Pagination {
@@ -2193,6 +2940,11 @@ export interface SearchHireDiversityInclusionRequest {
   talent_ids?: string[]
   /** 需要查询DI数据的投递ID列表 */
   application_ids?: string[]
+}
+
+export interface SearchHireDiversityInclusionResponse {
+  /** 多元化与包容性信息列表 */
+  items?: DiInfo[]
 }
 
 export interface ListHireEvaluationQuery extends Pagination {
@@ -2222,6 +2974,23 @@ export interface CreateHireExamRequest {
 export interface CreateHireExamQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface CreateHireExamResponse {
+  /** 笔试 ID */
+  exam_id?: string
+  /** 投递 ID */
+  application_id?: string
+  /** 试卷名称 */
+  exam_resource_name?: string
+  /** 笔试分数 */
+  score?: number
+  /** 附件ID */
+  uuid?: string
+  /** 操作人 ID */
+  operator_id?: string
+  /** 操作时间 */
+  operate_time?: string
 }
 
 export interface SearchHireTestRequest {
@@ -2262,14 +3031,28 @@ export interface GetByTalentHireInterviewQuery {
   job_level_id_type?: 'people_admin_job_level_id' | 'job_level_id'
 }
 
-export interface GetHireInterviewRecordQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+export interface GetByTalentHireInterviewResponse {
+  /** 投递面试列表 */
+  items?: TalentInterview[]
 }
 
 export interface GetHireInterviewRecordQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetHireInterviewRecordResponse {
+  /** 数据 */
+  interview_record?: InterviewRecord
+}
+
+export interface GetHireInterviewRecordQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetHireInterviewRecordResponse {
+  interview_record?: InterviewRecord
 }
 
 export interface ListHireInterviewRecordQuery extends Pagination {
@@ -2284,6 +3067,13 @@ export interface ListHireInterviewRecordQuery extends Pagination {
   ids?: string[]
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export const enum GetHireInterviewRecordAttachmentQueryLanguage {
+  /** 中文 */
+  Zh = 1,
+  /** 英文 */
+  En = 2,
 }
 
 export interface GetHireInterviewRecordAttachmentQuery {
@@ -2292,12 +3082,25 @@ export interface GetHireInterviewRecordAttachmentQuery {
   /** 面试记录 ID */
   interview_record_id?: string
   /** 面试记录语言 */
-  language?: 1 | 2
+  language?: GetHireInterviewRecordAttachmentQueryLanguage
+}
+
+export interface GetHireInterviewRecordAttachmentResponse {
+  /** 附件信息 */
+  attachment?: AttachmentInfo
 }
 
 export interface GetHireMinutesQuery extends Pagination {
   /** 面试ID */
   interview_id: string
+}
+
+export interface GetHireMinutesResponse {
+  minutes?: Minutes
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 对应面试是否还有更多项 */
+  has_more?: boolean
 }
 
 export interface ListHireQuestionnaireQuery extends Pagination {
@@ -2339,6 +3142,23 @@ export interface CreateHireOfferQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface CreateHireOfferResponse {
+  /** Offer ID */
+  offer_id?: string
+  /** 投递 ID */
+  application_id?: string
+  /** 模板 ID */
+  schema_id?: string
+  /** Offer 类型 */
+  offer_type?: 1 | 2
+  /** Offer 基本信息 */
+  basic_info?: OfferBasicInfo
+  /** Offer 薪资信息 */
+  salary_info?: OfferSalaryInfo
+  /** 自定义信息 */
+  customized_info_list?: OfferCustomizedInfo[]
+}
+
 export interface UpdateHireOfferRequest {
   /** 模板 ID */
   schema_id: string
@@ -2363,6 +3183,19 @@ export interface UpdateHireOfferQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface UpdateHireOfferResponse {
+  /** Offer ID */
+  offer_id?: string
+  /** 模板 ID */
+  schema_id?: string
+  /** Offer 基本信息 */
+  basic_info?: OfferBasicInfo
+  /** Offer 薪资信息 */
+  salary_info?: OfferSalaryInfo
+  /** 自定义信息 */
+  customized_info_list?: OfferCustomizedInfo[]
+}
+
 export interface OfferHireApplicationQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -2374,6 +3207,10 @@ export interface OfferHireApplicationQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
   /** 此次调用中使用的「人员类型 ID」的类型 */
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
+}
+
+export interface OfferHireApplicationResponse {
+  offer?: ApplicationOffer
 }
 
 export interface GetHireOfferQuery {
@@ -2389,6 +3226,11 @@ export interface GetHireOfferQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface GetHireOfferResponse {
+  /** Offer 详情 */
+  offer?: Offer
+}
+
 export interface ListHireOfferQuery extends Pagination {
   /** 人才 ID */
   talent_id: string
@@ -2398,9 +3240,30 @@ export interface ListHireOfferQuery extends Pagination {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export const enum OfferStatusHireOfferRequestOfferStatus {
+  /** Offer 审批中 */
+  Approving = 2,
+  /** Offer 审批已撤回 */
+  Withdrawn = 3,
+  /** Offer 审批通过 */
+  Approved = 4,
+  /** Offer 审批不通过 */
+  Rejected = 5,
+  /** Offer 已发出 */
+  OfferLetterSent = 6,
+  /** Offer 被候选人接受 */
+  OfferAccepted = 7,
+  /** Offer 被候选人拒绝 */
+  OfferRejected = 8,
+  /** Offer 已失效 */
+  Obsolete = 9,
+  /** Offer 已创建 */
+  NoApproval = 10,
+}
+
 export interface OfferStatusHireOfferRequest {
   /** offer状态 */
-  offer_status: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+  offer_status: OfferStatusHireOfferRequestOfferStatus
   /** offer 失效时间，当反馈状态是「offer已发出」时为必填项 */
   expiration_date?: string
   /** 终止原因列表，当反馈状态是「候选人已拒绝」时为必填项；最多传入50个 */
@@ -2410,6 +3273,17 @@ export interface OfferStatusHireOfferRequest {
 }
 
 export interface InternOfferStatusHireOfferRequest {
+  /** 更新入/离职状态的操作 */
+  operation: 'confirm_onboarding' | 'cancel_onboarding' | 'offboard'
+  /** 入职表单信息（当 operation 为 confirm_onboarding 时，该字段必填） */
+  onboarding_info?: InternOfferOnboardingInfo
+  /** 离职表单信息（当 operation 为 offboard 时，该字段必填） */
+  offboarding_info?: InternOfferOffboardingInfo
+}
+
+export interface InternOfferStatusHireOfferResponse {
+  /** Offer ID */
+  offer_id?: string
   /** 更新入/离职状态的操作 */
   operation: 'confirm_onboarding' | 'cancel_onboarding' | 'offboard'
   /** 入职表单信息（当 operation 为 confirm_onboarding 时，该字段必填） */
@@ -2429,13 +3303,39 @@ export interface ListHireBackgroundCheckOrderQuery extends Pagination {
   update_end_time?: string
 }
 
+export const enum CreateHireTripartiteAgreementRequestState {
+  /** 未开始 */
+  NotStarted = 1,
+  /** 已申请 */
+  Applied = 2,
+  /** 学生处理中 */
+  StudentProcessing = 3,
+  /** 公司处理中 */
+  CompanyProcessing = 4,
+  /** 学校处理中 */
+  SchoolProcessing = 5,
+  /** 已终止 */
+  Ended = 6,
+  /** 已完成 */
+  Completed = 7,
+  /** 解约处理中 */
+  TerminationProcessing = 8,
+  /** 已解约 */
+  Terminated = 9,
+}
+
 export interface CreateHireTripartiteAgreementRequest {
   /** 投递ID */
   application_id: string
   /** 三方协议状态 */
-  state: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  state: CreateHireTripartiteAgreementRequestState
   /** 三方协议创建时间，毫秒时间戳 */
   create_time: string
+}
+
+export interface CreateHireTripartiteAgreementResponse {
+  /** 创建的三方协议的 id */
+  id?: string
 }
 
 export interface ListHireTripartiteAgreementQuery extends Pagination {
@@ -2445,11 +3345,37 @@ export interface ListHireTripartiteAgreementQuery extends Pagination {
   tripartite_agreement_id?: string
 }
 
+export const enum UpdateHireTripartiteAgreementRequestState {
+  /** 未开始 */
+  NotStarted = 1,
+  /** 已申请 */
+  Applied = 2,
+  /** 学生处理中 */
+  StudentProcessing = 3,
+  /** 公司处理中 */
+  CompanyProcessing = 4,
+  /** 学校处理中 */
+  SchoolProcessing = 5,
+  /** 已终止 */
+  Ended = 6,
+  /** 已完成 */
+  Completed = 7,
+  /** 解约处理中 */
+  TerminationProcessing = 8,
+  /** 已解约 */
+  Terminated = 9,
+}
+
 export interface UpdateHireTripartiteAgreementRequest {
   /** 三方协议状态 */
-  state: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  state: UpdateHireTripartiteAgreementRequestState
   /** 三方协议修改时间戳，不可小于创建时间或者当前修改时间 */
   modify_time: string
+}
+
+export interface UpdateHireTripartiteAgreementResponse {
+  /** 三方协议信息 */
+  tripartite_agreement?: TripartiteAgreementInfo
 }
 
 export interface PatchHireEhrImportTaskRequest {
@@ -2497,9 +3423,21 @@ export interface TransferOnboardHireApplicationQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface TransferOnboardHireApplicationResponse {
+  /** employee */
+  employee?: Employee
+}
+
+export const enum PatchHireEmployeeRequestOperation {
+  /** 转正 */
+  Convert = 1,
+  /** 离职 */
+  Overboard = 2,
+}
+
 export interface PatchHireEmployeeRequest {
   /** 修改状态操作 */
-  operation: 1 | 2
+  operation: PatchHireEmployeeRequestOperation
   conversion_info?: EmployeeConversionInfo
   overboard_info?: EmployeeOverboardInfo
 }
@@ -2517,6 +3455,11 @@ export interface PatchHireEmployeeQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface PatchHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Employee
+}
+
 export interface GetByApplicationHireEmployeeQuery {
   /** 投递ID */
   application_id: string
@@ -2532,6 +3475,11 @@ export interface GetByApplicationHireEmployeeQuery {
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
 }
 
+export interface GetByApplicationHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Employee
+}
+
 export interface GetHireEmployeeQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -2543,6 +3491,11 @@ export interface GetHireEmployeeQuery {
   job_family_id_type?: 'people_admin_job_category_id' | 'job_family_id'
   /** 此次调用中使用的「人员类型 ID」的类型 */
   employee_type_id_type?: 'people_admin_employee_type_id' | 'employee_type_enum_id'
+}
+
+export interface GetHireEmployeeResponse {
+  /** 员工信息 */
+  employee?: Employee
 }
 
 export interface ListHireTodoQuery extends Pagination {
@@ -2581,6 +3534,13 @@ export interface ListHireInterviewTaskQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export const enum CreateHireNoteRequestPrivacy {
+  /** 私密 */
+  Private = 1,
+  /** 公开 */
+  Public = 2,
+}
+
 export interface CreateHireNoteRequest {
   /** 人才ID */
   talent_id: string
@@ -2591,7 +3551,7 @@ export interface CreateHireNoteRequest {
   /** 内容 */
   content: string
   /** 备注私密属性（默认为公开） */
-  privacy?: 1 | 2
+  privacy?: CreateHireNoteRequestPrivacy
   /** 是否通知被@的用户 */
   notify_mentioned_user?: boolean
   /** 被@用户列表 */
@@ -2601,6 +3561,10 @@ export interface CreateHireNoteRequest {
 export interface CreateHireNoteQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface CreateHireNoteResponse {
+  note?: Note
 }
 
 export interface PatchHireNoteRequest {
@@ -2619,9 +3583,19 @@ export interface PatchHireNoteQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface PatchHireNoteResponse {
+  /** 备注数据 */
+  note?: Note
+}
+
 export interface GetHireNoteQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface GetHireNoteResponse {
+  /** 备注数据 */
+  note?: Note
 }
 
 export interface ListHireNoteQuery extends Pagination {
@@ -2786,11 +3760,21 @@ export interface EnableHireReferralAccountQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface EnableHireReferralAccountResponse {
+  /** 账号信息 */
+  account?: Account
+}
+
 export interface GetAccountAssetsHireReferralAccountQuery {
   /** 账户 ID */
   referral_account_id: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetAccountAssetsHireReferralAccountResponse {
+  /** 账户信息 */
+  account?: Account
 }
 
 export interface CreateHireReferralAccountRequest {
@@ -2805,16 +3789,42 @@ export interface CreateHireReferralAccountQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateHireReferralAccountResponse {
+  /** 账号信息 */
+  account?: Account
+}
+
 export interface DeactivateHireReferralAccountQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface DeactivateHireReferralAccountResponse {
+  /** 账号信息 */
+  account?: Account
+}
+
+export const enum WithdrawHireReferralAccountRequestWithdrawBonusType {
+  /** 积分 */
+  Point = 1,
+  /** 现金 */
+  Cash = 2,
+}
+
 export interface WithdrawHireReferralAccountRequest {
   /** 请求提现的奖励类型 */
-  withdraw_bonus_type: (1 | 2)[]
+  withdraw_bonus_type: WithdrawHireReferralAccountRequestWithdrawBonusType[]
   /** 提现单ID，请求时由请求方提供，后续关于本次提现操作的交互都以此提现单ID为标识进行，需要保证唯一,用于保证提现的幂等性，传入重复ID会返回对应提现单提取的金额明细 */
   external_order_id: string
+}
+
+export interface WithdrawHireReferralAccountResponse {
+  /** 请求时传入的提现单ID */
+  external_order_id?: string
+  /** 交易时间戳，需要保存，用于统一交易时间，方便对账 */
+  trans_time?: string
+  /** 本次提现金额明细 */
+  withdrawal_details?: BonusAmount
 }
 
 export interface ReconciliationHireReferralAccountRequest {
@@ -2826,9 +3836,29 @@ export interface ReconciliationHireReferralAccountRequest {
   trade_details?: TradeDetail[]
 }
 
+export interface ReconciliationHireReferralAccountResponse {
+  /** 核对失败的信息 */
+  check_failed_list?: CheckFailedAccountInfo[]
+}
+
+export interface CreateHireAttachmentResponse {
+  /** 上传文件的 id */
+  id?: string
+}
+
 export interface GetHireAttachmentQuery {
   /** 附件类型 */
   type?: 1 | 2 | 3
+}
+
+export interface GetHireAttachmentResponse {
+  /** 附件信息 */
+  attachment?: Attachment
+}
+
+export interface PreviewHireAttachmentResponse {
+  /** 预览链接 */
+  url: string
 }
 
 export interface ListHireApplicationInterviewQuery extends Pagination {
@@ -2857,561 +3887,21 @@ export interface GetHireJobManagerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
-export interface GetHireRoleResponse {
-  /** 角色详情 */
-  role?: RoleDetail
-}
-
-export interface CombinedCreateHireJobResponse {
-  /** 职位广告 */
-  default_job_post?: CombinedJobResultDefaultJobPost
-  /** 职位 */
-  job?: Job
-  /** 职位负责人 */
-  job_manager?: JobManager
-  /** 面试登记表 */
-  interview_registration_schema_info?: RegistrationSchemaInfo
-  /** 入职登记表 */
-  onboard_registration_schema_info?: RegistrationSchemaInfo
-  /** 目标专业 */
-  target_major_list?: TargetMajorInfo[]
-  /** 官网申请表 */
-  portal_website_apply_form_schema_info?: RegistrationSchemaInfo
-}
-
-export interface CombinedUpdateHireJobResponse {
-  /** 职位广告 */
-  default_job_post?: CombinedJobResultDefaultJobPost
-  /** 职位 */
-  job?: Job
-  /** 职位负责人 */
-  job_manager?: JobManager
-  /** 官网申请表 */
-  portal_website_apply_form_schema_info?: RegistrationSchemaInfo
-}
-
-export interface UpdateConfigHireJobResponse {
-  job_config?: JobConfigResult
-}
-
-export interface BatchUpdateHireJobManagerResponse {
-  /** 职位负责人 */
-  job_manager?: JobManager
-}
-
-export interface GetDetailHireJobResponse {
-  /** 职位详情数据 */
-  job_detail?: JobDetail
-}
-
-export interface GetHireJobResponse {
-  /** 职位数据 */
-  job?: Job
-}
-
-export interface RecruiterHireJobResponse {
-  /** 职位负责人 */
-  info?: JobRecruiter2
-}
-
-export interface ConfigHireJobResponse {
-  job_config?: JobConfigResult
-}
-
-export interface CreateHireJobRequirementResponse {
-  job_requirement?: JobRequirementDto
-}
-
-export interface ListByIdHireJobRequirementResponse {
-  /** 招聘需求列表 */
-  items?: JobRequirementDto[]
-}
-
-export interface ListHireInterviewRoundTypeResponse {
-  /** 是否启用面试轮次类型 */
-  active_status?: 1 | 2
-  /** 列表 */
-  items?: InterviewRoundType[]
-}
-
-export interface PatchHireInterviewerResponse {
-  /** 面试官信息 */
-  interviewer?: Interviewer
-}
-
-export interface GetHireOfferApplicationFormResponse {
-  /** Offer 申请表详情 */
-  offer_apply_form?: OfferApplyFormInfo
-}
-
-export interface SearchHireReferralResponse {
-  /** 内推信息列表 */
-  items?: ReferralInfo[]
-}
-
-export interface GetHireReferralWebsiteJobPostResponse {
-  job_post?: PortalJobPost
-}
-
-export interface GetByApplicationHireReferralResponse {
-  /** 内推信息 */
-  referral?: Referral
-}
-
-export interface CreateHireWebsiteChannelResponse {
-  /** 推广渠道 ID */
-  id?: string
-  /** 推广渠道名称 */
-  name?: string
-  /** 推广渠道链接 */
-  link?: string
-  /** 推广渠道推广码 */
-  code?: string
-}
-
-export interface UpdateHireWebsiteChannelResponse {
-  /** 推广渠道 ID */
-  id?: string
-  /** 推广渠道名称 */
-  name?: string
-  /** 推广渠道链接 */
-  link?: string
-  /** 推广渠道推广码 */
-  code?: string
-}
-
-export interface CreateHireWebsiteSiteUserResponse {
-  site_user?: WebsiteUser
-}
-
-export interface GetHireWebsiteJobPostResponse {
-  job_post?: WebsiteJobPost
-}
-
-export interface CreateByResumeHireWebsiteDeliveryResponse {
-  delivery?: WebsiteDeliveryDto
-}
-
-export interface CreateByAttachmentHireWebsiteDeliveryResponse {
-  /** 异步任务 ID */
-  task_id?: string
-}
-
-export interface GetHireWebsiteDeliveryTaskResponse {
-  /** 任务状态 */
-  status?: 0 | 1 | 2 | 3
-  /** 官网投递信息 */
-  delivery?: WebsiteDeliveryDto
-  /** 状态信息，仅 status 为 3 时返回 */
-  status_msg?: string
-  /** 附加信息，当前返回投递 ID，仅当 status 为 3 且 status_msg 标识为重复投递时，将返回重复投递的 ID */
-  extra_info?: string
-}
-
-export interface GetHireAgencyResponse {
-  /** 数据 */
-  agency?: Agency
-}
-
-export interface ProtectSearchHireAgencyResponse {
-  /** 是否已入职 */
-  is_onboarded?: boolean
-  /** 是否在猎头保护期内入职 */
-  onboarded_in_protection?: boolean
-  /** 入职所在保护期 */
-  onboarded_protection?: AgencyProtection
-  /** 人才保护信息 */
-  protection_list?: AgencyProtection[]
-}
-
-export interface QueryHireAgencyResponse {
-  items?: Agency[]
-}
-
-export interface CreateHireTalentExternalInfoResponse {
-  /** 人才外部信息 */
-  external_info?: TalentExternalInfo
-}
-
-export interface UpdateHireTalentExternalInfoResponse {
-  /** 人才外部信息 */
-  external_info?: TalentExternalInfo
-}
-
-export interface CreateHireExternalApplicationResponse {
-  external_application?: ExternalApplication
-}
-
-export interface UpdateHireExternalApplicationResponse {
-  external_application?: ExternalApplication
-}
-
-export interface DeleteHireExternalApplicationResponse {
-  external_application?: ExternalApplication
-}
-
-export interface CreateHireExternalInterviewResponse {
-  external_interview?: ExternalInterview
-}
-
-export interface UpdateHireExternalInterviewResponse {
-  external_interview?: ExternalInterview
-}
-
-export interface CreateHireExternalInterviewAssessmentResponse {
-  external_interview_assessment?: ExternalInterviewAssessment
-}
-
-export interface PatchHireExternalInterviewAssessmentResponse {
-  external_interview_assessment?: ExternalInterviewAssessment
-}
-
-export interface CreateHireExternalOfferResponse {
-  external_offer?: ExternalOffer
-}
-
-export interface UpdateHireExternalOfferResponse {
-  external_offer?: ExternalOffer
-}
-
-export interface CreateHireExternalBackgroundCheckResponse {
-  external_background_check?: ExternalBackgroundCheck
-}
-
-export interface UpdateHireExternalBackgroundCheckResponse {
-  external_background_check?: ExternalBackgroundCheck
-}
-
-export interface CreateHireExternalReferralRewardResponse {
-  /** 创建的内推奖励的id */
-  id?: string
-}
-
-export interface MoveTalentHireTalentPoolResponse {
-  /** 人才库ID */
-  talent_pool_id?: string
-  /** 人才ID */
-  talent_id?: string
-}
-
-export interface CombinedCreateHireTalentResponse {
-  /** 人才 ID */
-  talent_id?: string
-  /** 创建人 ID */
-  creator_id?: string
-  /** 创建人类型 */
-  creator_account_type?: 1 | 3
-}
-
-export interface CombinedUpdateHireTalentResponse {
-  /** 人才 ID */
-  talent_id?: string
-  /** 更新人 ID */
-  operator_id?: string
-  /** 更新人类型 */
-  operator_account_type?: 1 | 3
-}
-
-export interface AddToFolderHireTalentResponse {
-  /** 人才 ID 列表 */
-  talent_id_list?: string[]
-  /** 文件夹 ID */
-  folder_id?: string
-}
-
-export interface RemoveToFolderHireTalentResponse {
-  /** 人才 ID 列表 */
-  talent_id_list?: string[]
-  /** 文件夹 ID */
-  folder_id?: string
-}
-
-export interface BatchGetIdHireTalentResponse {
-  /** 人才信息列表 */
-  talent_list?: TalentBatchInfo[]
-}
-
-export interface QueryHireTalentObjectResponse {
-  items?: CommonSchema[]
-}
-
-export interface GetHireTalentResponse {
-  /** 人才信息 */
-  talent?: Talent
-}
-
-export interface GetHireTalentResponse {
-  /** ID */
-  talent_id?: string
-  /** 基础信息 */
-  basic_info?: CompositeTalentBasicInfo
-  /** 教育经历 */
-  education_list?: CompositeTalentEducationInfo[]
-  /** 工作经历 */
-  career_list?: CompositeTalentCareerInfo[]
-  /** 项目经历 */
-  project_list?: CompositeTalentProjectInfo[]
-  /** 作品集 */
-  works_list?: CompositeTalentWorksInfo[]
-  /** 获奖列表 */
-  award_list?: CompositeTalentAwardInfo[]
-  /** 语言列表 */
-  language_list?: CompositeTalentLanguageInfo[]
-  /** SNS列表 */
-  sns_list?: CompositeTalentSnsInfo[]
-  /** 简历来源 */
-  resume_source_list?: TalentResumeSource[]
-  /** 实习经历 */
-  internship_list?: CompositeTalentInternshipInfo[]
-  /** 自定义字段 */
-  customized_data_list?: CompositeTalentCustomizedData[]
-  /** 简历附件id列表（按照简历创建时间降序）（废弃，请使用resume_attachment_list代替） */
-  resume_attachment_id_list?: string[]
-  /** 简历附件列表（按照简历创建时间降序） */
-  resume_attachment_list?: TalentResumeAttachment[]
-  /** 面试登记表 */
-  interview_registration_list?: TalentInterviewRegistrationSimple[]
-  /** 登记表列表 */
-  registration_list?: RegistrationBasicInfo[]
-  /** 是否已入职 */
-  is_onboarded?: boolean
-  /** 是否在猎头保护期 */
-  is_in_agency_period?: boolean
-  /** 最高学历 参考 DegreeType 枚举 */
-  top_degree?: number
-  /** 人才已加入的人才库列表 */
-  talent_pool_id_list?: string[]
-  /** 文件夹列表 */
-  talent_folder_ref_list_v2?: TalentFolder[]
-  /** 标签列表 */
-  tag_list?: TalentTag[]
-  /** 相似人才信息 */
-  similar_info_v2?: TalentSimilar
-  /** 人才黑名单详情 */
-  block_info?: TalentBlock
-  /** 人才已经加入的人才库列表 */
-  talent_pool_ref_list_v2?: TalentPool[]
-  /** 备注列表 */
-  note_list_v2?: TalentNote[]
-}
-
-export interface GetDetailHireApplicationResponse {
-  /** 投递详情 */
-  application_detail?: ApplicationDetailInfo
-}
-
-export interface CreateHireApplicationResponse {
-  /** 投递ID */
-  id?: string
-}
-
-export interface GetHireApplicationResponse {
-  /** 投递数据 */
-  application?: Application
-}
-
-export interface SearchHireDiversityInclusionResponse {
-  /** 多元化与包容性信息列表 */
-  items?: DiInfo[]
-}
-
-export interface CreateHireExamResponse {
-  /** 笔试 ID */
-  exam_id?: string
-  /** 投递 ID */
-  application_id?: string
-  /** 试卷名称 */
-  exam_resource_name?: string
-  /** 笔试分数 */
-  score?: number
-  /** 附件ID */
-  uuid?: string
-  /** 操作人 ID */
-  operator_id?: string
-  /** 操作时间 */
-  operate_time?: string
-}
-
-export interface GetByTalentHireInterviewResponse {
-  /** 投递面试列表 */
-  items?: TalentInterview[]
-}
-
-export interface GetHireInterviewRecordResponse {
-  /** 数据 */
-  interview_record?: InterviewRecord
-}
-
-export interface GetHireInterviewRecordResponse {
-  interview_record?: InterviewRecord
-}
-
-export interface GetHireInterviewRecordAttachmentResponse {
-  /** 附件信息 */
-  attachment?: AttachmentInfo
-}
-
-export interface GetHireMinutesResponse {
-  minutes?: Minutes
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-  /** 对应面试是否还有更多项 */
-  has_more?: boolean
-}
-
-export interface CreateHireOfferResponse {
-  /** Offer ID */
-  offer_id?: string
-  /** 投递 ID */
-  application_id?: string
-  /** 模板 ID */
-  schema_id?: string
-  /** Offer 类型 */
-  offer_type?: 1 | 2
-  /** Offer 基本信息 */
-  basic_info?: OfferBasicInfo
-  /** Offer 薪资信息 */
-  salary_info?: OfferSalaryInfo
-  /** 自定义信息 */
-  customized_info_list?: OfferCustomizedInfo[]
-}
-
-export interface UpdateHireOfferResponse {
-  /** Offer ID */
-  offer_id?: string
-  /** 模板 ID */
-  schema_id?: string
-  /** Offer 基本信息 */
-  basic_info?: OfferBasicInfo
-  /** Offer 薪资信息 */
-  salary_info?: OfferSalaryInfo
-  /** 自定义信息 */
-  customized_info_list?: OfferCustomizedInfo[]
-}
-
-export interface OfferHireApplicationResponse {
-  offer?: ApplicationOffer
-}
-
-export interface GetHireOfferResponse {
-  /** Offer 详情 */
-  offer?: Offer
-}
-
-export interface InternOfferStatusHireOfferResponse {
-  /** Offer ID */
-  offer_id?: string
-  /** 更新入/离职状态的操作 */
-  operation: 'confirm_onboarding' | 'cancel_onboarding' | 'offboard'
-  /** 入职表单信息（当 operation 为 confirm_onboarding 时，该字段必填） */
-  onboarding_info?: InternOfferOnboardingInfo
-  /** 离职表单信息（当 operation 为 offboard 时，该字段必填） */
-  offboarding_info?: InternOfferOffboardingInfo
-}
-
-export interface CreateHireTripartiteAgreementResponse {
-  /** 创建的三方协议的 id */
-  id?: string
-}
-
-export interface UpdateHireTripartiteAgreementResponse {
-  /** 三方协议信息 */
-  tripartite_agreement?: TripartiteAgreementInfo
-}
-
-export interface TransferOnboardHireApplicationResponse {
-  /** employee */
-  employee?: Employee
-}
-
-export interface PatchHireEmployeeResponse {
-  /** 员工信息 */
-  employee?: Employee
-}
-
-export interface GetByApplicationHireEmployeeResponse {
-  /** 员工信息 */
-  employee?: Employee
-}
-
-export interface GetHireEmployeeResponse {
-  /** 员工信息 */
-  employee?: Employee
-}
-
-export interface CreateHireNoteResponse {
-  note?: Note
-}
-
-export interface PatchHireNoteResponse {
-  /** 备注数据 */
-  note?: Note
-}
-
-export interface GetHireNoteResponse {
-  /** 备注数据 */
-  note?: Note
-}
-
-export interface EnableHireReferralAccountResponse {
-  /** 账号信息 */
-  account?: Account
-}
-
-export interface GetAccountAssetsHireReferralAccountResponse {
-  /** 账户信息 */
-  account?: Account
-}
-
-export interface CreateHireReferralAccountResponse {
-  /** 账号信息 */
-  account?: Account
-}
-
-export interface DeactivateHireReferralAccountResponse {
-  /** 账号信息 */
-  account?: Account
-}
-
-export interface WithdrawHireReferralAccountResponse {
-  /** 请求时传入的提现单ID */
-  external_order_id?: string
-  /** 交易时间戳，需要保存，用于统一交易时间，方便对账 */
-  trans_time?: string
-  /** 本次提现金额明细 */
-  withdrawal_details?: BonusAmount
-}
-
-export interface ReconciliationHireReferralAccountResponse {
-  /** 核对失败的信息 */
-  check_failed_list?: CheckFailedAccountInfo[]
-}
-
-export interface CreateHireAttachmentResponse {
-  /** 上传文件的 id */
-  id?: string
-}
-
-export interface GetHireAttachmentResponse {
-  /** 附件信息 */
-  attachment?: Attachment
-}
-
-export interface PreviewHireAttachmentResponse {
-  /** 预览链接 */
-  url: string
-}
-
 export interface GetHireJobManagerResponse {
   /** 职位负责人 */
   info?: JobManager
+}
+
+export const enum GetHireOfferSchemaResponseScenario {
+  /** Offer审批表 */
+  ApplyOffer = 1,
 }
 
 export interface GetHireOfferSchemaResponse {
   /** offer申请表ID */
   id?: string
   /** offer申请表使用场景 */
-  scenario?: 1
+  scenario?: GetHireOfferSchemaResponseScenario
   /** 申请表版本 */
   version?: number
   /** 字段对象信息 */

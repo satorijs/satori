@@ -10,11 +10,10 @@ export interface BaseResponse {
   msg: string
 }
 
-export type Paginated<T = any, ItemsKey extends string = 'items', TokenKey extends string = 'page_token'> =
+export type Paginated<T = any, ItemsKey extends string = 'items'> =
   & Promise<
     & { [K in ItemsKey]: T[] }
-    & { [K in TokenKey]?: string }
-    & { has_more: boolean }
+    & { page_token?: string; has_more: boolean }
   >
   & AsyncIterableIterator<T>
 
@@ -130,7 +129,7 @@ export class Internal {
                 iterArgs[argIndex].page_token = data[tokenKey]
                 return {
                   data: data[itemsKey],
-                  next: data.has_more ? iterArgs : undefined,
+                  next: data[tokenKey] ? iterArgs : undefined,
                 }
               }
             }

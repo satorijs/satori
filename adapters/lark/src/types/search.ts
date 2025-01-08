@@ -112,11 +112,25 @@ export interface CreateSearchAppQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum CreateSearchDataSourceRequestState {
+  /** 已上线 */
+  Online = 0,
+  /** 未上线 */
+  Offline = 1,
+}
+
+export const enum CreateSearchDataSourceRequestConnectType {
+  /** 调用搜索请求时，使用的是飞书搜索接口 */
+  Default = 0,
+  /** 调用搜索请求时，使用的是自定义回调函数的Uri */
+  Callback = 1,
+}
+
 export interface CreateSearchDataSourceRequest {
   /** data_source的展示名称 */
   name: string
   /** 数据源状态，0-已上线，1-未上线 */
-  state?: 0 | 1
+  state?: CreateSearchDataSourceRequestState
   /** 对于数据源的描述 */
   description?: string
   /** 数据源在 search tab 上的展示图标路径 */
@@ -134,18 +148,30 @@ export interface CreateSearchDataSourceRequest {
   /** datasource对应的开放平台应用id */
   app_id?: string
   /** 搜索请求的接入方式 */
-  connect_type?: 0 | 1
+  connect_type?: CreateSearchDataSourceRequestConnectType
   /** 根据连接器类型不同所需要提供的相关参数 */
   connector_param?: ConnectorParam
   /** 是否使用问答服务 */
   enable_answer?: boolean
 }
 
+export interface CreateSearchDataSourceResponse {
+  /** 数据源实例 */
+  data_source?: DataSource
+}
+
+export const enum PatchSearchDataSourceRequestState {
+  /** 已上线 */
+  Online = 0,
+  /** 未上线 */
+  Offline = 1,
+}
+
 export interface PatchSearchDataSourceRequest {
   /** 数据源的展示名称 */
   name?: string
   /** 数据源状态，0-已上线，1-未上线 */
-  state?: 0 | 1
+  state?: PatchSearchDataSourceRequestState
   /** 对于数据源的描述 */
   description?: string
   /** 数据源在 search tab 上的展示图标路径 */
@@ -160,9 +186,26 @@ export interface PatchSearchDataSourceRequest {
   enable_answer?: boolean
 }
 
+export interface PatchSearchDataSourceResponse {
+  /** 数据源 */
+  data_source?: DataSource
+}
+
+export interface GetSearchDataSourceResponse {
+  /** 数据源实例 */
+  data_source?: DataSource
+}
+
+export const enum ListSearchDataSourceQueryView {
+  /** 全量数据 */
+  FULL = 0,
+  /** 摘要数据 */
+  BASIC = 1,
+}
+
 export interface ListSearchDataSourceQuery extends Pagination {
   /** 回包数据格式，0-全量数据；1-摘要数据。**注**：摘要数据仅包含"id"，"name"，"state"。 */
-  view?: 0 | 1
+  view?: ListSearchDataSourceQueryView
 }
 
 export interface CreateSearchDataSourceItemRequest {
@@ -176,6 +219,11 @@ export interface CreateSearchDataSourceItemRequest {
   structured_data: string
   /** 非结构化数据，如文档文本 */
   content?: ItemContent
+}
+
+export interface GetSearchDataSourceItemResponse {
+  /** 数据项实例 */
+  item: Item
 }
 
 export interface CreateSearchSchemaRequest {
@@ -192,36 +240,16 @@ export interface CreateSearchSchemaQuery {
   validate_only?: boolean
 }
 
+export interface CreateSearchSchemaResponse {
+  /** 数据范式实例 */
+  schema?: Schema
+}
+
 export interface PatchSearchSchemaRequest {
   /** 数据展示相关配置 */
   display?: SchemaDisplay
   /** 数据范式的属性定义 */
   properties?: PatchSchemaProperty[]
-}
-
-export interface CreateSearchDataSourceResponse {
-  /** 数据源实例 */
-  data_source?: DataSource
-}
-
-export interface PatchSearchDataSourceResponse {
-  /** 数据源 */
-  data_source?: DataSource
-}
-
-export interface GetSearchDataSourceResponse {
-  /** 数据源实例 */
-  data_source?: DataSource
-}
-
-export interface GetSearchDataSourceItemResponse {
-  /** 数据项实例 */
-  item: Item
-}
-
-export interface CreateSearchSchemaResponse {
-  /** 数据范式实例 */
-  schema?: Schema
 }
 
 export interface PatchSearchSchemaResponse {

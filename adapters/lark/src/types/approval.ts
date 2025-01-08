@@ -122,22 +122,22 @@ declare module '../internal' {
      * 查询实例列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/query
      */
-    queryApprovalInstance(body: QueryApprovalInstanceRequest, query?: QueryApprovalInstanceQuery): Promise<QueryApprovalInstanceResponse>
+    queryApprovalInstance(body: QueryApprovalInstanceRequest, query?: QueryApprovalInstanceQuery): Promise<QueryApprovalInstanceResponse> & AsyncIterableIterator<InstanceSearchItem>
     /**
      * 查询抄送列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/search_cc
      */
-    searchCcApprovalInstance(body: SearchCcApprovalInstanceRequest, query?: SearchCcApprovalInstanceQuery): Promise<SearchCcApprovalInstanceResponse>
+    searchCcApprovalInstance(body: SearchCcApprovalInstanceRequest, query?: SearchCcApprovalInstanceQuery): Promise<SearchCcApprovalInstanceResponse> & AsyncIterableIterator<CcSearchItem>
     /**
      * 查询任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/search
      */
-    searchApprovalTask(body: SearchApprovalTaskRequest, query?: SearchApprovalTaskQuery): Promise<SearchApprovalTaskResponse>
+    searchApprovalTask(body: SearchApprovalTaskRequest, query?: SearchApprovalTaskQuery): Promise<SearchApprovalTaskResponse> & AsyncIterableIterator<TaskSearchItem>
     /**
      * 查询用户的任务列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/task/query
      */
-    queryApprovalTask(query?: QueryApprovalTaskQuery): Promise<QueryApprovalTaskResponse>
+    queryApprovalTask(query?: QueryApprovalTaskQuery): Promise<QueryApprovalTaskResponse> & AsyncIterableIterator<Task>
     /**
      * 订阅审批事件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/subscribe
@@ -183,6 +183,13 @@ export interface CreateApprovalQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateApprovalResponse {
+  /** 审批定义 Code */
+  approval_code?: string
+  /** 审批定义 id */
+  approval_id?: string
+}
+
 export interface GetApprovalQuery {
   /** 语言可选值 */
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
@@ -190,6 +197,30 @@ export interface GetApprovalQuery {
   with_admin_id?: boolean
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetApprovalResponse {
+  /** 审批名称 */
+  approval_name: string
+  /** 审批定义状态 */
+  status: 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'UNKNOWN'
+  /** 控件信息 */
+  form: string
+  /** 节点信息 */
+  node_list: ApprovalNodeInfo[]
+  /** 可见人列表 */
+  viewers: ApprovalViewerInfo[]
+  /** 有数据管理权限的审批流程管理员ID */
+  approval_admin_ids?: string[]
+  /** 组件之间值关联关系 */
+  form_widget_relation?: string
+}
+
+export const enum CreateApprovalInstanceRequestTitleDisplayMethod {
+  /** 如果都有title，展示approval 和instance的title，竖线分割。 */
+  DisplayAll = 0,
+  /** 如果都有title，只展示instance的title */
+  DisplayInstanceTitle = 1,
 }
 
 export interface CreateApprovalInstanceRequest {
@@ -226,9 +257,14 @@ export interface CreateApprovalInstanceRequest {
   /** 审批展示名称，如果填写了该字段，则审批列表中的审批名称使用该字段，如果不填该字段，则审批名称使用审批定义的名称 */
   title?: string
   /** 详情页title展示模式 */
-  title_display_method?: 0 | 1
+  title_display_method?: CreateApprovalInstanceRequestTitleDisplayMethod
   /** 自动通过节点ID */
   node_auto_approval_list?: NodeAutoApproval[]
+}
+
+export interface CreateApprovalInstanceResponse {
+  /** 审批实例 Code */
+  instance_code: string
 }
 
 export interface CancelApprovalInstanceRequest {
@@ -285,6 +321,11 @@ export interface PreviewApprovalInstanceQuery {
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
 }
 
+export interface PreviewApprovalInstanceResponse {
+  /** 预览节点信息 */
+  preview_nodes?: PreviewNode[]
+}
+
 export interface GetApprovalInstanceQuery {
   /** 语言 */
   locale?: 'zh-CN' | 'en-US' | 'ja-JP'
@@ -292,6 +333,45 @@ export interface GetApprovalInstanceQuery {
   user_id?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'open_id' | 'union_id'
+}
+
+export interface GetApprovalInstanceResponse {
+  /** 审批名称 */
+  approval_name: string
+  /** 审批创建时间 */
+  start_time?: string
+  /** 审批完成时间，未完成为 0 */
+  end_time: string
+  /** 发起审批用户 */
+  user_id: string
+  /** 发起审批用户 open id */
+  open_id: string
+  /** 审批单编号 */
+  serial_number: string
+  /** 发起审批用户所在部门 */
+  department_id: string
+  /** 审批实例状态 */
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED' | 'DELETED'
+  /** 用户的唯一标识id */
+  uuid: string
+  /** json字符串，控件值 */
+  form: string
+  /** 审批任务列表 */
+  task_list: InstanceTask[]
+  /** 评论列表 */
+  comment_list: InstanceComment[]
+  /** 审批动态 */
+  timeline: InstanceTimeline[]
+  /** 修改的原实例 code,仅在查询修改实例时显示该字段 */
+  modified_instance_code?: string
+  /** 撤销的原实例 code,仅在查询撤销实例时显示该字段 */
+  reverted_instance_code?: string
+  /** 审批定义 Code */
+  approval_code: string
+  /** 单据是否被撤销 */
+  reverted?: boolean
+  /** 审批实例 Code */
+  instance_code: string
 }
 
 export interface ListApprovalInstanceQuery extends Pagination {
@@ -381,6 +461,24 @@ export interface SpecifiedRollbackApprovalInstanceQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum AddSignApprovalInstanceRequestAddSignType {
+  /** 前加签 */
+  AddSignPre = 1,
+  /** 后加签 */
+  AddSignPost = 2,
+  /** 并加签 */
+  AddSignParallel = 3,
+}
+
+export const enum AddSignApprovalInstanceRequestApprovalMethod {
+  /** 或签 */
+  OrSign = 1,
+  /** 会签 */
+  AddSign = 2,
+  /** 依次审批 */
+  SequentialSign = 3,
+}
+
 export interface AddSignApprovalInstanceRequest {
   /** 操作用户id */
   user_id: string
@@ -395,9 +493,9 @@ export interface AddSignApprovalInstanceRequest {
   /** 被加签人id */
   add_sign_user_ids: string[]
   /** 1/2/3分别代表前加签/后加签/并加签 */
-  add_sign_type: 1 | 2 | 3
+  add_sign_type: AddSignApprovalInstanceRequestAddSignType
   /** 仅在前加签、后加签时需要填写，1/2 分别代表或签/会签 */
-  approval_method?: 1 | 2 | 3
+  approval_method?: AddSignApprovalInstanceRequestApprovalMethod
 }
 
 export interface ResubmitApprovalTaskRequest {
@@ -442,11 +540,21 @@ export interface CreateApprovalInstanceCommentQuery {
   user_id: string
 }
 
+export interface CreateApprovalInstanceCommentResponse {
+  /** 保存成功的comment_id */
+  comment_id: string
+}
+
 export interface DeleteApprovalInstanceCommentQuery {
   /** 用户ID类型，不填默认为open_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 根据user_id_type填写用户ID */
   user_id: string
+}
+
+export interface DeleteApprovalInstanceCommentResponse {
+  /** 删除的评论ID */
+  comment_id?: string
 }
 
 export interface RemoveApprovalInstanceCommentQuery {
@@ -456,11 +564,23 @@ export interface RemoveApprovalInstanceCommentQuery {
   user_id?: string
 }
 
+export interface RemoveApprovalInstanceCommentResponse {
+  /** 审批实例code */
+  instance_id?: string
+  /** 租户自定义审批实例ID */
+  external_id?: string
+}
+
 export interface ListApprovalInstanceCommentQuery extends Pagination {
   /** 用户ID类型，不填默认为open_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
   /** 用户ID */
   user_id: string
+}
+
+export interface ListApprovalInstanceCommentResponse {
+  /** 评论数据列表 */
+  comments: Comment[]
 }
 
 export interface CreateApprovalExternalApprovalRequest {
@@ -491,9 +611,35 @@ export interface CreateApprovalExternalApprovalQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateApprovalExternalApprovalResponse {
+  /** 审批定义 code，用户自定义，定义的唯一标识 */
+  approval_code: string
+}
+
 export interface GetApprovalExternalApprovalQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetApprovalExternalApprovalResponse {
+  /** 审批定义名称 */
+  approval_name: string
+  /** 审批定义code */
+  approval_code: string
+  /** 审批定义所属分组 */
+  group_code: string
+  /** 分组名称 */
+  group_name?: string
+  /** 审批定义的说明 */
+  description?: string
+  /** 三方审批定义相关 */
+  external?: ApprovalCreateExternal
+  /** 可见人列表 */
+  viewers?: ApprovalCreateViewers[]
+  /** 国际化文案 */
+  i18n_resources?: I18nResource[]
+  /** 流程管理员 */
+  managers?: string[]
 }
 
 export interface CreateApprovalExternalInstanceRequest {
@@ -549,9 +695,19 @@ export interface CreateApprovalExternalInstanceRequest {
   resource_region?: string
 }
 
+export interface CreateApprovalExternalInstanceResponse {
+  /** 同步的实例数据 */
+  data?: ExternalInstance
+}
+
 export interface CheckApprovalExternalInstanceRequest {
   /** 校验的实例信息 */
   instances: ExteranlInstanceCheck[]
+}
+
+export interface CheckApprovalExternalInstanceResponse {
+  /** 更新时间不一致的实例信息 */
+  diff_instances?: ExteranlInstanceCheckResponse[]
 }
 
 export interface ListApprovalExternalTaskRequest {
@@ -593,6 +749,17 @@ export interface QueryApprovalInstanceQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface QueryApprovalInstanceResponse {
+  /** 查询返回条数 */
+  count?: number
+  /** 审批实例列表 */
+  instance_list?: InstanceSearchItem[]
+  /** 翻页 Token */
+  page_token?: string
+  /** 是否有更多任务可供拉取 */
+  has_more?: boolean
+}
+
 export interface SearchCcApprovalInstanceRequest {
   /** 根据x_user_type填写用户 id */
   user_id?: string
@@ -621,6 +788,28 @@ export interface SearchCcApprovalInstanceQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface SearchCcApprovalInstanceResponse {
+  /** 查询返回条数 */
+  count?: number
+  /** 审批实例列表 */
+  cc_list?: CcSearchItem[]
+  /** 翻页 Token */
+  page_token?: string
+  /** 是否有更多任务可供拉取 */
+  has_more?: boolean
+}
+
+export const enum SearchApprovalTaskRequestOrder {
+  /** 按update_time倒排 */
+  UpdateTimeDESC = 0,
+  /** 按update_time正排 */
+  UpdateTimeASC = 1,
+  /** 按start_time倒排 */
+  StartTimeDESC = 2,
+  /** 按start_time正排 */
+  StartTimeASC = 3,
+}
+
 export interface SearchApprovalTaskRequest {
   /** 根据x_user_type填写用户 id */
   user_id?: string
@@ -645,174 +834,12 @@ export interface SearchApprovalTaskRequest {
   /** 可选择task_status中的多个状态，当填写此参数时，task_status失效 */
   task_status_list?: string[]
   /** 按时间排序 */
-  order?: 0 | 1 | 2 | 3
+  order?: SearchApprovalTaskRequestOrder
 }
 
 export interface SearchApprovalTaskQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface QueryApprovalTaskQuery extends Pagination {
-  /** 需要查询的 User ID */
-  user_id: string
-  /** 需要查询的任务分组主题，如「待办」、「已办」等 */
-  topic: '1' | '2' | '3' | '17' | '18'
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface CreateApprovalResponse {
-  /** 审批定义 Code */
-  approval_code?: string
-  /** 审批定义 id */
-  approval_id?: string
-}
-
-export interface GetApprovalResponse {
-  /** 审批名称 */
-  approval_name: string
-  /** 审批定义状态 */
-  status: 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'UNKNOWN'
-  /** 控件信息 */
-  form: string
-  /** 节点信息 */
-  node_list: ApprovalNodeInfo[]
-  /** 可见人列表 */
-  viewers: ApprovalViewerInfo[]
-  /** 有数据管理权限的审批流程管理员ID */
-  approval_admin_ids?: string[]
-  /** 组件之间值关联关系 */
-  form_widget_relation?: string
-}
-
-export interface CreateApprovalInstanceResponse {
-  /** 审批实例 Code */
-  instance_code: string
-}
-
-export interface PreviewApprovalInstanceResponse {
-  /** 预览节点信息 */
-  preview_nodes?: PreviewNode[]
-}
-
-export interface GetApprovalInstanceResponse {
-  /** 审批名称 */
-  approval_name: string
-  /** 审批创建时间 */
-  start_time?: string
-  /** 审批完成时间，未完成为 0 */
-  end_time: string
-  /** 发起审批用户 */
-  user_id: string
-  /** 发起审批用户 open id */
-  open_id: string
-  /** 审批单编号 */
-  serial_number: string
-  /** 发起审批用户所在部门 */
-  department_id: string
-  /** 审批实例状态 */
-  status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELED' | 'DELETED'
-  /** 用户的唯一标识id */
-  uuid: string
-  /** json字符串，控件值 */
-  form: string
-  /** 审批任务列表 */
-  task_list: InstanceTask[]
-  /** 评论列表 */
-  comment_list: InstanceComment[]
-  /** 审批动态 */
-  timeline: InstanceTimeline[]
-  /** 修改的原实例 code,仅在查询修改实例时显示该字段 */
-  modified_instance_code?: string
-  /** 撤销的原实例 code,仅在查询撤销实例时显示该字段 */
-  reverted_instance_code?: string
-  /** 审批定义 Code */
-  approval_code: string
-  /** 单据是否被撤销 */
-  reverted?: boolean
-  /** 审批实例 Code */
-  instance_code: string
-}
-
-export interface CreateApprovalInstanceCommentResponse {
-  /** 保存成功的comment_id */
-  comment_id: string
-}
-
-export interface DeleteApprovalInstanceCommentResponse {
-  /** 删除的评论ID */
-  comment_id?: string
-}
-
-export interface RemoveApprovalInstanceCommentResponse {
-  /** 审批实例code */
-  instance_id?: string
-  /** 租户自定义审批实例ID */
-  external_id?: string
-}
-
-export interface ListApprovalInstanceCommentResponse {
-  /** 评论数据列表 */
-  comments: Comment[]
-}
-
-export interface CreateApprovalExternalApprovalResponse {
-  /** 审批定义 code，用户自定义，定义的唯一标识 */
-  approval_code: string
-}
-
-export interface GetApprovalExternalApprovalResponse {
-  /** 审批定义名称 */
-  approval_name: string
-  /** 审批定义code */
-  approval_code: string
-  /** 审批定义所属分组 */
-  group_code: string
-  /** 分组名称 */
-  group_name?: string
-  /** 审批定义的说明 */
-  description?: string
-  /** 三方审批定义相关 */
-  external?: ApprovalCreateExternal
-  /** 可见人列表 */
-  viewers?: ApprovalCreateViewers[]
-  /** 国际化文案 */
-  i18n_resources?: I18nResource[]
-  /** 流程管理员 */
-  managers?: string[]
-}
-
-export interface CreateApprovalExternalInstanceResponse {
-  /** 同步的实例数据 */
-  data?: ExternalInstance
-}
-
-export interface CheckApprovalExternalInstanceResponse {
-  /** 更新时间不一致的实例信息 */
-  diff_instances?: ExteranlInstanceCheckResponse[]
-}
-
-export interface QueryApprovalInstanceResponse {
-  /** 查询返回条数 */
-  count?: number
-  /** 审批实例列表 */
-  instance_list?: InstanceSearchItem[]
-  /** 翻页 Token */
-  page_token?: string
-  /** 是否有更多任务可供拉取 */
-  has_more?: boolean
-}
-
-export interface SearchCcApprovalInstanceResponse {
-  /** 查询返回条数 */
-  count?: number
-  /** 审批实例列表 */
-  cc_list?: CcSearchItem[]
-  /** 翻页 Token */
-  page_token?: string
-  /** 是否有更多任务可供拉取 */
-  has_more?: boolean
 }
 
 export interface SearchApprovalTaskResponse {
@@ -824,6 +851,15 @@ export interface SearchApprovalTaskResponse {
   page_token?: string
   /** 是否有更多任务可供拉取 */
   has_more?: boolean
+}
+
+export interface QueryApprovalTaskQuery extends Pagination {
+  /** 需要查询的 User ID */
+  user_id: string
+  /** 需要查询的任务分组主题，如「待办」、「已办」等 */
+  topic: '1' | '2' | '3' | '17' | '18'
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface QueryApprovalTaskResponse {
@@ -904,16 +940,16 @@ Internal.define({
     GET: { name: 'listApprovalExternalTask', pagination: { argIndex: 1, itemsKey: 'data' } },
   },
   '/approval/v4/instances/query': {
-    POST: 'queryApprovalInstance',
+    POST: { name: 'queryApprovalInstance', pagination: { argIndex: 1, itemsKey: 'instance_list' } },
   },
   '/approval/v4/instances/search_cc': {
-    POST: 'searchCcApprovalInstance',
+    POST: { name: 'searchCcApprovalInstance', pagination: { argIndex: 1, itemsKey: 'cc_list' } },
   },
   '/approval/v4/tasks/search': {
-    POST: 'searchApprovalTask',
+    POST: { name: 'searchApprovalTask', pagination: { argIndex: 1, itemsKey: 'task_list' } },
   },
   '/approval/v4/tasks/query': {
-    GET: 'queryApprovalTask',
+    GET: { name: 'queryApprovalTask', pagination: { argIndex: 0, itemsKey: 'tasks' } },
   },
   '/approval/v4/approvals/{approval_code}/subscribe': {
     POST: 'subscribeApproval',

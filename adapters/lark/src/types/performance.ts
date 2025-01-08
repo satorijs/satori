@@ -121,6 +121,11 @@ export interface ListPerformanceV1SemesterQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ListPerformanceV1SemesterResponse {
+  /** 周期meta信息列表 */
+  items?: Semester[]
+}
+
 export interface QueryPerformanceV2ActivityRequest {
   /** 评估周期 ID 列表，获取指定评估周期的项目 ID，semester_id 可通过【获取周期】接口获得 */
   semester_ids?: string[]
@@ -130,6 +135,11 @@ export interface QueryPerformanceV2ActivityRequest {
 
 export interface QueryPerformanceV2ActivityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface QueryPerformanceV2ActivityResponse {
+  /** 绩效评估项目列表。 */
+  activities?: Activity[]
 }
 
 export interface QueryPerformanceV2AdditionalInformationRequest {
@@ -162,6 +172,13 @@ export interface ImportPerformanceV2AdditionalInformationQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface ImportPerformanceV2AdditionalInformationResponse {
+  /** 导入记录 ID */
+  import_record_id?: string
+  /** 成功导入后的补充信息列表 */
+  additional_informations?: AdditionalInformation[]
+}
+
 export interface DeletePerformanceV2AdditionalInformationsBatchRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
@@ -173,11 +190,23 @@ export interface DeletePerformanceV2AdditionalInformationsBatchQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface DeletePerformanceV2AdditionalInformationsBatchResponse {
+  /** 被删除的补充信息列表 */
+  additional_informations?: string[]
+}
+
+export const enum WritePerformanceV2UserGroupUserRelRequestScopeVisibleSetting {
+  /** 无限制 */
+  NotLimit = 0,
+  /** 后台管理员不可见 */
+  BackendAdminNotVisible = 1,
+}
+
 export interface WritePerformanceV2UserGroupUserRelRequest {
   /** 分组id key */
   group_id?: string
   /** 人员组查看人员名单可见性配置 */
-  scope_visible_setting?: 0 | 1
+  scope_visible_setting?: WritePerformanceV2UserGroupUserRelRequestScopeVisibleSetting
   /** 人员列表 */
   user_ids?: string[]
 }
@@ -187,6 +216,11 @@ export interface WritePerformanceV2UserGroupUserRelQuery {
   client_token: string
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface WritePerformanceV2UserGroupUserRelResponse {
+  /** 写入员工范围响应 */
+  data?: WriteUserGroupScopeData
 }
 
 export interface QueryPerformanceV2RevieweeRequest {
@@ -200,6 +234,17 @@ export interface QueryPerformanceV2RevieweeRequest {
 
 export interface QueryPerformanceV2RevieweeQuery extends Pagination {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface QueryPerformanceV2RevieweeResponse {
+  /** 周期ID */
+  semester_id?: string
+  /** 被评估人列表 */
+  reviewees?: Reviewee[]
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
 }
 
 export interface QueryPerformanceV2ReviewTemplateRequest {
@@ -250,6 +295,11 @@ export interface QueryPerformanceV2MetricFieldRequest {
   field_ids?: string[]
 }
 
+export interface QueryPerformanceV2MetricFieldResponse {
+  /** 指标字段信息 */
+  items?: MetricField[]
+}
+
 export interface ListPerformanceV2MetricTagQuery extends Pagination {
   /** 指标标签 ID 列表 */
   tag_ids?: string[]
@@ -273,6 +323,13 @@ export interface FindByUserListPerformanceV1StageTaskQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface FindByUserListPerformanceV1StageTaskResponse {
+  /** 周期基础信息 */
+  base?: SemesterBaseInfo
+  /** 周期环节信息列表 */
+  items?: StageTask[]
+}
+
 export interface FindByPagePerformanceV1StageTaskRequest {
   /** 周期ID，可以通过「查询周期」接口获得 */
   semester_id: string
@@ -293,6 +350,17 @@ export interface FindByPagePerformanceV1StageTaskQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface FindByPagePerformanceV1StageTaskResponse {
+  /** 周期基础信息 */
+  base?: SemesterBaseInfo
+  /** 周期环节信息列表 */
+  items?: StageTask[]
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 下一页分页的token */
+  page_token?: string
+}
+
 export interface QueryPerformanceV2MetricDetailRequest {
   /** 周期 ID，1 次只允许查询 1 个周期，semester_id 可通过【获取周期】接口获得 */
   semester_id: string
@@ -302,6 +370,13 @@ export interface QueryPerformanceV2MetricDetailRequest {
 
 export interface QueryPerformanceV2MetricDetailQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface QueryPerformanceV2MetricDetailResponse {
+  /** 周期ID */
+  semester_id?: string
+  /** 指标明细列表 */
+  reviewee_metrics?: RevieweeMetric[]
 }
 
 export interface ImportPerformanceV2MetricDetailRequest {
@@ -318,6 +393,11 @@ export interface ImportPerformanceV2MetricDetailQuery {
   client_token: string
   /** 用户ID类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+}
+
+export interface ImportPerformanceV2MetricDetailResponse {
+  /** 成功时返回导入记录 ID，失败时则为 null */
+  import_record_id?: string
 }
 
 export interface QueryPerformanceV1ReviewDataRequest {
@@ -342,6 +422,23 @@ export interface QueryPerformanceV1ReviewDataQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
 }
 
+export interface QueryPerformanceV1ReviewDataResponse {
+  /** 绩效评估周期列表 */
+  semesters?: Semester[]
+  /** 绩效评估项目列表 */
+  activities?: Activity[]
+  /** 评估项列表 */
+  indicators?: Indicator[]
+  /** 评估模板列表 */
+  templates?: Template[]
+  /** 评估内容列表 */
+  units?: Unit[]
+  /** 填写项列表 */
+  fields?: Field[]
+  /** 评估数据列表 */
+  datas?: ReviewProfile[]
+}
+
 export interface QueryPerformanceV2ReviewDataRequest {
   /** 评估周期 ID 列表，semester_id 可通过【获取周期】 */
   semester_ids: string[]
@@ -363,96 +460,6 @@ export interface QueryPerformanceV2ReviewDataRequest {
 
 export interface QueryPerformanceV2ReviewDataQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-}
-
-export interface ListPerformanceV1SemesterResponse {
-  /** 周期meta信息列表 */
-  items?: Semester[]
-}
-
-export interface QueryPerformanceV2ActivityResponse {
-  /** 绩效评估项目列表。 */
-  activities?: Activity[]
-}
-
-export interface ImportPerformanceV2AdditionalInformationResponse {
-  /** 导入记录 ID */
-  import_record_id?: string
-  /** 成功导入后的补充信息列表 */
-  additional_informations?: AdditionalInformation[]
-}
-
-export interface DeletePerformanceV2AdditionalInformationsBatchResponse {
-  /** 被删除的补充信息列表 */
-  additional_informations?: string[]
-}
-
-export interface WritePerformanceV2UserGroupUserRelResponse {
-  /** 写入员工范围响应 */
-  data?: WriteUserGroupScopeData
-}
-
-export interface QueryPerformanceV2RevieweeResponse {
-  /** 周期ID */
-  semester_id?: string
-  /** 被评估人列表 */
-  reviewees?: Reviewee[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
-  page_token?: string
-}
-
-export interface QueryPerformanceV2MetricFieldResponse {
-  /** 指标字段信息 */
-  items?: MetricField[]
-}
-
-export interface FindByUserListPerformanceV1StageTaskResponse {
-  /** 周期基础信息 */
-  base?: SemesterBaseInfo
-  /** 周期环节信息列表 */
-  items?: StageTask[]
-}
-
-export interface FindByPagePerformanceV1StageTaskResponse {
-  /** 周期基础信息 */
-  base?: SemesterBaseInfo
-  /** 周期环节信息列表 */
-  items?: StageTask[]
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 下一页分页的token */
-  page_token?: string
-}
-
-export interface QueryPerformanceV2MetricDetailResponse {
-  /** 周期ID */
-  semester_id?: string
-  /** 指标明细列表 */
-  reviewee_metrics?: RevieweeMetric[]
-}
-
-export interface ImportPerformanceV2MetricDetailResponse {
-  /** 成功时返回导入记录 ID，失败时则为 null */
-  import_record_id?: string
-}
-
-export interface QueryPerformanceV1ReviewDataResponse {
-  /** 绩效评估周期列表 */
-  semesters?: Semester[]
-  /** 绩效评估项目列表 */
-  activities?: Activity[]
-  /** 评估项列表 */
-  indicators?: Indicator[]
-  /** 评估模板列表 */
-  templates?: Template[]
-  /** 评估内容列表 */
-  units?: Unit[]
-  /** 填写项列表 */
-  fields?: Field[]
-  /** 评估数据列表 */
-  datas?: ReviewProfile[]
 }
 
 export interface QueryPerformanceV2ReviewDataResponse {

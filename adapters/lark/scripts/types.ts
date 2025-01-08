@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { capitalize } from 'cosmokit'
+import { camelCase, capitalize } from 'cosmokit'
 import pMap from 'p-map'
 import dedent from 'dedent'
 
@@ -58,11 +58,15 @@ export interface Schema {
   required: boolean
   properties?: Schema[]
   items?: Schema
-  options?: {
-    name: string
-    value: string
-    description: string
-  }[]
+  keyType?: Schema
+  valueType?: Schema
+  options?: SchemaOption[]
+}
+
+export interface SchemaOption {
+  name: string
+  value: string
+  description: string
 }
 
 interface ApiDetail {
@@ -125,26 +129,62 @@ async function getDetail(api: Api) {
   return data
 }
 
-function toHump(name: string) {
-  return name.replace(/[\_\.](\w)/g, function (all, letter) {
-    return letter.toUpperCase()
-  })
+function formatEnum(options: SchemaOption[], type: string): string {
+  if (!options.length) return ''
+  const quote = type === 'string' ? "'" : ''
+  return options.map((option) => {
+    const desc = option.description ? `  /** ${option.description.replace(/\n/g, '').trim()} */\n` : ''
+    return `${desc}  ${capitalize(camelCase(option.name))} = ${quote}${option.value}${quote},`
+  }).join('\n') + '\n'
 }
 
-function formatType(schema: Schema, imports: Set<string>, inArray?: boolean) {
-  if (!schema.ref) return _formatType(schema, imports, inArray)
-  const name = capitalize(toHump(schema.ref))
-  imports.add(name)
-  if (refs[name]) return name
-  refs[name] = schema.type === 'object' && schema.properties
-    ? `export interface ${name} ${_formatType(schema)}`
-    : `export type ${name} = ${_formatType(schema)}`
-  return name
+function formatObject(properties: Schema[], parentName: string, project?: Project): string {
+  if (!properties.length) return ''
+  return properties.map((schema) => {
+    const name = parentName ? parentName + capitalize(camelCase(schema.name)) : undefined
+    const desc = schema.description ? `  /** ${schema.description.replace(/\n/g, '').trim()} */\n` : ''
+    return `${desc}  ${schema.name}${schema.required ? '' : '?'}: ${formatType(schema, name!, project, false)}`
+  }).join('\n') + '\n'
 }
 
-function _formatType(schema: Schema, imports = new Set<string>(), inArray?: boolean) {
+function formatType(schema: Schema, name: string, project?: Project, inArray?: boolean) {
+  if (schema.ref) {
+    name = capitalize(camelCase(schema.ref.replace(/\./g, '_')))
+    project?.imports.add(name)
+    if (refs[name]) return name
+  }
+  let isEnum = !!((project || schema.ref) && schema.options)
+  if (isEnum) {
+    if (schema.type === 'int') {
+      isEnum = schema.options!.every(v => !/^\d+$/.test(v.name) && /^\w+$/.test(v.name))
+    } else if (schema.type === 'string') {
+      isEnum = !!schema.ref
+    } else {
+      isEnum = false
+    }
+  }
+  if (isEnum) {
+    const decl = `export const enum ${name} {\n${formatEnum(schema.options!, schema.type)}}`
+    if (schema.ref) {
+      refs[name] = decl
+    } else {
+      project!.interfaces.push(decl)
+    }
+    return name
+  }
+  if (!schema.ref) {
+    return _formatType(schema, name, project, inArray)
+  }
+  refs[name!] = schema.type === 'object' && schema.properties
+    ? `export interface ${name} ${_formatType(schema, name)}`
+    : `export type ${name} = ${_formatType(schema, name)}`
+  return name!
+}
+
+function _formatType(schema: Schema, parentName: string, project?: Project, inArray?: boolean) {
   if (schema.type === 'file') return 'Blob'
-  if (schema.type === 'int') {
+  if (schema.type === 'float') return 'number'
+  if (schema.type === 'int' || schema.type === 'int64') {
     if (schema.options) {
       const output = schema.options.map(v => v.value).join(' | ')
       return inArray ? `(${output})` : output
@@ -152,7 +192,6 @@ function _formatType(schema: Schema, imports = new Set<string>(), inArray?: bool
       return 'number'
     }
   }
-  if (schema.type === 'float') return 'number'
   if (schema.type === 'string') {
     if (schema.options) {
       const output = schema.options.map(v => `'${v.value}'`).join(' | ')
@@ -164,19 +203,26 @@ function _formatType(schema: Schema, imports = new Set<string>(), inArray?: bool
   if (schema.type === 'boolean') return 'boolean'
   if (schema.type === 'object') {
     if (!schema.properties) return 'unknown'
-    return `{\n${generateParams(schema.properties, imports)}}`
-  } else if (schema.type === 'list') {
-    return formatType(schema.items!, imports, true) + '[]'
+    return `{\n${formatObject(schema.properties, parentName, project)}}`
   }
+  if (schema.type === 'list') {
+    let name = parentName
+    if (name.endsWith('List')) {
+      name = parentName.slice(0, -4)
+    }
+    return formatType(schema.items!, name, project, true) + '[]'
+  }
+  if (schema.type === 'map') {
+    const key = formatType(schema.keyType!, parentName + 'Key', project)
+    const value = formatType(schema.valueType!, parentName + 'Value', project)
+    return `Record<${key}, ${value}>`
+  }
+  console.log(`unknown type: ${schema.type}`)
   return 'unknown'
 }
 
-function generateParams(properties: Schema[], imports: Set<string>): string {
-  if (!properties.length) return ''
-  const getDesc = (v: Schema) => v.description ? `  /** ${v.description.replace(/\n/g, '').trim()} */\n` : ''
-  return properties.map((schema: Schema) => {
-    return `${getDesc(schema)}  ${schema.name}${schema.required ? '' : '?'}: ${formatType(schema, imports)}`
-  }).join('\n') + '\n'
+function createInterface(name: string, properties: Schema[], project: Project, parent?: string): string {
+  return `export interface ${name}${parent ? ` extends ${parent}` : ''} {\n${formatObject(properties, name, project)}}`
 }
 
 function getApiName(detail: ApiDetail) {
@@ -185,16 +231,15 @@ function getApiName(detail: ApiDetail) {
     project = project + detail.version.toUpperCase()
   }
   if (detail.project === detail.resource) {
-    return toHump(`${detail.apiName}.${project}`)
+    return camelCase(`${detail.apiName}.${project}`.replace(/\./g, '_'))
   } else {
-    return toHump(`${detail.apiName}.${project}.${detail.resource}`)
+    return camelCase(`${detail.apiName}.${project}.${detail.resource}`.replace(/\./g, '_'))
   }
 }
 
 interface Project {
   methods: string[]
-  requests: string[]
-  responses: string[]
+  interfaces: string[]
   internals: string[]
   imports: Set<string>
   internalImports: Set<string>
@@ -222,8 +267,7 @@ async function start() {
     const summary = data.apis[index]
     const project = projects[detail.project] ||= {
       methods: [],
-      requests: [],
-      responses: [],
+      interfaces: [],
       internals: [],
       imports: new Set(),
       internalImports: new Set(['Internal']),
@@ -238,16 +282,17 @@ async function start() {
     let returnType: string
     let paginationRequest: { queryType?: string } | undefined
     for (const property of detail.request.path?.properties || []) {
-      args.push(`${property.name}: ${formatType(property, project.imports)}`)
+      const name = apiType + capitalize(camelCase(property.name))
+      args.push(`${property.name}: ${formatType(property, name, project)}`)
     }
     if (detail.supportFileUpload && detail.request.body?.properties?.length) {
       const name = `${apiType}Form`
       args.push(`form: ${name}`)
-      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body!.properties, project.imports)}}`)
+      project.interfaces.push(createInterface(name, detail.request.body!.properties, project))
       extras.push(`multipart: true`)
     } else if (detail.request.body?.properties?.length) {
       const name = `${apiType}Request`
-      project.requests.push(`export interface ${name} {\n${generateParams(detail.request.body.properties, project.imports)}}`)
+      project.interfaces.push(createInterface(name, detail.request.body.properties, project))
       args.push(`body: ${name}`)
     }
     if (detail.request.query?.properties?.length) {
@@ -257,14 +302,14 @@ async function start() {
         const properties = detail.request.query.properties.filter(s => s.name !== 'page_token' && s.name !== 'page_size')
         if (properties.length) {
           project.internalImports.add('Pagination')
-          project.requests.push(`export interface ${queryType} extends Pagination {\n${generateParams(properties, project.imports)}}`)
+          project.interfaces.push(createInterface(queryType, properties, project, 'Pagination'))
           paginationRequest = { queryType }
         } else {
           queryType = 'Pagination'
           paginationRequest = {}
         }
       } else {
-        project.requests.push(`export interface ${queryType} {\n${generateParams(detail.request.query.properties, project.imports)}}`)
+        project.interfaces.push(createInterface(queryType, detail.request.query.properties, project))
       }
       args.push(`query?: ${queryType}`)
     }
@@ -286,36 +331,49 @@ async function start() {
           returnType = 'Promise<void>'
         } else {
           const responseType = `${apiType}Response`
-          const keys = (data.properties || []).map(v => v.name)
+          const _keys = (data.properties || []).map(v => v.name)
+          const keys = new Set(_keys)
           let pagination: [string, string, Schema] | undefined
-          if (keys.includes('has_more') && (keys.includes('page_token') || keys.includes('next_page_token')) && keys.length === 3) {
-            const list = (data.properties || []).find(v => !['has_more', 'page_token', 'next_page_token'].includes(v.name))!
+          const isPagination = keys.delete('page_token') || keys.delete('next_page_token')
+          keys.delete('has_more')
+          keys.delete('count')
+          keys.delete('total_count')
+          keys.delete('total')
+          keys.delete('page_size')
+          if (isPagination && keys.size === 1) {
+            const list = (data.properties || []).find(v => v.name === [...keys][0])!
             if (list.type === 'list') {
-              const tokenKey = keys.includes('page_token') ? 'page_token' : 'next_page_token'
+              const tokenKey = _keys.includes('page_token') ? 'page_token' : 'next_page_token'
               pagination = [list.name, tokenKey, list.items!]
             }
           }
           if (pagination) {
             const [itemsKey, tokenKey, schema] = pagination
-            let innerType = formatType(schema, project.imports)
+            let innerType = formatType(schema, apiType + 'Item', project)
             if (schema.type === 'object' && schema.properties && !schema.ref) {
-              project.responses.push(`export interface ${apiType}Item ${innerType}`)
+              project.interfaces.push(`export interface ${apiType}Item ${innerType}`)
               innerType = `${apiType}Item`
             }
-            returnType = itemsKey === 'items' ? `Paginated<${innerType}>` : `Paginated<${innerType}, '${itemsKey}'>`
+            // standard pagination response
+            if (_keys.length === 3 && _keys.includes('has_more') && _keys.includes('page_token')) {
+              returnType = itemsKey === 'items' ? `Paginated<${innerType}>` : `Paginated<${innerType}, '${itemsKey}'>`
+            } else {
+              returnType = `Promise<${responseType}> & AsyncIterableIterator<${innerType}>`
+              project.interfaces.push(createInterface(responseType, data.properties, project))
+            }
             paginationResponse = { innerType, tokenKey, itemsKey }
           } else {
             if (detail.pagination) {
-              console.log(`unsupported pagination (${keys.join(', ')}), see https://open.feishu.cn${summary.fullPath}}`)
+              console.log(`unsupported pagination (${_keys}), see https://open.feishu.cn${summary.fullPath}}`)
             }
-            project.responses.push(`export interface ${responseType} {\n${generateParams(data.properties, project.imports)}}`)
+            project.interfaces.push(createInterface(responseType, data.properties, project))
             returnType = `Promise<${responseType}>`
           }
         }
       } else {
         const responseType = `${apiType}Response`
         const properties = detail.response.body.properties!.filter(v => !['code', 'msg'].includes(v.name))
-        project.responses.push(`export interface ${responseType} extends BaseResponse {\n${generateParams(properties, project.imports)}}`)
+        project.interfaces.push(createInterface(responseType, properties, project, 'BaseResponse'))
         extras.push(`type: 'raw-json'`)
         project.internalImports.add('BaseResponse')
         returnType = `Promise<${responseType}>`
@@ -376,8 +434,7 @@ async function start() {
           }
         }
       `.replace('__METHODS__', project.methods.join('\n').split('\n').join('\n    ')),
-      ...project.requests,
-      ...project.responses,
+      ...project.interfaces,
       dedent`
         Internal.define({
           __DEFINES__

@@ -101,9 +101,19 @@ export interface ParseDocumentAiResumeForm {
   file: Blob
 }
 
+export interface ParseDocumentAiResumeResponse {
+  /** 简历信息 */
+  resumes?: Resume[]
+}
+
 export interface RecognizeDocumentAiVehicleInvoiceForm {
   /** 识别的机动车发票源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiVehicleInvoiceResponse {
+  /** 机动车发票信息 */
+  vehicle_invoice?: VehicleInvoice
 }
 
 export interface RecognizeDocumentAiHealthCertificateForm {
@@ -111,9 +121,19 @@ export interface RecognizeDocumentAiHealthCertificateForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiHealthCertificateResponse {
+  /** 健康证信息 */
+  health_certificate?: HealthCertificate
+}
+
 export interface RecognizeDocumentAiHkmMainlandTravelPermitForm {
   /** 识别的港澳居民来往内地通行证源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiHkmMainlandTravelPermitResponse {
+  /** 港澳居民来往内地通行证信息 */
+  hkm_mainland_travel_permit?: HkmMainlandTravelPermit
 }
 
 export interface RecognizeDocumentAiTwMainlandTravelPermitForm {
@@ -121,9 +141,19 @@ export interface RecognizeDocumentAiTwMainlandTravelPermitForm {
   file?: Blob
 }
 
+export interface RecognizeDocumentAiTwMainlandTravelPermitResponse {
+  /** 台湾居民来往大陆通行证信息 */
+  tw_mainland_travel_permit?: TwMainlandTravelPermit
+}
+
 export interface RecognizeDocumentAiChinesePassportForm {
   /** 识别的中国护照源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiChinesePassportResponse {
+  /** 中国护照信息 */
+  chinese_passport?: ChinesePassport
 }
 
 export interface RecognizeDocumentAiBankCardForm {
@@ -131,9 +161,19 @@ export interface RecognizeDocumentAiBankCardForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiBankCardResponse {
+  /** 银行卡信息 */
+  bank_card?: BankCard
+}
+
 export interface RecognizeDocumentAiVehicleLicenseForm {
   /** 识别的行驶证源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiVehicleLicenseResponse {
+  /** 行驶证信息 */
+  vehicle_license?: VehicleLicense
 }
 
 export interface RecognizeDocumentAiTrainInvoiceForm {
@@ -141,9 +181,19 @@ export interface RecognizeDocumentAiTrainInvoiceForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiTrainInvoiceResponse {
+  /** 火车票信息 */
+  train_invoices?: TrainInvoice[]
+}
+
 export interface RecognizeDocumentAiTaxiInvoiceForm {
   /** 识别的出租车票源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiTaxiInvoiceResponse {
+  /** 出租车票信息 */
+  taxi_invoices?: TaxiInvoice[]
 }
 
 export interface RecognizeDocumentAiIdCardForm {
@@ -151,9 +201,19 @@ export interface RecognizeDocumentAiIdCardForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiIdCardResponse {
+  /** 身份证信息 */
+  id_card?: IdCard
+}
+
 export interface RecognizeDocumentAiFoodProduceLicenseForm {
   /** 识别的食品生产许可证源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiFoodProduceLicenseResponse {
+  /** 食品生产许可证信息 */
+  food_produce_license?: FoodProduceLicense
 }
 
 export interface RecognizeDocumentAiFoodManageLicenseForm {
@@ -161,9 +221,19 @@ export interface RecognizeDocumentAiFoodManageLicenseForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiFoodManageLicenseResponse {
+  /** 食品经营许可证信息 */
+  food_manage_license?: FoodManageLicense
+}
+
 export interface RecognizeDocumentAiDrivingLicenseForm {
   /** 识别的驾驶证源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiDrivingLicenseResponse {
+  /** 驾驶证信息 */
+  driving_license?: DrvingLicense
 }
 
 export interface RecognizeDocumentAiVatInvoiceForm {
@@ -171,9 +241,19 @@ export interface RecognizeDocumentAiVatInvoiceForm {
   file: Blob
 }
 
+export interface RecognizeDocumentAiVatInvoiceResponse {
+  /** 增值税发票信息 */
+  vat_invoices?: VatInvoice[]
+}
+
 export interface RecognizeDocumentAiBusinessLicenseForm {
   /** 识别的营业执照源文件 */
   file: Blob
+}
+
+export interface RecognizeDocumentAiBusinessLicenseResponse {
+  /** 营业执照信息 */
+  business_license?: BusinessLicense
 }
 
 export interface FieldExtractionDocumentAiContractForm {
@@ -183,91 +263,6 @@ export interface FieldExtractionDocumentAiContractForm {
   pdf_page_limit: number
   /** ocr 参数，当前支持force, pdf, unused三种格式 */
   ocr_mode: 'force' | 'auto' | 'unused'
-}
-
-export interface RecognizeDocumentAiBusinessCardForm {
-  /** 识别名片的源文件（支持 JPG / PNG / PDF） */
-  file: Blob
-}
-
-export interface ParseDocumentAiResumeResponse {
-  /** 简历信息 */
-  resumes?: Resume[]
-}
-
-export interface RecognizeDocumentAiVehicleInvoiceResponse {
-  /** 机动车发票信息 */
-  vehicle_invoice?: VehicleInvoice
-}
-
-export interface RecognizeDocumentAiHealthCertificateResponse {
-  /** 健康证信息 */
-  health_certificate?: HealthCertificate
-}
-
-export interface RecognizeDocumentAiHkmMainlandTravelPermitResponse {
-  /** 港澳居民来往内地通行证信息 */
-  hkm_mainland_travel_permit?: HkmMainlandTravelPermit
-}
-
-export interface RecognizeDocumentAiTwMainlandTravelPermitResponse {
-  /** 台湾居民来往大陆通行证信息 */
-  tw_mainland_travel_permit?: TwMainlandTravelPermit
-}
-
-export interface RecognizeDocumentAiChinesePassportResponse {
-  /** 中国护照信息 */
-  chinese_passport?: ChinesePassport
-}
-
-export interface RecognizeDocumentAiBankCardResponse {
-  /** 银行卡信息 */
-  bank_card?: BankCard
-}
-
-export interface RecognizeDocumentAiVehicleLicenseResponse {
-  /** 行驶证信息 */
-  vehicle_license?: VehicleLicense
-}
-
-export interface RecognizeDocumentAiTrainInvoiceResponse {
-  /** 火车票信息 */
-  train_invoices?: TrainInvoice[]
-}
-
-export interface RecognizeDocumentAiTaxiInvoiceResponse {
-  /** 出租车票信息 */
-  taxi_invoices?: TaxiInvoice[]
-}
-
-export interface RecognizeDocumentAiIdCardResponse {
-  /** 身份证信息 */
-  id_card?: IdCard
-}
-
-export interface RecognizeDocumentAiFoodProduceLicenseResponse {
-  /** 食品生产许可证信息 */
-  food_produce_license?: FoodProduceLicense
-}
-
-export interface RecognizeDocumentAiFoodManageLicenseResponse {
-  /** 食品经营许可证信息 */
-  food_manage_license?: FoodManageLicense
-}
-
-export interface RecognizeDocumentAiDrivingLicenseResponse {
-  /** 驾驶证信息 */
-  driving_license?: DrvingLicense
-}
-
-export interface RecognizeDocumentAiVatInvoiceResponse {
-  /** 增值税发票信息 */
-  vat_invoices?: VatInvoice[]
-}
-
-export interface RecognizeDocumentAiBusinessLicenseResponse {
-  /** 营业执照信息 */
-  business_license?: BusinessLicense
 }
 
 export interface FieldExtractionDocumentAiContractResponse {
@@ -287,6 +282,11 @@ export interface FieldExtractionDocumentAiContractResponse {
   body_info?: BodyInfo[]
   /** 银行信息 */
   bank_info?: BankInfo[]
+}
+
+export interface RecognizeDocumentAiBusinessCardForm {
+  /** 识别名片的源文件（支持 JPG / PNG / PDF） */
+  file: Blob
 }
 
 export interface RecognizeDocumentAiBusinessCardResponse {

@@ -51,11 +51,21 @@ export interface CreatePersonalSettingsSystemStatusRequest {
   sync_setting?: SystemStatusSyncSetting
 }
 
+export interface CreatePersonalSettingsSystemStatusResponse {
+  /** 系统状态 */
+  system_status?: SystemStatus
+}
+
 export interface PatchPersonalSettingsSystemStatusRequest {
   /** 系统状态 */
   system_status: SystemStatus
   /** 需要更新的字段 */
   update_fields: ('TITLE' | 'I18N_TITLE' | 'ICON' | 'COLOR' | 'PRIORITY' | 'SYNC_SETTING')[]
+}
+
+export interface PatchPersonalSettingsSystemStatusResponse {
+  /** 系统状态 */
+  system_status?: SystemStatus
 }
 
 export interface BatchOpenPersonalSettingsSystemStatusRequest {
@@ -68,6 +78,11 @@ export interface BatchOpenPersonalSettingsSystemStatusQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface BatchOpenPersonalSettingsSystemStatusResponse {
+  /** 开启结果 */
+  result_list: SystemStatusUserOpenResultEntity[]
+}
+
 export interface BatchClosePersonalSettingsSystemStatusRequest {
   /** 成员列表 */
   user_list: string[]
@@ -76,21 +91,6 @@ export interface BatchClosePersonalSettingsSystemStatusRequest {
 export interface BatchClosePersonalSettingsSystemStatusQuery {
   /** 用户id类型 open_id/user_id/union_id */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface CreatePersonalSettingsSystemStatusResponse {
-  /** 系统状态 */
-  system_status?: SystemStatus
-}
-
-export interface PatchPersonalSettingsSystemStatusResponse {
-  /** 系统状态 */
-  system_status?: SystemStatus
-}
-
-export interface BatchOpenPersonalSettingsSystemStatusResponse {
-  /** 开启结果 */
-  result_list: SystemStatusUserOpenResultEntity[]
 }
 
 export interface BatchClosePersonalSettingsSystemStatusResponse {

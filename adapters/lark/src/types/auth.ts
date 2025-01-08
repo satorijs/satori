@@ -37,11 +37,25 @@ export interface TenantAccessTokenInternalAuthRequest {
   app_secret: string
 }
 
+export interface TenantAccessTokenInternalAuthResponse extends BaseResponse {
+  /** 访问 token */
+  tenant_access_token?: string
+  /** app_access_token 过期时间 */
+  expire?: number
+}
+
 export interface AppAccessTokenInternalAuthRequest {
   /** 应用唯一标识，创建应用后获得 */
   app_id: string
   /** 应用秘钥，创建应用后获得 */
   app_secret: string
+}
+
+export interface AppAccessTokenInternalAuthResponse extends BaseResponse {
+  /** 访问 token */
+  app_access_token?: string
+  /** app_access_token 过期时间 */
+  expire?: number
 }
 
 export interface AppTicketResendAuthRequest {
@@ -60,32 +74,18 @@ export interface AppAccessTokenAuthRequest {
   app_ticket: string
 }
 
-export interface TenantAccessTokenAuthRequest {
-  /** 应用唯一标识，创建应用 */
-  app_access_token: string
-  /** 应用秘钥，创建应用后获得 */
-  tenant_key: string
-}
-
-export interface TenantAccessTokenInternalAuthResponse extends BaseResponse {
-  /** 访问 token */
-  tenant_access_token?: string
-  /** app_access_token 过期时间 */
-  expire?: number
-}
-
-export interface AppAccessTokenInternalAuthResponse extends BaseResponse {
-  /** 访问 token */
-  app_access_token?: string
-  /** app_access_token 过期时间 */
-  expire?: number
-}
-
 export interface AppAccessTokenAuthResponse extends BaseResponse {
   /** 访问 token */
   app_access_token?: string
   /** app_access_token 过期时间 */
   expire?: number
+}
+
+export interface TenantAccessTokenAuthRequest {
+  /** 应用唯一标识，创建应用 */
+  app_access_token: string
+  /** 应用秘钥，创建应用后获得 */
+  tenant_key: string
 }
 
 export interface TenantAccessTokenAuthResponse extends BaseResponse {

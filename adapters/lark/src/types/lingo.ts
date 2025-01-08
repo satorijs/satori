@@ -102,6 +102,10 @@ export interface CreateLingoDraftQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateLingoDraftResponse {
+  draft?: Draft
+}
+
 export interface UpdateLingoDraftRequest {
   /** 实体词 Id */
   id?: string
@@ -122,6 +126,10 @@ export interface UpdateLingoDraftRequest {
 export interface UpdateLingoDraftQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface UpdateLingoDraftResponse {
+  draft?: Draft
 }
 
 export interface CreateLingoEntityRequest {
@@ -148,6 +156,10 @@ export interface CreateLingoEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateLingoEntityResponse {
+  entity?: Entity
+}
+
 export interface UpdateLingoEntityRequest {
   /** 词条名 */
   main_keys: Term[]
@@ -170,6 +182,10 @@ export interface UpdateLingoEntityQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UpdateLingoEntityResponse {
+  entity?: Entity
+}
+
 export interface DeleteLingoEntityQuery {
   /** 数据提供方（使用时需要将路径中的词条 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
   provider?: string
@@ -184,6 +200,11 @@ export interface GetLingoEntityQuery {
   outer_id?: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetLingoEntityResponse {
+  /** 实体词 */
+  entity?: Entity
 }
 
 export interface ListLingoEntityQuery extends Pagination {
@@ -203,6 +224,11 @@ export interface MatchLingoEntityRequest {
 export interface MatchLingoEntityQuery {
   /** 词库ID */
   repo_id?: string
+}
+
+export interface MatchLingoEntityResponse {
+  /** 匹配结果 */
+  results?: MatchInfo[]
 }
 
 export interface SearchLingoEntityRequest {
@@ -228,9 +254,19 @@ export interface HighlightLingoEntityRequest {
   text: string
 }
 
+export interface HighlightLingoEntityResponse {
+  /** 返回识别到的实体词信息 */
+  phrases?: Phrase[]
+}
+
 export interface ListLingoClassificationQuery extends Pagination {
   /** 词库ID */
   repo_id?: string
+}
+
+export interface ListLingoRepoResponse {
+  /** 词库列表 */
+  items?: Repo[]
 }
 
 export interface UploadLingoFileForm {
@@ -238,42 +274,6 @@ export interface UploadLingoFileForm {
   name: string
   /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
   file: Blob
-}
-
-export interface CreateLingoDraftResponse {
-  draft?: Draft
-}
-
-export interface UpdateLingoDraftResponse {
-  draft?: Draft
-}
-
-export interface CreateLingoEntityResponse {
-  entity?: Entity
-}
-
-export interface UpdateLingoEntityResponse {
-  entity?: Entity
-}
-
-export interface GetLingoEntityResponse {
-  /** 实体词 */
-  entity?: Entity
-}
-
-export interface MatchLingoEntityResponse {
-  /** 匹配结果 */
-  results?: MatchInfo[]
-}
-
-export interface HighlightLingoEntityResponse {
-  /** 返回识别到的实体词信息 */
-  phrases?: Phrase[]
-}
-
-export interface ListLingoRepoResponse {
-  /** 词库列表 */
-  items?: Repo[]
 }
 
 export interface UploadLingoFileResponse {

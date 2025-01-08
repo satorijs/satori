@@ -300,6 +300,11 @@ export interface ApplyVcReserveQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ApplyVcReserveResponse {
+  reserve?: Reserve
+  reserve_correction_check_info?: ReserveCorrectionCheckInfo
+}
+
 export interface UpdateVcReserveRequest {
   /** 预约到期时间（unix时间，单位sec） */
   end_time?: string
@@ -312,9 +317,18 @@ export interface UpdateVcReserveQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UpdateVcReserveResponse {
+  reserve?: Reserve
+  reserve_correction_check_info?: ReserveCorrectionCheckInfo
+}
+
 export interface GetVcReserveQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetVcReserveResponse {
+  reserve?: Reserve
 }
 
 export interface GetActiveMeetingVcReserveQuery {
@@ -322,6 +336,10 @@ export interface GetActiveMeetingVcReserveQuery {
   with_participants?: boolean
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetActiveMeetingVcReserveResponse {
+  meeting?: Meeting
 }
 
 export interface InviteVcMeetingRequest {
@@ -334,6 +352,11 @@ export interface InviteVcMeetingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface InviteVcMeetingResponse {
+  /** 邀请结果 */
+  invite_results?: MeetingInviteStatus[]
+}
+
 export interface KickoutVcMeetingRequest {
   /** 需踢出的用户列表 */
   kickout_users: MeetingUser[]
@@ -342,6 +365,11 @@ export interface KickoutVcMeetingRequest {
 export interface KickoutVcMeetingQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface KickoutVcMeetingResponse {
+  /** 踢出结果 */
+  kickout_results?: MeetingParticipantResult[]
 }
 
 export interface SetHostVcMeetingRequest {
@@ -356,6 +384,11 @@ export interface SetHostVcMeetingQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface SetHostVcMeetingResponse {
+  /** 会中当前主持人 */
+  host_user?: MeetingUser
+}
+
 export interface GetVcMeetingQuery {
   /** 是否需要参会人列表 */
   with_participants?: boolean
@@ -363,6 +396,10 @@ export interface GetVcMeetingQuery {
   with_meeting_ability?: boolean
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetVcMeetingResponse {
+  meeting?: Meeting
 }
 
 export interface ListByNoVcMeetingQuery extends Pagination {
@@ -379,16 +416,38 @@ export interface StartVcMeetingRecordingRequest {
   timezone?: number
 }
 
+export interface GetVcMeetingRecordingResponse {
+  recording?: MeetingRecording
+}
+
+export const enum SetPermissionVcMeetingRecordingRequestActionType {
+  /** 授权 */
+  Authorize = 0,
+  /** 取消授权 */
+  Revoke = 1,
+}
+
 export interface SetPermissionVcMeetingRecordingRequest {
   /** 授权对象列表 */
   permission_objects: RecordingPermissionObject[]
   /** 授权或者取消授权，默认授权 */
-  action_type?: 0 | 1
+  action_type?: SetPermissionVcMeetingRecordingRequestActionType
 }
 
 export interface SetPermissionVcMeetingRecordingQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export const enum GetDailyVcReportQueryUnit {
+  /** 中国大陆 */
+  CN = 0,
+  /** 美国 */
+  VA = 1,
+  /** 新加坡 */
+  SG = 2,
+  /** 日本 */
+  JP = 3,
 }
 
 export interface GetDailyVcReportQuery {
@@ -397,7 +456,30 @@ export interface GetDailyVcReportQuery {
   /** 结束时间（unix时间，单位sec） */
   end_time: string
   /** 数据驻留地 */
-  unit?: 0 | 1 | 2 | 3
+  unit?: GetDailyVcReportQueryUnit
+}
+
+export interface GetDailyVcReportResponse {
+  /** 会议报告 */
+  meeting_report?: Report
+}
+
+export const enum GetTopUserVcReportQueryOrderBy {
+  /** 会议数量 */
+  MeetingCount = 1,
+  /** 会议时长 */
+  MeetingDuration = 2,
+}
+
+export const enum GetTopUserVcReportQueryUnit {
+  /** 中国大陆 */
+  CN = 0,
+  /** 美国 */
+  VA = 1,
+  /** 新加坡 */
+  SG = 2,
+  /** 日本 */
+  JP = 3,
 }
 
 export interface GetTopUserVcReportQuery {
@@ -408,11 +490,34 @@ export interface GetTopUserVcReportQuery {
   /** 取前多少位 */
   limit: number
   /** 排序依据（降序） */
-  order_by: 1 | 2
+  order_by: GetTopUserVcReportQueryOrderBy
   /** 数据驻留地 */
-  unit?: 0 | 1 | 2 | 3
+  unit?: GetTopUserVcReportQueryUnit
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetTopUserVcReportResponse {
+  /** top用户列表 */
+  top_user_report?: ReportTopUser[]
+}
+
+export const enum MeetingListVcExportRequestMeetingStatus {
+  /** 进行中 */
+  Ongoing = 1,
+  /** 已结束 */
+  Past = 2,
+  /** 待召开 */
+  Future = 3,
+}
+
+export const enum MeetingListVcExportRequestMeetingType {
+  /** 全部类型（默认） */
+  All = 1,
+  /** 视频会议 */
+  Meeting = 2,
+  /** 本地投屏 */
+  ShareScreen = 3,
 }
 
 export interface MeetingListVcExportRequest {
@@ -421,7 +526,7 @@ export interface MeetingListVcExportRequest {
   /** 查询结束时间（unix时间，单位sec） */
   end_time: string
   /** 会议状态（不传默认为已结束会议） */
-  meeting_status?: 1 | 2 | 3
+  meeting_status?: MeetingListVcExportRequestMeetingStatus
   /** 按9位会议号筛选（最多一个筛选条件） */
   meeting_no?: string
   /** 按参会Lark用户筛选（最多一个筛选条件） */
@@ -429,12 +534,26 @@ export interface MeetingListVcExportRequest {
   /** 按参会Rooms筛选（最多一个筛选条件） */
   room_id?: string
   /** 按会议类型筛选（最多一个筛选条件） */
-  meeting_type?: 1 | 2 | 3
+  meeting_type?: MeetingListVcExportRequestMeetingType
 }
 
 export interface MeetingListVcExportQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface MeetingListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+
+export const enum ParticipantListVcExportRequestMeetingStatus {
+  /** 进行中 */
+  Ongoing = 1,
+  /** 已结束 */
+  Past = 2,
+  /** 待召开 */
+  Future = 3,
 }
 
 export interface ParticipantListVcExportRequest {
@@ -443,7 +562,7 @@ export interface ParticipantListVcExportRequest {
   /** 会议结束时间（unix时间，单位sec） */
   meeting_end_time: string
   /** 会议状态（不传默认为已结束会议） */
-  meeting_status?: 1 | 2 | 3
+  meeting_status?: ParticipantListVcExportRequestMeetingStatus
   /** 9位会议号 */
   meeting_no: string
   /** 按参会Lark用户筛选（最多一个筛选条件） */
@@ -455,6 +574,11 @@ export interface ParticipantListVcExportRequest {
 export interface ParticipantListVcExportQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface ParticipantListVcExportResponse {
+  /** 任务id */
+  task_id?: string
 }
 
 export interface ParticipantQualityListVcExportRequest {
@@ -477,6 +601,11 @@ export interface ParticipantQualityListVcExportQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface ParticipantQualityListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+
 export interface ResourceReservationListVcExportRequest {
   /** 层级id */
   room_level_id: string
@@ -492,6 +621,31 @@ export interface ResourceReservationListVcExportRequest {
   is_exclude?: boolean
 }
 
+export interface ResourceReservationListVcExportResponse {
+  /** 任务id */
+  task_id?: string
+}
+
+export const enum GetVcExportResponseStatus {
+  /** 处理中 */
+  InProgress = 1,
+  /** 失败 */
+  Failed = 2,
+  /** 完成 */
+  Done = 3,
+}
+
+export interface GetVcExportResponse {
+  /** 任务状态 */
+  status: GetVcExportResponseStatus
+  /** 文件下载地址 */
+  url?: string
+  /** 文件token */
+  file_token?: string
+  /** 失败信息 */
+  fail_msg?: string
+}
+
 export interface DownloadVcExportQuery {
   /** 文档token */
   file_token: string
@@ -504,6 +658,10 @@ export interface CreateVcRoomLevelRequest {
   parent_id: string
   /** 自定义层级ID */
   custom_group_id?: string
+}
+
+export interface CreateVcRoomLevelResponse {
+  room_level?: RoomLevel
 }
 
 export interface DelVcRoomLevelRequest {
@@ -522,9 +680,18 @@ export interface PatchVcRoomLevelRequest {
   custom_group_id?: string
 }
 
+export interface GetVcRoomLevelResponse {
+  room_level?: RoomLevel
+}
+
 export interface MgetVcRoomLevelRequest {
   /** 层级id列表 */
   level_ids: string[]
+}
+
+export interface MgetVcRoomLevelResponse {
+  /** 层级列表 */
+  items?: RoomLevel[]
 }
 
 export interface ListVcRoomLevelQuery extends Pagination {
@@ -535,6 +702,11 @@ export interface ListVcRoomLevelQuery extends Pagination {
 export interface SearchVcRoomLevelQuery {
   /** 用于查询指定会议室的租户自定义会议室ID */
   custom_level_ids: string
+}
+
+export interface SearchVcRoomLevelResponse {
+  /** 层级id列表 */
+  level_ids?: string[]
 }
 
 export interface CreateVcRoomRequest {
@@ -557,6 +729,10 @@ export interface CreateVcRoomRequest {
 export interface CreateVcRoomQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface CreateVcRoomResponse {
+  room?: Room
 }
 
 export interface PatchVcRoomRequest {
@@ -586,6 +762,10 @@ export interface GetVcRoomQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetVcRoomResponse {
+  room?: Room
+}
+
 export interface MgetVcRoomRequest {
   /** 会议室id列表 */
   room_ids: string[]
@@ -594,6 +774,11 @@ export interface MgetVcRoomRequest {
 export interface MgetVcRoomQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface MgetVcRoomResponse {
+  /** 会议室列表 */
+  items?: Room[]
 }
 
 export interface ListVcRoomQuery extends Pagination {
@@ -623,18 +808,39 @@ export interface SearchVcRoomQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum GetVcScopeConfigQueryScopeType {
+  /** 会议室层级 */
+  RoomLevel = 1,
+  /** 会议室 */
+  Room = 2,
+}
+
 export interface GetVcScopeConfigQuery {
   /** 查询节点范围 */
-  scope_type: 1 | 2
+  scope_type: GetVcScopeConfigQueryScopeType
   /** 查询节点ID：如果scope_type为1，则为层级ID，如果scope_type为2，则为会议室ID */
   scope_id: string
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetVcScopeConfigResponse {
+  /** 当前节点的配置，根据层级顺序从底向上进行合并计算后的结果；如果当前节点某个值已配置，则取该节点的值，否则会从该节点的父层级节点获取，如果父节点依然未配置，则继续向上递归获取；若所有节点均未配置，则该值返回为空 */
+  current_config?: ScopeConfig
+  /** 所有节点的原始配置，按照层级顺序从底向上返回；如果某节点某个值未配置，则该值返回为空 */
+  origin_configs?: ScopeConfig[]
+}
+
+export const enum CreateVcScopeConfigRequestScopeType {
+  /** 会议室层级 */
+  RoomLevel = 1,
+  /** 会议室 */
+  Room = 2,
+}
+
 export interface CreateVcScopeConfigRequest {
   /** 查询节点范围 */
-  scope_type: 1 | 2
+  scope_type: CreateVcScopeConfigRequestScopeType
   /** 查询节点ID：如果scope_type为1，则为层级ID，如果scope_type为2，则为会议室ID */
   scope_id: string
   /** 节点配置 */
@@ -653,6 +859,15 @@ export interface ReserveScopeVcReserveConfigQuery {
   scope_type: string
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface ReserveScopeVcReserveConfigResponse {
+  /** 预定审批设置 */
+  approve_config?: ApprovalConfig
+  /** 预定时间设置 */
+  time_config?: TimeConfig
+  /** 预定范围设置 */
+  reserve_scope_config?: ReserveScopeConfig
 }
 
 export interface PatchVcReserveConfigRequest {
@@ -678,6 +893,11 @@ export interface GetVcReserveConfigFormQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetVcReserveConfigFormResponse {
+  /** 预定表单 */
+  reserve_form_config: ReserveFormConfig
+}
+
 export interface PatchVcReserveConfigFormRequest {
   /** 1代表层级，2代表会议室 */
   scope_type: number
@@ -695,6 +915,11 @@ export interface GetVcReserveConfigAdminQuery {
   scope_type: number
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetVcReserveConfigAdminResponse {
+  /** 预定管理员/部门 */
+  reserve_admin_config: ReserveAdminConfig
 }
 
 export interface PatchVcReserveConfigAdminRequest {
@@ -716,6 +941,11 @@ export interface GetVcReserveConfigDisableInformQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetVcReserveConfigDisableInformResponse {
+  /** 会议室禁用通知配置 */
+  disable_inform?: DisableInformConfig
+}
+
 export interface PatchVcReserveConfigDisableInformRequest {
   /** 1表示会议室层级，2表示会议室 */
   scope_type: number
@@ -728,13 +958,31 @@ export interface PatchVcReserveConfigDisableInformQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export const enum GetVcMeetingListQueryMeetingStatus {
+  /** 进行中 */
+  Ongoing = 1,
+  /** 已结束 */
+  Past = 2,
+  /** 待召开 */
+  Future = 3,
+}
+
+export const enum GetVcMeetingListQueryMeetingType {
+  /** 全部类型（默认） */
+  All = 1,
+  /** 视频会议 */
+  Meeting = 2,
+  /** 本地投屏 */
+  ShareScreen = 3,
+}
+
 export interface GetVcMeetingListQuery extends Pagination {
   /** 查询开始时间（unix时间，单位sec） */
   start_time: string
   /** 查询结束时间（unix时间，单位sec） */
   end_time: string
   /** 会议状态 */
-  meeting_status?: 1 | 2 | 3
+  meeting_status?: GetVcMeetingListQueryMeetingStatus
   /** 按9位会议号筛选（最多一个筛选条件） */
   meeting_no?: string
   /** 按参会Lark用户筛选（最多一个筛选条件） */
@@ -742,9 +990,18 @@ export interface GetVcMeetingListQuery extends Pagination {
   /** 按参会Rooms筛选（最多一个筛选条件） */
   room_id?: string
   /** 按会议类型筛选（最多一个筛选条件） */
-  meeting_type?: 1 | 2 | 3
+  meeting_type?: GetVcMeetingListQueryMeetingType
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export const enum GetVcParticipantListQueryMeetingStatus {
+  /** 进行中 */
+  Ongoing = 1,
+  /** 已结束 */
+  Past = 2,
+  /** 待召开 */
+  Future = 3,
 }
 
 export interface GetVcParticipantListQuery extends Pagination {
@@ -753,7 +1010,7 @@ export interface GetVcParticipantListQuery extends Pagination {
   /** 会议结束时间（unix时间，单位sec；对于进行中会议则传0） */
   meeting_end_time: string
   /** 会议状态（不传默认为已结束会议） */
-  meeting_status?: 1 | 2 | 3
+  meeting_status?: GetVcParticipantListQueryMeetingStatus
   /** 9位会议号 */
   meeting_no: string
   /** 按参会Lark用户筛选（最多一个筛选条件） */
@@ -796,20 +1053,53 @@ export interface GetVcResourceReservationListQuery extends Pagination {
   is_exclude?: boolean
 }
 
+export const enum ListVcAlertQueryQueryType {
+  /** 会议室 */
+  Room = 1,
+  /** erc */
+  Erc = 2,
+  /** SIP会议室系统 */
+  Sip = 3,
+}
+
 export interface ListVcAlertQuery extends Pagination {
   /** 开始时间（unix时间，单位sec） */
   start_time: string
   /** 结束时间（unix时间，单位sec） */
   end_time: string
   /** 查询对象类型 */
-  query_type?: 1 | 2 | 3
+  query_type?: ListVcAlertQueryQueryType
   /** 查询对象ID */
   query_value?: string
 }
 
+export const enum SetCheckboardAccessCodeVcRoomConfigRequestScope {
+  /** 租户 */
+  Tenant = 1,
+  /** 国家/地区 */
+  CountryDistrict = 2,
+  /** 城市 */
+  City = 3,
+  /** 建筑 */
+  Building = 4,
+  /** 楼层 */
+  Floor = 5,
+  /** 会议室 */
+  Room = 6,
+}
+
+export const enum SetCheckboardAccessCodeVcRoomConfigRequestValidDay {
+  /** 1天 */
+  Day = 1,
+  /** 7天 */
+  Week = 7,
+  /** 30天 */
+  Month = 30,
+}
+
 export interface SetCheckboardAccessCodeVcRoomConfigRequest {
   /** 设置节点范围 */
-  scope: 1 | 2 | 3 | 4 | 5 | 6
+  scope: SetCheckboardAccessCodeVcRoomConfigRequestScope
   /** 国家/地区ID scope为2，3时需要此参数 */
   country_id?: string
   /** 城市ID scope为3时需要此参数 */
@@ -821,12 +1111,41 @@ export interface SetCheckboardAccessCodeVcRoomConfigRequest {
   /** 会议室ID scope为6时需要此参数 */
   room_id?: string
   /** 有效天数 */
-  valid_day: 1 | 7 | 30
+  valid_day: SetCheckboardAccessCodeVcRoomConfigRequestValidDay
+}
+
+export interface SetCheckboardAccessCodeVcRoomConfigResponse {
+  /** 部署访问码 */
+  access_code?: string
+}
+
+export const enum SetRoomAccessCodeVcRoomConfigRequestScope {
+  /** 租户 */
+  Tenant = 1,
+  /** 国家/地区 */
+  CountryDistrict = 2,
+  /** 城市 */
+  City = 3,
+  /** 建筑 */
+  Building = 4,
+  /** 楼层 */
+  Floor = 5,
+  /** 会议室 */
+  Room = 6,
+}
+
+export const enum SetRoomAccessCodeVcRoomConfigRequestValidDay {
+  /** 1天 */
+  Day = 1,
+  /** 7天 */
+  Week = 7,
+  /** 30天 */
+  Month = 30,
 }
 
 export interface SetRoomAccessCodeVcRoomConfigRequest {
   /** 设置节点范围 */
-  scope: 1 | 2 | 3 | 4 | 5 | 6
+  scope: SetRoomAccessCodeVcRoomConfigRequestScope
   /** 国家/地区ID scope为2，3时需要此参数 */
   country_id?: string
   /** 城市ID scope为3时需要此参数 */
@@ -838,12 +1157,32 @@ export interface SetRoomAccessCodeVcRoomConfigRequest {
   /** 会议室ID scope为6时需要此参数 */
   room_id?: string
   /** 有效天数 */
-  valid_day: 1 | 7 | 30
+  valid_day: SetRoomAccessCodeVcRoomConfigRequestValidDay
+}
+
+export interface SetRoomAccessCodeVcRoomConfigResponse {
+  /** 部署访问码 */
+  access_code?: string
+}
+
+export const enum QueryVcRoomConfigQueryScope {
+  /** 租户 */
+  Tenant = 1,
+  /** 国家/地区 */
+  CountryDistrict = 2,
+  /** 城市 */
+  City = 3,
+  /** 建筑 */
+  Building = 4,
+  /** 楼层 */
+  Floor = 5,
+  /** 会议室 */
+  Room = 6,
 }
 
 export interface QueryVcRoomConfigQuery {
   /** 查询节点范围 */
-  scope: 1 | 2 | 3 | 4 | 5 | 6
+  scope: QueryVcRoomConfigQueryScope
   /** 国家/地区ID scope为2，3时需要此参数 */
   country_id?: string
   /** 城市ID scope为3时需要此参数 */
@@ -858,9 +1197,37 @@ export interface QueryVcRoomConfigQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface QueryVcRoomConfigResponse {
+  /** 飞书会议室背景图 */
+  room_background?: string
+  /** 飞书签到板背景图 */
+  display_background?: string
+  /** 飞书会议室数字标牌 */
+  digital_signage?: RoomDigitalSignage
+  /** 飞书投屏盒子数字标牌 */
+  room_box_digital_signage?: RoomDigitalSignage
+  /** 会议室状态 */
+  room_status?: RoomStatus
+}
+
+export const enum SetVcRoomConfigRequestScope {
+  /** 租户 */
+  Tenant = 1,
+  /** 国家/地区 */
+  CountryDistrict = 2,
+  /** 城市 */
+  City = 3,
+  /** 建筑 */
+  Building = 4,
+  /** 楼层 */
+  Floor = 5,
+  /** 会议室 */
+  Room = 6,
+}
+
 export interface SetVcRoomConfigRequest {
   /** 设置节点范围 */
-  scope: 1 | 2 | 3 | 4 | 5 | 6
+  scope: SetVcRoomConfigRequestScope
   /** 国家/地区ID scope为2，3时需要此参数 */
   country_id?: string
   /** 城市ID scope为3时需要此参数 */
@@ -878,173 +1245,6 @@ export interface SetVcRoomConfigRequest {
 export interface SetVcRoomConfigQuery {
   /** 此次调用中使用的用户ID的类型，默认使用open_id可不填 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface ApplyVcReserveResponse {
-  reserve?: Reserve
-  reserve_correction_check_info?: ReserveCorrectionCheckInfo
-}
-
-export interface UpdateVcReserveResponse {
-  reserve?: Reserve
-  reserve_correction_check_info?: ReserveCorrectionCheckInfo
-}
-
-export interface GetVcReserveResponse {
-  reserve?: Reserve
-}
-
-export interface GetActiveMeetingVcReserveResponse {
-  meeting?: Meeting
-}
-
-export interface InviteVcMeetingResponse {
-  /** 邀请结果 */
-  invite_results?: MeetingInviteStatus[]
-}
-
-export interface KickoutVcMeetingResponse {
-  /** 踢出结果 */
-  kickout_results?: MeetingParticipantResult[]
-}
-
-export interface SetHostVcMeetingResponse {
-  /** 会中当前主持人 */
-  host_user?: MeetingUser
-}
-
-export interface GetVcMeetingResponse {
-  meeting?: Meeting
-}
-
-export interface GetVcMeetingRecordingResponse {
-  recording?: MeetingRecording
-}
-
-export interface GetDailyVcReportResponse {
-  /** 会议报告 */
-  meeting_report?: Report
-}
-
-export interface GetTopUserVcReportResponse {
-  /** top用户列表 */
-  top_user_report?: ReportTopUser[]
-}
-
-export interface MeetingListVcExportResponse {
-  /** 任务id */
-  task_id?: string
-}
-
-export interface ParticipantListVcExportResponse {
-  /** 任务id */
-  task_id?: string
-}
-
-export interface ParticipantQualityListVcExportResponse {
-  /** 任务id */
-  task_id?: string
-}
-
-export interface ResourceReservationListVcExportResponse {
-  /** 任务id */
-  task_id?: string
-}
-
-export interface GetVcExportResponse {
-  /** 任务状态 */
-  status: 1 | 2 | 3
-  /** 文件下载地址 */
-  url?: string
-  /** 文件token */
-  file_token?: string
-  /** 失败信息 */
-  fail_msg?: string
-}
-
-export interface CreateVcRoomLevelResponse {
-  room_level?: RoomLevel
-}
-
-export interface GetVcRoomLevelResponse {
-  room_level?: RoomLevel
-}
-
-export interface MgetVcRoomLevelResponse {
-  /** 层级列表 */
-  items?: RoomLevel[]
-}
-
-export interface SearchVcRoomLevelResponse {
-  /** 层级id列表 */
-  level_ids?: string[]
-}
-
-export interface CreateVcRoomResponse {
-  room?: Room
-}
-
-export interface GetVcRoomResponse {
-  room?: Room
-}
-
-export interface MgetVcRoomResponse {
-  /** 会议室列表 */
-  items?: Room[]
-}
-
-export interface GetVcScopeConfigResponse {
-  /** 当前节点的配置，根据层级顺序从底向上进行合并计算后的结果；如果当前节点某个值已配置，则取该节点的值，否则会从该节点的父层级节点获取，如果父节点依然未配置，则继续向上递归获取；若所有节点均未配置，则该值返回为空 */
-  current_config?: ScopeConfig
-  /** 所有节点的原始配置，按照层级顺序从底向上返回；如果某节点某个值未配置，则该值返回为空 */
-  origin_configs?: ScopeConfig[]
-}
-
-export interface ReserveScopeVcReserveConfigResponse {
-  /** 预定审批设置 */
-  approve_config?: ApprovalConfig
-  /** 预定时间设置 */
-  time_config?: TimeConfig
-  /** 预定范围设置 */
-  reserve_scope_config?: ReserveScopeConfig
-}
-
-export interface GetVcReserveConfigFormResponse {
-  /** 预定表单 */
-  reserve_form_config: ReserveFormConfig
-}
-
-export interface GetVcReserveConfigAdminResponse {
-  /** 预定管理员/部门 */
-  reserve_admin_config: ReserveAdminConfig
-}
-
-export interface GetVcReserveConfigDisableInformResponse {
-  /** 会议室禁用通知配置 */
-  disable_inform?: DisableInformConfig
-}
-
-export interface SetCheckboardAccessCodeVcRoomConfigResponse {
-  /** 部署访问码 */
-  access_code?: string
-}
-
-export interface SetRoomAccessCodeVcRoomConfigResponse {
-  /** 部署访问码 */
-  access_code?: string
-}
-
-export interface QueryVcRoomConfigResponse {
-  /** 飞书会议室背景图 */
-  room_background?: string
-  /** 飞书签到板背景图 */
-  display_background?: string
-  /** 飞书会议室数字标牌 */
-  digital_signage?: RoomDigitalSignage
-  /** 飞书投屏盒子数字标牌 */
-  room_box_digital_signage?: RoomDigitalSignage
-  /** 会议室状态 */
-  room_status?: RoomStatus
 }
 
 Internal.define({

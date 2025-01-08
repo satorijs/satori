@@ -30,34 +30,6 @@ declare module '../internal' {
   }
 }
 
-export interface CreateAuthenOidcAccessTokenRequest {
-  /** 授权类型，**固定值** */
-  grant_type: string
-  /** 登录预授权码 */
-  code: string
-}
-
-export interface CreateAuthenOidcRefreshAccessTokenRequest {
-  /** 授权类型，**固定值**： */
-  grant_type: string
-  /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
-  refresh_token: string
-}
-
-export interface CreateAuthenAccessTokenRequest {
-  /** 授权类型，**固定值** */
-  grant_type: string
-  /** 登录预授权码，调用[获取登录预授权码](https://open.feishu.cn/document/ukTMukTMukTM/ukzN4UjL5cDO14SO3gTN)接口获取 */
-  code: string
-}
-
-export interface CreateAuthenRefreshAccessTokenRequest {
-  /** 授权类型，**固定值**： */
-  grant_type: string
-  /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
-  refresh_token: string
-}
-
 export interface GetAuthenUserInfoResponse {
   /** 用户姓名 */
   name?: string
@@ -89,6 +61,13 @@ export interface GetAuthenUserInfoResponse {
   employee_no?: string
 }
 
+export interface CreateAuthenOidcAccessTokenRequest {
+  /** 授权类型，**固定值** */
+  grant_type: string
+  /** 登录预授权码 */
+  code: string
+}
+
 export interface CreateAuthenOidcAccessTokenResponse {
   /** user_access_token，用于获取用户资源和访问某些open api */
   access_token: string
@@ -104,6 +83,13 @@ export interface CreateAuthenOidcAccessTokenResponse {
   scope?: string
 }
 
+export interface CreateAuthenOidcRefreshAccessTokenRequest {
+  /** 授权类型，**固定值**： */
+  grant_type: string
+  /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
+  refresh_token: string
+}
+
 export interface CreateAuthenOidcRefreshAccessTokenResponse {
   /** user_access_token，用于获取用户资源和访问某些open api */
   access_token: string
@@ -117,6 +103,13 @@ export interface CreateAuthenOidcRefreshAccessTokenResponse {
   refresh_expires_in?: number
   /** 用户授予app的权限全集 */
   scope?: string
+}
+
+export interface CreateAuthenAccessTokenRequest {
+  /** 授权类型，**固定值** */
+  grant_type: string
+  /** 登录预授权码，调用[获取登录预授权码](https://open.feishu.cn/document/ukTMukTMukTM/ukzN4UjL5cDO14SO3gTN)接口获取 */
+  code: string
 }
 
 export interface CreateAuthenAccessTokenResponse {
@@ -158,6 +151,13 @@ export interface CreateAuthenAccessTokenResponse {
   refresh_token?: string
   /** 用户当前登录态session的唯一标识，为空则不返回 */
   sid?: string
+}
+
+export interface CreateAuthenRefreshAccessTokenRequest {
+  /** 授权类型，**固定值**： */
+  grant_type: string
+  /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
+  refresh_token: string
 }
 
 export interface CreateAuthenRefreshAccessTokenResponse {

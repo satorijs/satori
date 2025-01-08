@@ -148,6 +148,11 @@ export interface CreateSheetsSpreadsheetRequest {
   folder_token?: string
 }
 
+export interface CreateSheetsSpreadsheetResponse {
+  /** 表格信息 */
+  spreadsheet?: Spreadsheet
+}
+
 export interface PatchSheetsSpreadsheetRequest {
   /** 表格标题 */
   title?: string
@@ -156,6 +161,21 @@ export interface PatchSheetsSpreadsheetRequest {
 export interface GetSheetsSpreadsheetQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetSheetsSpreadsheetResponse {
+  /** 表格 */
+  spreadsheet?: GetSpreadsheet
+}
+
+export interface QuerySheetsSpreadsheetSheetResponse {
+  /** 工作表信息 */
+  sheets?: Sheet[]
+}
+
+export interface GetSheetsSpreadsheetSheetResponse {
+  /** 工作表 */
+  sheet?: Sheet
 }
 
 export interface MoveDimensionSheetsSpreadsheetSheetRequest {
@@ -172,6 +192,11 @@ export interface FindSheetsSpreadsheetSheetRequest {
   find: string
 }
 
+export interface FindSheetsSpreadsheetSheetResponse {
+  /** 查找返回符合条件的信息 */
+  find_result?: FindReplaceResult
+}
+
 export interface ReplaceSheetsSpreadsheetSheetRequest {
   /** 查找条件 */
   find_condition: FindCondition
@@ -179,6 +204,11 @@ export interface ReplaceSheetsSpreadsheetSheetRequest {
   find: string
   /** 替换的字符串 */
   replacement: string
+}
+
+export interface ReplaceSheetsSpreadsheetSheetResponse {
+  /** 符合查找条件并替换的单元格信息 */
+  replace_result?: FindReplaceResult
 }
 
 export interface CreateSheetsSpreadsheetSheetFilterRequest {
@@ -197,6 +227,11 @@ export interface UpdateSheetsSpreadsheetSheetFilterRequest {
   condition: Condition
 }
 
+export interface GetSheetsSpreadsheetSheetFilterResponse {
+  /** 筛选信息 */
+  sheet_filter_info?: SheetFilterInfo
+}
+
 export interface CreateSheetsSpreadsheetSheetFilterViewRequest {
   /** 筛选视图 id */
   filter_view_id?: string
@@ -206,11 +241,31 @@ export interface CreateSheetsSpreadsheetSheetFilterViewRequest {
   range?: string
 }
 
+export interface CreateSheetsSpreadsheetSheetFilterViewResponse {
+  /** 创建的筛选视图的 id 、name、range */
+  filter_view?: FilterView
+}
+
 export interface PatchSheetsSpreadsheetSheetFilterViewRequest {
   /** 筛选视图名字 */
   filter_view_name?: string
   /** 筛选视图的筛选范围 */
   range?: string
+}
+
+export interface PatchSheetsSpreadsheetSheetFilterViewResponse {
+  /** 更新后的筛选视图的 id 、name、range */
+  filter_view?: FilterView
+}
+
+export interface QuerySheetsSpreadsheetSheetFilterViewResponse {
+  /** 子表的所有筛选视图信息，id、name、range */
+  items?: FilterView[]
+}
+
+export interface GetSheetsSpreadsheetSheetFilterViewResponse {
+  /** 筛选视图信息，包括 id、name、range */
+  filter_view?: FilterView
 }
 
 export interface CreateSheetsSpreadsheetSheetFilterViewConditionRequest {
@@ -224,6 +279,11 @@ export interface CreateSheetsSpreadsheetSheetFilterViewConditionRequest {
   expected?: string[]
 }
 
+export interface CreateSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 创建的筛选条件 */
+  condition?: FilterViewCondition
+}
+
 export interface UpdateSheetsSpreadsheetSheetFilterViewConditionRequest {
   /** 筛选类型 */
   filter_type?: string
@@ -231,6 +291,21 @@ export interface UpdateSheetsSpreadsheetSheetFilterViewConditionRequest {
   compare_type?: string
   /** 筛选参数 */
   expected?: string[]
+}
+
+export interface UpdateSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 更新后的筛选条件 */
+  condition?: FilterViewCondition
+}
+
+export interface QuerySheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 筛选视图设置的所有筛选条件 */
+  items?: FilterViewCondition[]
+}
+
+export interface GetSheetsSpreadsheetSheetFilterViewConditionResponse {
+  /** 筛选的条件 */
+  condition?: FilterViewCondition
 }
 
 export interface CreateSheetsSpreadsheetSheetFloatImageRequest {
@@ -250,6 +325,11 @@ export interface CreateSheetsSpreadsheetSheetFloatImageRequest {
   offset_y?: number
 }
 
+export interface CreateSheetsSpreadsheetSheetFloatImageResponse {
+  /** 浮动图片 */
+  float_image?: FloatImage
+}
+
 export interface PatchSheetsSpreadsheetSheetFloatImageRequest {
   /** 浮动图片 token，需要先上传图片到表格获得此 token 之后再进行浮动图片的操作 */
   float_image_token?: string
@@ -263,86 +343,6 @@ export interface PatchSheetsSpreadsheetSheetFloatImageRequest {
   offset_x?: number
   /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
   offset_y?: number
-}
-
-export interface CreateSheetsSpreadsheetResponse {
-  /** 表格信息 */
-  spreadsheet?: Spreadsheet
-}
-
-export interface GetSheetsSpreadsheetResponse {
-  /** 表格 */
-  spreadsheet?: GetSpreadsheet
-}
-
-export interface QuerySheetsSpreadsheetSheetResponse {
-  /** 工作表信息 */
-  sheets?: Sheet[]
-}
-
-export interface GetSheetsSpreadsheetSheetResponse {
-  /** 工作表 */
-  sheet?: Sheet
-}
-
-export interface FindSheetsSpreadsheetSheetResponse {
-  /** 查找返回符合条件的信息 */
-  find_result?: FindReplaceResult
-}
-
-export interface ReplaceSheetsSpreadsheetSheetResponse {
-  /** 符合查找条件并替换的单元格信息 */
-  replace_result?: FindReplaceResult
-}
-
-export interface GetSheetsSpreadsheetSheetFilterResponse {
-  /** 筛选信息 */
-  sheet_filter_info?: SheetFilterInfo
-}
-
-export interface CreateSheetsSpreadsheetSheetFilterViewResponse {
-  /** 创建的筛选视图的 id 、name、range */
-  filter_view?: FilterView
-}
-
-export interface PatchSheetsSpreadsheetSheetFilterViewResponse {
-  /** 更新后的筛选视图的 id 、name、range */
-  filter_view?: FilterView
-}
-
-export interface QuerySheetsSpreadsheetSheetFilterViewResponse {
-  /** 子表的所有筛选视图信息，id、name、range */
-  items?: FilterView[]
-}
-
-export interface GetSheetsSpreadsheetSheetFilterViewResponse {
-  /** 筛选视图信息，包括 id、name、range */
-  filter_view?: FilterView
-}
-
-export interface CreateSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 创建的筛选条件 */
-  condition?: FilterViewCondition
-}
-
-export interface UpdateSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 更新后的筛选条件 */
-  condition?: FilterViewCondition
-}
-
-export interface QuerySheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 筛选视图设置的所有筛选条件 */
-  items?: FilterViewCondition[]
-}
-
-export interface GetSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 筛选的条件 */
-  condition?: FilterViewCondition
-}
-
-export interface CreateSheetsSpreadsheetSheetFloatImageResponse {
-  /** 浮动图片 */
-  float_image?: FloatImage
 }
 
 export interface PatchSheetsSpreadsheetSheetFloatImageResponse {

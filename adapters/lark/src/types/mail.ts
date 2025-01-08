@@ -270,6 +270,25 @@ export interface CreateMailMailgroupRequest {
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
 
+export interface CreateMailMailgroupResponse {
+  /** The unique ID of a mail group */
+  mailgroup_id?: string
+  /** The mail group's email address */
+  email?: string
+  /** The mail group's display name */
+  name?: string
+  /** The mail group's description */
+  description?: string
+  /** The number of mail group's direct members */
+  direct_members_count?: string
+  /** Value is true if this mail group has external member */
+  include_external_member?: boolean
+  /** Value is true if all company members are in this mail group */
+  include_all_company_member?: boolean
+  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
+}
+
 export interface PatchMailMailgroupRequest {
   /** The public mailbox's new primary email address */
   email?: string
@@ -281,6 +300,25 @@ export interface PatchMailMailgroupRequest {
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
 
+export interface PatchMailMailgroupResponse {
+  /** The unique ID of a mail group */
+  mailgroup_id?: string
+  /** The mail group's email address */
+  email?: string
+  /** The mail group's display name */
+  name?: string
+  /** The mail group's description */
+  description?: string
+  /** The number of mail group's direct members */
+  direct_members_count?: string
+  /** Value is true if this mail group has external member */
+  include_external_member?: boolean
+  /** Value is true if all company members are in this mail group */
+  include_all_company_member?: boolean
+  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
+}
+
 export interface UpdateMailMailgroupRequest {
   /** The public mailbox's new primary email address */
   email?: string
@@ -288,6 +326,44 @@ export interface UpdateMailMailgroupRequest {
   name?: string
   /** The mail group's description */
   description?: string
+  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
+}
+
+export interface UpdateMailMailgroupResponse {
+  /** The unique ID of a mail group */
+  mailgroup_id?: string
+  /** The mail group's email address */
+  email?: string
+  /** The mail group's display name */
+  name?: string
+  /** The mail group's description */
+  description?: string
+  /** The number of mail group's direct members */
+  direct_members_count?: string
+  /** Value is true if this mail group has external member */
+  include_external_member?: boolean
+  /** Value is true if all company members are in this mail group */
+  include_all_company_member?: boolean
+  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
+}
+
+export interface GetMailMailgroupResponse {
+  /** The unique ID of a mail group */
+  mailgroup_id?: string
+  /** The mail group's email address */
+  email?: string
+  /** The mail group's display name */
+  name?: string
+  /** The mail group's description */
+  description?: string
+  /** The number of mail group's direct members */
+  direct_members_count?: string
+  /** Value is true if this mail group has external member */
+  include_external_member?: boolean
+  /** Value is true if all company members are in this mail group */
+  include_all_company_member?: boolean
   /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
   who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
 }
@@ -342,11 +418,37 @@ export interface CreateMailMailgroupMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface CreateMailMailgroupMemberResponse {
+  /** The unique ID of a member in this mail group */
+  member_id?: string
+  /** The member's email address. Value is valid when type is one of USER/EXTERNAL_USER/MAIL_GROUP/PUBLIC_MAILBOX/OTHER_MEMBER */
+  email?: string
+  /** The member's user id. Value is valid when type is USER */
+  user_id?: string
+  /** The member's department id. Value is valid when type is DEPARTMENT */
+  department_id?: string
+  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
+  type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
+}
+
 export interface GetMailMailgroupMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
+}
+
+export interface GetMailMailgroupMemberResponse {
+  /** The unique ID of a member in this mail group */
+  member_id?: string
+  /** The member's email address. Value is valid when type is one of USER/EXTERNAL_USER/MAIL_GROUP/PUBLIC_MAILBOX/OTHER_MEMBER */
+  email?: string
+  /** The member's user id. Value is valid when type is USER */
+  user_id?: string
+  /** The member's department id. Value is valid when type is DEPARTMENT */
+  department_id?: string
+  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
+  type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
 }
 
 export interface ListMailMailgroupMemberQuery extends Pagination {
@@ -368,6 +470,11 @@ export interface BatchCreateMailMailgroupMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface BatchCreateMailMailgroupMemberResponse {
+  /** 添加成功后的邮件组成员信息列表 */
+  items?: MailgroupMember[]
+}
+
 export interface BatchDeleteMailMailgroupMemberRequest {
   /** 本次调用删除的成员ID列表 */
   member_id_list?: string[]
@@ -376,6 +483,16 @@ export interface BatchDeleteMailMailgroupMemberRequest {
 export interface CreateMailMailgroupAliasRequest {
   /** 邮箱别名 */
   email_alias?: string
+}
+
+export interface CreateMailMailgroupAliasResponse {
+  /** 邮件组别名 */
+  mailgroup_alias?: EmailAlias
+}
+
+export interface ListMailMailgroupAliasResponse {
+  /** 邮件组别名 */
+  items?: EmailAlias[]
 }
 
 export interface CreateMailMailgroupPermissionMemberRequest {
@@ -396,11 +513,37 @@ export interface CreateMailMailgroupPermissionMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface CreateMailMailgroupPermissionMemberResponse {
+  /** The unique ID of a member in this permission group */
+  permission_member_id?: string
+  /** The member's user id. Value is valid when type is USER */
+  user_id?: string
+  /** The member's department id. Value is valid when type is DEPARTMENT */
+  department_id?: string
+  /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
+  email?: string
+  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
+  type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
+}
+
 export interface GetMailMailgroupPermissionMemberQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
+}
+
+export interface GetMailMailgroupPermissionMemberResponse {
+  /** The unique ID of a member in this permission group */
+  permission_member_id?: string
+  /** The member's user id. Value is valid when type is USER */
+  user_id?: string
+  /** The member's department id. Value is valid when type is DEPARTMENT */
+  department_id?: string
+  /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
+  email?: string
+  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
+  type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
 }
 
 export interface ListMailMailgroupPermissionMemberQuery extends Pagination {
@@ -422,12 +565,28 @@ export interface BatchCreateMailMailgroupPermissionMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface BatchCreateMailMailgroupPermissionMemberResponse {
+  /** 添加成功后的邮件组权限成员信息列表 */
+  items?: MailgroupPermissionMember[]
+}
+
 export interface BatchDeleteMailMailgroupPermissionMemberRequest {
   /** 本次调用删除的权限成员ID列表 */
   permission_member_id_list: string[]
 }
 
 export interface CreateMailPublicMailboxRequest {
+  /** The public mailbox's email address */
+  email?: string
+  /** The public mailbox's display name */
+  name?: string
+  /** 数据驻留地 */
+  geo?: string
+}
+
+export interface CreateMailPublicMailboxResponse {
+  /** The unique ID of a public mailbox */
+  public_mailbox_id?: string
   /** The public mailbox's email address */
   email?: string
   /** The public mailbox's display name */
@@ -443,233 +602,17 @@ export interface PatchMailPublicMailboxRequest {
   name?: string
 }
 
-export interface UpdateMailPublicMailboxRequest {
-  /** The public mailbox's new primary email address */
-  email?: string
-  /** The public mailbox's display name */
-  name?: string
-}
-
-export interface CreateMailPublicMailboxMemberRequest {
-  /** The member's user id. Value is valid when type is USER */
-  user_id?: string
-  /** The type of member. Possible values are:- USER: internal user in the team */
-  type?: 'USER'
-}
-
-export interface CreateMailPublicMailboxMemberQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface GetMailPublicMailboxMemberQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface ListMailPublicMailboxMemberQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface BatchCreateMailPublicMailboxMemberRequest {
-  /** 本次调用添加的公共邮箱成员列表 */
-  items: PublicMailboxMember[]
-}
-
-export interface BatchCreateMailPublicMailboxMemberQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface BatchDeleteMailPublicMailboxMemberRequest {
-  /** 本次调用删除的公共邮箱成员ID列表 */
-  member_id_list: string[]
-}
-
-export interface CreateMailPublicMailboxAliasRequest {
-  /** 邮箱别名 */
-  email_alias?: string
-}
-
-export interface DeleteMailUserMailboxQuery {
-  /** 用于接受转移的邮箱地址 */
-  transfer_mailbox?: string
-}
-
-export interface CreateMailUserMailboxAliasRequest {
-  /** 邮箱别名 */
-  email_alias?: string
-}
-
-export interface QueryMailUserRequest {
-  /** 需要查询的邮箱地址列表 */
-  email_list: string[]
-}
-
-export interface CreateMailMailgroupResponse {
-  /** The unique ID of a mail group */
-  mailgroup_id?: string
-  /** The mail group's email address */
-  email?: string
-  /** The mail group's display name */
-  name?: string
-  /** The mail group's description */
-  description?: string
-  /** The number of mail group's direct members */
-  direct_members_count?: string
-  /** Value is true if this mail group has external member */
-  include_external_member?: boolean
-  /** Value is true if all company members are in this mail group */
-  include_all_company_member?: boolean
-  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
-  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
-}
-
-export interface PatchMailMailgroupResponse {
-  /** The unique ID of a mail group */
-  mailgroup_id?: string
-  /** The mail group's email address */
-  email?: string
-  /** The mail group's display name */
-  name?: string
-  /** The mail group's description */
-  description?: string
-  /** The number of mail group's direct members */
-  direct_members_count?: string
-  /** Value is true if this mail group has external member */
-  include_external_member?: boolean
-  /** Value is true if all company members are in this mail group */
-  include_all_company_member?: boolean
-  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
-  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
-}
-
-export interface UpdateMailMailgroupResponse {
-  /** The unique ID of a mail group */
-  mailgroup_id?: string
-  /** The mail group's email address */
-  email?: string
-  /** The mail group's display name */
-  name?: string
-  /** The mail group's description */
-  description?: string
-  /** The number of mail group's direct members */
-  direct_members_count?: string
-  /** Value is true if this mail group has external member */
-  include_external_member?: boolean
-  /** Value is true if all company members are in this mail group */
-  include_all_company_member?: boolean
-  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
-  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
-}
-
-export interface GetMailMailgroupResponse {
-  /** The unique ID of a mail group */
-  mailgroup_id?: string
-  /** The mail group's email address */
-  email?: string
-  /** The mail group's display name */
-  name?: string
-  /** The mail group's description */
-  description?: string
-  /** The number of mail group's direct members */
-  direct_members_count?: string
-  /** Value is true if this mail group has external member */
-  include_external_member?: boolean
-  /** Value is true if all company members are in this mail group */
-  include_all_company_member?: boolean
-  /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
-  who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
-}
-
-export interface CreateMailMailgroupMemberResponse {
-  /** The unique ID of a member in this mail group */
-  member_id?: string
-  /** The member's email address. Value is valid when type is one of USER/EXTERNAL_USER/MAIL_GROUP/PUBLIC_MAILBOX/OTHER_MEMBER */
-  email?: string
-  /** The member's user id. Value is valid when type is USER */
-  user_id?: string
-  /** The member's department id. Value is valid when type is DEPARTMENT */
-  department_id?: string
-  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
-  type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
-}
-
-export interface GetMailMailgroupMemberResponse {
-  /** The unique ID of a member in this mail group */
-  member_id?: string
-  /** The member's email address. Value is valid when type is one of USER/EXTERNAL_USER/MAIL_GROUP/PUBLIC_MAILBOX/OTHER_MEMBER */
-  email?: string
-  /** The member's user id. Value is valid when type is USER */
-  user_id?: string
-  /** The member's department id. Value is valid when type is DEPARTMENT */
-  department_id?: string
-  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
-  type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
-}
-
-export interface BatchCreateMailMailgroupMemberResponse {
-  /** 添加成功后的邮件组成员信息列表 */
-  items?: MailgroupMember[]
-}
-
-export interface CreateMailMailgroupAliasResponse {
-  /** 邮件组别名 */
-  mailgroup_alias?: EmailAlias
-}
-
-export interface ListMailMailgroupAliasResponse {
-  /** 邮件组别名 */
-  items?: EmailAlias[]
-}
-
-export interface CreateMailMailgroupPermissionMemberResponse {
-  /** The unique ID of a member in this permission group */
-  permission_member_id?: string
-  /** The member's user id. Value is valid when type is USER */
-  user_id?: string
-  /** The member's department id. Value is valid when type is DEPARTMENT */
-  department_id?: string
-  /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
-  email?: string
-  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
-  type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
-}
-
-export interface GetMailMailgroupPermissionMemberResponse {
-  /** The unique ID of a member in this permission group */
-  permission_member_id?: string
-  /** The member's user id. Value is valid when type is USER */
-  user_id?: string
-  /** The member's department id. Value is valid when type is DEPARTMENT */
-  department_id?: string
-  /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
-  email?: string
-  /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
-  type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
-}
-
-export interface BatchCreateMailMailgroupPermissionMemberResponse {
-  /** 添加成功后的邮件组权限成员信息列表 */
-  items?: MailgroupPermissionMember[]
-}
-
-export interface CreateMailPublicMailboxResponse {
-  /** The unique ID of a public mailbox */
-  public_mailbox_id?: string
-  /** The public mailbox's email address */
-  email?: string
-  /** The public mailbox's display name */
-  name?: string
-  /** 数据驻留地 */
-  geo?: string
-}
-
 export interface PatchMailPublicMailboxResponse {
   /** The unique ID of a public mailbox */
   public_mailbox_id?: string
   /** The public mailbox's email address */
+  email?: string
+  /** The public mailbox's display name */
+  name?: string
+}
+
+export interface UpdateMailPublicMailboxRequest {
+  /** The public mailbox's new primary email address */
   email?: string
   /** The public mailbox's display name */
   name?: string
@@ -695,6 +638,18 @@ export interface GetMailPublicMailboxResponse {
   geo?: string
 }
 
+export interface CreateMailPublicMailboxMemberRequest {
+  /** The member's user id. Value is valid when type is USER */
+  user_id?: string
+  /** The type of member. Possible values are:- USER: internal user in the team */
+  type?: 'USER'
+}
+
+export interface CreateMailPublicMailboxMemberQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
 export interface CreateMailPublicMailboxMemberResponse {
   /** The unique ID of a member in this public mailbox */
   member_id?: string
@@ -702,6 +657,11 @@ export interface CreateMailPublicMailboxMemberResponse {
   user_id?: string
   /** The type of member. Possible values are:- USER: internal user in the team */
   type?: 'USER'
+}
+
+export interface GetMailPublicMailboxMemberQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 export interface GetMailPublicMailboxMemberResponse {
@@ -713,9 +673,34 @@ export interface GetMailPublicMailboxMemberResponse {
   type?: 'USER'
 }
 
+export interface ListMailPublicMailboxMemberQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface BatchCreateMailPublicMailboxMemberRequest {
+  /** 本次调用添加的公共邮箱成员列表 */
+  items: PublicMailboxMember[]
+}
+
+export interface BatchCreateMailPublicMailboxMemberQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
 export interface BatchCreateMailPublicMailboxMemberResponse {
   /** 添加成功后的公共邮箱成员信息列表 */
   items?: PublicMailboxMember[]
+}
+
+export interface BatchDeleteMailPublicMailboxMemberRequest {
+  /** 本次调用删除的公共邮箱成员ID列表 */
+  member_id_list: string[]
+}
+
+export interface CreateMailPublicMailboxAliasRequest {
+  /** 邮箱别名 */
+  email_alias?: string
 }
 
 export interface CreateMailPublicMailboxAliasResponse {
@@ -728,6 +713,16 @@ export interface ListMailPublicMailboxAliasResponse {
   items?: EmailAlias[]
 }
 
+export interface DeleteMailUserMailboxQuery {
+  /** 用于接受转移的邮箱地址 */
+  transfer_mailbox?: string
+}
+
+export interface CreateMailUserMailboxAliasRequest {
+  /** 邮箱别名 */
+  email_alias?: string
+}
+
 export interface CreateMailUserMailboxAliasResponse {
   /** 用户邮箱别名 */
   user_mailbox_alias?: EmailAlias
@@ -736,6 +731,11 @@ export interface CreateMailUserMailboxAliasResponse {
 export interface ListMailUserMailboxAliasResponse {
   /** 用户邮箱别名 */
   items?: EmailAlias[]
+}
+
+export interface QueryMailUserRequest {
+  /** 需要查询的邮箱地址列表 */
+  email_list: string[]
 }
 
 export interface QueryMailUserResponse {

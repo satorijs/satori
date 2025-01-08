@@ -363,6 +363,30 @@ export interface ListContactScopeQuery extends Pagination {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface ListContactScopeResponse {
+  /** 已授权部门列表，授权范围为全员可见时返回的是当前企业的所有一级部门列表 */
+  department_ids?: string[]
+  /** 已授权用户列表，应用申请了获取用户user_id 权限时返回；当授权范围为全员可见时返回的是当前企业所有顶级部门用户列表 */
+  user_ids?: string[]
+  /** 已授权的用户组，授权范围为全员可见时返回的是当前企业所有用户组 */
+  group_ids?: string[]
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token */
+  page_token?: string
+}
+
+export const enum CreateContactUserRequestGender {
+  /** 保密 */
+  Unkown = 0,
+  /** 男 */
+  Male = 1,
+  /** 女 */
+  Female = 2,
+  /** 其他 */
+  Others = 3,
+}
+
 export interface CreateContactUserRequest {
   /** 租户内用户的唯一标识 */
   user_id?: string
@@ -379,7 +403,7 @@ export interface CreateContactUserRequest {
   /** 手机号码可见性，true 为可见，false 为不可见，目前默认为 true。不可见时，组织员工将无法查看该员工的手机号码 */
   mobile_visible?: boolean
   /** 性别 */
-  gender?: 0 | 1 | 2 | 3
+  gender?: CreateContactUserRequestGender
   /** 头像的文件Key */
   avatar_key?: string
   /** 用户所在的部门 */
@@ -427,6 +451,21 @@ export interface CreateContactUserQuery {
   client_token?: string
 }
 
+export interface CreateContactUserResponse {
+  user?: User
+}
+
+export const enum PatchContactUserRequestGender {
+  /** 保密 */
+  Unkown = 0,
+  /** 男 */
+  Male = 1,
+  /** 女 */
+  Female = 2,
+  /** 其他 */
+  Others = 3,
+}
+
 export interface PatchContactUserRequest {
   /** 用户名称 */
   name?: string
@@ -441,7 +480,7 @@ export interface PatchContactUserRequest {
   /** 手机号码可见性，true 为可见，false 为不可见，目前默认为 true。不可见时，组织员工将无法查看该员工的手机号码 */
   mobile_visible?: boolean
   /** 性别 */
-  gender?: 0 | 1 | 2 | 3
+  gender?: PatchContactUserRequestGender
   /** 头像的文件Key */
   avatar_key?: string
   /** 用户所在部门ID */
@@ -487,6 +526,10 @@ export interface PatchContactUserQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface PatchContactUserResponse {
+  user?: User
+}
+
 export interface UpdateUserIdContactUserRequest {
   /** 自定义新用户ID */
   new_user_id: string
@@ -504,6 +547,10 @@ export interface GetContactUserQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface GetContactUserResponse {
+  user?: User
+}
+
 export interface BatchContactUserQuery {
   /** 要查询的用户ID列表 */
   user_ids: string[]
@@ -511,6 +558,11 @@ export interface BatchContactUserQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 指定查询结果中用户关联的部门ID类型 */
   department_id_type?: 'open_department_id' | 'department_id'
+}
+
+export interface BatchContactUserResponse {
+  /** 查询到的用户信息，其中异常的用户ID不返回结果。 */
+  items?: User[]
 }
 
 export interface FindByDepartmentContactUserQuery extends Pagination {
@@ -534,6 +586,11 @@ export interface BatchGetIdContactUserRequest {
 export interface BatchGetIdContactUserQuery {
   /** 返回的用户ID的类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface BatchGetIdContactUserResponse {
+  /** 手机号或者邮箱对应的用户id信息 */
+  user_list?: UserContactInfo[]
 }
 
 export interface DeleteContactUserRequest {
@@ -576,13 +633,20 @@ export interface ResurrectContactUserQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export const enum CreateContactGroupRequestType {
+  /** 普通用户组 */
+  Assign = 1,
+  /** 动态用户组 */
+  Dynamic = 2,
+}
+
 export interface CreateContactGroupRequest {
   /** 用户组的名字，企业内唯一，最大长度：100 字符 */
   name: string
   /** 用户组描述 */
   description?: string
   /** 用户组的类型。默认为1表示普通用户组 */
-  type?: 1 | 2
+  type?: CreateContactGroupRequestType
   /** 自定义用户组ID，可在创建时自定义，不自定义则由系统自动生成，已创建用户组不允许修改 group_id 。自定义group_id数据校验规则：最大长度：64 字符校验规则：数字、大小写字母的组合，不能包含空格 */
   group_id?: string
 }
@@ -592,6 +656,11 @@ export interface CreateContactGroupQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'open_department_id' | 'department_id'
+}
+
+export interface CreateContactGroupResponse {
+  /** 用户组ID */
+  group_id: string
 }
 
 export interface PatchContactGroupRequest {
@@ -615,9 +684,28 @@ export interface GetContactGroupQuery {
   department_id_type?: 'open_department_id' | 'department_id'
 }
 
+export interface GetContactGroupResponse {
+  /** 用户组详情 */
+  group: Group
+}
+
+export const enum SimplelistContactGroupQueryType {
+  /** 普通用户组 */
+  Assign = 1,
+  /** 动态用户组 */
+  Dynamic = 2,
+}
+
 export interface SimplelistContactGroupQuery extends Pagination {
   /** 用户组类型 */
-  type?: 1 | 2
+  type?: SimplelistContactGroupQueryType
+}
+
+export const enum MemberBelongContactGroupQueryGroupType {
+  /** 普通用户组 */
+  Assign = 1,
+  /** 动态用户组 */
+  Dynamic = 2,
 }
 
 export interface MemberBelongContactGroupQuery extends Pagination {
@@ -626,29 +714,66 @@ export interface MemberBelongContactGroupQuery extends Pagination {
   /** 成员ID类型 */
   member_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 欲获取的用户组类型 */
-  group_type?: 1 | 2
+  group_type?: MemberBelongContactGroupQueryGroupType
+}
+
+export const enum CreateContactEmployeeTypeEnumRequestEnumType {
+  /** 内置类型 */
+  Defualt = 1,
+  /** 自定义 */
+  Custom = 2,
+}
+
+export const enum CreateContactEmployeeTypeEnumRequestEnumStatus {
+  /** 激活 */
+  Active = 1,
+  /** 未激活 */
+  Inactive = 2,
 }
 
 export interface CreateContactEmployeeTypeEnumRequest {
   /** 枚举内容 */
   content: string
   /** 类型 */
-  enum_type: 1 | 2
+  enum_type: CreateContactEmployeeTypeEnumRequestEnumType
   /** 类型 */
-  enum_status: 1 | 2
+  enum_status: CreateContactEmployeeTypeEnumRequestEnumStatus
   /** i18n定义 */
   i18n_content?: I18nContent[]
+}
+
+export interface CreateContactEmployeeTypeEnumResponse {
+  /** 创建人员类型接口 */
+  employee_type_enum?: EmployeeTypeEnum
+}
+
+export const enum UpdateContactEmployeeTypeEnumRequestEnumType {
+  /** 内置类型 */
+  Defualt = 1,
+  /** 自定义 */
+  Custom = 2,
+}
+
+export const enum UpdateContactEmployeeTypeEnumRequestEnumStatus {
+  /** 激活 */
+  Active = 1,
+  /** 未激活 */
+  Inactive = 2,
 }
 
 export interface UpdateContactEmployeeTypeEnumRequest {
   /** 枚举内容 */
   content: string
   /** 类型 */
-  enum_type: 1 | 2
+  enum_type: UpdateContactEmployeeTypeEnumRequestEnumType
   /** 类型 */
-  enum_status: 1 | 2
+  enum_status: UpdateContactEmployeeTypeEnumRequestEnumStatus
   /** i18n定义 */
   i18n_content?: I18nContent[]
+}
+
+export interface UpdateContactEmployeeTypeEnumResponse {
+  employee_type_enum?: EmployeeTypeEnum
 }
 
 export interface CreateContactDepartmentRequest {
@@ -683,6 +808,10 @@ export interface CreateContactDepartmentQuery {
   client_token?: string
 }
 
+export interface CreateContactDepartmentResponse {
+  department?: Department
+}
+
 export interface PatchContactDepartmentRequest {
   /** 部门名 */
   name?: string
@@ -711,6 +840,10 @@ export interface PatchContactDepartmentQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface PatchContactDepartmentResponse {
+  department?: Department
+}
+
 export interface UpdateContactDepartmentRequest {
   /** 部门名称 */
   name: string
@@ -735,6 +868,10 @@ export interface UpdateContactDepartmentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
+}
+
+export interface UpdateContactDepartmentResponse {
+  department?: Department
 }
 
 export interface UpdateDepartmentIdContactDepartmentRequest {
@@ -764,6 +901,10 @@ export interface GetContactDepartmentQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface GetContactDepartmentResponse {
+  department?: Department
+}
+
 export interface BatchContactDepartmentQuery {
   /** 查询的部门ID列表，类型需要与department_id_type对应 */
   department_ids: string[]
@@ -771,6 +912,11 @@ export interface BatchContactDepartmentQuery {
   department_id_type?: 'open_department_id' | 'department_id'
   /** 指定调用结果中包含用户（如部门leader）关联的用户ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface BatchContactDepartmentResponse {
+  /** 查询到的部门信息，其中异常的部门ID不返回结果。 */
+  items?: Department[]
 }
 
 export interface ChildrenContactDepartmentQuery extends Pagination {
@@ -817,6 +963,11 @@ export interface CreateContactUnitRequest {
   unit_type: string
 }
 
+export interface CreateContactUnitResponse {
+  /** 单位的自定义ID */
+  unit_id: string
+}
+
 export interface PatchContactUnitRequest {
   /** 单位的名字 */
   name?: string
@@ -847,6 +998,11 @@ export interface ListDepartmentContactUnitQuery extends Pagination {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface GetContactUnitResponse {
+  /** 单位信息 */
+  unit: Unit
+}
+
 export interface AddContactGroupMemberRequest {
   /** 用户组成员的类型，取值为 user */
   member_type: 'user'
@@ -859,6 +1015,11 @@ export interface AddContactGroupMemberRequest {
 export interface BatchAddContactGroupMemberRequest {
   /** 待添加成员 */
   members?: Memberlist[]
+}
+
+export interface BatchAddContactGroupMemberResponse {
+  /** 成员添加操作结果 */
+  results?: MemberResult[]
 }
 
 export interface SimplelistContactGroupMemberQuery extends Pagination {
@@ -887,6 +1048,11 @@ export interface CreateContactFunctionalRoleRequest {
   role_name: string
 }
 
+export interface CreateContactFunctionalRoleResponse {
+  /** 角色ID，在单租户下唯一 */
+  role_id: string
+}
+
 export interface UpdateContactFunctionalRoleRequest {
   /** 修改的角色名称，在单租户下唯一 */
   role_name: string
@@ -900,6 +1066,11 @@ export interface BatchCreateContactFunctionalRoleMemberRequest {
 export interface BatchCreateContactFunctionalRoleMemberQuery {
   /** 成员ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface BatchCreateContactFunctionalRoleMemberResponse {
+  /** 批量新增角色成员结果集 */
+  results?: FunctionalRoleMemberResult[]
 }
 
 export interface ScopesContactFunctionalRoleMemberRequest {
@@ -916,11 +1087,21 @@ export interface ScopesContactFunctionalRoleMemberQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface ScopesContactFunctionalRoleMemberResponse {
+  /** 批量更新角色成员管理范围结果集 */
+  results?: FunctionalRoleMemberResult[]
+}
+
 export interface GetContactFunctionalRoleMemberQuery {
   /** 用户 ID 类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
   /** 此次调用中使用的部门ID的类型 */
   department_id_type?: 'department_id' | 'open_department_id'
+}
+
+export interface GetContactFunctionalRoleMemberResponse {
+  /** 成员的管理范围 */
+  member?: FunctionalRoleMember
 }
 
 export interface ListContactFunctionalRoleMemberQuery extends Pagination {
@@ -940,6 +1121,11 @@ export interface BatchDeleteContactFunctionalRoleMemberQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
+export interface BatchDeleteContactFunctionalRoleMemberResponse {
+  /** 批量新增角色成员结果集 */
+  result?: FunctionalRoleMemberResult[]
+}
+
 export interface CreateContactJobLevelRequest {
   /** 职级名称 */
   name: string
@@ -955,6 +1141,11 @@ export interface CreateContactJobLevelRequest {
   i18n_description?: I18nContent[]
 }
 
+export interface CreateContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: JobLevel
+}
+
 export interface UpdateContactJobLevelRequest {
   /** 职级名称 */
   name?: string
@@ -968,6 +1159,16 @@ export interface UpdateContactJobLevelRequest {
   i18n_name?: I18nContent[]
   /** 多语言描述 */
   i18n_description?: I18nContent[]
+}
+
+export interface UpdateContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: JobLevel
+}
+
+export interface GetContactJobLevelResponse {
+  /** 职级信息 */
+  job_level?: JobLevel
 }
 
 export interface ListContactJobLevelQuery extends Pagination {
@@ -990,6 +1191,11 @@ export interface CreateContactJobFamilyRequest {
   i18n_description?: I18nContent[]
 }
 
+export interface CreateContactJobFamilyResponse {
+  /** 序列信息 */
+  job_family?: JobFamily
+}
+
 export interface UpdateContactJobFamilyRequest {
   /** 序列名称。1-100字符，支持中、英文及符号 */
   name?: string
@@ -1005,9 +1211,29 @@ export interface UpdateContactJobFamilyRequest {
   i18n_description?: I18nContent[]
 }
 
+export interface UpdateContactJobFamilyResponse {
+  /** 更新后的序列信息 */
+  job_family?: JobFamily
+}
+
+export interface GetContactJobFamilyResponse {
+  /** 序列信息 */
+  job_family?: JobFamily
+}
+
 export interface ListContactJobFamilyQuery extends Pagination {
   /** 序列名称,传入该字段时，可查询指定序列名称对应的序列信息 */
   name?: string
+}
+
+export interface GetContactJobTitleResponse {
+  /** 职务信息 */
+  job_title?: JobTitle
+}
+
+export interface GetContactWorkCityResponse {
+  /** 工作城市信息 */
+  work_city?: WorkCity
 }
 
 export interface ListContactUserQuery extends Pagination {
@@ -1017,6 +1243,17 @@ export interface ListContactUserQuery extends Pagination {
   department_id_type?: 'department_id' | 'open_department_id'
   /** 填写该字段表示获取部门下所有用户，选填。 */
   department_id?: string
+}
+
+export const enum UpdateContactUserRequestGender {
+  /** 保密 */
+  Unkown = 0,
+  /** 男 */
+  Male = 1,
+  /** 女 */
+  Female = 2,
+  /** 其他 */
+  Others = 3,
 }
 
 export interface UpdateContactUserRequest {
@@ -1033,7 +1270,7 @@ export interface UpdateContactUserRequest {
   /** 手机号码可见性，true 为可见，false 为不可见，目前默认为 true。不可见时，组织员工将无法查看该员工的手机号码 */
   mobile_visible?: boolean
   /** 性别 */
-  gender?: 0 | 1 | 2 | 3
+  gender?: UpdateContactUserRequestGender
   /** 头像的文件Key */
   avatar_key?: string
   /** 用户所在部门ID */
@@ -1071,6 +1308,10 @@ export interface UpdateContactUserQuery {
   department_id_type?: 'department_id' | 'open_department_id'
 }
 
+export interface UpdateContactUserResponse {
+  user?: User
+}
+
 export interface ListContactDepartmentQuery extends Pagination {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -1080,165 +1321,6 @@ export interface ListContactDepartmentQuery extends Pagination {
   parent_department_id?: string
   /** 是否递归获取子部门 */
   fetch_child?: boolean
-}
-
-export interface ListContactScopeResponse {
-  /** 已授权部门列表，授权范围为全员可见时返回的是当前企业的所有一级部门列表 */
-  department_ids?: string[]
-  /** 已授权用户列表，应用申请了获取用户user_id 权限时返回；当授权范围为全员可见时返回的是当前企业所有顶级部门用户列表 */
-  user_ids?: string[]
-  /** 已授权的用户组，授权范围为全员可见时返回的是当前企业所有用户组 */
-  group_ids?: string[]
-  /** 是否还有更多项 */
-  has_more?: boolean
-  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token */
-  page_token?: string
-}
-
-export interface CreateContactUserResponse {
-  user?: User
-}
-
-export interface PatchContactUserResponse {
-  user?: User
-}
-
-export interface GetContactUserResponse {
-  user?: User
-}
-
-export interface BatchContactUserResponse {
-  /** 查询到的用户信息，其中异常的用户ID不返回结果。 */
-  items?: User[]
-}
-
-export interface BatchGetIdContactUserResponse {
-  /** 手机号或者邮箱对应的用户id信息 */
-  user_list?: UserContactInfo[]
-}
-
-export interface CreateContactGroupResponse {
-  /** 用户组ID */
-  group_id: string
-}
-
-export interface GetContactGroupResponse {
-  /** 用户组详情 */
-  group: Group
-}
-
-export interface CreateContactEmployeeTypeEnumResponse {
-  /** 创建人员类型接口 */
-  employee_type_enum?: EmployeeTypeEnum
-}
-
-export interface UpdateContactEmployeeTypeEnumResponse {
-  employee_type_enum?: EmployeeTypeEnum
-}
-
-export interface CreateContactDepartmentResponse {
-  department?: Department
-}
-
-export interface PatchContactDepartmentResponse {
-  department?: Department
-}
-
-export interface UpdateContactDepartmentResponse {
-  department?: Department
-}
-
-export interface GetContactDepartmentResponse {
-  department?: Department
-}
-
-export interface BatchContactDepartmentResponse {
-  /** 查询到的部门信息，其中异常的部门ID不返回结果。 */
-  items?: Department[]
-}
-
-export interface CreateContactUnitResponse {
-  /** 单位的自定义ID */
-  unit_id: string
-}
-
-export interface GetContactUnitResponse {
-  /** 单位信息 */
-  unit: Unit
-}
-
-export interface BatchAddContactGroupMemberResponse {
-  /** 成员添加操作结果 */
-  results?: MemberResult[]
-}
-
-export interface CreateContactFunctionalRoleResponse {
-  /** 角色ID，在单租户下唯一 */
-  role_id: string
-}
-
-export interface BatchCreateContactFunctionalRoleMemberResponse {
-  /** 批量新增角色成员结果集 */
-  results?: FunctionalRoleMemberResult[]
-}
-
-export interface ScopesContactFunctionalRoleMemberResponse {
-  /** 批量更新角色成员管理范围结果集 */
-  results?: FunctionalRoleMemberResult[]
-}
-
-export interface GetContactFunctionalRoleMemberResponse {
-  /** 成员的管理范围 */
-  member?: FunctionalRoleMember
-}
-
-export interface BatchDeleteContactFunctionalRoleMemberResponse {
-  /** 批量新增角色成员结果集 */
-  result?: FunctionalRoleMemberResult[]
-}
-
-export interface CreateContactJobLevelResponse {
-  /** 职级信息 */
-  job_level?: JobLevel
-}
-
-export interface UpdateContactJobLevelResponse {
-  /** 职级信息 */
-  job_level?: JobLevel
-}
-
-export interface GetContactJobLevelResponse {
-  /** 职级信息 */
-  job_level?: JobLevel
-}
-
-export interface CreateContactJobFamilyResponse {
-  /** 序列信息 */
-  job_family?: JobFamily
-}
-
-export interface UpdateContactJobFamilyResponse {
-  /** 更新后的序列信息 */
-  job_family?: JobFamily
-}
-
-export interface GetContactJobFamilyResponse {
-  /** 序列信息 */
-  job_family?: JobFamily
-}
-
-export interface GetContactJobTitleResponse {
-  /** 职务信息 */
-  job_title?: JobTitle
-}
-
-export interface GetContactWorkCityResponse {
-  /** 工作城市信息 */
-  work_city?: WorkCity
-}
-
-export interface UpdateContactUserResponse {
-  user?: User
 }
 
 Internal.define({

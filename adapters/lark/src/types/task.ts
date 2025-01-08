@@ -423,9 +423,19 @@ export interface CreateTaskV2Query {
   user_id_type?: string
 }
 
+export interface CreateTaskV2Response {
+  /** 产生的任务 */
+  task?: Task
+}
+
 export interface GetTaskV2Query {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface GetTaskV2Response {
+  /** 获得的任务实体 */
+  task?: Task
 }
 
 export interface PatchTaskV2Request {
@@ -440,6 +450,11 @@ export interface PatchTaskV2Query {
   user_id_type?: string
 }
 
+export interface PatchTaskV2Response {
+  /** 更新后的任务 */
+  task?: Task
+}
+
 export interface AddMembersTaskV2Request {
   /** 要添加的members列表 */
   members: Member[]
@@ -452,6 +467,11 @@ export interface AddMembersTaskV2Query {
   user_id_type?: string
 }
 
+export interface AddMembersTaskV2Response {
+  /** 更新完成后的任务实体数据 */
+  task?: Task
+}
+
 export interface RemoveMembersTaskV2Request {
   /** 要移除的member列表 */
   members: Member[]
@@ -462,6 +482,11 @@ export interface RemoveMembersTaskV2Query {
   user_id_type?: string
 }
 
+export interface RemoveMembersTaskV2Response {
+  /** 移除成员后的任务数据 */
+  task?: Task
+}
+
 export interface ListTaskV2Query extends Pagination {
   /** 是否按任务完成进行过滤。不填写表示不过滤。 */
   completed?: boolean
@@ -469,6 +494,11 @@ export interface ListTaskV2Query extends Pagination {
   type?: string
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface TasklistsTaskV2Response {
+  /** 任务所在清单的摘要信息 */
+  tasklists?: TaskInTasklistInfo[]
 }
 
 export interface AddTasklistTaskV2Request {
@@ -483,6 +513,11 @@ export interface AddTasklistTaskV2Query {
   user_id_type?: string
 }
 
+export interface AddTasklistTaskV2Response {
+  /** 添加后的任务详情 */
+  task?: Task
+}
+
 export interface RemoveTasklistTaskV2Request {
   /** 要移除的清单的全局唯一ID */
   tasklist_guid: string
@@ -491,6 +526,11 @@ export interface RemoveTasklistTaskV2Request {
 export interface RemoveTasklistTaskV2Query {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface RemoveTasklistTaskV2Response {
+  /** 添加后的任务详情 */
+  task?: Task
 }
 
 export interface AddRemindersTaskV2Request {
@@ -503,6 +543,11 @@ export interface AddRemindersTaskV2Query {
   user_id_type?: string
 }
 
+export interface AddRemindersTaskV2Response {
+  /** 更新完成后的任务实体 */
+  task?: Task
+}
+
 export interface RemoveRemindersTaskV2Request {
   /** 要移除的reminder的id列表 */
   reminder_ids: string[]
@@ -513,14 +558,29 @@ export interface RemoveRemindersTaskV2Query {
   user_id_type?: string
 }
 
+export interface RemoveRemindersTaskV2Response {
+  /** 移除提醒后的任务详情 */
+  task?: Task
+}
+
 export interface AddDependenciesTaskV2Request {
   /** 要添加的依赖 */
+  dependencies?: TaskDependency[]
+}
+
+export interface AddDependenciesTaskV2Response {
+  /** 被添加后任务的所有依赖 */
   dependencies?: TaskDependency[]
 }
 
 export interface RemoveDependenciesTaskV2Request {
   /** 要移除的依赖 */
   dependencies: TaskDependency[]
+}
+
+export interface RemoveDependenciesTaskV2Response {
+  /** 移除之后的任务GUID */
+  dependencies?: TaskDependency[]
 }
 
 export interface CreateTaskV2TaskSubtaskRequest {
@@ -565,6 +625,11 @@ export interface CreateTaskV2TaskSubtaskQuery {
   user_id_type?: string
 }
 
+export interface CreateTaskV2TaskSubtaskResponse {
+  /** 创建的任务 */
+  subtask?: Task
+}
+
 export interface ListTaskV2TaskSubtaskQuery extends Pagination {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
@@ -582,9 +647,19 @@ export interface CreateTaskV2TasklistQuery {
   user_id_type?: string
 }
 
+export interface CreateTaskV2TasklistResponse {
+  /** 创建的清单数据 */
+  tasklist?: Tasklist
+}
+
 export interface GetTaskV2TasklistQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface GetTaskV2TasklistResponse {
+  /** 清单详情 */
+  tasklist?: Tasklist
 }
 
 export interface PatchTaskV2TasklistRequest {
@@ -601,6 +676,11 @@ export interface PatchTaskV2TasklistQuery {
   user_id_type?: string
 }
 
+export interface PatchTaskV2TasklistResponse {
+  /** 修改后的任务清单 */
+  tasklist?: Tasklist
+}
+
 export interface AddMembersTaskV2TasklistRequest {
   /** 要添加的成员列表 */
   members: Member[]
@@ -611,6 +691,11 @@ export interface AddMembersTaskV2TasklistQuery {
   user_id_type?: string
 }
 
+export interface AddMembersTaskV2TasklistResponse {
+  /** 完成更新后的清单实体 */
+  tasklist?: Tasklist
+}
+
 export interface RemoveMembersTaskV2TasklistRequest {
   /** 要移除的member列表 */
   members: Member[]
@@ -619,6 +704,11 @@ export interface RemoveMembersTaskV2TasklistRequest {
 export interface RemoveMembersTaskV2TasklistQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface RemoveMembersTaskV2TasklistResponse {
+  /** 修改完成后的清单实体 */
+  tasklist?: Tasklist
 }
 
 export interface TasksTaskV2TasklistQuery extends Pagination {
@@ -653,9 +743,19 @@ export interface CreateTaskV2TasklistActivitySubscriptionQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
+export interface CreateTaskV2TasklistActivitySubscriptionResponse {
+  /** 清单动态订阅 */
+  activity_subscription?: TasklistActivitySubscription
+}
+
 export interface GetTaskV2TasklistActivitySubscriptionQuery {
   /** 用户ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface GetTaskV2TasklistActivitySubscriptionResponse {
+  /** 订阅详情 */
+  activity_subscription?: TasklistActivitySubscription
 }
 
 export interface ListTaskV2TasklistActivitySubscriptionQuery {
@@ -663,6 +763,11 @@ export interface ListTaskV2TasklistActivitySubscriptionQuery {
   limit?: number
   /** 用户ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface ListTaskV2TasklistActivitySubscriptionResponse {
+  /** 清单的动态订阅数据 */
+  items?: TasklistActivitySubscription[]
 }
 
 export interface PatchTaskV2TasklistActivitySubscriptionRequest {
@@ -675,6 +780,11 @@ export interface PatchTaskV2TasklistActivitySubscriptionRequest {
 export interface PatchTaskV2TasklistActivitySubscriptionQuery {
   /** 用户ID类型 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface PatchTaskV2TasklistActivitySubscriptionResponse {
+  /** 更新后的订阅 */
+  activity_subscription?: TasklistActivitySubscription
 }
 
 export interface CreateTaskV2CommentRequest {
@@ -693,9 +803,19 @@ export interface CreateTaskV2CommentQuery {
   user_id_type?: string
 }
 
+export interface CreateTaskV2CommentResponse {
+  /** 创建的评论详情 */
+  comment?: Comment
+}
+
 export interface GetTaskV2CommentQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface GetTaskV2CommentResponse {
+  /** 评论详情 */
+  comment?: Comment
 }
 
 export interface PatchTaskV2CommentRequest {
@@ -708,6 +828,11 @@ export interface PatchTaskV2CommentRequest {
 export interface PatchTaskV2CommentQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface PatchTaskV2CommentResponse {
+  /** 更新后的评论 */
+  comment?: Comment
 }
 
 export interface ListTaskV2CommentQuery extends Pagination {
@@ -735,6 +860,11 @@ export interface UploadTaskV2AttachmentQuery {
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
 }
 
+export interface UploadTaskV2AttachmentResponse {
+  /** 上传的附件列表 */
+  items?: Attachment[]
+}
+
 export interface ListTaskV2AttachmentQuery extends Pagination {
   /** 附件归属的资源类型 */
   resource_type?: string
@@ -747,6 +877,11 @@ export interface ListTaskV2AttachmentQuery extends Pagination {
 export interface GetTaskV2AttachmentQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface GetTaskV2AttachmentResponse {
+  /** 附件详情 */
+  attachment?: Attachment
 }
 
 export interface CreateTaskV2SectionRequest {
@@ -767,9 +902,19 @@ export interface CreateTaskV2SectionQuery {
   user_id_type?: string
 }
 
+export interface CreateTaskV2SectionResponse {
+  /** 创建的自定义分组数据 */
+  section?: Section
+}
+
 export interface GetTaskV2SectionQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface GetTaskV2SectionResponse {
+  /** 获取的自定义分组详情 */
+  section?: Section
 }
 
 export interface PatchTaskV2SectionRequest {
@@ -782,6 +927,11 @@ export interface PatchTaskV2SectionRequest {
 export interface PatchTaskV2SectionQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: string
+}
+
+export interface PatchTaskV2SectionResponse {
+  /** 更新后的自定义分组 */
+  section?: Section
 }
 
 export interface ListTaskV2SectionQuery extends Pagination {
@@ -832,9 +982,19 @@ export interface CreateTaskV2CustomFieldQuery {
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
 }
 
+export interface CreateTaskV2CustomFieldResponse {
+  /** 创建的自定义字段 */
+  custom_field?: CustomField
+}
+
 export interface GetTaskV2CustomFieldQuery {
   /** 表示user的ID的类型，支持open_id, user_id, union_id */
   user_id_type?: 'open_id' | 'user_id' | 'union_id'
+}
+
+export interface GetTaskV2CustomFieldResponse {
+  /** 获取的自定义字段数据 */
+  custom_field?: CustomField
 }
 
 export interface PatchTaskV2CustomFieldRequest {
@@ -847,6 +1007,11 @@ export interface PatchTaskV2CustomFieldRequest {
 export interface PatchTaskV2CustomFieldQuery {
   /** 用户ID格式 */
   user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface PatchTaskV2CustomFieldResponse {
+  /** 修改后的自定义字段设置 */
+  custom_field?: CustomField
 }
 
 export interface ListTaskV2CustomFieldQuery extends Pagination {
@@ -885,11 +1050,21 @@ export interface CreateTaskV2CustomFieldOptionRequest {
   is_hidden?: boolean
 }
 
+export interface CreateTaskV2CustomFieldOptionResponse {
+  /** 创建的选项 */
+  option?: Option
+}
+
 export interface PatchTaskV2CustomFieldOptionRequest {
   /** 要更新的option数据 */
   option?: InputOption
   /** 要更新的字段名，支持name,color,is_hidden,insert_before,insert_after */
   update_fields?: string[]
+}
+
+export interface PatchTaskV2CustomFieldOptionResponse {
+  /** 更新后的option数据 */
+  option?: Option
 }
 
 export interface CreateTaskV1Request {
@@ -924,6 +1099,11 @@ export interface CreateTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateTaskV1Response {
+  /** 返回创建好的任务 */
+  task?: Task
+}
+
 export interface PatchTaskV1Request {
   /** 被更新的任务实体基础信息 */
   task: Task
@@ -936,9 +1116,19 @@ export interface PatchTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface PatchTaskV1Response {
+  /** 返回修改后的任务详情 */
+  task?: Task
+}
+
 export interface GetTaskV1Query {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface GetTaskV1Response {
+  /** 返回任务资源详情 */
+  task?: Task
 }
 
 export interface ListTaskV1Query extends Pagination {
@@ -957,6 +1147,11 @@ export interface CreateTaskV1TaskReminderRequest {
   relative_fire_minute: number
 }
 
+export interface CreateTaskV1TaskReminderResponse {
+  /** 返回创建成功的提醒时间 */
+  reminder?: Reminder
+}
+
 export interface CreateTaskV1TaskCommentRequest {
   /** 评论内容 */
   content?: string
@@ -973,6 +1168,11 @@ export interface CreateTaskV1TaskCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateTaskV1TaskCommentResponse {
+  /** 返回创建好的任务评论 */
+  comment?: Comment
+}
+
 export interface UpdateTaskV1TaskCommentRequest {
   /** 新的评论内容 */
   content?: string
@@ -985,14 +1185,31 @@ export interface UpdateTaskV1TaskCommentQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface UpdateTaskV1TaskCommentResponse {
+  /** 返回修改后的任务评论详情 */
+  comment?: Comment
+}
+
 export interface GetTaskV1TaskCommentQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface GetTaskV1TaskCommentResponse {
+  /** 返回新的任务评论详情 */
+  comment?: Comment
+}
+
+export const enum ListTaskV1TaskCommentQueryListDirection {
+  /** 按照回复时间从小到大查询 */
+  Down = 0,
+  /** 按照回复时间从大到小查询 */
+  Up = 1,
+}
+
 export interface ListTaskV1TaskCommentQuery extends Pagination {
   /** 评论排序标记，可按照评论时间从小到大查询，或者评论时间从大到小查询，不填默认按照从小到大 */
-  list_direction?: 0 | 1
+  list_direction?: ListTaskV1TaskCommentQueryListDirection
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
@@ -1009,6 +1226,11 @@ export interface CreateTaskV1TaskFollowerQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateTaskV1TaskFollowerResponse {
+  /** 创建后的任务关注者 */
+  follower: Follower
+}
+
 export interface DeleteTaskV1TaskFollowerQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -1022,6 +1244,11 @@ export interface BatchDeleteFollowerTaskV1Request {
 export interface BatchDeleteFollowerTaskV1Query {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
+export interface BatchDeleteFollowerTaskV1Response {
+  /** 实际删除的关注人用户ID列表 */
+  followers?: string[]
 }
 
 export interface ListTaskV1TaskFollowerQuery extends Pagination {
@@ -1041,6 +1268,11 @@ export interface CreateTaskV1TaskCollaboratorQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateTaskV1TaskCollaboratorResponse {
+  /** 返回创建成功后的任务协作者 */
+  collaborator: Collaborator
+}
+
 export interface DeleteTaskV1TaskCollaboratorQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
@@ -1056,239 +1288,14 @@ export interface BatchDeleteCollaboratorTaskV1Query {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
-export interface ListTaskV1TaskCollaboratorQuery extends Pagination {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface CreateTaskV2Response {
-  /** 产生的任务 */
-  task?: Task
-}
-
-export interface GetTaskV2Response {
-  /** 获得的任务实体 */
-  task?: Task
-}
-
-export interface PatchTaskV2Response {
-  /** 更新后的任务 */
-  task?: Task
-}
-
-export interface AddMembersTaskV2Response {
-  /** 更新完成后的任务实体数据 */
-  task?: Task
-}
-
-export interface RemoveMembersTaskV2Response {
-  /** 移除成员后的任务数据 */
-  task?: Task
-}
-
-export interface TasklistsTaskV2Response {
-  /** 任务所在清单的摘要信息 */
-  tasklists?: TaskInTasklistInfo[]
-}
-
-export interface AddTasklistTaskV2Response {
-  /** 添加后的任务详情 */
-  task?: Task
-}
-
-export interface RemoveTasklistTaskV2Response {
-  /** 添加后的任务详情 */
-  task?: Task
-}
-
-export interface AddRemindersTaskV2Response {
-  /** 更新完成后的任务实体 */
-  task?: Task
-}
-
-export interface RemoveRemindersTaskV2Response {
-  /** 移除提醒后的任务详情 */
-  task?: Task
-}
-
-export interface AddDependenciesTaskV2Response {
-  /** 被添加后任务的所有依赖 */
-  dependencies?: TaskDependency[]
-}
-
-export interface RemoveDependenciesTaskV2Response {
-  /** 移除之后的任务GUID */
-  dependencies?: TaskDependency[]
-}
-
-export interface CreateTaskV2TaskSubtaskResponse {
-  /** 创建的任务 */
-  subtask?: Task
-}
-
-export interface CreateTaskV2TasklistResponse {
-  /** 创建的清单数据 */
-  tasklist?: Tasklist
-}
-
-export interface GetTaskV2TasklistResponse {
-  /** 清单详情 */
-  tasklist?: Tasklist
-}
-
-export interface PatchTaskV2TasklistResponse {
-  /** 修改后的任务清单 */
-  tasklist?: Tasklist
-}
-
-export interface AddMembersTaskV2TasklistResponse {
-  /** 完成更新后的清单实体 */
-  tasklist?: Tasklist
-}
-
-export interface RemoveMembersTaskV2TasklistResponse {
-  /** 修改完成后的清单实体 */
-  tasklist?: Tasklist
-}
-
-export interface CreateTaskV2TasklistActivitySubscriptionResponse {
-  /** 清单动态订阅 */
-  activity_subscription?: TasklistActivitySubscription
-}
-
-export interface GetTaskV2TasklistActivitySubscriptionResponse {
-  /** 订阅详情 */
-  activity_subscription?: TasklistActivitySubscription
-}
-
-export interface ListTaskV2TasklistActivitySubscriptionResponse {
-  /** 清单的动态订阅数据 */
-  items?: TasklistActivitySubscription[]
-}
-
-export interface PatchTaskV2TasklistActivitySubscriptionResponse {
-  /** 更新后的订阅 */
-  activity_subscription?: TasklistActivitySubscription
-}
-
-export interface CreateTaskV2CommentResponse {
-  /** 创建的评论详情 */
-  comment?: Comment
-}
-
-export interface GetTaskV2CommentResponse {
-  /** 评论详情 */
-  comment?: Comment
-}
-
-export interface PatchTaskV2CommentResponse {
-  /** 更新后的评论 */
-  comment?: Comment
-}
-
-export interface UploadTaskV2AttachmentResponse {
-  /** 上传的附件列表 */
-  items?: Attachment[]
-}
-
-export interface GetTaskV2AttachmentResponse {
-  /** 附件详情 */
-  attachment?: Attachment
-}
-
-export interface CreateTaskV2SectionResponse {
-  /** 创建的自定义分组数据 */
-  section?: Section
-}
-
-export interface GetTaskV2SectionResponse {
-  /** 获取的自定义分组详情 */
-  section?: Section
-}
-
-export interface PatchTaskV2SectionResponse {
-  /** 更新后的自定义分组 */
-  section?: Section
-}
-
-export interface CreateTaskV2CustomFieldResponse {
-  /** 创建的自定义字段 */
-  custom_field?: CustomField
-}
-
-export interface GetTaskV2CustomFieldResponse {
-  /** 获取的自定义字段数据 */
-  custom_field?: CustomField
-}
-
-export interface PatchTaskV2CustomFieldResponse {
-  /** 修改后的自定义字段设置 */
-  custom_field?: CustomField
-}
-
-export interface CreateTaskV2CustomFieldOptionResponse {
-  /** 创建的选项 */
-  option?: Option
-}
-
-export interface PatchTaskV2CustomFieldOptionResponse {
-  /** 更新后的option数据 */
-  option?: Option
-}
-
-export interface CreateTaskV1Response {
-  /** 返回创建好的任务 */
-  task?: Task
-}
-
-export interface PatchTaskV1Response {
-  /** 返回修改后的任务详情 */
-  task?: Task
-}
-
-export interface GetTaskV1Response {
-  /** 返回任务资源详情 */
-  task?: Task
-}
-
-export interface CreateTaskV1TaskReminderResponse {
-  /** 返回创建成功的提醒时间 */
-  reminder?: Reminder
-}
-
-export interface CreateTaskV1TaskCommentResponse {
-  /** 返回创建好的任务评论 */
-  comment?: Comment
-}
-
-export interface UpdateTaskV1TaskCommentResponse {
-  /** 返回修改后的任务评论详情 */
-  comment?: Comment
-}
-
-export interface GetTaskV1TaskCommentResponse {
-  /** 返回新的任务评论详情 */
-  comment?: Comment
-}
-
-export interface CreateTaskV1TaskFollowerResponse {
-  /** 创建后的任务关注者 */
-  follower: Follower
-}
-
-export interface BatchDeleteFollowerTaskV1Response {
-  /** 实际删除的关注人用户ID列表 */
-  followers?: string[]
-}
-
-export interface CreateTaskV1TaskCollaboratorResponse {
-  /** 返回创建成功后的任务协作者 */
-  collaborator: Collaborator
-}
-
 export interface BatchDeleteCollaboratorTaskV1Response {
   /** 实际删除的执行人用户ID列表 */
   collaborators?: string[]
+}
+
+export interface ListTaskV1TaskCollaboratorQuery extends Pagination {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
 Internal.define({

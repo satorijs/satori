@@ -21,6 +21,11 @@ export interface DetectTranslationTextRequest {
   text: string
 }
 
+export interface DetectTranslationTextResponse {
+  /** 识别的文本语种，返回符合  ISO 693-1 标准 */
+  language: string
+}
+
 export interface TranslateTranslationTextRequest {
   /** 源语言 */
   source_language: string
@@ -30,11 +35,6 @@ export interface TranslateTranslationTextRequest {
   target_language: string
   /** 请求级术语表，携带术语，仅在本次翻译中生效（最多能携带 128个术语词） */
   glossary?: Term[]
-}
-
-export interface DetectTranslationTextResponse {
-  /** 识别的文本语种，返回符合  ISO 693-1 标准 */
-  language: string
 }
 
 export interface TranslateTranslationTextResponse {

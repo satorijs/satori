@@ -73,9 +73,48 @@ export interface CreateOkrPeriodRequest {
   start_month: string
 }
 
+export interface CreateOkrPeriodResponse {
+  /** 周期id */
+  period_id?: string
+  /** 周期起始年月 */
+  start_month?: string
+  /** 周期结束年月 */
+  end_month?: string
+}
+
+export const enum PatchOkrPeriodRequestStatus {
+  /** 正常状态 */
+  NormalStatus = 1,
+  /** 标记失效 */
+  MarkInvalid = 2,
+  /** 隐藏周期 */
+  HiddenPeriod = 3,
+}
+
 export interface PatchOkrPeriodRequest {
   /** 周期显示状态 */
-  status: 1 | 2 | 3
+  status: PatchOkrPeriodRequestStatus
+}
+
+export const enum PatchOkrPeriodResponseStatus {
+  /** 正常状态 */
+  NormalStatus = 1,
+  /** 标记失效 */
+  MarkInvalid = 2,
+  /** 隐藏周期 */
+  HiddenPeriod = 3,
+}
+
+export interface PatchOkrPeriodResponse {
+  /** 周期规则id */
+  period_id?: string
+  /** 周期显示状态 */
+  status?: PatchOkrPeriodResponseStatus
+}
+
+export interface ListOkrPeriodRuleResponse {
+  /** 指标库列表 */
+  period_rules?: PeriodRule[]
 }
 
 export interface ListOkrUserOkrQuery {
@@ -91,6 +130,13 @@ export interface ListOkrUserOkrQuery {
   period_ids?: string[]
 }
 
+export interface ListOkrUserOkrResponse {
+  /** OKR周期总数 */
+  total?: number
+  /** OKR 列表 */
+  okr_list?: OkrBatch[]
+}
+
 export interface BatchGetOkrQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
@@ -98,6 +144,18 @@ export interface BatchGetOkrQuery {
   okr_ids: string[]
   /** 请求OKR的语言版本（比如@的人名），lang=en_us/zh_cn，请求 Query中 */
   lang?: string
+}
+
+export interface BatchGetOkrResponse {
+  /** OKR 列表 */
+  okr_list?: OkrBatch[]
+}
+
+export const enum CreateOkrProgressRecordRequestTargetType {
+  /** okr的O */
+  Objective = 2,
+  /** okr的KR */
+  KeyResult = 3,
 }
 
 export interface CreateOkrProgressRecordRequest {
@@ -108,7 +166,7 @@ export interface CreateOkrProgressRecordRequest {
   /** 目标id，与target_type对应 */
   target_id: string
   /** 目标类型 */
-  target_type: 2 | 3
+  target_type: CreateOkrProgressRecordRequestTargetType
   /** 进展详情 富文本格式 */
   content: ContentBlock
   /** pc进展来源链接 */
@@ -122,6 +180,15 @@ export interface CreateOkrProgressRecordQuery {
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
 }
 
+export interface CreateOkrProgressRecordResponse {
+  /** OKR 进展ID */
+  progress_id?: string
+  /** 进展更新时间 毫秒 */
+  modify_time?: string
+  /** 进展 对应的 Content 详细内容 */
+  content?: ContentBlock
+}
+
 export interface UpdateOkrProgressRecordRequest {
   /** 进展详情 富文本格式 */
   content: ContentBlock
@@ -130,71 +197,6 @@ export interface UpdateOkrProgressRecordRequest {
 export interface UpdateOkrProgressRecordQuery {
   /** 此次调用中使用的用户ID的类型 */
   user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface GetOkrProgressRecordQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
-
-export interface UploadOkrImageForm {
-  /** 图片 */
-  data: Blob
-  /** 图片的目标ID */
-  target_id: string
-  /** 图片使用的目标类型 */
-  target_type: 2 | 3
-}
-
-export interface QueryOkrReviewQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-  /** 目标用户id列表，最多5个 */
-  user_ids: string[]
-  /** period_id列表，最多5个 */
-  period_ids: string[]
-}
-
-export interface CreateOkrPeriodResponse {
-  /** 周期id */
-  period_id?: string
-  /** 周期起始年月 */
-  start_month?: string
-  /** 周期结束年月 */
-  end_month?: string
-}
-
-export interface PatchOkrPeriodResponse {
-  /** 周期规则id */
-  period_id?: string
-  /** 周期显示状态 */
-  status?: 1 | 2 | 3
-}
-
-export interface ListOkrPeriodRuleResponse {
-  /** 指标库列表 */
-  period_rules?: PeriodRule[]
-}
-
-export interface ListOkrUserOkrResponse {
-  /** OKR周期总数 */
-  total?: number
-  /** OKR 列表 */
-  okr_list?: OkrBatch[]
-}
-
-export interface BatchGetOkrResponse {
-  /** OKR 列表 */
-  okr_list?: OkrBatch[]
-}
-
-export interface CreateOkrProgressRecordResponse {
-  /** OKR 进展ID */
-  progress_id?: string
-  /** 进展更新时间 毫秒 */
-  modify_time?: string
-  /** 进展 对应的 Content 详细内容 */
-  content?: ContentBlock
 }
 
 export interface UpdateOkrProgressRecordResponse {
@@ -206,6 +208,11 @@ export interface UpdateOkrProgressRecordResponse {
   content?: ContentBlock
 }
 
+export interface GetOkrProgressRecordQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id'
+}
+
 export interface GetOkrProgressRecordResponse {
   /** OKR 进展ID */
   progress_id?: string
@@ -215,11 +222,36 @@ export interface GetOkrProgressRecordResponse {
   content?: ContentBlock
 }
 
+export const enum UploadOkrImageFormTargetType {
+  /** okr的O */
+  Objective = 2,
+  /** okr的KR */
+  KeyResult = 3,
+}
+
+export interface UploadOkrImageForm {
+  /** 图片 */
+  data: Blob
+  /** 图片的目标ID */
+  target_id: string
+  /** 图片使用的目标类型 */
+  target_type: UploadOkrImageFormTargetType
+}
+
 export interface UploadOkrImageResponse {
   /** 图片token */
   file_token?: string
   /** 图片下载链接 */
   url?: string
+}
+
+export interface QueryOkrReviewQuery {
+  /** 此次调用中使用的用户ID的类型 */
+  user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+  /** 目标用户id列表，最多5个 */
+  user_ids: string[]
+  /** period_id列表，最多5个 */
+  period_ids: string[]
 }
 
 export interface QueryOkrReviewResponse {
