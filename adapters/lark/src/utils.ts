@@ -250,7 +250,7 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
       if (body.event.action.value?._satori_type === 'command') {
         session.type = 'interaction/command'
         let content = body.event.action.value.content
-        const args = [], options = Object.create(null)
+        const args: any[] = [], options = Object.create(null)
         for (const [key, value] of Object.entries(body.event.action.form_value ?? {})) {
           if (+key * 0 === 0) {
             args[+key] = value
@@ -258,18 +258,23 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
             options[key] = value
           }
         }
-        for (let i = 0; i < args.length; ++i) {
-          if (i in args) {
-            content += ` ${args[i]}`
+        const toArg = (value: any) => {
+          if (typeof value === 'string') {
+            return `'${value}'`
+          } else if (typeof value === 'number') {
+            return value
           } else {
-            content += ` ''`
+            return `''`
           }
         }
+        for (let i = 0; i < args.length; ++i) {
+          content += ` ${toArg(args[i])}`
+        }
         for (const [key, value] of Object.entries(options)) {
-          content += ` --${key} ${value}`
+          content += ` --${key} ${toArg(value)}`
         }
         if (body.event.action.input_value) {
-          content += ` ${body.event.action.input_value}`
+          content += ` ${toArg(body.event.action.input_value)}`
         }
         session.content = content
         session.messageId = body.event.context.open_message_id
