@@ -206,10 +206,18 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     if (type === 'text') {
       this.textContent += attrs.content
     } else if (type === 'at') {
-      if (attrs.type === 'all') {
-        this.textContent += `<at user_id="all">${attrs.name ?? '所有人'}</at>`
+      if (this.card) {
+        if (attrs.type === 'all') {
+          this.textContent += `<at id=all>${attrs.name ?? ''}</at>`
+        } else {
+          this.textContent += `<at id=${attrs.id}>${attrs.name ?? ''}</at>`
+        }
       } else {
-        this.textContent += `<at user_id="${attrs.id}">${attrs.name}</at>`
+        if (attrs.type === 'all') {
+          this.textContent += `<at user_id="all">${attrs.name ?? ''}</at>`
+        } else {
+          this.textContent += `<at user_id="${attrs.id}">${attrs.name ?? ''}</at>`
+        }
       }
     } else if (type === 'a') {
       await this.render(children)
