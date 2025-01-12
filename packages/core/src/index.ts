@@ -3,7 +3,7 @@ import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { ExtractParams, InternalRequest, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
-import { HTTP } from '@cordisjs/plugin-http'
+import { FileResponse, HTTP } from '@cordisjs/plugin-http'
 import { Meta, Response, SendOptions } from '@satorijs/protocol'
 import h from '@satorijs/element'
 
@@ -88,7 +88,7 @@ declare module '@cordisjs/plugin-http' {
 HTTP.createConfig = function createConfig(this, endpoint) {
   return z.object({
     endpoint: z.string().role('link').description('要连接的服务器地址。')
-      .default(typeof endpoint === 'string' ? endpoint : null)
+      .default(typeof endpoint === 'string' ? endpoint : undefined!)
       .required(typeof endpoint === 'boolean' ? endpoint : false),
     headers: z.dict(String).role('table').description('要附加的额外请求头。'),
     ...this.Config.dict,
@@ -172,7 +172,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
   public _loginSeq = 0
   public _sessionSeq = 0
 
-  constructor(ctx?: C) {
+  constructor(ctx: C) {
     super(ctx)
     ctx.mixin('satori', ['bots', 'component'])
 
@@ -185,12 +185,12 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
       const { status, body, headers } = await self.handleInternalRoute('GET', url)
       if (status >= 400) throw new Error(`Failed to fetch ${_url}, status code: ${status}`)
       if (status >= 300) {
-        const location = headers?.get('location')
+        const location = headers?.get('location')!
         return this.file(location, options)
       }
       const type = headers?.get('content-type')
       const filename = headers?.get('content-disposition')?.split('filename=')[1]
-      return { data: body, filename, type, mime: type }
+      return { data: body, filename, type, mime: type } as FileResponse
     })
 
     this._internalRouter = new InternalRouter(ctx)
@@ -223,7 +223,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     })
   }
 
-  public bots = new Proxy([], {
+  public bots = new Proxy([] as Bot<C>[], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop)
@@ -270,7 +270,7 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
 
   toJSON(meta = false): Meta {
     return {
-      logins: meta ? undefined : this.bots.map(bot => bot.toJSON()),
+      logins: meta ? undefined! : this.bots.map(bot => bot.toJSON()),
       proxyUrls: [...this.proxyUrls],
     }
   }

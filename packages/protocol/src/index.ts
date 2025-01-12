@@ -492,7 +492,7 @@ export namespace WebSocket {
 }
 
 export interface WebSocket {
-  readonly url?: string
+  readonly url: string
   readonly protocol?: string
   readonly readyState?: number
   close(code?: number, reason?: string): void

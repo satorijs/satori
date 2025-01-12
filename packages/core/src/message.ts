@@ -12,7 +12,7 @@ class AggregateError extends Error {
 export abstract class MessageEncoder<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   public errors: Error[] = []
   public results: Message[] = []
-  public session: C[typeof Context.session]
+  public session!: C[typeof Context.session]
 
   constructor(public bot: B, public channelId: string, public referrer?: any, public options: SendOptions = {}) {}
 
@@ -38,7 +38,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
     })
     for (const key in this.options.session || {}) {
       if (key === 'id' || key === 'event') continue
-      this.session[key] = this.options.session[key]
+      this.session[key] = this.options.session![key]
     }
     await this.prepare()
     const session = this.options.session ?? this.session

@@ -36,8 +36,8 @@ export class Session<C extends Context = Context> {
 
   public id: number // for backward compatibility
   public sn: number
-  public bot: Bot<C>
-  public app: C['root']
+  public bot!: Bot<C>
+  public app!: C['root']
   public event: Event
   public locales: string[] = []
 
@@ -59,21 +59,21 @@ export class Session<C extends Context = Context> {
   }
 
   get isDirect() {
-    return this.event.channel.type === Channel.Type.DIRECT
+    return this.event.channel?.type === Channel.Type.DIRECT
   }
 
   set isDirect(value) {
     (this.event.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
   }
 
-  get author(): GuildMember & User {
+  get author() {
     return {
       ...this.event.user,
       ...this.event.member,
       userId: this.event.user?.id,
       username: this.event.user?.name,
       nickname: this.event.member?.name,
-    }
+    } as GuildMember & User
   }
 
   get uid() {
@@ -114,7 +114,7 @@ export class Session<C extends Context = Context> {
     this.event.message.quote = undefined
     this.event.message.elements = isNullable(value) ? value : h.parse(value)
     if (this.event.message.elements?.[0]?.type === 'quote') {
-      const el = this.event.message.elements.shift()
+      const el = this.event.message.elements.shift()!
       this.event.message.quote = Resource.decode(el)
     }
   }
@@ -146,7 +146,7 @@ export class Session<C extends Context = Context> {
       event.message.content = this.content
       delete event.message.elements
       if (event.message.quote) {
-        event.message.content = Resource.encode('quote', event.message.quote) + event.message.content
+        event.message.content = Resource.encode('quote', event.message.quote) + event.message.content!
       }
     }
     return event
@@ -163,7 +163,7 @@ export function defineAccessor(prototype: {}, name: string, keys: string[]) {
       // See https://github.com/satorijs/satori/issues/166
       if (value === undefined) return
       const _keys = keys.slice()
-      const last = _keys.pop()
+      const last = _keys.pop()!
       const data = _keys.reduce((data, key) => data[key] ??= {}, this)
       data[last] = value
     },

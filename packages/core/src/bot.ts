@@ -37,7 +37,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public platform: string
   public features: string[]
   public adapter?: Adapter<C, this>
-  public error?: Error
+  public error: any
   public callbacks: Dict<Function> = {}
   public logger: Logger
 
@@ -131,7 +131,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   online() {
     this.status = Status.ONLINE
-    this.error = null
+    this.error = undefined
   }
 
   offline(error?: Error) {
@@ -145,7 +145,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
     try {
       await this.context.parallel('bot-connect', this)
       await this.adapter?.connect(this)
-    } catch (error) {
+    } catch (error: any) {
       this.offline(error)
     }
   }
@@ -193,7 +193,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   async createMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
-    return new MessageEncoder(this, channelId, referrer, options).send(content)
+    return new MessageEncoder!(this, channelId, referrer, options).send(content)
   }
 
   async sendMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
