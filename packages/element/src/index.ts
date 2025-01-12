@@ -101,8 +101,8 @@ defineProperty(ElementConstructor.prototype, kElement, true)
 
 type RenderFunction = Element.Render<Element.Fragment, Awaitable<Element.Fragment>>
 
-function Element(type: string | RenderFunction, ...children: Element.Fragment[]): Element
-function Element(type: string | RenderFunction, attrs: Dict, ...children: Element.Fragment[]): Element
+function Element(type: string | RenderFunction, ...children: (Element.Fragment | undefined)[]): Element
+function Element(type: string | RenderFunction, attrs: Dict, ...children: (Element.Fragment | undefined)[]): Element
 function Element(type: string | RenderFunction, ...args: any[]) {
   const el = Object.create(ElementConstructor.prototype)
   const attrs: Dict = {}, children: Element[] = []
@@ -156,7 +156,7 @@ namespace Element {
     return source && typeof source === 'object' && source[kElement]
   }
 
-  export function toElement(content: string | Element) {
+  export function toElement(content: string | Element | undefined) {
     if (typeof content === 'string' || typeof content === 'number' || typeof content === 'boolean') {
       content = '' + content
       if (content) return Element('text', { content })
@@ -167,11 +167,13 @@ namespace Element {
     }
   }
 
-  export function toElementArray(content: Element.Fragment) {
+  const isNonNullable = <T, >(x: T): x is NonNullable<T> => !isNullable(x)
+
+  export function toElementArray(content?: Element.Fragment) {
     if (Array.isArray(content)) {
-      return content.map(toElement).filter(x => x)
+      return content.map(toElement).filter(isNonNullable)
     } else {
-      return [toElement(content)].filter(x => x)
+      return [toElement(content)].filter(isNonNullable)
     }
   }
 
@@ -205,7 +207,7 @@ namespace Element {
   }
 
   /** @deprecated use `Element.select()` instead */
-  export function from(source: string, options: FindOptions = {}): Element {
+  export function from(source: string, options: FindOptions = {}): Element | undefined {
     const elements = parse(source)
     if (options.caret) {
       if (options.type && elements[0]?.type !== options.type) return
@@ -227,7 +229,7 @@ namespace Element {
     return input.split(',').map((query) => {
       const selectors: Selector[] = []
       query = query.trim()
-      let combCap: RegExpExecArray, combinator: Combinator = ' '
+      let combCap: RegExpExecArray | null, combinator: Combinator = ' '
       while ((combCap = combRegExp.exec(query))) {
         selectors.push({ type: query.slice(0, combCap.index), combinator })
         combinator = combCap[1] as Combinator
@@ -314,32 +316,33 @@ namespace Element {
     }
 
     const tagRegExp = context ? tagRegExp2 : tagRegExp1
-    let tagCap: RegExpExecArray
+    let tagCap: RegExpExecArray | null
     let trimStart = true
     while ((tagCap = tagRegExp.exec(source))) {
-      const trimEnd = !tagCap.groups.curly
+      const { curly, comment, derivative } = tagCap.groups!
+      const trimEnd = !curly
       parseContent(source.slice(0, tagCap.index), trimStart, trimEnd)
       trimStart = trimEnd
       source = source.slice(tagCap.index + tagCap[0].length)
       const [_, , , close, type, extra, empty] = tagCap
-      if (tagCap.groups.comment) continue
-      if (tagCap.groups.curly) {
+      if (comment) continue
+      if (curly) {
         let name = '', position = Position.EMPTY
-        if (tagCap.groups.derivative) {
-          name = tagCap.groups.derivative.slice(1)
+        if (derivative) {
+          name = derivative.slice(1)
           position = {
             '@': Position.EMPTY,
             '#': Position.OPEN,
             '/': Position.CLOSE,
             ':': Position.CONTINUE,
-          }[tagCap.groups.derivative[0]]
+          }[derivative[0]]!
         }
         tokens.push({
           type: 'curly',
           name,
           position,
-          source: tagCap.groups.curly,
-          extra: tagCap.groups.curly.slice(1 + (tagCap.groups.derivative ?? '').length, -1),
+          source: curly,
+          extra: curly.slice(1 + (derivative ?? '').length, -1),
         })
         continue
       }
@@ -375,7 +378,7 @@ namespace Element {
 
     function pushToken(...tokens: (string | Token)[]) {
       const [token, slot] = stack[0]
-      token.children[slot].push(...tokens)
+      token.children![slot].push(...tokens)
     }
 
     for (const token of tokens) {
@@ -389,7 +392,7 @@ namespace Element {
           stack.shift()
         }
       } else if (position === Position.CONTINUE) {
-        stack[0][0].children[name] = []
+        stack[0][0].children![name] = []
         stack[0][1] = name
       } else if (position === Position.OPEN) {
         pushToken(token)
@@ -400,7 +403,7 @@ namespace Element {
       }
     }
 
-    return stack[stack.length - 1][0].children.default
+    return stack[stack.length - 1][0].children!.default
   }
 
   function parseTokens(tokens: (string | Token)[], context?: any) {
@@ -411,7 +414,7 @@ namespace Element {
       } else if (token.type === 'angle') {
         const attrs = {}
         const attrRegExp = context ? attrRegExp2 : attrRegExp1
-        let attrCap: RegExpExecArray
+        let attrCap: RegExpExecArray | null
         while ((attrCap = attrRegExp.exec(token.extra))) {
           const [, key, v1, v2 = v1, v3] = attrCap
           if (v3) {
@@ -429,16 +432,16 @@ namespace Element {
         result.push(...toElementArray(interpolate(token.extra, context)))
       } else if (token.name === 'if') {
         if (evaluate(token.extra, context)) {
-          result.push(...parseTokens(token.children.default, context))
+          result.push(...parseTokens(token.children!.default, context))
         } else {
-          result.push(...parseTokens(token.children.else || [], context))
+          result.push(...parseTokens(token.children!.else || [], context))
         }
       } else if (token.name === 'each') {
         const [expr, ident] = token.extra.split(/\s+as\s+/)
         const items = interpolate(expr, context)
         if (!items || !items[Symbol.iterator]) continue
         for (const item of items) {
-          result.push(...parseTokens(token.children.default, { ...context, [ident]: item }))
+          result.push(...parseTokens(token.children!.default, { ...context, [ident]: item }))
         }
       }
     }
@@ -458,9 +461,11 @@ namespace Element {
     }
   }
 
-  export function transform<S = never>(source: string, rules: SyncVisitor<S>, session?: S): string
-  export function transform<S = never>(source: Element[], rules: SyncVisitor<S>, session?: S): Element[]
-  export function transform<S>(source: string | Element[], rules: SyncVisitor<S>, session?: S) {
+  type Rest<T> = [T] extends [never] ? [session?: T] : [session: T]
+
+  export function transform<S = never>(source: string, rules: SyncVisitor<S>, ...rest: Rest<S>): string
+  export function transform<S = never>(source: Element[], rules: SyncVisitor<S>, ...rest: Rest<S>): Element[]
+  export function transform<S>(source: string | Element[], rules: SyncVisitor<S>, session: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const output: Element[] = []
     elements.forEach((element) => {
@@ -475,9 +480,9 @@ namespace Element {
     return typeof source === 'string' ? output.join('') : output
   }
 
-  export async function transformAsync<S = never>(source: string, rules: Visitor<S>, session?: S): Promise<string>
-  export async function transformAsync<S = never>(source: Element[], rules: Visitor<S>, session?: S): Promise<Element[]>
-  export async function transformAsync<S>(source: string | Element[], rules: Visitor<S>, session?: S) {
+  export async function transformAsync<S = never>(source: string, rules: Visitor<S>, ...rest: Rest<S>): Promise<string>
+  export async function transformAsync<S = never>(source: Element[], rules: Visitor<S>, ...rest: Rest<S>): Promise<Element[]>
+  export async function transformAsync<S>(source: string | Element[], rules: Visitor<S>, session: S) {
     const elements = typeof source === 'string' ? parse(source) : source
     const children = (await Promise.all(elements.map(async (element) => {
       const { type, attrs, children } = element
