@@ -1,4 +1,4 @@
-import { Awaitable, Binary, camelize, defineProperty, Dict, hyphenate, is, isNullable, makeArray } from 'cosmokit'
+import { Awaitable, Binary, camelize, defineProperty, Dict, hyphenate, is, isNonNullable, isNullable, makeArray } from 'cosmokit'
 
 declare global {
   namespace JSX {
@@ -166,8 +166,6 @@ namespace Element {
       throw new TypeError(`Invalid content: ${content}`)
     }
   }
-
-  const isNonNullable = <T, >(x: T): x is NonNullable<T> => !isNullable(x)
 
   export function toElementArray(content?: Element.Fragment) {
     if (Array.isArray(content)) {

@@ -44,6 +44,6 @@
     "@satorijs/core": "^4.5.0"
   },
   "dependencies": {
-    "cosmokit": "^1.6.3"
+    "cosmokit": "^1.7.0"
   }
 }

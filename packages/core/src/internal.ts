@@ -140,13 +140,15 @@ export namespace JsonForm {
 
   export async function decode(body: Body) {
     const type = body.headers.get('content-type')
-    if (type.startsWith('multipart/form-data')) {
+    if (type?.startsWith('multipart/form-data')) {
       const response = new globalThis.Response(body.body, { headers: body.headers })
       const form = await response.formData()
       const json = form.get('$') as string
       return load(JSON.parse(json), '$', form)
-    } else if (type.startsWith('application/json')) {
+    } else if (type?.startsWith('application/json')) {
       return JSON.parse(new TextDecoder().decode(body.body))
+    } else {
+      throw new Error(`Unsupported content type: ${type}`)
     }
   }
 

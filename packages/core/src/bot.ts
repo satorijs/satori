@@ -1,4 +1,4 @@
-import { clone, Dict, pick } from 'cosmokit'
+import { clone, Dict, isNonNullable, pick } from 'cosmokit'
 import { Context, Logger, Service } from 'cordis'
 import h from '@satorijs/element'
 import { Adapter } from './adapter'
@@ -34,12 +34,12 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public user = {} as User
   public isBot = true
   public hidden = false
-  public platform: string
+  public platform!: string
   public features: string[]
   public adapter?: Adapter<C, this>
   public error: any
   public callbacks: Dict<Function> = {}
-  public logger: Logger
+  public logger!: Logger
 
   public _internalRouter: InternalRouter<C>
 
@@ -72,7 +72,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
     ctx.on('dispose', () => this.dispose())
 
     ctx.on('interaction/button', (session) => {
-      const cb = this.callbacks[session.event.button.id]
+      const cb = this.callbacks[session.event.button!.id]
       if (cb) cb(session)
     })
   }
@@ -198,7 +198,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   async sendMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
     const messages = await this.createMessage(channelId, content, referrer, options)
-    return messages.map(message => message.id)
+    return messages.map(message => message.id).filter(isNonNullable)
   }
 
   async sendPrivateMessage(userId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {

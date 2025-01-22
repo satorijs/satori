@@ -13,18 +13,20 @@ declare module '@satorijs/protocol' {
 // Accessors
 export interface Session {
   type: string
+  /** @deprecated */
   subtype: string
+  /** @deprecated */
   subsubtype: string
   selfId: string
   platform: string
   timestamp: number
-  userId: string
-  channelId: string
-  guildId: string
-  messageId: string
-  operatorId: string
-  roleId: string
-  quote: Message
+  userId?: string
+  channelId?: string
+  guildId?: string
+  messageId?: string
+  operatorId?: string
+  roleId?: string
+  quote?: Message
   referrer: any
 }
 

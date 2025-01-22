@@ -380,13 +380,13 @@ export type EventName =
 export interface Event {
   sn: number
   type: string
+  login: Login
   selfId: string
   platform: string
   timestamp: number
   argv?: Argv
   channel?: Channel
   guild?: Guild
-  login?: Login
   member?: GuildMember
   message?: Message
   operator?: User
