@@ -12,8 +12,8 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   static inject = ['http']
 
   public http: HTTP
-  public internal: Internal
-  public webhooks: Record<string, Webhook> = {}
+  public internal: Internal<C>
+  public webhooks: Record<string, Webhook | null> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
   public commands: Universal.Command[] = []
 
@@ -122,7 +122,7 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
   async getGuildMemberList(guildId: string, after?: string) {
     const users = await this.internal.listGuildMembers(guildId, { after, limit: 1000 })
     const data = users.map(v => Discord.decodeGuildMember(v))
-    return { data, next: data[999]?.user.id }
+    return { data, next: data[999]?.user!.id }
   }
 
   async getChannel(channelId: string) {

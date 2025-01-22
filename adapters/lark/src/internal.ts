@@ -1,4 +1,4 @@
-import { Dict, HTTP, makeArray } from '@satorijs/core'
+import { Context, Dict, HTTP, makeArray } from '@satorijs/core'
 import { LarkBot } from './bot'
 
 export interface Internal {}
@@ -33,8 +33,8 @@ export interface InternalRoute {
   type?: 'raw-json' | 'binary'
 }
 
-export class Internal {
-  constructor(private bot: LarkBot) {}
+export class Internal<C extends Context = Context> {
+  constructor(private bot: LarkBot<C>) {}
 
   private _assertResponse(response: HTTP.Response<BaseResponse>) {
     if (!response.data.code) return
@@ -113,12 +113,13 @@ export class Internal {
               const { argIndex, itemsKey = 'items', tokenKey = 'page_token' } = route.pagination
               const iterArgs = [...args]
               iterArgs[argIndex] = { ...args[argIndex] }
-              let pagination: { data: any[]; next?: any } | undefined
+              type Pagniation = { data: any[]; next?: any }
+              let pagination: Pagniation | undefined
               result.next = async function () {
-                pagination ??= await this[Symbol.for('satori.pagination')]()
+                pagination ??= await this[Symbol.for('satori.pagination')]() as Pagniation
                 if (pagination.data.length) return { done: false, value: pagination.data.shift() }
                 if (!pagination.next) return { done: true, value: undefined }
-                pagination = await this[Symbol.for('satori.pagination')]()
+                pagination = await this[Symbol.for('satori.pagination')]() as Pagniation
                 return this.next()
               }
               result[Symbol.asyncIterator] = function () {

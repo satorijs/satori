@@ -5,9 +5,9 @@ import { DiscordBot } from './bot'
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DiscordBot<C>> {
   _d = 0
-  _ping: NodeJS.Timeout
+  _ping?: NodeJS.Timeout
   _sessionId = ''
-  _resumeUrl: string
+  _resumeUrl?: string
 
   async prepare() {
     if (this._resumeUrl) {
@@ -18,6 +18,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
   }
 
   heartbeat() {
+    if (!this.socket) return
     this.bot.logger.debug(`heartbeat d ${this._d}`)
     this.socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
@@ -26,7 +27,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
   }
 
   accept() {
-    this.socket.addEventListener('message', async ({ data }) => {
+    this.socket!.addEventListener('message', async ({ data }) => {
       let parsed: Gateway.Payload
       data = data.toString()
       try {
@@ -44,7 +45,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) {
           this.bot.logger.debug('resuming')
-          this.socket.send(JSON.stringify({
+          this.socket!.send(JSON.stringify({
             op: Gateway.Opcode.RESUME,
             d: {
               token: this.bot.config.token,
@@ -53,7 +54,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
             },
           }))
         } else {
-          this.socket.send(JSON.stringify({
+          this.socket!.send(JSON.stringify({
             op: Gateway.Opcode.IDENTIFY,
             d: {
               token: this.bot.config.token,
@@ -75,7 +76,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       if (parsed.op === Gateway.Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
-          _type: 'discord/' + parsed.t.toLowerCase().replace(/_/g, '-'),
+          _type: 'discord/' + parsed.t!.toLowerCase().replace(/_/g, '-'),
           _data: parsed.d,
         }))
         if (parsed.t === 'READY') {
@@ -98,7 +99,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
       }
     })
 
-    this.socket.addEventListener('close', () => {
+    this.socket!.addEventListener('close', () => {
       clearInterval(this._ping)
     })
   }

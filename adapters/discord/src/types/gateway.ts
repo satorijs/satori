@@ -6,7 +6,7 @@ export namespace Gateway {
     /** opcode for the payload */
     op: O
     /** event data */
-    d?: D
+    d: D
     /** the event name for this payload */
     t?: T
     /** sequence number, used for resuming sessions and heartbeats */

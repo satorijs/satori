@@ -18,11 +18,10 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   static inject = ['server', 'http']
   static MessageEncoder = LarkMessageEncoder
 
-  _token?: string
   _refresher?: NodeJS.Timeout
   http: HTTP
   assetsQuester: HTTP
-  internal: Internal
+  internal: Internal<C>
 
   constructor(ctx: C, config: LarkBot.Config) {
     super(ctx, config, 'lark')
@@ -86,7 +85,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
         app_secret: this.config.appSecret,
       })
       this.logger.debug('refreshed token %s', token)
-      this.token = token
+      this.http.config.headers!.Authorization = `Bearer ${token}`
     } catch (error) {
       this.logger.error('failed to refresh token, retrying in 10s')
       this.logger.error(error)
@@ -95,15 +94,6 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     if (this._refresher) clearTimeout(this._refresher)
     this._refresher = setTimeout(() => this.refreshToken(), timeout)
     this.online()
-  }
-
-  get token() {
-    return this._token
-  }
-
-  set token(v: string) {
-    this._token = v
-    this.http.config.headers.Authorization = `Bearer ${v}`
   }
 
   async editMessage(channelId: string, messageId: string, content: h.Fragment) {
@@ -118,9 +108,9 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   async getMessage(channelId: string, messageId: string, recursive = true) {
     const data = await this.internal.getImMessage(messageId)
-    const message = await Utils.decodeMessage(this, data.items[0], recursive)
+    const message = await Utils.decodeMessage(this, data.items![0], recursive)
     const im = await this.internal.getImChat(channelId)
-    message.channel.type = im.chat_mode === 'p2p' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT
+    message.channel!.type = im.chat_mode === 'p2p' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT
     return message
   }
 
@@ -132,7 +122,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   async getUser(userId: string, guildId?: string) {
     const data = await this.internal.getContactUser(userId)
-    return Utils.decodeUser(data.user)
+    return Utils.decodeUser(data.user!)
   }
 
   async getChannel(channelId: string) {
@@ -156,7 +146,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 
   async getGuildMemberList(guildId: string, after?: string) {
     const members = await this.internal.getImChatMembers(guildId, { page_token: after })
-    const data = members.items.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
+    const data = members.items!.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
     return { data, next: members.page_token }
   }
 
