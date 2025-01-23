@@ -47,7 +47,7 @@ export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> =
 
   getBot(login: Universal.Login, action?: 'created' | 'updated' | 'removed') {
     // FIXME Do not dispatch event from outside adapters.
-    let bot = this.bots.find(bot => bot.upstream.sn === login.sn)
+    let bot = this.bots.find(bot => bot.config.sn === login.sn)
     if (bot) {
       if (action === 'created') {
         this.logger.warn('bot already exists when login created, sn = %s, adapter = %s', login.sn, login.adapter)

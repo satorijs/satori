@@ -1,4 +1,4 @@
-import { Bot, camelCase, Context, h, HTTP, JsonForm, omit, pick, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, h, HTTP, JsonForm, omit, snakeCase, Universal } from '@satorijs/core'
 import { SatoriAdapter } from './ws'
 
 function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix = '') {
@@ -62,12 +62,11 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
   declare adapter: SatoriAdapter<C, this>
 
   public internal = createInternal(this)
-  public upstream: Pick<Universal.Login, 'sn' | 'adapter'>
 
   constructor(ctx: C, config: Universal.Login) {
-    super(ctx, config, 'satori')
+    super(ctx, config, config.adapter)
+    this.logger = ctx.logger('satori')
     Object.assign(this, omit(config, ['sn', 'adapter']))
-    this.upstream = pick(config, ['sn', 'adapter'])
 
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
       const response = await this.request(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
@@ -83,10 +82,6 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
         headers: response.headers,
       }
     })
-  }
-
-  get adapterName() {
-    return this.upstream.adapter
   }
 
   request(url: string, config: HTTP.RequestConfig) {

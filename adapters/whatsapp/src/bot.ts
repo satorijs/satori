@@ -8,7 +8,10 @@ export class WhatsAppBot<C extends Context = Context> extends Bot<C> {
 
   public internal: Internal
   public http: HTTP
-  public platform = 'whatsapp'
+
+  constructor(ctx: C) {
+    super(ctx, {}, 'whatsapp')
+  }
 
   async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
     await this.internal.messageReaction(this.selfId, channelId, messageId, emoji)

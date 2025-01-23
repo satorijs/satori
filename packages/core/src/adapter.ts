@@ -6,7 +6,6 @@ import { Bot } from './bot'
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   static schema = false as const
 
-  public name?: string
   public bots: B[] = []
 
   constructor(protected ctx: C) {}

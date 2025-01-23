@@ -46,17 +46,15 @@ export abstract class Bot<C extends Context = Context, T = any> {
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
-  constructor(public ctx: C, public config: T, platform?: string) {
+  constructor(public ctx: C, public config: T, public adapterName: string) {
     this.sn = ++ctx.satori._loginSeq
     this.internal = null
     this._internalRouter = new InternalRouter(ctx)
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
-    if (platform) {
-      this.logger = ctx.logger(platform)
-      this.platform = platform
-    }
+    this.logger = ctx.logger(adapterName)
+    this.platform = adapterName
 
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
@@ -74,10 +72,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
       const cb = this.callbacks[session.event.button!.id]
       if (cb) cb(session)
     })
-  }
-
-  get adapterName() {
-    return this.adapter.name
   }
 
   getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0], slash?: boolean) {
