@@ -31,12 +31,11 @@ export abstract class Bot<C extends Context = Context, T = any> {
   }
 
   public sn: number
-  public user = {} as User
-  public isBot = true
-  public hidden = false
-  public platform!: string
+  public user?: User
+  public platform?: string
   public features: string[]
-  public adapter?: Adapter<C, this>
+  public hidden = false
+  public adapter!: Adapter<C, this>
   public error: any
   public callbacks: Dict<Function> = {}
   public logger!: Logger
@@ -77,6 +76,10 @@ export abstract class Bot<C extends Context = Context, T = any> {
     })
   }
 
+  get adapterName() {
+    return this.adapter.name
+  }
+
   getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0], slash?: boolean) {
     let search = new URLSearchParams(init).toString()
     if (search) search = '?' + search
@@ -90,7 +93,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
   update(login: Login) {
     // make sure `status` is the last property to be assigned
     // so that `login-updated` event can be dispatched after all properties are updated
-    const { status, ...rest } = login
+    const { sn, status, ...rest } = login
     Object.assign(this, rest)
     this.status = status
   }
@@ -246,10 +249,8 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   toJSON(): Login {
     return clone({
-      ...pick(this, ['sn', 'platform', 'selfId', 'status', 'hidden', 'features']),
-      // make sure `user.id` is present
-      user: this.user.id ? this.user : undefined,
-      adapter: this.platform,
+      ...pick(this, ['sn', 'user', 'platform', 'selfId', 'status', 'hidden', 'features']),
+      adapter: this.adapterName,
     })
   }
 

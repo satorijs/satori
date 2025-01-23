@@ -1,6 +1,7 @@
-import { Bot, camelCase, Context, h, HTTP, JsonForm, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, h, HTTP, JsonForm, omit, pick, snakeCase, Universal } from '@satorijs/core'
+import { SatoriAdapter } from './ws'
 
-function createInternal(bot: SatoriBot, prefix = '') {
+function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
       const key = prefix.slice(1)
@@ -11,7 +12,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
         if (pagination) {
           request.headers.set('Satori-Pagination', 'true')
         }
-        const response = await bot.http('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), {
+        const response = await bot.request('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), {
           method: 'POST',
           headers: Object.fromEntries(request.headers.entries()),
           data: request.body,
@@ -28,14 +29,15 @@ function createInternal(bot: SatoriBot, prefix = '') {
         }
       }
 
-      let pagination: { data: any[]; next?: any } | undefined
+      type Pagination = { data: any[]; next?: any }
+      let pagination: Pagination | undefined
       result.next = async function () {
-        pagination ??= await impl(true)
+        pagination ??= await impl(true) as Pagination
         if (!pagination.data) throw new Error('Invalid pagination response')
         if (pagination.data.length) return { done: false, value: pagination.data.shift() }
         if (!pagination.next) return { done: true, value: undefined }
         args = pagination.next
-        pagination = await impl(true)
+        pagination = await impl(true) as Pagination
         return this.next()
       }
       result[Symbol.asyncIterator] = function () {
@@ -57,15 +59,18 @@ function createInternal(bot: SatoriBot, prefix = '') {
 }
 
 export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Login> {
-  public http: HTTP
+  declare adapter: SatoriAdapter<C, this>
+
   public internal = createInternal(this)
+  public upstream: Pick<Universal.Login, 'sn' | 'adapter'>
 
   constructor(ctx: C, config: Universal.Login) {
     super(ctx, config, 'satori')
-    Object.assign(this, config)
+    Object.assign(this, omit(config, ['sn', 'adapter']))
+    this.upstream = pick(config, ['sn', 'adapter'])
 
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
-      const response = await this.http(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
+      const response = await this.request(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
         method,
         headers,
         data: method === 'GET' || method === 'HEAD' ? null : body,
@@ -77,6 +82,23 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
         body: response.data,
         headers: response.headers,
       }
+    })
+  }
+
+  get adapterName() {
+    return this.upstream.adapter
+  }
+
+  request(url: string, config: HTTP.RequestConfig) {
+    return this.adapter.http(url, {
+      ...config,
+      headers: {
+        ...config.headers,
+        'Satori-Platform': this.platform,
+        'Satori-User-ID': this.user?.id,
+        'X-Platform': this.platform,
+        'X-Self-ID': this.user?.id,
+      },
     })
   }
 }
@@ -109,7 +131,10 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
       }
     }
     this.logger.debug('[request]', key, payload)
-    const result = await this.http.post('/v1/' + key, payload)
+    const result = await this.request('/v1/' + key, {
+      method: 'POST',
+      data: payload,
+    })
     return Universal.transformKey(result, camelCase)
   }
 }
