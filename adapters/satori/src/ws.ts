@@ -118,7 +118,9 @@ export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> =
         if (!bot) return
         const session = bot.session(parsed.body)
         if (typeof parsed.body.message?.content === 'string') {
+          const oldQuote = session.quote
           session.content = parsed.body.message.content
+          if (oldQuote) session.quote = oldQuote
         }
         if (parsed.body._type && parsed.body.type !== 'internal') {
           session.setInternal(parsed.body._type, parsed.body._data)
