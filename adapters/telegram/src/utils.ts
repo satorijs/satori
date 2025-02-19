@@ -120,21 +120,23 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
       id: update.callback_query.data,
     }
     const data = update.callback_query.message
-    if (data.chat.type === 'private') {
-      session.event.channel = {
-        id: data.chat.id.toString(),
-        type: Universal.Channel.Type.DIRECT,
-      }
-    } else {
-      session.event.guild = {
-        id: data.chat.id.toString(),
-        name: data.chat.title,
-      }
-      session.event.channel = {
-        id: data.is_topic_message
-          ? data.message_thread_id.toString()
-          : data.chat.id.toString(),
-        type: Universal.Channel.Type.TEXT,
+    if (data) {
+      if (data.chat.type === 'private') {
+        session.event.channel = {
+          id: data.chat.id.toString(),
+          type: Universal.Channel.Type.DIRECT,
+        }
+      } else {
+        session.event.guild = {
+          id: data.chat.id.toString(),
+          name: data.chat.title,
+        }
+        session.event.channel = {
+          id: data.is_topic_message
+            ? data.message_thread_id.toString()
+            : data.chat.id.toString(),
+          type: Universal.Channel.Type.TEXT,
+        }
       }
     }
     await bot.internal.answerCallbackQuery({
