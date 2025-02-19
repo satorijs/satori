@@ -4,6 +4,8 @@ import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
 
+export { Telegram }
+
 export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
   static inject = ['server']
 
