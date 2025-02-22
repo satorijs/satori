@@ -3,7 +3,7 @@ import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, QQBot<C>> {
+export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, QQBot<C, QQBot.Config & WsClient.Options>> {
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout

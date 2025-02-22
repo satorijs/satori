@@ -121,11 +121,11 @@ function setupReaction(session: Session, data: ReactionEvent) {
 export async function adaptSession(bot: ZulipBot, input: Event) {
   const session = bot.session({})
   if (input.type === 'message') {
-    await decodeMessage(bot, input.message, session.event.message = {}, session)
+    await decodeMessage(bot, input.message, session.event.message = {}, session.event)
   } else if (input.type === 'reaction') {
     session.type = input.op === 'add' ? 'reaction-added' : 'reaction-removed'
     const { message } = await bot.internal.getMessage(input.message_id.toString())
-    setupMessage(session, message)
+    setupMessage(session.event, message)
     session.messageId = input.message_id.toString()
     setupReaction(session, input)
   } else if (input.type === 'delete_message' && input.message_type === 'stream') {

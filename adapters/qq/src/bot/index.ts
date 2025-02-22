@@ -11,7 +11,7 @@ interface GetAppAccessTokenResult {
   expires_in: number
 }
 
-export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
+export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.Config> extends Bot<C, T> {
   static MessageEncoder = QQMessageEncoder
   static inject = {
     required: ['http'],
@@ -26,7 +26,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
   private _token: string
   private _timer: NodeJS.Timeout
 
-  constructor(ctx: C, config: QQBot.Config) {
+  constructor(ctx: C, config: T) {
     super(ctx, config, 'qq')
     let endpoint = config.endpoint
     if (config.sandbox) {
@@ -46,7 +46,7 @@ export class QQBot<C extends Context = Context> extends Bot<C, QQBot.Config> {
     })
     this.internal = new GroupInternal(this, () => this.http)
     if (config.protocol === 'websocket') {
-      this.ctx.plugin(WsClient, this)
+      this.ctx.plugin(WsClient, this as any)
     } else {
       this.ctx.plugin(HttpServer, this)
     }
