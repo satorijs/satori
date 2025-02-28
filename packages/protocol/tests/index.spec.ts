@@ -1,7 +1,7 @@
 import Element from '@satorijs/element'
 import { describe } from 'node:test'
 import { Resource } from '../src'
-import { expect, use } from 'chai'
+import { expect } from 'chai'
 
 describe('@satorijs/protocol', () => {
   describe('Resource', () => {
