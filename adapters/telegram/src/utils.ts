@@ -255,7 +255,7 @@ export async function decodeMessage(
       segments.push(h('img', await bot.$getFileFromPath(file.file_path, {
         id: data.sticker.file_id,
         uniqueId: data.sticker.file_unique_id,
-        setId: data.sticker.set_id,
+        setName: data.sticker.set_name,
       })))
     } catch (e) {
       bot.logger.warn('get file error', e)
