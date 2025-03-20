@@ -50,11 +50,11 @@
     "utilities"
   ],
   "devDependencies": {
-    "@types/chai": "^4.3.16",
-    "chai": "^5.1.1",
+    "@types/chai": "^5.2.0",
+    "chai": "^5.2.0",
     "chai-shape": "^1.1.0"
   },
   "dependencies": {
-    "cosmokit": "^1.7.0"
+    "cosmokit": "^1.7.4"
   }
 }

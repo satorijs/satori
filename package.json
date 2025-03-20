@@ -16,9 +16,6 @@
   ],
   "scripts": {
     "build": "yakumo build",
-    "bump": "yakumo version",
-    "dep": "yakumo upgrade",
-    "pub": "yakumo publish",
     "lint": "eslint packages adapters --ext=ts --cache",
     "test": "yakumo test --import tsx",
     "test:text": "shx rm -rf coverage && c8 -r text yarn test",
@@ -29,16 +26,15 @@
   "license": "MIT",
   "devDependencies": {
     "@cordisjs/eslint-config": "^1.1.1",
-    "@types/node": "^22.7.5",
-    "c8": "^7.14.0",
-    "esbuild": "^0.23.1",
-    "esbuild-register": "^3.5.0",
+    "@types/node": "^22.13.10",
+    "c8": "^10.1.3",
+    "esbuild": "^0.25.1",
     "eslint": "^8.57.0",
-    "shx": "^0.3.4",
-    "tsx": "^4.19.2",
-    "typescript": "^5.6.2",
-    "yakumo": "^1.0.0-beta.20",
-    "yakumo-esbuild": "^1.0.0-beta.7",
-    "yakumo-tsc": "^1.0.0-beta.5"
+    "shx": "^0.4.0",
+    "tsx": "npm:@cordiverse/tsx@4.19.3-fix.3",
+    "typescript": "^5.8.2",
+    "yakumo": "^2.0.0-alpha.3",
+    "yakumo-esbuild": "^2.0.0-alpha.2",
+    "yakumo-tsc": "^2.0.0-alpha.2"
   }
 }

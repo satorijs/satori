@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-telegram",
   "description": "Telegram Adapter for Satorijs",
-  "version": "4.5.8",
+  "version": "5.0.0-alpha.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -34,14 +34,14 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.5",
-    "@satorijs/core": "^4.5.0",
-    "cordis": "^3.18.1"
+    "@cordisjs/plugin-server": "^1.1.0",
+    "@satorijs/core": "^5.0.0-alpha.0",
+    "cordis": "^4.0.0-alpha.7"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.0"
+    "@satorijs/core": "^5.0.0-alpha.0"
   },
   "dependencies": {
-    "file-type": "^16.5.4"
+    "file-type": "^20.4.1"
   }
 }
