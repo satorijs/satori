@@ -1,23 +1,12 @@
 {
   "name": "@satorijs/protocol",
   "description": "Protocol types for Satori protocol",
-  "version": "1.6.0",
+  "version": "2.0.0-alpha.0",
   "type": "module",
-  "main": "lib/index.cjs",
-  "module": "lib/index.mjs",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs"
-    },
-    "./src/*": "./src/*",
-    "./package.json": "./package.json"
-  },
   "files": [
-    "lib",
-    "src"
+    "lib"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
@@ -38,7 +27,7 @@
     "api"
   ],
   "dependencies": {
-    "@satorijs/element": "^3.1.7",
+    "@satorijs/element": "^4.0.0-alpha.0",
     "cosmokit": "^1.7.4"
   }
 }
