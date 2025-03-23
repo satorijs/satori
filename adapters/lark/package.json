@@ -37,7 +37,7 @@
     "@cordisjs/plugin-server": "^0.2.5",
     "@satorijs/core": "^4.5.0",
     "cordis": "^3.18.1",
-    "cosmokit": "^1.7.0",
+    "cosmokit": "^1.7.2",
     "dedent": "^1.5.3"
   },
   "peerDependencies": {
