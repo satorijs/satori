@@ -204,11 +204,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
     let msg_id: string, msg_seq: number, event_id: string
-    if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+    if (this.options?.session?.messageId) {
       this.options.session['seq'] ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
-    } else if (this.options?.session?.qq['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+    } else if (this.options?.session?.qq['id']) {
       event_id = this.options.session.qq['id']
     }
     if (this.passiveId) msg_id = this.passiveId
