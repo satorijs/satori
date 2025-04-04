@@ -208,8 +208,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       this.options.session['seq'] ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
-    } else if (this.options?.session?.qq['id']) {
-      event_id = this.options.session.qq['id']
+    } else if (this.options?.session?.qq?.['id']) {
+      event_id = this.options.session.qq?.['id']
     }
     if (this.passiveId) msg_id = this.passiveId
     if (this.passiveSeq) msg_seq = this.passiveSeq
