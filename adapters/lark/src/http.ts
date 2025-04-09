@@ -43,6 +43,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
         if (!result) return (ctx.status = 403)
       }
 
+      // only accept JSON body
+      if (!ctx.request.is('json')) return ctx.status = 415
+
       // try to decrypt message first if encryptKey is set
       const body = this._tryDecryptBody(ctx.request.body)
       // respond challenge message

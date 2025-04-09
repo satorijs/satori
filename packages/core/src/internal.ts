@@ -166,7 +166,7 @@ export namespace JsonForm {
         headers: request.headers,
       }
     } else {
-      const body = new TextEncoder().encode(json)
+      const body = new TextEncoder().encode(json).buffer as ArrayBuffer
       const headers = new Headers({
         'content-type': 'application/json',
       })
