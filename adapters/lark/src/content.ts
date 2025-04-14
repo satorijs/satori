@@ -512,6 +512,27 @@ export namespace MessageContent {
       }
     }
 
+    export interface ColumnSetElement extends BaseElement<'column_set'> {
+      horizontal_spacing?: string
+      horizontal_align?: 'left' | 'center' | 'right'
+      margin?: string
+      flex_mode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect'
+      background_style?: string
+      columns: ColumnElement[]
+      // action?: Action
+    }
+
+    export interface ColumnElement extends BaseElement<'column'> {
+      background_style?: string
+      width?: 'auto' | 'weighted' | string
+      weight?: number
+      vertical_align?: 'top' | 'center' | 'bottom'
+      vertical_spacing?: 'default' | 'medium' | 'large' | string
+      padding?: string
+      elements: Element[]
+      // action?: Action
+    }
+
     export namespace ButtonElement {
       export type Size = 'tiny' | 'small' | 'medium' | 'large'
       export type Width = 'default' | 'fill' | string
@@ -531,6 +552,7 @@ export namespace MessageContent {
       | InputElement
       | ButtonElement
       | CheckerElement
+      | ColumnSetElement
   }
 
   export interface Template {

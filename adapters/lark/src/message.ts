@@ -417,6 +417,38 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           tag: 'standard_icon',
           token: attrs.token,
         })
+      } else if (tag === 'column-set') {
+        this.flushText()
+        const parent = this.card
+        const columns: MessageContent.Card.ColumnElement[] = []
+        parent?.elements.push({
+          tag: 'column_set',
+          margin: attrs.margin,
+          flex_mode: attrs.flexMode,
+          horizontal_align: attrs.horizontalAlign,
+          horizontal_spacing: attrs.horizontalSpacing,
+          background_style: attrs.backgroundStyle,
+          columns,
+        })
+        for (const child of children) {
+          if (child.type !== 'lark:column' && child.type !== 'feishu:column') {
+            // throw unexpected?
+            continue
+          }
+          this.card = { elements: [] }
+          await this.render(child.children)
+          columns.push({
+            tag: 'column',
+            width: child.attrs.width,
+            weight: child.attrs.weight,
+            padding: child.attrs.padding,
+            vertical_align: child.attrs.verticalAlign,
+            vertical_spacing: child.attrs.verticalSpacing,
+            background_style: child.attrs.backgroundStyle,
+            elements: this.card.elements,
+          })
+        }
+        this.card = parent
       }
     } else {
       await this.render(children)
