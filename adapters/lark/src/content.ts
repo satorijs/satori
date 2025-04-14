@@ -378,6 +378,10 @@ export namespace MessageContent {
       name?: string
       required?: boolean
       action_type?: 'link' | 'request' | 'multi' | 'form_submit' | 'form_reset'
+      // legacy fields
+      value?: Record<string, string>
+      url?: string
+      multi_url?: Omit<URLs, 'url'>
     }
 
     export interface ConfirmElement {
@@ -526,6 +530,7 @@ export namespace MessageContent {
       | FormElement
       | InputElement
       | ButtonElement
+      | CheckerElement
   }
 
   export interface Template {

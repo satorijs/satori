@@ -253,7 +253,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       const length = this.card?.elements.length
       await this.render(children)
       if (this.card?.elements.length > length) {
-        const elements = this.card?.elements.slice(length)
+        const elements = this.card?.elements.splice(length)
         this.card.elements.push({
           tag: 'form',
           name: attrs.name || 'Form',
@@ -261,24 +261,56 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         })
       }
     } else if (type === 'input') {
-      this.flushText()
-      this.card?.elements.push({
-        tag: 'action',
-        actions: [{
-          tag: 'input',
+      if (attrs.type === 'checkbox') {
+        this.flushText()
+        await this.render(children)
+        this.card?.elements.push({
+          tag: 'checker',
+          name: (attrs.argument ? '@@' : attrs.option ? `@${attrs.option}=` : '') + attrs.name,
+          checked: attrs.checked,
+          text: {
+            tag: 'plain_text',
+            content: this.textContent,
+          },
+        })
+      } else if (attrs.type === 'submit') {
+        this.flushText(true)
+        await this.render(children)
+        this.card?.elements.push({
+          tag: 'button',
           name: attrs.name,
-          width: attrs.width,
-          label: attrs.label && {
+          text: {
             tag: 'plain_text',
-            content: attrs.label,
+            content: this.textContent,
           },
-          placeholder: attrs.placeholder && {
-            tag: 'plain_text',
-            content: attrs.placeholder,
+          action_type: 'form_submit',
+          value: {
+            _satori_type: 'command',
+            content: attrs.text,
           },
-          behaviors: this.createBehavior(attrs),
-        }],
-      })
+        })
+      } else {
+        this.flushText()
+        await this.render(children)
+        this.card?.elements.push({
+          tag: 'action',
+          actions: [{
+            tag: 'input',
+            name: attrs.name,
+            width: attrs.width,
+            label: this.textContent && {
+              tag: 'plain_text',
+              content: this.textContent,
+            },
+            placeholder: attrs.placeholder && {
+              tag: 'plain_text',
+              content: attrs.placeholder,
+            },
+            behaviors: this.createBehavior(attrs),
+          }],
+        })
+      }
+      this.textContent = ''
     } else if (type === 'button') {
       this.card ??= { elements: [] }
       this.flushText(true)
