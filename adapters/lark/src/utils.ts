@@ -267,8 +267,10 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         }
         for (const [key, value] of Object.entries(body.event.action.form_value ?? {})) {
           if (key.startsWith('@@')) {
-            if (value) args.push(key.slice(2))
+            if (value === false) continue
+            args.push(key.slice(2))
           } else if (key.startsWith('@')) {
+            if (value === false) continue
             const [_key] = key.slice(1).split('=', 1)
             setOption(_key, key.slice(2 + _key.length))
           } else if (+key * 0 === 0) {
