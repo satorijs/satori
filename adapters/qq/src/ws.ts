@@ -11,8 +11,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   async prepare() {
     if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
     try {
-      let { url } = await this.bot.internal.getGateway()
-      url = url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
+      const url = this.bot.config.gatewayUrl
+        ? this.bot.config.gatewayUrl
+        : (await this.bot.internal.getGateway()).url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
       this.bot.logger.debug('url: %s', url)
       return this.bot.http.ws(url)
     } catch (error) {
