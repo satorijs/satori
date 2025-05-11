@@ -7,6 +7,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout
+  _acked = true
 
   async prepare() {
     if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
@@ -24,10 +25,15 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   }
 
   heartbeat() {
+    if (!this._acked) {
+      this.bot.logger.warn('zombied connection')
+      return this.socket.close()
+    }
     this.socket.send(JSON.stringify({
       op: Opcode.HEARTBEAT,
       s: this._s,
     }))
+    this._acked = false
   }
 
   async accept() {
@@ -58,6 +64,8 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
           }))
         }
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
+      } else if (parsed.op === Opcode.HEARTBEAT_ACK) {
+        this._acked = true
       } else if (parsed.op === Opcode.INVALID_SESSION) {
         this._sessionId = ''
         this._s = null
