@@ -121,7 +121,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
 
   async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
     const r = await this.internal.getMessage(channelId, messageId)
-    return decodeMessage(this, r)
+    return decodeMessage(this, r.message)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
