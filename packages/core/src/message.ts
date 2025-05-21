@@ -1,7 +1,7 @@
 import { Context } from 'cordis'
 import { Bot } from './bot'
 import { Channel, Message, SendOptions } from '@satorijs/protocol'
-import h from '@satorijs/element'
+import { Fragment, h } from '@satorijs/element'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -30,7 +30,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
     }
   }
 
-  async send(content: h.Fragment) {
+  async send(content: Fragment) {
     this.session = this.bot.session({
       type: 'send',
       channel: { id: this.channelId, ...this.options.session?.event.channel } as Channel,

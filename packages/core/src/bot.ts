@@ -1,6 +1,6 @@
 import { clone, Dict, isNonNullable, pick } from 'cosmokit'
-import { Context, Logger, Service } from 'cordis'
-import h from '@satorijs/element'
+import { Context, Service } from 'cordis'
+import { Fragment } from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
@@ -38,7 +38,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public adapter!: Adapter<C, this>
   public error: any
   public callbacks: Dict<Function> = {}
-  public logger!: Logger
 
   public _internalRouter: InternalRouter<C>
 
@@ -53,7 +52,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
     this.context = ctx
     ctx.bots.push(this)
     this.context.emit('bot-added', this)
-    this.logger = ctx.logger(adapterName)
     this.platform = adapterName
 
     this.features = Object.entries(Methods)
@@ -169,7 +167,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
   }
 
   dispatch(session: C[typeof Context.session]) {
-    if (!this.ctx.lifecycle.isActive) return
     let events = [session.type]
     for (const aliases of eventAliases) {
       if (aliases.includes(session.type)) {
@@ -188,17 +185,17 @@ export abstract class Bot<C extends Context = Context, T = any> {
     }
   }
 
-  async createMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
+  async createMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
     return new MessageEncoder!(this, channelId, referrer, options).send(content)
   }
 
-  async sendMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
+  async sendMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions) {
     const messages = await this.createMessage(channelId, content, referrer, options)
     return messages.map(message => message.id).filter(isNonNullable)
   }
 
-  async sendPrivateMessage(userId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
+  async sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions) {
     const { id } = await this.createDirectChannel(userId, guildId ?? options?.session?.guildId)
     return this.sendMessage(id, content, null, options)
   }

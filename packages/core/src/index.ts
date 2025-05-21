@@ -1,19 +1,13 @@
-import { Context, Logger, Service, z } from 'cordis'
+import { Context, Service } from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
 import { ExtractParams, InternalRequest, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
-import { FileResponse, HTTP } from '@cordisjs/plugin-http'
+import { HTTP } from '@cordisjs/plugin-http'
 import { Meta, Response, SendOptions } from '@satorijs/protocol'
-import h from '@satorijs/element'
+import { Fragment, h, Render } from '@satorijs/element'
 
-h.warn = new Logger('element').warn
-
-// do not remove the `type` modifier
-// because `esModuleInterop` is not respected by esbuild
-export type { Fragment, Render } from '@satorijs/element'
-
-export { h, h as Element, h as segment, HTTP, HTTP as Quester }
+export { h, Element, Fragment, Render } from '@satorijs/element'
 
 export * from 'cordis'
 export * from 'cosmokit'
@@ -79,23 +73,7 @@ declare module 'cordis' {
   }
 }
 
-declare module '@cordisjs/plugin-http' {
-  namespace HTTP {
-    export function createConfig(this: typeof HTTP, endpoint?: string | boolean): z<Config>
-  }
-}
-
-HTTP.createConfig = function createConfig(this, endpoint) {
-  return z.object({
-    endpoint: z.string().role('link').description('要连接的服务器地址。')
-      .default(typeof endpoint === 'string' ? endpoint : undefined!)
-      .required(typeof endpoint === 'boolean' ? endpoint : false),
-    headers: z.dict(String).role('table').description('要附加的额外请求头。'),
-    ...this.Config.dict,
-  }).description('请求设置')
-}
-
-export type Component<S extends Session = Session> = h.Render<Awaitable<h.Fragment>, S>
+export type Component<S extends Session = Session> = Render<Awaitable<Fragment>, S>
 
 export namespace Component {
   export interface Options {
@@ -104,16 +82,6 @@ export namespace Component {
 }
 
 export type GetSession<C extends Context> = C[typeof Context.session]
-
-class SatoriContext extends Context {
-  constructor(config?: any) {
-    super(config)
-    this.provide('satori', undefined, true)
-    this.plugin(Satori)
-  }
-}
-
-export { SatoriContext as Context }
 
 class DisposableSet<T> {
   private sn = 0
@@ -159,10 +127,7 @@ class DisposableSet<T> {
   }
 }
 
-export class Satori<C extends Context = Context> extends Service<unknown, C> {
-  static [Service.provide] = 'satori'
-  static [Service.immediate] = true
-
+export class Satori<C extends Context = Context> extends Service<C> {
   public uid = Math.random().toString(36).slice(2)
   public proxyUrls: DisposableSet<string> = new DisposableSet(this.ctx)
 
@@ -173,24 +138,21 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
   public _sessionSeq = 0
 
   constructor(ctx: C) {
-    super(ctx)
+    super(ctx, 'satori')
     ctx.mixin('satori', ['bots', 'component'])
 
     defineProperty(this.bots, Service.tracker, {})
 
     const self = this
-    ;(ctx as Context).on('http/file', async function (_url, options) {
-      const url = new URL(_url)
-      if (url.protocol !== 'internal:') return
+    ;(ctx as Context).on('http/fetch', async function (url, init, next) {
+      if (url.protocol !== 'satori:') return
       const { status, body, headers } = await self.handleInternalRoute('GET', url)
-      if (status >= 400) throw new Error(`Failed to fetch ${_url}, status code: ${status}`)
+      if (status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
       if (status >= 300) {
         const location = headers?.get('location')!
-        return this.file(location, options)
+        return this(location) as any // FIXME
       }
-      const type = headers?.get('content-type')
-      const filename = headers?.get('content-disposition')?.split('filename=')[1]
-      return { data: body, filename, type, mime: type } as FileResponse
+      return new Response(body, { status, headers })
     })
 
     this._internalRouter = new InternalRouter(ctx)

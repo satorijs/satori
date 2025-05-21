@@ -51,8 +51,6 @@ export class Session<C extends Context = Context> {
     this.sn = this.id = ++bot.ctx.satori._sessionSeq
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
-    defineProperty(this, Context.current, bot.ctx)
-    return Context.associate(this, 'session')
   }
 
   /** @deprecated */

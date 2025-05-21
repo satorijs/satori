@@ -1,24 +1,15 @@
-import { Awaitable, remove, Time } from 'cosmokit'
+import { Awaitable, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
+import type {} from '@cordisjs/plugin-logger'
 import { Context, z } from 'cordis'
 import { Bot } from './bot'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
-  static schema = false as const
-
   public bots: B[] = []
 
   constructor(protected ctx: C) {}
   async connect(bot: B) {}
   async disconnect(bot: B) {}
-
-  fork(ctx: Context, bot: B) {
-    bot.adapter = this
-    this.bots.push(bot)
-    ctx.on('dispose', () => {
-      remove(this.bots, bot)
-    })
-  }
 }
 
 export namespace Adapter {
