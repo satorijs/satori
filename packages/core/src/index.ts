@@ -62,12 +62,6 @@ declare module 'cordis' {
     'guild-member-request'(session: GetSession<C>): void
     'before-send'(session: GetSession<C>, options: SendOptions): Awaitable<void | boolean>
     'send'(session: GetSession<C>): void
-    /** @deprecated use `login-added` instead */
-    'bot-added'(client: Bot<C>): void
-    /** @deprecated use `login-removed` instead */
-    'bot-removed'(client: Bot<C>): void
-    /** @deprecated use `login-updated` instead */
-    'bot-status-updated'(client: Bot<C>): void
     'bot-connect'(client: Bot<C>): Awaitable<void>
     'bot-disconnect'(client: Bot<C>): Awaitable<void>
   }

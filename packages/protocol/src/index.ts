@@ -200,12 +200,6 @@ export interface User {
   id: string
   name?: string
   nick?: string
-  /** @deprecated */
-  userId?: string
-  /** @deprecated */
-  username?: string
-  /** @deprecated */
-  nickname?: string
   avatar?: string
   discriminator?: string
   isBot?: boolean
@@ -291,8 +285,6 @@ export interface Login {
   adapter: string
   user?: User
   platform?: string
-  /** @deprecated use `login.user.id` instead */
-  selfId?: string
   hidden?: boolean
   status: Status
   features: string[]
@@ -308,8 +300,6 @@ export const enum Status {
 
 export interface Message {
   id?: string
-  /** @deprecated */
-  messageId?: string
   channel?: Channel
   guild?: Guild
   user?: User
@@ -389,10 +379,6 @@ export interface Event {
   referrer: any
   _type?: string
   _data?: any
-  /** @deprecated */
-  subtype?: string
-  /** @deprecated */
-  subsubtype?: string
 }
 
 export interface Meta {

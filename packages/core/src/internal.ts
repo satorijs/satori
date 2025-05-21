@@ -1,7 +1,6 @@
 import { Context, Service } from 'cordis'
 import { Dict, remove, valueMap } from 'cosmokit'
 import { HTTP } from '@cordisjs/plugin-http'
-import { Response } from '@satorijs/protocol'
 import { ExtractParams, Key, pathToRegexp } from 'path-to-regexp-typed'
 import { Bot } from '.'
 
@@ -95,7 +94,7 @@ export namespace JsonForm {
   export async function decode(body: Body) {
     const type = body.headers.get('content-type')
     if (type?.startsWith('multipart/form-data')) {
-      const response = new globalThis.Response(body.body, { headers: body.headers })
+      const response = new Response(body.body, { headers: body.headers })
       const form = await response.formData()
       const json = form.get('$') as string
       return load(JSON.parse(json), '$', form)

@@ -1,7 +1,7 @@
 import { Context } from 'cordis'
 import { Bot } from './bot'
 import { Channel, Message, SendOptions } from '@satorijs/protocol'
-import { Fragment, h } from '@satorijs/element'
+import * as h from '@cordisjs/element'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -19,9 +19,9 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   async prepare() {}
 
   abstract flush(): Promise<void>
-  abstract visit(element: h): Promise<void>
+  abstract visit(element: h.Element): Promise<void>
 
-  async render(elements: h[], flush?: boolean) {
+  async render(elements: h.Element[], flush?: boolean) {
     for (const element of elements) {
       await this.visit(element)
     }
@@ -30,7 +30,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
     }
   }
 
-  async send(content: Fragment) {
+  async send(content: h.Fragment) {
     this.session = this.bot.session({
       type: 'send',
       channel: { id: this.channelId, ...this.options.session?.event.channel } as Channel,

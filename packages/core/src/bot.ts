@@ -248,12 +248,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
   async getLogin() {
     return this.toJSON()
   }
-
-  /** @deprecated use `bot.getLogin()` instead */
-  async getSelf() {
-    const { user } = await this.getLogin()
-    return user
-  }
 }
 
 const iterableMethods = [

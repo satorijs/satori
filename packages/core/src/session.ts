@@ -1,8 +1,8 @@
 import { Channel, Event, GuildMember, Message, Resource, User } from '@satorijs/protocol'
+import * as h from '@cordisjs/element'
 import { clone, defineProperty, isNullable } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import { Bot } from './bot'
-import h from '@satorijs/element'
 
 declare module '@satorijs/protocol' {
   interface SendOptions {
@@ -13,10 +13,6 @@ declare module '@satorijs/protocol' {
 // Accessors
 export interface Session {
   type: string
-  /** @deprecated */
-  subtype: string
-  /** @deprecated */
-  subsubtype: string
   selfId: string
   platform: string
   timestamp: number
@@ -51,11 +47,6 @@ export class Session<C extends Context = Context> {
     this.sn = this.id = ++bot.ctx.satori._sessionSeq
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
-  }
-
-  /** @deprecated */
-  get data() {
-    return this.event
   }
 
   get isDirect() {
@@ -126,7 +117,7 @@ export class Session<C extends Context = Context> {
     defineProperty(this, type, Object.assign(internal, data))
   }
 
-  async transform(elements: h[]): Promise<h[]> {
+  async transform(elements: h.Element[]): Promise<h.Element[]> {
     return await h.transformAsync(elements, async ({ type, attrs, children }, session) => {
       const render = type === 'component' ? attrs.is : this.app.get('component:' + type)
       if (!render) return true
