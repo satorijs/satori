@@ -1,4 +1,4 @@
-import Element from '@satorijs/element'
+import { Element, Fragment, parse } from '@cordisjs/element'
 import { Dict, isNullable, pick } from 'cosmokit'
 
 type PartialWithPick<T, K extends keyof T> = Partial<T> & Pick<T, K>
@@ -11,13 +11,6 @@ export interface Upload {
   type: string
   filename?: string
   data: ArrayBuffer
-}
-
-export interface Response {
-  status: number
-  statusText?: string
-  body?: ArrayBuffer
-  headers?: Headers
 }
 
 export interface Field {
@@ -103,13 +96,13 @@ export type Order = 'asc' | 'desc'
 
 export interface Methods {
   // message
-  createMessage(channelId: string, content: Element.Fragment, referrer?: any, options?: SendOptions): Promise<Message[]>
-  sendMessage(channelId: string, content: Element.Fragment, referrer?: any, options?: SendOptions): Promise<string[]>
-  sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+  createMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions): Promise<Message[]>
+  sendMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions): Promise<string[]>
+  sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
   getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<BidiList<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
-  editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
+  editMessage(channelId: string, messageId: string, content: Fragment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>
 
   // reaction
@@ -253,7 +246,7 @@ export namespace Resource {
       element.children.push(encode(key as any, data[key]))
     }
     if (resource.content && !isNullable(data[resource.content])) {
-      element.children.push(...Element.parse(data[resource.content] as string))
+      element.children.push(...parse(data[resource.content] as string))
     }
     return element
   }

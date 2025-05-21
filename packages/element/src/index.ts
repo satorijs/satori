@@ -1,7 +1,7 @@
 import { Binary, Dict, is, isNullable } from 'cosmokit'
-import Element from '@cordisjs/element'
+import { Element } from '@cordisjs/element'
 
-export default Element
+export { default } from '@cordisjs/element'
 export * from '@cordisjs/element'
 
 declare global {
@@ -48,20 +48,6 @@ declare global {
   }
 }
 
-declare module '@cordisjs/element' {
-  namespace Element {
-    export function at(id: any, attrs?: Dict): Element
-    export function sharp(id: any, attrs?: Dict): Element
-    export function quote(id: any, attrs?: Dict): Element
-    export let image: AssetFactory
-    export let img: AssetFactory
-    export let video: AssetFactory
-    export let audio: AssetFactory
-    export let file: AssetFactory
-    export function i18n(path: string | Dict, children?: any[]): Element
-  }
-}
-
 type Factory<R extends any[]> = (...args: [...rest: R, attrs?: Dict]) => Element
 type AssetFactory = Factory<[data: string] | [data: Binary.Source, type: string]>
 
@@ -97,15 +83,15 @@ function createAssetFactory(type: string): AssetFactory {
   }
 }
 
-Element.at = createFactory<[id: any]>('at', 'id')
-Element.sharp = createFactory<[id: any]>('sharp', 'id')
-Element.quote = createFactory<[id: any]>('quote', 'id')
-Element.image = createAssetFactory('img')
-Element.img = createAssetFactory('img')
-Element.video = createAssetFactory('video')
-Element.audio = createAssetFactory('audio')
-Element.file = createAssetFactory('file')
+export const at = createFactory<[id: any]>('at', 'id')
+export const sharp = createFactory<[id: any]>('sharp', 'id')
+export const quote = createFactory<[id: any]>('quote', 'id')
+export const image = createAssetFactory('img')
+export const img = createAssetFactory('img')
+export const video = createAssetFactory('video')
+export const audio = createAssetFactory('audio')
+export const file = createAssetFactory('file')
 
-Element.i18n = function i18n(path: string | Dict, children?: any[]) {
+export const i18n = function i18n(path: string | Dict, children?: any[]) {
   return Element('i18n', typeof path === 'string' ? { path } : path, children)
 }
