@@ -1,5 +1,7 @@
-import { Bot, camelCase, Context, h, HTTP, JsonForm, omit, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
 import { SatoriAdapter } from './ws'
+import type { HTTP } from '@cordisjs/plugin-http'
+import type { Logger } from '@cordisjs/plugin-logger'
 
 function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix = '') {
   return new Proxy(() => {}, {
@@ -18,7 +20,7 @@ function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix =
           data: request.body,
           responseType: 'arraybuffer',
         })
-        return await JsonForm.decode({ body: response.data, headers: response.headers })
+        return await JsonForm.decode(response)
       }
 
       let promise: Promise<any> | undefined
@@ -62,6 +64,7 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
   declare adapter: SatoriAdapter<C, this>
 
   public internal = createInternal(this)
+  public logger: Logger
 
   constructor(ctx: C, config: Universal.Login) {
     super(ctx, config, config.adapter)
@@ -69,18 +72,13 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
     Object.assign(this, omit(config, ['sn', 'adapter']))
 
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
-      const response = await this.request(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
+      return this.request(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
         method,
         headers,
         data: method === 'GET' || method === 'HEAD' ? null : body,
         responseType: 'arraybuffer',
         validateStatus: () => true,
       })
-      return {
-        status: response.status,
-        body: response.data,
-        headers: response.headers,
-      }
     })
   }
 
@@ -91,8 +89,6 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
         ...config.headers,
         'Satori-Platform': this.platform,
         'Satori-User-ID': this.user?.id,
-        'X-Platform': this.platform,
-        'X-Self-ID': this.user?.id,
       },
     })
   }
@@ -103,8 +99,8 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
     let payload: any
     if (method.name === 'createUpload') {
       payload = new FormData()
-      for (const { data, type, filename } of args as Universal.Upload[]) {
-        payload.append('file', new Blob([data], { type }), filename)
+      for (const blob of args as Blob[]) {
+        payload.append('file', blob)
       }
     } else {
       payload = {}
@@ -115,7 +111,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
             channel: { id: args[0], type: 0 },
             ...args[3]?.session?.event,
           })
-          session.elements = await session.transform(h.normalize(args[index]))
+          session.elements = await session.transform(normalize(args[index]))
           if (await session.app.serial(session, 'before-send', session, args[3] ?? {})) return
           payload[field.name] = session.elements.join('')
         } else if (field.name === 'referrer') {

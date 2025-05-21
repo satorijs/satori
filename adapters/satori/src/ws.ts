@@ -1,4 +1,6 @@
-import { Adapter, camelize, Context, HTTP, Logger, Schema, Time, Universal } from '@satorijs/core'
+import { Adapter, camelize, Context, Schema, Service, Time, Universal } from '@satorijs/core'
+import type { HTTP } from '@cordisjs/plugin-http'
+import type { Logger } from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 
 export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> = SatoriBot<C>> extends Adapter.WsClientBase<C, B> {
@@ -19,13 +21,11 @@ export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> =
     super(ctx, config)
     this.logger = ctx.logger('satori')
     this.http = ctx.http.extend({
-      endpoint: config.endpoint,
+      baseUrl: config.baseUrl,
       headers: {
         'Authorization': `Bearer ${config.token}`,
       },
     })
-    ctx.on('ready', () => this.start())
-    ctx.on('dispose', () => this.stop())
   }
 
   getActive() {
@@ -137,26 +137,26 @@ export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> =
     })
   }
 
-  async start() {
+  async* [Service.init]() {
+    yield async () => {
+      this.setStatus(Universal.Status.DISCONNECT)
+      await super.stop()
+    }
+
     this.setStatus(Universal.Status.CONNECT)
     await super.start()
-  }
-
-  async stop() {
-    this.setStatus(Universal.Status.DISCONNECT)
-    await super.stop()
   }
 }
 
 export namespace SatoriAdapter {
   export interface Config extends Adapter.WsClientConfig {
-    endpoint: string
+    baseUrl: string
     token?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      endpoint: Schema.string().description('API 终结点。').required(),
+      baseUrl: Schema.string().description('API 终结点。').required(),
       token: Schema.string().description('API 访问令牌。'),
     }),
     Adapter.WsClientConfig,

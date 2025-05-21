@@ -86,44 +86,31 @@ export namespace JsonForm {
     })
   }
 
-  export interface Body {
-    body: ArrayBuffer
-    headers: Headers
-  }
-
-  export async function decode(body: Body) {
+  export async function decode(body: Response) {
     const type = body.headers.get('content-type')
     if (type?.startsWith('multipart/form-data')) {
-      const response = new Response(body.body, { headers: body.headers })
-      const form = await response.formData()
+      const form = await body.formData()
       const json = form.get('$') as string
       return load(JSON.parse(json), '$', form)
     } else if (type?.startsWith('application/json')) {
-      return JSON.parse(new TextDecoder().decode(body.body))
+      return await body.json()
     } else {
       throw new Error(`Unsupported content type: ${type}`)
     }
   }
 
-  export async function encode(data: any): Promise<Body> {
+  export async function encode(data: any): Promise<Response> {
     const form = new FormData()
     const json = JSON.stringify(JsonForm.dump(data, '$', form))
     if ([...form.entries()].length) {
       form.append('$', json)
-      const request = new Request('stub:', {
-        method: 'POST',
-        body: form,
-      })
-      return {
-        body: await request.arrayBuffer(),
-        headers: request.headers,
-      }
+      return new Response(form)
     } else {
-      const body = new TextEncoder().encode(json).buffer as ArrayBuffer
-      const headers = new Headers({
-        'content-type': 'application/json',
+      return new Response(json, {
+        headers: {
+          'content-type': 'application/json',
+        },
       })
-      return { body, headers }
     }
   }
 }

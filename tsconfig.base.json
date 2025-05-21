@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es2022",
+    "target": "es2024",
     "module": "esnext",
     "declaration": true,
     "emitDeclarationOnly": true,

@@ -7,12 +7,6 @@ export interface SendOptions {
   linkPreview?: boolean
 }
 
-export interface Upload {
-  type: string
-  filename?: string
-  data: ArrayBuffer
-}
-
 export interface Field {
   name: string
 }
@@ -113,7 +107,7 @@ export interface Methods {
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
   // upload
-  createUpload(...uploads: Upload[]): Promise<string[]>
+  createUpload(...blobs: Blob[]): Promise<string[]>
 
   // user
   getLogin(): Promise<Login>

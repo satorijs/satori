@@ -35,15 +35,15 @@
     "api"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^1.1.0",
+    "@cordisjs/plugin-server": "^1.2.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "@types/node": "^22.13.10",
-    "cordis": "^4.0.0-alpha.7"
+    "cordis": "^4.0.0-beta.3"
   },
   "peerDependencies": {
     "@satorijs/core": "^5.0.0-alpha.0"
   },
   "dependencies": {
-    "cosmokit": "^1.7.4"
+    "cosmokit": "^1.8.0"
   }
 }

@@ -1,10 +1,8 @@
-import { Context, Schema, Service, Session, Universal } from '@satorijs/core'
-import { Binary, camelCase, defineProperty, makeArray, sanitize, snakeCase, Time } from 'cosmokit'
-import {} from '@cordisjs/plugin-server'
-import WebSocket from 'ws'
-import { Readable } from 'node:stream'
-import { readFile } from 'node:fs/promises'
-import { Middleware, ParameterizedContext } from 'koa'
+import { Context, Inject, Schema, Service, Session, Universal } from '@satorijs/core'
+import { Binary, camelCase, snakeCase, Time } from 'cosmokit'
+import { Request, Response } from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-logger'
+import { WebSocket } from 'ws'
 
 declare module '@satorijs/core' {
   interface Satori {
@@ -27,181 +25,159 @@ const FILTER_HEADERS = [
   'x-platform',
 ]
 
-class SatoriServer extends Service<SatoriServer.Config> {
-  static inject = ['server', 'http']
+@Inject('http')
+@Inject('server', true, { path: '/satori' })
+@Inject('logger', true, { name: 'satori:server' })
+class SatoriServer<C extends Context = Context> extends Service<C> {
+  private buffer: Session[] = []
 
-  constructor(ctx: Context, public config: SatoriServer.Config) {
-    super(ctx, 'satori.server', true)
-    const logger = ctx.logger('server')
-    const path = sanitize(config.path)
+  constructor(ctx: C, public config: SatoriServer.Config) {
+    super(ctx, 'satori.server')
 
-    function checkAuth(koa: ParameterizedContext) {
+    function checkAuth(req: Request, res: Response) {
       if (!config.token) return
-      if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
-        koa.body = 'invalid token'
-        koa.status = 403
+      if (req.headers.get('authorization') !== `Bearer ${config.token}`) {
+        res.body = 'invalid token'
+        res.status = 403
         return true
       }
     }
 
-    ctx.server.get(path + '/v1/:name', async (koa, next) => {
-      const method = Universal.Methods[koa.params.name]
+    ctx.server.get('/v1/:name', async (req, res, next) => {
+      const method = Universal.Methods[req.params.name]
       if (!method) return next()
-      koa.body = 'Please use POST method to send requests.'
-      koa.status = 405
+      res.body = 'Please use POST method to send requests.'
+      res.status = 405
     })
 
-    ctx.server.post(path + '/v1/:name', async (koa) => {
-      const method = Universal.Methods[koa.params.name]
+    ctx.server.post('/v1/:name', async (req, res) => {
+      const method = Universal.Methods[req.params.name]
       if (!method) {
-        koa.body = 'method not found'
-        koa.status = 404
+        res.body = 'method not found'
+        res.status = 404
         return
       }
 
-      if (checkAuth(koa)) return
+      if (checkAuth(req, res)) return
 
-      const selfId = koa.request.headers['satori-user-id'] ?? koa.request.headers['x-self-id']
-      const platform = koa.request.headers['satori-platform'] ?? koa.request.headers['x-platform']
+      const selfId = req.headers['satori-user-id'] ?? req.headers['x-self-id']
+      const platform = req.headers['satori-platform'] ?? req.headers['x-platform']
       const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
       if (!bot) {
-        koa.body = 'login not found'
-        koa.status = 403
+        res.body = 'login not found'
+        res.status = 403
         return
       }
 
       if (method.name === 'createUpload') {
-        const entries = Object.entries(koa.request.files ?? {}).map(([key, value]) => {
-          return [key, makeArray(value)[0]] as const
+        const form = await req.formData()
+        const blobs = [...form].map(([, value]) => {
+          if (value instanceof File) return value
+          return new Blob([value], { type: 'text/plain' })
         })
-        const uploads = await Promise.all(entries.map<Promise<Universal.Upload>>(async ([, file]) => {
-          const buffer = await readFile(file.filepath)
-          return {
-            data: Binary.fromSource(buffer),
-            type: file.mimetype!,
-            filename: file.newFilename,
-          }
-        }))
-        const result = await bot.createUpload(...uploads)
-        koa.body = Object.fromEntries(entries.map(([key], index) => [key, result[index]]))
-        koa.status = 200
+        const result = await bot.createUpload(...blobs)
+        res.body = JSON.stringify(Object.fromEntries([...form].map(([key], index) => [key, result[index]])))
+        res.headers.set('content-type', 'application/json')
+        res.status = 200
         return
       }
 
-      const json = koa.request.body
+      const json = await req.json()
       const args = method.fields.map(({ name }) => {
         if (name === 'referrer') return json[name]
         return Universal.transformKey(json[name], camelCase)
       })
       const result = await bot[method.name](...args)
-      koa.body = Universal.transformKey(result, snakeCase)
-      koa.status = 200
+      res.body = Universal.transformKey(result, snakeCase)
+      res.status = 200
     })
 
-    const marker: Middleware = defineProperty((_, next) => next(), Symbol.for('noParseBody'), true)
-
-    ctx.server.all(path + '/v1/internal/:path(.+)', marker, async (koa) => {
-      const url = new URL(`internal:${koa.params.path}`)
-      for (const [key, value] of Object.entries(koa.query)) {
-        for (const item of makeArray(value)) {
-          url.searchParams.append(key, item)
-        }
+    ctx.server.all('/v1/internal/*path', async (req, res) => {
+      const url = new URL(`satori:${req.params.path}`)
+      for (const [key, value] of req.query) {
+        url.searchParams.append(key, value)
       }
 
       const headers = new Headers()
-      for (const [key, value] of Object.entries(koa.headers)) {
+      for (const [key, value] of req.headers) {
         if (FILTER_HEADERS.includes(key)) continue
         headers.set(key, value as string)
       }
 
-      const buffers: any[] = []
-      for await (const chunk of koa.req) {
+      const buffers: Uint8Array[] = []
+      for await (const chunk of req.body!) {
         buffers.push(chunk)
       }
       const body = Binary.fromSource(Buffer.concat(buffers))
-      const response = await ctx.satori.handleInternalRoute(koa.method as any, url, headers, body)
-      for (const [key, value] of response.headers ?? new Headers()) {
-        koa.set(key, value)
-      }
-      koa.status = response.status
-      koa.body = response.body ? Buffer.from(response.body) : ''
+      return ctx.satori.handleInternalRoute(req.method as any, url, headers, body)
     })
 
-    ctx.server.get(path + '/v1/proxy/:url(.+)', async (koa) => {
+    ctx.server.get('/v1/proxy/*url', async (req, res) => {
       let url: URL
       try {
-        url = new URL(koa.params.url)
+        url = new URL(req.params.url)
       } catch {
-        koa.body = 'invalid url'
-        koa.status = 400
+        res.body = 'invalid url'
+        res.status = 400
         return
       }
 
-      koa.header['Access-Control-Allow-Origin'] = ctx.server.config.selfUrl || '*'
+      req.headers.set('access-control-allow-origin', ctx.server.config.selfUrl || '*')
       const proxyUrls = [...ctx.satori.proxyUrls]
       if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
-        koa.body = 'forbidden'
-        koa.status = 403
+        res.body = 'forbidden'
+        res.status = 403
         return
       }
 
       try {
-        koa.body = Readable.fromWeb(await ctx.http.get(url.href, { responseType: 'stream' }))
+        res.body = await ctx.http.get(url.href, { responseType: 'stream' })
       } catch (error) {
         if (!ctx.http.isError(error) || !error.response) throw error
-        koa.status = error.response.status
-        koa.body = error.response.data
-        for (const [key, value] of error.response.headers) {
-          koa.set(key, value)
-        }
+        return error.response
       }
     })
 
-    ctx.server.all(path + '/v1/admin/:path(.+)', async (koa) => {
-      koa.redirect(`${path}/v1/meta/${koa.params.path}`)
+    ctx.server.all('/v1/admin/*path', async (req, res) => {
+      res.status = 301
+      res.headers.set('location', `/v1/meta/${req.params.path}`)
     })
 
-    ctx.server.post(path + '/v1/meta', async (koa) => {
-      if (checkAuth(koa)) return
-      koa.body = Universal.transformKey(ctx.satori.toJSON(), snakeCase)
-      koa.status = 200
+    ctx.server.post('/v1/meta', async (req, res) => {
+      if (checkAuth(req, res)) return
+      res.body = JSON.stringify(Universal.transformKey(ctx.satori.toJSON(), snakeCase))
+      res.headers.set('content-type', 'application/json')
+      res.status = 200
     })
 
-    ctx.server.post(path + '/v1/meta/webhook.create', async (koa) => {
-      if (checkAuth(koa)) return
-      const webhook: SatoriServer.Webhook = Universal.transformKey(koa.request.body, camelCase)
+    ctx.server.post('/v1/meta/webhook.create', async (req, res) => {
+      if (checkAuth(req, res)) return
+      const webhook: SatoriServer.Webhook = Universal.transformKey(await req.json(), camelCase)
       const index = config.webhooks.findIndex(({ url }) => url === webhook.url)
       if (index === -1) {
         config.webhooks.push(webhook)
-        ctx.scope.update(config, false)
+        ctx.fiber.update(config)
       }
-      koa.body = {}
-      koa.status = 200
+      res.body = JSON.stringify({})
+      res.headers.set('content-type', 'application/json')
+      res.status = 200
     })
 
-    ctx.server.post(path + '/v1/meta/webhook.delete', async (koa) => {
-      if (checkAuth(koa)) return
-      const url = koa.request.body.url
-      const index = config.webhooks.findIndex(webhook => webhook.url === url)
+    ctx.server.post('/v1/meta/webhook.delete', async (req, res) => {
+      if (checkAuth(req, res)) return
+      const body = await req.json()
+      const index = config.webhooks.findIndex(webhook => webhook.url === body.url)
       if (index !== -1) {
         config.webhooks.splice(index, 1)
-        ctx.scope.update(config, false)
+        ctx.fiber.update(config)
       }
-      koa.body = {}
-      koa.status = 200
+      res.body = JSON.stringify({})
+      res.headers.set('content-type', 'application/json')
+      res.status = 200
     })
 
-    const buffer: Session[] = []
-
-    const timeout = setInterval(() => {
-      while (buffer[0]?.timestamp! + config.websocket?.resumeTimeout! < Date.now()) {
-        buffer.shift()
-      }
-    }, Time.second * 10)
-
-    ctx.on('dispose', () => clearInterval(timeout))
-
-    const layer = ctx.server.ws(path + '/v1/events', (socket) => {
+    const route = ctx.server.ws('/v1/events', async (req, next) => {
+      const socket = await next()
       const client = socket[kClient] = new Client()
 
       socket.addEventListener('message', (event) => {
@@ -225,7 +201,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
             body: Universal.transformKey(ctx.satori.toJSON(), snakeCase),
           }))
           if (!payload.body?.sn) return
-          for (const session of buffer) {
+          for (const session of this.buffer) {
             if (session.id <= payload.body.sn) continue
             dispatch(socket, Universal.transformKey(session.toJSON(), snakeCase))
           }
@@ -246,7 +222,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
     }
 
     function sendEvent(opcode: Universal.Opcode, body: any) {
-      for (const socket of layer.clients) {
+      for (const socket of route.clients) {
         if (!socket[kClient]?.authorized) continue
         dispatch(socket, body)
       }
@@ -259,7 +235,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
               'Authorization': `Bearer ${webhook.token}`,
             } : {},
           },
-        }).catch(logger.warn)
+        }).catch(ctx.logger.warn)
       }
     }
 
@@ -276,6 +252,15 @@ class SatoriServer extends Service<SatoriServer.Config> {
 
   get url() {
     return (this.ctx.server.config.selfUrl ?? this.ctx.server.selfUrl) + this.config.path
+  }
+
+  * [Service.init]() {
+    const timeout = setInterval(() => {
+      while (this.buffer[0]?.timestamp! + this.config.websocket?.resumeTimeout! < Date.now()) {
+        this.buffer.shift()
+      }
+    }, Time.second * 10)
+    yield () => clearInterval(timeout)
   }
 }
 

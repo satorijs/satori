@@ -1,17 +1,17 @@
 import { Context, Service } from 'cordis'
 import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
-import { ExtractParams, InternalRequest, InternalRouter, JsonForm } from './internal'
+import { InternalRequest, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
 import { HTTP } from '@cordisjs/plugin-http'
-import { Meta, Response, SendOptions } from '@satorijs/protocol'
-import { Fragment, h, Render } from '@satorijs/element'
-
-export { h, Element, Fragment, Render } from '@satorijs/element'
+import { Meta, SendOptions } from '@satorijs/protocol'
+import { ExtractParams } from 'path-to-regexp-typed'
+import * as h from '@cordisjs/element'
 
 export * from 'cordis'
 export * from 'cosmokit'
 
+export * from '@cordisjs/element'
 export * as Universal from '@satorijs/protocol'
 
 export * from './bot'
@@ -67,7 +67,7 @@ declare module 'cordis' {
   }
 }
 
-export type Component<S extends Session = Session> = Render<Awaitable<Fragment>, S>
+export type Component<S extends Session = Session> = h.Render<Awaitable<h.Fragment>, S>
 
 export namespace Component {
   export interface Options {
@@ -152,28 +152,32 @@ export class Satori<C extends Context = Context> extends Service<C> {
     this._internalRouter = new InternalRouter(ctx)
 
     this.defineInternalRoute('/_tmp/:id', async ({ params, method }) => {
-      if (method !== 'GET') return { status: 405 }
-      return this._tempStore[params.id] ?? { status: 404 }
+      if (method !== 'GET') return new Response(null, { status: 405 })
+      return this._tempStore[params.id] ?? new Response(null, { status: 404 })
     })
 
     this.defineInternalRoute('/_api/:name', async ({ bot, headers, params, method, body }) => {
-      if (method !== 'POST') return { status: 405 }
-      const args = await JsonForm.decode({ body, headers: new Headers(headers) })
-      if (!args) return { status: 400 }
+      if (method !== 'POST') return new Response(null, { status: 405 })
+      const args = await JsonForm.decode(new Response(body, { headers }))
+      if (!args) return new Response(null, { status: 400 })
       try {
         let result = bot.internal[params.name](...args)
         if (headers['satori-pagination']) {
           if (!result?.[Symbol.for('satori.pagination')]) {
-            return { status: 400, statusText: 'This API does not support pagination' }
+            return new Response('This API does not support pagination', {
+              status: 400,
+              headers: {
+                'content-type': 'text/plain',
+              },
+            })
           }
           result = await result[Symbol.for('satori.pagination')]()
         } else {
           result = await result
         }
-        return { ...await JsonForm.encode(result), status: 200 }
+        return new Response(null, { ...await JsonForm.encode(result), status: 200 })
       } catch (error) {
         if (!ctx.http.isError(error) || !error.response) throw error
-        // FIXME: missing response body
         return error.response
       }
     })
@@ -214,13 +218,13 @@ export class Satori<C extends Context = Context> extends Service<C> {
 
   async handleInternalRoute(method: HTTP.Method, url: URL, headers = new Headers(), body?: any): Promise<Response> {
     const capture = /^([^/]+)\/([^/]+)(\/.+)$/.exec(url.pathname)
-    if (!capture) return { status: 400 }
+    if (!capture) return new Response(null, { status: 404 })
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
-    if (!bot) return { status: 404 }
+    if (!bot) return new Response(null, { status: 404 })
     let response = await this._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
     response ??= await bot._internalRouter.handle(bot, method, path, url.searchParams, headers, body)
-    if (!response) return { status: 404 }
+    if (!response) return new Response(null, { status: 404 })
     return response
   }
 

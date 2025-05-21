@@ -1,11 +1,12 @@
 import { clone, Dict, isNonNullable, pick } from 'cosmokit'
 import { Context, Service } from 'cordis'
-import { Fragment } from '@satorijs/element'
+import * as h from '@cordisjs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
-import { ExtractParams, InternalRequest, InternalRouter } from './internal'
-import { Event, List, Login, Methods, Response, SendOptions, Status, Upload, User } from '@satorijs/protocol'
+import { ExtractParams } from 'path-to-regexp-typed'
+import { InternalRequest, InternalRouter } from './internal'
+import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
 
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
@@ -51,25 +52,22 @@ export abstract class Bot<C extends Context = Context, T = any> {
     this._internalRouter = new InternalRouter(ctx)
     this.context = ctx
     ctx.bots.push(this)
-    this.context.emit('bot-added', this)
     this.platform = adapterName
 
     this.features = Object.entries(Methods)
       .filter(([, value]) => this[value.name])
       .map(([key]) => key)
 
-    ctx.on('ready', async () => {
-      await Promise.resolve()
-      this.dispatchLoginEvent('login-added')
-      return this.start()
-    })
-
-    ctx.on('dispose', () => this.dispose())
-
     ctx.on('interaction/button', (session) => {
       const cb = this.callbacks[session.event.button!.id]
       if (cb) cb(session)
     })
+  }
+
+  * [Service.init]() {
+    yield () => this.dispose()
+    this.dispatchLoginEvent('login-added')
+    return this.start()
   }
 
   getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0], slash?: boolean) {
@@ -94,7 +92,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
     const index = this.ctx.bots.findIndex(bot => bot.sid === this.sid)
     if (index >= 0) {
       this.ctx.bots.splice(index, 1)
-      this.context.emit('bot-removed', this)
       this.dispatchLoginEvent('login-removed')
     }
     return this.stop()
@@ -115,7 +112,6 @@ export abstract class Bot<C extends Context = Context, T = any> {
     if (value === this._status) return
     this._status = value
     if (this.ctx.bots?.some(bot => bot.sid === this.sid)) {
-      this.context.emit('bot-status-updated', this)
       this.dispatchLoginEvent('login-updated')
     }
   }
@@ -185,46 +181,43 @@ export abstract class Bot<C extends Context = Context, T = any> {
     }
   }
 
-  async createMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions) {
+  async createMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
     const { MessageEncoder } = this.constructor as typeof Bot
     return new MessageEncoder!(this, channelId, referrer, options).send(content)
   }
 
-  async sendMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions) {
+  async sendMessage(channelId: string, content: h.Fragment, referrer?: any, options?: SendOptions) {
     const messages = await this.createMessage(channelId, content, referrer, options)
     return messages.map(message => message.id).filter(isNonNullable)
   }
 
-  async sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions) {
+  async sendPrivateMessage(userId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
     const { id } = await this.createDirectChannel(userId, guildId ?? options?.session?.guildId)
     return this.sendMessage(id, content, null, options)
   }
 
-  async createUpload(...uploads: Upload[]): Promise<string[]> {
+  async createUpload(...blobs: Blob[]): Promise<string[]> {
     const ids: string[] = []
-    for (const upload of uploads) {
+    for (const blob of blobs) {
       const id = Math.random().toString(36).slice(2)
       const headers = new Headers()
-      headers.set('content-type', upload.type)
-      if (upload.filename) {
-        headers.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(upload.filename)}`)
+      // encode `file.name` into `content-disposition` header
+      if (typeof blob['name'] === 'string') {
+        headers.set('content-disposition', `attachment; filename*=UTF-8''${encodeURIComponent(blob['name'])}`)
       }
-      this.ctx.satori._tempStore[id] = {
-        status: 200,
-        body: upload.data,
-        headers,
-      }
+      this.ctx.satori._tempStore[id] = new Response(blob)
       ids.push(id)
     }
-    const timer = setTimeout(() => dispose(), 600000)
-    const dispose = () => {
-      _dispose()
-      clearTimeout(timer)
-      for (const id of ids) {
-        delete this.ctx.satori._tempStore[id]
+    const ctx = this.ctx
+    const dispose = this.ctx.effect(function* () {
+      yield () => {
+        for (const id of ids) {
+          delete ctx.satori._tempStore[id]
+        }
       }
-    }
-    const _dispose = this.ctx.on('dispose', dispose)
+      const timer = setTimeout(dispose, 600000)
+      yield () => clearTimeout(timer)
+    }, 'bot.createUpload()')
     return ids.map(id => this.getInternalUrl(`/_tmp/${id}`))
   }
 
@@ -240,7 +233,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
 
   toJSON(): Login {
     return clone({
-      ...pick(this, ['sn', 'user', 'platform', 'selfId', 'status', 'hidden', 'features']),
+      ...pick(this, ['sn', 'user', 'platform', 'status', 'hidden', 'features']),
       adapter: this.adapterName,
     })
   }
