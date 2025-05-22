@@ -7,6 +7,17 @@ export * from './types'
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   id: data.id,
   name: data.name,
+  avatar: data.icon,
+})
+
+export const adaptChannel = (data: Kook.Channel): Universal.Channel => ({
+  id: data.id,
+  type: data.is_category ? Universal.Channel.Type.CATEGORY
+    : data.type === 1 ? Universal.Channel.Type.TEXT
+      : data.type === 2 ? Universal.Channel.Type.VOICE
+        : Universal.Channel.Type.TEXT,
+  name: data.name,
+  parentId: data.parent_id,
 })
 
 export const adaptUser = (user: Kook.User): Universal.User => ({
@@ -179,7 +190,10 @@ async function adaptMessageModify(bot: KookBot, data: Kook.Data, meta: Kook.Noti
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
 }
 
-function adaptReaction(body: Kook.NoticeBody, session: Session) {
+function adaptReaction(data: Kook.Data, body: Kook.NoticeBody, session: Session) {
+  if (data.channel_type === 'GROUP') {
+    session.guildId = data.target_id
+  }
   session.channelId = body.channel_id
   session.messageId = body.msg_id
   session.userId = body.user_id
@@ -217,12 +231,12 @@ export async function adaptSession<C extends Context>(bot: KookBot<C>, input: an
       case 'added_reaction':
       case 'private_added_reaction':
         session.type = 'reaction-added'
-        adaptReaction(body, session)
+        adaptReaction(input, body, session)
         break
       case 'deleted_reaction':
       case 'private_deleted_reaction':
         session.type = 'reaction-deleted'
-        adaptReaction(body, session)
+        adaptReaction(input, body, session)
         break
       case 'updated_channel':
       case 'deleted_channel':
