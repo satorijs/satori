@@ -35,11 +35,13 @@
     "im",
     "chat"
   ],
+  "peerDependencies": {
+    "@cordisjs/plugin-http": "^1.2.0",
+    "@satorijs/core": "^5.0.0-alpha.0"
+  },
   "devDependencies": {
+    "@cordisjs/plugin-http": "^1.2.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "cordis": "^4.0.0-beta.3"
-  },
-  "peerDependencies": {
-    "@satorijs/core": "^5.0.0-alpha.0"
   }
 }

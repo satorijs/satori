@@ -5,7 +5,7 @@ import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
 import { ExtractParams } from 'path-to-regexp-typed'
-import { InternalRequest, InternalRouter } from './internal'
+import { InternalRouteCallback, InternalRouter } from './internal'
 import { Event, List, Login, Methods, SendOptions, Status, User } from '@satorijs/protocol'
 
 /* eslint-enable @typescript-eslint/no-unused-vars */
@@ -76,7 +76,7 @@ export abstract class Bot<C extends Context = Context, T = any> {
     return `internal${slash ? '/' : ':'}${this.platform}/${this.selfId}${path}${search}`
   }
 
-  defineInternalRoute<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
+  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
     return this._internalRouter.define(path, callback)
   }
 

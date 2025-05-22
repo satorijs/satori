@@ -1,22 +1,17 @@
 import { Context, Service } from 'cordis'
 import { Dict, remove, valueMap } from 'cosmokit'
-import { HTTP } from '@cordisjs/plugin-http'
 import { ExtractParams, Key, pathToRegexp } from 'path-to-regexp-typed'
 import { Bot } from '.'
 
-export interface InternalRequest<C extends Context, P = any> {
-  bot: Bot<C>
-  method: HTTP.Method
-  params: P
-  query: URLSearchParams
-  headers: Headers
-  body: ArrayBuffer
-}
+export type InternalRouteCallback<C extends Context, T = any> = (
+  request: Request & { params: T; query: URLSearchParams },
+  bot: Bot<C>,
+) => Promise<Response>
 
 export interface InternalRoute<C extends Context> {
   regexp: RegExp
   keys: Key[]
-  callback: (request: InternalRequest<C>) => Promise<Response>
+  callback: InternalRouteCallback<C>
 }
 
 export class InternalRouter<C extends Context> {
@@ -28,7 +23,7 @@ export class InternalRouter<C extends Context> {
 
   constructor(public ctx: Context) {}
 
-  define<P extends string>(path: P, callback: (request: InternalRequest<C, ExtractParams<P>>) => Promise<Response>) {
+  define<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
     return this.ctx.effect(() => {
       const route: InternalRoute<C> = {
         ...pathToRegexp(path),
@@ -39,7 +34,7 @@ export class InternalRouter<C extends Context> {
     })
   }
 
-  handle(bot: Bot<C>, method: HTTP.Method, path: string, query: URLSearchParams, headers: Headers, body: any): undefined | Promise<Response> {
+  handle(bot: Bot<C>, req: Request, path: string, query: URLSearchParams): undefined | Promise<Response> {
     for (const route of this.routes) {
       const capture = route.regexp.exec(path)
       if (!capture) continue
@@ -47,14 +42,8 @@ export class InternalRouter<C extends Context> {
       route.keys.forEach(({ name }, index) => {
         params[name] = capture[index + 1]
       })
-      return route.callback({
-        bot,
-        method,
-        params,
-        query,
-        body,
-        headers,
-      })
+      const _req = Object.assign(Object.create(req), { params, query })
+      return route.callback(_req, bot)
     }
   }
 }
@@ -86,7 +75,7 @@ export namespace JsonForm {
     })
   }
 
-  export async function decode(body: Response) {
+  export async function decode(body: Response | Request) {
     const type = body.headers.get('content-type')
     if (type?.startsWith('multipart/form-data')) {
       const form = await body.formData()

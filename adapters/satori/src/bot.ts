@@ -10,17 +10,17 @@ function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix =
       bot.logger.debug('[request.internal]', key, args)
 
       const impl = async (pagination = false) => {
-        const request = await JsonForm.encode(args)
+        const req = await JsonForm.encode(args)
         if (pagination) {
-          request.headers.set('Satori-Pagination', 'true')
+          req.headers.set('satori-pagination', 'true')
         }
-        const response = await bot.request('/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true), {
-          method: 'POST',
-          headers: Object.fromEntries(request.headers.entries()),
-          data: request.body,
-          responseType: 'arraybuffer',
-        })
-        return await JsonForm.decode(response)
+        const res = await bot._request(
+          'POST',
+          '/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true),
+          req.body,
+          req.headers,
+        )
+        return await JsonForm.decode(res)
       }
 
       let promise: Promise<any> | undefined
@@ -72,23 +72,23 @@ export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Log
     Object.assign(this, omit(config, ['sn', 'adapter']))
 
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
-      return this.request(`/v1/${this.getInternalUrl('/' + params.path, query, true)}`, {
-        method,
+      return this._request(
+        method as any,
+        `/v1/${this.getInternalUrl('/' + params.path, query, true)}`,
+        method === 'GET' || method === 'HEAD' ? null : body,
         headers,
-        data: method === 'GET' || method === 'HEAD' ? null : body,
-        responseType: 'arraybuffer',
-        validateStatus: () => true,
-      })
+      )
     })
   }
 
-  request(url: string, config: HTTP.RequestConfig) {
-    return this.adapter.http(url, {
-      ...config,
+  _request(method: HTTP.Method, path: string, body: BodyInit | null, headers?: HeadersInit) {
+    return this.adapter.http(path, {
+      method,
+      data: body,
       headers: {
-        ...config.headers,
-        'Satori-Platform': this.platform,
-        'Satori-User-ID': this.user?.id,
+        ...Object.fromEntries(new Headers(headers)),
+        'satori-platform': this.platform,
+        'satori-user-id': this.user?.id,
       },
     })
   }
@@ -122,10 +122,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
       }
     }
     this.logger.debug('[request]', key, payload)
-    const result = await this.request('/v1/' + key, {
-      method: 'POST',
-      data: payload,
-    })
+    const result = await this._request('POST', '/v1/' + key, payload)
     return Universal.transformKey(result, camelCase)
   }
 }

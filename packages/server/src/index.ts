@@ -1,6 +1,7 @@
 import { Context, Inject, Schema, Service, Session, Universal } from '@satorijs/core'
-import { Binary, camelCase, snakeCase, Time } from 'cosmokit'
+import { camelCase, snakeCase, Time } from 'cosmokit'
 import { Request, Response } from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-http'
 import type {} from '@cordisjs/plugin-logger'
 import { WebSocket } from 'ws'
 
@@ -21,11 +22,9 @@ const FILTER_HEADERS = [
   'authorization',
   'satori-user-id',
   'satori-platform',
-  'x-self-id',
-  'x-platform',
 ]
 
-@Inject('http')
+@Inject('http', true)
 @Inject('server', true, { path: '/satori' })
 @Inject('logger', true, { name: 'satori:server' })
 class SatoriServer<C extends Context = Context> extends Service<C> {
@@ -97,19 +96,13 @@ class SatoriServer<C extends Context = Context> extends Service<C> {
       for (const [key, value] of req.query) {
         url.searchParams.append(key, value)
       }
-
       const headers = new Headers()
       for (const [key, value] of req.headers) {
         if (FILTER_HEADERS.includes(key)) continue
         headers.set(key, value as string)
       }
-
-      const buffers: Uint8Array[] = []
-      for await (const chunk of req.body!) {
-        buffers.push(chunk)
-      }
-      const body = Binary.fromSource(Buffer.concat(buffers))
-      return ctx.satori.handleInternalRoute(req.method as any, url, headers, body)
+      const _req = new globalThis.Request(url, { headers, body: req.body })
+      return ctx.satori.handleInternalRoute(_req)
     })
 
     ctx.server.get('/v1/proxy/*url', async (req, res) => {
