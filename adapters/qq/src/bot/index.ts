@@ -5,6 +5,7 @@ import { QQGuildBot } from './guild'
 import { QQMessageEncoder } from '../message'
 import { GroupInternal } from '../internal'
 import { HttpServer } from '../http'
+import { decodeUser } from '../utils'
 
 interface GetAppAccessTokenResult {
   access_token: string
@@ -54,9 +55,7 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
 
   async initialize() {
     const user = await this.guildBot.internal.getMe()
-    Object.assign(this.user, user)
-    this.user.name = user.username
-    this.user.isBot = true
+    Object.assign(this.user, decodeUser(user))
   }
 
   async stop() {

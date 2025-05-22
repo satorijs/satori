@@ -5,13 +5,18 @@ import { QQBot } from './bot'
 export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
   name: guild.name,
+  avatar: guild.icon,
 })
 
 export const decodeChannel = (channel: QQ.Channel): Universal.Channel => ({
   id: channel.id,
   name: channel.name,
-  // TODO support more channel types
-  type: Universal.Channel.Type.TEXT,
+  type: channel.type === QQ.ChannelType.TEXT ? Universal.Channel.Type.TEXT
+    : channel.type === QQ.ChannelType.VOICE ? Universal.Channel.Type.VOICE
+      : channel.type === QQ.ChannelType.GROUP ? Universal.Channel.Type.CATEGORY
+        : Universal.Channel.Type.TEXT,
+  parentId: channel.parent_id,
+  position: channel.position,
 })
 
 export const decodeUser = (user: QQ.User): Universal.User => ({
@@ -22,9 +27,10 @@ export const decodeUser = (user: QQ.User): Universal.User => ({
 })
 
 export const decodeGuildMember = (member: QQ.Member): Universal.GuildMember => ({
-  user: decodeUser(member.user),
+  user: member.user ? decodeUser(member.user) : undefined,
   nick: member.nick,
   roles: member.roles,
+  joinedAt: new Date(member.joined_at).valueOf(),
 })
 
 export function decodeGroupMessage(

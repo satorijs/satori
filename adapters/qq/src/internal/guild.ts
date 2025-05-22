@@ -63,7 +63,7 @@ declare module './internal' {
       add: string
       remove: string
     }): Promise<void>
-    getMessage(channelId: string, messageId: string): Promise<QQ.Message>
+    getMessage(channelId: string, messageId: string): Promise<{ message: QQ.Message }>
     sendMessage(channelId: string, data: QQ.Message.ChannelRequest): Promise<QQ.Message>
     sendDM(guildId: string, data: QQ.Message.ChannelRequest): Promise<QQ.Message>
     deleteMessage(channelId: string, messageId: string, params?: {
