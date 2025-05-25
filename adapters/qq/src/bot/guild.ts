@@ -3,6 +3,7 @@ import { QQBot } from '.'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from '../utils'
 import { GuildInternal } from '../internal'
 import { QQGuildMessageEncoder } from '../message'
+import * as QQ from '../types'
 
 export namespace QQGuildBot {
   export interface Config {
@@ -59,6 +60,23 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     return decodeChannel(channel)
   }
 
+  async createChannel(guildId: string, data: Partial<Universal.Channel>) {
+    const channel = await this.internal.createGuildChannel(guildId, {
+      name: data.name,
+      type: data.type === Universal.Channel.Type.TEXT ? QQ.ChannelType.TEXT
+        : data.type === Universal.Channel.Type.CATEGORY ? QQ.ChannelType.GROUP
+          : data.type === Universal.Channel.Type.VOICE ? QQ.ChannelType.VOICE
+            : QQ.ChannelType.TEXT,
+      parent_id: data.parentId,
+      position: data.position,
+      sub_type: 0,
+      private_type: 0,
+      speak_permission: 1,
+      private_user_ids: [],
+    })
+    return decodeChannel(channel)
+  }
+
   async getGuildMemberList(guildId: string, next?: string): Promise<Universal.List<Universal.GuildMember>> {
     const members = await this.internal.getGuildMembers(guildId, {
       limit: 400,
@@ -103,7 +121,7 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
 
   async getMessage(channelId: string, messageId: string): Promise<Universal.Message> {
     const r = await this.internal.getMessage(channelId, messageId)
-    return decodeMessage(this, r)
+    return decodeMessage(this, r.message)
   }
 
   async deleteMessage(channelId: string, messageId: string) {
