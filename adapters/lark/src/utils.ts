@@ -3,6 +3,7 @@ import { Context, h, pick, Session, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { GetImChatResponse, ListChat, Message, User } from './types'
 import { MessageContent } from './content'
+import { hyphenate } from 'cosmokit'
 
 export interface EventHeader<K extends keyof Events> {
   event_id: string
@@ -291,11 +292,11 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         }
         for (const [key, value] of Object.entries(options)) {
           if (value === true) {
-            content += ` --${key} 1`
+            content += ` --${hyphenate(key)} 1`
           } else if (value === false) {
-            content += ` --${key} 0`
+            content += ` --${hyphenate(key)} 0`
           } else {
-            content += ` --${key} ${toArg(value)}`
+            content += ` --${hyphenate(key)} ${toArg(value)}`
           }
         }
         if (body.event.action.input_value) {
