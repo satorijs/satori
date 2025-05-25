@@ -126,6 +126,7 @@ export namespace QQBot {
     manualAcknowledge: boolean
     protocol: 'websocket' | 'webhook'
     path?: string
+    gatewayUrl?: string
   }
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
@@ -149,6 +150,7 @@ export namespace QQBot {
     ]),
     Schema.object({
       manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
+      gatewayUrl: Schema.string().role('link').description('覆写 WebSocket 地址。'),
     }).description('高级设置'),
   ] as const)
 }
