@@ -1,352 +1,466 @@
-import { BankCard, BankInfo, BodyInfo, BusinessLicense, ChinesePassport, DrvingLicense, ExtractCopy, ExtractCurrency, ExtractPrice, ExtractTime, FoodManageLicense, FoodProduceLicense, HealthCertificate, HkmMainlandTravelPermit, IdCard, RecognizedEntities, Resume, TaxiInvoice, TrainInvoice, TwMainlandTravelPermit, VatInvoice, VehicleInvoice, VehicleLicense } from '.'
+import * as Lark from '.'
 import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
-    /**
-     * 识别文件中的简历信息
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/resume/parse
-     */
-    parseDocumentAiResume(form: ParseDocumentAiResumeForm): Promise<ParseDocumentAiResumeResponse>
-    /**
-     * 识别文件中的机动车发票
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_invoice/recognize
-     */
-    recognizeDocumentAiVehicleInvoice(form: RecognizeDocumentAiVehicleInvoiceForm): Promise<RecognizeDocumentAiVehicleInvoiceResponse>
-    /**
-     * 识别文件中的健康证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/health_certificate/recognize
-     */
-    recognizeDocumentAiHealthCertificate(form: RecognizeDocumentAiHealthCertificateForm): Promise<RecognizeDocumentAiHealthCertificateResponse>
-    /**
-     * 识别文件中的港澳居民来往内地通行证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/hkm_mainland_travel_permit/recognize
-     */
-    recognizeDocumentAiHkmMainlandTravelPermit(form: RecognizeDocumentAiHkmMainlandTravelPermitForm): Promise<RecognizeDocumentAiHkmMainlandTravelPermitResponse>
-    /**
-     * 识别文件中的台湾居民来往大陆通行证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/tw_mainland_travel_permit/recognize
-     */
-    recognizeDocumentAiTwMainlandTravelPermit(form: RecognizeDocumentAiTwMainlandTravelPermitForm): Promise<RecognizeDocumentAiTwMainlandTravelPermitResponse>
-    /**
-     * 识别文件中的中国护照
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/chinese_passport/recognize
-     */
-    recognizeDocumentAiChinesePassport(form: RecognizeDocumentAiChinesePassportForm): Promise<RecognizeDocumentAiChinesePassportResponse>
-    /**
-     * 识别文件中的银行卡
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/bank_card/recognize
-     */
-    recognizeDocumentAiBankCard(form: RecognizeDocumentAiBankCardForm): Promise<RecognizeDocumentAiBankCardResponse>
-    /**
-     * 识别文件中的行驶证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_license/recognize
-     */
-    recognizeDocumentAiVehicleLicense(form: RecognizeDocumentAiVehicleLicenseForm): Promise<RecognizeDocumentAiVehicleLicenseResponse>
-    /**
-     * 识别文件中的火车票
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/train_invoice/recognize
-     */
-    recognizeDocumentAiTrainInvoice(form: RecognizeDocumentAiTrainInvoiceForm): Promise<RecognizeDocumentAiTrainInvoiceResponse>
-    /**
-     * 识别文件中的出租车发票
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/taxi_invoice/recognize
-     */
-    recognizeDocumentAiTaxiInvoice(form: RecognizeDocumentAiTaxiInvoiceForm): Promise<RecognizeDocumentAiTaxiInvoiceResponse>
-    /**
-     * 识别文件中的身份证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/id_card/recognize
-     */
-    recognizeDocumentAiIdCard(form: RecognizeDocumentAiIdCardForm): Promise<RecognizeDocumentAiIdCardResponse>
-    /**
-     * 识别文件中的食品生产许可证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_produce_license/recognize
-     */
-    recognizeDocumentAiFoodProduceLicense(form: RecognizeDocumentAiFoodProduceLicenseForm): Promise<RecognizeDocumentAiFoodProduceLicenseResponse>
-    /**
-     * 识别文件中的食品经营许可证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_manage_license/recognize
-     */
-    recognizeDocumentAiFoodManageLicense(form: RecognizeDocumentAiFoodManageLicenseForm): Promise<RecognizeDocumentAiFoodManageLicenseResponse>
-    /**
-     * 识别文件中的驾驶证
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/driving_license/recognize
-     */
-    recognizeDocumentAiDrivingLicense(form: RecognizeDocumentAiDrivingLicenseForm): Promise<RecognizeDocumentAiDrivingLicenseResponse>
-    /**
-     * 识别文件中的增值税发票
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vat_invoice/recognize
-     */
-    recognizeDocumentAiVatInvoice(form: RecognizeDocumentAiVatInvoiceForm): Promise<RecognizeDocumentAiVatInvoiceResponse>
-    /**
-     * 识别文件中的营业执照
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_license/recognize
-     */
-    recognizeDocumentAiBusinessLicense(form: RecognizeDocumentAiBusinessLicenseForm): Promise<RecognizeDocumentAiBusinessLicenseResponse>
-    /**
-     * 提取文件中的合同字段
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/contract/field_extraction
-     */
-    fieldExtractionDocumentAiContract(form: FieldExtractionDocumentAiContractForm): Promise<FieldExtractionDocumentAiContractResponse>
-    /**
-     * 识别文件中的名片
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_card/recognize
-     */
-    recognizeDocumentAiBusinessCard(form: RecognizeDocumentAiBusinessCardForm): Promise<RecognizeDocumentAiBusinessCardResponse>
+    documentAi: DocumentAi.Methods
   }
 }
 
-export interface ParseDocumentAiResumeForm {
-  /** 简历文件，支持 PDF / DOCX / PNG / JPG */
-  file: Blob
-}
+export namespace DocumentAi {
+  export interface Methods {
+    resume: Resume.Methods
+    vehicleInvoice: VehicleInvoice.Methods
+    healthCertificate: HealthCertificate.Methods
+    hkmMainlandTravelPermit: HkmMainlandTravelPermit.Methods
+    twMainlandTravelPermit: TwMainlandTravelPermit.Methods
+    chinesePassport: ChinesePassport.Methods
+    bankCard: BankCard.Methods
+    vehicleLicense: VehicleLicense.Methods
+    trainInvoice: TrainInvoice.Methods
+    taxiInvoice: TaxiInvoice.Methods
+    idCard: IdCard.Methods
+    foodProduceLicense: FoodProduceLicense.Methods
+    foodManageLicense: FoodManageLicense.Methods
+    drivingLicense: DrivingLicense.Methods
+    vatInvoice: VatInvoice.Methods
+    businessLicense: BusinessLicense.Methods
+    contract: Contract.Methods
+    businessCard: BusinessCard.Methods
+  }
 
-export interface ParseDocumentAiResumeResponse {
-  /** 简历信息 */
-  resumes?: Resume[]
-}
+  export namespace Resume {
+    export interface Methods {
+      /**
+       * 识别文件中的简历信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/resume/parse
+       */
+      parse(form: ParseForm): Promise<ParseResponse>
+    }
 
-export interface RecognizeDocumentAiVehicleInvoiceForm {
-  /** 识别的机动车发票源文件 */
-  file: Blob
-}
+    export interface ParseForm {
+      /** 简历文件，支持 PDF / DOCX / PNG / JPG */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiVehicleInvoiceResponse {
-  /** 机动车发票信息 */
-  vehicle_invoice?: VehicleInvoice
-}
+    export interface ParseResponse {
+      /** 简历信息 */
+      resumes?: Lark.Resume[]
+    }
+  }
 
-export interface RecognizeDocumentAiHealthCertificateForm {
-  /** 识别的健康证源文件 */
-  file: Blob
-}
+  export namespace VehicleInvoice {
+    export interface Methods {
+      /**
+       * 识别文件中的机动车发票
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_invoice/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiHealthCertificateResponse {
-  /** 健康证信息 */
-  health_certificate?: HealthCertificate
-}
+    export interface RecognizeForm {
+      /** 识别的机动车发票源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiHkmMainlandTravelPermitForm {
-  /** 识别的港澳居民来往内地通行证源文件 */
-  file: Blob
-}
+    export interface RecognizeResponse {
+      /** 机动车发票信息 */
+      vehicle_invoice?: Lark.VehicleInvoice
+    }
+  }
 
-export interface RecognizeDocumentAiHkmMainlandTravelPermitResponse {
-  /** 港澳居民来往内地通行证信息 */
-  hkm_mainland_travel_permit?: HkmMainlandTravelPermit
-}
+  export namespace HealthCertificate {
+    export interface Methods {
+      /**
+       * 识别文件中的健康证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/health_certificate/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiTwMainlandTravelPermitForm {
-  /** 识别的台湾居民来往大陆通行证源文件 */
-  file?: Blob
-}
+    export interface RecognizeForm {
+      /** 识别的健康证源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiTwMainlandTravelPermitResponse {
-  /** 台湾居民来往大陆通行证信息 */
-  tw_mainland_travel_permit?: TwMainlandTravelPermit
-}
+    export interface RecognizeResponse {
+      /** 健康证信息 */
+      health_certificate?: Lark.HealthCertificate
+    }
+  }
 
-export interface RecognizeDocumentAiChinesePassportForm {
-  /** 识别的中国护照源文件 */
-  file: Blob
-}
+  export namespace HkmMainlandTravelPermit {
+    export interface Methods {
+      /**
+       * 识别文件中的港澳居民来往内地通行证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/hkm_mainland_travel_permit/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiChinesePassportResponse {
-  /** 中国护照信息 */
-  chinese_passport?: ChinesePassport
-}
+    export interface RecognizeForm {
+      /** 识别的港澳居民来往内地通行证源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiBankCardForm {
-  /** 识别的银行卡源文件 */
-  file: Blob
-}
+    export interface RecognizeResponse {
+      /** 港澳居民来往内地通行证信息 */
+      hkm_mainland_travel_permit?: Lark.HkmMainlandTravelPermit
+    }
+  }
 
-export interface RecognizeDocumentAiBankCardResponse {
-  /** 银行卡信息 */
-  bank_card?: BankCard
-}
+  export namespace TwMainlandTravelPermit {
+    export interface Methods {
+      /**
+       * 识别文件中的台湾居民来往大陆通行证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/tw_mainland_travel_permit/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiVehicleLicenseForm {
-  /** 识别的行驶证源文件 */
-  file: Blob
-}
+    export interface RecognizeForm {
+      /** 识别的台湾居民来往大陆通行证源文件 */
+      file?: Blob
+    }
 
-export interface RecognizeDocumentAiVehicleLicenseResponse {
-  /** 行驶证信息 */
-  vehicle_license?: VehicleLicense
-}
+    export interface RecognizeResponse {
+      /** 台湾居民来往大陆通行证信息 */
+      tw_mainland_travel_permit?: Lark.TwMainlandTravelPermit
+    }
+  }
 
-export interface RecognizeDocumentAiTrainInvoiceForm {
-  /** 识别的火车票源文件 */
-  file: Blob
-}
+  export namespace ChinesePassport {
+    export interface Methods {
+      /**
+       * 识别文件中的中国护照
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/chinese_passport/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiTrainInvoiceResponse {
-  /** 火车票信息 */
-  train_invoices?: TrainInvoice[]
-}
+    export interface RecognizeForm {
+      /** 识别的中国护照源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiTaxiInvoiceForm {
-  /** 识别的出租车票源文件 */
-  file: Blob
-}
+    export interface RecognizeResponse {
+      /** 中国护照信息 */
+      chinese_passport?: Lark.ChinesePassport
+    }
+  }
 
-export interface RecognizeDocumentAiTaxiInvoiceResponse {
-  /** 出租车票信息 */
-  taxi_invoices?: TaxiInvoice[]
-}
+  export namespace BankCard {
+    export interface Methods {
+      /**
+       * 识别文件中的银行卡
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/bank_card/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiIdCardForm {
-  /** 识别身份证的源文件 */
-  file: Blob
-}
+    export interface RecognizeForm {
+      /** 识别的银行卡源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiIdCardResponse {
-  /** 身份证信息 */
-  id_card?: IdCard
-}
+    export interface RecognizeResponse {
+      /** 银行卡信息 */
+      bank_card?: Lark.BankCard
+    }
+  }
 
-export interface RecognizeDocumentAiFoodProduceLicenseForm {
-  /** 识别的食品生产许可证源文件 */
-  file: Blob
-}
+  export namespace VehicleLicense {
+    export interface Methods {
+      /**
+       * 识别文件中的行驶证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vehicle_license/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiFoodProduceLicenseResponse {
-  /** 食品生产许可证信息 */
-  food_produce_license?: FoodProduceLicense
-}
+    export interface RecognizeForm {
+      /** 识别的行驶证源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiFoodManageLicenseForm {
-  /** 识别的食品经营许可证源文件 */
-  file: Blob
-}
+    export interface RecognizeResponse {
+      /** 行驶证信息 */
+      vehicle_license?: Lark.VehicleLicense
+    }
+  }
 
-export interface RecognizeDocumentAiFoodManageLicenseResponse {
-  /** 食品经营许可证信息 */
-  food_manage_license?: FoodManageLicense
-}
+  export namespace TrainInvoice {
+    export interface Methods {
+      /**
+       * 识别文件中的火车票
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/train_invoice/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiDrivingLicenseForm {
-  /** 识别的驾驶证源文件 */
-  file: Blob
-}
+    export interface RecognizeForm {
+      /** 识别的火车票源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiDrivingLicenseResponse {
-  /** 驾驶证信息 */
-  driving_license?: DrvingLicense
-}
+    export interface RecognizeResponse {
+      /** 火车票信息 */
+      train_invoices?: Lark.TrainInvoice[]
+    }
+  }
 
-export interface RecognizeDocumentAiVatInvoiceForm {
-  /** 识别的增值税发票文件 */
-  file: Blob
-}
+  export namespace TaxiInvoice {
+    export interface Methods {
+      /**
+       * 识别文件中的出租车发票
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/taxi_invoice/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiVatInvoiceResponse {
-  /** 增值税发票信息 */
-  vat_invoices?: VatInvoice[]
-}
+    export interface RecognizeForm {
+      /** 识别的出租车票源文件 */
+      file: Blob
+    }
 
-export interface RecognizeDocumentAiBusinessLicenseForm {
-  /** 识别的营业执照源文件 */
-  file: Blob
-}
+    export interface RecognizeResponse {
+      /** 出租车票信息 */
+      taxi_invoices?: Lark.TaxiInvoice[]
+    }
+  }
 
-export interface RecognizeDocumentAiBusinessLicenseResponse {
-  /** 营业执照信息 */
-  business_license?: BusinessLicense
-}
+  export namespace IdCard {
+    export interface Methods {
+      /**
+       * 识别文件中的身份证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/id_card/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface FieldExtractionDocumentAiContractForm {
-  /** 合同字段解析的源文件，当前只支持pdf, doc, docx三种类型的文件 */
-  file: Blob
-  /** pdf页数限制，太长会导致latency增加，最大允许100页 */
-  pdf_page_limit: number
-  /** ocr 参数，当前支持force, pdf, unused三种格式 */
-  ocr_mode: 'force' | 'auto' | 'unused'
-}
+    export interface RecognizeForm {
+      /** 识别身份证的源文件 */
+      file: Blob
+    }
 
-export interface FieldExtractionDocumentAiContractResponse {
-  /** 文件的唯一id */
-  file_id?: string
-  /** 总交易金额 */
-  price?: ExtractPrice
-  /** 期限相关信息，包括开始日期、结束日期、有效时长 */
-  time?: ExtractTime
-  /** 盖章份数 */
-  copy?: ExtractCopy
-  /** 币种 */
-  currency?: ExtractCurrency
-  /** 合同标题 */
-  header?: string
-  /** 主体信息 */
-  body_info?: BodyInfo[]
-  /** 银行信息 */
-  bank_info?: BankInfo[]
-}
+    export interface RecognizeResponse {
+      /** 身份证信息 */
+      id_card?: Lark.IdCard
+    }
+  }
 
-export interface RecognizeDocumentAiBusinessCardForm {
-  /** 识别名片的源文件（支持 JPG / PNG / PDF） */
-  file: Blob
-}
+  export namespace FoodProduceLicense {
+    export interface Methods {
+      /**
+       * 识别文件中的食品生产许可证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_produce_license/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
 
-export interface RecognizeDocumentAiBusinessCardResponse {
-  /** 名片信息 */
-  business_cards?: RecognizedEntities[]
+    export interface RecognizeForm {
+      /** 识别的食品生产许可证源文件 */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 食品生产许可证信息 */
+      food_produce_license?: Lark.FoodProduceLicense
+    }
+  }
+
+  export namespace FoodManageLicense {
+    export interface Methods {
+      /**
+       * 识别文件中的食品经营许可证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/food_manage_license/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
+
+    export interface RecognizeForm {
+      /** 识别的食品经营许可证源文件 */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 食品经营许可证信息 */
+      food_manage_license?: Lark.FoodManageLicense
+    }
+  }
+
+  export namespace DrivingLicense {
+    export interface Methods {
+      /**
+       * 识别文件中的驾驶证
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/driving_license/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
+
+    export interface RecognizeForm {
+      /** 识别的驾驶证源文件 */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 驾驶证信息 */
+      driving_license?: Lark.DrvingLicense
+    }
+  }
+
+  export namespace VatInvoice {
+    export interface Methods {
+      /**
+       * 识别文件中的增值税发票
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/vat_invoice/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
+
+    export interface RecognizeForm {
+      /** 识别的增值税发票文件 */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 增值税发票信息 */
+      vat_invoices?: Lark.VatInvoice[]
+    }
+  }
+
+  export namespace BusinessLicense {
+    export interface Methods {
+      /**
+       * 识别文件中的营业执照
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_license/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
+
+    export interface RecognizeForm {
+      /** 识别的营业执照源文件 */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 营业执照信息 */
+      business_license?: Lark.BusinessLicense
+    }
+  }
+
+  export namespace Contract {
+    export interface Methods {
+      /**
+       * 提取文件中的合同字段
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/contract/field_extraction
+       */
+      fieldExtraction(form: FieldExtractionForm): Promise<FieldExtractionResponse>
+    }
+
+    export interface FieldExtractionForm {
+      /** 合同字段解析的源文件，当前只支持pdf, doc, docx三种类型的文件 */
+      file: Blob
+      /** pdf页数限制，太长会导致latency增加，最大允许100页 */
+      pdf_page_limit: number
+      /** ocr 参数，当前支持force, pdf, unused三种格式 */
+      ocr_mode: 'force' | 'auto' | 'unused'
+    }
+
+    export interface FieldExtractionResponse {
+      /** 文件的唯一id */
+      file_id?: string
+      /** 总交易金额 */
+      price?: Lark.ExtractPrice
+      /** 期限相关信息，包括开始日期、结束日期、有效时长 */
+      time?: Lark.ExtractTime
+      /** 盖章份数 */
+      copy?: Lark.ExtractCopy
+      /** 币种 */
+      currency?: Lark.ExtractCurrency
+      /** 合同标题 */
+      header?: string
+      /** 主体信息 */
+      body_info?: Lark.BodyInfo[]
+      /** 银行信息 */
+      bank_info?: Lark.BankInfo[]
+    }
+  }
+
+  export namespace BusinessCard {
+    export interface Methods {
+      /**
+       * 识别文件中的名片
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/ai/document_ai-v1/business_card/recognize
+       */
+      recognize(form: RecognizeForm): Promise<RecognizeResponse>
+    }
+
+    export interface RecognizeForm {
+      /** 识别名片的源文件（支持 JPG / PNG / PDF） */
+      file: Blob
+    }
+
+    export interface RecognizeResponse {
+      /** 名片信息 */
+      business_cards?: Lark.RecognizedEntities[]
+    }
+  }
 }
 
 Internal.define({
   '/document_ai/v1/resume/parse': {
-    POST: { name: 'parseDocumentAiResume', multipart: true },
+    POST: { name: 'documentAi.resume.parse', multipart: true },
   },
   '/document_ai/v1/vehicle_invoice/recognize': {
-    POST: { name: 'recognizeDocumentAiVehicleInvoice', multipart: true },
+    POST: { name: 'documentAi.vehicleInvoice.recognize', multipart: true },
   },
   '/document_ai/v1/health_certificate/recognize': {
-    POST: { name: 'recognizeDocumentAiHealthCertificate', multipart: true },
+    POST: { name: 'documentAi.healthCertificate.recognize', multipart: true },
   },
   '/document_ai/v1/hkm_mainland_travel_permit/recognize': {
-    POST: { name: 'recognizeDocumentAiHkmMainlandTravelPermit', multipart: true },
+    POST: { name: 'documentAi.hkmMainlandTravelPermit.recognize', multipart: true },
   },
   '/document_ai/v1/tw_mainland_travel_permit/recognize': {
-    POST: { name: 'recognizeDocumentAiTwMainlandTravelPermit', multipart: true },
+    POST: { name: 'documentAi.twMainlandTravelPermit.recognize', multipart: true },
   },
   '/document_ai/v1/chinese_passport/recognize': {
-    POST: { name: 'recognizeDocumentAiChinesePassport', multipart: true },
+    POST: { name: 'documentAi.chinesePassport.recognize', multipart: true },
   },
   '/document_ai/v1/bank_card/recognize': {
-    POST: { name: 'recognizeDocumentAiBankCard', multipart: true },
+    POST: { name: 'documentAi.bankCard.recognize', multipart: true },
   },
   '/document_ai/v1/vehicle_license/recognize': {
-    POST: { name: 'recognizeDocumentAiVehicleLicense', multipart: true },
+    POST: { name: 'documentAi.vehicleLicense.recognize', multipart: true },
   },
   '/document_ai/v1/train_invoice/recognize': {
-    POST: { name: 'recognizeDocumentAiTrainInvoice', multipart: true },
+    POST: { name: 'documentAi.trainInvoice.recognize', multipart: true },
   },
   '/document_ai/v1/taxi_invoice/recognize': {
-    POST: { name: 'recognizeDocumentAiTaxiInvoice', multipart: true },
+    POST: { name: 'documentAi.taxiInvoice.recognize', multipart: true },
   },
   '/document_ai/v1/id_card/recognize': {
-    POST: { name: 'recognizeDocumentAiIdCard', multipart: true },
+    POST: { name: 'documentAi.idCard.recognize', multipart: true },
   },
   '/document_ai/v1/food_produce_license/recognize': {
-    POST: { name: 'recognizeDocumentAiFoodProduceLicense', multipart: true },
+    POST: { name: 'documentAi.foodProduceLicense.recognize', multipart: true },
   },
   '/document_ai/v1/food_manage_license/recognize': {
-    POST: { name: 'recognizeDocumentAiFoodManageLicense', multipart: true },
+    POST: { name: 'documentAi.foodManageLicense.recognize', multipart: true },
   },
   '/document_ai/v1/driving_license/recognize': {
-    POST: { name: 'recognizeDocumentAiDrivingLicense', multipart: true },
+    POST: { name: 'documentAi.drivingLicense.recognize', multipart: true },
   },
   '/document_ai/v1/vat_invoice/recognize': {
-    POST: { name: 'recognizeDocumentAiVatInvoice', multipart: true },
+    POST: { name: 'documentAi.vatInvoice.recognize', multipart: true },
   },
   '/document_ai/v1/business_license/recognize': {
-    POST: { name: 'recognizeDocumentAiBusinessLicense', multipart: true },
+    POST: { name: 'documentAi.businessLicense.recognize', multipart: true },
   },
   '/document_ai/v1/contract/field_extraction': {
-    POST: { name: 'fieldExtractionDocumentAiContract', multipart: true },
+    POST: { name: 'documentAi.contract.fieldExtraction', multipart: true },
   },
   '/document_ai/v1/business_card/recognize': {
-    POST: { name: 'recognizeDocumentAiBusinessCard', multipart: true },
+    POST: { name: 'documentAi.businessCard.recognize', multipart: true },
   },
 })

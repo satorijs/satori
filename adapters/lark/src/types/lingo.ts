@@ -1,321 +1,357 @@
-import { Classification, ClassificationFilter, Draft, Entity, I18nEntryDesc, MatchInfo, OuterInfo, Phrase, RelatedMeta, Repo, Term } from '.'
-import { Internal, Pagination } from '../internal'
+import * as Lark from '.'
+import { Internal, Paginated, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
-    /**
-     * 创建草稿
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/draft/create
-     */
-    createLingoDraft(body: CreateLingoDraftRequest, query?: CreateLingoDraftQuery): Promise<CreateLingoDraftResponse>
-    /**
-     * 更新草稿
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/draft/update
-     */
-    updateLingoDraft(draft_id: string, body: UpdateLingoDraftRequest, query?: UpdateLingoDraftQuery): Promise<UpdateLingoDraftResponse>
-    /**
-     * 创建免审词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/create
-     */
-    createLingoEntity(body: CreateLingoEntityRequest, query?: CreateLingoEntityQuery): Promise<CreateLingoEntityResponse>
-    /**
-     * 更新免审词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/update
-     */
-    updateLingoEntity(entity_id: string, body: UpdateLingoEntityRequest, query?: UpdateLingoEntityQuery): Promise<UpdateLingoEntityResponse>
-    /**
-     * 删除免审词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/delete
-     */
-    deleteLingoEntity(entity_id: string, query?: DeleteLingoEntityQuery): Promise<void>
-    /**
-     * 获取词条详情
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/get
-     */
-    getLingoEntity(entity_id: string, query?: GetLingoEntityQuery): Promise<GetLingoEntityResponse>
-    /**
-     * 获取词条列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/list
-     */
-    listLingoEntity(query?: ListLingoEntityQuery): Paginated<Entity, 'entities'>
-    /**
-     * 精准搜索词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/match
-     */
-    matchLingoEntity(body: MatchLingoEntityRequest, query?: MatchLingoEntityQuery): Promise<MatchLingoEntityResponse>
-    /**
-     * 模糊搜索词条
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/search
-     */
-    searchLingoEntity(body: SearchLingoEntityRequest, query?: SearchLingoEntityQuery): Paginated<Entity, 'entities'>
-    /**
-     * 词条高亮
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/highlight
-     */
-    highlightLingoEntity(body: HighlightLingoEntityRequest): Promise<HighlightLingoEntityResponse>
-    /**
-     * 获取词典分类
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/classification/list
-     */
-    listLingoClassification(query?: ListLingoClassificationQuery): Paginated<Classification>
-    /**
-     * 获取词库列表
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/repo/list
-     */
-    listLingoRepo(): Promise<ListLingoRepoResponse>
-    /**
-     * 上传图片
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/upload
-     */
-    uploadLingoFile(form: UploadLingoFileForm): Promise<UploadLingoFileResponse>
-    /**
-     * 下载图片
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/download
-     */
-    downloadLingoFile(file_token: string): Promise<ArrayBuffer>
+    lingo: Lingo.Methods
   }
 }
 
-export interface CreateLingoDraftRequest {
-  /** 实体词 Id */
-  id?: string
-  /** 词条名 */
-  main_keys: Term[]
-  /** 别名 */
-  aliases?: Term[]
-  /** 详情描述 */
-  description?: string
-  /** 相关数据 */
-  related_meta?: RelatedMeta
-  /** 外部 id 关联数据 */
-  outer_info?: OuterInfo
-  /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
-  rich_text?: string
-  /** 国际化的词条释义 */
-  i18n_descs?: I18nEntryDesc[]
-}
+export namespace Lingo {
+  export interface Methods {
+    draft: Draft.Methods
+    entity: Entity.Methods
+    classification: Classification.Methods
+    repo: Repo.Methods
+    file: File.Methods
+  }
 
-export interface CreateLingoDraftQuery {
-  /** 词库ID */
-  repo_id?: string
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+  export namespace Draft {
+    export interface Methods {
+      /**
+       * 创建草稿
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/draft/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 更新草稿
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/draft/update
+       */
+      update(draft_id: string, body: UpdateRequest, query?: UpdateQuery): Promise<UpdateResponse>
+    }
 
-export interface CreateLingoDraftResponse {
-  draft?: Draft
-}
+    export interface CreateRequest {
+      /** 实体词 Id */
+      id?: string
+      /** 词条名 */
+      main_keys: Lark.Term[]
+      /** 别名 */
+      aliases?: Lark.Term[]
+      /** 详情描述 */
+      description?: string
+      /** 相关数据 */
+      related_meta?: Lark.RelatedMeta
+      /** 外部 id 关联数据 */
+      outer_info?: Lark.OuterInfo
+      /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
+      rich_text?: string
+      /** 国际化的词条释义 */
+      i18n_descs?: Lark.I18nEntryDesc[]
+    }
 
-export interface UpdateLingoDraftRequest {
-  /** 实体词 Id */
-  id?: string
-  /** 词条名 */
-  main_keys: Term[]
-  /** 别名 */
-  aliases?: Term[]
-  /** 详情描述 */
-  description?: string
-  /** 相关数据 */
-  related_meta?: RelatedMeta
-  /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
-  rich_text?: string
-  /** 国际化的词条释义 */
-  i18n_descs?: I18nEntryDesc[]
-}
+    export interface CreateQuery {
+      /** 词库ID */
+      repo_id?: string
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface UpdateLingoDraftQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface CreateResponse {
+      draft?: Lark.Draft
+    }
 
-export interface UpdateLingoDraftResponse {
-  draft?: Draft
-}
+    export interface UpdateRequest {
+      /** 实体词 Id */
+      id?: string
+      /** 词条名 */
+      main_keys: Lark.Term[]
+      /** 别名 */
+      aliases?: Lark.Term[]
+      /** 详情描述 */
+      description?: string
+      /** 相关数据 */
+      related_meta?: Lark.RelatedMeta
+      /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
+      rich_text?: string
+      /** 国际化的词条释义 */
+      i18n_descs?: Lark.I18nEntryDesc[]
+    }
 
-export interface CreateLingoEntityRequest {
-  /** 词条名 */
-  main_keys: Term[]
-  /** 别名 */
-  aliases?: Term[]
-  /** 详情描述 */
-  description?: string
-  /** 相关数据 */
-  related_meta?: RelatedMeta
-  /** 外部 id 关联数据 */
-  outer_info?: OuterInfo
-  /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
-  rich_text?: string
-  /** 国际化的词条释义 */
-  i18n_descs?: I18nEntryDesc[]
-}
+    export interface UpdateQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface CreateLingoEntityQuery {
-  /** 词库 ID */
-  repo_id?: string
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface UpdateResponse {
+      draft?: Lark.Draft
+    }
+  }
 
-export interface CreateLingoEntityResponse {
-  entity?: Entity
-}
+  export namespace Entity {
+    export interface Methods {
+      /**
+       * 创建免审词条
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 更新免审词条
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/update
+       */
+      update(entity_id: string, body: UpdateRequest, query?: UpdateQuery): Promise<UpdateResponse>
+      /**
+       * 删除免审词条
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/delete
+       */
+      delete(entity_id: string, query?: DeleteQuery): Promise<void>
+      /**
+       * 获取词条详情
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/get
+       */
+      get(entity_id: string, query?: GetQuery): Promise<GetResponse>
+      /**
+       * 获取词条列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/list
+       */
+      list(query?: ListQuery): Paginated<Lark.Entity, 'entities'>
+      /**
+       * 精准搜索词条
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/match
+       */
+      match(body: MatchRequest, query?: MatchQuery): Promise<MatchResponse>
+      /**
+       * 模糊搜索词条
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/search
+       */
+      search(body: SearchRequest, query?: SearchQuery): Paginated<Lark.Entity, 'entities'>
+      /**
+       * 词条高亮
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/entity/highlight
+       */
+      highlight(body: HighlightRequest): Promise<HighlightResponse>
+    }
 
-export interface UpdateLingoEntityRequest {
-  /** 词条名 */
-  main_keys: Term[]
-  /** 别名 */
-  aliases?: Term[]
-  /** 详情描述 */
-  description?: string
-  /** 相关数据 */
-  related_meta?: RelatedMeta
-  /** 外部 id 关联数据 */
-  outer_info?: OuterInfo
-  /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
-  rich_text?: string
-  /** 国际化的词条释义 */
-  i18n_descs?: I18nEntryDesc[]
-}
+    export interface CreateRequest {
+      /** 词条名 */
+      main_keys: Lark.Term[]
+      /** 别名 */
+      aliases?: Lark.Term[]
+      /** 详情描述 */
+      description?: string
+      /** 相关数据 */
+      related_meta?: Lark.RelatedMeta
+      /** 外部 id 关联数据 */
+      outer_info?: Lark.OuterInfo
+      /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
+      rich_text?: string
+      /** 国际化的词条释义 */
+      i18n_descs?: Lark.I18nEntryDesc[]
+    }
 
-export interface UpdateLingoEntityQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface CreateQuery {
+      /** 词库 ID */
+      repo_id?: string
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface UpdateLingoEntityResponse {
-  entity?: Entity
-}
+    export interface CreateResponse {
+      entity?: Lark.Entity
+    }
 
-export interface DeleteLingoEntityQuery {
-  /** 数据提供方（使用时需要将路径中的词条 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
-  provider?: string
-  /** 外部唯一 id（使用时需要将路径中的词条 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
-  outer_id?: string
-}
+    export interface UpdateRequest {
+      /** 词条名 */
+      main_keys: Lark.Term[]
+      /** 别名 */
+      aliases?: Lark.Term[]
+      /** 详情描述 */
+      description?: string
+      /** 相关数据 */
+      related_meta?: Lark.RelatedMeta
+      /** 外部 id 关联数据 */
+      outer_info?: Lark.OuterInfo
+      /** 富文本格式（当填写富文本内容时，description字段将会失效可不填写），支持的格式参考[企业百科指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/baike-v1/overview)中的释义部分 */
+      rich_text?: string
+      /** 国际化的词条释义 */
+      i18n_descs?: Lark.I18nEntryDesc[]
+    }
 
-export interface GetLingoEntityQuery {
-  /** 数据提供方（使用时需要将路径中的实体词 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
-  provider?: string
-  /** 外部唯一 id（使用时需要将路径中的实体词 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
-  outer_id?: string
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface UpdateQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface GetLingoEntityResponse {
-  /** 实体词 */
-  entity?: Entity
-}
+    export interface UpdateResponse {
+      entity?: Lark.Entity
+    }
 
-export interface ListLingoEntityQuery extends Pagination {
-  /** 数据提供方【可用来过滤数据】 */
-  provider?: string
-  /** 词库 id */
-  repo_id?: string
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface DeleteQuery {
+      /** 数据提供方（使用时需要将路径中的词条 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
+      provider?: string
+      /** 外部唯一 id（使用时需要将路径中的词条 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
+      outer_id?: string
+    }
 
-export interface MatchLingoEntityRequest {
-  /** 实体词主关键词、全称、别名全匹配 */
-  word: string
-}
+    export interface GetQuery {
+      /** 数据提供方（使用时需要将路径中的实体词 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
+      provider?: string
+      /** 外部唯一 id（使用时需要将路径中的实体词 ID 固定为：enterprise_0，且提供 provider 和 outer_id） */
+      outer_id?: string
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface MatchLingoEntityQuery {
-  /** 词库ID */
-  repo_id?: string
-}
+    export interface GetResponse {
+      /** 实体词 */
+      entity?: Lark.Entity
+    }
 
-export interface MatchLingoEntityResponse {
-  /** 匹配结果 */
-  results?: MatchInfo[]
-}
+    export interface ListQuery extends Pagination {
+      /** 数据提供方【可用来过滤数据】 */
+      provider?: string
+      /** 词库 id */
+      repo_id?: string
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface SearchLingoEntityRequest {
-  /** 搜索关键词 */
-  query?: string
-  /** 分类筛选 */
-  classification_filter?: ClassificationFilter
-  /** 词条的创建来源，1：用户主动创建，2：批量导入，3：官方词，4：OpenAPI 创建 */
-  sources?: number[]
-  /** 创建者 */
-  creators?: string[]
-}
+    export interface MatchRequest {
+      /** 实体词主关键词、全称、别名全匹配 */
+      word: string
+    }
 
-export interface SearchLingoEntityQuery extends Pagination {
-  /** 词库ID */
-  repo_id?: string
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface MatchQuery {
+      /** 词库ID */
+      repo_id?: string
+    }
 
-export interface HighlightLingoEntityRequest {
-  /** 需要被识别实体词内容的一句话（不要超过1000字） */
-  text: string
-}
+    export interface MatchResponse {
+      /** 匹配结果 */
+      results?: Lark.MatchInfo[]
+    }
 
-export interface HighlightLingoEntityResponse {
-  /** 返回识别到的实体词信息 */
-  phrases?: Phrase[]
-}
+    export interface SearchRequest {
+      /** 搜索关键词 */
+      query?: string
+      /** 分类筛选 */
+      classification_filter?: Lark.ClassificationFilter
+      /** 词条的创建来源，1：用户主动创建，2：批量导入，3：官方词，4：OpenAPI 创建 */
+      sources?: number[]
+      /** 创建者 */
+      creators?: string[]
+    }
 
-export interface ListLingoClassificationQuery extends Pagination {
-  /** 词库ID */
-  repo_id?: string
-}
+    export interface SearchQuery extends Pagination {
+      /** 词库ID */
+      repo_id?: string
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface ListLingoRepoResponse {
-  /** 词库列表 */
-  items?: Repo[]
-}
+    export interface HighlightRequest {
+      /** 需要被识别实体词内容的一句话（不要超过1000字） */
+      text: string
+    }
 
-export interface UploadLingoFileForm {
-  /** 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp */
-  name: string
-  /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
-  file: Blob
-}
+    export interface HighlightResponse {
+      /** 返回识别到的实体词信息 */
+      phrases?: Lark.Phrase[]
+    }
+  }
 
-export interface UploadLingoFileResponse {
-  /** 文件 token */
-  file_token?: string
+  export namespace Classification {
+    export interface Methods {
+      /**
+       * 获取词典分类
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/classification/list
+       */
+      list(query?: ListQuery): Paginated<Lark.Classification>
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 词库ID */
+      repo_id?: string
+    }
+  }
+
+  export namespace Repo {
+    export interface Methods {
+      /**
+       * 获取词库列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/repo/list
+       */
+      list(): Promise<ListResponse>
+    }
+
+    export interface ListResponse {
+      /** 词库列表 */
+      items?: Lark.Repo[]
+    }
+  }
+
+  export namespace File {
+    export interface Methods {
+      /**
+       * 上传图片
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/upload
+       */
+      upload(form: UploadForm): Promise<UploadResponse>
+      /**
+       * 下载图片
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/lingo-v1/file/download
+       */
+      download(file_token: string): Promise<ArrayBuffer>
+    }
+
+    export interface UploadForm {
+      /** 文件名称，当前仅支持上传图片且图片格式为以下六种：icon、bmp、gif、png、jpeg、webp */
+      name: string
+      /** 二进制文件内容，高宽像素在 320-4096 像素之间，大小在 3KB-10MB 的图片 */
+      file: Blob
+    }
+
+    export interface UploadResponse {
+      /** 文件 token */
+      file_token?: string
+    }
+  }
 }
 
 Internal.define({
   '/lingo/v1/drafts': {
-    POST: 'createLingoDraft',
+    POST: 'lingo.draft.create',
   },
   '/lingo/v1/drafts/{draft_id}': {
-    PUT: 'updateLingoDraft',
+    PUT: 'lingo.draft.update',
   },
   '/lingo/v1/entities': {
-    POST: 'createLingoEntity',
-    GET: { name: 'listLingoEntity', pagination: { argIndex: 0, itemsKey: 'entities' } },
+    POST: 'lingo.entity.create',
+    GET: { name: 'lingo.entity.list', pagination: { argIndex: 0, itemsKey: 'entities' } },
   },
   '/lingo/v1/entities/{entity_id}': {
-    PUT: 'updateLingoEntity',
-    DELETE: 'deleteLingoEntity',
-    GET: 'getLingoEntity',
+    PUT: 'lingo.entity.update',
+    DELETE: 'lingo.entity.delete',
+    GET: 'lingo.entity.get',
   },
   '/lingo/v1/entities/match': {
-    POST: 'matchLingoEntity',
+    POST: 'lingo.entity.match',
   },
   '/lingo/v1/entities/search': {
-    POST: { name: 'searchLingoEntity', pagination: { argIndex: 1, itemsKey: 'entities' } },
+    POST: { name: 'lingo.entity.search', pagination: { argIndex: 1, itemsKey: 'entities' } },
   },
   '/lingo/v1/entities/highlight': {
-    POST: 'highlightLingoEntity',
+    POST: 'lingo.entity.highlight',
   },
   '/lingo/v1/classifications': {
-    GET: { name: 'listLingoClassification', pagination: { argIndex: 0 } },
+    GET: { name: 'lingo.classification.list', pagination: { argIndex: 0 } },
   },
   '/lingo/v1/repos': {
-    GET: 'listLingoRepo',
+    GET: 'lingo.repo.list',
   },
   '/lingo/v1/files/upload': {
-    POST: { name: 'uploadLingoFile', multipart: true },
+    POST: { name: 'lingo.file.upload', multipart: true },
   },
   '/lingo/v1/files/{file_token}/download': {
-    GET: { name: 'downloadLingoFile', type: 'binary' },
+    GET: { name: 'lingo.file.download', type: 'binary' },
   },
 })

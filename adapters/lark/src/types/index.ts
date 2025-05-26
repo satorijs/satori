@@ -3295,13 +3295,6 @@ export interface Bp {
   hrbp_id?: string
 }
 
-export interface BpmDataengineI18n {
-  /** （注json key是zh-CN，不是zh_cn）i18n类型字段，中文值 */
-  zh_cn?: string
-  /** （注json key是en-US，不是en_us）i18n类型字段，英文值 */
-  en_us?: string
-}
-
 export interface BpRoleOrganization {
   /** 角色类型的唯一标识 */
   role_key: string
@@ -4518,6 +4511,29 @@ export interface ContractPeriodInfo {
   period: number
 }
 
+export interface CooperationProject {
+  /** 合作项目 ID */
+  id?: string
+  /** 合作项目的名称 */
+  name?: I18n
+  /** 项目角色 */
+  roles?: CooperationRole[]
+}
+
+export interface CooperationRole {
+  /** 评估人的项目角色。在未配置项目角色情况下，该字段为空值。 */
+  reviewer_role?: CooperationUserRole
+  /** 被评估人的项目角色。在未配置项目角色情况下，该字段为空值。 */
+  reviewee_role?: CooperationUserRole
+}
+
+export interface CooperationUserRole {
+  /** 角色 ID */
+  role_id?: string
+  /** 名称 */
+  name?: I18n
+}
+
 export interface CostAllocationPlan {
   /** 唯一标识 */
   id?: string
@@ -5651,6 +5667,13 @@ export interface DimensionOption {
   name?: I18n
   /** 选项对应的分数 */
   score_val?: number
+}
+
+export interface DirectProjectLeaderRecordInfo {
+  /** 评估人 ID */
+  reviewer_id?: User
+  /** 评估人作为直属项目上级所在的项目 */
+  cooperation_projects?: CooperationProject[]
 }
 
 export interface DisableInformConfig {
@@ -7514,134 +7537,6 @@ export interface FoodProduceLicense {
   entities?: FoodProduceEntity[]
 }
 
-export interface FormFieldVariable {
-  /** 变量api名称 */
-  variable_api_name?: string
-  /** 变量名称的i18n描述 */
-  variable_name?: BpmDataengineI18n
-  /** 变量值的对象 */
-  variable_value?: FormVariableValueInfo
-}
-
-export interface FormFieldVariableBoolValue {
-  /** 布尔变量的值 */
-  value?: boolean
-}
-
-export interface FormFieldVariableDatetimeValue {
-  /** 毫秒的时间戳 */
-  value?: number
-  /** 时区 */
-  zone?: string
-}
-
-export interface FormFieldVariableDateValue {
-  /** 日期变量的值，从1970起的天数 */
-  value?: number
-}
-
-export interface FormFieldVariableDepartmentValue {
-  /** 部门ID */
-  value?: string
-}
-
-export interface FormFieldVariableEmploymentValue {
-  /** employmentID */
-  value?: string
-  /** 员工ID 如3158117 */
-  user_id?: string
-}
-
-export interface FormFieldVariableEnumValue {
-  /** 枚举值 */
-  value?: string
-  /** 枚举的名称 */
-  name?: BpmDataengineI18n
-  /** 枚举的描述 */
-  desc?: BpmDataengineI18n
-}
-
-export interface FormFieldVariableFileValue {
-  /** 文件源类型（1BPM; 2主数据） */
-  source_type?: number
-  /** 文件id */
-  file_id?: string
-  /** 文件名称 */
-  file_name?: string
-  /** 文件长度 */
-  length?: number
-  /** mime type */
-  mime_type?: string
-}
-
-export interface FormFieldVariableI18nValue {
-  /** i18n值 */
-  value?: BpmDataengineI18n
-}
-
-export interface FormFieldVariableListObject {
-  /** 文本变量对象 */
-  text_value?: FormFieldVariableTextValue
-  /** 数值变量对象 */
-  number_value?: FormFieldVariableNumberValue
-  /** 日期变量对象 */
-  date_value?: FormFieldVariableDateValue
-  /** 员工变量对象 */
-  employment_value?: FormFieldVariableEmploymentValue
-  /** 日期时间变量对象 */
-  date_time_value?: FormFieldVariableDatetimeValue
-  /** 枚举变量对象 */
-  enum_value?: FormFieldVariableEnumValue
-  /** 空变量对象 */
-  null_value?: FormFieldVariableNullValue
-  /** 布尔变量对象 */
-  bool_value?: FormFieldVariableBoolValue
-  /** 部门变量对象 */
-  department_value?: FormFieldVariableDepartmentValue
-  /** 文件变量对象 */
-  file_value?: FormFieldVariableFileValue
-  /** i18n变量对象 */
-  i18n_value?: FormFieldVariableI18nValue
-  /** 对象变量 */
-  object_value?: FormFieldVariableObjectValue
-  /** 记录对象 */
-  record_value?: FormFieldVariableRecordValue
-}
-
-export interface FormFieldVariableListValue {
-  /** 列表值 */
-  values?: FormFieldVariableListObject[]
-}
-
-export type FormFieldVariableNullValue = unknown
-
-export interface FormFieldVariableNumberValue {
-  /** 数值类型变量的值 */
-  value?: string
-}
-
-export interface FormFieldVariableObjectValue {
-  /** 对象ID */
-  value?: string
-  /** 主数据apiName */
-  wk_api_name?: string
-}
-
-export interface FormFieldVariableRecordValue {
-  /** 注意：这个值是一个map，key是变量唯一标识，value是变量值（平台限制，没法录入Map类型，这里用object示意一下） */
-  values?: FormFieldVariableRecordValueExample
-}
-
-export interface FormFieldVariableRecordValueExample {
-  /** 这个属性名称是map的key的示例，属性值是map的value的示例，值和外层的variable_value是的一样的结构。 */
-  country_region?: FormVariableValueInfoExample
-}
-
-export interface FormFieldVariableTextValue {
-  /** 文本类型变量的值 */
-  value?: string
-}
-
 export interface Formula {
   /** 公式表达式 */
   expr?: string
@@ -7654,42 +7549,6 @@ export interface FormulaParam {
   ref_type?: 1 | 2
   /** 引用类型ID */
   id?: string
-}
-
-export interface FormVariableValueInfo {
-  /** 文本变量对象 */
-  text_value?: FormFieldVariableTextValue
-  /** 数值变量对象 */
-  number_value?: FormFieldVariableNumberValue
-  /** 日期变量对象 */
-  date_value?: FormFieldVariableDateValue
-  /** 员工变量对象 */
-  employment_value?: FormFieldVariableEmploymentValue
-  /** 日期时间变量对象 */
-  date_time_value?: FormFieldVariableDatetimeValue
-  /** 枚举变量对象 */
-  enum_value?: FormFieldVariableEnumValue
-  /** 空变量对象 */
-  null_value?: FormFieldVariableNullValue
-  /** 布尔变量对象 */
-  bool_value?: FormFieldVariableBoolValue
-  /** 部门变量对象 */
-  department_value?: FormFieldVariableDepartmentValue
-  /** 文件变量对象 */
-  file_value?: FormFieldVariableFileValue
-  /** i18n变量对象 */
-  i18n_value?: FormFieldVariableI18nValue
-  /** 对象变量 */
-  object_value?: FormFieldVariableObjectValue
-  /** 列表对象 */
-  list_value?: FormFieldVariableListValue
-  /** 记录对象 */
-  record_value?: FormFieldVariableRecordValue
-}
-
-export interface FormVariableValueInfoExample {
-  /** 示例的国家地区变量对象 */
-  object_value?: FormFieldVariableObjectValue
 }
 
 export interface Freebusy {
@@ -8764,6 +8623,23 @@ export interface InterviewTask {
   activity_status?: 1 | 2 | 3 | 5
 }
 
+export interface InvitedReviewRecordInfo {
+  /** 评估人 ID。如果开启了 360 匿名评估，并且是对全部查看者匿名，则不返回该值 */
+  reviewer_id?: User
+  /** 是否拒绝 */
+  is_rejected?: boolean
+  /** 360° 评估人拒绝评估的理由，当 360° 评估环节被评估人拒绝时有值 */
+  rejected_reason?: string
+  /** 360° 评估人的评估尺度标签 */
+  distribute_type?: 1 | 2 | 3
+  /** 360° 评估人的评估尺度数值 */
+  avg_diff?: string
+  /** 360° 评估人的与被评估人关系。如果开启了 360 匿名评估，并且是对全部查看者匿名，且配置隐藏描述信息则不返回该值 */
+  relationship_with_reviewee?: 'direct_report' | 'skiplevel_report' | 'former_direct_manager' | 'skiplevel_manager' | 'teammate' | 'crossteam_colleague'
+  /** 360° 评估人的邀请人类型。如果开启了 360 匿名评估，并且是对全部查看者匿名，且配置隐藏描述信息则不返回该值 */
+  invitedby?: 'system_default' | 'reviewee' | 'manager' | 'hrbp_or_others' | 'voluntary'
+}
+
 export interface Isv {
   /** 团队互动应用唯一ID */
   component_id?: string
@@ -9497,6 +9373,17 @@ export interface JobUserInfo {
   id?: string
   /** 名称 */
   name?: I18n
+}
+
+export interface KeyresultData {
+  /** 关键举措 ID */
+  keyresult_id: string
+  /** 关键举措的评分 */
+  score?: string
+  /** 该关键举措的填写项内容 */
+  text?: string
+  /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
+  richtext?: string
 }
 
 export interface KvEntity {
@@ -10414,6 +10301,13 @@ export interface MetaFailed {
   code: 970002 | 970003 | 970005
 }
 
+export interface MetricData {
+  /** 指标 ID，可以通过获取指标详情接口获取详细信息 */
+  id: string
+  /** 指标评分 */
+  score?: string
+}
+
 export interface MetricDetail {
   /** 指标 ID */
   metric_id?: string
@@ -10969,6 +10863,19 @@ export interface ObjectFieldData {
   field_name: string
   /** 字段值，是json转义后的字符串，根据元数据定义不同，字段格式不同(123, 123.23, true, [\"id1\",\"id2\], 2006-01-02 15:04:05]) */
   value: string
+}
+
+export interface ObjectiveData {
+  /** 目标 ID */
+  objective_id: string
+  /** 目标的评分 */
+  score?: string
+  /** 评估人在该填写项填写的文本 */
+  text?: string
+  /** 评估的关键举措，当评估内容是对关键举措（KR）评估时有值 */
+  keyresult_data?: KeyresultData[]
+  /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
+  richtext?: string
 }
 
 export interface ObjectMeta {
@@ -12288,18 +12195,20 @@ export interface PermissionNameInfo {
 
 export interface PermissionPublic {
   /** 允许内容被分享到组织外 */
-  external_access?: boolean
-  /** 谁可以复制内容、创建副本、打印、下载 */
+  external_access_entity?: 'open' | 'closed' | 'allow_share_partner_tenant'
+  /** 谁可以创建副本、打印、下载 */
   security_entity?: 'anyone_can_view' | 'anyone_can_edit' | 'only_full_access'
   /** 谁可以评论 */
   comment_entity?: 'anyone_can_view' | 'anyone_can_edit'
-  /** 谁可以添加和管理协作者 */
-  share_entity?: 'anyone' | 'same_tenant' | 'only_full_access'
+  /** 谁可以添加和管理协作者-组织维度 */
+  share_entity?: 'anyone' | 'same_tenant'
+  /** 谁可以添加和管理协作者-协作者维度 */
+  manage_collaborator_entity?: 'collaborator_can_view' | 'collaborator_can_edit' | 'collaborator_full_access'
   /** 链接分享设置 */
-  link_share_entity?: 'tenant_readable' | 'tenant_editable' | 'anyone_readable' | 'anyone_editable' | 'closed'
-  /** 允许非「可管理权限」的人分享到组织外（仅share_entity=“same_tenant”时有效） */
-  invite_external?: boolean
-  /** 节点是否已加锁 */
+  link_share_entity?: 'tenant_readable' | 'tenant_editable' | 'partner_tenant_readable' | 'partner_tenant_editable' | 'anyone_readable' | 'anyone_editable' | 'closed'
+  /** 谁可以复制内容 */
+  copy_entity?: 'anyone_can_view' | 'anyone_can_edit' | 'only_full_access'
+  /** 节点是否已加锁，加锁之后不再继承父级页面的权限 */
   lock_switch?: boolean
 }
 
@@ -14789,28 +14698,42 @@ export interface ResurrectEmployeeOptions {
 }
 
 export interface ReviewDetail {
-  /** 评估模板 ID */
-  template_id?: string
-  /** 评估内容 ID */
-  unit_id?: string
-  /** 评估控件 ID */
-  field_id?: string
-  /** 评估人 ID */
+  /** 评估题 ID，指评估内容中的每个评估项或填写项 */
+  field_id: string
+  /** 评估人 ID。如果开启了 360 匿名评估，并且是对全部查看者匿名，则不返回该值 */
   reviewer_user_id?: User
-  /** 最后提交时间 */
+  /** 该评估题的最后提交时间 */
   submit_time?: string
-  /** 评估项 ID */
+  /** 评估项 ID（不包含子评估项），option_id 或 score 有值的时候有值 */
   indicator_id?: string
-  /** 评估项结果等级 ID */
+  /** 评估等级 ID */
   option_id?: string
-  /** 评分型评估项填写内容 */
+  /** 评分 */
   score?: string
-  /** 填写项填写内容 */
+  /** 填写项填写的文本 */
   text?: string
+  /** 标签填写题的 ID */
+  tag_based_question_id?: string
+  /** 标签填写项的内容 */
+  tag_text_item_data?: TagText[]
   /** 绩效系数值 */
-  perf_coefficient_result?: string
+  perf_coefficient_value?: string
+  /** 子评估项内容 */
+  sub_indicator_data?: SubIndicator[]
+  /** 评估的目标数据，当评估内容是对目标（O）或关键举措（KR）评估时有值 */
+  objective_data?: ObjectiveData[]
+  /** 评估的指标，当评估内容是对指标评估时有值 */
+  metric_data?: MetricData[]
+  /** 终评环节填写内容的来源（仅终评环节的数据有值） */
+  leader_review_data_source?: 'review' | 'calibaration' | 'reconsideration'
+  /** 工作/总结类型的文本内容 */
+  multi_texts?: string[]
   /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
   richtext?: string
+  /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
+  multi_richtexts?: string[]
+  /** 该评估题是否是首要评估项 */
+  is_principal_review_item?: boolean
 }
 
 export interface Reviewee {
@@ -14838,17 +14761,36 @@ export interface ReviewProfile {
   semester_id?: string
   /** 绩效评估项目 ID */
   activity_id?: string
+  /** 被评估人在该周期对应的后台评估模板 ID */
+  review_template_id?: string
   /** 本周期内各环节内容 */
   stages?: ReviewStage[]
 }
 
+export interface ReviewRecord {
+  /** 评估人的环节状态。各类型的环节分别有以下环节状态：  绩效结果查看环节状态 可选值： 0：已开通，绩效结果已开通，未发起复议也无需确认结果 1：待确认，绩效结果已开通但被评估人还未确认结果，确认的截止时间还未到达 2：已截止，绩效结果已开通但被评估人还未确认结果，确认的截止时间已到达 3：已确认，绩效结果已开通，被评估人已确认结果 4：已复议，绩效结果已开通，且被评估人已发起  绩效结果复议环节状态 可选值： 1：待完成，任务未完成 2：已截止，任务的截止时间已到达，且任务未完成 3：已完成，任务已完成  除上述类型外的其他环节类型状态 可选值： 0：未开始，任务的开始时间未到达 1：待完成，任务的开始时间到达而截止时间未到达，且任务未完成 2：已截止，任务的截止时间已到达，且任务未完成 3：已完成，任务已完成 */
+  progress?: number
+  /** 评估记录中的评估内容明细 */
+  units?: ReviewUnit[]
+  /** 360 ° 评估记录的信息。如果开启了 360 匿名评估，并且是对全部查看者匿名，则不返回评估人的部分信息 */
+  invited_review_record_info?: InvitedReviewRecordInfo
+  /** 项目上级评估记录信息 */
+  direct_project_leader_record_info?: DirectProjectLeaderRecordInfo
+  /** 评估记录 ID */
+  record_id?: string
+}
+
 export interface ReviewStage {
+  /** 环节 ID */
+  stage_id?: string
   /** 环节类型 */
-  stage_type?: string
-  /** 环节状态 */
-  progress?: 0 | 1 | 2 | 3 | 4
-  /** 环节填写内容 */
-  data?: ReviewDetail[]
+  stage_type?: 'summarize_key_outputs' | 'review' | 'communication_and_open_result' | 'view_result' | 'reconsideration' | 'leader_review'
+  /** 该环节对应的环节模板的 ID */
+  template_id?: string
+  /** 评估内容记录。多人评估的环节有多份记录，比如 360 评估环节。如果开启了 360 匿名评估，并且是对全部查看者匿名，则评估记录数低于匿名下限，则不返回 360 评估记录 */
+  records?: ReviewRecord[]
+  /** 评估型环节的执行人角色 */
+  review_stage_role?: 'reviewee' | 'invited_reviewer' | 'solid_line_leader' | 'dotted_line_leader' | 'secondary_solid_line_leader' | 'direct_project_leader' | 'custom_review_role' | 'metric_reviewer'
 }
 
 export interface ReviewTemplate {
@@ -14864,6 +14806,15 @@ export interface ReviewTemplate {
   description?: I18n
   /** 状态 */
   status?: string
+}
+
+export interface ReviewUnit {
+  /** 评估内容 ID */
+  unit_id?: string
+  /** 是否为不了解。当评估人选不了解时，会返回为 true，其他时候不返回。 */
+  is_unknown?: boolean
+  /** 评估题列表，指评估内容中的每个题，可能是评估项或者填写项 */
+  data?: ReviewDetail[]
 }
 
 export interface Richtext {
@@ -15854,6 +15805,21 @@ export interface Subdivision {
   subdivision_type: Enum
 }
 
+export interface SubIndicator {
+  /** 子评估项的 ID */
+  field_id: string
+  /** 子评估项的评估等级 ID */
+  indicator_id?: string
+  /** 子评估项的评分 */
+  option_id?: string
+  /** 子评估项的填写项标题名称 */
+  score?: string
+  /** 评估人在该子评估项填写的文本 */
+  text?: string
+  /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
+  richtext?: string
+}
+
 export interface Subject {
   /** ID */
   id?: string
@@ -16185,6 +16151,15 @@ export interface TagInfoWithBindVersion {
   tag_info?: TagInfo
   /** 绑定时间 */
   bind_version?: string
+}
+
+export interface TagText {
+  /** 标签 ID */
+  tag_text_id?: string
+  /** 评估人在该标签下填写的文本 */
+  tag_text?: string
+  /** 富文本格式的填写内容，解析方式见 [editor](https://open.larkoffice.com/document/client-docs/gadget/component-component/basic-component/form/editor#51af2f4f) */
+  tag_richtext?: string
 }
 
 export interface Talent {
