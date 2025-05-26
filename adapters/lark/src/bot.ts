@@ -1,11 +1,11 @@
 import { Bot, Context, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
-import { CreateImFileForm } from './types'
+import { Im } from './types'
 import { HttpServer } from './http'
 import { LarkMessageEncoder } from './message'
 import { Internal } from './internal'
 import * as Utils from './utils'
 
-const fileTypeMap: Record<Exclude<CreateImFileForm['file_type'], 'stream'>, string[]> = {
+const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, string[]> = {
   opus: ['audio/opus'],
   mp4: ['video/mp4'],
   pdf: ['application/pdf'],
@@ -80,7 +80,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     // 初次获得 token 后的半小时内必须刷新一次，因为初次获得的 token 可能是 1.5 小时前生成的。
     let timeout = Time.minute * 20
     try {
-      const { tenant_access_token: token } = await this.internal.tenantAccessTokenInternalAuth({
+      const { tenant_access_token: token } = await this.internal.auth.auth.tenantAccessTokenInternal({
         app_id: this.config.appId,
         app_secret: this.config.appSecret,
       })
@@ -103,30 +103,30 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async deleteMessage(channelId: string, messageId: string) {
-    await this.internal.deleteImMessage(messageId)
+    await this.internal.im.message.delete(messageId)
   }
 
   async getMessage(channelId: string, messageId: string, recursive = true) {
-    const data = await this.internal.getImMessage(messageId)
+    const data = await this.internal.im.message.get(messageId)
     const message = await Utils.decodeMessage(this, data.items![0], recursive)
-    const im = await this.internal.getImChat(channelId)
+    const im = await this.internal.im.chat.get(channelId)
     message.channel!.type = im.chat_mode === 'p2p' ? Universal.Channel.Type.DIRECT : Universal.Channel.Type.TEXT
     return message
   }
 
   async getMessageList(channelId: string, before?: string) {
-    const messages = await this.internal.listImMessage({ container_id_type: 'chat', container_id: channelId, page_token: before })
+    const messages = await this.internal.im.message.list({ container_id_type: 'chat', container_id: channelId, page_token: before })
     const data = await Promise.all(messages.items.reverse().map(data => Utils.decodeMessage(this, data)))
     return { data, next: data[0]?.id }
   }
 
   async getUser(userId: string, guildId?: string) {
-    const data = await this.internal.getContactUser(userId)
+    const data = await this.internal.contact.user.get(userId)
     return Utils.decodeUser(data.user!)
   }
 
   async getChannel(channelId: string) {
-    const chat = await this.internal.getImChat(channelId)
+    const chat = await this.internal.im.chat.get(channelId)
     return Utils.decodeChannel(channelId, chat)
   }
 
@@ -135,31 +135,31 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   }
 
   async getGuild(guildId: string) {
-    const chat = await this.internal.getImChat(guildId)
+    const chat = await this.internal.im.chat.get(guildId)
     return Utils.decodeGuild(chat)
   }
 
   async getGuildList(after?: string) {
-    const chats = await this.internal.listImChat({ page_token: after })
+    const chats = await this.internal.im.chat.list({ page_token: after })
     return { data: chats.items.map(Utils.decodeGuild), next: chats.page_token }
   }
 
   async getGuildMemberList(guildId: string, after?: string) {
-    const members = await this.internal.getImChatMembers(guildId, { page_token: after })
+    const members = await this.internal.im.chat.members.get(guildId, { page_token: after })
     const data = members.items!.map(v => ({ user: { id: v.member_id, name: v.name }, name: v.name }))
     return { data, next: members.page_token }
   }
 
   async createUpload(...uploads: Universal.Upload[]): Promise<string[]> {
     return await Promise.all(uploads.map(async (upload) => {
-      let type: CreateImFileForm['file_type'] = 'stream'
+      let type: Im.File.CreateForm['file_type'] = 'stream'
       for (const [key, value] of Object.entries(fileTypeMap)) {
         if (value.includes(upload.type)) {
-          type = key as CreateImFileForm['file_type']
+          type = key as Im.File.CreateForm['file_type']
           break
         }
       }
-      const response = await this.internal.createImFile({
+      const response = await this.internal.im.file.create({
         file_name: upload.filename,
         file_type: type,
         file: new Blob([upload.data]),

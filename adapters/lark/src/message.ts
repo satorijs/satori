@@ -1,6 +1,6 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { CreateImFileForm, Message } from './types'
+import { Im, Message } from './types'
 import { EventPayload, extractIdType } from './utils'
 import { MessageContent } from './content'
 
@@ -29,7 +29,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           }
         } else if (this.referrer.type === 'card.action.trigger') {
           // cannot determine whether the card is in thread or not
-          const { items: [message] } = await this.bot.internal.getImMessage(this.referrer.event.context.open_message_id)
+          const { items: [message] } = await this.bot.internal.im.message.get(this.referrer.event.context.open_message_id)
           if (message?.thread_id) {
             quote = {
               id: this.referrer.event.context.open_message_id,
@@ -43,18 +43,18 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         if (!messageId) throw new Error('No message to edit')
         if (data.msg_type === 'interactive') {
           delete data.msg_type
-          await this.bot.internal.patchImMessage(messageId, data)
+          await this.bot.internal.im.message.patch(messageId, data)
         } else {
-          await this.bot.internal.updateImMessage(messageId, data)
+          await this.bot.internal.im.message.update(messageId, data)
         }
       } else if (quote?.id) {
-        resp = await this.bot.internal.replyImMessage(quote.id, {
+        resp = await this.bot.internal.im.message.reply(quote.id, {
           ...data,
           reply_in_thread: quote.replyInThread,
         })
       } else {
         data.receive_id = this.channelId
-        resp = await this.bot.internal.createImMessage(data, {
+        resp = await this.bot.internal.im.message.create(data, {
           receive_id_type: extractIdType(this.channelId),
         })
       }
@@ -128,7 +128,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
   async createImage(url: string) {
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
-    const { image_key } = await this.bot.internal.createImImage({
+    const { image_key } = await this.bot.internal.im.image.create({
       image_type: 'message',
       image: new File([data], filename, { type }),
     })
@@ -149,7 +149,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
 
     const { filename, type, data } = await this.bot.assetsQuester.file(url)
 
-    let file_type: CreateImFileForm['file_type']
+    let file_type: Im.File.CreateForm['file_type']
     if (_type === 'audio') {
       // FIXME: only support opus
       file_type = 'opus'
@@ -165,7 +165,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       }
     }
 
-    const form: CreateImFileForm = {
+    const form: Im.File.CreateForm = {
       file_type,
       file: new File([data], filename, { type }),
       file_name: filename,
@@ -174,7 +174,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       form.duration = attrs.duration
     }
 
-    const { file_key } = await this.bot.internal.createImFile(form)
+    const { file_key } = await this.bot.internal.im.file.create(form)
     await this.post({
       msg_type: _type === 'video' ? 'media' : _type,
       content: JSON.stringify({ file_key }),

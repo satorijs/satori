@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Context, h, pick, Session, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
-import { GetImChatResponse, ListChat, Message, User } from './types'
+import { Im, ListChat, Message, User } from './types'
 import { MessageContent } from './content'
 import { hyphenate } from 'cosmokit'
 
@@ -307,7 +307,7 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         session.channelId = body.event.context.open_chat_id
         session.guildId = body.event.context.open_chat_id
         session.userId = body.event.operator.open_id
-        const chat = await bot.internal.getImChat(session.channelId)
+        const chat = await bot.internal.im.chat.get(session.channelId)
         // TODO: add channel data
         session.isDirect = chat.chat_mode === 'p2p'
       }
@@ -388,7 +388,7 @@ export function extractIdType(id: string): ReceiveIdType {
   return 'user_id'
 }
 
-export function decodeChannel(channelId: string, guild: GetImChatResponse): Universal.Channel {
+export function decodeChannel(channelId: string, guild: Im.Chat.GetResponse): Universal.Channel {
   return {
     id: channelId,
     type: Universal.Channel.Type.TEXT,
