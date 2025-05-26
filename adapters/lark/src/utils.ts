@@ -188,10 +188,12 @@ export async function adaptMessage<C extends Context = Context>(
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)!
-          content.push(h.at(mention.id.open_id, { name: mention.name }))
-        } else {
-          content.push(word)
+          if (mention) {
+            content.push(h.at(mention.id.open_id, { name: mention.name }))
+            return
+          }
         }
+        content.push(word)
       })
       break
     }
@@ -327,10 +329,12 @@ export async function decodeMessage<C extends Context = Context>(bot: LarkBot<C>
       text.split(' ').forEach((word) => {
         if (word.startsWith('@')) {
           const mention = body.mentions!.find((mention) => mention.key === word)!
-          content.push(h.at(mention.id, { name: mention.name }))
-        } else {
-          content.push(h.text(word))
+          if (mention) {
+            content.push(h.at(mention.id, { name: mention.name }))
+            return
+          }
         }
+        content.push(h.text(word))
       })
       break
     }
