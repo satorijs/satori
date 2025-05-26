@@ -256,27 +256,43 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
         session.type = 'interaction/command'
         let content = body.event.action.value.content
         const args: any[] = [], options = Object.create(null)
-        for (const [key, value] of Object.entries(body.event.action.form_value ?? {})) {
-          if (+key * 0 === 0) {
-            args[+key] = value
+        const setOption = (key: string, value: any) => {
+          if (key in options) {
+            options[key] += ',' + value
           } else {
             options[key] = value
+          }
+        }
+        for (const [key, value] of Object.entries(body.event.action.form_value ?? {})) {
+          if (key.startsWith('@@')) {
+            if (value) args.push(key.slice(2))
+          } else if (key.startsWith('@')) {
+            const [_key] = key.slice(1).split('=', 1)
+            setOption(_key, key.slice(2 + _key.length))
+          } else if (+key * 0 === 0) {
+            args[+key] = value
+          } else {
+            setOption(key, value)
           }
         }
         const toArg = (value: any) => {
           if (typeof value === 'string') {
             return `'${value}'`
-          } else if (typeof value === 'number') {
+          } else { // number, boolean
             return value
-          } else {
-            return `''`
           }
         }
         for (let i = 0; i < args.length; ++i) {
           content += ` ${toArg(args[i])}`
         }
         for (const [key, value] of Object.entries(options)) {
-          content += ` --${key} ${toArg(value)}`
+          if (value === true) {
+            content += ` --${key} 1`
+          } else if (value === false) {
+            content += ` --${key} 0`
+          } else {
+            content += ` --${key} ${toArg(value)}`
+          }
         }
         if (body.event.action.input_value) {
           content += ` ${toArg(body.event.action.input_value)}`
