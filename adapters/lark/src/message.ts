@@ -273,6 +273,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             content: this.textContent,
           },
         })
+        this.textContent = ''
       } else if (attrs.type === 'submit') {
         this.flushText(true)
         await this.render(children)
@@ -289,18 +290,18 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             content: attrs.text,
           },
         })
+        this.textContent = ''
       } else {
         this.flushText()
-        await this.render(children)
         this.card?.elements.push({
           tag: 'action',
           actions: [{
             tag: 'input',
             name: attrs.name,
             width: attrs.width,
-            label: this.textContent && {
+            label: attrs.label && {
               tag: 'plain_text',
-              content: this.textContent,
+              content: attrs.label,
             },
             placeholder: attrs.placeholder && {
               tag: 'plain_text',
@@ -310,7 +311,6 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           }],
         })
       }
-      this.textContent = ''
     } else if (type === 'button') {
       this.card ??= { elements: [] }
       this.flushText(true)
