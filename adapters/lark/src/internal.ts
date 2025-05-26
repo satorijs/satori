@@ -34,17 +34,26 @@ export interface InternalRoute {
 }
 
 export class Internal<C extends Context = Context> {
-  constructor(private bot: LarkBot<C>) {}
+  constructor(bot: LarkBot<C>, tree = Internal._tree) {
+    return new Proxy(this, {
+      get: (target, prop) => {
+        if (typeof prop === 'symbol') return Reflect.get(target, prop)
+        const value = tree[prop]
+        if (typeof value === 'function') return value.bind(bot)
+        if (value) return new Internal(bot, value)
+      },
+    })
+  }
 
-  private _assertResponse(response: HTTP.Response<BaseResponse>) {
+  private static _assertResponse(bot: LarkBot, response: HTTP.Response<BaseResponse>) {
     if (!response.data.code) return
-    this.bot.logger.debug('response: %o', response.data)
+    bot.logger.debug('response: %o', response.data)
     const error = new HTTP.Error(`request failed`)
     error.response = response
     throw error
   }
 
-  private _buildData(arg: object, options: InternalRoute) {
+  private static _buildData(arg: object, options: InternalRoute) {
     if (options.multipart) {
       const form = new FormData()
       for (const [key, value] of Object.entries(arg)) {
@@ -60,6 +69,8 @@ export class Internal<C extends Context = Context> {
     }
   }
 
+  private static _tree: Dict = Object.create(null)
+
   static define(routes: Dict<Partial<Record<HTTP.Method, string | InternalRoute>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
@@ -69,7 +80,7 @@ export class Internal<C extends Context = Context> {
             route = { name: route }
           }
 
-          const impl = async function (this: Internal, ...args: any[]) {
+          const impl = async function (bot: LarkBot, ...args: any[]) {
             const raw = args.join(', ')
             const url = path.replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
@@ -80,10 +91,10 @@ export class Internal<C extends Context = Context> {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
               } else {
-                config.data = this._buildData(args[0], route)
+                config.data = Internal._buildData(args[0], route)
               }
             } else if (args.length === 2 && method !== 'GET' && method !== 'DELETE') {
-              config.data = this._buildData(args[0], route)
+              config.data = Internal._buildData(args[0], route)
               config.params = args[1]
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
@@ -91,8 +102,8 @@ export class Internal<C extends Context = Context> {
             if (route.type === 'binary') {
               config.responseType = 'arraybuffer'
             }
-            const response = await this.bot.http(method, url, config)
-            this._assertResponse(response)
+            const response = await bot.http(method, url, config)
+            Internal._assertResponse(bot, response)
             if (route.type === 'raw-json' || route.type === 'binary') {
               return response.data
             } else {
@@ -100,7 +111,13 @@ export class Internal<C extends Context = Context> {
             }
           }
 
-          Internal.prototype[route.name] = function (this: Internal, ...args: any[]) {
+          let root = Internal._tree
+          const parts = route.name.split('.')
+          const lastPart = parts.pop()!
+          for (const part of route.name.split('.')) {
+            root = root[part] ??= Object.create(null)
+          }
+          root[lastPart] = function (this: LarkBot, ...args: any[]) {
             let promise: Promise<any> | undefined
             const result = {} as Paginated
             for (const key of ['then', 'catch', 'finally']) {
