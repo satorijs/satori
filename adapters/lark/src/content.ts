@@ -447,6 +447,7 @@ export namespace MessageContent {
     export interface SelectElement extends BaseSelectElement<'select_static'> {
       options: OptionElement[]
       initial_option?: string
+      behaviors?: ActionBehavior[]
     }
 
     export interface MultiSelectElement extends BaseSelectElement<'multi_select_static'> {
@@ -553,6 +554,7 @@ export namespace MessageContent {
       | ButtonElement
       | CheckerElement
       | ColumnSetElement
+      | SelectElement
   }
 
   export interface Template {

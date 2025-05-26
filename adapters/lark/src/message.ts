@@ -13,6 +13,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private card: MessageContent.Card | undefined
   private noteElements: MessageContent.Card.NoteElement.InnerElement[] | undefined
   private actionElements: MessageContent.Card.Element[] = []
+  private isForm = false
 
   public editMessageIds: string[] | undefined
 
@@ -251,7 +252,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'form') {
       this.flushText()
       const length = this.card?.elements.length
+      this.isForm = true
       await this.render(children)
+      this.isForm = false
       if (this.card?.elements.length > length) {
         const elements = this.card?.elements.splice(length)
         this.card.elements.push({
@@ -267,7 +270,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         this.card?.elements.push({
           tag: 'checker',
           name: (attrs.argument ? '@@' : attrs.option ? `@${attrs.option}=` : '') + attrs.name,
-          checked: attrs.checked,
+          checked: attrs.value,
           text: {
             tag: 'plain_text',
             content: this.textContent,
@@ -293,20 +296,68 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         this.textContent = ''
       } else {
         this.flushText()
+        const input: MessageContent.Card.InputElement = {
+          tag: 'input',
+          name: attrs.name,
+          width: attrs.width,
+          label: attrs.label && {
+            tag: 'plain_text',
+            content: attrs.label,
+          },
+          placeholder: attrs.placeholder && {
+            tag: 'plain_text',
+            content: attrs.placeholder,
+          },
+          default_value: attrs.value,
+          disabled: attrs.disabled,
+          required: attrs.required,
+        }
+        if (this.isForm) {
+          this.card?.elements.push(input)
+        } else {
+          this.card?.elements.push({
+            tag: 'action',
+            actions: [{
+              ...input,
+              behaviors: this.createBehavior(attrs),
+            }],
+          })
+        }
+      }
+    } else if (type === 'select') {
+      this.flushText()
+      const select: MessageContent.Card.SelectElement = {
+        tag: 'select_static',
+        name: attrs.name,
+        width: attrs.width,
+        initial_option: attrs.value,
+        disabled: attrs.disabled,
+        required: attrs.required,
+        placeholder: attrs.placeholder && {
+          tag: 'plain_text',
+          content: attrs.placeholder,
+        },
+        options: [],
+      }
+      for (const child of children) {
+        if (child.type !== 'option') continue
+        await this.render(child.children)
+        select.options.push({
+          value: child.attrs.value,
+          text: {
+            tag: 'plain_text',
+            content: this.textContent ?? child.attrs.value,
+          },
+        })
+        this.textContent = ''
+      }
+      if (this.isForm) {
+        this.card?.elements.push(select)
+      } else {
         this.card?.elements.push({
           tag: 'action',
           actions: [{
-            tag: 'input',
-            name: attrs.name,
-            width: attrs.width,
-            label: attrs.label && {
-              tag: 'plain_text',
-              content: attrs.label,
-            },
-            placeholder: attrs.placeholder && {
-              tag: 'plain_text',
-              content: attrs.placeholder,
-            },
+            ...select,
             behaviors: this.createBehavior(attrs),
           }],
         })
@@ -437,13 +488,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           }
           this.card = { elements: [] }
           await this.render(child.children)
+          this.flushText()
           columns.push({
             tag: 'column',
             width: child.attrs.width,
             weight: child.attrs.weight,
             padding: child.attrs.padding,
-            vertical_align: child.attrs.verticalAlign,
-            vertical_spacing: child.attrs.verticalSpacing,
+            vertical_align: child.attrs.verticalAlign ?? 'center',
+            vertical_spacing: child.attrs.verticalSpacing ?? '0px',
             background_style: child.attrs.backgroundStyle,
             elements: this.card.elements,
           })
