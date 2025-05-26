@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/protocol",
   "description": "Protocol types for Satori protocol",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "type": "module",
   "main": "lib/index.cjs",
   "module": "lib/index.mjs",
@@ -38,7 +38,7 @@
     "api"
   ],
   "dependencies": {
-    "@satorijs/element": "^3.1.7",
+    "@satorijs/element": "^3.1.8",
     "cosmokit": "^1.7.2"
   }
 }
