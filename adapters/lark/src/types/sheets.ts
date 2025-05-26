@@ -1,425 +1,467 @@
-import { Condition, Dimension, FilterView, FilterViewCondition, FindCondition, FindReplaceResult, FloatImage, GetSpreadsheet, Sheet, SheetFilterInfo, Spreadsheet } from '.'
+import * as Lark from '.'
 import { Internal } from '../internal'
 
 declare module '../internal' {
   interface Internal {
-    /**
-     * 创建电子表格
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/create
-     */
-    createSheetsSpreadsheet(body: CreateSheetsSpreadsheetRequest): Promise<CreateSheetsSpreadsheetResponse>
-    /**
-     * 修改电子表格属性
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/patch
-     */
-    patchSheetsSpreadsheet(spreadsheet_token: string, body: PatchSheetsSpreadsheetRequest): Promise<void>
-    /**
-     * 获取电子表格信息
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/get
-     */
-    getSheetsSpreadsheet(spreadsheet_token: string, query?: GetSheetsSpreadsheetQuery): Promise<GetSheetsSpreadsheetResponse>
-    /**
-     * 获取工作表
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/query
-     */
-    querySheetsSpreadsheetSheet(spreadsheet_token: string): Promise<QuerySheetsSpreadsheetSheetResponse>
-    /**
-     * 查询工作表
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/get
-     */
-    getSheetsSpreadsheetSheet(spreadsheet_token: string, sheet_id: string): Promise<GetSheetsSpreadsheetSheetResponse>
-    /**
-     * 移动行列
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/move_dimension
-     */
-    moveDimensionSheetsSpreadsheetSheet(spreadsheet_token: string, sheet_id: string, body: MoveDimensionSheetsSpreadsheetSheetRequest): Promise<void>
-    /**
-     * 查找单元格
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/find
-     */
-    findSheetsSpreadsheetSheet(spreadsheet_token: string, sheet_id: string, body: FindSheetsSpreadsheetSheetRequest): Promise<FindSheetsSpreadsheetSheetResponse>
-    /**
-     * 替换单元格
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/replace
-     */
-    replaceSheetsSpreadsheetSheet(spreadsheet_token: string, sheet_id: string, body: ReplaceSheetsSpreadsheetSheetRequest): Promise<ReplaceSheetsSpreadsheetSheetResponse>
-    /**
-     * 创建筛选
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/create
-     */
-    createSheetsSpreadsheetSheetFilter(spreadsheet_token: string, sheet_id: string, body: CreateSheetsSpreadsheetSheetFilterRequest): Promise<void>
-    /**
-     * 更新筛选
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/update
-     */
-    updateSheetsSpreadsheetSheetFilter(spreadsheet_token: string, sheet_id: string, body: UpdateSheetsSpreadsheetSheetFilterRequest): Promise<void>
-    /**
-     * 获取筛选
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/get
-     */
-    getSheetsSpreadsheetSheetFilter(spreadsheet_token: string, sheet_id: string): Promise<GetSheetsSpreadsheetSheetFilterResponse>
-    /**
-     * 删除筛选
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/delete
-     */
-    deleteSheetsSpreadsheetSheetFilter(spreadsheet_token: string, sheet_id: string): Promise<void>
-    /**
-     * 创建筛选视图
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/create
-     */
-    createSheetsSpreadsheetSheetFilterView(spreadsheet_token: string, sheet_id: string, body: CreateSheetsSpreadsheetSheetFilterViewRequest): Promise<CreateSheetsSpreadsheetSheetFilterViewResponse>
-    /**
-     * 更新筛选视图
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/patch
-     */
-    patchSheetsSpreadsheetSheetFilterView(spreadsheet_token: string, sheet_id: string, filter_view_id: string, body: PatchSheetsSpreadsheetSheetFilterViewRequest): Promise<PatchSheetsSpreadsheetSheetFilterViewResponse>
-    /**
-     * 查询筛选视图
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/query
-     */
-    querySheetsSpreadsheetSheetFilterView(spreadsheet_token: string, sheet_id: string): Promise<QuerySheetsSpreadsheetSheetFilterViewResponse>
-    /**
-     * 获取筛选视图
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/get
-     */
-    getSheetsSpreadsheetSheetFilterView(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<GetSheetsSpreadsheetSheetFilterViewResponse>
-    /**
-     * 删除筛选视图
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/delete
-     */
-    deleteSheetsSpreadsheetSheetFilterView(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<void>
-    /**
-     * 创建筛选条件
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/create
-     */
-    createSheetsSpreadsheetSheetFilterViewCondition(spreadsheet_token: string, sheet_id: string, filter_view_id: string, body: CreateSheetsSpreadsheetSheetFilterViewConditionRequest): Promise<CreateSheetsSpreadsheetSheetFilterViewConditionResponse>
-    /**
-     * 更新筛选条件
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/update
-     */
-    updateSheetsSpreadsheetSheetFilterViewCondition(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string, body: UpdateSheetsSpreadsheetSheetFilterViewConditionRequest): Promise<UpdateSheetsSpreadsheetSheetFilterViewConditionResponse>
-    /**
-     * 查询筛选条件
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/query
-     */
-    querySheetsSpreadsheetSheetFilterViewCondition(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<QuerySheetsSpreadsheetSheetFilterViewConditionResponse>
-    /**
-     * 获取筛选条件
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/get
-     */
-    getSheetsSpreadsheetSheetFilterViewCondition(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string): Promise<GetSheetsSpreadsheetSheetFilterViewConditionResponse>
-    /**
-     * 删除筛选条件
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/delete
-     */
-    deleteSheetsSpreadsheetSheetFilterViewCondition(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string): Promise<void>
-    /**
-     * 创建浮动图片
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/create
-     */
-    createSheetsSpreadsheetSheetFloatImage(spreadsheet_token: string, sheet_id: string, body: CreateSheetsSpreadsheetSheetFloatImageRequest): Promise<CreateSheetsSpreadsheetSheetFloatImageResponse>
-    /**
-     * 更新浮动图片
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/patch
-     */
-    patchSheetsSpreadsheetSheetFloatImage(spreadsheet_token: string, sheet_id: string, float_image_id: string, body: PatchSheetsSpreadsheetSheetFloatImageRequest): Promise<PatchSheetsSpreadsheetSheetFloatImageResponse>
-    /**
-     * 获取浮动图片
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/get
-     */
-    getSheetsSpreadsheetSheetFloatImage(spreadsheet_token: string, sheet_id: string, float_image_id: string): Promise<GetSheetsSpreadsheetSheetFloatImageResponse>
-    /**
-     * 查询浮动图片
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/query
-     */
-    querySheetsSpreadsheetSheetFloatImage(spreadsheet_token: string, sheet_id: string): Promise<QuerySheetsSpreadsheetSheetFloatImageResponse>
-    /**
-     * 删除浮动图片
-     * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/delete
-     */
-    deleteSheetsSpreadsheetSheetFloatImage(spreadsheet_token: string, sheet_id: string, float_image_id: string): Promise<void>
+    sheets: Sheets.Methods
   }
 }
 
-export interface CreateSheetsSpreadsheetRequest {
-  /** 表格标题 */
-  title?: string
-  /** 文件夹token */
-  folder_token?: string
-}
+export namespace Sheets {
+  export interface Methods {
+    spreadsheet: Spreadsheet.Methods
+  }
 
-export interface CreateSheetsSpreadsheetResponse {
-  /** 表格信息 */
-  spreadsheet?: Spreadsheet
-}
+  export namespace Spreadsheet {
+    export interface Methods {
+      sheet: Sheet.Methods
+      /**
+       * 创建电子表格
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/create
+       */
+      create(body: CreateRequest): Promise<CreateResponse>
+      /**
+       * 修改电子表格属性
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/patch
+       */
+      patch(spreadsheet_token: string, body: PatchRequest): Promise<void>
+      /**
+       * 获取电子表格信息
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet/get
+       */
+      get(spreadsheet_token: string, query?: GetQuery): Promise<GetResponse>
+    }
 
-export interface PatchSheetsSpreadsheetRequest {
-  /** 表格标题 */
-  title?: string
-}
+    export interface CreateRequest {
+      /** 表格标题 */
+      title?: string
+      /** 文件夹token */
+      folder_token?: string
+    }
 
-export interface GetSheetsSpreadsheetQuery {
-  /** 此次调用中使用的用户ID的类型 */
-  user_id_type?: 'user_id' | 'union_id' | 'open_id'
-}
+    export interface CreateResponse {
+      /** 表格信息 */
+      spreadsheet?: Lark.Spreadsheet
+    }
 
-export interface GetSheetsSpreadsheetResponse {
-  /** 表格 */
-  spreadsheet?: GetSpreadsheet
-}
+    export interface PatchRequest {
+      /** 表格标题 */
+      title?: string
+    }
 
-export interface QuerySheetsSpreadsheetSheetResponse {
-  /** 工作表信息 */
-  sheets?: Sheet[]
-}
+    export interface GetQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
 
-export interface GetSheetsSpreadsheetSheetResponse {
-  /** 工作表 */
-  sheet?: Sheet
-}
+    export interface GetResponse {
+      /** 表格 */
+      spreadsheet?: Lark.GetSpreadsheet
+    }
 
-export interface MoveDimensionSheetsSpreadsheetSheetRequest {
-  /** 移动源位置参数 */
-  source?: Dimension
-  /** 移动的目标位置行或者列号 */
-  destination_index?: number
-}
+    export namespace Sheet {
+      export interface Methods {
+        filter: Filter.Methods
+        filterView: FilterView.Methods
+        floatImage: FloatImage.Methods
+        /**
+         * 获取工作表
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/query
+         */
+        query(spreadsheet_token: string): Promise<QueryResponse>
+        /**
+         * 查询工作表
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/get
+         */
+        get(spreadsheet_token: string, sheet_id: string): Promise<GetResponse>
+        /**
+         * 移动行列
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/move_dimension
+         */
+        moveDimension(spreadsheet_token: string, sheet_id: string, body: MoveDimensionRequest): Promise<void>
+        /**
+         * 查找单元格
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/find
+         */
+        find(spreadsheet_token: string, sheet_id: string, body: FindRequest): Promise<FindResponse>
+        /**
+         * 替换单元格
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet/replace
+         */
+        replace(spreadsheet_token: string, sheet_id: string, body: ReplaceRequest): Promise<ReplaceResponse>
+      }
 
-export interface FindSheetsSpreadsheetSheetRequest {
-  /** 查找条件 */
-  find_condition: FindCondition
-  /** 查找的字符串 */
-  find: string
-}
+      export interface QueryResponse {
+        /** 工作表信息 */
+        sheets?: Lark.Sheet[]
+      }
 
-export interface FindSheetsSpreadsheetSheetResponse {
-  /** 查找返回符合条件的信息 */
-  find_result?: FindReplaceResult
-}
+      export interface GetResponse {
+        /** 工作表 */
+        sheet?: Lark.Sheet
+      }
 
-export interface ReplaceSheetsSpreadsheetSheetRequest {
-  /** 查找条件 */
-  find_condition: FindCondition
-  /** 查找的字符串 */
-  find: string
-  /** 替换的字符串 */
-  replacement: string
-}
+      export interface MoveDimensionRequest {
+        /** 移动源位置参数 */
+        source?: Lark.Dimension
+        /** 移动的目标位置行或者列号 */
+        destination_index?: number
+      }
 
-export interface ReplaceSheetsSpreadsheetSheetResponse {
-  /** 符合查找条件并替换的单元格信息 */
-  replace_result?: FindReplaceResult
-}
+      export interface FindRequest {
+        /** 查找条件 */
+        find_condition: Lark.FindCondition
+        /** 查找的字符串 */
+        find: string
+      }
 
-export interface CreateSheetsSpreadsheetSheetFilterRequest {
-  /** 筛选应用范围 */
-  range: string
-  /** 设置筛选条件的列 */
-  col: string
-  /** 筛选的条件 */
-  condition: Condition
-}
+      export interface FindResponse {
+        /** 查找返回符合条件的信息 */
+        find_result?: Lark.FindReplaceResult
+      }
 
-export interface UpdateSheetsSpreadsheetSheetFilterRequest {
-  /** 更新筛选条件的列 */
-  col: string
-  /** 筛选条件 */
-  condition: Condition
-}
+      export interface ReplaceRequest {
+        /** 查找条件 */
+        find_condition: Lark.FindCondition
+        /** 查找的字符串 */
+        find: string
+        /** 替换的字符串 */
+        replacement: string
+      }
 
-export interface GetSheetsSpreadsheetSheetFilterResponse {
-  /** 筛选信息 */
-  sheet_filter_info?: SheetFilterInfo
-}
+      export interface ReplaceResponse {
+        /** 符合查找条件并替换的单元格信息 */
+        replace_result?: Lark.FindReplaceResult
+      }
 
-export interface CreateSheetsSpreadsheetSheetFilterViewRequest {
-  /** 筛选视图 id */
-  filter_view_id?: string
-  /** 筛选视图名字 */
-  filter_view_name?: string
-  /** 筛选视图的筛选范围 */
-  range?: string
-}
+      export namespace Filter {
+        export interface Methods {
+          /**
+           * 创建筛选
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/create
+           */
+          create(spreadsheet_token: string, sheet_id: string, body: CreateRequest): Promise<void>
+          /**
+           * 更新筛选
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/update
+           */
+          update(spreadsheet_token: string, sheet_id: string, body: UpdateRequest): Promise<void>
+          /**
+           * 获取筛选
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/get
+           */
+          get(spreadsheet_token: string, sheet_id: string): Promise<GetResponse>
+          /**
+           * 删除筛选
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter/delete
+           */
+          delete(spreadsheet_token: string, sheet_id: string): Promise<void>
+        }
 
-export interface CreateSheetsSpreadsheetSheetFilterViewResponse {
-  /** 创建的筛选视图的 id 、name、range */
-  filter_view?: FilterView
-}
+        export interface CreateRequest {
+          /** 筛选应用范围 */
+          range: string
+          /** 设置筛选条件的列 */
+          col: string
+          /** 筛选的条件 */
+          condition: Lark.Condition
+        }
 
-export interface PatchSheetsSpreadsheetSheetFilterViewRequest {
-  /** 筛选视图名字 */
-  filter_view_name?: string
-  /** 筛选视图的筛选范围 */
-  range?: string
-}
+        export interface UpdateRequest {
+          /** 更新筛选条件的列 */
+          col: string
+          /** 筛选条件 */
+          condition: Lark.Condition
+        }
 
-export interface PatchSheetsSpreadsheetSheetFilterViewResponse {
-  /** 更新后的筛选视图的 id 、name、range */
-  filter_view?: FilterView
-}
+        export interface GetResponse {
+          /** 筛选信息 */
+          sheet_filter_info?: Lark.SheetFilterInfo
+        }
+      }
 
-export interface QuerySheetsSpreadsheetSheetFilterViewResponse {
-  /** 子表的所有筛选视图信息，id、name、range */
-  items?: FilterView[]
-}
+      export namespace FilterView {
+        export interface Methods {
+          condition: Condition.Methods
+          /**
+           * 创建筛选视图
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/create
+           */
+          create(spreadsheet_token: string, sheet_id: string, body: CreateRequest): Promise<CreateResponse>
+          /**
+           * 更新筛选视图
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/patch
+           */
+          patch(spreadsheet_token: string, sheet_id: string, filter_view_id: string, body: PatchRequest): Promise<PatchResponse>
+          /**
+           * 查询筛选视图
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/query
+           */
+          query(spreadsheet_token: string, sheet_id: string): Promise<QueryResponse>
+          /**
+           * 获取筛选视图
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/get
+           */
+          get(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<GetResponse>
+          /**
+           * 删除筛选视图
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view/delete
+           */
+          delete(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<void>
+        }
 
-export interface GetSheetsSpreadsheetSheetFilterViewResponse {
-  /** 筛选视图信息，包括 id、name、range */
-  filter_view?: FilterView
-}
+        export interface CreateRequest {
+          /** 筛选视图 id */
+          filter_view_id?: string
+          /** 筛选视图名字 */
+          filter_view_name?: string
+          /** 筛选视图的筛选范围 */
+          range?: string
+        }
 
-export interface CreateSheetsSpreadsheetSheetFilterViewConditionRequest {
-  /** 设置筛选条件的列，使用字母号 */
-  condition_id?: string
-  /** 筛选类型 */
-  filter_type?: string
-  /** 比较类型 */
-  compare_type?: string
-  /** 筛选参数 */
-  expected?: string[]
-}
+        export interface CreateResponse {
+          /** 创建的筛选视图的 id 、name、range */
+          filter_view?: Lark.FilterView
+        }
 
-export interface CreateSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 创建的筛选条件 */
-  condition?: FilterViewCondition
-}
+        export interface PatchRequest {
+          /** 筛选视图名字 */
+          filter_view_name?: string
+          /** 筛选视图的筛选范围 */
+          range?: string
+        }
 
-export interface UpdateSheetsSpreadsheetSheetFilterViewConditionRequest {
-  /** 筛选类型 */
-  filter_type?: string
-  /** 比较类型 */
-  compare_type?: string
-  /** 筛选参数 */
-  expected?: string[]
-}
+        export interface PatchResponse {
+          /** 更新后的筛选视图的 id 、name、range */
+          filter_view?: Lark.FilterView
+        }
 
-export interface UpdateSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 更新后的筛选条件 */
-  condition?: FilterViewCondition
-}
+        export interface QueryResponse {
+          /** 子表的所有筛选视图信息，id、name、range */
+          items?: Lark.FilterView[]
+        }
 
-export interface QuerySheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 筛选视图设置的所有筛选条件 */
-  items?: FilterViewCondition[]
-}
+        export interface GetResponse {
+          /** 筛选视图信息，包括 id、name、range */
+          filter_view?: Lark.FilterView
+        }
 
-export interface GetSheetsSpreadsheetSheetFilterViewConditionResponse {
-  /** 筛选的条件 */
-  condition?: FilterViewCondition
-}
+        export namespace Condition {
+          export interface Methods {
+            /**
+             * 创建筛选条件
+             * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/create
+             */
+            create(spreadsheet_token: string, sheet_id: string, filter_view_id: string, body: CreateRequest): Promise<CreateResponse>
+            /**
+             * 更新筛选条件
+             * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/update
+             */
+            update(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string, body: UpdateRequest): Promise<UpdateResponse>
+            /**
+             * 查询筛选条件
+             * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/query
+             */
+            query(spreadsheet_token: string, sheet_id: string, filter_view_id: string): Promise<QueryResponse>
+            /**
+             * 获取筛选条件
+             * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/get
+             */
+            get(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string): Promise<GetResponse>
+            /**
+             * 删除筛选条件
+             * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-filter_view-condition/delete
+             */
+            delete(spreadsheet_token: string, sheet_id: string, filter_view_id: string, condition_id: string): Promise<void>
+          }
 
-export interface CreateSheetsSpreadsheetSheetFloatImageRequest {
-  /** 浮动图片 id */
-  float_image_id?: string
-  /** 浮动图片 token，需要先上传图片到表格获得此 token 之后再进行浮动图片的操作 */
-  float_image_token?: string
-  /** 浮动图片的左上角单元格定位，只支持一个单元格 */
-  range?: string
-  /** 浮动图片的宽度，大于等于 20px */
-  width?: number
-  /** 浮动图片的高度，大于等于 20px */
-  height?: number
-  /** 浮动图片左上角所在位置相对于所在单元格左上角的横向偏移，大于等于0且小于所在单元格的宽度 */
-  offset_x?: number
-  /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
-  offset_y?: number
-}
+          export interface CreateRequest {
+            /** 设置筛选条件的列，使用字母号 */
+            condition_id?: string
+            /** 筛选类型 */
+            filter_type?: string
+            /** 比较类型 */
+            compare_type?: string
+            /** 筛选参数 */
+            expected?: string[]
+          }
 
-export interface CreateSheetsSpreadsheetSheetFloatImageResponse {
-  /** 浮动图片 */
-  float_image?: FloatImage
-}
+          export interface CreateResponse {
+            /** 创建的筛选条件 */
+            condition?: Lark.FilterViewCondition
+          }
 
-export interface PatchSheetsSpreadsheetSheetFloatImageRequest {
-  /** 浮动图片 token，需要先上传图片到表格获得此 token 之后再进行浮动图片的操作 */
-  float_image_token?: string
-  /** 浮动图片的左上角单元格定位，只支持一个单元格 */
-  range?: string
-  /** 浮动图片的宽度，大于等于 20px */
-  width?: number
-  /** 浮动图片的高度，大于等于 20px */
-  height?: number
-  /** 浮动图片左上角所在位置相对于所在单元格左上角的横向偏移，大于等于0且小于所在单元格的宽度 */
-  offset_x?: number
-  /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
-  offset_y?: number
-}
+          export interface UpdateRequest {
+            /** 筛选类型 */
+            filter_type?: string
+            /** 比较类型 */
+            compare_type?: string
+            /** 筛选参数 */
+            expected?: string[]
+          }
 
-export interface PatchSheetsSpreadsheetSheetFloatImageResponse {
-  /** 浮动图片 */
-  float_image?: FloatImage
-}
+          export interface UpdateResponse {
+            /** 更新后的筛选条件 */
+            condition?: Lark.FilterViewCondition
+          }
 
-export interface GetSheetsSpreadsheetSheetFloatImageResponse {
-  /** 浮动图片 */
-  float_image?: FloatImage
-}
+          export interface QueryResponse {
+            /** 筛选视图设置的所有筛选条件 */
+            items?: Lark.FilterViewCondition[]
+          }
 
-export interface QuerySheetsSpreadsheetSheetFloatImageResponse {
-  /** 子表的所有浮动图片信息 */
-  items?: FloatImage[]
+          export interface GetResponse {
+            /** 筛选的条件 */
+            condition?: Lark.FilterViewCondition
+          }
+        }
+      }
+
+      export namespace FloatImage {
+        export interface Methods {
+          /**
+           * 创建浮动图片
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/create
+           */
+          create(spreadsheet_token: string, sheet_id: string, body: CreateRequest): Promise<CreateResponse>
+          /**
+           * 更新浮动图片
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/patch
+           */
+          patch(spreadsheet_token: string, sheet_id: string, float_image_id: string, body: PatchRequest): Promise<PatchResponse>
+          /**
+           * 获取浮动图片
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/get
+           */
+          get(spreadsheet_token: string, sheet_id: string, float_image_id: string): Promise<GetResponse>
+          /**
+           * 查询浮动图片
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/query
+           */
+          query(spreadsheet_token: string, sheet_id: string): Promise<QueryResponse>
+          /**
+           * 删除浮动图片
+           * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/sheets-v3/spreadsheet-sheet-float_image/delete
+           */
+          delete(spreadsheet_token: string, sheet_id: string, float_image_id: string): Promise<void>
+        }
+
+        export interface CreateRequest {
+          /** 浮动图片 id */
+          float_image_id?: string
+          /** 浮动图片 token，需要先上传图片到表格获得此 token 之后再进行浮动图片的操作 */
+          float_image_token?: string
+          /** 浮动图片的左上角单元格定位，只支持一个单元格 */
+          range?: string
+          /** 浮动图片的宽度，大于等于 20px */
+          width?: number
+          /** 浮动图片的高度，大于等于 20px */
+          height?: number
+          /** 浮动图片左上角所在位置相对于所在单元格左上角的横向偏移，大于等于0且小于所在单元格的宽度 */
+          offset_x?: number
+          /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
+          offset_y?: number
+        }
+
+        export interface CreateResponse {
+          /** 浮动图片 */
+          float_image?: Lark.FloatImage
+        }
+
+        export interface PatchRequest {
+          /** 浮动图片 token，需要先上传图片到表格获得此 token 之后再进行浮动图片的操作 */
+          float_image_token?: string
+          /** 浮动图片的左上角单元格定位，只支持一个单元格 */
+          range?: string
+          /** 浮动图片的宽度，大于等于 20px */
+          width?: number
+          /** 浮动图片的高度，大于等于 20px */
+          height?: number
+          /** 浮动图片左上角所在位置相对于所在单元格左上角的横向偏移，大于等于0且小于所在单元格的宽度 */
+          offset_x?: number
+          /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
+          offset_y?: number
+        }
+
+        export interface PatchResponse {
+          /** 浮动图片 */
+          float_image?: Lark.FloatImage
+        }
+
+        export interface GetResponse {
+          /** 浮动图片 */
+          float_image?: Lark.FloatImage
+        }
+
+        export interface QueryResponse {
+          /** 子表的所有浮动图片信息 */
+          items?: Lark.FloatImage[]
+        }
+      }
+    }
+  }
 }
 
 Internal.define({
   '/sheets/v3/spreadsheets': {
-    POST: 'createSheetsSpreadsheet',
+    POST: 'sheets.spreadsheet.create',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}': {
-    PATCH: 'patchSheetsSpreadsheet',
-    GET: 'getSheetsSpreadsheet',
+    PATCH: 'sheets.spreadsheet.patch',
+    GET: 'sheets.spreadsheet.get',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/query': {
-    GET: 'querySheetsSpreadsheetSheet',
+    GET: 'sheets.spreadsheet.sheet.query',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}': {
-    GET: 'getSheetsSpreadsheetSheet',
+    GET: 'sheets.spreadsheet.sheet.get',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/move_dimension': {
-    POST: 'moveDimensionSheetsSpreadsheetSheet',
+    POST: 'sheets.spreadsheet.sheet.moveDimension',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/find': {
-    POST: 'findSheetsSpreadsheetSheet',
+    POST: 'sheets.spreadsheet.sheet.find',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/replace': {
-    POST: 'replaceSheetsSpreadsheetSheet',
+    POST: 'sheets.spreadsheet.sheet.replace',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter': {
-    POST: 'createSheetsSpreadsheetSheetFilter',
-    PUT: 'updateSheetsSpreadsheetSheetFilter',
-    GET: 'getSheetsSpreadsheetSheetFilter',
-    DELETE: 'deleteSheetsSpreadsheetSheetFilter',
+    POST: 'sheets.spreadsheet.sheet.filter.create',
+    PUT: 'sheets.spreadsheet.sheet.filter.update',
+    GET: 'sheets.spreadsheet.sheet.filter.get',
+    DELETE: 'sheets.spreadsheet.sheet.filter.delete',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views': {
-    POST: 'createSheetsSpreadsheetSheetFilterView',
+    POST: 'sheets.spreadsheet.sheet.filterView.create',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}': {
-    PATCH: 'patchSheetsSpreadsheetSheetFilterView',
-    GET: 'getSheetsSpreadsheetSheetFilterView',
-    DELETE: 'deleteSheetsSpreadsheetSheetFilterView',
+    PATCH: 'sheets.spreadsheet.sheet.filterView.patch',
+    GET: 'sheets.spreadsheet.sheet.filterView.get',
+    DELETE: 'sheets.spreadsheet.sheet.filterView.delete',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/query': {
-    GET: 'querySheetsSpreadsheetSheetFilterView',
+    GET: 'sheets.spreadsheet.sheet.filterView.query',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions': {
-    POST: 'createSheetsSpreadsheetSheetFilterViewCondition',
+    POST: 'sheets.spreadsheet.sheet.filterView.condition.create',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/{condition_id}': {
-    PUT: 'updateSheetsSpreadsheetSheetFilterViewCondition',
-    GET: 'getSheetsSpreadsheetSheetFilterViewCondition',
-    DELETE: 'deleteSheetsSpreadsheetSheetFilterViewCondition',
+    PUT: 'sheets.spreadsheet.sheet.filterView.condition.update',
+    GET: 'sheets.spreadsheet.sheet.filterView.condition.get',
+    DELETE: 'sheets.spreadsheet.sheet.filterView.condition.delete',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/filter_views/{filter_view_id}/conditions/query': {
-    GET: 'querySheetsSpreadsheetSheetFilterViewCondition',
+    GET: 'sheets.spreadsheet.sheet.filterView.condition.query',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images': {
-    POST: 'createSheetsSpreadsheetSheetFloatImage',
+    POST: 'sheets.spreadsheet.sheet.floatImage.create',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/{float_image_id}': {
-    PATCH: 'patchSheetsSpreadsheetSheetFloatImage',
-    GET: 'getSheetsSpreadsheetSheetFloatImage',
-    DELETE: 'deleteSheetsSpreadsheetSheetFloatImage',
+    PATCH: 'sheets.spreadsheet.sheet.floatImage.patch',
+    GET: 'sheets.spreadsheet.sheet.floatImage.get',
+    DELETE: 'sheets.spreadsheet.sheet.floatImage.delete',
   },
   '/sheets/v3/spreadsheets/{spreadsheet_token}/sheets/{sheet_id}/float_images/query': {
-    GET: 'querySheetsSpreadsheetSheetFloatImage',
+    GET: 'sheets.spreadsheet.sheet.floatImage.query',
   },
 })
