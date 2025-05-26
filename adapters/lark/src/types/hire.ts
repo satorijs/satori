@@ -679,6 +679,11 @@ declare module '../internal' {
      */
     transferOnboardHireApplication(application_id: string, body: TransferOnboardHireApplicationRequest, query?: TransferOnboardHireApplicationQuery): Promise<TransferOnboardHireApplicationResponse>
     /**
+     * 取消候选人入职
+     * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/application/cancel_onboard
+     */
+    cancelOnboardHireApplication(application_id: string, body: CancelOnboardHireApplicationRequest): Promise<void>
+    /**
      * 更新员工状态
      * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/employee/patch
      */
@@ -3428,6 +3433,15 @@ export interface TransferOnboardHireApplicationResponse {
   employee?: Employee
 }
 
+export interface CancelOnboardHireApplicationRequest {
+  /** 终止类型 */
+  termination_type: 1 | 22 | 27
+  /** 终止原因 ID 列表 */
+  termination_reason_id_list?: string[]
+  /** 备注 */
+  termination_reason_notes?: string
+}
+
 export const enum PatchHireEmployeeRequestOperation {
   /** 转正 */
   Convert = 1,
@@ -4283,6 +4297,9 @@ Internal.define({
   },
   '/hire/v1/applications/{application_id}/transfer_onboard': {
     POST: 'transferOnboardHireApplication',
+  },
+  '/hire/v1/applications/{application_id}/cancel_onboard': {
+    POST: 'cancelOnboardHireApplication',
   },
   '/hire/v1/employees/{employee_id}': {
     PATCH: 'patchHireEmployee',

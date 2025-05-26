@@ -1,4 +1,4 @@
-import { AilyKnowledgeAskProcessData, AilyKnowledgeFaq, AilyKnowledgeMessage, AilyMention, AilyMessage, AilyMessageContentType, AilySession, DataAsset, DataAssetTag, Run, Skill, SkillGlobalVariable } from '.'
+import { AilyKnowledgeAskProcessData, AilyKnowledgeFaq, AilyKnowledgeMessage, AilyMention, AilyMessage, AilyMessageContentType, AilySession, DataAsset, DataAssetFile, DataAssetImportKnowledgeSetting, DataAssetTag, Run, Skill, SkillGlobalVariable } from '.'
 import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
@@ -78,6 +78,26 @@ declare module '../internal' {
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-knowledge/ask
      */
     askAilyAppKnowledge(app_id: string, body: AskAilyAppKnowledgeRequest): Promise<AskAilyAppKnowledgeResponse>
+    /**
+     * 上传文件用于数据知识管理
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/upload_file
+     */
+    uploadFileAilyAppDataAsset(app_id: string, form: UploadFileAilyAppDataAssetForm, query?: UploadFileAilyAppDataAssetQuery): Promise<UploadFileAilyAppDataAssetResponse>
+    /**
+     * 创建数据知识
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/create
+     */
+    createAilyAppDataAsset(app_id: string, body: CreateAilyAppDataAssetRequest, query?: CreateAilyAppDataAssetQuery): Promise<CreateAilyAppDataAssetResponse>
+    /**
+     * 获取数据知识
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/get
+     */
+    getAilyAppDataAsset(app_id: string, data_asset_id: string, query?: GetAilyAppDataAssetQuery): Promise<GetAilyAppDataAssetResponse>
+    /**
+     * 删除数据知识
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/delete
+     */
+    deleteAilyAppDataAsset(app_id: string, data_asset_id: string, query?: DeleteAilyAppDataAssetQuery): Promise<DeleteAilyAppDataAssetResponse>
     /**
      * 查询数据知识列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/app-data_asset/list
@@ -221,6 +241,66 @@ export interface AskAilyAppKnowledgeResponse {
   has_answer?: boolean
 }
 
+export interface UploadFileAilyAppDataAssetForm {
+  /** 需要上传的文件 */
+  file: Blob
+}
+
+export interface UploadFileAilyAppDataAssetQuery {
+  /** 应用环境，默认为线上环境，dev代表开发环境，只支持dev */
+  tenant_type?: string
+}
+
+export interface UploadFileAilyAppDataAssetResponse {
+  /** 数据知识文件 */
+  file_info?: DataAssetFile
+}
+
+export interface CreateAilyAppDataAssetRequest {
+  /** 连接类型 */
+  connect_type: 'import' | 'direct'
+  /** 数据源类型 */
+  source_type: 'file' | 'lark_wiki_space' | 'lark_doc' | 'lark_helpdesk'
+  /** 知识导入配置 */
+  import_knowledge_setting?: DataAssetImportKnowledgeSetting
+  /** 数据知识描述信息 */
+  description?: Record<string, string>
+}
+
+export interface CreateAilyAppDataAssetQuery {
+  /** 应用环境，默认为线上环境，dev代表开发环境，只支持dev */
+  tenant_type?: string
+}
+
+export interface CreateAilyAppDataAssetResponse {
+  /** 数据知识 */
+  data_asset?: DataAsset
+}
+
+export interface GetAilyAppDataAssetQuery {
+  /** 结果是否包含数据与知识项 */
+  with_data_asset_item?: boolean
+  /** 结果是否包含数据知识连接状态 */
+  with_connect_status?: boolean
+  /** 应用环境，默认为线上环境，dev代表开发环境 */
+  tenant_type?: string
+}
+
+export interface GetAilyAppDataAssetResponse {
+  /** 数据知识 */
+  data_asset?: DataAsset
+}
+
+export interface DeleteAilyAppDataAssetQuery {
+  /** 应用环境，默认为线上环境，dev代表开发环境，只支持dev */
+  tenant_type?: string
+}
+
+export interface DeleteAilyAppDataAssetResponse {
+  /** 数据知识 */
+  data_asset?: DataAsset
+}
+
 export interface ListAilyAppDataAssetQuery extends Pagination {
   /** 模糊匹配关键词 */
   keyword?: string
@@ -279,8 +359,16 @@ Internal.define({
   '/aily/v1/apps/{app_id}/knowledges/ask': {
     POST: 'askAilyAppKnowledge',
   },
+  '/aily/v1/apps/{app_id}/data_assets/upload_file': {
+    POST: { name: 'uploadFileAilyAppDataAsset', multipart: true },
+  },
   '/aily/v1/apps/{app_id}/data_assets': {
+    POST: 'createAilyAppDataAsset',
     GET: { name: 'listAilyAppDataAsset', pagination: { argIndex: 1 } },
+  },
+  '/aily/v1/apps/{app_id}/data_assets/{data_asset_id}': {
+    GET: 'getAilyAppDataAsset',
+    DELETE: 'deleteAilyAppDataAsset',
   },
   '/aily/v1/apps/{app_id}/data_asset_tags': {
     GET: { name: 'listAilyAppDataAssetTag', pagination: { argIndex: 1 } },

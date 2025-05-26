@@ -8,6 +8,7 @@ export * from './attendance'
 export * from './auth'
 export * from './authen'
 export * from './baike'
+export * from './base'
 export * from './bitable'
 export * from './board'
 export * from './calendar'
@@ -15,6 +16,7 @@ export * from './cardkit'
 export * from './compensation'
 export * from './contact'
 export * from './corehr'
+export * from './directory'
 export * from './docs'
 export * from './document_ai'
 export * from './docx'
@@ -44,6 +46,7 @@ export * from './speech_to_text'
 export * from './task'
 export * from './tenant'
 export * from './translation'
+export * from './trust_party'
 export * from './vc'
 export * from './verification'
 export * from './wiki'
@@ -61,6 +64,22 @@ export interface Ability {
   name?: I18n
   /** 能力项描述 */
   description?: I18n
+}
+
+export const enum AbnormalCode {
+  /** 成功 */
+  SUCCESS = 0,
+  /** 没权限 */
+  FORBIDDEN = 1000,
+}
+
+export interface AbnormalRecord {
+  /** 异常ID */
+  id?: string
+  /** 行级异常 */
+  row_error?: AbnormalCode
+  /** 列级异常 */
+  field_errors?: Record<string, AbnormalCode>
 }
 
 export interface Acceptance {
@@ -107,6 +126,13 @@ export interface Account {
   assets?: Assets
   /** 账号状态 */
   status?: 1 | 2
+}
+
+export interface AccountingItemValue {
+  /** 算薪项数据原始值，当发薪明细的数据来源为「人工导入」时，如果当前算薪项类型为引用类型，那么算薪项原始值可能为空。 */
+  original_value?: string
+  /** 引用类型算薪项展示值 */
+  reference_values?: I18nContent[]
 }
 
 export interface AcctItem {
@@ -921,6 +947,13 @@ export interface AppAbility {
   message_action?: MessageAction
   /** 加号菜单 */
   plus_menu?: PlusMenu
+}
+
+export interface AppCollaborator {
+  /** 人员类型 */
+  type: 'administrator' | 'developer' | 'operator'
+  /** 用户ID */
+  user_id: string
 }
 
 export interface AppContactsRangeIdList {
@@ -2173,6 +2206,13 @@ export interface Attachment {
   file_token?: string
 }
 
+export interface AttachmentDownloadUrlItem {
+  /** 附件 id */
+  attachment_id?: string
+  /** 下载链接 */
+  download_url?: string
+}
+
 export interface AttachmentInfo {
   /** 附件id */
   id?: string
@@ -3192,6 +3232,13 @@ export interface BlockIdRelation {
   block_id?: string
 }
 
+export interface BlockRole {
+  /** Block ID */
+  block_id: string
+  /** Block权限 */
+  block_perm: 0 | 1
+}
+
 export interface Board {
   /** 画板 token */
   token?: string
@@ -3281,6 +3328,13 @@ export interface BusinessManagementScope {
   entity?: EntityInfo
   /** 权限分组 */
   permission_groups?: PermissionGroupInfo[]
+}
+
+export interface CalculationActivity {
+  /** 算薪活动唯一标识 */
+  calculation_activity_id?: string
+  /** 算薪活动名称 */
+  calculation_activity_names?: I18nContent[]
 }
 
 export interface Calendar {
@@ -3721,6 +3775,159 @@ export interface CodeNameObject {
   name?: I18n
 }
 
+export interface CollaborationDepartment {
+  /** 关联组织的部门open id */
+  open_department_id?: string
+  /** 关联组织的部门id */
+  department_id?: string
+  /** 关联组织的部门名称 */
+  name?: string
+  /** 关联组织的的国际化部门名称 */
+  i18n_name?: I18nName
+  /** 关联组织的部门排序 */
+  order?: string
+  /** 部门负责人 */
+  leaders?: CollaborationDepartmentLeader[]
+  /** 父部门ID */
+  parent_department_id?: CollaborationDepartmentId
+}
+
+export interface CollaborationDepartmentId {
+  /** 部门ID */
+  department_id?: string
+  /** 部门open ID */
+  open_department_id?: string
+}
+
+export interface CollaborationDepartmentLeader {
+  /** 负责人类型 */
+  leader_type: 1 | 2
+  /** 负责人ID */
+  id: CollaborationUserId
+}
+
+export interface CollaborationEntity {
+  /** 关联组织实体类型 */
+  collaboration_entity_type: 'user' | 'department' | 'group'
+  /** 部门ID */
+  department_id?: string
+  /** 部门的open ID */
+  open_department_id?: string
+  /** 用户ID */
+  user_id?: string
+  /** 用户的open ID */
+  open_user_id?: string
+  /** 用户的union_id */
+  union_user_id?: string
+  /** 部门名称 */
+  department_name?: string
+  /** 部门的国际化名称 */
+  i18n_department_name?: I18nName
+  /** 部门顺序 */
+  department_order?: string
+  /** 对方成员名称 */
+  user_name?: string
+  /** 对方成员i18n名称 */
+  i18n_user_name?: I18nName
+  /** 对方租户的成员头像 */
+  user_avatar?: AvatarInfo
+  /** 用户组ID */
+  group_id?: string
+  /** 用户组的open ID */
+  open_group_id?: string
+  /** 对方用户组名称 */
+  group_name?: string
+  /** 对方用户组i18n名称 */
+  i18n_group_name?: I18nName
+}
+
+export interface CollaborationRule {
+  /** 规则ID */
+  rule_id?: string
+  /** 实体数量之和需要小于100 */
+  subjects?: CollaborationRuleEntities
+  /** 是否生效，如果规则主体超出了分享的范围，则is_valid为false，规则主体将不返回 */
+  subject_is_valid?: boolean
+  /** 实体数量之和需要小于100 */
+  objects?: CollaborationRuleEntities
+  /** 是否生效，如果规则客体超出了分享的范围，则is_valid为false，规则客体将不返回 */
+  object_is_valid?: boolean
+}
+
+export interface CollaborationRuleEntities {
+  /** user open id */
+  open_user_ids?: string[]
+  /** department open id，0代表全部成员 */
+  open_department_ids?: string[]
+  /** group open id */
+  open_group_ids?: string[]
+}
+
+export interface CollaborationTenant {
+  /** 关联租户ID */
+  tenant_key?: string
+  /** 目标租户的租户名称 */
+  tenant_name?: string
+  /** 目标租户的租户i18n名称 */
+  i18n_tenant_name?: I18nName
+  /** 目标租户的租户简称 */
+  tenant_short_name?: string
+  /** 目标租户的租户i18n简称 */
+  i18n_tenant_short_name?: I18nName
+  /** 关联时间 */
+  connect_time?: number
+  /** 标签 */
+  tenant_tag?: string
+  /** i18n标签 */
+  i18n_tenant_tag?: I18nName
+  /** 租户icon信息 */
+  avatar?: AvatarInfo
+  /** 租户品牌 */
+  brand?: string
+}
+
+export interface CollaborationUser {
+  /** 对方关联组织用户的open_id */
+  open_id?: string
+  /** 对方关联组织用户的id */
+  user_id?: string
+  /** 对方关联组织用户的union id */
+  union_id?: string
+  /** 用户的名称 */
+  name: string
+  /** 关联组织的的国际化用户名称 */
+  i18n_name?: I18nName
+  /** 用户头像信息 */
+  avatar?: AvatarInfo
+  /** 手机号 */
+  mobile?: string
+  /** 用户状态 */
+  status?: UserStatus
+  /** 用户所属部门的ID列表,deprecate */
+  department_ids?: string[]
+  /** 用户的直接主管的用户ID,deprecate */
+  leader_user_id?: string
+  /** 职务 */
+  job_title?: string
+  /** 自定义属性 */
+  custom_attrs?: UserCustomAttr[]
+  /** 工号 */
+  employee_no?: string
+  /** 父部门ID */
+  parent_department_ids?: CollaborationDepartmentId[]
+  /** 用户的leader */
+  leader_id?: CollaborationUserId
+}
+
+export interface CollaborationUserId {
+  /** 用户ID */
+  user_id?: string
+  /** 用户open ID */
+  open_id?: string
+  /** 用户union ID */
+  union_id?: string
+}
+
 export interface Collaborator {
   /** 任务协作者的 ID */
   id?: string
@@ -3931,6 +4138,8 @@ export interface Company {
   /** 办公地址详细信息 */
   office_address_info?: Address
 }
+
+export type CompareOperator = string
 
 export interface CompensationCost {
   /** 成本项值 */
@@ -4460,11 +4669,76 @@ export interface CpstStandardType {
   api_name?: 'standard_value' | 'bandwidth_and_standard_value' | 'bandwidth_upper_and_lower_limit'
 }
 
+export interface CreateDepartment {
+  /** 标识租户内一个唯一的部门，支持自定义，未自定义时系统自动生成。ID支持修改。详细说明参见 部门ID说明，获取department_id的方式：企业管理员在 管理后台 > 组织架构 > 成员与部门 页面，点击 部门详情，查询部门ID */
+  custom_department_id?: string
+  /** i18n文本 */
+  name?: I18nText
+  /** 父部门ID */
+  parent_department_id?: string
+  /** 部门负责人 */
+  leaders?: DepartmentLeader[]
+  /** 在上级部门下的排序权重 */
+  order_weight?: string
+  /** 是否启用 */
+  enabled_status?: boolean
+  /** 自定义字段 */
+  custom_field_values?: CustomFieldValue[]
+}
+
 export interface CreateEmpCustomOrg {
   /** 自定义组织ID */
   id: string
   /** 比例 如果是非比例的可不填写 */
   rate?: number
+}
+
+export interface CreateEmployee {
+  /** 姓名 */
+  name?: UpsertName
+  /** 员工的联系手机号 */
+  mobile?: string
+  /** 用户的user_id */
+  custom_employee_id?: string
+  /** 头像的文件key */
+  avatar_key?: string
+  /** 员工的联系邮箱 */
+  email?: string
+  /** 员工的企业邮箱 */
+  enterprise_email?: string
+  /** 性别 */
+  gender?: GenderDirectory
+  /** 部门排序 */
+  employee_order_in_departments?: UpsertUserDepartmentSortInfo[]
+  /** 员工直属上级的user_id */
+  leader_id?: string
+  /** 员工虚线上级的user_id */
+  dotted_line_leader_ids?: string[]
+  /** 工作地国家/地区 */
+  work_country_or_region?: string
+  /** 工作地点 */
+  work_place_id?: string
+  /** i18n文本 */
+  work_station?: I18nText
+  /** 工号 */
+  job_number?: string
+  /** 分机号 */
+  extension_number?: string
+  /** 入职日期 */
+  join_date?: string
+  /** 员工类型 */
+  employment_type?: EmployeeTypeDirectory
+  /** 职务ID */
+  job_title_id?: string
+  /** 自定义字段 */
+  custom_field_values?: CustomFieldValue[]
+}
+
+export interface CreateEmployeeOptions {
+  /** 用户指定geo/unit */
+  geo_name?: string
+  /** 席位信息 */
+  subscription_ids?: string[]
 }
 
 export interface CreateTag {
@@ -4666,6 +4940,48 @@ export interface CustomFields {
   value?: string
 }
 
+export interface CustomFieldValue {
+  /** 自定义字段key */
+  field_key?: string
+  /** 自定义字段类型 */
+  field_type?: CustomFieldValueType
+  /** i18n文本 */
+  text_value?: I18nText
+  /** 网页链接字段值 */
+  url_value?: UrlValue
+  /** 枚举 */
+  enum_value?: EnumValue
+  /** 人员字段值 */
+  user_values?: UserValue[]
+}
+
+export const enum CustomFieldValueEnumType {
+  /** 文本 */
+  CustomFieldValueEnumTypeText = '1',
+  /** 图片 */
+  CustomFieldValueEnumTypePicture = '2',
+}
+
+export const enum CustomFieldValueType {
+  /** 多行文本 */
+  CustomFieldValueTypeText = '1',
+  /** 网页链接 */
+  CustomFieldValueTypeUrl = '2',
+  /** 枚举选项 */
+  CustomFieldValueTypeEnum = '3',
+  /** 人员 */
+  CustomFieldValueTypeGenericUser = '4',
+  /** 多选枚举类型(目前仅支持文本类型) */
+  CustomFieldFieldTypeDirectoryMultiEnum = '10',
+  /** 人员列表 */
+  CustomFieldFieldTypeDirectoryMultiGenericUser = '11',
+}
+
+export const enum CustomFieldValueUserType {
+  /** 员工 */
+  CustomFieldValueUserTypeEmployee = '1',
+}
+
 export interface CustomizationOption {
   /** the option unique key */
   option_key?: string
@@ -4697,6 +5013,33 @@ export interface CustomMetricConfig {
   least_metrics_size?: number
   /** 添加的指标方式 */
   add_metric_options?: (1 | 2)[]
+}
+
+export interface CustomOrg {
+  /** 组织类型编码 */
+  object_api_name: string
+  /** 组织名称 */
+  names?: I18n[]
+  /** 编码 */
+  code?: string
+  /** 上级组织 ID */
+  parent_id?: string
+  /** 负责人ID 列表 */
+  manager_ids?: string[]
+  /** 描述 */
+  description?: I18n[]
+  /** 生效时间 */
+  effective_time?: string
+  /** 组织角色 */
+  org_roles?: OrgRole[]
+  /** 匹配规则组，组间并集 */
+  match_rule_groups?: MatchRules[]
+  /** 是否启用 */
+  active?: boolean
+  /** 组织ID */
+  org_id?: string
+  /** 自定义字段 */
+  custom_fields?: CustomFieldData[]
 }
 
 export interface CustomWorkplaceAccessData {
@@ -4735,6 +5078,71 @@ export interface DataAsset {
   updated_time?: string
 }
 
+export interface DataAssetFile {
+  /** 文件token */
+  token: string
+  /** 文件内容类型 */
+  mime_type: string
+}
+
+export interface DataAssetImportKnowledgeFile {
+  /** 文件标题 */
+  title?: string
+  /** 上传文件获取到的token。和content二选一，优先使用token。 */
+  token?: string
+  /** 文件内容。和token二选一，优先使用token。有长度限制，大文件优先使用token方式。 */
+  content?: string
+  /** 文件内容对应的 MIME 类型，使用token方式必须填写 */
+  mime_type?: string
+  /** 文件源的URL */
+  url?: string
+}
+
+export interface DataAssetImportKnowledgeHelpdesk {
+  /** 飞书服务台ID */
+  helpdesk_id: string
+}
+
+export interface DataAssetImportKnowledgeLarkDoc {
+  /** 云文档类型 */
+  type: 'doc' | 'file' | 'wiki' | 'docx' | 'folder'
+  /** 云文档标识 */
+  token: string
+  /** 是否包含子文档，只有wiki类型的云文档支持 */
+  with_sub_docs?: boolean
+}
+
+export interface DataAssetImportKnowledgeSetting {
+  /** 知识切片配置 */
+  chunk_setting?: DataAssetKnowledgeChunkSetting
+  /** 知识导入-文件 */
+  file?: DataAssetImportKnowledgeFile
+  /** 知识导入-飞书云文档 */
+  lark_doc?: DataAssetImportKnowledgeLarkDoc
+  /** 知识导入-飞书知识空间 */
+  lark_wiki_space?: DataAssetImportKnowledgeWiki
+  /** 知识导入-飞书服务台 */
+  lark_helpdesk?: DataAssetImportKnowledgeHelpdesk
+}
+
+export interface DataAssetImportKnowledgeWiki {
+  /** 飞书知识空间ID */
+  space_id: string
+  /** 指定知识空间子节点时使用 */
+  sub_docs?: DataAssetImportKnowledgeWikiSubDoc[]
+  /** 知识空间URL */
+  url?: string
+}
+
+export interface DataAssetImportKnowledgeWikiSubDoc {
+  /** 云文档类型，只支持wiki中的云文档 */
+  type: 'wiki'
+  /** 云文档标识 */
+  token: string
+  /** 云文档链接 */
+  url?: string
+}
+
 export interface DataAssetItem {
   /** 数据知识项ID */
   data_asset_item_id?: string
@@ -4746,6 +5154,17 @@ export interface DataAssetItem {
   description?: Record<string, string>
   /** 数据知识资源 */
   resources?: DataAssetResource[]
+}
+
+export interface DataAssetKnowledgeChunkSetting {
+  /** 切片规则 */
+  rule_type: 'separator' | 'intelligent'
+  /** 切片分割符类型 */
+  separate_type?: 'paragraph' | 'title'
+  /** 分段最大长度（字符），按标识符切片时必须填写 */
+  size?: number
+  /** 分段重叠字符数，按标识符切片时必须填写，不能超过size的数值 */
+  overlap?: number
 }
 
 export interface DataAssetResource {
@@ -4778,41 +5197,68 @@ export interface DataPermission {
   select_status?: 0 | 1 | 2
 }
 
-export interface DataSource {
-  /** 数据源的唯一标识 */
-  id?: string
-  /** data_source的展示名称 */
-  name: string
-  /** 数据源状态，0-已上线，1-未上线 */
-  state?: 0 | 1
-  /** 对于数据源的描述 */
-  description?: string
-  /** 创建时间，采用 Unix 时间戳 */
-  create_time?: string
-  /** 更新时间，采用 Unix 时间戳 */
-  update_time?: string
-  /** 是否超限 */
-  is_exceed_quota?: boolean
-  /** 数据源在 search tab 上的展示图标路径 */
-  icon_url?: string
-  /** 数据源采用的展示模版名称 */
-  template?: string
-  /** 描述哪些字段可以被搜索 */
-  searchable_fields?: string[]
-  /** 数据源的国际化展示名称 */
-  i18n_name?: I18nMeta
-  /** 数据源的国际化描述 */
-  i18n_description?: I18nMeta
-  /** 数据源关联的 schema 标识 */
-  schema_id?: string
-  /** datasource对应的开放平台应用id */
-  app_id?: string
-  /** 搜索请求的接入方式 */
-  connect_type?: 0 | 1
-  /** 根据连接器类型不同所需要提供的相关参数 */
-  connector_param?: ConnectorParam
-  /** 是否使用问答服务 */
-  enable_answer?: boolean
+export interface Datasource {
+  /** 数据源编码 */
+  code: string
+  /** 数据源名称 */
+  i18n_names: I18nContent[]
+  /** 启停用状态 */
+  active_status: 1 | 2
+  /** 数据源字段列表 */
+  fields: DatasourceField[]
+  /** 数据源描述 */
+  i18n_description?: I18nContent[]
+  /** 数据期间类型（数据写入维度） */
+  data_period_type?: 1 | 2 | 3
+}
+
+export const enum DataSource {
+  /** 管理后台 */
+  FEISHU_ADMIN = 1,
+  /** 人事企业版 */
+  CORE_HR = 2,
+  /** SCIM */
+  DIR_SYNC_VISA_SCIM = 3,
+}
+
+export interface DatasourceField {
+  /** 数据源字段编码 */
+  code: string
+  /** 数据源字段名称 */
+  i18n_names: I18nContent[]
+  /** 字段类型 */
+  field_type: 1 | 2 | 3 | 4 | 5
+  /** 字段启停用状态 */
+  active_status: 1 | 2
+  /** 数据源字段描述 */
+  i18n_description?: I18nContent[]
+  /** 保留小数位数。目前只有number、money类型字段需要设置保留小数 */
+  decimal_places?: number
+}
+
+export interface DatasourceRecord {
+  /** 记录的启停用状态 */
+  active_status: 1 | 2
+  /** 记录的字段值列表 */
+  field_values: DatasourceRecordField[]
+}
+
+export interface DatasourceRecordField {
+  /** 数据源字段编码 */
+  field_code: string
+  /** 字段值 通过string传输，确保字段的值符合协议。  - money：金额  eg: "12.23"  超过设定精度会被四舍五入，目前只支持人民币¥元 - number：数值 eg: "12.87" 超过设定精度会被四舍五入 - text：文本 eg: "我是一段文本"。文本字符个数不允许超过500，一条记录的文本总的字符个数不允许超过3000. - date：日期 yyyy-MM-dd  eg: "2024-05-09" - percentage：百分比 "10" 代表10%，最多保留两位小数，超过后四舍五入 */
+  value: string
+  /** 字段类型 */
+  field_type?: number
+}
+
+export interface DatasourceRecordFieldFilter {
+  /** 查询条件的字段编码 */
+  field_code: string
+  /** 条件值列表 */
+  field_values?: string[]
+  /** 查询操作符 */
+  operator?: 1 | 2
 }
 
 export interface DataSummaryDimension {
@@ -4833,6 +5279,11 @@ export interface DataSummaryDimension {
 export interface DatetimeSetting {
   /** 日期显示格式 */
   format?: string
+}
+
+export interface DeleteEmployeeOptions {
+  /** 资源转移方式 */
+  resigned_employee_resource_receiver?: ResignedUserResouceReceiver
 }
 
 export interface DeleteGridColumnRequest {
@@ -4894,6 +5345,13 @@ export interface Department {
   primary_member_count?: number
 }
 
+export interface DepartmentBaseInfo {
+  /** 部门ID */
+  department_id?: string
+  /** i18n文本 */
+  department_name?: I18nText
+}
+
 export interface DepartmentChange {
   /** 部门调整记录 ID */
   department_change_id?: string
@@ -4946,6 +5404,15 @@ export interface DepartmentI18nName {
   ja_jp?: string
   /** 部门的英文名 */
   en_us?: string
+}
+
+export interface DepartmentIdConvertResult {
+  /** ID */
+  id: string
+  /** 部门ID */
+  department_id?: string
+  /** 部门OpenID */
+  open_department_id?: string
 }
 
 export interface DepartmentLeader {
@@ -5079,13 +5546,6 @@ export interface Device {
   name: string
 }
 
-export interface DeviceExternal {
-  /** 设备id */
-  id?: string
-  /** 设备名称 */
-  name?: string
-}
-
 export interface Diagram {
   /** 绘图类型 */
   diagram_type?: 1 | 2
@@ -5163,11 +5623,25 @@ export interface DimensionEntity {
   dimension_value: string
 }
 
+export interface DimensionIdInData {
+  /** 维度 key */
+  dimension_key?: string
+  /** 维度 ids */
+  dimension_ids?: string[]
+}
+
 export interface DimensionInfo {
   /** 维度id */
   id: string
   /** 维度名称 */
   name?: I18n[]
+}
+
+export interface DimensionInfoData {
+  /** 维度 key */
+  dimension_key?: string
+  /** 维度信息 */
+  dimension_info?: DimensionInfo
 }
 
 export interface DimensionOption {
@@ -5513,9 +5987,105 @@ export interface Employee {
   custom_fields?: CustomFields[]
 }
 
+export const enum EmployeeActiveStatusDirectory {
+  /** 未激活 */
+  EmployeeActiveStatusDirectoryUnregister = 1,
+  /** 激活 */
+  EmployeeActiveStatusDirectoryRegister = 2,
+  /** 冻结 */
+  EmployeeActiveStatusDirectoryFrozen = 3,
+  /** 主动退出 */
+  EmployeeActiveStatusDirectoryQuit = 4,
+  /** 未加入 */
+  EmployeeActiveStatusDirectoryUnjoined = 5,
+}
+
+export interface EmployeeBaseEntity {
+  /** EmployeeID 和UserID一致 */
+  employee_id: string
+  /** 姓名 */
+  name: Name
+  /** 手机号 */
+  mobile?: string
+  /** 登录邮箱 */
+  email?: string
+  /** 企业邮箱 */
+  enterprise_email?: string
+  /** 性别 */
+  gender?: GenderDirectory
+  /** 部门信息 */
+  departments?: Department[]
+  /** 用户在部门内的排序信息， 第一个部门为主部门 */
+  employee_order_in_departments?: UserDepartmentSortInfo[]
+  /** 个人签名 */
+  description?: string
+  /** 用户活跃状态 */
+  active_status?: EmployeeActiveStatusDirectory
+  /** 是否离职 */
+  is_resigned?: boolean
+  /** 直属上级ID */
+  leader_id?: string
+  /** 虚线上级ID */
+  dotted_line_leader_ids?: string[]
+  /** 是否租户超级管理员 */
+  is_primary_admin?: boolean
+  /** 企业邮箱别名 */
+  enterprise_email_aliases?: string[]
+  /** 自定义字段值 */
+  custom_field_values?: CustomFieldValue[]
+  /** 员工部门全路径节点 本字段不含根部门信息，部门顺序为父部门->当前部门 例如：三级部门为员工当前部门[[DepartmentBaseInfo{1,一级部门},DepartmentBaseInfo{2,二级部门}, DepartmentBaseInfo{3,三级部门}]] */
+  department_path_infos?: DepartmentBaseInfo[][]
+  /** 离职时间 管理后台进行离职操作的时间，系统自动生成，无法写入 */
+  resign_time?: string
+  /** 头像url */
+  avatar?: ImageLink
+  /** 自定义背景图 url */
+  background_image?: string
+  /** 是否租户普通管理员 */
+  is_admin?: boolean
+  /** 数据来源 */
+  data_source?: DataSource
+  /** 员工Geo */
+  geo_name?: string
+  /** 员工license */
+  subscription_ids?: string[]
+}
+
 export interface EmployeeConversionInfo {
   /** 实际转正日期 */
   actual_conversion_time?: number
+}
+
+export interface EmployeeCostAllocation {
+  /** 员工id */
+  employment_id?: string
+  /** 成本分摊 */
+  cost_allocations?: EmploymentCostAllocation[]
+}
+
+export interface EmployeeDefaultCostCenter {
+  /** 用户id */
+  employment_id?: string
+  /** 默认成本中心 */
+  default_cost_centers?: EmploymentDefaultCostCenter[]
+}
+
+export interface EmployeeEntity {
+  /** 员工基础信息 */
+  base_info?: EmployeeBaseEntity
+  /** 员工工作信息 */
+  work_info?: EmployeeWorkEntity
+}
+
+export interface EmployeeIdConvertResult {
+  /** ID */
+  id: string
+  /** 员工ID */
+  employee_id?: string
+  /** 员工OpenID */
+  open_employee_id?: string
+  /** 员工UnionID */
+  union_employee_id?: string
 }
 
 export interface EmployeeJobData {
@@ -5625,6 +6195,19 @@ export interface EmployeesAdditionalJobWriteResp {
   employee_subtype_id?: string
 }
 
+export const enum EmployeeStaffStatusDirectory {
+  /** 在职 */
+  EmployeeStaffStatusDirectoryUnResigned = 1,
+  /** 离职 */
+  EmployeeStaffStatusDirectoryResigned = 2,
+  /** 待入职 */
+  EmployeeStaffStatusDirectoryPreEntry = 3,
+  /** 取消入职 */
+  EmployeeStaffStatusDirectoryCancelledEntry = 4,
+  /** 待离职 */
+  EmployeeStaffStatusDirectoryPreResigned = 5,
+}
+
 export interface EmployeeType {
   /** 实体在CoreHR内部的唯一键 */
   id?: string
@@ -5639,6 +6222,8 @@ export interface EmployeeType {
   /** 自定义字段 */
   custom_fields?: ObjectFieldData[]
 }
+
+export type EmployeeTypeDirectory = number
 
 export interface EmployeeTypeEnum {
   /** 枚举值id */
@@ -5688,6 +6273,39 @@ export interface EmployeeV2 {
   employee_type?: string
   /** 招聘需求ID */
   job_requirement_id?: string
+}
+
+export interface EmployeeWorkEntity {
+  /** 工作地国家/地区 */
+  work_country_or_region?: string
+  /** 地点 */
+  work_place?: Place
+  /** i18n文本 */
+  work_station?: I18nText
+  /** 工号 */
+  job_number?: string
+  /** 分机号 */
+  extension_number?: string
+  /** 入职日期 2007-03-20 */
+  join_date?: string
+  /** 员工类型 */
+  employment_type?: EmployeeTypeDirectory
+  /** 员工人事状态 */
+  staff_status?: EmployeeStaffStatusDirectory
+  /** 职务 */
+  job_title?: JobTitle
+  /** 职级 */
+  job_level?: JobLevel
+  /** 序列 */
+  job_family?: JobFamily
+  /** 离职日期 2007-03-20 */
+  resign_date?: string
+  /** 离职原因 */
+  resign_reason?: ResignReasonDirectory
+  /** 离职备注 */
+  resign_remark?: string
+  /** 离职类型 */
+  resign_type?: ResignTypeDirectory
 }
 
 export interface Employment {
@@ -5764,6 +6382,19 @@ export interface EmploymentBp {
   location_bp_ids?: string[]
 }
 
+export interface EmploymentCostAllocation {
+  /** id */
+  wk_id: string
+  /** 分摊生效日期 */
+  effective_time?: string
+  /** 分摊失效日期 */
+  expiration_time?: string
+  /** 成本分摊 */
+  job_data_cost_center_id?: JobDataCostCenter[]
+  /** 变更原因 */
+  reason?: string
+}
+
 export interface EmploymentCreate {
   /** 待入职 ID */
   prehire_id?: string
@@ -5825,6 +6456,21 @@ export interface EmploymentCreate {
   rehire?: Enum
   /** 历史雇佣信息 ID */
   rehire_employment_id?: string
+}
+
+export interface EmploymentDefaultCostCenter {
+  /** id */
+  wk_id: string
+  /** id */
+  wk_tid: string
+  /** 生效日期 */
+  effective_time?: string
+  /** 成本中心id */
+  cost_center_id?: string
+  /** 是否继承自岗位/部门的默认成本中心 */
+  is_inherit?: boolean
+  /** 变更原因 */
+  reason?: string
 }
 
 export interface EmploymentLeaveBalance {
@@ -5890,6 +6536,21 @@ export interface Enum {
   display?: I18n[]
 }
 
+export interface EnumField {
+  /** ApiName */
+  api_name?: string
+  /** 枚举值名 */
+  name?: I18n[]
+  /** 枚举值描述 */
+  description?: I18n[]
+  /** 所属枚举常量ApiName */
+  enum_api_name?: string
+  /** 顺序 */
+  order?: number
+  /** 状态 */
+  status?: 1 | 0
+}
+
 export interface EnumFieldOption {
   /** 枚举值选项 API Name，即选项的唯一标识 */
   option_api_name: string
@@ -5902,6 +6563,20 @@ export interface EnumObject {
   enum_value_id?: string
   /** 枚举对象 */
   enum_key?: string
+}
+
+export interface Enums {
+  /** 枚举名称 */
+  enum_apiname?: string
+  /** 枚举值 */
+  enum_items?: EnumField[]
+}
+
+export interface EnumValue {
+  /** 选项结果ID */
+  enum_ids: string[]
+  /** 选项类型 */
+  enum_type: CustomFieldValueEnumType
 }
 
 export interface EnvironmentVariable {
@@ -6041,6 +6716,15 @@ export interface ExportTask {
   job_error_msg?: string
   /** 任务状态 */
   job_status?: 0 | 1 | 2 | 3 | 107 | 108 | 109 | 110 | 111 | 122 | 123 | 6000
+}
+
+export interface Expression {
+  /** 字段名 */
+  field: string
+  /** 运算符 */
+  operator: Operator
+  /** 字段值 */
+  value: Value
 }
 
 export interface ExteranlInstanceCheck {
@@ -6450,6 +7134,8 @@ export interface FieldGroup {
   readable: string[]
 }
 
+export type FieldName = string
+
 export interface FieldVariableSubVlaue {
   /** 用于关联list和record类型变量值中的key */
   key?: string
@@ -6666,15 +7352,20 @@ export interface FileViewRecord {
   last_view_time?: string
 }
 
+export interface Filter {
+  /** 与、或条件 */
+  logic: Logic
+  /** 过滤条件 */
+  expressions?: Expression[]
+}
+
 export interface FilterCondition {
-  /** 左值 */
-  left?: FilterRuleValue
-  /** 右值 */
-  right?: FilterRuleValue
-  /** 操作符 */
-  operator?: number
-  /** 右值类型 */
-  right_value_type?: number
+  /** 筛选条件的左值，值为字段的参数名称。具体可填哪些字段请看 https://bytedance.larkoffice.com/wiki/Yyrgw6kLLiGxMIkrEZece1ZvnWg */
+  field: FieldName
+  /** 比较操作符。可选值有： - equal：等于，支持任何类型的左值 - in：属于任一 */
+  operator: CompareOperator
+  /** 筛选条件的右值。内容为左值字段类型及操作符组合下，对应的值类型。注意： 1. field为int类型，operator为in时，value应当为list<int>的json字符串   1. 示例值："[11,22]" 2. field为string类型，operator为in时，value应当为json序列化后的json字符串   1. 示例值："[\"正式\",\"实习\"]" 3. field为string类型，operator为eq时，value应当为json序列化后的string   1. 示例值："\正式\"" */
+  value: string
 }
 
 export interface FilterExpression {
@@ -6689,17 +7380,6 @@ export interface FilterInfo {
   col: string
   /** 筛选条件 */
   conditions: Condition[]
-}
-
-export interface FilterRuleValue {
-  /** 规则值类型 */
-  type?: number
-  /** 规则值 */
-  value?: string
-  /** 下钻值 */
-  lookup_value?: string
-  /** 下钻类型 */
-  lookup_type?: string
 }
 
 export interface FilterView {
@@ -6779,6 +7459,21 @@ export interface FloatImage {
   offset_x?: number
   /** 浮动图片左上角所在位置相对于所在单元格左上角的纵向偏移，大于等于0且小于所在单元格的高度 */
   offset_y?: number
+}
+
+export interface Folder {
+  /** folder id */
+  id?: string
+  /** 文件夹名称 */
+  name: string
+  /** 父文件夹 id，该值为 0 表示根文件夹 */
+  parent_folder_id: string
+  /** 文件夹类型 */
+  folder_type?: 1 | 2
+  /** 未读邮件数量 */
+  unread_message_count?: number
+  /** 未读会话数量 */
+  unread_thread_count?: number
 }
 
 export interface Follower {
@@ -7052,6 +7747,17 @@ export interface Gadget {
   pc_min_lark_version?: string
 }
 
+export const enum GenderDirectory {
+  /** 未知 */
+  GenderDirectoryUnknown = 0,
+  /** 男 */
+  GenderDirectoryMan = 1,
+  /** 女 */
+  GenderDirectoryWoman = 2,
+  /** 其他 */
+  GenderDirectoryOther = 3,
+}
+
 export interface GetSpreadsheet {
   /** 电子表格标题 */
   title?: string
@@ -7215,10 +7921,12 @@ export interface I18nMeta {
 }
 
 export interface I18nName {
-  /** ISO 639-1的语言代码。比如zh表示中文。 */
-  language?: string
-  /** 名字 */
-  name?: string
+  /** 中文名 */
+  zh_cn?: string
+  /** 日文名 */
+  ja_jp?: string
+  /** 英文名 */
+  en_us?: string
 }
 
 export interface I18nNames {
@@ -7247,30 +7955,10 @@ export interface I18nResourceText {
 export type I18ns = I18n[]
 
 export interface I18nText {
-  /** 英文 */
-  en_us?: string
-  /** 中文 */
-  zh_cn?: string
-  /** 中文（香港地区） */
-  zh_hk?: string
-  /** 中文（台湾地区） */
-  zh_tw?: string
-  /** 日语 */
-  ja_jp?: string
-  /** 法语 */
-  fr_fr?: string
-  /** 意大利语 */
-  it_it?: string
-  /** 德语 */
-  de_de?: string
-  /** 俄语 */
-  ru_ru?: string
-  /** 泰语 */
-  th_th?: string
-  /** 西班牙语 */
-  es_es?: string
-  /** 韩语 */
-  ko_kr?: string
+  /** 默认值 */
+  default_value: string
+  /** 国际化值，key为zh_cn, ja_jp, en_us, value为对应的值 */
+  i18n_value?: Record<string, string>
 }
 
 export interface IdCard {
@@ -7333,6 +8021,17 @@ export interface Image {
   token?: string
   /** 对齐方式 */
   align?: 1 | 2 | 3
+}
+
+export interface ImageLink {
+  /** 72*72像素头像链接 */
+  avatar_72?: string
+  /** 240*240像素头像链接 */
+  avatar_240?: string
+  /** 640*640像素头像链接 */
+  avatar_640?: string
+  /** 原始头像链接 */
+  avatar_origin?: string
 }
 
 export interface ImportedMetric {
@@ -9226,6 +9925,8 @@ export interface LocationState {
   state_name_info?: LocationNameInfo
 }
 
+export type Logic = string
+
 export interface LookupWithAvatar {
   /** 用户ID */
   id?: string
@@ -9249,6 +9950,27 @@ export interface MailAddress {
   mail_address: string
   /** 名称 */
   name?: string
+}
+
+export interface MailContact {
+  /** 联系人 id */
+  id?: string
+  /** 联系人姓名 */
+  name: string
+  /** 联系人公司 */
+  company?: string
+  /** 联系人手机号 */
+  phone?: string
+  /** 联系人邮箱 */
+  mail_address?: string
+  /** 联系人标签 */
+  tag?: string
+  /** 联系人备注 */
+  remark?: string
+  /** 联系人头像 */
+  avatar?: string
+  /** 联系人职位 */
+  position?: string
 }
 
 export interface Mailgroup {
@@ -9330,6 +10052,20 @@ export interface MatchInfo {
   entity_id?: string
   /** 匹配中的字段 */
   type?: 0 | 1 | 2
+}
+
+export interface MatchRule {
+  /** 左值 */
+  left_value: 'department' | 'department_hierarchy' | 'work_location' | 'work_location_hierarchy' | 'cost_center' | 'cost_center_hierarchy' | 'job' | 'job_level' | 'job_family' | 'job_family_hierarchy' | 'employee_type'
+  /** 操作符 */
+  operator: 'contains' | 'notContains'
+  /** 右值 */
+  right_values?: string[]
+}
+
+export interface MatchRules {
+  /** 匹配规则组，组内取交集 */
+  match_rules?: MatchRule[]
 }
 
 export interface Meeting {
@@ -9909,11 +10645,16 @@ export interface MoveResult {
   status_msg: string
 }
 
+export interface MultiFilterCondition {
+  /** 比较表达式列表，内容如 base_info.mobile eq "\"+8613000000001\""的比较条件，多个表达式之间的关系为且 */
+  conditions: FilterCondition[]
+}
+
 export interface Name {
-  /** 中文 */
-  zh_cn?: string
-  /** 英文 */
-  en_us?: string
+  /** i18n文本 */
+  name?: I18nText
+  /** 别名 */
+  another_name?: string
 }
 
 export interface NameForUpdate {
@@ -11178,29 +11919,6 @@ export interface OpenFeedStatusLabel {
   type: 'primary' | 'secondary' | 'success' | 'danger'
 }
 
-export interface OpeningTimeExternal {
-  /** 有效日期 */
-  valid_day?: OpeningTimeValidDayExternal
-  /** 有效星期 */
-  weekdays?: number[]
-  /** 有效时间 */
-  day_times?: OpeningTimePeriodExternal[]
-}
-
-export interface OpeningTimePeriodExternal {
-  /** 起始时间 */
-  start_hhmm: number
-  /** 结束时间 */
-  end_hhmm: number
-}
-
-export interface OpeningTimeValidDayExternal {
-  /** 权限开始时间 */
-  start_day: number
-  /** 权限结束时间 */
-  end_day: number
-}
-
 export interface OperationLogEntityField {
   /** 变更字段 */
   field?: string
@@ -11273,6 +11991,26 @@ export interface OrgdraftDepartmentId {
   draft_department_id?: string
 }
 
+export interface OrgRole {
+  /** 角色key */
+  api_name: string
+  /** 角色ID */
+  security_group_id?: string
+  /** 授权员工列表 */
+  employment_ids?: string[]
+  /** 继承至上级授权员工列表 */
+  inherit_employment_ids?: string[]
+}
+
+export interface OrgRoleUpdate {
+  /** 角色key（ID、key必须填一个） */
+  api_name?: string
+  /** 角色ID（ID、key必须填一个） */
+  security_group_id?: string
+  /** 授权员工列表 */
+  employment_ids?: string[]
+}
+
 export interface OrgTruncation {
   /** 组织名称 */
   org_key?: string
@@ -11287,6 +12025,13 @@ export interface Origin {
   platform_i18n_name?: I18nText
   /** 任务关联的来源平台详情页链接 */
   href?: Href
+}
+
+export interface OtherRecRule {
+  /** 记录筛选条件 */
+  conditions?: RecRuleCondition[]
+  /** 多个筛选条件的关系 */
+  conjunction?: 'and' | 'or'
 }
 
 export interface OuterInfo {
@@ -11308,6 +12053,20 @@ export interface OvertimeRule {
   on_overtime: string
   /** 下班时间 */
   off_overtime: string
+}
+
+export interface PageCondition {
+  /** 本次请求条数 */
+  page_size?: number
+  /** 顺序分页查询，不能跳页查询，支持深分页，在需要遍历全部数据的场景只能使用该方式。第一次传空字符串或者不传，后面传上一次的返回值中的page_token */
+  page_token?: string
+}
+
+export interface PageResponse {
+  /** 是否还有后续结果 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
 }
 
 export interface Participant {
@@ -11417,6 +12176,52 @@ export interface Paygroup {
   status: 1 | 0
   /** 薪资组所属国家/地区 */
   country_region?: CountryRegion
+}
+
+export interface PaymentAccountingItem {
+  /** 算薪项唯一标识 */
+  id?: string
+  /** 算薪项名称 */
+  accounting_item_names?: I18nContent[]
+  /** 算薪项值 */
+  accounting_item_value?: AccountingItemValue
+  /** 算薪项分段数据 */
+  segment_values?: SegmentValue[]
+  /** 算薪项类型，1-文本；2-金额；3-数值；4-百分比；5-日期；6-引用 */
+  accounting_item_type?: number
+}
+
+export interface PaymentActivity {
+  /** 发薪活动唯一标识 */
+  activity_id?: string
+  /** 发薪活动名称 */
+  activity_names?: I18nContent[]
+  /** 发薪活动发薪日期 */
+  pay_date?: string
+  /** 发薪总笔数 */
+  total_number_of_payroll?: number
+  /** 关联的算薪活动个数 */
+  number_of_calculation_activities?: number
+  /** 发薪活动关联的算薪活动详情 */
+  calculation_activities?: CalculationActivity[]
+  /** 发薪活动审批状态，其中：100-待确认发薪名单；150-待提交审批；200-审批中；300-审批被拒绝；350-审批被撤回；360-审批被撤销；375-审批通过；400-已封存。 */
+  activity_status?: number
+}
+
+export interface PaymentActivityDetail {
+  /** 员工的唯一标识 */
+  employee_id?: string
+  /** 发薪明细详情 */
+  payment_details?: PaymentAccountingItem[]
+}
+
+export interface PaymentDetail {
+  /** 员工的唯一标识 */
+  employee_id?: string
+  /** 发薪明细所在的发薪活动 ID */
+  activity_id?: string
+  /** 发薪明细详情 */
+  payment_accounting_items?: PaymentAccountingItem[]
 }
 
 export interface Period {
@@ -11726,6 +12531,17 @@ export interface Pin {
   operator_id_type?: string
   /** Pin的创建时间（毫秒级时间戳） */
   create_time?: string
+}
+
+export interface Place {
+  /** ID */
+  place_id: string
+  /** i18n文本 */
+  place_name?: I18nText
+  /** 是否启用 */
+  is_enabled?: boolean
+  /** i18n文本 */
+  description?: I18nText
 }
 
 export interface PlanCondition {
@@ -13219,6 +14035,24 @@ export interface RecordScore {
   total_score?: number
 }
 
+export interface RecRule {
+  /** 记录筛选条件 */
+  conditions?: RecRuleCondition[]
+  /** 多个筛选条件的关系 */
+  conjunction?: 'and' | 'or'
+  /** 其他记录权限，仅在table_perm为2时有效 */
+  other_perm?: 0 | 1
+}
+
+export interface RecRuleCondition {
+  /** 字段名 */
+  field_name: string
+  /** 运算符 */
+  operator?: 'is' | 'isNot' | 'contains' | 'doesNotContain' | 'isEmpty' | 'isNotEmpty'
+  /** 单选或多选字段的选项id */
+  values?: string[]
+}
+
 export interface ReferenceObject {
   /** cpst_item(项目)、 cpst_indicator(指标) */
   api_name?: 'cpst_item' | 'cpst_indicator'
@@ -13673,6 +14507,97 @@ export interface ResidentTaxForUpdate {
   year_resident_tax?: string
 }
 
+export interface ResignedUserResouceReceiver {
+  /** 部门群owner */
+  department_chat_acceptor_employee_id?: string
+  /** 外部群owner */
+  external_chat_acceptor_employee_id?: string
+  /** 文档owner */
+  docs_acceptor_employee_id?: string
+  /** 日历owner */
+  calendar_acceptor_employee_id?: string
+  /** 开放平台应用owner */
+  application_acceptor_employee_id?: string
+  /** 服务台owner */
+  helpdesk_acceptor_employee_id?: string
+  /** 审批owner */
+  approval_acceptor_employee_id?: string
+  /** 邮件owner */
+  email_acceptor_employee_id?: string
+  /** 妙记Owner */
+  minutes_acceptor_employee_id?: string
+  /** 飞书问卷Owner */
+  survey_acceptor_employee_id?: string
+  /** 集成平台资源Owner */
+  anycross_acceptor_employee_id?: string
+}
+
+export const enum ResignReasonDirectory {
+  /** 置空 */
+  ResignReasonDirectoryEmpty = '0',
+  /** 薪酬不符合预期 */
+  ResignReasonDirectoryNotSatisfiedWithSalary = '1',
+  /** 工作时间过长 */
+  ResignReasonDirectoryWorkingPressure = '2',
+  /** 不满意工作内容 */
+  ResignReasonDirectoryNotSatisfiedWithWorkContent = '3',
+  /** 不认可上级或管理层 */
+  ResignReasonDirectoryLackOfRecognitionOfLeader = '4',
+  /** 职业发展机会有限 */
+  ResignReasonDirectoryCareerDevelopment = '5',
+  /** 对公司文化缺乏认同 */
+  ResignReasonDirectoryLackOfRecognitionOfCompanyCulture = '6',
+  /** 组织架构调整（主动离职） */
+  ResignReasonDirectoryActiveOrganizeBusinessAdjustment = '7',
+  /** 合同到期 */
+  ResignReasonDirectoryContractNotRenewed = '8',
+  /** 跳槽 */
+  ResignReasonDirectoryJobHopping = '9',
+  /** 转行 */
+  ResignReasonDirectoryChangeCareer = '10',
+  /** 家庭原因 */
+  ResignReasonDirectoryFamily = '11',
+  /** 健康状况不佳 */
+  ResignReasonDirectoryPoorHealth = '12',
+  /** 工作地点原因 */
+  ResignReasonDirectoryWorkPlace = '13',
+  /** 其他(主动离职) */
+  ResignReasonDirectoryActiveResignationOtherReason = '14',
+  /** 意外 */
+  ResignReasonDirectoryAccident = '15',
+  /** 身故 */
+  ResignReasonDirectoryDeath = '16',
+  /** 解雇 */
+  ResignReasonDirectoryFired = '17',
+  /** 试用期不通过 */
+  ResignReasonDirectoryFailedToPassProbationPeriod = '18',
+  /** 工作表现不佳 */
+  ResignReasonDirectoryNotUpToTheJob = '19',
+  /** 工作产出低 */
+  ResignReasonDirectoryLowWorkOutput = '20',
+  /** 组织架构调整（被动离职） */
+  ResignReasonDirectoryPassiveOrganizeBusinessAdjustment = '21',
+  /** 违纪 */
+  ResignReasonDirectoryBreachOfCompanyOrdinance = '22',
+  /** 违法 */
+  ResignReasonDirectoryBreakTheLaw = '23',
+  /** 其他（被动离职） */
+  ResignReasonDirectoryPassiveResignationOtherReason = '24',
+  /** 其他（其他） */
+  ResignReasonDirectoryOtherReason = '25',
+}
+
+export const enum ResignTypeDirectory {
+  /** 置空 */
+  ResignTypeDirectoryEmpty = '0',
+  /** 主动 */
+  ResignTypeDirectoryAcitve = '1',
+  /** 被动 */
+  ResignTypeDirectoryPassive = '2',
+  /** 其他 */
+  ResignTypeDirectoryyOther = '3',
+}
+
 export interface ResourceAcceptor {
   /** 资源处理类型 */
   processing_type: '1' | '2' | '3'
@@ -13858,6 +14783,11 @@ export interface ResumeSource {
   resume_source_type?: string
 }
 
+export interface ResurrectEmployeeOptions {
+  /** License订阅ID */
+  subscription_ids?: string[]
+}
+
 export interface ReviewDetail {
   /** 评估模板 ID */
   template_id?: string
@@ -13944,20 +14874,16 @@ export interface Richtext {
 }
 
 export interface Role {
-  /** 角色 ID */
-  id?: string
-  /** 角色名称 */
-  name?: I18n
-  /** 角色描述 */
-  description?: I18n
-  /** 适用范围 */
-  scope_of_application?: 1 | 2 | 3
-  /** 更新时间 */
-  modify_time?: string
-  /** 停启用状态 */
-  role_status?: 1 | 2
-  /** 角色类型 */
-  role_type?: 1 | 2 | 5
+  /** 自定义权限的名字 */
+  role_name: string
+  /** 数据表权限 */
+  table_roles: TableRole[]
+  /** 自定义权限的id */
+  role_id?: string
+  /** block权限 */
+  block_roles?: BlockRole[]
+  /** base权限 */
+  base_rule?: Record<string, number>
 }
 
 export interface RoleAuthorization {
@@ -14159,26 +15085,46 @@ export interface RoomStatus {
 }
 
 export interface Rule {
-  /** 权限组id */
+  /** 规则 id */
   id?: string
-  /** 权限组名称 */
-  name?: string
-  /** 权限组包含的设备 */
-  devices?: DeviceExternal[]
-  /** 权限组包含的员工个数 */
-  user_count?: string
-  /** 权限组包含的员工列表 */
-  users?: UserExternal[]
-  /** 权限组包含的访客个数 */
-  visitor_count?: string
-  /** 权限组包含的访客列表 */
-  visitors?: UserExternal[]
-  /** 是否通知人员录入 */
-  remind_face?: boolean
-  /** 开门时间段 */
-  opening_time?: OpeningTimeExternal
-  /** 是否为临时权限组 */
-  is_temp?: boolean
+  /** 匹配条件 */
+  condition: RuleCondition
+  /** 匹配命中后的操作 */
+  action: RuleAction
+  /** 是否终点规则 */
+  ignore_the_rest_of_rules: boolean
+  /** 规则名称 */
+  name: string
+  /** 是否启用 */
+  is_enable: boolean
+}
+
+export interface RuleAction {
+  /** 匹配中规则后的操作列表 */
+  items: RuleActionItem[]
+}
+
+export interface RuleActionItem {
+  /** 操作类型 */
+  type: 1 | 2 | 3 | 4 | 5 | 8 | 9 | 10 | 11 | 12 | 13
+  /** 当 type 为移动到文件夹时，该字段填文件夹的 id */
+  input?: string
+}
+
+export interface RuleCondition {
+  /** 匹配类型 */
+  match_type: 1 | 2
+  /** 匹配规则列表 */
+  items: RuleConditionItem[]
+}
+
+export interface RuleConditionItem {
+  /** 匹配条件左值 */
+  type: 1 | 2 | 3 | 4 | 6 | 7 | 8 | 9 | 10 | 12 | 13 | 14 | 15 | 16
+  /** 匹配条件操作符 */
+  operator?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 10
+  /** 匹配条件右值 */
+  input?: string
 }
 
 export interface RuleDetail {
@@ -14436,6 +15382,26 @@ export interface SearchObjectParam {
   order_by?: OrderCondition
 }
 
+export interface SeatActivity {
+  /** aPaaS 产品用户的 ID */
+  user_id?: number
+  /** aPaaS 产品应用的 namespace */
+  namespace?: string
+  /** 席位状态，枚举值：1. in_use 2. released */
+  status?: 'in_use' | 'released'
+  /** 用户使用席位访问应用且席位验证通过时，记录或更新的时间 */
+  active_time?: number
+}
+
+export interface SeatAssignment {
+  /** aPaaS 产品用户的 ID */
+  user_id?: number
+  /** aPaaS 产品应用的 namespace */
+  namespace?: string
+  /** 席位状态，枚举值：1. in_use 2. released */
+  status?: 'in_use' | 'released'
+}
+
 export interface Section {
   /** 分区标题 */
   title?: string
@@ -14461,6 +15427,17 @@ export interface SecurityGroup {
   description?: Name
   /** 组织管理维度 */
   org_truncation?: OrgTruncation[]
+}
+
+export interface SegmentValue {
+  /** 分段开始时间-毫秒级时间戳，[start_time, end_time] 是一个左闭右闭区间。 */
+  start_time?: string
+  /** 分段结束时间-毫秒级时间戳，[start_time, end_time] 是一个左闭右闭区间。 */
+  end_time?: string
+  /** 引用类型算薪项分段展示值 */
+  reference_values?: I18nContent[]
+  /** 算薪项分段原始值 */
+  original_value?: string
 }
 
 export interface SelectOptionResult {
@@ -14558,6 +15535,17 @@ export interface Sentence {
   speaker_name?: I18n
 }
 
+export interface SetEmployeePreResigned {
+  /** 离职日期 */
+  resign_date: string
+  /** 离职原因 */
+  resign_reason: ResignReasonDirectory
+  /** 离职类型 */
+  resign_type: ResignTypeDirectory
+  /** 离职备注 */
+  resign_remark?: string
+}
+
 export interface Setting {
   /** 谁可以创建空间的一级页面： "admin_and_member" = 管理员和成员 "admin"  - 仅管理员 */
   create_setting?: string
@@ -14565,6 +15553,29 @@ export interface Setting {
   security_setting?: string
   /** 可阅读用户可否评论： "allow" - 允许 "not_allow" - 不允许 */
   comment_setting?: string
+}
+
+export interface ShareDepartment {
+  /** 部门open ID */
+  open_department_id?: string
+  /** i18n文本 */
+  name?: I18nText
+}
+
+export interface ShareGroup {
+  /** 用户组的open_id */
+  open_group_id?: string
+  /** i18n文本 */
+  name?: I18nText
+}
+
+export interface ShareUser {
+  /** user open ID */
+  open_user_id?: string
+  /** i18n文本 */
+  name?: I18nText
+  /** 用户的头像 */
+  avatar?: ImageLink
 }
 
 export interface Sheet {
@@ -15120,6 +16131,31 @@ export interface TableProperty {
   header_row?: boolean
   /** 设置首列为标题列 */
   header_column?: boolean
+}
+
+export interface TableRole {
+  /** 数据表权限 */
+  table_perm: 0 | 1 | 2 | 4
+  /** 数据表名 */
+  table_name?: string
+  /** 数据表ID */
+  table_id?: string
+  /** 记录筛选条件，在table_perm为1或2时有意义，用于指定可编辑或可阅读某些记录 */
+  rec_rule?: RecRule
+  /** 记录筛选条件，在rec_rule.Perm为2时有意义，用于指定剩余可阅读的记录 */
+  other_rec_rule?: OtherRecRule
+  /** 字段权限，仅在table_perm为2时有意义，设置字段可编辑或可阅读 */
+  field_perm?: Record<string, number>
+  /** 新增记录权限，仅在table_perm为2时有意义，用于设置记录是否可以新增 */
+  allow_add_record?: boolean
+  /** 删除记录权限，仅在table_perm为2时有意义，用于设置记录是否可以删除 */
+  allow_delete_record?: boolean
+  /** 视图权限 */
+  view_perm?: 1 | 2
+  /** 可读的视图集合，仅在view_perm为1时有意义，未设置表示所有视图可读 */
+  view_rules?: Record<string, number>
+  /** 可读的视图集合，仅在view_perm为1时有意义，未设置表示所有视图可读 */
+  field_action_rules?: Record<string, Record<string, number>>
 }
 
 export interface TagI18nName {
@@ -16489,6 +17525,82 @@ export interface UpdateBlockRequest {
   update_task?: UpdateTaskRequest
 }
 
+export interface UpdateDepartment {
+  /** 自定义部门ID */
+  custom_department_id?: string
+  /** i18n文本 */
+  name?: I18nText
+  /** 父部门ID */
+  parent_department_id?: string
+  /** 部门负责人 */
+  leaders?: DepartmentLeader[]
+  /** 在上级部门下的排序权重 */
+  order_weight?: string
+  /** 是否启用 */
+  enabled_status?: boolean
+  /** 自定义字段 */
+  custom_field_values?: CustomFieldValue[]
+}
+
+export interface UpdateEmployee {
+  /** 姓名 */
+  name?: UpsertName
+  /** 员工的联系手机号 */
+  mobile?: string
+  /** 用户的user_id */
+  custom_employee_id?: string
+  /** 头像的文件key */
+  avatar_key?: string
+  /** 员工的联系邮箱 */
+  email?: string
+  /** 员工的企业邮箱 */
+  enterprise_email?: string
+  /** 性别 */
+  gender?: GenderDirectory
+  /** 部门排序 */
+  employee_order_in_departments?: UpsertUserDepartmentSortInfo[]
+  /** 背景图的key */
+  background_image_key?: string
+  /** 员工的个性签名 */
+  description?: string
+  /** 员工直属上级的user_id */
+  leader_id?: string
+  /** 员工虚线上级的user_id */
+  dotted_line_leader_ids?: string[]
+  /** 工作地国家/地区 */
+  work_country_or_region?: string
+  /** 工作地点 */
+  work_place_id?: string
+  /** i18n文本 */
+  work_station?: I18nText
+  /** 工号 */
+  job_number?: string
+  /** 分机号 */
+  extension_number?: string
+  /** 入职日期 */
+  join_date?: string
+  /** 员工类型 */
+  employment_type?: EmployeeTypeDirectory
+  /** 职务ID */
+  job_title_id?: string
+  /** 职级ID */
+  job_level_id?: string
+  /** 序列ID */
+  job_family_id?: string
+  /** 离职日期 */
+  resign_date?: string
+  /** 离职原因 */
+  resign_reason?: ResignReasonDirectory
+  /** 离职备注信息 */
+  resign_remark?: string
+  /** 离职类型 */
+  resign_type?: ResignTypeDirectory
+  /** 暂停 true， false 恢复暂停 */
+  is_frozen?: boolean
+  /** 自定义字段 */
+  custom_field_values?: CustomFieldValue[]
+}
+
 export interface UpdateGridColumnWidthRatioRequest {
   /** 更新列宽比例时，需要传入所有列宽占比 */
   width_ratios: number[]
@@ -16530,6 +17642,33 @@ export interface UpdateTextStyleRequest {
   style: TextStyle
   /** 应更新的字段，必须至少指定一个字段。例如，要调整 Block 对齐方式，请设置 fields 为 [1]。 */
   fields: (1 | 2 | 3 | 4 | 5 | 6 | 7)[]
+}
+
+export interface UpsertName {
+  /** i18n文本 */
+  name: I18nText
+  /** 别名 */
+  another_name?: string
+}
+
+export interface UpsertUserDepartmentSortInfo {
+  /** 部门id */
+  department_id?: string
+  /** 用户在部门内的排序权重 */
+  order_weight_in_deparment?: string
+  /** 用户多个部门间的排序权重 */
+  order_weight_among_deparments?: string
+  /** 是否为用户的主部门（用户只能有一个主部门，且排序权重应最大，不填则默认使用排序第一的部门作为主部门) */
+  is_main_department?: boolean
+}
+
+export interface UrlValue {
+  /** i18n文本 */
+  link_text: I18nText
+  /** 移动端网页链接 */
+  url: string
+  /** 桌面端网页链接 */
+  pcurl: string
 }
 
 export interface User {
@@ -16742,6 +17881,15 @@ export interface UserDepartmentInfo {
   department_order?: number
 }
 
+export interface UserDepartmentSortInfo {
+  /** 部门id */
+  department_id?: string
+  /** 用户在部门内的排序权重 */
+  order_weight_in_deparment?: string
+  /** 用户多个部门间的排序权重 */
+  order_weight_among_deparments?: string
+}
+
 export interface UserExternal {
   /** 用户类型 */
   user_type: 1 | 2 | 10 | 11
@@ -16788,6 +17936,15 @@ export interface UserFlow {
   external_id?: string
   /** 唯一幂等键 */
   idempotent_id?: string
+}
+
+export interface UserInfo {
+  /** 个人邮箱还是公共邮箱 */
+  type: string
+  /** 卡片owner的ID，卡片owner为个人邮箱时非空 */
+  owner_user_id?: string
+  /** 公共邮箱唯一标识 */
+  public_mailbox_id?: string
 }
 
 export interface UserLeave {
@@ -17100,11 +18257,31 @@ export interface UserTrip {
   remarks?: string
 }
 
+export interface UserValue {
+  /** 人员ID */
+  ids: string[]
+  /** 人员类型 */
+  user_type: CustomFieldValueUserType
+}
+
 export interface UserViewDetail {
   /** 用户ID */
   user_id?: string
   /** 用户的最近查看时间timestamp（ms级别） */
   view_time?: string
+}
+
+export interface Value {
+  /** 字符串值 */
+  string_value?: string
+  /** 布尔值 */
+  bool_value?: boolean
+  /** 整形值 */
+  int_value?: string
+  /** 字符串列表值 */
+  string_list_value?: string[]
+  /** 整形列表值 */
+  int_list_value?: string[]
 }
 
 export interface VatEntity {
@@ -17740,11 +18917,45 @@ export interface WorkforcePlanDetailRow {
   plan_value?: string
 }
 
+export interface WorkforcePlanDetailV2 {
+  /** 编制规划明细 ID */
+  workforce_plan_detail_id?: string
+  /** 维度信息 */
+  dimension_info_datas?: DimensionInfoData[]
+  /** 编制规划值 */
+  workforce_plan?: string
+  /** 在职人数 */
+  active_individuals?: string
+  /** 预增员数量 */
+  individuals_to_be_added?: string
+  /** 预减员数量 */
+  individuals_to_be_removed?: string
+  /** 预估在职人数明细 */
+  estimated_active_individuals_details?: WorkforcePlanEaiDetail[]
+  /** 多周期的编制规划信息 */
+  multi_period_values?: WorkforcePlanMultiPeriodValue[]
+  /** 是否为缺维度的明细行，true为缺维度明细行，false为非缺维度明细行 */
+  is_missing_dimension?: boolean
+  /** 是否在职、预增/预减人员、编制数、预估在职人数都为0的明细行，true代表在职、预增/预减人员、编制数、预估在职人数都为0的明细行，false代表在职、预增/预减人员、编制数、预估在职人数不全为0的明细行 */
+  is_all_zero_value?: boolean
+}
+
 export interface WorkforcePlanEaiDetail {
   /** 预估月份 */
   date?: string
   /** 预估在职人数 */
   estimated_active_individuals?: string
+}
+
+export interface WorkforcePlanMultiPeriodValue {
+  /** 周期的最后一天 */
+  period_date?: string
+  /** 对应周期的编制规划值 */
+  workforce_plan?: string
+  /** 预增员数量 */
+  individuals_to_be_added?: string
+  /** 预减员数量 */
+  individuals_to_be_removed?: string
 }
 
 export interface WorkingHoursType {

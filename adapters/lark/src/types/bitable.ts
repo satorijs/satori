@@ -169,21 +169,6 @@ declare module '../internal' {
      */
     listBitableAppTableFormField(app_token: string, table_id: string, form_id: string, query?: Pagination): Promise<ListBitableAppTableFormFieldResponse> & AsyncIterableIterator<AppTableFormField>
     /**
-     * 新增自定义角色
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/create
-     */
-    createBitableAppRole(app_token: string, body: CreateBitableAppRoleRequest): Promise<CreateBitableAppRoleResponse>
-    /**
-     * 更新自定义角色
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/update
-     */
-    updateBitableAppRole(app_token: string, role_id: string, body: UpdateBitableAppRoleRequest): Promise<UpdateBitableAppRoleResponse>
-    /**
-     * 列出自定义角色
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/list
-     */
-    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse> & AsyncIterableIterator<AppRole>
-    /**
      * 删除自定义角色
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/delete
      */
@@ -223,6 +208,21 @@ declare module '../internal' {
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-workflow/update
      */
     updateBitableAppWorkflow(app_token: string, workflow_id: string, body: UpdateBitableAppWorkflowRequest): Promise<void>
+    /**
+     * 新增自定义角色
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/create
+     */
+    createBitableAppRole(app_token: string, body: CreateBitableAppRoleRequest): Promise<CreateBitableAppRoleResponse>
+    /**
+     * 列出自定义角色
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/list
+     */
+    listBitableAppRole(app_token: string, query?: Pagination): Promise<ListBitableAppRoleResponse> & AsyncIterableIterator<AppRole>
+    /**
+     * 更新自定义角色
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-role/update
+     */
+    updateBitableAppRole(app_token: string, role_id: string, body: UpdateBitableAppRoleRequest): Promise<UpdateBitableAppRoleResponse>
     /**
      * 检索记录
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-record/get
@@ -724,43 +724,6 @@ export interface ListBitableAppTableFormFieldResponse {
   total: number
 }
 
-export interface CreateBitableAppRoleRequest {
-  /** 自定义权限的名字 */
-  role_name: string
-  /** 数据表权限 */
-  table_roles: AppRoleTableRole[]
-  /** block权限 */
-  block_roles?: AppRoleBlockRole[]
-}
-
-export interface CreateBitableAppRoleResponse {
-  role?: AppRole
-}
-
-export interface UpdateBitableAppRoleRequest {
-  /** 自定义权限的名字 */
-  role_name: string
-  /** 数据表权限 */
-  table_roles: AppRoleTableRole[]
-  /** block权限 */
-  block_roles?: AppRoleBlockRole[]
-}
-
-export interface UpdateBitableAppRoleResponse {
-  role?: AppRole
-}
-
-export interface ListBitableAppRoleResponse {
-  /** 角色列表 */
-  items?: AppRole[]
-  /** 下一页分页的token */
-  page_token?: string
-  /** 是否有下一页数据 */
-  has_more?: boolean
-  /** 总数 */
-  total?: number
-}
-
 export interface CreateBitableAppRoleMemberRequest {
   /** 协作者id */
   member_id: string
@@ -805,6 +768,43 @@ export interface ListBitableAppWorkflowResponse {
 export interface UpdateBitableAppWorkflowRequest {
   /** 自动化状态 */
   status: string
+}
+
+export interface CreateBitableAppRoleRequest {
+  /** 自定义权限的名字 */
+  role_name: string
+  /** 数据表权限 */
+  table_roles: AppRoleTableRole[]
+  /** block权限 */
+  block_roles?: AppRoleBlockRole[]
+}
+
+export interface CreateBitableAppRoleResponse {
+  role?: AppRole
+}
+
+export interface ListBitableAppRoleResponse {
+  /** 角色列表 */
+  items?: AppRole[]
+  /** 下一页分页的token */
+  page_token?: string
+  /** 是否有下一页数据 */
+  has_more?: boolean
+  /** 总数 */
+  total?: number
+}
+
+export interface UpdateBitableAppRoleRequest {
+  /** 自定义权限的名字 */
+  role_name: string
+  /** 数据表权限 */
+  table_roles: AppRoleTableRole[]
+  /** block权限 */
+  block_roles?: AppRoleBlockRole[]
+}
+
+export interface UpdateBitableAppRoleResponse {
+  role?: AppRole
 }
 
 export interface GetBitableAppTableRecordQuery {
@@ -935,13 +935,9 @@ Internal.define({
   '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/fields': {
     GET: { name: 'listBitableAppTableFormField', pagination: { argIndex: 3 } },
   },
-  '/bitable/v1/apps/{app_token}/roles': {
-    POST: 'createBitableAppRole',
-    GET: { name: 'listBitableAppRole', pagination: { argIndex: 1 } },
-  },
   '/bitable/v1/apps/{app_token}/roles/{role_id}': {
-    PUT: 'updateBitableAppRole',
     DELETE: 'deleteBitableAppRole',
+    PUT: 'updateBitableAppRole',
   },
   '/bitable/v1/apps/{app_token}/roles/{role_id}/members': {
     POST: 'createBitableAppRoleMember',
@@ -961,5 +957,9 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/workflows/{workflow_id}': {
     PUT: 'updateBitableAppWorkflow',
+  },
+  '/bitable/v1/apps/{app_token}/roles': {
+    POST: 'createBitableAppRole',
+    GET: { name: 'listBitableAppRole', pagination: { argIndex: 1 } },
   },
 })
