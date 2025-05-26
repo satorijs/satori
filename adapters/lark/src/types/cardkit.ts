@@ -24,11 +24,6 @@ declare module '../internal' {
      */
     updateCardkitCard(card_id: string, body: UpdateCardkitCardRequest): Promise<void>
     /**
-     * 转换 ID
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card/id_convert
-     */
-    idConvertCardkitCard(body: IdConvertCardkitCardRequest): Promise<IdConvertCardkitCardResponse>
-    /**
      * 新增组件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card-element/create
      */
@@ -53,6 +48,11 @@ declare module '../internal' {
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card-element/delete
      */
     deleteCardkitCardElement(card_id: string, element_id: string, body: DeleteCardkitCardElementRequest): Promise<void>
+    /**
+     * 转换 ID
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card/id_convert
+     */
+    idConvertCardkitCard(body: IdConvertCardkitCardRequest): Promise<IdConvertCardkitCardResponse>
   }
 }
 
@@ -93,16 +93,6 @@ export interface UpdateCardkitCardRequest {
   uuid?: string
   /** 卡片处于流式更新模式时，进行卡片操作的顺序序号，用于保证多次更新的时序性。值为正整数，一次流式状态的多次更新操作（streaming_mode 一次从 true 到 false 期间）需要保证 sequence 递增，否则将报错。推荐使用时间戳。 */
   sequence: number
-}
-
-export interface IdConvertCardkitCardRequest {
-  /** 消息ID */
-  message_id: string
-}
-
-export interface IdConvertCardkitCardResponse {
-  /** 消息 ID 对应的卡片 ID */
-  card_id?: string
 }
 
 export interface CreateCardkitCardElementRequest {
@@ -152,6 +142,16 @@ export interface DeleteCardkitCardElementRequest {
   sequence: number
 }
 
+export interface IdConvertCardkitCardRequest {
+  /** 消息ID */
+  message_id: string
+}
+
+export interface IdConvertCardkitCardResponse {
+  /** 消息 ID 对应的卡片 ID */
+  card_id?: string
+}
+
 Internal.define({
   '/cardkit/v1/cards': {
     POST: 'createCardkitCard',
@@ -165,9 +165,6 @@ Internal.define({
   '/cardkit/v1/cards/{card_id}': {
     PUT: 'updateCardkitCard',
   },
-  '/cardkit/v1/cards/id_convert': {
-    POST: 'idConvertCardkitCard',
-  },
   '/cardkit/v1/cards/{card_id}/elements': {
     POST: 'createCardkitCardElement',
   },
@@ -178,5 +175,8 @@ Internal.define({
   },
   '/cardkit/v1/cards/{card_id}/elements/{element_id}/content': {
     PUT: 'contentCardkitCardElement',
+  },
+  '/cardkit/v1/cards/id_convert': {
+    POST: 'idConvertCardkitCard',
   },
 })

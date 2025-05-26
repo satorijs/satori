@@ -114,7 +114,7 @@ declare module '../internal' {
      */
     queryAttendanceUserStatsData(body: QueryAttendanceUserStatsDataRequest, query?: QueryAttendanceUserStatsDataQuery): Promise<QueryAttendanceUserStatsDataResponse>
     /**
-     * 获取审批通过数据
+     * 获取审批数据
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/query
      */
     queryAttendanceUserApproval(body: QueryAttendanceUserApprovalRequest, query?: QueryAttendanceUserApprovalQuery): Promise<QueryAttendanceUserApprovalResponse>
@@ -178,6 +178,11 @@ declare module '../internal' {
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_flow/query
      */
     queryAttendanceUserFlow(body: QueryAttendanceUserFlowRequest, query?: QueryAttendanceUserFlowQuery): Promise<QueryAttendanceUserFlowResponse>
+    /**
+     * 删除打卡流水
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_flow/batch_del
+     */
+    batchDelAttendanceUserFlow(body: BatchDelAttendanceUserFlowRequest): Promise<BatchDelAttendanceUserFlowResponse>
     /**
      * 查询打卡结果
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_task/query
@@ -1007,6 +1012,18 @@ export interface QueryAttendanceUserFlowResponse {
   user_flow_results?: UserFlow[]
 }
 
+export interface BatchDelAttendanceUserFlowRequest {
+  /** 流水记录ID */
+  record_ids: string[]
+}
+
+export interface BatchDelAttendanceUserFlowResponse {
+  /** 删除成功的流水记录ID列表 */
+  success_record_ids?: string[]
+  /** 删除失败的流水记录ID列表 */
+  fail_record_ids?: string[]
+}
+
 export interface QueryAttendanceUserTaskRequest {
   /** employee_no 或 employee_id 列表 */
   user_ids: string[]
@@ -1185,6 +1202,9 @@ Internal.define({
   },
   '/attendance/v1/user_flows/query': {
     POST: 'queryAttendanceUserFlow',
+  },
+  '/attendance/v1/user_flows/batch_del': {
+    POST: 'batchDelAttendanceUserFlow',
   },
   '/attendance/v1/user_tasks/query': {
     POST: 'queryAttendanceUserTask',

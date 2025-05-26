@@ -9,15 +9,15 @@ declare module '../internal' {
      */
     createTaskV2(body: CreateTaskV2Request, query?: CreateTaskV2Query): Promise<CreateTaskV2Response>
     /**
-     * 获取任务详情
-     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/get
-     */
-    getTaskV2(task_guid: string, query?: GetTaskV2Query): Promise<GetTaskV2Response>
-    /**
      * 更新任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/patch
      */
     patchTaskV2(task_guid: string, body: PatchTaskV2Request, query?: PatchTaskV2Query): Promise<PatchTaskV2Response>
+    /**
+     * 获取任务详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/get
+     */
+    getTaskV2(task_guid: string, query?: GetTaskV2Query): Promise<GetTaskV2Response>
     /**
      * 删除任务
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/delete
@@ -428,16 +428,6 @@ export interface CreateTaskV2Response {
   task?: Task
 }
 
-export interface GetTaskV2Query {
-  /** 表示user的ID的类型，支持open_id, user_id, union_id */
-  user_id_type?: string
-}
-
-export interface GetTaskV2Response {
-  /** 获得的任务实体 */
-  task?: Task
-}
-
 export interface PatchTaskV2Request {
   /** 要更新的任务数据，只需要写明要更新的字段 */
   task?: InputTask
@@ -452,6 +442,16 @@ export interface PatchTaskV2Query {
 
 export interface PatchTaskV2Response {
   /** 更新后的任务 */
+  task?: Task
+}
+
+export interface GetTaskV2Query {
+  /** 表示user的ID的类型，支持open_id, user_id, union_id */
+  user_id_type?: string
+}
+
+export interface GetTaskV2Response {
+  /** 获得的任务实体 */
   task?: Task
 }
 
@@ -1304,8 +1304,8 @@ Internal.define({
     GET: { name: 'listTaskV2', pagination: { argIndex: 0 } },
   },
   '/task/v2/tasks/{task_guid}': {
-    GET: 'getTaskV2',
     PATCH: 'patchTaskV2',
+    GET: 'getTaskV2',
     DELETE: 'deleteTaskV2',
   },
   '/task/v2/tasks/{task_guid}/add_members': {

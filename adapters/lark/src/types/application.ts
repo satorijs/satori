@@ -1,8 +1,23 @@
-import { AppContactsRangeIdList, Application, ApplicationAppContactsRange, ApplicationAppUsage, ApplicationAppVersion, ApplicationDepartmentAppUsage, ApplicationFeedback, ApplicationVisibilityDepartmentWhiteBlackInfo, ApplicationVisibilityGroupWhiteBlackInfo, ApplicationVisibilityUserWhiteBlackInfo, AppRecommendRule, AppVisibilityIdList, ClientBadgeNum, Scope } from '.'
+import { AppCollaborator, AppContactsRangeIdList, Application, ApplicationAppContactsRange, ApplicationAppUsage, ApplicationAppVersion, ApplicationDepartmentAppUsage, ApplicationFeedback, ApplicationVisibilityDepartmentWhiteBlackInfo, ApplicationVisibilityGroupWhiteBlackInfo, ApplicationVisibilityUserWhiteBlackInfo, AppRecommendRule, AppVisibilityIdList, ClientBadgeNum, Scope } from '.'
 import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
+    /**
+     * 转移应用所有者
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-owner/update
+     */
+    updateApplicationApplicationOwner(app_id: string, body: UpdateApplicationApplicationOwnerRequest, query?: UpdateApplicationApplicationOwnerQuery): Promise<void>
+    /**
+     * 更新应用协作者
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-collaborators/update
+     */
+    updateApplicationApplicationCollaborators(app_id: string, body: UpdateApplicationApplicationCollaboratorsRequest, query?: UpdateApplicationApplicationCollaboratorsQuery): Promise<void>
+    /**
+     * 获取应用协作者列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application-collaborators/get
+     */
+    getApplicationApplicationCollaborators(app_id: string, query?: GetApplicationApplicationCollaboratorsQuery): Promise<GetApplicationApplicationCollaboratorsResponse>
     /**
      * 获取应用信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v6/application/get
@@ -124,6 +139,38 @@ declare module '../internal' {
      */
     listApplicationAppRecommendRule(query?: ListApplicationAppRecommendRuleQuery): Paginated<AppRecommendRule, 'rules'>
   }
+}
+
+export interface UpdateApplicationApplicationOwnerRequest {
+  /** 新的拥有者用户ID，类型由查询参数中的user_id_type确定 */
+  owner_id: string
+}
+
+export interface UpdateApplicationApplicationOwnerQuery {
+  /** 用户ID类型 */
+  user_id_type?: 'open_id' | 'user_id' | 'union_id'
+}
+
+export interface UpdateApplicationApplicationCollaboratorsRequest {
+  /** 添加人员 */
+  adds?: AppCollaborator[]
+  /** 移除人员 */
+  removes?: string[]
+}
+
+export interface UpdateApplicationApplicationCollaboratorsQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface GetApplicationApplicationCollaboratorsQuery {
+  /** 用户 ID 类型 */
+  user_id_type?: 'open_id' | 'union_id' | 'user_id'
+}
+
+export interface GetApplicationApplicationCollaboratorsResponse {
+  /** 协作者 */
+  collaborators?: AppCollaborator[]
 }
 
 export interface GetApplicationQuery {
@@ -543,6 +590,13 @@ export interface ListApplicationAppRecommendRuleQuery extends Pagination {
 }
 
 Internal.define({
+  '/application/v6/applications/{app_id}/owner': {
+    PUT: 'updateApplicationApplicationOwner',
+  },
+  '/application/v6/applications/{app_id}/collaborators': {
+    PUT: 'updateApplicationApplicationCollaborators',
+    GET: 'getApplicationApplicationCollaborators',
+  },
   '/application/v6/applications/{app_id}': {
     GET: 'getApplication',
     PATCH: 'patchApplication',

@@ -1,13 +1,113 @@
-import { Attachment, EmailAlias, MailAddress, Mailgroup, MailgroupManager, MailgroupMember, MailgroupPermissionMember, PublicMailbox, PublicMailboxMember, User } from '.'
+import { Attachment, AttachmentDownloadUrlItem, EmailAlias, Folder, MailAddress, MailContact, Mailgroup, MailgroupManager, MailgroupMember, MailgroupPermissionMember, Message, PublicMailbox, PublicMailboxMember, Rule, RuleAction, RuleCondition, User, UserInfo } from '.'
 import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
     /**
+     * 创建邮箱文件夹
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-folder/create
+     */
+    createMailUserMailboxFolder(user_mailbox_id: string, body: CreateMailUserMailboxFolderRequest): Promise<CreateMailUserMailboxFolderResponse>
+    /**
+     * 删除邮箱文件夹
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-folder/delete
+     */
+    deleteMailUserMailboxFolder(user_mailbox_id: string, folder_id: string): Promise<void>
+    /**
+     * 修改邮箱文件夹
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-folder/patch
+     */
+    patchMailUserMailboxFolder(user_mailbox_id: string, folder_id: string, body: PatchMailUserMailboxFolderRequest): Promise<void>
+    /**
+     * 列出邮箱文件夹
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-folder/list
+     */
+    listMailUserMailboxFolder(user_mailbox_id: string, query?: ListMailUserMailboxFolderQuery): Promise<ListMailUserMailboxFolderResponse>
+    /**
+     * 获取邮件卡片的邮件列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-message/get_by_card
+     */
+    getByCardMailUserMailboxMessage(user_mailbox_id: string, query?: GetByCardMailUserMailboxMessageQuery): Promise<GetByCardMailUserMailboxMessageResponse>
+    /**
+     * 列出邮件
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-message/list
+     */
+    listMailUserMailboxMessage(user_mailbox_id: string, query?: ListMailUserMailboxMessageQuery): Paginated<string>
+    /**
+     * 获取邮件详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-message/get
+     */
+    getMailUserMailboxMessage(user_mailbox_id: string, message_id: string): Promise<GetMailUserMailboxMessageResponse>
+    /**
      * 发送邮件
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-message/send
      */
     sendMailUserMailboxMessage(user_mailbox_id: string, body: SendMailUserMailboxMessageRequest): Promise<void>
+    /**
+     * 获取附件下载链接
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-message-attachment/download_url
+     */
+    downloadUrlMailUserMailboxMessageAttachment(user_mailbox_id: string, message_id: string, query?: DownloadUrlMailUserMailboxMessageAttachmentQuery): Promise<DownloadUrlMailUserMailboxMessageAttachmentResponse>
+    /**
+     * 订阅事件
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-event/subscribe
+     */
+    subscribeMailUserMailboxEvent(user_mailbox_id: string, body: SubscribeMailUserMailboxEventRequest): Promise<void>
+    /**
+     * 获取订阅状态
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-event/subscription
+     */
+    subscriptionMailUserMailboxEvent(user_mailbox_id: string): Promise<SubscriptionMailUserMailboxEventResponse>
+    /**
+     * 取消订阅
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-event/unsubscribe
+     */
+    unsubscribeMailUserMailboxEvent(user_mailbox_id: string, body: UnsubscribeMailUserMailboxEventRequest): Promise<void>
+    /**
+     * 创建收信规则
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-rule/create
+     */
+    createMailUserMailboxRule(user_mailbox_id: string, body: CreateMailUserMailboxRuleRequest): Promise<CreateMailUserMailboxRuleResponse>
+    /**
+     * 删除收信规则
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-rule/delete
+     */
+    deleteMailUserMailboxRule(user_mailbox_id: string, rule_id: string): Promise<void>
+    /**
+     * 更新收信规则
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-rule/update
+     */
+    updateMailUserMailboxRule(user_mailbox_id: string, rule_id: string, body: UpdateMailUserMailboxRuleRequest): Promise<void>
+    /**
+     * 列出收信规则
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-rule/list
+     */
+    listMailUserMailboxRule(user_mailbox_id: string): Promise<ListMailUserMailboxRuleResponse>
+    /**
+     * 对收信规则进行排序
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-rule/reorder
+     */
+    reorderMailUserMailboxRule(user_mailbox_id: string, body: ReorderMailUserMailboxRuleRequest): Promise<void>
+    /**
+     * 创建邮箱联系人
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-mail_contact/create
+     */
+    createMailUserMailboxMailContact(user_mailbox_id: string, body: CreateMailUserMailboxMailContactRequest): Promise<CreateMailUserMailboxMailContactResponse>
+    /**
+     * 删除邮箱联系人
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-mail_contact/delete
+     */
+    deleteMailUserMailboxMailContact(user_mailbox_id: string, mail_contact_id: string): Promise<void>
+    /**
+     * 修改邮箱联系人信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-mail_contact/patch
+     */
+    patchMailUserMailboxMailContact(user_mailbox_id: string, mail_contact_id: string, body: PatchMailUserMailboxMailContactRequest): Promise<void>
+    /**
+     * 列出邮箱联系人
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/user_mailbox-mail_contact/list
+     */
+    listMailUserMailboxMailContact(user_mailbox_id: string, query?: Pagination): Paginated<MailContact>
     /**
      * 创建邮件组
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/mailgroup/create
@@ -154,6 +254,11 @@ declare module '../internal' {
      */
     listMailPublicMailbox(query?: Pagination): Paginated<PublicMailbox>
     /**
+     * 将公共邮箱移至回收站
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/remove_to_recycle_bin
+     */
+    removeToRecycleBinMailPublicMailbox(public_mailbox_id: string, body: RemoveToRecycleBinMailPublicMailboxRequest): Promise<void>
+    /**
      * 永久删除公共邮箱
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/mail-v1/public_mailbox/delete
      */
@@ -236,6 +341,72 @@ declare module '../internal' {
   }
 }
 
+export interface CreateMailUserMailboxFolderRequest {
+  /** 文件夹名称 */
+  name: string
+  /** 父文件夹 id，该值为 0 表示根文件夹 */
+  parent_folder_id: string
+}
+
+export interface CreateMailUserMailboxFolderResponse {
+  /** 文件夹实体 */
+  folder?: Folder
+}
+
+export interface PatchMailUserMailboxFolderRequest {
+  /** 文件夹名称 */
+  name?: string
+  /** 父文件夹 id，该值为 0 表示根文件夹 */
+  parent_folder_id?: string
+}
+
+export const enum ListMailUserMailboxFolderQueryFolderType {
+  /** 系统文件夹 */
+  System = 1,
+  /** 用户文件夹 */
+  User = 2,
+}
+
+export interface ListMailUserMailboxFolderQuery {
+  /** 文件夹类型 */
+  folder_type?: ListMailUserMailboxFolderQueryFolderType
+}
+
+export interface ListMailUserMailboxFolderResponse {
+  /** 文件夹列表 */
+  items?: Folder[]
+}
+
+export interface GetByCardMailUserMailboxMessageQuery {
+  /** 卡片ID */
+  card_id: string
+  /** 卡片OwnerID */
+  owner_id: string
+  /** 用户ID类型 */
+  user_id_type?: 'open_id' | 'user_id' | 'union_id'
+}
+
+export interface GetByCardMailUserMailboxMessageResponse {
+  /** 邮件Owner信息 */
+  owner_info: UserInfo
+  /** 邮件ID列表 */
+  message_ids: string[]
+  /** 卡片ID */
+  card_id: string
+}
+
+export interface ListMailUserMailboxMessageQuery extends Pagination {
+  /** 文件夹 id */
+  folder_id: string
+  /** 是否只查询未读邮件 */
+  only_unread?: boolean
+}
+
+export interface GetMailUserMailboxMessageResponse {
+  /** 邮件体 */
+  message?: Message
+}
+
 export interface SendMailUserMailboxMessageRequest {
   /** MIME邮件数据，基于base64url编码 */
   raw?: string
@@ -257,6 +428,123 @@ export interface SendMailUserMailboxMessageRequest {
   attachments?: Attachment[]
   /** 会话id */
   thread_id?: string
+}
+
+export interface DownloadUrlMailUserMailboxMessageAttachmentQuery {
+  /** 附件 id 列表 */
+  attachment_ids: string[]
+}
+
+export interface DownloadUrlMailUserMailboxMessageAttachmentResponse {
+  /** 下载链接列表 */
+  download_urls?: AttachmentDownloadUrlItem[]
+  /** 获取失败的附件 id 列表 */
+  failed_ids?: string[]
+}
+
+export const enum SubscribeMailUserMailboxEventRequestEventType {
+  /** 邮件相关事件 */
+  Message = 1,
+}
+
+export interface SubscribeMailUserMailboxEventRequest {
+  /** 事件类型 */
+  event_type: SubscribeMailUserMailboxEventRequestEventType
+}
+
+export interface SubscriptionMailUserMailboxEventResponse {
+  /** 订阅的事件列表 */
+  event_types?: number[]
+}
+
+export const enum UnsubscribeMailUserMailboxEventRequestEventType {
+  /** 邮件相关事件 */
+  Message = 1,
+}
+
+export interface UnsubscribeMailUserMailboxEventRequest {
+  /** 事件类型 */
+  event_type: UnsubscribeMailUserMailboxEventRequestEventType
+}
+
+export interface CreateMailUserMailboxRuleRequest {
+  /** 匹配条件 */
+  condition: RuleCondition
+  /** 匹配命中后的操作 */
+  action: RuleAction
+  /** 是否终点规则 */
+  ignore_the_rest_of_rules: boolean
+  /** 规则名称 */
+  name: string
+  /** 是否启用 */
+  is_enable: boolean
+}
+
+export interface CreateMailUserMailboxRuleResponse {
+  /** 规则实体 */
+  rule?: Rule
+}
+
+export interface UpdateMailUserMailboxRuleRequest {
+  /** 匹配条件 */
+  condition: RuleCondition
+  /** 匹配命中后的操作 */
+  action: RuleAction
+  /** 是否终点规则 */
+  ignore_the_rest_of_rules: boolean
+  /** 规则名称 */
+  name: string
+  /** 是否启用 */
+  is_enable: boolean
+}
+
+export interface ListMailUserMailboxRuleResponse {
+  /** 规则列表 */
+  items?: Rule[]
+}
+
+export interface ReorderMailUserMailboxRuleRequest {
+  /** 规则 id 列表 */
+  rule_ids: string[]
+}
+
+export interface CreateMailUserMailboxMailContactRequest {
+  /** 联系人姓名 */
+  name: string
+  /** 联系人公司 */
+  company?: string
+  /** 联系人手机号 */
+  phone?: string
+  /** 联系人邮箱 */
+  mail_address?: string
+  /** 联系人标签 */
+  tag?: string
+  /** 联系人备注 */
+  remark?: string
+  /** 联系人职位 */
+  position?: string
+}
+
+export interface CreateMailUserMailboxMailContactResponse {
+  /** 联系人实体 */
+  mail_contact?: MailContact
+}
+
+export interface PatchMailUserMailboxMailContactRequest {
+  /** 联系人姓名 */
+  name: string
+  /** 联系人公司 */
+  company?: string
+  /** 联系人手机号 */
+  phone?: string
+  /** 联系人邮箱 */
+  mail_address?: string
+  /** 联系人标签 */
+  tag?: string
+  /** 联系人备注 */
+  remark?: string
+  /** 联系人职位 */
+  position?: string
 }
 
 export interface CreateMailMailgroupRequest {
@@ -638,6 +926,11 @@ export interface GetMailPublicMailboxResponse {
   geo?: string
 }
 
+export interface RemoveToRecycleBinMailPublicMailboxRequest {
+  /** 接收删除邮件的邮箱地址，不填则删除该公共邮箱的邮件 */
+  to_mail_address?: string
+}
+
 export interface CreateMailPublicMailboxMemberRequest {
   /** The member's user id. Value is valid when type is USER */
   user_id?: string
@@ -744,8 +1037,56 @@ export interface QueryMailUserResponse {
 }
 
 Internal.define({
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/folders': {
+    POST: 'createMailUserMailboxFolder',
+    GET: 'listMailUserMailboxFolder',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/folders/{folder_id}': {
+    DELETE: 'deleteMailUserMailboxFolder',
+    PATCH: 'patchMailUserMailboxFolder',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/messages/get_by_card': {
+    GET: 'getByCardMailUserMailboxMessage',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/messages': {
+    GET: { name: 'listMailUserMailboxMessage', pagination: { argIndex: 1 } },
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/messages/{message_id}': {
+    GET: 'getMailUserMailboxMessage',
+  },
   '/mail/v1/user_mailboxes/{user_mailbox_id}/messages/send': {
     POST: 'sendMailUserMailboxMessage',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/messages/{message_id}/attachments/download_url': {
+    GET: 'downloadUrlMailUserMailboxMessageAttachment',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/event/subscribe': {
+    POST: 'subscribeMailUserMailboxEvent',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/event/subscription': {
+    GET: 'subscriptionMailUserMailboxEvent',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/event/unsubscribe': {
+    POST: 'unsubscribeMailUserMailboxEvent',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/rules': {
+    POST: 'createMailUserMailboxRule',
+    GET: 'listMailUserMailboxRule',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/rules/{rule_id}': {
+    DELETE: 'deleteMailUserMailboxRule',
+    PUT: 'updateMailUserMailboxRule',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/rules/reorder': {
+    POST: 'reorderMailUserMailboxRule',
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/mail_contacts': {
+    POST: 'createMailUserMailboxMailContact',
+    GET: { name: 'listMailUserMailboxMailContact', pagination: { argIndex: 1 } },
+  },
+  '/mail/v1/user_mailboxes/{user_mailbox_id}/mail_contacts/{mail_contact_id}': {
+    DELETE: 'deleteMailUserMailboxMailContact',
+    PATCH: 'patchMailUserMailboxMailContact',
   },
   '/mail/v1/mailgroups': {
     POST: 'createMailMailgroup',
@@ -810,6 +1151,9 @@ Internal.define({
     PUT: 'updateMailPublicMailbox',
     GET: 'getMailPublicMailbox',
     DELETE: 'deleteMailPublicMailbox',
+  },
+  '/mail/v1/public_mailboxes/{public_mailbox_id}/remove_to_recycle_bin': {
+    DELETE: 'removeToRecycleBinMailPublicMailbox',
   },
   '/mail/v1/public_mailboxes/{public_mailbox_id}/members': {
     POST: 'createMailPublicMailboxMember',

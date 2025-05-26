@@ -1,8 +1,18 @@
-import { AllowedRollbaclkTaskItemType, AuditLogDetail, AuditLogEsField, Criterion, EnvironmentVariable, EnvironmentVariableFilter, ObjectMeta, RecordGroupByItem, RecordResult, RoleMember, SearchObjectParam, Sort, UserTask } from '.'
-import { Internal } from '../internal'
+import { AllowedRollbaclkTaskItemType, AuditLogDetail, AuditLogEsField, Criterion, EnvironmentVariable, EnvironmentVariableFilter, ObjectMeta, RecordGroupByItem, RecordResult, RoleMember, SearchObjectParam, SeatActivity, SeatAssignment, Sort, UserTask } from '.'
+import { Internal, Pagination } from '../internal'
 
 declare module '../internal' {
   interface Internal {
+    /**
+     * 查询席位分配详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/seat_assignment/list
+     */
+    listApaasSeatAssignment(query?: ListApaasSeatAssignmentQuery): Paginated<SeatAssignment>
+    /**
+     * 查询席位活跃详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/seat_activity/list
+     */
+    listApaasSeatActivity(query?: ListApaasSeatActivityQuery): Paginated<SeatActivity>
     /**
      * 查询审计日志列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-audit_log/audit_log_list
@@ -13,6 +23,16 @@ declare module '../internal' {
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-audit_log/get
      */
     getApaasApplicationAuditLog(namespace: string, query?: GetApaasApplicationAuditLogQuery): Promise<GetApaasApplicationAuditLogResponse>
+    /**
+     * 查询数据变更日志列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-audit_log/data_change_logs_list
+     */
+    dataChangeLogsListApaasApplicationAuditLog(namespace: string, query?: DataChangeLogsListApaasApplicationAuditLogQuery): Promise<DataChangeLogsListApaasApplicationAuditLogResponse>
+    /**
+     * 查询数据变更日志详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-audit_log/data_change_log_detail
+     */
+    dataChangeLogDetailApaasApplicationAuditLog(namespace: string, query?: DataChangeLogDetailApaasApplicationAuditLogQuery): Promise<DataChangeLogDetailApaasApplicationAuditLogResponse>
     /**
      * 批量删除角色成员授权
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-role-member/batch_remove_authorization
@@ -166,6 +186,16 @@ declare module '../internal' {
   }
 }
 
+export interface ListApaasSeatAssignmentQuery extends Pagination {
+  /** 席位类型，枚举值：1.平台席位 2. 应用访问席位 */
+  seat_type: 'per_user' | 'per_user_per_app'
+}
+
+export interface ListApaasSeatActivityQuery extends Pagination {
+  /** 席位类型，枚举值：1. 平台席位2. 应用席位 */
+  seat_type: 'per_user' | 'per_user_per_app'
+}
+
 export interface AuditLogListApaasApplicationAuditLogQuery {
   /** 分页大小 */
   page_size: string
@@ -205,6 +235,48 @@ export interface GetApaasApplicationAuditLogQuery {
 
 export interface GetApaasApplicationAuditLogResponse {
   /** 审计日志详情信息 */
+  data?: AuditLogDetail
+}
+
+export interface DataChangeLogsListApaasApplicationAuditLogQuery {
+  /** 模糊查询 */
+  quick_query?: string
+  /** 分页大小 */
+  page_size: string
+  /** 翻页数量 */
+  offset: string
+  /** 查询时间范围：开始时间 */
+  from?: string
+  /** 查询时间范围：结束时间 */
+  to?: string
+  /** 日志类型：10007-数据变更日志 */
+  log_type: string
+  /** 日志查询：筛选能力 */
+  filter?: string
+  /** 日志列表：选择展示行信息，例如["opTime","appName","eventName","clientIP","operator","status"] */
+  columns?: string[]
+  /** 查询排序字段：可选项为操作时间（opTime） */
+  sort_by?: string
+  /** 查询排序：按时间从小到大使用 asc */
+  sort_order?: string
+  /** 应用类型，0为apaas类型，1为aily类型 */
+  app_type?: string
+}
+
+export interface DataChangeLogsListApaasApplicationAuditLogResponse {
+  /** 数据变更日志查询结果列表详情信息 */
+  items?: AuditLogEsField[]
+  /** 数据变更日志查询总条数 */
+  total?: string
+}
+
+export interface DataChangeLogDetailApaasApplicationAuditLogQuery {
+  /** 数据变更日志ID信息 */
+  log_id: string
+}
+
+export interface DataChangeLogDetailApaasApplicationAuditLogResponse {
+  /** 数据变更日志详情信息 */
   data?: AuditLogDetail
 }
 
@@ -549,11 +621,23 @@ export interface ChatGroupApaasUserTaskResponse {
 }
 
 Internal.define({
+  '/apaas/v1/seat_assignments': {
+    GET: { name: 'listApaasSeatAssignment', pagination: { argIndex: 0 } },
+  },
+  '/apaas/v1/seat_activities': {
+    GET: { name: 'listApaasSeatActivity', pagination: { argIndex: 0 } },
+  },
   '/apaas/v1/applications/{namespace}/audit_log/audit_log_list': {
     GET: 'auditLogListApaasApplicationAuditLog',
   },
   '/apaas/v1/applications/{namespace}/audit_log': {
     GET: 'getApaasApplicationAuditLog',
+  },
+  '/apaas/v1/applications/{namespace}/audit_log/data_change_logs_list': {
+    GET: 'dataChangeLogsListApaasApplicationAuditLog',
+  },
+  '/apaas/v1/applications/{namespace}/audit_log/data_change_log_detail': {
+    GET: 'dataChangeLogDetailApaasApplicationAuditLog',
   },
   '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_remove_authorization': {
     POST: 'batchRemoveAuthorizationApaasApplicationRoleMember',
