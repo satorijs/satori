@@ -114,7 +114,7 @@ export class Internal<C extends Context = Context> {
           let root = Internal._tree
           const parts = route.name.split('.')
           const lastPart = parts.pop()!
-          for (const part of route.name.split('.')) {
+          for (const part of parts) {
             root = root[part] ??= Object.create(null)
           }
           root[lastPart] = function (this: LarkBot, ...args: any[]) {
@@ -122,7 +122,7 @@ export class Internal<C extends Context = Context> {
             const result = {} as Paginated
             for (const key of ['then', 'catch', 'finally']) {
               result[key] = (...args2: any[]) => {
-                return (promise ??= impl.apply(this, args))[key](...args2)
+                return (promise ??= impl(this, ...args))[key](...args2)
               }
             }
 
@@ -143,7 +143,7 @@ export class Internal<C extends Context = Context> {
                 return this
               }
               result[Symbol.for('satori.pagination')] = async () => {
-                const data = await impl.apply(this, iterArgs)
+                const data = await impl(this, ...iterArgs)
                 iterArgs[argIndex].page_token = data[tokenKey]
                 return {
                   data: data[itemsKey],
