@@ -228,7 +228,7 @@ function createInterface(name: string, properties: Schema[], project: Project, n
 }
 
 interface Project {
-  namespaces: Record<string, Namespace>
+  namespace: Namespace
   imports: Set<string>
   internalImports: Set<string>
   defines: Record<string, Record<string, string>>
@@ -280,11 +280,13 @@ async function start() {
 
   const methods: Record<string, number> = {}
   details.forEach((detail, index) => {
-    const route = [
+    const routeParts = [
       detail.project,
       ...detail.resource.split('.'),
       detail.apiName,
-    ].map(camelize).join('.')
+    ].map(camelize)
+    if (routeParts[0] === routeParts[1]) routeParts.shift()
+    const route = routeParts.join('.')
     if (!methods[route] || details[methods[route]].version < detail.version) {
       methods[route] = index
     }
@@ -294,7 +296,11 @@ async function start() {
     const detail = details[index]
     const summary = data.apis[index]
     const project = projects[detail.project] ||= {
-      namespaces: {},
+      namespace: {
+        methods: [],
+        interfaces: [],
+        namespaces: {},
+      },
       imports: new Set(),
       internalImports: new Set(['Internal']),
       defines: {},
@@ -306,20 +312,18 @@ async function start() {
     const extras: string[] = []
 
     const parts = detail.resource.split('.').map(name => capitalize(camelize(name)))
-    let ns = project.namespaces[parts[0]] ||= {
-      methods: [],
-      interfaces: [],
-      namespaces: {},
+    let ns = project.namespace
+    if (parts[0] === capitalize(camelize(detail.project))) {
+      parts.shift()
     }
-    for (let i = 1; i < parts.length; i++) {
-      const part = parts[i]
+    for (const part of parts) {
       ns = ns.namespaces[part] ||= {
         methods: [],
         interfaces: [],
         namespaces: {},
       }
     }
-    const lastPart = parts[parts.length - 1]
+    const lastPart = parts[parts.length - 1] ?? capitalize(camelize(detail.project))
 
     let returnType: string
     let paginationRequest: { queryType?: string } | undefined
@@ -480,11 +484,7 @@ async function start() {
         Internal.define({
           __DEFINES__
         })`
-        .replace('__NAMESPACE__', formatNamespace(capitalize(camelize(name)), {
-          methods: [],
-          interfaces: [],
-          namespaces: project.namespaces,
-        }))
+        .replace('__NAMESPACE__', formatNamespace(capitalize(camelize(name)), project.namespace))
         .replace('__DEFINES__', defines),
     ].join('\n\n').split('\n')
       .map(line => line.trimEnd())

@@ -9,111 +9,351 @@ declare module '../internal' {
 
 export namespace Task {
   export interface Methods {
-    task: Task.Methods
+    subtask: Subtask.Methods
     tasklist: Tasklist.Methods
     comment: Comment.Methods
     attachment: Attachment.Methods
     section: Section.Methods
     customField: CustomField.Methods
+    reminder: Reminder.Methods
+    follower: Follower.Methods
+    collaborator: Collaborator.Methods
+    /**
+     * 创建任务
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/create
+     */
+    create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+    /**
+     * 更新任务
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/patch
+     */
+    patch(task_guid: string, body: PatchRequest, query?: PatchQuery): Promise<PatchResponse>
+    /**
+     * 获取任务详情
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/get
+     */
+    get(task_guid: string, query?: GetQuery): Promise<GetResponse>
+    /**
+     * 删除任务
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/delete
+     */
+    delete(task_guid: string): Promise<void>
+    /**
+     * 添加任务成员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_members
+     */
+    addMembers(task_guid: string, body: AddMembersRequest, query?: AddMembersQuery): Promise<AddMembersResponse>
+    /**
+     * 移除任务成员
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_members
+     */
+    removeMembers(task_guid: string, body: RemoveMembersRequest, query?: RemoveMembersQuery): Promise<RemoveMembersResponse>
+    /**
+     * 列取任务列表
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/list
+     */
+    list(query?: ListQuery): Paginated<Lark.Task>
+    /**
+     * 列取任务所在清单
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/tasklists
+     */
+    tasklists(task_guid: string): Promise<TasklistsResponse>
+    /**
+     * 任务加入清单
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_tasklist
+     */
+    addTasklist(task_guid: string, body: AddTasklistRequest, query?: AddTasklistQuery): Promise<AddTasklistResponse>
+    /**
+     * 任务移出清单
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_tasklist
+     */
+    removeTasklist(task_guid: string, body: RemoveTasklistRequest, query?: RemoveTasklistQuery): Promise<RemoveTasklistResponse>
+    /**
+     * 添加任务提醒
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_reminders
+     */
+    addReminders(task_guid: string, body: AddRemindersRequest, query?: AddRemindersQuery): Promise<AddRemindersResponse>
+    /**
+     * 移除任务提醒
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_reminders
+     */
+    removeReminders(task_guid: string, body: RemoveRemindersRequest, query?: RemoveRemindersQuery): Promise<RemoveRemindersResponse>
+    /**
+     * 添加依赖
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_dependencies
+     */
+    addDependencies(task_guid: string, body: AddDependenciesRequest): Promise<AddDependenciesResponse>
+    /**
+     * 移除依赖
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_dependencies
+     */
+    removeDependencies(task_guid: string, body: RemoveDependenciesRequest): Promise<RemoveDependenciesResponse>
+    /**
+     * 完成任务
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/complete
+     */
+    complete(task_id: string): Promise<void>
+    /**
+     * 取消完成任务
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/uncomplete
+     */
+    uncomplete(task_id: string): Promise<void>
+    /**
+     * 批量删除关注人
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/batch_delete_follower
+     */
+    batchDeleteFollower(task_id: string, body: BatchDeleteFollowerRequest, query?: BatchDeleteFollowerQuery): Promise<BatchDeleteFollowerResponse>
+    /**
+     * 批量删除执行者
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/batch_delete_collaborator
+     */
+    batchDeleteCollaborator(task_id: string, body: BatchDeleteCollaboratorRequest, query?: BatchDeleteCollaboratorQuery): Promise<BatchDeleteCollaboratorResponse>
   }
 
-  export namespace Task {
+  export interface CreateRequest {
+    /** 任务标题 */
+    summary: string
+    /** 任务描述 */
+    description?: string
+    /** 任务截止时间戳(ms)，截止时间戳和截止日期选择一个填写。 */
+    due?: Lark.Due
+    /** 任务关联的第三方平台来源信息 */
+    origin?: Lark.Origin
+    /** 调用者可以传入的任意附带到任务上的数据。在获取任务详情时会原样返回。 */
+    extra?: string
+    /** 任务的完成时刻时间戳(ms) */
+    completed_at?: string
+    /** 任务成员列表 */
+    members?: Lark.Member[]
+    /** 如果设置，则该任务为“重复任务”。该字段表示了重复任务的重复规则。 */
+    repeat_rule?: string
+    /** 如果设置，则将任务设计为“自定义完成”。用户在任务中心点击“完成”时，不会直接完成任务，而是跳转到第三方配置好的地址或者现实自定义提示。 */
+    custom_complete?: Lark.CustomComplete
+    /** 任务所在清单的信息 */
+    tasklists?: Lark.TaskInTasklistInfo[]
+    /** 幂等token，如果填写则触发幂等行为。 */
+    client_token?: string
+    /** 任务的开始时间(ms) */
+    start?: Lark.Start
+    /** 任务提醒 */
+    reminders?: Lark.Reminder[]
+    /** 任务完成模式, 1 - 会签任务; 2 - 或签任务 */
+    mode?: number
+    /** 是否是里程碑任务 */
+    is_milestone?: boolean
+    /** 自定义字段值 */
+    custom_fields?: Lark.InputCustomFieldValue[]
+    /** 任务的新版云文档来源 */
+    docx_source?: Lark.DocxSource
+  }
+
+  export interface CreateQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface CreateResponse {
+    /** 产生的任务 */
+    task?: Lark.Task
+  }
+
+  export interface PatchRequest {
+    /** 要更新的任务数据，只需要写明要更新的字段 */
+    task?: Lark.InputTask
+    /** 要更新的字段名称。支持summary, description, due, start, completed_at, extra, repeat_rule, custom_complete, mode, is_milestone, custom_fields。 */
+    update_fields: string[]
+  }
+
+  export interface PatchQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface PatchResponse {
+    /** 更新后的任务 */
+    task?: Lark.Task
+  }
+
+  export interface GetQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface GetResponse {
+    /** 获得的任务实体 */
+    task?: Lark.Task
+  }
+
+  export interface AddMembersRequest {
+    /** 要添加的members列表 */
+    members: Lark.Member[]
+    /** 幂等token，如果提供则实现幂等行为 */
+    client_token?: string
+  }
+
+  export interface AddMembersQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface AddMembersResponse {
+    /** 更新完成后的任务实体数据 */
+    task?: Lark.Task
+  }
+
+  export interface RemoveMembersRequest {
+    /** 要移除的member列表 */
+    members: Lark.Member[]
+  }
+
+  export interface RemoveMembersQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface RemoveMembersResponse {
+    /** 移除成员后的任务数据 */
+    task?: Lark.Task
+  }
+
+  export interface ListQuery extends Pagination {
+    /** 是否按任务完成进行过滤。不填写表示不过滤。 */
+    completed?: boolean
+    /** 查询任务的范围 */
+    type?: string
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface TasklistsResponse {
+    /** 任务所在清单的摘要信息 */
+    tasklists?: Lark.TaskInTasklistInfo[]
+  }
+
+  export interface AddTasklistRequest {
+    /** 要添加到的清单的全局唯一ID */
+    tasklist_guid: string
+    /** 要添加到清单的自定义分组全局唯一ID，如不填写表示添加到默认分组 */
+    section_guid?: string
+  }
+
+  export interface AddTasklistQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface AddTasklistResponse {
+    /** 添加后的任务详情 */
+    task?: Lark.Task
+  }
+
+  export interface RemoveTasklistRequest {
+    /** 要移除的清单的全局唯一ID */
+    tasklist_guid: string
+  }
+
+  export interface RemoveTasklistQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface RemoveTasklistResponse {
+    /** 添加后的任务详情 */
+    task?: Lark.Task
+  }
+
+  export interface AddRemindersRequest {
+    /** 要添加的reminder的列表 */
+    reminders: Lark.Reminder[]
+  }
+
+  export interface AddRemindersQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface AddRemindersResponse {
+    /** 更新完成后的任务实体 */
+    task?: Lark.Task
+  }
+
+  export interface RemoveRemindersRequest {
+    /** 要移除的reminder的id列表 */
+    reminder_ids: string[]
+  }
+
+  export interface RemoveRemindersQuery {
+    /** 表示user的ID的类型，支持open_id, user_id, union_id */
+    user_id_type?: string
+  }
+
+  export interface RemoveRemindersResponse {
+    /** 移除提醒后的任务详情 */
+    task?: Lark.Task
+  }
+
+  export interface AddDependenciesRequest {
+    /** 要添加的依赖 */
+    dependencies?: Lark.TaskDependency[]
+  }
+
+  export interface AddDependenciesResponse {
+    /** 被添加后任务的所有依赖 */
+    dependencies?: Lark.TaskDependency[]
+  }
+
+  export interface RemoveDependenciesRequest {
+    /** 要移除的依赖 */
+    dependencies: Lark.TaskDependency[]
+  }
+
+  export interface RemoveDependenciesResponse {
+    /** 移除之后的任务GUID */
+    dependencies?: Lark.TaskDependency[]
+  }
+
+  export interface BatchDeleteFollowerRequest {
+    /** 要添加为关注人的user_id */
+    id_list?: string[]
+  }
+
+  export interface BatchDeleteFollowerQuery {
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  }
+
+  export interface BatchDeleteFollowerResponse {
+    /** 实际删除的关注人用户ID列表 */
+    followers?: string[]
+  }
+
+  export interface BatchDeleteCollaboratorRequest {
+    /** 协作人的用户ID列表 */
+    id_list?: string[]
+  }
+
+  export interface BatchDeleteCollaboratorQuery {
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  }
+
+  export interface BatchDeleteCollaboratorResponse {
+    /** 实际删除的执行人用户ID列表 */
+    collaborators?: string[]
+  }
+
+  export namespace Subtask {
     export interface Methods {
-      subtask: Subtask.Methods
-      reminder: Reminder.Methods
-      comment: Comment.Methods
-      follower: Follower.Methods
-      collaborator: Collaborator.Methods
       /**
-       * 创建任务
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/create
+       * 创建子任务
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/create
        */
-      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      create(task_guid: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
       /**
-       * 更新任务
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/patch
+       * 获取任务的子任务列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/list
        */
-      patch(task_guid: string, body: PatchRequest, query?: PatchQuery): Promise<PatchResponse>
-      /**
-       * 获取任务详情
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/get
-       */
-      get(task_guid: string, query?: GetQuery): Promise<GetResponse>
-      /**
-       * 删除任务
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/delete
-       */
-      delete(task_guid: string): Promise<void>
-      /**
-       * 添加任务成员
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_members
-       */
-      addMembers(task_guid: string, body: AddMembersRequest, query?: AddMembersQuery): Promise<AddMembersResponse>
-      /**
-       * 移除任务成员
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_members
-       */
-      removeMembers(task_guid: string, body: RemoveMembersRequest, query?: RemoveMembersQuery): Promise<RemoveMembersResponse>
-      /**
-       * 列取任务列表
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/list
-       */
-      list(query?: ListQuery): Paginated<Lark.Task>
-      /**
-       * 列取任务所在清单
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/tasklists
-       */
-      tasklists(task_guid: string): Promise<TasklistsResponse>
-      /**
-       * 任务加入清单
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_tasklist
-       */
-      addTasklist(task_guid: string, body: AddTasklistRequest, query?: AddTasklistQuery): Promise<AddTasklistResponse>
-      /**
-       * 任务移出清单
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_tasklist
-       */
-      removeTasklist(task_guid: string, body: RemoveTasklistRequest, query?: RemoveTasklistQuery): Promise<RemoveTasklistResponse>
-      /**
-       * 添加任务提醒
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_reminders
-       */
-      addReminders(task_guid: string, body: AddRemindersRequest, query?: AddRemindersQuery): Promise<AddRemindersResponse>
-      /**
-       * 移除任务提醒
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_reminders
-       */
-      removeReminders(task_guid: string, body: RemoveRemindersRequest, query?: RemoveRemindersQuery): Promise<RemoveRemindersResponse>
-      /**
-       * 添加依赖
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/add_dependencies
-       */
-      addDependencies(task_guid: string, body: AddDependenciesRequest): Promise<AddDependenciesResponse>
-      /**
-       * 移除依赖
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task/remove_dependencies
-       */
-      removeDependencies(task_guid: string, body: RemoveDependenciesRequest): Promise<RemoveDependenciesResponse>
-      /**
-       * 完成任务
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/complete
-       */
-      complete(task_id: string): Promise<void>
-      /**
-       * 取消完成任务
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/uncomplete
-       */
-      uncomplete(task_id: string): Promise<void>
-      /**
-       * 批量删除关注人
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/batch_delete_follower
-       */
-      batchDeleteFollower(task_id: string, body: BatchDeleteFollowerRequest, query?: BatchDeleteFollowerQuery): Promise<BatchDeleteFollowerResponse>
-      /**
-       * 批量删除执行者
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task/batch_delete_collaborator
-       */
-      batchDeleteCollaborator(task_id: string, body: BatchDeleteCollaboratorRequest, query?: BatchDeleteCollaboratorQuery): Promise<BatchDeleteCollaboratorResponse>
+      list(task_guid: string, query?: ListQuery): Paginated<Lark.Task>
     }
 
     export interface CreateRequest {
@@ -159,476 +399,13 @@ export namespace Task {
     }
 
     export interface CreateResponse {
-      /** 产生的任务 */
-      task?: Lark.Task
-    }
-
-    export interface PatchRequest {
-      /** 要更新的任务数据，只需要写明要更新的字段 */
-      task?: Lark.InputTask
-      /** 要更新的字段名称。支持summary, description, due, start, completed_at, extra, repeat_rule, custom_complete, mode, is_milestone, custom_fields。 */
-      update_fields: string[]
-    }
-
-    export interface PatchQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface PatchResponse {
-      /** 更新后的任务 */
-      task?: Lark.Task
-    }
-
-    export interface GetQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface GetResponse {
-      /** 获得的任务实体 */
-      task?: Lark.Task
-    }
-
-    export interface AddMembersRequest {
-      /** 要添加的members列表 */
-      members: Lark.Member[]
-      /** 幂等token，如果提供则实现幂等行为 */
-      client_token?: string
-    }
-
-    export interface AddMembersQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface AddMembersResponse {
-      /** 更新完成后的任务实体数据 */
-      task?: Lark.Task
-    }
-
-    export interface RemoveMembersRequest {
-      /** 要移除的member列表 */
-      members: Lark.Member[]
-    }
-
-    export interface RemoveMembersQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface RemoveMembersResponse {
-      /** 移除成员后的任务数据 */
-      task?: Lark.Task
+      /** 创建的任务 */
+      subtask?: Lark.Task
     }
 
     export interface ListQuery extends Pagination {
-      /** 是否按任务完成进行过滤。不填写表示不过滤。 */
-      completed?: boolean
-      /** 查询任务的范围 */
-      type?: string
       /** 表示user的ID的类型，支持open_id, user_id, union_id */
       user_id_type?: string
-    }
-
-    export interface TasklistsResponse {
-      /** 任务所在清单的摘要信息 */
-      tasklists?: Lark.TaskInTasklistInfo[]
-    }
-
-    export interface AddTasklistRequest {
-      /** 要添加到的清单的全局唯一ID */
-      tasklist_guid: string
-      /** 要添加到清单的自定义分组全局唯一ID，如不填写表示添加到默认分组 */
-      section_guid?: string
-    }
-
-    export interface AddTasklistQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface AddTasklistResponse {
-      /** 添加后的任务详情 */
-      task?: Lark.Task
-    }
-
-    export interface RemoveTasklistRequest {
-      /** 要移除的清单的全局唯一ID */
-      tasklist_guid: string
-    }
-
-    export interface RemoveTasklistQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface RemoveTasklistResponse {
-      /** 添加后的任务详情 */
-      task?: Lark.Task
-    }
-
-    export interface AddRemindersRequest {
-      /** 要添加的reminder的列表 */
-      reminders: Lark.Reminder[]
-    }
-
-    export interface AddRemindersQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface AddRemindersResponse {
-      /** 更新完成后的任务实体 */
-      task?: Lark.Task
-    }
-
-    export interface RemoveRemindersRequest {
-      /** 要移除的reminder的id列表 */
-      reminder_ids: string[]
-    }
-
-    export interface RemoveRemindersQuery {
-      /** 表示user的ID的类型，支持open_id, user_id, union_id */
-      user_id_type?: string
-    }
-
-    export interface RemoveRemindersResponse {
-      /** 移除提醒后的任务详情 */
-      task?: Lark.Task
-    }
-
-    export interface AddDependenciesRequest {
-      /** 要添加的依赖 */
-      dependencies?: Lark.TaskDependency[]
-    }
-
-    export interface AddDependenciesResponse {
-      /** 被添加后任务的所有依赖 */
-      dependencies?: Lark.TaskDependency[]
-    }
-
-    export interface RemoveDependenciesRequest {
-      /** 要移除的依赖 */
-      dependencies: Lark.TaskDependency[]
-    }
-
-    export interface RemoveDependenciesResponse {
-      /** 移除之后的任务GUID */
-      dependencies?: Lark.TaskDependency[]
-    }
-
-    export interface BatchDeleteFollowerRequest {
-      /** 要添加为关注人的user_id */
-      id_list?: string[]
-    }
-
-    export interface BatchDeleteFollowerQuery {
-      /** 此次调用中使用的用户ID的类型 */
-      user_id_type?: 'user_id' | 'union_id' | 'open_id'
-    }
-
-    export interface BatchDeleteFollowerResponse {
-      /** 实际删除的关注人用户ID列表 */
-      followers?: string[]
-    }
-
-    export interface BatchDeleteCollaboratorRequest {
-      /** 协作人的用户ID列表 */
-      id_list?: string[]
-    }
-
-    export interface BatchDeleteCollaboratorQuery {
-      /** 此次调用中使用的用户ID的类型 */
-      user_id_type?: 'user_id' | 'union_id' | 'open_id'
-    }
-
-    export interface BatchDeleteCollaboratorResponse {
-      /** 实际删除的执行人用户ID列表 */
-      collaborators?: string[]
-    }
-
-    export namespace Subtask {
-      export interface Methods {
-        /**
-         * 创建子任务
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/create
-         */
-        create(task_guid: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
-        /**
-         * 获取任务的子任务列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/task-subtask/list
-         */
-        list(task_guid: string, query?: ListQuery): Paginated<Lark.Task>
-      }
-
-      export interface CreateRequest {
-        /** 任务标题 */
-        summary: string
-        /** 任务描述 */
-        description?: string
-        /** 任务截止时间戳(ms)，截止时间戳和截止日期选择一个填写。 */
-        due?: Lark.Due
-        /** 任务关联的第三方平台来源信息 */
-        origin?: Lark.Origin
-        /** 调用者可以传入的任意附带到任务上的数据。在获取任务详情时会原样返回。 */
-        extra?: string
-        /** 任务的完成时刻时间戳(ms) */
-        completed_at?: string
-        /** 任务成员列表 */
-        members?: Lark.Member[]
-        /** 如果设置，则该任务为“重复任务”。该字段表示了重复任务的重复规则。 */
-        repeat_rule?: string
-        /** 如果设置，则将任务设计为“自定义完成”。用户在任务中心点击“完成”时，不会直接完成任务，而是跳转到第三方配置好的地址或者现实自定义提示。 */
-        custom_complete?: Lark.CustomComplete
-        /** 任务所在清单的信息 */
-        tasklists?: Lark.TaskInTasklistInfo[]
-        /** 幂等token，如果填写则触发幂等行为。 */
-        client_token?: string
-        /** 任务的开始时间(ms) */
-        start?: Lark.Start
-        /** 任务提醒 */
-        reminders?: Lark.Reminder[]
-        /** 任务完成模式, 1 - 会签任务; 2 - 或签任务 */
-        mode?: number
-        /** 是否是里程碑任务 */
-        is_milestone?: boolean
-        /** 自定义字段值 */
-        custom_fields?: Lark.InputCustomFieldValue[]
-        /** 任务的新版云文档来源 */
-        docx_source?: Lark.DocxSource
-      }
-
-      export interface CreateQuery {
-        /** 表示user的ID的类型，支持open_id, user_id, union_id */
-        user_id_type?: string
-      }
-
-      export interface CreateResponse {
-        /** 创建的任务 */
-        subtask?: Lark.Task
-      }
-
-      export interface ListQuery extends Pagination {
-        /** 表示user的ID的类型，支持open_id, user_id, union_id */
-        user_id_type?: string
-      }
-    }
-
-    export namespace Reminder {
-      export interface Methods {
-        /**
-         * 新增提醒时间
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/create
-         */
-        create(task_id: string, body: CreateRequest): Promise<CreateResponse>
-        /**
-         * 删除提醒时间
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/delete
-         */
-        delete(task_id: string, reminder_id: string): Promise<void>
-        /**
-         * 查询提醒时间列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/list
-         */
-        list(task_id: string, query?: Pagination): Paginated<Lark.Reminder>
-      }
-
-      export interface CreateRequest {
-        /** 相对于截止时间的提醒时间（如提前 30 分钟，截止时间后 30 分钟，则为 -30） */
-        relative_fire_minute: number
-      }
-
-      export interface CreateResponse {
-        /** 返回创建成功的提醒时间 */
-        reminder?: Lark.Reminder
-      }
-    }
-
-    export namespace Comment {
-      export interface Methods {
-        /**
-         * 创建评论
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/create
-         */
-        create(task_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
-        /**
-         * 删除评论
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/delete
-         */
-        delete(task_id: string, comment_id: string): Promise<void>
-        /**
-         * 更新评论
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/update
-         */
-        update(task_id: string, comment_id: string, body: UpdateRequest, query?: UpdateQuery): Promise<UpdateResponse>
-        /**
-         * 获取评论详情
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/get
-         */
-        get(task_id: string, comment_id: string, query?: GetQuery): Promise<GetResponse>
-        /**
-         * 获取评论列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/list
-         */
-        list(task_id: string, query?: ListQuery): Paginated<Lark.Comment>
-      }
-
-      export interface CreateRequest {
-        /** 评论内容 */
-        content?: string
-        /** 评论的父ID，创建评论时若不为空则为某条评论的回复，若为空则不是回复 */
-        parent_id?: string
-        /** 评论创建的时间戳，单位为毫秒，用于展示，创建时不用填写 */
-        create_milli_time?: string
-        /** 富文本评论内容 */
-        rich_content?: string
-      }
-
-      export interface CreateQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface CreateResponse {
-        /** 返回创建好的任务评论 */
-        comment?: Lark.Comment
-      }
-
-      export interface UpdateRequest {
-        /** 新的评论内容 */
-        content?: string
-        /** 新的富文本评论内容（优先使用） */
-        rich_content?: string
-      }
-
-      export interface UpdateQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface UpdateResponse {
-        /** 返回修改后的任务评论详情 */
-        comment?: Lark.Comment
-      }
-
-      export interface GetQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface GetResponse {
-        /** 返回新的任务评论详情 */
-        comment?: Lark.Comment
-      }
-
-      export const enum ListQueryListDirection {
-        /** 按照回复时间从小到大查询 */
-        Down = 0,
-        /** 按照回复时间从大到小查询 */
-        Up = 1,
-      }
-
-      export interface ListQuery extends Pagination {
-        /** 评论排序标记，可按照评论时间从小到大查询，或者评论时间从大到小查询，不填默认按照从小到大 */
-        list_direction?: ListQueryListDirection
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-    }
-
-    export namespace Follower {
-      export interface Methods {
-        /**
-         * 新增关注人
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/create
-         */
-        create(task_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
-        /**
-         * 删除指定关注人
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/delete
-         */
-        delete(task_id: string, follower_id: string, query?: DeleteQuery): Promise<void>
-        /**
-         * 获取关注人列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/list
-         */
-        list(task_id: string, query?: ListQuery): Paginated<Lark.Follower>
-      }
-
-      export interface CreateRequest {
-        /** 任务关注者 ID */
-        id?: string
-        /** 要添加为关注人的user_id */
-        id_list?: string[]
-      }
-
-      export interface CreateQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface CreateResponse {
-        /** 创建后的任务关注者 */
-        follower: Lark.Follower
-      }
-
-      export interface DeleteQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface ListQuery extends Pagination {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-    }
-
-    export namespace Collaborator {
-      export interface Methods {
-        /**
-         * 新增执行者
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/create
-         */
-        create(task_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
-        /**
-         * 删除指定执行者
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/delete
-         */
-        delete(task_id: string, collaborator_id: string, query?: DeleteQuery): Promise<void>
-        /**
-         * 获取执行者列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/list
-         */
-        list(task_id: string, query?: ListQuery): Paginated<Lark.Collaborator>
-      }
-
-      export interface CreateRequest {
-        /** 任务协作者的 ID */
-        id?: string
-        /** 协作人的用户ID列表 */
-        id_list?: string[]
-      }
-
-      export interface CreateQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface CreateResponse {
-        /** 返回创建成功后的任务协作者 */
-        collaborator: Lark.Collaborator
-      }
-
-      export interface DeleteQuery {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
-
-      export interface ListQuery extends Pagination {
-        /** 此次调用中使用的用户ID的类型 */
-        user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      }
     }
   }
 
@@ -887,6 +664,11 @@ export namespace Task {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/task-v2/comment/list
        */
       list(query?: ListQuery): Paginated<Lark.Comment>
+      /**
+       * 更新评论
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-comment/update
+       */
+      update(task_id: string, comment_id: string, body: UpdateRequest, query?: UpdateQuery): Promise<UpdateResponse>
     }
 
     export interface CreateRequest {
@@ -946,6 +728,23 @@ export namespace Task {
       direction?: 'asc' | 'desc'
       /** 表示user的ID的类型，支持open_id, user_id, union_id */
       user_id_type?: string
+    }
+
+    export interface UpdateRequest {
+      /** 新的评论内容 */
+      content?: string
+      /** 新的富文本评论内容（优先使用） */
+      rich_content?: string
+    }
+
+    export interface UpdateQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface UpdateResponse {
+      /** 返回修改后的任务评论详情 */
+      comment?: Lark.Comment
     }
   }
 
@@ -1280,48 +1079,172 @@ export namespace Task {
       }
     }
   }
+
+  export namespace Reminder {
+    export interface Methods {
+      /**
+       * 新增提醒时间
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/create
+       */
+      create(task_id: string, body: CreateRequest): Promise<CreateResponse>
+      /**
+       * 删除提醒时间
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/delete
+       */
+      delete(task_id: string, reminder_id: string): Promise<void>
+      /**
+       * 查询提醒时间列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-reminder/list
+       */
+      list(task_id: string, query?: Pagination): Paginated<Lark.Reminder>
+    }
+
+    export interface CreateRequest {
+      /** 相对于截止时间的提醒时间（如提前 30 分钟，截止时间后 30 分钟，则为 -30） */
+      relative_fire_minute: number
+    }
+
+    export interface CreateResponse {
+      /** 返回创建成功的提醒时间 */
+      reminder?: Lark.Reminder
+    }
+  }
+
+  export namespace Follower {
+    export interface Methods {
+      /**
+       * 新增关注人
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/create
+       */
+      create(task_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 删除指定关注人
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/delete
+       */
+      delete(task_id: string, follower_id: string, query?: DeleteQuery): Promise<void>
+      /**
+       * 获取关注人列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-follower/list
+       */
+      list(task_id: string, query?: ListQuery): Paginated<Lark.Follower>
+    }
+
+    export interface CreateRequest {
+      /** 任务关注者 ID */
+      id?: string
+      /** 要添加为关注人的user_id */
+      id_list?: string[]
+    }
+
+    export interface CreateQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface CreateResponse {
+      /** 创建后的任务关注者 */
+      follower: Lark.Follower
+    }
+
+    export interface DeleteQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+  }
+
+  export namespace Collaborator {
+    export interface Methods {
+      /**
+       * 新增执行者
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/create
+       */
+      create(task_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 删除指定执行者
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/delete
+       */
+      delete(task_id: string, collaborator_id: string, query?: DeleteQuery): Promise<void>
+      /**
+       * 获取执行者列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/task-v1/task-collaborator/list
+       */
+      list(task_id: string, query?: ListQuery): Paginated<Lark.Collaborator>
+    }
+
+    export interface CreateRequest {
+      /** 任务协作者的 ID */
+      id?: string
+      /** 协作人的用户ID列表 */
+      id_list?: string[]
+    }
+
+    export interface CreateQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface CreateResponse {
+      /** 返回创建成功后的任务协作者 */
+      collaborator: Lark.Collaborator
+    }
+
+    export interface DeleteQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+  }
 }
 
 Internal.define({
   '/task/v2/tasks': {
-    POST: 'task.task.create',
-    GET: { name: 'task.task.list', pagination: { argIndex: 0 } },
+    POST: 'task.create',
+    GET: { name: 'task.list', pagination: { argIndex: 0 } },
   },
   '/task/v2/tasks/{task_guid}': {
-    PATCH: 'task.task.patch',
-    GET: 'task.task.get',
-    DELETE: 'task.task.delete',
+    PATCH: 'task.patch',
+    GET: 'task.get',
+    DELETE: 'task.delete',
   },
   '/task/v2/tasks/{task_guid}/add_members': {
-    POST: 'task.task.addMembers',
+    POST: 'task.addMembers',
   },
   '/task/v2/tasks/{task_guid}/remove_members': {
-    POST: 'task.task.removeMembers',
+    POST: 'task.removeMembers',
   },
   '/task/v2/tasks/{task_guid}/tasklists': {
-    GET: 'task.task.tasklists',
+    GET: 'task.tasklists',
   },
   '/task/v2/tasks/{task_guid}/add_tasklist': {
-    POST: 'task.task.addTasklist',
+    POST: 'task.addTasklist',
   },
   '/task/v2/tasks/{task_guid}/remove_tasklist': {
-    POST: 'task.task.removeTasklist',
+    POST: 'task.removeTasklist',
   },
   '/task/v2/tasks/{task_guid}/add_reminders': {
-    POST: 'task.task.addReminders',
+    POST: 'task.addReminders',
   },
   '/task/v2/tasks/{task_guid}/remove_reminders': {
-    POST: 'task.task.removeReminders',
+    POST: 'task.removeReminders',
   },
   '/task/v2/tasks/{task_guid}/add_dependencies': {
-    POST: 'task.task.addDependencies',
+    POST: 'task.addDependencies',
   },
   '/task/v2/tasks/{task_guid}/remove_dependencies': {
-    POST: 'task.task.removeDependencies',
+    POST: 'task.removeDependencies',
   },
   '/task/v2/tasks/{task_guid}/subtasks': {
-    POST: 'task.task.subtask.create',
-    GET: { name: 'task.task.subtask.list', pagination: { argIndex: 1 } },
+    POST: 'task.subtask.create',
+    GET: { name: 'task.subtask.list', pagination: { argIndex: 1 } },
   },
   '/task/v2/tasklists': {
     POST: 'task.tasklist.create',
@@ -1402,45 +1325,39 @@ Internal.define({
     PATCH: 'task.customField.option.patch',
   },
   '/task/v1/tasks/{task_id}/complete': {
-    POST: 'task.task.complete',
+    POST: 'task.complete',
   },
   '/task/v1/tasks/{task_id}/uncomplete': {
-    POST: 'task.task.uncomplete',
+    POST: 'task.uncomplete',
   },
   '/task/v1/tasks/{task_id}/reminders': {
-    POST: 'task.task.reminder.create',
-    GET: { name: 'task.task.reminder.list', pagination: { argIndex: 1 } },
+    POST: 'task.reminder.create',
+    GET: { name: 'task.reminder.list', pagination: { argIndex: 1 } },
   },
   '/task/v1/tasks/{task_id}/reminders/{reminder_id}': {
-    DELETE: 'task.task.reminder.delete',
-  },
-  '/task/v1/tasks/{task_id}/comments': {
-    POST: 'task.task.comment.create',
-    GET: { name: 'task.task.comment.list', pagination: { argIndex: 1 } },
+    DELETE: 'task.reminder.delete',
   },
   '/task/v1/tasks/{task_id}/comments/{comment_id}': {
-    DELETE: 'task.task.comment.delete',
-    PUT: 'task.task.comment.update',
-    GET: 'task.task.comment.get',
+    PUT: 'task.comment.update',
   },
   '/task/v1/tasks/{task_id}/followers': {
-    POST: 'task.task.follower.create',
-    GET: { name: 'task.task.follower.list', pagination: { argIndex: 1 } },
+    POST: 'task.follower.create',
+    GET: { name: 'task.follower.list', pagination: { argIndex: 1 } },
   },
   '/task/v1/tasks/{task_id}/followers/{follower_id}': {
-    DELETE: 'task.task.follower.delete',
+    DELETE: 'task.follower.delete',
   },
   '/task/v1/tasks/{task_id}/batch_delete_follower': {
-    POST: 'task.task.batchDeleteFollower',
+    POST: 'task.batchDeleteFollower',
   },
   '/task/v1/tasks/{task_id}/collaborators': {
-    POST: 'task.task.collaborator.create',
-    GET: { name: 'task.task.collaborator.list', pagination: { argIndex: 1 } },
+    POST: 'task.collaborator.create',
+    GET: { name: 'task.collaborator.list', pagination: { argIndex: 1 } },
   },
   '/task/v1/tasks/{task_id}/collaborators/{collaborator_id}': {
-    DELETE: 'task.task.collaborator.delete',
+    DELETE: 'task.collaborator.delete',
   },
   '/task/v1/tasks/{task_id}/batch_delete_collaborator': {
-    POST: 'task.task.batchDeleteCollaborator',
+    POST: 'task.batchDeleteCollaborator',
   },
 })
