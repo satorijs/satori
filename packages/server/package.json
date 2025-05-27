@@ -36,12 +36,12 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.7",
-    "@satorijs/core": "^4.5.1",
+    "@satorijs/core": "^4.5.2",
     "@types/node": "^22.7.5",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.1"
+    "@satorijs/core": "^4.5.2"
   },
   "dependencies": {
     "cosmokit": "^1.7.2"

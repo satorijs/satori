@@ -33,10 +33,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/core": "^4.5.1",
+    "@satorijs/core": "^4.5.2",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.1"
+    "@satorijs/core": "^4.5.2"
   }
 }

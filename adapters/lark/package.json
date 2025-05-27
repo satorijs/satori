@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-lark",
   "description": "Lark (飞书) Adapter for Satorijs",
-  "version": "3.10.6",
+  "version": "3.11.0",
   "type": "module",
   "main": "lib/index.cjs",
   "types": "lib/index.d.ts",
@@ -35,12 +35,12 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.7",
-    "@satorijs/core": "^4.5.1",
+    "@satorijs/core": "^4.5.2",
     "cordis": "^3.18.1",
     "cosmokit": "^1.7.2",
     "dedent": "^1.5.3"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.1"
+    "@satorijs/core": "^4.5.2"
   }
 }
