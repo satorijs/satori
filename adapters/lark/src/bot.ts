@@ -80,7 +80,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     // 初次获得 token 后的半小时内必须刷新一次，因为初次获得的 token 可能是 1.5 小时前生成的。
     let timeout = Time.minute * 20
     try {
-      const { tenant_access_token: token } = await this.internal.auth.auth.tenantAccessTokenInternal({
+      const { tenant_access_token: token } = await this.internal.auth.tenantAccessTokenInternal({
         app_id: this.config.appId,
         app_secret: this.config.appSecret,
       })

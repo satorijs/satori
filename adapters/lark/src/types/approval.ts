@@ -9,102 +9,96 @@ declare module '../internal' {
 
 export namespace Approval {
   export interface Methods {
-    approval: Approval.Methods
     instance: Instance.Methods
     task: Task.Methods
     externalApproval: ExternalApproval.Methods
     externalInstance: ExternalInstance.Methods
     externalTask: ExternalTask.Methods
+    /**
+     * 创建审批定义
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/create
+     */
+    create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+    /**
+     * 查看指定审批定义
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/get
+     */
+    get(approval_code: string, query?: GetQuery): Promise<GetResponse>
+    /**
+     * 订阅审批事件
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/subscribe
+     */
+    subscribe(approval_code: string): Promise<void>
+    /**
+     * 取消订阅审批事件
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/unsubscribe
+     */
+    unsubscribe(approval_code: string): Promise<void>
   }
 
-  export namespace Approval {
-    export interface Methods {
-      /**
-       * 创建审批定义
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/create
-       */
-      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
-      /**
-       * 查看指定审批定义
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/get
-       */
-      get(approval_code: string, query?: GetQuery): Promise<GetResponse>
-      /**
-       * 订阅审批事件
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/subscribe
-       */
-      subscribe(approval_code: string): Promise<void>
-      /**
-       * 取消订阅审批事件
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/unsubscribe
-       */
-      unsubscribe(approval_code: string): Promise<void>
-    }
+  export interface CreateRequest {
+    /** 审批名称的国际化文案 Key，以 @i18n@ 开头，长度不得少于 9 个字符 */
+    approval_name: string
+    /** 传空表示新建 */
+    approval_code?: string
+    /** 审批描述的国际化文案 Key，以 @i18n@ 开头，长度不得少于 9 个字符 */
+    description?: string
+    /** viewers 字段指定了哪些人能从审批应用的前台发起该审批。  当 view_type 为 USER，需要填写viewer_user_id；  当       view_type 为DEPARTMENT，需要填写viewer_department_id；  当 view_type 为TENANT或NONE时，viewer_user_id和viewer_department_id无需填写 */
+    viewers: Lark.ApprovalCreateViewers[]
+    /** 审批定义表单内容，json 数组 */
+    form: Lark.ApprovalForm
+    /** 审批定义节点，需要将开始节点作为 list 第一个元素，结束节点作为最后一个元素 */
+    node_list: Lark.ApprovalNode[]
+    /** 审批定义其他设置 */
+    settings?: Lark.ApprovalSetting
+    /** 审批定义配置项，用于配置对应审批定义是否可以由用户在审批后台进行修改 */
+    config?: Lark.ApprovalConfig
+    /** 审批图标枚举，详见下方说明，默认为 0 */
+    icon?: number
+    /** 国际化文案 */
+    i18n_resources: Lark.I18nResource[]
+    /** 流程负责人 */
+    process_manager_ids?: string[]
+  }
 
-    export interface CreateRequest {
-      /** 审批名称的国际化文案 Key，以 @i18n@ 开头，长度不得少于 9 个字符 */
-      approval_name: string
-      /** 传空表示新建 */
-      approval_code?: string
-      /** 审批描述的国际化文案 Key，以 @i18n@ 开头，长度不得少于 9 个字符 */
-      description?: string
-      /** viewers 字段指定了哪些人能从审批应用的前台发起该审批。  当 view_type 为 USER，需要填写viewer_user_id；  当       view_type 为DEPARTMENT，需要填写viewer_department_id；  当 view_type 为TENANT或NONE时，viewer_user_id和viewer_department_id无需填写 */
-      viewers: Lark.ApprovalCreateViewers[]
-      /** 审批定义表单内容，json 数组 */
-      form: Lark.ApprovalForm
-      /** 审批定义节点，需要将开始节点作为 list 第一个元素，结束节点作为最后一个元素 */
-      node_list: Lark.ApprovalNode[]
-      /** 审批定义其他设置 */
-      settings?: Lark.ApprovalSetting
-      /** 审批定义配置项，用于配置对应审批定义是否可以由用户在审批后台进行修改 */
-      config?: Lark.ApprovalConfig
-      /** 审批图标枚举，详见下方说明，默认为 0 */
-      icon?: number
-      /** 国际化文案 */
-      i18n_resources: Lark.I18nResource[]
-      /** 流程负责人 */
-      process_manager_ids?: string[]
-    }
+  export interface CreateQuery {
+    /** 此次调用中使用的部门ID的类型 */
+    department_id_type?: 'department_id' | 'open_department_id'
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  }
 
-    export interface CreateQuery {
-      /** 此次调用中使用的部门ID的类型 */
-      department_id_type?: 'department_id' | 'open_department_id'
-      /** 此次调用中使用的用户ID的类型 */
-      user_id_type?: 'user_id' | 'union_id' | 'open_id'
-    }
+  export interface CreateResponse {
+    /** 审批定义 Code */
+    approval_code?: string
+    /** 审批定义 id */
+    approval_id?: string
+  }
 
-    export interface CreateResponse {
-      /** 审批定义 Code */
-      approval_code?: string
-      /** 审批定义 id */
-      approval_id?: string
-    }
+  export interface GetQuery {
+    /** 语言可选值 */
+    locale?: 'zh-CN' | 'en-US' | 'ja-JP'
+    /** 可选是否返回有数据权限审批流程管理员ID列表 */
+    with_admin_id?: boolean
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  }
 
-    export interface GetQuery {
-      /** 语言可选值 */
-      locale?: 'zh-CN' | 'en-US' | 'ja-JP'
-      /** 可选是否返回有数据权限审批流程管理员ID列表 */
-      with_admin_id?: boolean
-      /** 此次调用中使用的用户ID的类型 */
-      user_id_type?: 'user_id' | 'union_id' | 'open_id'
-    }
-
-    export interface GetResponse {
-      /** 审批名称 */
-      approval_name: string
-      /** 审批定义状态 */
-      status: 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'UNKNOWN'
-      /** 控件信息 */
-      form: string
-      /** 节点信息 */
-      node_list: Lark.ApprovalNodeInfo[]
-      /** 可见人列表 */
-      viewers: Lark.ApprovalViewerInfo[]
-      /** 有数据管理权限的审批流程管理员ID */
-      approval_admin_ids?: string[]
-      /** 组件之间值关联关系 */
-      form_widget_relation?: string
-    }
+  export interface GetResponse {
+    /** 审批名称 */
+    approval_name: string
+    /** 审批定义状态 */
+    status: 'ACTIVE' | 'INACTIVE' | 'DELETED' | 'UNKNOWN'
+    /** 控件信息 */
+    form: string
+    /** 节点信息 */
+    node_list: Lark.ApprovalNodeInfo[]
+    /** 可见人列表 */
+    viewers: Lark.ApprovalViewerInfo[]
+    /** 有数据管理权限的审批流程管理员ID */
+    approval_admin_ids?: string[]
+    /** 组件之间值关联关系 */
+    form_widget_relation?: string
   }
 
   export namespace Instance {
@@ -923,10 +917,10 @@ export namespace Approval {
 
 Internal.define({
   '/approval/v4/approvals': {
-    POST: 'approval.approval.create',
+    POST: 'approval.create',
   },
   '/approval/v4/approvals/{approval_code}': {
-    GET: 'approval.approval.get',
+    GET: 'approval.get',
   },
   '/approval/v4/instances': {
     POST: 'approval.instance.create',
@@ -1000,9 +994,9 @@ Internal.define({
     GET: { name: 'approval.task.query', pagination: { argIndex: 0, itemsKey: 'tasks' } },
   },
   '/approval/v4/approvals/{approval_code}/subscribe': {
-    POST: 'approval.approval.subscribe',
+    POST: 'approval.subscribe',
   },
   '/approval/v4/approvals/{approval_code}/unsubscribe': {
-    POST: 'approval.approval.unsubscribe',
+    POST: 'approval.unsubscribe',
   },
 })

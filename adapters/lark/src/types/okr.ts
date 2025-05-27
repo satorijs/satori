@@ -12,10 +12,28 @@ export namespace Okr {
     period: Period.Methods
     periodRule: PeriodRule.Methods
     user: User.Methods
-    okr: Okr.Methods
     progressRecord: ProgressRecord.Methods
     image: Image.Methods
     review: Review.Methods
+    /**
+     * 批量获取 OKR
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/okr/batch_get
+     */
+    batchGet(query?: BatchGetQuery): Promise<BatchGetResponse>
+  }
+
+  export interface BatchGetQuery {
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
+    /** OKR ID 列表，最多10个 */
+    okr_ids: string[]
+    /** 请求OKR的语言版本（比如@的人名），lang=en_us/zh_cn，请求 Query中 */
+    lang?: string
+  }
+
+  export interface BatchGetResponse {
+    /** OKR 列表 */
+    okr_list?: Lark.OkrBatch[]
   }
 
   export namespace Period {
@@ -132,30 +150,6 @@ export namespace Okr {
         /** OKR 列表 */
         okr_list?: Lark.OkrBatch[]
       }
-    }
-  }
-
-  export namespace Okr {
-    export interface Methods {
-      /**
-       * 批量获取 OKR
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/okr-v1/okr/batch_get
-       */
-      batchGet(query?: BatchGetQuery): Promise<BatchGetResponse>
-    }
-
-    export interface BatchGetQuery {
-      /** 此次调用中使用的用户ID的类型 */
-      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_admin_id'
-      /** OKR ID 列表，最多10个 */
-      okr_ids: string[]
-      /** 请求OKR的语言版本（比如@的人名），lang=en_us/zh_cn，请求 Query中 */
-      lang?: string
-    }
-
-    export interface BatchGetResponse {
-      /** OKR 列表 */
-      okr_list?: Lark.OkrBatch[]
     }
   }
 
@@ -328,7 +322,7 @@ Internal.define({
     GET: 'okr.user.okr.list',
   },
   '/okr/v1/okrs/batch_get': {
-    GET: 'okr.okr.batchGet',
+    GET: 'okr.batchGet',
   },
   '/okr/v1/progress_records': {
     POST: 'okr.progressRecord.create',
