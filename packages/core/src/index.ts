@@ -161,7 +161,11 @@ export class Satori<C extends Context = Context> extends Service<C> {
       const args = await JsonForm.decode(req)
       if (!args) return new Response(null, { status: 400 })
       try {
-        let result = bot.internal[req.params.name](...args)
+        let root = bot.internal
+        for (const part of req.params.name.split('.')) {
+          root = root[part]
+        }
+        let result = root(...args)
         if (req.headers['satori-pagination']) {
           if (!result?.[Symbol.for('satori.pagination')]) {
             return new Response('This API does not support pagination', { status: 400 })
