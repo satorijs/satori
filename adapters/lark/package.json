@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-lark",
   "description": "Lark (飞书) Adapter for Satorijs",
-  "version": "3.11.0",
+  "version": "3.11.2",
   "type": "module",
   "main": "lib/index.cjs",
   "types": "lib/index.d.ts",

@@ -411,7 +411,7 @@ async function start() {
             paginationResponse = { innerType, tokenKey, itemsKey }
           } else {
             if (detail.pagination) {
-              console.log(`unsupported pagination (${_keys}), see https://open.feishu.cn${summary.fullPath}}`)
+              console.log(`unsupported pagination (${_keys}), see https://open.feishu.cn${summary.fullPath}`)
             }
             ns.interfaces.push(createInterface(responseType, data.properties, project, ns))
             returnType = `Promise<${responseType}>`

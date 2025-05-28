@@ -11,8 +11,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private textContent = ''
   private richContent: MessageContent.RichText.Paragraph[] = []
   private card: MessageContent.Card | undefined
-  private noteElements: MessageContent.Card.NoteElement.InnerElement[] | undefined
-  private actionElements: MessageContent.Card.Element[] = []
+  private elements: MessageContent.Card.Element[] = []
   private isForm = false
 
   public editMessageIds: string[] | undefined
@@ -79,20 +78,11 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     }
   }
 
-  private flushText(button = false) {
-    if ((this.textContent || !button) && this.actionElements.length) {
-      this.card!.elements.push({ tag: 'action', actions: this.actionElements, layout: 'flow' })
-      this.actionElements = []
-    }
-    if (this.textContent) {
-      this.richContent.push([{ tag: 'md', text: this.textContent }])
-      if (this.noteElements) {
-        this.noteElements.push({ tag: 'plain_text', content: this.textContent })
-      } else if (this.card) {
-        this.card.elements.push({ tag: 'markdown', content: this.textContent })
-      }
-      this.textContent = ''
-    }
+  private flushText() {
+    if (!this.textContent) return
+    this.richContent.push([{ tag: 'md', text: this.textContent }])
+    this.elements.push({ tag: 'markdown', content: this.textContent })
+    this.textContent = ''
   }
 
   async flush() {
@@ -100,13 +90,11 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     if (!this.card && !this.richContent.length) return
 
     if (this.card) {
-      this.bot.logger.debug('card', JSON.stringify(this.card.elements))
+      // strip undefined properties
+      this.bot.logger.debug('card %o', JSON.parse(JSON.stringify(this.card)))
       await this.post({
         msg_type: 'interactive',
-        content: JSON.stringify({
-          header: this.card.header,
-          elements: this.card.elements,
-        }),
+        content: JSON.stringify(this.card),
       })
     } else {
       await this.post({
@@ -181,14 +169,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     })
   }
 
-  private createBehavior(attrs: Dict) {
+  private createBehaviors(attrs: Dict) {
     const behaviors: MessageContent.Card.ActionBehavior[] = []
     if (attrs.type === 'link') {
       behaviors.push({
         type: 'open_url',
         default_url: attrs.href,
       })
-    } else if (attrs.type === 'input') {
+    } else if (attrs.type === 'input' || attrs.type === 'submit') {
       behaviors.push({
         type: 'callback',
         value: {
@@ -248,26 +236,24 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'hr') {
       this.flushText()
       this.richContent.push([{ tag: 'hr' }])
-      this.card?.elements.push({ tag: 'hr' })
+      this.elements.push({ tag: 'hr' })
     } else if (type === 'form') {
       this.flushText()
-      const length = this.card?.elements.length
+      const parent = this.elements
+      parent.push({
+        tag: 'form',
+        name: attrs.name || 'Form',
+        elements: this.elements = [],
+      })
       this.isForm = true
       await this.render(children)
       this.isForm = false
-      if (this.card?.elements.length > length) {
-        const elements = this.card?.elements.splice(length)
-        this.card.elements.push({
-          tag: 'form',
-          name: attrs.name || 'Form',
-          elements,
-        })
-      }
+      this.elements = parent
     } else if (type === 'input') {
       if (attrs.type === 'checkbox') {
         this.flushText()
         await this.render(children)
-        this.card?.elements.push({
+        this.elements.push({
           tag: 'checker',
           name: (attrs.argument ? '@@' : attrs.option ? `@${attrs.option}=` : '') + attrs.name,
           checked: attrs.value,
@@ -278,20 +264,17 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         })
         this.textContent = ''
       } else if (attrs.type === 'submit') {
-        this.flushText(true)
+        this.flushText()
         await this.render(children)
-        this.card?.elements.push({
+        this.elements.push({
           tag: 'button',
           name: attrs.name,
           text: {
             tag: 'plain_text',
             content: this.textContent,
           },
-          action_type: 'form_submit',
-          value: {
-            _satori_type: 'command',
-            content: attrs.text,
-          },
+          form_action_type: 'submit',
+          behaviors: this.createBehaviors(attrs),
         })
         this.textContent = ''
       } else {
@@ -311,18 +294,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           default_value: attrs.value,
           disabled: attrs.disabled,
           required: attrs.required,
+          behaviors: this.createBehaviors(attrs),
         }
-        if (this.isForm) {
-          this.card?.elements.push(input)
-        } else {
-          this.card?.elements.push({
-            tag: 'action',
-            actions: [{
-              ...input,
-              behaviors: this.createBehavior(attrs),
-            }],
-          })
-        }
+        this.elements.push(input)
       }
     } else if (type === 'select') {
       this.flushText()
@@ -338,6 +312,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           content: attrs.placeholder,
         },
         options: [],
+        behaviors: this.createBehaviors(attrs),
       }
       for (const child of children) {
         if (child.type !== 'option') continue
@@ -351,29 +326,17 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         })
         this.textContent = ''
       }
-      if (this.isForm) {
-        this.card?.elements.push(select)
-      } else {
-        this.card?.elements.push({
-          tag: 'action',
-          actions: [{
-            ...select,
-            behaviors: this.createBehavior(attrs),
-          }],
-        })
-      }
+      this.elements.push(select)
     } else if (type === 'button') {
-      this.card ??= { elements: [] }
-      this.flushText(true)
+      this.flushText()
       await this.render(children)
-      this.actionElements.push({
+      this.elements.push({
         tag: 'button',
         text: {
           tag: 'plain_text',
           content: this.textContent,
         },
         disabled: attrs.disabled,
-        behaviors: this.createBehavior(attrs),
         type: attrs['lark:type'],
         size: attrs['lark:size'],
         width: attrs['lark:width'],
@@ -389,12 +352,24 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           tag: 'plain_text',
           content: attrs['lark:disabled-tips'],
         },
+        behaviors: this.createBehaviors(attrs),
       })
       this.textContent = ''
-    } else if (type === 'button-group') {
+    } else if (type === 'div') {
       this.flushText()
       await this.render(children)
-      this.flushText()
+      this.elements.push({
+        tag: 'markdown',
+        text_align: attrs.align,
+        text_size: attrs.size,
+        content: this.textContent,
+        margin: attrs.margin,
+        icon: attrs.icon && {
+          tag: 'standard_icon',
+          token: attrs.icon,
+        },
+      })
+      this.textContent = ''
     } else if (type.startsWith('lark:') || type.startsWith('feishu:')) {
       const tag = type.slice(type.split(':', 1)[0].length + 1)
       if (tag === 'share-chat') {
@@ -424,10 +399,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       } else if (tag === 'card') {
         await this.flush()
         this.card = {
-          elements: [],
+          schema: '2.0',
           header: attrs.title && {
             template: attrs.color,
-            ud_icon: attrs.icon && {
+            icon: attrs.icon && {
               tag: 'standard_icon',
               token: attrs.icon,
             },
@@ -440,39 +415,15 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
               content: attrs.subtitle,
             },
           },
+          body: {
+            elements: this.elements = [],
+          },
         }
         await this.render(children, true)
-      } else if (tag === 'div') {
-        this.flushText()
-        await this.render(children)
-        this.card?.elements.push({
-          tag: 'markdown',
-          text_align: attrs.align,
-          text_size: attrs.size,
-          content: this.textContent,
-        })
-        this.textContent = ''
-      } else if (tag === 'note') {
-        this.flushText()
-        this.noteElements = []
-        await this.render(children)
-        this.flushText()
-        this.card?.elements.push({
-          tag: 'note',
-          elements: this.noteElements,
-        })
-        this.noteElements = undefined
-      } else if (tag === 'icon') {
-        this.flushText()
-        this.noteElements?.push({
-          tag: 'standard_icon',
-          token: attrs.token,
-        })
       } else if (tag === 'column-set') {
         this.flushText()
-        const parent = this.card
         const columns: MessageContent.Card.ColumnElement[] = []
-        parent?.elements.push({
+        this.elements.push({
           tag: 'column_set',
           margin: attrs.margin,
           flex_mode: attrs.flexMode,
@@ -481,12 +432,13 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           background_style: attrs.backgroundStyle,
           columns,
         })
+        const parent = this.elements
         for (const child of children) {
           if (child.type !== 'lark:column' && child.type !== 'feishu:column') {
             // throw unexpected?
             continue
           }
-          this.card = { elements: [] }
+          this.elements = []
           await this.render(child.children)
           this.flushText()
           columns.push({
@@ -497,11 +449,30 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             vertical_align: child.attrs.verticalAlign ?? 'center',
             vertical_spacing: child.attrs.verticalSpacing ?? '0px',
             background_style: child.attrs.backgroundStyle,
-            elements: this.card.elements,
+            elements: this.elements,
           })
         }
-        this.card = parent
+        this.elements = parent
       }
+    } else if (type === 'button-group') {
+      this.flushText()
+      const parent = this.elements
+      this.elements = []
+      await this.render(children)
+      this.flushText()
+      parent.push({
+        tag: 'column_set',
+        margin: attrs.margin,
+        flex_mode: attrs.flexMode,
+        horizontal_align: attrs.horizontalAlign,
+        horizontal_spacing: attrs.horizontalSpacing,
+        background_style: attrs.backgroundStyle,
+        columns: this.elements.map((element) => ({
+          tag: 'column',
+          elements: [element],
+        })),
+      })
+      this.elements = parent
     } else {
       await this.render(children)
     }
