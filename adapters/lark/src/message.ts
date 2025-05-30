@@ -269,6 +269,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         this.elements.push({
           tag: 'button',
           name: attrs.name,
+          width: attrs.width,
           text: {
             tag: 'plain_text',
             content: this.textContent,
@@ -343,6 +344,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         icon: attrs['lark:icon'] && {
           tag: 'standard_icon',
           token: attrs['lark:icon'],
+          color: attrs['lark:icon-color'],
         },
         hover_tips: attrs['lark:hover-tips'] && {
           tag: 'plain_text',
@@ -367,6 +369,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         icon: attrs.icon && {
           tag: 'standard_icon',
           token: attrs.icon,
+          color: attrs.iconColor,
         },
       })
       this.textContent = ''
@@ -405,6 +408,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             icon: attrs.icon && {
               tag: 'standard_icon',
               token: attrs.icon,
+              color: attrs.iconColor,
             },
             title: {
               tag: 'plain_text',
@@ -420,6 +424,30 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           },
         }
         await this.render(children, true)
+      } else if (tag === 'interactive-container') {
+        this.flushText()
+        const parent = this.elements
+        parent.push({
+          tag: 'interactive_container',
+          width: attrs.width,
+          height: attrs.height,
+          margin: attrs.margin,
+          padding: attrs.padding,
+          background_style: attrs.backgroundStyle,
+          vertical_align: attrs.verticalAlign,
+          vertical_spacing: attrs.verticalSpacing,
+          horizontal_align: attrs.horizontalAlign,
+          horizontal_spacing: attrs.horizontalSpacing,
+          direction: attrs.direction,
+          has_border: attrs.hasBorder,
+          border_color: attrs.borderColor,
+          corner_radius: attrs.cornerRadius,
+          elements: this.elements = [],
+          behaviors: this.createBehaviors(attrs),
+        })
+        await this.render(children)
+        this.flushText()
+        this.elements = parent
       } else if (tag === 'column-set') {
         this.flushText()
         const columns: MessageContent.Card.ColumnElement[] = []
