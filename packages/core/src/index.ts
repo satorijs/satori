@@ -166,7 +166,7 @@ export class Satori<C extends Context = Context> extends Service<C> {
           root = root[part]
         }
         let result = root(...args)
-        if (req.headers['satori-pagination']) {
+        if (req.headers.get('satori-pagination')) {
           if (!result?.[Symbol.for('satori.pagination')]) {
             return new Response('This API does not support pagination', { status: 400 })
           }
@@ -174,7 +174,7 @@ export class Satori<C extends Context = Context> extends Service<C> {
         } else {
           result = await result
         }
-        return new Response(null, { ...await JsonForm.encode(result), status: 200 })
+        return await JsonForm.encode(result)
       } catch (error) {
         if (!ctx.get('http')?.isError(error) || !error.response) throw error
         return error.response

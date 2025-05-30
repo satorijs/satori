@@ -59,8 +59,8 @@ class SatoriServer<C extends Context = Context> extends Service<C> {
 
       if (checkAuth(req, res)) return
 
-      const selfId = req.headers['satori-user-id'] ?? req.headers['x-self-id']
-      const platform = req.headers['satori-platform'] ?? req.headers['x-platform']
+      const selfId = req.headers.get('satori-user-id')
+      const platform = req.headers.get('satori-platform')
       const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
       if (!bot) {
         res.body = 'login not found'
