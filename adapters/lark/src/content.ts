@@ -25,6 +25,7 @@ export interface MessageContent {
   audio: MessageContent.Audio
   media: MessageContent.Media
   sticker: MessageContent.Sticker
+  interactive: MessageContent.Card
   share_chat: MessageContent.ShareChat
   share_user: MessageContent.ShareUser
   system: MessageContent.System
@@ -106,13 +107,10 @@ export namespace MessageContent {
     export interface AtElement extends BaseElement<'at'> {
       user_id: string
       style?: Style[]
-      // user_name?: string
     }
 
     export interface ImageElement extends BaseElement<'img'> {
       image_key: string
-      // height?: number
-      // width?: number
     }
 
     export interface MediaElement extends BaseElement<'media'> {
@@ -129,7 +127,7 @@ export namespace MessageContent {
       text: string
     }
 
-    export interface HRElement extends BaseElement<'hr'> {}
+    export interface HrElement extends BaseElement<'hr'> {}
 
     export interface MarkdownElement extends BaseElement<'md'> {
       text: string
@@ -146,7 +144,7 @@ export namespace MessageContent {
       | ImageElement
       | MediaElement
       | CodeBlockElement
-      | HRElement
+      | HrElement
 
     export type Paragraph =
       | InlineElement[]
@@ -154,43 +152,158 @@ export namespace MessageContent {
   }
 
   export interface Card {
+    schema: '2.0'
     config?: Card.Config
-    card_link?: Card.URLs
+    card_link?: Card.Urls
     header?: Card.Header
-    elements: Card.Element[]
+    body: Card.Body
   }
 
   export namespace Card {
     /** @see https://open.larksuite.com/document/common-capabilities/message-card/getting-started/card-structure/card-configuration */
     export interface Config {
+      streaming_mode?: boolean
+      streaming_config?: StreamingConfig
+      summary: {
+        content: string
+        i18n_content?: Record<string, string>
+      }
+      locales: string[]
       enable_forward?: boolean
       update_multi?: boolean
+      width_mode?: 'compact' | 'fill'
+      use_custom_translation?: boolean
+      enable_forward_interaction?: boolean
+      style?: {
+        text_size?: {
+          'cus-0': Record<'default' | 'android' | 'ios' | 'pc', 'medium' | 'large'>
+        }
+        color?: {
+          'cus-0': Record<'light_mode' | 'dark_mode', string>
+        }
+      }
     }
 
-    export interface URLs {
+    export interface StreamingConfig {
+      print_frequency_ms?: Record<'default' | 'android' | 'ios' | 'pc', number>
+      print_step?: Record<'default' | 'android' | 'ios' | 'pc', number>
+      print_strategy?: 'fast' | 'delay'
+    }
+
+    export interface Urls {
       url: string
       pc_url?: string
       ios_url?: string
       android_url?: string
     }
 
-    /** @see https://open.larksuite.com/document/common-capabilities/message-card/message-cards-content/card-header */
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/title */
     export interface Header {
-      title: I18nPlainTextElement
-      subtitle?: I18nPlainTextElement
+      title: I18nTextElement
+      subtitle?: I18nTextElement
       template?: Header.Template
-      icon?: CustomIconElement
-      ud_icon?: StandardIconElement
+      icon?: IconElement
       text_tag_list?: TextTagElement[]
       i18n_text_tag_list?: Record<string, TextTagElement[]>
+      padding?: string
     }
 
     export namespace Header {
       export type Template = 'blue' | 'wathet' | 'turquoise' | 'green' | 'yellow' | 'orange' | 'red' | 'carmine' | 'violet' | 'purple' | 'indigo' | 'grey' | 'default'
     }
 
+    export interface Body {
+      direction?: 'vertical' | 'horizontal'
+      padding?: string
+      horizontal_spacing?: string
+      horizontal_align?: 'left' | 'center' | 'right'
+      vertical_spacing?: string
+      vertical_align?: 'top' | 'center' | 'bottom'
+      elements: Element[]
+    }
+
     export interface BaseElement<T extends string = string> {
       tag: T
+      margin?: string
+      element_id?: string
+    }
+
+    export interface BaseContainerElement<T extends string = string> extends BaseElement<T> {
+      vertical_align?: 'top' | 'center' | 'bottom'
+      vertical_spacing?: string
+      horizontal_align?: 'left' | 'center' | 'right'
+      horizontal_spacing?: string
+      direction?: 'vertical' | 'horizontal'
+      padding?: string
+      elements: Element[]
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/containers/column-set */
+    export interface ColumnSetElement extends BaseElement<'column_set'> {
+      horizontal_spacing?: string
+      horizontal_align?: 'left' | 'center' | 'right'
+      vertical_align?: 'center'
+      flex_mode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect'
+      background_style?: string
+      columns: ColumnElement[]
+      action?: {
+        multi_url: Urls
+      }
+    }
+
+    export interface ColumnElement extends BaseContainerElement<'column'> {
+      background_style?: string
+      width?: 'auto' | 'weighted' | string
+      weight?: number
+      action?: {
+        multi_url: Urls
+      }
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/containers/form-container */
+    export interface FormElement extends BaseContainerElement<'form'> {
+      name: string
+      confirm?: ConfirmElement
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/containers/interactive-container */
+    export interface InteractiveContainerElement extends BaseContainerElement<'interactive_container'> {
+      width?: string
+      height?: string
+      background_style?: string
+      has_border?: boolean
+      border_color?: string
+      corner_radius?: string
+      behaviors: ActionBehavior[]
+      disabled?: boolean
+      disabled_tips?: TextElement
+      confirm?: ConfirmElement
+      hover_tips?: TextElement
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/containers/collapsible-panel */
+    export interface CollapsiblePanelElement extends BaseContainerElement<'collapsible_panel'> {
+      expanded?: boolean
+      background_color?: string
+      header: CollapsiblePanelElement.Header
+      border?: {
+        color?: string
+        corner_radius?: string
+      }
+    }
+
+    export namespace CollapsiblePanelElement {
+      export interface Header {
+        title: TextElement | MarkdownElement
+        background_color?: string
+        vertical_align?: 'center' | 'top' | 'bottom'
+        padding?: string
+        position?: 'top' | 'bottom'
+        width?: string
+        icon?: IconElement & { size?: string }
+        icon_position?: 'left' | 'right' | 'follow_text'
+        icon_expanded_angle?: number
+      }
     }
 
     export type TextSize =
@@ -199,20 +312,19 @@ export namespace MessageContent {
 
     export type TextAlign = 'left' | 'center' | 'right'
 
-    export interface PlainTextElement extends BaseElement<'plain_text'> {
+    export interface TextElement<T extends string = 'plain_text'> extends BaseElement<T> {
       content: string
     }
 
-    export interface I18nPlainTextElement extends PlainTextElement {
-      i18n?: Record<string, string>
+    export interface I18nTextElement extends TextElement<'plain_text' | 'lark_md'> {
+      i18n_content?: Record<string, string>
     }
 
-    export interface DivPlainTextElement extends PlainTextElement {
+    export interface DivTextElement extends TextElement<'plain_text' | 'lark_md'> {
       text_size?: TextSize
       text_color?: string
       text_align?: TextAlign
       lines?: number
-      icon?: IconElement
     }
 
     export type IconElement = StandardIconElement | CustomIconElement
@@ -227,7 +339,7 @@ export namespace MessageContent {
     }
 
     export interface TextTagElement extends BaseElement<'text_tag'> {
-      text: PlainTextElement
+      text: TextElement
       color: TextTagElement.Color
     }
 
@@ -235,51 +347,71 @@ export namespace MessageContent {
       export type Color = 'neutral' | 'blue' | 'torqoise' | 'lime' | 'orange' | 'violet' | 'indigo' | 'wathet' | 'green' | 'yellow' | 'red' | 'purple' | 'carmine'
     }
 
-    export interface BaseImageElement extends BaseElement<'image'> {
+    export interface BaseImageElement extends BaseElement<'img'> {
       img_key: string
-      alt?: PlainTextElement
+      alt?: TextElement
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/image */
     export interface ImageElement extends BaseImageElement {
-      title?: PlainTextElement
+      title?: TextElement
       transparent?: string
       preview?: boolean
       corner_radius?: string
       scale_type?: 'crop_center' | 'fit_horizontal' | 'crop_top'
       size?: 'large' | 'medium' | 'small' | 'tiny' | 'stretch_without_padding' | 'stretch' | string
-      /** @deprecated */
-      custom_width?: number
-      /** @deprecated */
-      compact_width?: boolean
-      /** @deprecated */
       mode?: 'crop_center' | 'fit_horizontal' | 'large' | 'medium' | 'small' | 'tiny'
     }
 
-    export interface HRElement extends BaseElement<'hr'> {}
-
-    export interface DivElement extends BaseElement<'div'> {
-      text?: DivPlainTextElement
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/multi-image-laylout */
+    export interface ImageCombinationElement extends BaseElement<'img_combination'> {
+      combination_mode?: 'double' | 'triple' | 'bisect' | 'trisect'
+      combination_transparent?: boolean
+      corner_radius?: string
+      img_list?: {
+        img_key: string
+      }[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/divider */
+    export interface HrElement extends BaseElement<'hr'> {}
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/plain-text */
+    export interface DivElement extends BaseElement<'div'> {
+      text?: DivTextElement
+      width?: string
+      icon?: IconElement
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/rich-text */
     export interface MarkdownElement extends BaseElement<'markdown'> {
       content: string
       text_size?: TextSize
       text_align?: TextAlign
-      href?: Record<string, URLs>
+      icon?: IconElement
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/user-profile */
     export interface PersonElement extends BaseElement<'person'> {
       user_id: string
       size?: 'large' | 'medium' | 'small' | 'extra_small'
+      show_avatar?: boolean
+      show_name?: boolean
+      style?: 'normal' | 'capsule'
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/user-list */
     export interface PersonListElement extends BaseElement<'person_list'> {
       persons: { id: string }[]
       size?: 'large' | 'medium' | 'small' | 'extra_small'
       show_name?: boolean
       show_avatar?: boolean
+      lines?: number
+      drop_invalid_user_id?: string
+      icon?: IconElement
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/chart */
     export interface ChartElement extends BaseElement<'chart'> {
       chart_spec: {} // TODO
       aspect_ratio?: '1:1' | '2:1' | '4:3' | '16:9'
@@ -288,9 +420,12 @@ export namespace MessageContent {
       height?: 'auto' | string
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/table */
     export interface TableElement extends BaseElement<'table'> {
       page_size?: number
       row_height?: 'low' | 'medium' | 'high' | string
+      row_max_height?: string
+      freeze_first_column?: boolean
       header_style?: TableElement.HeaderStyle
       columns: TableElement.Column[]
       rows: object[]
@@ -310,6 +445,7 @@ export namespace MessageContent {
         name: string
         display_name?: string
         width?: 'auto' | string
+        vertical_align?: 'top' | 'center' | 'bottom'
         horizontal_align?: 'left' | 'center' | 'right'
         data_type?: 'text' | 'lark_md' | 'options' | 'number' | 'persons' | 'date' | 'markdown'
         format?: {
@@ -321,30 +457,11 @@ export namespace MessageContent {
       }
     }
 
-    export interface NoteElement extends BaseElement<'note'> {
-      elements: NoteElement.InnerElement[]
-    }
-
-    export namespace NoteElement {
-      export type InnerElement = IconElement | PlainTextElement | BaseImageElement
-    }
-
-    export interface FormElement extends BaseElement<'form'> {
-      name: string
-      elements: Element[]
-      confirm?: ConfirmElement
-    }
-
-    export interface ActionElement extends BaseElement<'action'> {
-      actions: Element[]
-      layout?: 'bisected' | 'trisection' | 'flow'
-    }
-
     export type ActionBehavior =
-      | OpenURLBehavior
+      | OpenUrlBehavior
       | CallbackBehavior
 
-    export interface OpenURLBehavior {
+    export interface OpenUrlBehavior {
       type: 'open_url'
       default_url: string
       pc_url?: string
@@ -358,43 +475,39 @@ export namespace MessageContent {
     }
 
     export interface BaseButtonElement extends BaseElement<'button'> {
-      text: PlainTextElement
+      text: TextElement
       size?: ButtonElement.Size
       icon?: IconElement
       disabled?: boolean
       behaviors?: ActionBehavior[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/button */
     export interface ButtonElement extends BaseButtonElement {
       type?: ButtonElement.Type
       width?: ButtonElement.Width
-      hover_tips?: PlainTextElement
-      disabled_tips?: PlainTextElement
-      confirm?: {
-        title: PlainTextElement
-        text: PlainTextElement
-      }
+      hover_tips?: TextElement
+      disabled_tips?: TextElement
+      confirm?: ConfirmElement
       // form-related fields
       name?: string
       required?: boolean
-      action_type?: 'link' | 'request' | 'multi' | 'form_submit' | 'form_reset'
-      // legacy fields
-      value?: Record<string, string>
-      url?: string
-      multi_url?: Omit<URLs, 'url'>
+      form_action_type?: 'submit' | 'reset'
     }
 
     export interface ConfirmElement {
-      title: PlainTextElement
-      text: PlainTextElement
+      title: TextElement
+      text: TextElement
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/input */
     export interface InputElement extends BaseElement<'input'> {
-      name: string
+      name?: string
       required?: boolean
-      placeholder?: PlainTextElement
+      placeholder?: TextElement
       default_value?: string
       disabled?: boolean
+      disabled_tips?: TextElement
       width?: 'default' | 'fill' | string
       max_length?: number
       input_type?: 'text' | 'multiline_text' | 'password'
@@ -402,17 +515,14 @@ export namespace MessageContent {
       rows?: number
       auto_resize?: boolean
       max_rows?: number
-      label?: PlainTextElement
+      label?: TextElement
       label_position?: 'top' | 'left'
       value?: string | object
       behaviors?: ActionBehavior[]
       confirm?: ConfirmElement
-      fallback?: {
-        tag?: string
-        text?: PlainTextElement
-      }
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/overflow */
     export interface OverflowElement extends BaseElement<'overflow'> {
       width?: 'default' | 'fill' | string
       options: OverflowElement.Option[]
@@ -422,8 +532,8 @@ export namespace MessageContent {
 
     export namespace OverflowElement {
       export interface Option {
-        text?: PlainTextElement
-        multi_url?: URLs
+        text?: TextElement
+        multi_url?: Urls
         value?: string
       }
     }
@@ -433,105 +543,109 @@ export namespace MessageContent {
       name?: string
       required?: boolean
       disabled?: boolean
-      placeholder?: PlainTextElement
+      placeholder?: TextElement
       width?: 'default' | 'fill' | string
       confirm?: ConfirmElement
+      behaviors?: ActionBehavior[]
     }
 
     export interface OptionElement {
-      text: PlainTextElement
+      text: TextElement
       icon?: IconElement
       value: string
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/single-select-dropdown-menu */
     export interface SelectElement extends BaseSelectElement<'select_static'> {
       options: OptionElement[]
       initial_option?: string
       behaviors?: ActionBehavior[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/multi-select-dropdown-menu */
     export interface MultiSelectElement extends BaseSelectElement<'multi_select_static'> {
       options: OptionElement[]
       selected_values?: string[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/single-select-user-picker */
     export interface SelectPersonElement extends BaseSelectElement<'select_person'> {
-      options?: { value: string }[]
+      options: { value: string }[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/multi-select-user-picker */
     export interface MultiSelectPersonElement extends BaseSelectElement<'multi_select_person'> {
-      options?: { value: string }[]
+      options: { value: string }[]
       selected_values?: string[]
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/date-picker */
     export interface DatePickerElement extends BaseSelectElement<'date_picker'> {
       initial_date?: string
       value?: object
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/time-selector */
     export interface TimePickerElement extends BaseSelectElement<'picker_time'> {
       initial_time?: string
       value?: object
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/date-time-picker */
     export interface DateTimePickerElement extends BaseSelectElement<'picker_datetime'> {
       initial_datetime?: string
       value?: object
     }
 
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/image-picker */
+    export interface SelectImageElement extends BaseSelectElement<'select_img'> {
+      multi_select?: boolean
+      layout?: 'stretch' | 'bisect' | 'trisect'
+      can_preview?: boolean
+      aspect_ratio?: '1:1' | '4:3' | '16:9'
+      disabled_tips?: TextElement
+      value?: string | object
+      options?: {
+        img_key: string
+        value?: string
+        disabled?: boolean
+        disabled_tips?: TextElement
+        hover_tips?: TextElement
+      }[]
+    }
+
+    /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/interactive-components/checker */
     export interface CheckerElement extends BaseElement<'checker'> {
       name?: string
       checked?: boolean
       disabled?: boolean
-      text?: CheckerElement.TextElement
+      text?: CheckerElement.Text
       overall_checkable?: boolean
       button_area?: {
         pc_display_rule?: 'always' | 'on_hover'
-        buttons?: CheckerElement.ButtonElement[]
+        buttons?: CheckerElement.Button[]
       }
       checked_style?: {
         show_strikethrough?: boolean
         opacity?: number
       }
-      margin?: string
       padding?: string
       confirm?: ConfirmElement
       behaviors?: ActionBehavior[]
-      hover_tips?: PlainTextElement
-      disable_tips?: PlainTextElement
+      hover_tips?: TextElement
+      disable_tips?: TextElement
     }
 
     export namespace CheckerElement {
-      export interface TextElement extends PlainTextElement {
+      export interface Text extends Card.TextElement<'plain_text' | 'lark_md'> {
         text_size?: 'normal' | 'heading' | 'notation'
         text_color?: string
         text_align?: TextAlign
       }
 
-      export interface ButtonElement extends BaseButtonElement {
+      export interface Button extends BaseButtonElement {
         type: 'text' | 'primary_text' | 'danger_text'
       }
-    }
-
-    export interface ColumnSetElement extends BaseElement<'column_set'> {
-      horizontal_spacing?: string
-      horizontal_align?: 'left' | 'center' | 'right'
-      margin?: string
-      flex_mode?: 'none' | 'stretch' | 'flow' | 'bisect' | 'trisect'
-      background_style?: string
-      columns: ColumnElement[]
-      // action?: Action
-    }
-
-    export interface ColumnElement extends BaseElement<'column'> {
-      background_style?: string
-      width?: 'auto' | 'weighted' | string
-      weight?: number
-      vertical_align?: 'top' | 'center' | 'bottom'
-      vertical_spacing?: 'default' | 'medium' | 'large' | string
-      padding?: string
-      elements: Element[]
-      // action?: Action
     }
 
     export namespace ButtonElement {
@@ -543,9 +657,7 @@ export namespace MessageContent {
     export type Element =
       | DivElement
       | MarkdownElement
-      | HRElement
-      | ActionElement
-      | NoteElement
+      | HrElement
       | ChartElement
       | TableElement
       | ImageElement
@@ -555,6 +667,15 @@ export namespace MessageContent {
       | CheckerElement
       | ColumnSetElement
       | SelectElement
+      | MultiSelectElement
+      | SelectPersonElement
+      | MultiSelectPersonElement
+      | DatePickerElement
+      | TimePickerElement
+      | DateTimePickerElement
+      | InteractiveContainerElement
+      | CollapsiblePanelElement
+      | OverflowElement
   }
 
   export interface Template {
