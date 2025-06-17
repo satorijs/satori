@@ -55,7 +55,9 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
 
   async initialize() {
     const user = await this.guildBot.internal.getMe()
-    Object.assign(this.user, decodeUser(user))
+    // user 在 ws 内设置, http 内未设置, 此处补上
+    if (!this.user) this.user = decodeUser(user)
+    else Object.assign(this.user, decodeUser(user))
   }
 
   async stop() {
