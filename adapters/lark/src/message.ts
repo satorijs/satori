@@ -257,8 +257,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           tag: 'checker',
           name: (attrs.argument ? '@@' : attrs.option ? `@${attrs.option}=` : '') + attrs.name,
           checked: attrs.value,
+          disabled: attrs.disabled,
           text: {
-            tag: 'plain_text',
+            tag: 'lark_md',
             content: this.textContent,
           },
         })
@@ -429,6 +430,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         const parent = this.elements
         parent.push({
           tag: 'interactive_container',
+          disabled: attrs.disabled,
           width: attrs.width,
           height: attrs.height,
           margin: attrs.margin,
