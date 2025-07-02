@@ -355,7 +355,7 @@ export namespace MessageContent {
     /** @see https://open.feishu.cn/document/feishu-cards/card-json-v2-components/content-components/image */
     export interface ImageElement extends BaseImageElement {
       title?: TextElement
-      transparent?: string
+      transparent?: boolean
       preview?: boolean
       corner_radius?: string
       scale_type?: 'crop_center' | 'fit_horizontal' | 'crop_top'
