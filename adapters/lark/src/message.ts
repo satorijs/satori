@@ -12,7 +12,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
   private richContent: MessageContent.RichText.Paragraph[] = []
   private card: MessageContent.Card | undefined
   private elements: MessageContent.Card.Element[] = []
-  private isForm = false
+  private inline = false
 
   public editMessageIds: string[] | undefined
 
@@ -230,6 +230,20 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (['video', 'audio', 'file'].includes(type)) {
       await this.flush()
       await this.sendFile(type as any, attrs)
+    } else if (type === 'lark:img') {
+      this.flushText()
+      this.elements.push({
+        tag: 'img',
+        alt: attrs.alt,
+        img_key: attrs.imgKey,
+        transparent: attrs.transparent,
+        preview: attrs.preview,
+        corner_radius: attrs.cornerRadius,
+        scale_type: attrs.scaleType,
+        size: attrs.size,
+        mode: attrs.mode,
+        margin: attrs.margin,
+      })
     } else if (type === 'figure' || type === 'message') {
       await this.flush()
       await this.render(children, true)
@@ -245,9 +259,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         name: attrs.name || 'Form',
         elements: this.elements = [],
       })
-      this.isForm = true
       await this.render(children)
-      this.isForm = false
       this.elements = parent
     } else if (type === 'input') {
       if (attrs.type === 'checkbox') {
@@ -360,7 +372,9 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
       this.textContent = ''
     } else if (type === 'div') {
       this.flushText()
+      this.inline = true
       await this.render(children)
+      this.inline = false
       this.elements.push({
         tag: 'markdown',
         text_align: attrs.align,
