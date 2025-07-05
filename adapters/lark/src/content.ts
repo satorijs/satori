@@ -164,11 +164,11 @@ export namespace MessageContent {
     export interface Config {
       streaming_mode?: boolean
       streaming_config?: StreamingConfig
-      summary: {
+      summary?: {
         content: string
         i18n_content?: Record<string, string>
       }
-      locales: string[]
+      locales?: string[]
       enable_forward?: boolean
       update_multi?: boolean
       width_mode?: 'compact' | 'fill'
@@ -633,7 +633,7 @@ export namespace MessageContent {
       confirm?: ConfirmElement
       behaviors?: ActionBehavior[]
       hover_tips?: TextElement
-      disable_tips?: TextElement
+      disabled_tips?: TextElement
     }
 
     export namespace CheckerElement {
