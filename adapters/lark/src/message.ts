@@ -274,6 +274,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             tag: 'lark_md',
             content: this.textContent,
           },
+          hover_tips: attrs.hoverTips && {
+            tag: 'plain_text',
+            content: attrs.hoverTips,
+          },
+          disabled_tips: attrs.disabledTips && {
+            tag: 'plain_text',
+            content: attrs.disabledTips,
+          },
         })
         this.textContent = ''
       } else if (attrs.type === 'submit') {
@@ -304,6 +312,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           placeholder: attrs.placeholder && {
             tag: 'plain_text',
             content: attrs.placeholder,
+          },
+          disabled_tips: attrs.disabledTips && {
+            tag: 'plain_text',
+            content: attrs.disabledTips,
           },
           default_value: attrs.value,
           disabled: attrs.disabled,
@@ -359,13 +371,13 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           token: attrs['lark:icon'],
           color: attrs['lark:icon-color'],
         },
-        hover_tips: attrs['lark:hover-tips'] && {
+        hover_tips: attrs.hoverTips && {
           tag: 'plain_text',
-          content: attrs['lark:hover-tips'],
+          content: attrs.hoverTips,
         },
-        disabled_tips: attrs['lark:disabled-tips'] && {
+        disabled_tips: attrs.disabledTips && {
           tag: 'plain_text',
-          content: attrs['lark:disabled-tips'],
+          content: attrs.disabledTips,
         },
         behaviors: this.createBehaviors(attrs),
       })
@@ -418,6 +430,15 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         await this.flush()
         this.card = {
           schema: '2.0',
+          config: {
+            summary: attrs.summary && {
+              content: attrs.summary,
+            },
+            enable_forward: attrs.enableForward,
+            update_multi: attrs.updateMulti,
+            enable_forward_interaction: attrs.enableForwardInteraction,
+            style: typeof attrs.style === 'string' ? JSON.parse(attrs.style) : attrs.style,
+          },
           header: attrs.title && {
             template: attrs.color,
             icon: attrs.icon && {
@@ -435,6 +456,12 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             },
           },
           body: {
+            direction: attrs.direction,
+            padding: attrs.padding,
+            horizontal_spacing: attrs.horizontalSpacing,
+            horizontal_align: attrs.horizontalAlign,
+            vertical_spacing: attrs.verticalSpacing,
+            vertical_align: attrs.verticalAlign,
             elements: this.elements = [],
           },
         }
@@ -459,6 +486,14 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           border_color: attrs.borderColor,
           corner_radius: attrs.cornerRadius,
           elements: this.elements = [],
+          hover_tips: attrs.hoverTips && {
+            tag: 'plain_text',
+            content: attrs.hoverTips,
+          },
+          disabled_tips: attrs.disabledTips && {
+            tag: 'plain_text',
+            content: attrs.disabledTips,
+          },
           behaviors: this.createBehaviors(attrs),
         })
         await this.render(children)
