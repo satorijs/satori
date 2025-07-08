@@ -250,7 +250,10 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
     } else if (type === 'hr') {
       this.flushText()
       this.richContent.push([{ tag: 'hr' }])
-      this.elements.push({ tag: 'hr' })
+      this.elements.push({
+        tag: 'hr',
+        margin: attrs.margin,
+      })
     } else if (type === 'form') {
       this.flushText()
       const parent = this.elements
@@ -282,6 +285,8 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             tag: 'plain_text',
             content: attrs.disabledTips,
           },
+          behaviors: this.createBehaviors(attrs),
+          margin: attrs.margin,
         })
         this.textContent = ''
       } else if (attrs.type === 'submit') {
@@ -297,6 +302,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           },
           form_action_type: 'submit',
           behaviors: this.createBehaviors(attrs),
+          margin: attrs.margin,
         })
         this.textContent = ''
       } else {
@@ -321,6 +327,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           disabled: attrs.disabled,
           required: attrs.required,
           behaviors: this.createBehaviors(attrs),
+          margin: attrs.margin,
         }
         this.elements.push(input)
       }
@@ -339,6 +346,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
         },
         options: [],
         behaviors: this.createBehaviors(attrs),
+        margin: attrs.margin,
       }
       for (const child of children) {
         if (child.type !== 'option') continue
@@ -380,6 +388,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
           content: attrs.disabledTips,
         },
         behaviors: this.createBehaviors(attrs),
+        margin: attrs.margin,
       })
       this.textContent = ''
     } else if (type === 'div') {
@@ -524,6 +533,7 @@ export class LarkMessageEncoder<C extends Context = Context> extends MessageEnco
             tag: 'column',
             width: child.attrs.width,
             weight: child.attrs.weight,
+            margin: child.attrs.margin,
             padding: child.attrs.padding,
             vertical_align: child.attrs.verticalAlign ?? 'center',
             vertical_spacing: child.attrs.verticalSpacing ?? '0px',
