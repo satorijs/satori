@@ -1,0 +1,52 @@
+{
+  "name": "@satorijs/adapter-heychat",
+  "description": "HeyChat (小黑盒) Adapter for Satorijs",
+  "version": "4.0.0-alpha.0",
+  "type": "module",
+  "main": "lib/index.cjs",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "generate": "tsx scripts/generate.ts"
+  },
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/heychat"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "homepage": "https://koishi.chat/plugins/adapter/heychat.html",
+  "keywords": [
+    "bot",
+    "heychat",
+    "xiaoheihe",
+    "feishu",
+    "adapter",
+    "chatbot",
+    "satori",
+    "im",
+    "chat"
+  ],
+  "devDependencies": {
+    "@cordisjs/plugin-server": "^1.1.0",
+    "@satorijs/core": "^5.0.0-alpha.0",
+    "cordis": "^4.0.0-alpha.7",
+    "cosmokit": "^1.7.4",
+    "dedent": "^1.5.3",
+    "openapi-types": "^12.1.3",
+    "tsx": "~4.20.3"
+  },
+  "peerDependencies": {
+    "@satorijs/core": "^5.0.0-alpha.0"
+  }
+}
