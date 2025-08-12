@@ -1,6 +1,6 @@
 {
   "name": "@satorijs/adapter-heychat",
-  "description": "HeyChat (小黑盒) Adapter for Satorijs",
+  "description": "HeyChat (黑盒语音) Adapter for Satorijs",
   "version": "4.0.0-alpha.0",
   "type": "module",
   "main": "lib/index.cjs",
