@@ -40,7 +40,11 @@ async function generate(json: OpenAPIV3.Document): Promise<Record<string, Output
     for (const method in methods) {
       const operation = methods[method] as OpenAPIV3.OperationObject
       const summary = operation.summary || operation.operationId || 'Unnamed'
-      const interfacePrefix = path.split('/').map((s) => cmk.capitalize(cmk.camelCase(s))).join('') + (Object.keys(methods).length > 1 ? cmk.capitalize(method) : '')
+      const interfacePrefix = path
+        .split('/')
+        .map((s) => cmk.capitalize(cmk.camelCase(s)))
+        .join('')
+        + (Object.keys(methods).length > 1 ? cmk.capitalize(method) : '')
 
       // Generate the interface of request param for the operation
       // Generate comment first
@@ -58,8 +62,7 @@ async function generate(json: OpenAPIV3.Document): Promise<Record<string, Output
           file.content += `  ${name}: ${(schema as OpenAPIV3.SchemaObject)?.type};\n`
         }
         file.content += `}\n`
-      }
-      else if (method === 'post') {
+      } else if (method === 'post') {
         if (operation.requestBody) {
           const { content } = operation.requestBody as OpenAPIV3.RequestBodyObject
           const schema = (content['application/json'] || content['application/x-www-form-urlencoded'])?.schema
@@ -68,7 +71,7 @@ async function generate(json: OpenAPIV3.Document): Promise<Record<string, Output
             let cur = schemata.pop() as OpenAPIV3.SchemaObject | undefined
             while (cur && cur.type === 'object') {
               if (cur.properties) {
-                for (const [_, prop] of Object.entries(cur.properties)) {
+                for (const prop of Object.values(cur.properties)) {
                   if ('$ref' in prop) {
                     continue
                   }
@@ -96,11 +99,10 @@ async function generate(json: OpenAPIV3.Document): Promise<Record<string, Output
             file.content += await compile(
               ('$ref' in schema) ? { ...schema, components: json.components } : schema,
               `${interfacePrefix}Params`,
-              { bannerComment: '', declareExternallyReferenced: false },
+              { bannerComment: '', declareExternallyReferenced: false, format: false },
             )
           }
-        }
-        else {
+        } else {
           file.content += `export interface ${interfacePrefix}Params {\n` + `}\n`
         }
       }
@@ -114,7 +116,7 @@ async function generate(json: OpenAPIV3.Document): Promise<Record<string, Output
         paramName = 'FormData'
       }
 
-      let additionalParams: Record<string, string> = {}
+      const additionalParams: Record<string, string> = {}
       for (const param of (operation.parameters as OpenAPIV3.ParameterObject[]) || []) {
         if (method === 'get') continue
         if (ignoredQueryParams.includes(param.name)) continue

@@ -7,18 +7,18 @@ export interface ChatroomV2ChannelMsgSendParams {
   /**
    * "@{here}" 等价于@在线成员,该消息会推送当前房间的所有在线成员，增加所有在线成员的未读消息数量。 "@{all}"等价于 @全体成员,该消息会推送当前房间的所有在线成员，增加所有成员的未读消息数量。
    */
-  msg: string;
-  msg_type: number;
-  heychat_ack_id: string;
-  reply_id: string;
-  room_id: string;
-  addition: string;
-  at_user_id: string;
-  at_role_id: string;
-  mention_channel_id: string;
-  channel_id: string;
-  channel_type: number;
-  [k: string]: unknown;
+  msg: string
+  msg_type: number
+  heychat_ack_id: string
+  reply_id: string
+  room_id: string
+  addition: string
+  at_user_id: string
+  at_role_id: string
+  mention_channel_id: string
+  channel_id: string
+  channel_type: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -39,45 +39,45 @@ export interface ChatroomV2ChannelMsgUpdateParams {
   /**
    * 文字消息内容
    */
-  msg: string;
+  msg: string
   /**
    * 消息类型： 1: 文本 3: 图片 4: markdown 10: 支持AT的markdown
    */
-  msg_type: number;
-  heychat_ack_id: string;
+  msg_type: number
+  heychat_ack_id: string
   /**
    * 回复的消息ID
    */
-  reply_id?: string;
+  reply_id?: string
   /**
    * 发送消息的房间ID
    */
-  room_id: string;
+  room_id: string
   /**
    * 需要用json.dumps转换成字符串再填充
    */
-  addition: string;
+  addition: string
   /**
    * AT的用户ID列表"123,234"
    */
-  at_user_id?: string;
+  at_user_id?: string
   /**
    * AT的角色ID列表"123,234"
    */
-  at_role_id?: string;
+  at_role_id?: string
   /**
    * 提及的频道ID"123456",可以直接跳转到某个频道
    */
-  mention_channel_id?: string;
+  mention_channel_id?: string
   /**
    * 发送消息的频道ID
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 更新的消息id
    */
-  msg_id: string;
-  [k: string]: unknown;
+  msg_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -98,16 +98,16 @@ export interface ChatroomV2ChannelMsgDeleteParams {
   /**
    * 消息id
    */
-  msg_id: string;
+  msg_id: string
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 频道id
    */
-  channel_id: string;
-  [k: string]: unknown;
+  channel_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -128,24 +128,24 @@ export interface ChatroomV2ChannelMsgEmojiReplyParams {
   /**
    * 消息id
    */
-  msg_id: string;
+  msg_id: string
   /**
    * [custom3358126864697663488_1737773988806922240.jpg],具体查看房间表情包文档
    */
-  emoji: string;
+  emoji: string
   /**
    * 增加还是删除回应,1是增加 0是删除
    */
-  is_add: number;
+  is_add: number
   /**
    * 频道id
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -166,24 +166,24 @@ export interface ChatroomV3MsgUserParams {
   /**
    * 消息内容
    */
-  msg: string;
+  msg: string
   /**
    * 消息类型
    */
-  msg_type: number;
+  msg_type: number
   /**
    * 自增不重复字段
    */
-  heychat_ack_id: string;
+  heychat_ack_id: string
   /**
    * 扩展字段
    */
-  addition: string;
+  addition: string
   /**
    * 对方用户ID
    */
-  to_user_id: number;
-  [k: string]: unknown;
+  to_user_id: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -202,7 +202,7 @@ Internal.define({
  */
 export interface ChatroomV2RoomRoleRolesParams {
   /** 房间ID */
-  room_id: string;
+  room_id: string
 }
 
 declare module '../internal' {
@@ -223,40 +223,40 @@ export interface ChatroomV2RoomRoleCreateParams {
   /**
    * 角色名称。
    */
-  name: string;
+  name: string
   /**
    * 角色icon的url
    */
-  icon?: string;
+  icon?: string
   /**
    * 渐变色的颜色数组
    */
-  color_list?: number[];
+  color_list?: number[]
   /**
    * 房间 ID，与部门 ID 相同
    */
-  room_id: string;
+  room_id: string
   /**
    * 权限值
    */
-  permissions: string;
+  permissions: string
   /**
    * 创建的新角色仅为0
    */
-  type: number;
+  type: number
   /**
    * 颜色值，在界面展示中用于区分不同角色。
    */
-  color?: number;
+  color?: number
   /**
    * 是否将该角色成员在右侧和普通成员区分显示,1是区分0是不区分
    */
-  hoist: number;
+  hoist: number
   /**
    * 随机值,防止重复请求
    */
-  nonce: string;
-  [k: string]: unknown;
+  nonce: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -277,48 +277,48 @@ export interface ChatroomV2RoomRoleUpdateParams {
   /**
    * 角色id
    */
-  id: string;
+  id: string
   /**
    * 角色名称。
    */
-  name: string;
+  name: string
   /**
    * 角色icon的url
    */
-  icon: string;
+  icon: string
   /**
    * 渐变色的颜色数组
    */
-  color_list: number[];
+  color_list: number[]
   /**
    * 房间 ID
    */
-  room_id: string;
+  room_id: string
   /**
    * 权限值
    */
-  permissions: string;
+  permissions: string
   /**
    * 创建的新角色仅为0
    */
-  type: number;
+  type: number
   /**
    * 颜色值，在界面展示中用于区分不同角色。
    */
-  color: number;
+  color: number
   /**
    * 是否将该角色成员在右侧和普通成员区分显示,1是区分0是不区分
    */
-  hoist: number;
+  hoist: number
   /**
    * 随机值,防止重复请求
    */
-  nonce: string;
+  nonce: string
   /**
    * 角色位置排序
    */
-  position: number;
-  [k: string]: unknown;
+  position: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -339,12 +339,12 @@ export interface ChatroomV2RoomRoleDeleteParams {
   /**
    * 角色id
    */
-  role_id: string;
+  role_id: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -365,16 +365,16 @@ export interface ChatroomV2RoomRoleGrantParams {
   /**
    * 用户id
    */
-  to_user_id: number;
+  to_user_id: number
   /**
    * 角色id
    */
-  role_id: string;
+  role_id: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -395,16 +395,16 @@ export interface ChatroomV2RoomRoleRevokeParams {
   /**
    * 用户id
    */
-  to_user_id: number;
+  to_user_id: number
   /**
    * 角色id
    */
-  role_id: string;
+  role_id: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -423,7 +423,7 @@ Internal.define({
  */
 export interface ChatroomV3MsgMemeRoomListParams {
   /** 房间ID */
-  room_id: string;
+  room_id: string
 }
 
 declare module '../internal' {
@@ -441,12 +441,12 @@ Internal.define({
  * 房间删除表情包
  */
 export interface ChatroomV2MsgMemeRoomDelParams {
-  path: string;
+  path: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -467,16 +467,16 @@ export interface ChatroomV2MsgMemeRoomEditParams {
   /**
    * 表情包path
    */
-  path: string;
+  path: string
   /**
    * 名称
    */
-  name: string;
+  name: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -494,10 +494,10 @@ Internal.define({
  * 修改房间内昵称
  */
 export interface ChatroomV2RoomNicknameParams {
-  nickname: string;
-  room_id: string;
-  to_user_id: number;
-  [k: string]: unknown;
+  nickname: string
+  room_id: string
+  to_user_id: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -515,8 +515,8 @@ Internal.define({
  * 分页获取加入的房间列表
  */
 export interface ChatroomV2RoomJoinedParams {
-  offset: string;
-  limit: string;
+  offset: string
+  limit: string
 }
 
 declare module '../internal' {
@@ -535,7 +535,7 @@ Internal.define({
  */
 export interface ChatroomV2RoomViewParams {
   /** 房间id */
-  room_id: string;
+  room_id: string
 }
 
 declare module '../internal' {
@@ -553,8 +553,8 @@ Internal.define({
  * 退出房间
  */
 export interface ChatroomV2RoomLeaveParams {
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -572,9 +572,9 @@ Internal.define({
  * 房间踢人
  */
 export interface ChatroomV2RoomKickOutParams {
-  room_id: string;
-  to_user_id: string;
-  [k: string]: unknown;
+  room_id: string
+  to_user_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -612,8 +612,8 @@ export interface ChatroomV2ChannelKickOutParams {
   /**
    * 被操作用户id
    */
-  to_user_id: number;
-  [k: string]: unknown;
+  to_user_id: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -634,20 +634,20 @@ export interface ChatroomV2RoomBanParams {
   /**
    * 封禁时间(s) 为0则解除封禁
    */
-  duration: number;
+  duration: number
   /**
    * 原因 用于审核日志
    */
-  reason: string;
+  reason: string
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 封禁/解封对象id
    */
-  to_user_id: number;
-  [k: string]: unknown;
+  to_user_id: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -669,16 +669,16 @@ export interface ChatroomV2ChannelMuteUserParams {
   /**
    * 被操作对象id
    */
-  to_user_id: number;
+  to_user_id: number
   /**
    * 频道id
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 房间id
    */
-  room_id: string;
-  [k: string]: unknown;
+  room_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -699,20 +699,20 @@ export interface ChatroomV2RoomMuteParams {
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 是否静音
    */
-  mute: boolean;
+  mute: boolean
   /**
    * 被操作对象id
    */
-  to_user_id: number;
+  to_user_id: number
   /**
    * 频道id
    */
-  channel_id: string;
-  [k: string]: unknown;
+  channel_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -733,17 +733,17 @@ export interface ChatroomV2RoomMuteEarphoneParams {
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 是否静音
    */
-  mute: boolean;
+  mute: boolean
   /**
    * 被操作对象id
    */
-  to_user_id: number;
-  channel_id: string;
-  [k: string]: unknown;
+  to_user_id: number
+  channel_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -763,9 +763,9 @@ Internal.define({
  */
 export interface ChatroomV2ChannelWhichUserParams {
   /** 查询用户id */
-  to_user_id: string;
+  to_user_id: string
   /** 房间id */
-  room_id: string;
+  room_id: string
 }
 
 declare module '../internal' {
@@ -783,9 +783,9 @@ Internal.define({
  * 获取语音频道内在线成员列表
  */
 export interface ChatroomV2ChannelUserListParams {
-  channel_id: string;
-  room_id: string;
-  heybox_id: string;
+  channel_id: string
+  room_id: string
+  heybox_id: string
 }
 
 declare module '../internal' {
@@ -805,11 +805,11 @@ Internal.define({
  */
 export interface ChatroomV2InviteCodeParams {
   /** bot id */
-  user_id: string;
+  user_id: string
   /** 房间id */
-  room_id: string;
+  room_id: string
   /** 频道id */
-  channel_id: string;
+  channel_id: string
 }
 
 declare module '../internal' {
@@ -837,24 +837,24 @@ export interface ChatroomV2SettingsChannelEditParams {
   /**
    * 频道id
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 配置项
    */
-  setting: string;
+  setting: string
   /**
    * 配置项的值
    */
-  value: number;
+  value: number
   /**
    * 频道类型
    */
-  channel_type: number;
-  [k: string]: unknown;
+  channel_type: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -876,17 +876,17 @@ export interface ChatroomV2ChannelEditParams {
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 频道id
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 频道名
    */
-  channel_name: string;
-  channel_type: number;
-  [k: string]: unknown;
+  channel_name: string
+  channel_type: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -987,46 +987,46 @@ export interface ChatroomV2RoleRoleUserPermParams {
   /**
    * 房间id
    */
-  room_id: string;
+  room_id: string
   /**
    * 频道id
    */
-  channel_id: string;
+  channel_id: string
   roles: {
     /**
      * 权限组id
      */
-    role_id?: string;
+    role_id?: string
     /**
      * 允许的权限位
      */
-    allow?: string;
+    allow?: string
     /**
      * 拒绝的权限位
      */
-    deny?: string;
+    deny?: string
     /**
      * 频道类型
      */
-    channel_type?: number;
-    [k: string]: unknown;
-  }[];
+    channel_type?: number
+    [k: string]: unknown
+  }[]
   users: {
     /**
      * 用户id
      */
-    to_user_id?: number;
+    to_user_id?: number
     /**
      * 允许的权限位
      */
-    allow?: string;
+    allow?: string
     /**
      * 拒绝的权限位
      */
-    deny?: string;
-    [k: string]: unknown;
-  }[];
-  [k: string]: unknown;
+    deny?: string
+    [k: string]: unknown
+  }[]
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -1045,12 +1045,12 @@ Internal.define({
  */
 export interface ChatroomV2RoomUsersParams {
   /** 用户id */
-  heybox_id: string;
-  offset: string;
+  heybox_id: string
+  offset: string
   /** 最大值300 */
-  limit: string;
+  limit: string
   /** 房间id */
-  room_id: string;
+  room_id: string
 }
 
 declare module '../internal' {
@@ -1071,40 +1071,40 @@ export interface ChatroomV3ChannelStreamPushParams {
   /**
    * 房间ID
    */
-  room_id: string;
+  room_id: string
   /**
    * 频道ID
    */
-  channel_id: string;
+  channel_id: string
   /**
    * 源流URL
    */
-  stream_url: string;
+  stream_url: string
   /**
    * 音量，取值范围[0, 100]，默认100，表示原音量。
    */
-  volume?: number;
+  volume?: number
   /**
    * 操作用户的UID
    */
-  operator: number;
+  operator: number
   /**
    * 回调链接 详见文档
    */
-  callback_url?: string;
+  callback_url?: string
   /**
    * 指定视频从某个秒时间戳播放
    */
-  seek_second?: number;
+  seek_second?: number
   /**
    * 循环播放次数, 取值范围[-1, 1000], 默认1次, -1为循环播放。线路2 不支持播放次数
    */
-  repeat_num?: number;
+  repeat_num?: number
   /**
    * 循环播放最大时长,仅支持RepeatNum设置-1时生效，取值范围[1, 10080]，单位分钟。
    */
-  max_duration?: number;
-  [k: string]: unknown;
+  max_duration?: number
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -1125,8 +1125,8 @@ export interface ChatroomV3ChannelStreamStopParams {
   /**
    * 任务ID
    */
-  task_id: string;
-  [k: string]: unknown;
+  task_id: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -1147,20 +1147,20 @@ export interface ChatroomApiTokenParams {
   /**
    * 授权类型, 目前支持 authorization_code 和 refresh_token
    */
-  grant_type: string;
+  grant_type: string
   /**
    * 客户端id
    */
-  client_id: string;
+  client_id: string
   /**
    * 客户端密钥
    */
-  client_secret: string;
+  client_secret: string
   /**
    * 刷新token
    */
-  refresh_token: string;
-  [k: string]: unknown;
+  refresh_token: string
+  [k: string]: unknown
 }
 
 declare module '../internal' {
@@ -1180,13 +1180,13 @@ Internal.define({
  */
 export interface ChatroomApiAccountInfoParams {
   /** 用户ID */
-  user_id: string;
+  user_id: string
   /** 客户端ID */
-  client_id: string;
+  client_id: string
   /** 回调地址 */
-  redirect_uri: string;
+  redirect_uri: string
   /** 申请的权限 多个权限以空格分隔 */
-  scope: string;
+  scope: string
 }
 
 declare module '../internal' {
@@ -1207,13 +1207,13 @@ appid可通过[获取房间信息]((apifox://link/endpoint/226373528))中的bind
  */
 export interface ChatroomApiDurationChatParams {
   /** 房间ID */
-  room_id: string;
+  room_id: string
   /** 开始时间 unix时间戳 秒级 */
-  begin_time: string;
+  begin_time: string
   /** 结束时间 unix时间戳 秒级 */
-  end_time: string;
+  end_time: string
   /** 游戏id */
-  appid: string;
+  appid: string
 }
 
 declare module '../internal' {

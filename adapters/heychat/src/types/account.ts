@@ -6,13 +6,13 @@ import { Internal } from '../internal'
  */
 export interface AccountBotOauthParams {
   /** 客户端ID */
-  client_id: string;
+  client_id: string
   /** 回调地址 */
-  redirect_uri: string;
+  redirect_uri: string
   /** 授权码类型 不可更改 */
-  response_type: string;
+  response_type: string
   /** 申请的权限 多个权限以空格分隔 */
-  scope: string;
+  scope: string
 }
 
 declare module '../internal' {
