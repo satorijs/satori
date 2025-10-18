@@ -1,5 +1,5 @@
 import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
-import { adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
+import { adaptChannel, adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
@@ -19,7 +19,7 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
         'Authorization': `Bot ${config.token}`,
       },
     }).extend(config)
-    this.proxyUrls.push('https://www.kookapp.cn/')
+    ctx.satori.proxyUrls.add('https://www.kookapp.cn/')
     this.internal = new Kook.Internal(this.http)
 
     if (config.protocol === 'http') {
@@ -56,9 +56,9 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
 
   async getMessage(channelId: string, msg_id: string) {
     if (isDirectChannel(channelId)) {
-      return adaptMessage(await this.request('POST', '/user-chat/view', { msg_id }))
+      return adaptMessage(await this.request('GET', '/user-chat/view', { msg_id }))
     } else {
-      return adaptMessage(await this.request('POST', '/message/view', { msg_id }))
+      return adaptMessage(await this.request('GET', '/message/view', { msg_id }))
     }
   }
 
@@ -86,6 +86,24 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
   async getGuildList() {
     const { items } = await this.request<Kook.GuildList>('GET', '/guild/list')
     return { data: items.map(adaptGroup) }
+  }
+
+  async getChannelList(guildId: string, next?: string): Promise<Universal.List<Universal.Channel>> {
+    const channels = await this.internal.getChannelList({ guild_id: guildId })
+    return { data: channels.items.map(adaptChannel) }
+  }
+
+  async createChannel(guildId: string, data: Partial<Universal.Channel>) {
+    const channel = await this.internal.createChannel({
+      guild_id: guildId,
+      name: data.name,
+      type: data.type === Universal.Channel.Type.TEXT ? 1
+        : data.type === Universal.Channel.Type.VOICE ? 2
+          : 1,
+      parent_id: data.parentId,
+      is_category: data.type === Universal.Channel.Type.CATEGORY ? 1 : 0,
+    })
+    return adaptChannel(channel)
   }
 
   async getGuildMemberList(guild_id: string) {

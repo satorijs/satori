@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-wecom",
   "description": "Wecom Adapter for Satorijs",
-  "version": "2.4.3-alpha.0",
+  "version": "3.0.0-alpha.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -30,13 +30,13 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.3",
-    "@satorijs/core": "^4.2.1",
+    "@cordisjs/plugin-server": "^1.1.0",
+    "@satorijs/core": "^5.0.0-alpha.0",
     "@types/xml2js": "^0.4.14",
-    "cordis": "^3.18.0"
+    "cordis": "^4.0.0-alpha.7"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.1"
+    "@satorijs/core": "^5.0.0-alpha.0"
   },
   "dependencies": {
     "@wecom/crypto": "^1.0.1",

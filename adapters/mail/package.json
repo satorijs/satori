@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-mail",
   "description": "Mail Adapter for Satorijs",
-  "version": "2.3.2",
+  "version": "3.0.0-alpha.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -32,19 +32,19 @@
     "chat"
   ],
   "devDependencies": {
-    "@satorijs/core": "^4.2.1",
+    "@satorijs/core": "^5.0.0-alpha.0",
     "@types/node-imap": "^0.9.3",
-    "@types/nodemailer": "^6.4.14",
-    "cordis": "^3.18.0"
+    "@types/nodemailer": "^6.4.17",
+    "cordis": "^4.0.0-alpha.7"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.1"
+    "@satorijs/core": "^5.0.0-alpha.0"
   },
   "dependencies": {
-    "@types/mailparser": "^3.4.4",
+    "@types/mailparser": "^3.4.5",
     "html5parser": "^2.0.2",
-    "mailparser": "^3.6.9",
+    "mailparser": "^3.7.2",
     "node-imap": "^0.9.6",
-    "nodemailer": "^6.9.13"
+    "nodemailer": "^6.10.0"
   }
 }

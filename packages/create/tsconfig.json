@@ -5,6 +5,8 @@
     "outDir": "lib",
     "module": "esnext",
     "moduleResolution": "bundler",
+    "strict": true,
+    "noImplicitAny": false,
   },
   "include": [
     "src",

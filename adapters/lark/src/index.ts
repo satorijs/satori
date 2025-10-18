@@ -1,4 +1,6 @@
 import { LarkBot } from './bot'
+import { Internal } from './internal'
+import { EventPayload } from './utils'
 import * as Lark from './types'
 
 export * from './bot'
@@ -9,7 +11,7 @@ export default LarkBot
 
 declare module '@satorijs/core' {
   interface Session {
-    feishu: Lark.Internal
-    lark: Lark.Internal
+    feishu: Internal & EventPayload
+    lark: Internal & EventPayload
   }
 }

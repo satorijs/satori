@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-slack",
   "description": "Slack Adapter for Satorijs",
-  "version": "2.4.2",
+  "version": "3.0.0-alpha.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -30,14 +30,14 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.3",
-    "@satorijs/core": "^4.2.1",
-    "cordis": "^3.18.0"
+    "@cordisjs/plugin-server": "^1.1.0",
+    "@satorijs/core": "^5.0.0-alpha.0",
+    "cordis": "^4.0.0-alpha.7"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.1"
+    "@satorijs/core": "^5.0.0-alpha.0"
   },
   "dependencies": {
-    "@slack/types": "^2.11.0"
+    "@slack/types": "^2.14.0"
   }
 }

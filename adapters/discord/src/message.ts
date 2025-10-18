@@ -19,9 +19,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
   private stack: State[] = [new State('message')]
   private buffer: string = ''
   private addition: Dict = {}
-  private figure: h = null
+  private figure?: h
   private mode: RenderMode = 'default'
-  private listType: 'ol' | 'ul' = null
+  private listType?: 'ol' | 'ul'
   private rows: ActionRow[] = []
   private async getUrl() {
     const input = this.options?.session?.discord
@@ -73,7 +73,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       if (this.bot.http.isError(e) && e.response) {
         if (e.response.data?.code === 10015) {
           this.bot.logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
-          if (!this.bot.webhookLock[this.channelId]) this.bot.webhooks[this.channelId] = null
+          if (!this.bot.webhookLock[this.channelId]) {
+            this.bot.webhooks[this.channelId] = null
+          }
           await this.ensureWebhook()
           return this.post(data, headers)
         } else {
@@ -134,7 +136,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       headers: { accept: type + '/*' },
       timeout: 1000,
     }).then(
-      (headers) => headers.get('content-type').startsWith(type),
+      (headers) => headers.get('content-type')?.startsWith(type),
       () => false,
     )
   }
@@ -260,7 +262,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     } else if (type === 'ul' || type === 'ol') {
       this.listType = type
       await this.render(children)
-      this.listType = null
+      this.listType = undefined
     } else if (type === 'li') {
       if (!this.buffer.endsWith('\n')) this.buffer += '\n'
       if (this.listType === 'ol') {
@@ -343,7 +345,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         if (this.stack[0].type === 'forward' && this.stack[0].fakeMessageMap[attrs.id]?.length >= 1) {
           // quote to fake message, eg. 1st message has id (in channel or thread), later message quote to it
           replyId = this.stack[0].fakeMessageMap[attrs.id][0].id
-          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channel.id
+          channelId = this.stack[0].fakeMessageMap[attrs.id][0].channel!.id
         }
         const quote = await this.bot.getMessage(channelId, replyId)
         if (!guildId) {

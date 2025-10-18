@@ -1,21 +1,10 @@
-import Element from '@satorijs/element'
-import { Dict } from 'cosmokit'
+import { Element, Fragment, parse } from '@cordisjs/element'
+import { Dict, isNullable, pick } from 'cosmokit'
+
+type PartialWithPick<T, K extends keyof T> = Partial<T> & Pick<T, K>
 
 export interface SendOptions {
   linkPreview?: boolean
-}
-
-export interface Upload {
-  type: string
-  filename?: string
-  data: ArrayBuffer
-}
-
-export interface Response {
-  status: number
-  statusText?: string
-  data?: ArrayBuffer
-  headers?: Headers
 }
 
 export interface Field {
@@ -44,7 +33,7 @@ export const Methods: Dict<Method> = {
   'channel.delete': Method('deleteChannel', ['channel_id']),
   'channel.mute': Method('muteChannel', ['channel_id', 'guild_id', 'enable']),
 
-  'message.create': Method('createMessage', ['channel_id', 'content']),
+  'message.create': Method('createMessage', ['channel_id', 'content', 'referrer']),
   'message.update': Method('editMessage', ['channel_id', 'message_id', 'content']),
   'message.delete': Method('deleteMessage', ['channel_id', 'message_id']),
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
@@ -66,6 +55,7 @@ export const Methods: Dict<Method> = {
   'guild.member.mute': Method('muteGuildMember', ['guild_id', 'user_id', 'duration', 'reason']),
   'guild.member.role.set': Method('setGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
   'guild.member.role.unset': Method('unsetGuildMemberRole', ['guild_id', 'user_id', 'role_id']),
+  'guild.member.role.list': Method('getGuildMemberRoleList', ['guild_id', 'user_id', 'next']),
 
   'guild.role.list': Method('getGuildRoleList', ['guild_id', 'next']),
   'guild.role.create': Method('createGuildRole', ['guild_id', 'data']),
@@ -83,12 +73,12 @@ export const Methods: Dict<Method> = {
   'guild.member.approve': Method('handleGuildMemberRequest', ['message_id', 'approve', 'comment']),
 }
 
-export interface List<T> {
+export interface List<T = any> {
   data: T[]
   next?: string
 }
 
-export interface TwoWayList<T> {
+export interface BidiList<T = any> {
   data: T[]
   prev?: string
   next?: string
@@ -100,13 +90,13 @@ export type Order = 'asc' | 'desc'
 
 export interface Methods {
   // message
-  createMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<Message[]>
-  sendMessage(channelId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
-  sendPrivateMessage(userId: string, content: Element.Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
+  createMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions): Promise<Message[]>
+  sendMessage(channelId: string, content: Fragment, referrer?: any, options?: SendOptions): Promise<string[]>
+  sendPrivateMessage(userId: string, content: Fragment, guildId?: string, options?: SendOptions): Promise<string[]>
   getMessage(channelId: string, messageId: string): Promise<Message>
-  getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<TwoWayList<Message>>
+  getMessageList(channelId: string, next?: string, direction?: Direction, limit?: number, order?: Order): Promise<BidiList<Message>>
   getMessageIter(channelId: string): AsyncIterable<Message>
-  editMessage(channelId: string, messageId: string, content: Element.Fragment): Promise<void>
+  editMessage(channelId: string, messageId: string, content: Fragment): Promise<void>
   deleteMessage(channelId: string, messageId: string): Promise<void>
 
   // reaction
@@ -117,7 +107,7 @@ export interface Methods {
   getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
 
   // upload
-  createUpload(...uploads: Upload[]): Promise<string[]>
+  createUpload(...blobs: Blob[]): Promise<string[]>
 
   // user
   getLogin(): Promise<Login>
@@ -137,10 +127,11 @@ export interface Methods {
   getGuildMemberIter(guildId: string): AsyncIterable<GuildMember>
   kickGuildMember(guildId: string, userId: string, permanent?: boolean): Promise<void>
   muteGuildMember(guildId: string, userId: string, duration: number, reason?: string): Promise<void>
-
-  // role
   setGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
   unsetGuildMemberRole(guildId: string, userId: string, roleId: string): Promise<void>
+  getGuildMemberRoleList(guildId: string, userId: string, next?: string): Promise<List<PartialWithPick<GuildRole, 'id'>>>
+
+  // role
   getGuildRoleList(guildId: string, next?: string): Promise<List<GuildRole>>
   getGuildRoleIter(guildId: string): AsyncIterable<GuildRole>
   createGuildRole(guildId: string, data: Partial<GuildRole>): Promise<GuildRole>
@@ -203,15 +194,74 @@ export interface User {
   id: string
   name?: string
   nick?: string
-  /** @deprecated */
-  userId?: string
-  /** @deprecated */
-  username?: string
-  /** @deprecated */
-  nickname?: string
   avatar?: string
   discriminator?: string
   isBot?: boolean
+}
+
+export interface Resource<K = any> {
+  attrs: (keyof K)[]
+  children: (keyof K)[]
+  content?: keyof K
+}
+
+export function Resource<K>(attrs: (keyof K)[] = [], children: (keyof K)[] = [], content?: keyof K): Resource<K> {
+  return { attrs, children, content }
+}
+
+export namespace Resource {
+  export interface Definitions {
+    user: User
+    member: GuildMember
+    channel: Channel
+    guild: Guild
+    quote: Message
+  }
+
+  const Definitions: { [K in keyof Definitions]: Resource<Definitions[K]> } = {
+    user: Resource(['id', 'name', 'nick', 'avatar', 'isBot']),
+    member: Resource(['name', 'nick', 'avatar']),
+    channel: Resource(['id', 'type', 'name']),
+    guild: Resource(['id', 'name', 'avatar']),
+    quote: Resource(['id'], ['quote', 'user', 'member', 'channel'], 'content'),
+  }
+
+  export function encode<K extends keyof Definitions>(type: K, data: Definitions[K]) {
+    const resource = Definitions[type]
+    const element = Element(type, pick(data, resource.attrs as any))
+    for (const key of resource.children) {
+      if (isNullable(data[key])) continue
+      element.children.push(encode(key as any, data[key]))
+    }
+    if (resource.content && !isNullable(data[resource.content])) {
+      element.children.push(...parse(data[resource.content] as string))
+    }
+    return element
+  }
+
+  export function decode(element: Element) {
+    const data: any = element.attrs
+    const resource = Definitions[element.type]
+    for (const key of resource.children) {
+      const index = element.children.findIndex((el) => el.type === key)
+      if (index === -1) continue
+      const [child] = element.children.splice(index, 1)
+      data[key] = decode(child)
+    }
+    if (resource.content && element.children.length) {
+      data[resource.content] = element.children.join('')
+    }
+    return data
+  }
+}
+
+export function transformKey(source: any, callback: (key: string) => string) {
+  if (!source || typeof source !== 'object') return source
+  if (Array.isArray(source)) return source.map(value => transformKey(value, callback))
+  return Object.fromEntries(Object.entries(source).map(([key, value]) => {
+    if (key.startsWith('_') || key === 'referrer') return [key, value]
+    return [callback(key), transformKey(value, callback)]
+  }))
 }
 
 export interface GuildMember {
@@ -225,14 +275,13 @@ export interface GuildMember {
 }
 
 export interface Login {
+  sn: number
+  adapter: string
   user?: User
   platform?: string
-  /** @deprecated use `login.user.id` instead */
-  selfId?: string
   hidden?: boolean
   status: Status
   features: string[]
-  proxyUrls: string[]
 }
 
 export const enum Status {
@@ -245,8 +294,6 @@ export const enum Status {
 
 export interface Message {
   id?: string
-  /** @deprecated */
-  messageId?: string
   channel?: Channel
   guild?: Guild
   user?: User
@@ -308,27 +355,29 @@ export type EventName =
   | 'guild-member-request'
 
 export interface Event {
-  id: number
+  sn: number
   type: string
+  login: Login
   selfId: string
   platform: string
   timestamp: number
   argv?: Argv
   channel?: Channel
   guild?: Guild
-  login?: Login
   member?: GuildMember
   message?: Message
   operator?: User
   role?: GuildRole
   user?: User
   button?: Button
+  referrer: any
   _type?: string
   _data?: any
-  /** @deprecated */
-  subtype?: string
-  /** @deprecated */
-  subsubtype?: string
+}
+
+export interface Meta {
+  logins: Login[]
+  proxyUrls: string[]
 }
 
 export type MessageLike = Message | Event
@@ -339,6 +388,7 @@ export const enum Opcode {
   PONG = 2,
   IDENTIFY = 3,
   READY = 4,
+  META = 5,
 }
 
 export interface GatewayPayloadStructure<O extends Opcode> {
@@ -348,7 +398,7 @@ export interface GatewayPayloadStructure<O extends Opcode> {
 
 export type ServerPayload = {
   [O in Opcode]: GatewayPayloadStructure<O>
-}[Opcode.EVENT | Opcode.PONG | Opcode.READY]
+}[Opcode.EVENT | Opcode.PONG | Opcode.READY | Opcode.META]
 
 export type ClientPayload = {
   [O in Opcode]: GatewayPayloadStructure<O>
@@ -360,10 +410,11 @@ export interface GatewayBody {
   [Opcode.PONG]: {}
   [Opcode.IDENTIFY]: {
     token?: string
-    sequence?: number
+    sn?: number
   }
-  [Opcode.READY]: {
-    logins: Login[]
+  [Opcode.READY]: Meta
+  [Opcode.META]: {
+    proxyUrls: string[]
   }
 }
 
@@ -414,7 +465,7 @@ export namespace WebSocket {
 }
 
 export interface WebSocket {
-  readonly url?: string
+  readonly url: string
   readonly protocol?: string
   readonly readyState?: number
   close(code?: number, reason?: string): void

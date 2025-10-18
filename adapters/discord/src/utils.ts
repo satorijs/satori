@@ -29,7 +29,7 @@ export const decodeGuildMember = (member: Partial<Discord.GuildMember>): Univers
   user: member.user && decodeUser(member.user),
   nick: member.nick,
   roles: member.roles,
-  joinedAt: member.joined_at && new Date(member.joined_at).valueOf(),
+  joinedAt: member.joined_at ? new Date(member.joined_at).valueOf() : undefined,
 })
 
 export const decodeGuild = (data: Discord.Guild): Universal.Guild => ({
@@ -56,11 +56,11 @@ export const decodeRole = (role: Discord.Role): Universal.GuildRole => ({
 
 export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Discord.Role> => ({
   ...role,
-  permissions: role.permissions && '' + role.permissions,
+  permissions: role.permissions ? '' + role.permissions : undefined,
 })
 
-export async function decodeMessage(
-  bot: DiscordBot,
+export async function decodeMessage<C extends Context = Context>(
+  bot: DiscordBot<C>,
   data: Discord.Message,
   message: Universal.Message,
   payload: Universal.MessageLike = message,
@@ -167,11 +167,11 @@ export async function decodeMessage(
   // THREAD_STARTER_MESSAGE (21) 事件下，message_reference 有 message_id
   if (details && data.message_reference?.message_id) {
     const { message_id, channel_id } = data.message_reference
-    message.quote = await bot.getMessage(channel_id, message_id, false)
+    message.quote = await bot.getMessage(channel_id!, message_id, false)
   }
 
   message.createdAt = new Date(data.timestamp).valueOf()
-  message.updatedAt = data.edited_timestamp && new Date(data.edited_timestamp).valueOf()
+  message.updatedAt = data.edited_timestamp ? new Date(data.edited_timestamp).valueOf() : undefined
   if (!payload) return message
   payload.channel = {
     id: data.channel_id,
@@ -183,7 +183,7 @@ export async function decodeMessage(
   return message
 }
 
-export function setupMessageGuildId(session: Session, guildId: string) {
+export function setupMessageGuildId(session: Session, guildId?: string) {
   session.guildId = guildId
   session.isDirect = !guildId
   session.subtype = guildId ? 'group' : 'private'
@@ -226,11 +226,11 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
-    const message = await bot._getMessage(input.d.channel_id, input.d.id)
+    const message = await bot._getMessage(input.d.channel_id!, input.d.id!)
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
     await decodeMessage(bot, message, session.event.message = {}, session.event)
-    const channel = await bot.internal.getChannel(input.d.channel_id)
+    const channel = await bot.internal.getChannel(input.d.channel_id!)
     setupMessageGuildId(session, channel.guild_id)
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_DELETE') {
@@ -279,7 +279,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
-    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
+    session.userId = session.isDirect ? input.d.user!.id : input.d.member!.user!.id
     session.messageId = input.d.id
     session.content = ''
     session.event.argv = decodeArgv(data, command)
@@ -296,7 +296,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
-    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
+    session.userId = session.isDirect ? input.d.user!.id : input.d.member!.user!.id
     session.messageId = input.d.id
     session.content = user_input
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.MESSAGE_COMPONENT) {
@@ -328,7 +328,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     session.isDirect = !input.d.guild_id
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
-    session.userId = session.isDirect ? input.d.user.id : input.d.member.user.id
+    session.userId = session.isDirect ? input.d.user!.id : input.d.member!.user!.id
     session.messageId = input.d.id
     session.content = ''
     session.event.button = {
@@ -441,5 +441,5 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       })
     }
   }
-  return result.sort((a, b) => +b.required - +a.required)
+  return result.sort((a, b) => +b.required! - +a.required!)
 }

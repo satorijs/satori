@@ -32,13 +32,15 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
 
     bot.ctx.server.post('/wechat-official', async (ctx) => {
       const { timestamp, nonce, msg_signature } = ctx.request.query
+      bot.logger.debug('%c', ctx.request.body)
       let { xml: data }: {
         xml: Message
-      } = await xml2js.parseStringPromise(ctx.request.body[Symbol.for('unparsedBody')], {
+      } = await xml2js.parseStringPromise(ctx.request.body, {
         explicitArray: false,
       })
       const botId = data.ToUserName
       const localBot = this.bots.find((bot) => bot.selfId === botId)
+      if (!localBot) return ctx.status = 403
 
       if (data.Encrypt) {
         const localSign = getSignature(localBot.config.token, timestamp?.toString(), nonce?.toString(), data.Encrypt)
@@ -51,8 +53,6 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
         bot.logger.debug('decrypted %c', data2)
         data = data2
       }
-
-      bot.logger.debug('%c', ctx.request.body[Symbol.for('unparsedBody')])
 
       const session = await decodeMessage(localBot, data)
 

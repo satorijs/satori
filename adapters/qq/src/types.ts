@@ -111,7 +111,9 @@ export enum Opcode {
   /** 当发送心跳成功之后，就会收到该消息 */
   HEARTBEAT_ACK = 11,
   /** 仅用于 http 回调模式的回包，代表机器人收到了平台推送的数据 */
-  HTTP_CAKKBACK_ACK = 12
+  HTTP_CALLBACK_ACK = 12,
+  /** 开放平台对机器人服务端进行验证 */
+  ADDRESS_VERIFICATION = 13,
 }
 
 export type WithOpUser<T> = T & { op_user_id: string }
@@ -247,6 +249,12 @@ export type Payload = DispatchPayload | {
   }
 } | {
   op: Opcode.INVALID_SESSION
+} | {
+  op: Opcode.ADDRESS_VERIFICATION
+  d: {
+    plain_token: string
+    event_ts: number
+  }
 }
 
 export interface Attachment {
@@ -869,7 +877,6 @@ export interface Options {
   /** 是否开启沙箱模式 */
   sandbox?: boolean
   endpoint?: string
-  /** 目前还不支持 bearer 验证方式。 */
   authType?: 'bot' | 'bearer'
   /** 重连次数 */
   retryTimes?: number

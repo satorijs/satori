@@ -1,41 +1,33 @@
 {
   "name": "@satorijs/element",
   "description": "Element Manipulation",
-  "version": "3.1.7",
-  "main": "lib/index.cjs",
-  "module": "lib/index.mjs",
-  "types": "lib/index.d.ts",
+  "version": "4.0.0-alpha.0",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
     },
     "./jsx-runtime": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
     },
     "./jsx-dev-runtime": {
-      "import": "./lib/index.mjs",
-      "require": "./lib/index.cjs",
-      "types": "./lib/index.d.ts"
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
   },
   "files": [
-    "lib",
-    "src",
-    "jsx-runtime.d.ts",
-    "jsx-dev-runtime.d.ts"
+    "lib"
   ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/satorijs/satori.git",
-    "directory": "packages/message"
+    "directory": "packages/element"
   },
   "bugs": {
     "url": "https://github.com/satorijs/satori/issues"
@@ -50,11 +42,12 @@
     "utilities"
   ],
   "devDependencies": {
-    "@types/chai": "^4.3.16",
-    "chai": "^5.1.1",
+    "@types/chai": "^5.2.0",
+    "chai": "^5.2.0",
     "chai-shape": "^1.1.0"
   },
   "dependencies": {
-    "cosmokit": "^1.6.2"
+    "@cordisjs/element": "^0.3.0",
+    "cosmokit": "^1.8.0"
   }
 }

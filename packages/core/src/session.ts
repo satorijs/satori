@@ -1,8 +1,8 @@
-import { Channel, Event, GuildMember, Login, Message, User } from '@satorijs/protocol'
-import { defineProperty, isNullable } from 'cosmokit'
+import { Channel, Event, GuildMember, Message, Resource, User } from '@satorijs/protocol'
+import * as h from '@cordisjs/element'
+import { clone, defineProperty, isNullable } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import { Bot } from './bot'
-import h from '@satorijs/element'
 
 declare module '@satorijs/protocol' {
   interface SendOptions {
@@ -13,31 +13,29 @@ declare module '@satorijs/protocol' {
 // Accessors
 export interface Session {
   type: string
-  subtype: string
-  subsubtype: string
   selfId: string
   platform: string
   timestamp: number
-  userId: string
-  channelId: string
-  guildId: string
-  messageId: string
-  operatorId: string
-  roleId: string
-  quote: Message
+  userId?: string
+  channelId?: string
+  guildId?: string
+  messageId?: string
+  operatorId?: string
+  roleId?: string
+  quote?: Message
+  referrer: any
 }
 
 export class Session<C extends Context = Context> {
-  static counter = 0
-
   public [Service.tracker] = {
     associate: 'session',
     property: 'ctx',
   }
 
-  public id: number
-  public bot: Bot<C>
-  public app: C['root']
+  public id: number // for backward compatibility
+  public sn: number
+  public bot!: Bot<C>
+  public app!: C['root']
   public event: Event
   public locales: string[] = []
 
@@ -46,34 +44,27 @@ export class Session<C extends Context = Context> {
     event.platform ??= bot.platform
     event.timestamp ??= Date.now()
     this.event = event as Event
-    this.id = ++Session.counter
+    this.sn = this.id = ++bot.ctx.satori._sessionSeq
     defineProperty(this, 'bot', bot)
     defineProperty(this, 'app', bot.ctx.root)
-    defineProperty(this, Context.current, bot.ctx)
-    return Context.associate(this, 'session')
-  }
-
-  /** @deprecated */
-  get data() {
-    return this.event
   }
 
   get isDirect() {
-    return this.event.channel.type === Channel.Type.DIRECT
+    return this.event.channel?.type === Channel.Type.DIRECT
   }
 
   set isDirect(value) {
     (this.event.channel ??= {} as Channel).type = value ? Channel.Type.DIRECT : Channel.Type.TEXT
   }
 
-  get author(): GuildMember & User {
+  get author() {
     return {
       ...this.event.user,
       ...this.event.member,
       userId: this.event.user?.id,
       username: this.event.user?.name,
       nickname: this.event.member?.name,
-    }
+    } as GuildMember & User
   }
 
   get uid() {
@@ -114,11 +105,8 @@ export class Session<C extends Context = Context> {
     this.event.message.quote = undefined
     this.event.message.elements = isNullable(value) ? value : h.parse(value)
     if (this.event.message.elements?.[0]?.type === 'quote') {
-      const el = this.event.message.elements.shift()
-      this.event.message.quote = {
-        ...el.attrs,
-        content: el.children.join(''),
-      }
+      const el = this.event.message.elements.shift()!
+      this.event.message.quote = Resource.decode(el)
     }
   }
 
@@ -129,22 +117,30 @@ export class Session<C extends Context = Context> {
     defineProperty(this, type, Object.assign(internal, data))
   }
 
-  async transform(elements: h[]): Promise<h[]> {
-    return await h.transformAsync(elements, ({ type, attrs, children }, session) => {
+  async transform(elements: h.Element[]): Promise<h.Element[]> {
+    return await h.transformAsync(elements, async ({ type, attrs, children }, session) => {
       const render = type === 'component' ? attrs.is : this.app.get('component:' + type)
-      return render?.(attrs, children, session) ?? true
+      if (!render) return true
+      children = await render(attrs, children, session)
+      return this.transform(h.toElementArray(children))
     }, this)
   }
 
-  toJSON(): Event {
-    return {
-      login: {
-        platform: this.platform,
-        user: { id: this.userId },
-      } as Login,
-      ...this.event,
-      id: this.id,
+  toJSON() {
+    const event: Event = {
+      ...clone(this.event),
+      sn: this.sn,
+      login: this.bot.toJSON(),
+      ['id' as never]: this.sn, // for backward compatibility
     }
+    if (event.message?.elements) {
+      event.message.content = this.content
+      delete event.message.elements
+      if (event.message.quote) {
+        event.message.content = Resource.encode('quote', event.message.quote) + event.message.content!
+      }
+    }
+    return event
   }
 }
 
@@ -158,7 +154,7 @@ export function defineAccessor(prototype: {}, name: string, keys: string[]) {
       // See https://github.com/satorijs/satori/issues/166
       if (value === undefined) return
       const _keys = keys.slice()
-      const last = _keys.pop()
+      const last = _keys.pop()!
       const data = _keys.reduce((data, key) => data[key] ??= {}, this)
       data[last] = value
     },
@@ -180,3 +176,4 @@ defineAccessor(Session.prototype, 'messageId', ['event', 'message', 'id'])
 defineAccessor(Session.prototype, 'operatorId', ['event', 'operator', 'id'])
 defineAccessor(Session.prototype, 'roleId', ['event', 'role', 'id'])
 defineAccessor(Session.prototype, 'quote', ['event', 'message', 'quote'])
+defineAccessor(Session.prototype, 'referrer', ['event', 'referrer'])

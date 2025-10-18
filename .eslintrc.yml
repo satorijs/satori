@@ -13,3 +13,7 @@ extends:
 
 rules:
   '@typescript-eslint/naming-convention': off
+  '@typescript-eslint/no-unused-vars':
+    - error
+    - args: none
+      ignoreRestSiblings: true

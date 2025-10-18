@@ -1,31 +1,27 @@
-import { Readable } from 'node:stream'
-import { ReadableStream } from 'node:stream/web'
 import { Adapter, Context, Logger, Schema } from '@satorijs/core'
 import {} from '@cordisjs/plugin-server'
+import { LarkBot } from './bot'
+import { adaptSession, Cipher, EventPayload } from './utils'
 
-import { FeishuBot } from './bot'
-import { AllEvents } from './types'
-import { adaptSession, Cipher } from './utils'
-
-export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBot<C>> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C>> {
   static inject = ['server']
 
   private logger: Logger
   private ciphers: Record<string, Cipher> = {}
 
-  constructor(ctx: C, bot: FeishuBot<C>) {
+  constructor(ctx: C, bot: LarkBot<C>) {
     super(ctx)
     this.logger = ctx.logger('lark')
   }
 
-  fork(ctx: C, bot: FeishuBot<C>) {
+  fork(ctx: C, bot: LarkBot<C>) {
     super.fork(ctx, bot)
 
     this._refreshCipher()
     return bot.initialize()
   }
 
-  async connect(bot: FeishuBot) {
+  async connect(bot: LarkBot) {
     const { path } = bot.config
     bot.ctx.server.post(path, (ctx) => {
       this._refreshCipher()
@@ -46,6 +42,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
         })
         if (!result) return (ctx.status = 403)
       }
+
+      // only accept JSON body
+      if (!ctx.request.is('json')) return ctx.status = 415
 
       // try to decrypt message first if encryptKey is set
       const body = this._tryDecryptBody(ctx.request.body)
@@ -72,38 +71,20 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, FeishuBo
 
       // dispatch message
       bot.logger.debug('received decryped event: %o', body)
-      // @TODO: need await?
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
+      ctx.body = {}
       return ctx.status = 200
-    })
-
-    bot.ctx.server.get(path + '/assets/:type/:message_id/:key', async (ctx) => {
-      const type = ctx.params.type === 'image' ? 'image' : 'file'
-      const key = ctx.params.key
-      const messageId = ctx.params.message_id
-      const selfId = ctx.request.query.self_id
-      const bot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!bot) return ctx.status = 404
-
-      const resp = await bot.http<ReadableStream>(`/im/v1/messages/${messageId}/resources/${key}`, {
-        method: 'GET',
-        params: { type },
-        responseType: 'stream',
-      })
-      ctx.set('content-type', resp.headers.get('content-type'))
-      ctx.status = 200
-      ctx.response.body = Readable.fromWeb(resp.data)
     })
   }
 
-  async dispatchSession(body: AllEvents) {
+  async dispatchSession(body: EventPayload) {
     const { header } = body
     if (!header) return
     const { app_id, event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
-    const bot = this.bots.find((bot) => bot.appId === app_id)
+    const bot = this.bots.find((bot) => bot.config.appId === app_id)!
     const session = await adaptSession(bot, body)
     bot.dispatch(session)
   }

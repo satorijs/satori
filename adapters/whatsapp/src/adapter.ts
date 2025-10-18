@@ -114,7 +114,7 @@ export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, Wha
     ctx.on('ready', async () => {
       const data = await internal.getPhoneNumbers(config.id)
       for (const item of data) {
-        const bot = new WhatsAppBot(ctx, {})
+        const bot = new WhatsAppBot(ctx)
         bot.selfId = item.id
         bot.adapter = this
         bot.internal = internal

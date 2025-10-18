@@ -120,21 +120,23 @@ export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
       id: update.callback_query.data,
     }
     const data = update.callback_query.message
-    if (data.chat.type === 'private') {
-      session.event.channel = {
-        id: data.chat.id.toString(),
-        type: Universal.Channel.Type.DIRECT,
-      }
-    } else {
-      session.event.guild = {
-        id: data.chat.id.toString(),
-        name: data.chat.title,
-      }
-      session.event.channel = {
-        id: data.is_topic_message
-          ? data.message_thread_id.toString()
-          : data.chat.id.toString(),
-        type: Universal.Channel.Type.TEXT,
+    if (data) {
+      if (data.chat.type === 'private') {
+        session.event.channel = {
+          id: data.chat.id.toString(),
+          type: Universal.Channel.Type.DIRECT,
+        }
+      } else {
+        session.event.guild = {
+          id: data.chat.id.toString(),
+          name: data.chat.title,
+        }
+        session.event.channel = {
+          id: data.is_topic_message
+            ? data.message_thread_id.toString()
+            : data.chat.id.toString(),
+          type: Universal.Channel.Type.TEXT,
+        }
       }
     }
     await bot.internal.answerCallbackQuery({
@@ -250,7 +252,11 @@ export async function decodeMessage(
       if (file.file_path.endsWith('.tgs')) {
         throw new Error('tgs is not supported now')
       }
-      segments.push(h('img', await bot.$getFileFromPath(file.file_path)))
+      segments.push(h('img', await bot.$getFileFromPath(file.file_path, {
+        id: data.sticker.file_id,
+        uniqueId: data.sticker.file_unique_id,
+        setName: data.sticker.set_name,
+      })))
     } catch (e) {
       bot.logger.warn('get file error', e)
       segments.push(h('text', { content: `[${data.sticker.set_name || 'sticker'} ${data.sticker.emoji || ''}]` }))

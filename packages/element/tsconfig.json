@@ -4,6 +4,8 @@
     "rootDir": "src",
     "outDir": "lib",
     "module": "preserve",
+    "strict": true,
+    "noImplicitAny": false,
   },
   "include": [
     "src"

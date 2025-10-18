@@ -5,7 +5,7 @@ import { decodeGuildMember, decodeUser } from './utils'
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
-import FileType from 'file-type'
+import { fileTypeFromBuffer } from 'file-type'
 
 export class SenderError extends Error {
   constructor(args: Dict<any>, url: string, retcode: number, selfId: string) {
@@ -160,16 +160,16 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     }
   }
 
-  async $getFileFromPath(filePath: string) {
+  async $getFileFromPath(filePath: string, extra?: Record<string, any>) {
     if (this.server) {
-      return { src: `${this.server}/${filePath}` }
+      return { ...extra, src: `${this.server}/${filePath}` }
     }
     let { type, data } = await this.$getFile(filePath)
     if (type === 'application/octet-stream') {
-      type = (await FileType.fromBuffer(data))?.mime
+      type = (await fileTypeFromBuffer(data))?.mime
     }
     const base64 = `data:${type};base64,` + Binary.toBase64(data)
-    return { src: base64 }
+    return { ...extra, src: base64 }
   }
 
   private async setAvatarUrl(user: Universal.User) {

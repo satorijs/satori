@@ -1,7 +1,9 @@
-import { Adapter, camelize, Context, HTTP, Logger, pick, Schema, Time, Universal } from '@satorijs/core'
-import { SatoriBot, transformKey } from './bot'
+import { Adapter, camelize, Context, Schema, Service, Time, Universal } from '@satorijs/core'
+import type { HTTP } from '@cordisjs/plugin-http'
+import type { Logger } from '@cordisjs/plugin-logger'
+import { SatoriBot } from './bot'
 
-export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClientBase<C, SatoriBot<C>> {
+export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> = SatoriBot<C>> extends Adapter.WsClientBase<C, B> {
   static schema = true as any
   static reusable = true
   static inject = ['http']
@@ -13,17 +15,17 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
   private sequence?: number
   private timeout?: NodeJS.Timeout
 
+  private _metaDispose?: () => void
+
   constructor(public ctx: C, public config: SatoriAdapter.Config) {
     super(ctx, config)
     this.logger = ctx.logger('satori')
     this.http = ctx.http.extend({
-      endpoint: config.endpoint,
+      baseUrl: config.baseUrl,
       headers: {
         'Authorization': `Bearer ${config.token}`,
       },
     })
-    ctx.on('ready', () => this.start())
-    ctx.on('dispose', () => this.stop())
   }
 
   getActive() {
@@ -43,53 +45,51 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
     return this.http.ws('/v1/events')
   }
 
-  getBot(platform: string, selfId: string, login: Universal.Login) {
-    // Do not dispatch event from outside adapters.
-    let bot = this.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+  getBot(login: Universal.Login, action?: 'created' | 'updated' | 'removed') {
+    // FIXME Do not dispatch event from outside adapters.
+    let bot = this.bots.find(bot => bot.config.sn === login.sn)
     if (bot) {
-      if (login) bot.update(login)
-      return this.bots.includes(bot) ? bot : undefined
-    }
-
-    if (!login) {
-      this.logger.error('cannot find bot for', platform, selfId)
+      if (action === 'created') {
+        this.logger.warn('bot already exists when login created, sn = %s, adapter = %s', login.sn, login.adapter)
+      } else if (action === 'updated') {
+        bot.update(login)
+      } else if (action === 'removed') {
+        bot.dispose()
+      }
+      return bot
+    } else if (!action) {
+      this.logger.warn('bot not found when non-login event received, sn = %s, adapter = %s', action, login.sn, login.adapter)
       return
     }
-    bot = new SatoriBot(this.ctx, login)
-    this.bots.push(bot)
+
+    bot = new SatoriBot(this.ctx, login) as B
     bot.adapter = this
-    bot.http = this.http.extend({
-      headers: {
-        'Satori-Platform': platform,
-        'Satori-Login-ID': selfId,
-        'X-Platform': platform,
-        'X-Self-ID': selfId,
-      },
-    })
-    bot.status = login.status
+    this.bots.push(bot)
   }
 
-  accept() {
-    this.socket.send(JSON.stringify({
+  accept(socket: WebSocket) {
+    socket.send(JSON.stringify({
       op: Universal.Opcode.IDENTIFY,
       body: {
         token: this.config.token,
-        sequence: this.sequence,
+        sn: this.sequence,
       },
     }))
 
+    clearInterval(this.timeout)
     this.timeout = setInterval(() => {
-      this.socket.send(JSON.stringify({
+      if (socket !== this.socket) return
+      socket.send(JSON.stringify({
         op: Universal.Opcode.PING,
         body: {},
       }))
     }, Time.second * 10)
 
-    this.socket.addEventListener('message', async ({ data }) => {
+    socket.addEventListener('message', async ({ data }) => {
       let parsed: Universal.ServerPayload
       data = data.toString()
       try {
-        parsed = transformKey(JSON.parse(data), camelize)
+        parsed = Universal.transformKey(JSON.parse(data), camelize)
       } catch (error) {
         return this.logger.warn('cannot parse message', data)
       }
@@ -97,22 +97,25 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
       if (parsed.op === Universal.Opcode.READY) {
         this.logger.debug('ready')
         for (const login of parsed.body.logins) {
-          this.getBot(login.platform, login.user.id, login)
+          this.getBot(login)
         }
+        this._metaDispose?.()
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls ?? [])
+      }
+
+      if (parsed.op === Universal.Opcode.META) {
+        this._metaDispose?.()
+        this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls ?? [])
       }
 
       if (parsed.op === Universal.Opcode.EVENT) {
-        const { id, type, login, selfId = login?.user.id, platform = login?.platform } = parsed.body
-        this.sequence = id
+        // Satori protocol ensures that login.user and login.platform are always present ?
+        const { sn, type, login } = parsed.body
+        this.sequence = sn
         // `login-*` events will be dispatched by the bot,
         // so there is no need to create sessions manually.
-        const bot = this.getBot(platform, selfId, type === 'login-added' && login)
+        const bot = this.getBot(login, type.startsWith('login-') ? type.slice(6) as any : undefined)
         if (!bot) return
-        if (type === 'login-updated') {
-          return bot.update(login)
-        } else if (type === 'login-removed') {
-          return bot.dispose()
-        }
         const session = bot.session(parsed.body)
         if (typeof parsed.body.message?.content === 'string') {
           session.content = parsed.body.message.content
@@ -122,48 +125,38 @@ export class SatoriAdapter<C extends Context = Context> extends Adapter.WsClient
         }
         bot.dispatch(session)
         // temporary solution for `send` event
-        if (type === 'message-created' && session.userId === selfId) {
+        if (type === 'message-created' && session.userId === login.user?.id) {
           session.app.emit(session, 'send', session)
         }
       }
     })
 
-    this.socket.addEventListener('close', () => {
+    socket.addEventListener('close', () => {
       clearInterval(this.timeout)
-    })
-
-    this.ctx.satori.upload(() => {
-      return this.bots
-        .flatMap(bot => bot.proxyUrls)
-        .filter(url => url.startsWith('upload://'))
-        .map(url => url.replace('upload://', ''))
-    }, async (path) => {
-      path = path.replace(/^\//g, '')
-      const response = await this.http('/v1/proxy/upload://' + path, { responseType: 'arraybuffer' })
-      return pick(response, ['status', 'data', 'headers', 'statusText'])
+      this._metaDispose?.()
     })
   }
 
-  async start() {
+  async* [Service.init]() {
+    yield async () => {
+      this.setStatus(Universal.Status.DISCONNECT)
+      await super.stop()
+    }
+
     this.setStatus(Universal.Status.CONNECT)
     await super.start()
-  }
-
-  async stop() {
-    this.setStatus(Universal.Status.DISCONNECT)
-    await super.stop()
   }
 }
 
 export namespace SatoriAdapter {
   export interface Config extends Adapter.WsClientConfig {
-    endpoint: string
+    baseUrl: string
     token?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      endpoint: Schema.string().description('API 终结点。').required(),
+      baseUrl: Schema.string().description('API 终结点。').required(),
       token: Schema.string().description('API 访问令牌。'),
     }),
     Adapter.WsClientConfig,

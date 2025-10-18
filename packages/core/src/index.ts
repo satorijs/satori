@@ -1,27 +1,23 @@
-import { Context, Logger, Service, z } from 'cordis'
-import { Awaitable, defineProperty, Dict, makeArray, remove } from 'cosmokit'
+import { Context, Service } from 'cordis'
+import { Awaitable, defineProperty, Dict } from 'cosmokit'
 import { Bot } from './bot'
+import { InternalRouteCallback, InternalRouter, JsonForm } from './internal'
 import { Session } from './session'
-import { HTTP } from '@cordisjs/plugin-http'
-import { Response, SendOptions } from '@satorijs/protocol'
-import h from '@satorijs/element'
-
-h.warn = new Logger('element').warn
-
-// do not remove the `type` modifier
-// because `esModuleInterop` is not respected by esbuild
-export type { Fragment, Render } from '@satorijs/element'
-
-export { h, h as Element, h as segment, HTTP, HTTP as Quester }
+import type {} from '@cordisjs/plugin-http'
+import { Meta, SendOptions } from '@satorijs/protocol'
+import { ExtractParams } from 'path-to-regexp-typed'
+import * as h from '@cordisjs/element'
 
 export * from 'cordis'
 export * from 'cosmokit'
 
+export * from '@cordisjs/element'
 export * as Universal from '@satorijs/protocol'
 
 export * from './bot'
 export * from './adapter'
 export * from './message'
+export * from './internal'
 export * from './session'
 
 declare module 'cordis' {
@@ -37,6 +33,7 @@ declare module 'cordis' {
   }
 
   interface Events<C> {
+    'satori/meta'(): void
     'internal/session'(session: GetSession<C>): void
     'interaction/command'(session: GetSession<C>): void
     'interaction/button'(session: GetSession<C>): void
@@ -65,31 +62,9 @@ declare module 'cordis' {
     'guild-member-request'(session: GetSession<C>): void
     'before-send'(session: GetSession<C>, options: SendOptions): Awaitable<void | boolean>
     'send'(session: GetSession<C>): void
-    /** @deprecated use `login-added` instead */
-    'bot-added'(client: Bot<C>): void
-    /** @deprecated use `login-removed` instead */
-    'bot-removed'(client: Bot<C>): void
-    /** @deprecated use `login-updated` instead */
-    'bot-status-updated'(client: Bot<C>): void
     'bot-connect'(client: Bot<C>): Awaitable<void>
     'bot-disconnect'(client: Bot<C>): Awaitable<void>
   }
-}
-
-declare module '@cordisjs/plugin-http' {
-  namespace HTTP {
-    export function createConfig(this: typeof HTTP, endpoint?: string | boolean): z<Config>
-  }
-}
-
-HTTP.createConfig = function createConfig(this, endpoint) {
-  return z.object({
-    endpoint: z.string().role('link').description('要连接的服务器地址。')
-      .default(typeof endpoint === 'string' ? endpoint : null)
-      .required(typeof endpoint === 'boolean' ? endpoint : false),
-    headers: z.dict(String).role('table').description('要附加的额外请求头。'),
-    ...this.Config.dict,
-  }).description('请求设置')
 }
 
 export type Component<S extends Session = Session> = h.Render<Awaitable<h.Fragment>, S>
@@ -102,57 +77,112 @@ export namespace Component {
 
 export type GetSession<C extends Context> = C[typeof Context.session]
 
-class SatoriContext extends Context {
-  constructor(config?: any) {
-    super(config)
-    this.provide('satori', undefined, true)
-    this.plugin(Satori)
+class DisposableSet<T> {
+  private sn = 0
+  private map1 = new Map<number, T[]>()
+  private map2 = new Map<T, Set<number>>()
+
+  constructor(private ctx: Context) {
+    defineProperty(this, Service.tracker, {
+      property: 'ctx',
+    })
+  }
+
+  add(...values: T[]) {
+    const sn = ++this.sn
+    return this.ctx.effect(() => {
+      let hasUpdate = false
+      for (const value of values) {
+        if (!this.map2.has(value)) {
+          this.map2.set(value, new Set())
+          hasUpdate = true
+        }
+        this.map2.get(value)!.add(sn)
+      }
+      this.map1.set(sn, values)
+      if (hasUpdate) this.ctx.emit('satori/meta')
+      return () => {
+        let hasUpdate = false
+        this.map1.delete(sn)
+        for (const value of values) {
+          this.map2.get(value)!.delete(sn)
+          if (this.map2.get(value)!.size === 0) {
+            this.map2.delete(value)
+            hasUpdate = true
+          }
+        }
+        if (hasUpdate) this.ctx.emit('satori/meta')
+      }
+    })
+  }
+
+  [Symbol.iterator]() {
+    return new Set(([] as T[]).concat(...this.map1.values()))[Symbol.iterator]()
   }
 }
 
-export { SatoriContext as Context }
-
-export interface UploadRoute {
-  path: string | string[] | (() => string | string[])
-  callback: (path: string) => Promise<Response>
-}
-
-export class Satori<C extends Context = Context> extends Service<unknown, C> {
-  static [Service.provide] = 'satori'
-  static [Service.immediate] = true
-
+export class Satori<C extends Context = Context> extends Service<C> {
   public uid = Math.random().toString(36).slice(2)
+  public proxyUrls: DisposableSet<string> = new DisposableSet(this.ctx)
 
-  _uploadRoutes: UploadRoute[] = []
-  _tempStore: Dict<Response> = Object.create(null)
+  public _internalRouter: InternalRouter<C>
+  public _tempStore: Dict<Response> = Object.create(null)
 
-  constructor(ctx?: C) {
-    super(ctx)
+  public _loginSeq = 0
+  public _sessionSeq = 0
+
+  constructor(ctx: C) {
+    super(ctx, 'satori')
     ctx.mixin('satori', ['bots', 'component'])
-
-    this.upload(`/temp/${this.uid}/`, async (path) => {
-      const id = path.split('/').pop()
-      return this._tempStore[id] ?? { status: 404 }
-    })
 
     defineProperty(this.bots, Service.tracker, {})
 
     const self = this
-    ;(ctx as Context).on('http/file', async function (url, options) {
-      if (!url.startsWith('upload://')) return
-      const { status, data, headers } = await self.download(url.slice(9))
-      if (status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
-      if (status >= 300) {
-        const location = headers?.get('location')
-        return this.file(location, options)
+    ;(ctx as Context).on('http/fetch', async function (url, init, next) {
+      if (url.protocol !== 'satori:') return
+      const res = await self.handleInternalRoute(new Request(url))
+      if (res.status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
+      if (res.status >= 300) {
+        const location = res.headers.get('location')!
+        return this(location) as any // FIXME
       }
-      const type = headers?.get('content-type')
-      const filename = headers?.get('content-disposition')?.split('filename=')[1]
-      return { data, filename, type, mime: type }
+      return res
+    })
+
+    this._internalRouter = new InternalRouter(ctx)
+
+    this.defineInternalRoute('/_tmp/:id', async ({ params, method }) => {
+      if (method !== 'GET') return new Response(null, { status: 405 })
+      return this._tempStore[params.id] ?? new Response(null, { status: 404 })
+    })
+
+    this.defineInternalRoute('/_api/:name', async (req, bot) => {
+      if (req.method !== 'POST') return new Response(null, { status: 405 })
+      const args = await JsonForm.decode(req)
+      if (!args) return new Response(null, { status: 400 })
+      try {
+        let root = bot.internal
+        for (const part of req.params.name.split('.')) {
+          root = root[part]
+        }
+        let result = root(...args)
+        if (req.headers.get('satori-pagination')) {
+          if (!result?.[Symbol.for('satori.pagination')]) {
+            return new Response('This API does not support pagination', { status: 400 })
+          }
+          result = await result[Symbol.for('satori.pagination')]()
+        } else {
+          result = await result
+        }
+        return await JsonForm.encode(result)
+      } catch (error) {
+        if (!ctx.get('http')?.isError(error) || !error.response) throw error
+        return error.response
+      }
     })
   }
 
-  public bots = new Proxy([], {
+  public bots = new Proxy([] as Bot<C>[], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop)
@@ -181,26 +211,28 @@ export class Satori<C extends Context = Context> extends Service<unknown, C> {
     return this.ctx.set('component:' + name, render)
   }
 
-  upload(path: UploadRoute['path'], callback: UploadRoute['callback'], proxyUrls: UploadRoute['path'][] = []) {
-    return this.ctx.effect(() => {
-      const route: UploadRoute = { path, callback }
-      this._uploadRoutes.push(route)
-      proxyUrls.push(path)
-      return () => {
-        remove(this._uploadRoutes, route)
-        remove(proxyUrls, path)
-      }
-    })
+  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
+    return this._internalRouter.define(path, callback)
   }
 
-  async download(path: string) {
-    for (const route of this._uploadRoutes) {
-      const paths = makeArray(typeof route.path === 'function' ? route.path() : route.path)
-      if (paths.some(prefix => path.startsWith(prefix))) {
-        return route.callback(path)
-      }
+  async handleInternalRoute(req: Request): Promise<Response> {
+    const url = new URL(req.url)
+    const capture = /^([^/]+)\/([^/]+)(\/.+)$/.exec(url.pathname)
+    if (!capture) return new Response(null, { status: 404 })
+    const [, platform, selfId, path] = capture
+    const bot = this.bots[`${platform}:${selfId}`]
+    if (!bot) return new Response(null, { status: 404 })
+    let response = await this._internalRouter.handle(bot, req, path, url.searchParams)
+    response ??= await bot._internalRouter.handle(bot, req, path, url.searchParams)
+    if (!response) return new Response(null, { status: 404 })
+    return response
+  }
+
+  toJSON(meta = false): Meta {
+    return {
+      logins: meta ? undefined! : this.bots.map(bot => bot.toJSON()),
+      proxyUrls: [...this.proxyUrls],
     }
-    return { status: 404 }
   }
 }
 

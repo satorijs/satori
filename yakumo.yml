@@ -1,4 +1,5 @@
-- name: yakumo
+- id: zzgvxg
+  name: yakumo
   config:
     pipeline:
       build:
@@ -6,5 +7,21 @@
         - esbuild
       clean:
         - tsc --clean
-- name: yakumo-esbuild
-- name: yakumo-tsc
+    alias:
+      server: /external/server/packages/core
+      satori: /packages/core
+      ss: /packages/server
+      sa: /adapters/satori
+      lark: /adapters/lark
+- id: 67eben
+  name: yakumo-esbuild
+- id: fqmym8
+  name: yakumo-tsc
+- id: qrzdog
+  name: yakumo/run
+- id: g61i7p
+  name: yakumo/version
+- id: 16co8h
+  name: yakumo/publish
+- id: 4q41x7
+  name: yakumo/test

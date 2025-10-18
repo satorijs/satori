@@ -1,7 +1,7 @@
 import { Context } from 'cordis'
 import { Bot } from './bot'
-import { Message, SendOptions } from '@satorijs/protocol'
-import h from '@satorijs/element'
+import { Channel, Message, SendOptions } from '@satorijs/protocol'
+import * as h from '@cordisjs/element'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -12,16 +12,16 @@ class AggregateError extends Error {
 export abstract class MessageEncoder<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   public errors: Error[] = []
   public results: Message[] = []
-  public session: C[typeof Context.session]
+  public session!: C[typeof Context.session]
 
-  constructor(public bot: B, public channelId: string, public guildId?: string, public options: SendOptions = {}) {}
+  constructor(public bot: B, public channelId: string, public referrer?: any, public options: SendOptions = {}) {}
 
   async prepare() {}
 
   abstract flush(): Promise<void>
-  abstract visit(element: h): Promise<void>
+  abstract visit(element: h.Element): Promise<void>
 
-  async render(elements: h[], flush?: boolean) {
+  async render(elements: h.Element[], flush?: boolean) {
     for (const element of elements) {
       await this.visit(element)
     }
@@ -33,12 +33,12 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
   async send(content: h.Fragment) {
     this.session = this.bot.session({
       type: 'send',
-      channel: { id: this.channelId, ...this.options.session?.event.channel },
+      channel: { id: this.channelId, ...this.options.session?.event.channel } as Channel,
       guild: this.options.session?.event.guild,
     })
     for (const key in this.options.session || {}) {
       if (key === 'id' || key === 'event') continue
-      this.session[key] = this.options.session[key]
+      this.session[key] = this.options.session![key]
     }
     await this.prepare()
     const session = this.options.session ?? this.session
@@ -49,7 +49,7 @@ export abstract class MessageEncoder<C extends Context = Context, B extends Bot<
       btn.attrs.id ||= r
       if (typeof btn.attrs.action === 'function') this.bot.callbacks[btn.attrs.id] = btn.attrs.action
     }
-    if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return
+    if (await this.session.app.serial(this.session, 'before-send', this.session, this.options)) return []
     await this.render(this.session.elements)
     await this.flush()
     if (this.errors.length) {

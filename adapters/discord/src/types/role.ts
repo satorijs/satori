@@ -228,6 +228,11 @@ declare module './internal' {
      */
     modifyGuildRolePositions(guild_id: snowflake, param: Role.Params.ModifyPositions): Promise<Role[]>
     /**
+     * Returns a role object for the specified role.
+     * @see https://discord.com/developers/docs/resources/guild#get-guild-role
+     */
+    getGuildRole(guild_id: snowflake, role_id: snowflake): Promise<Role>
+    /**
      * Modify a guild role. Requires the MANAGE_ROLES permission. Returns the updated role on success. Fires a Guild Role Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-role
      */
@@ -247,6 +252,7 @@ Internal.define({
     PATCH: 'modifyGuildRolePositions',
   },
   '/guilds/{guild.id}/roles/{role.id}': {
+    GET: 'getGuildRole',
     PATCH: 'modifyGuildRole',
     DELETE: 'deleteGuildRole',
   },

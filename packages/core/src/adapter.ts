@@ -1,31 +1,22 @@
-import { Awaitable, remove, Time } from 'cosmokit'
+import { Awaitable, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
+import type {} from '@cordisjs/plugin-logger'
 import { Context, z } from 'cordis'
 import { Bot } from './bot'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
-  static schema = false as const
-
   public bots: B[] = []
 
   constructor(protected ctx: C) {}
   async connect(bot: B) {}
   async disconnect(bot: B) {}
-
-  fork(ctx: Context, bot: B) {
-    bot.adapter = this
-    this.bots.push(bot)
-    ctx.on('dispose', () => {
-      remove(this.bots, bot)
-    })
-  }
 }
 
 export namespace Adapter {
   export interface WsClientConfig {
-    retryLazy?: number
-    retryTimes?: number
-    retryInterval?: number
+    retryLazy: number
+    retryTimes: number
+    retryInterval: number
   }
 
   export const WsClientConfig: z<WsClientConfig> = z.object({
@@ -35,7 +26,7 @@ export namespace Adapter {
   }).description('连接设置')
 
   export abstract class WsClientBase<C extends Context, B extends Bot<C>> extends Adapter<C, B> {
-    protected socket: WebSocket
+    protected socket?: WebSocket
     protected connectionId = 0
 
     protected abstract prepare(): Awaitable<WebSocket>
@@ -79,7 +70,7 @@ export namespace Adapter {
         let socket: WebSocket
         try {
           socket = await this.prepare()
-        } catch (error) {
+        } catch (error: any) {
           reconnect(initial, error.toString() || `failed to prepare websocket`)
           return
         }
@@ -92,7 +83,7 @@ export namespace Adapter {
         })
 
         socket.addEventListener('close', ({ code, reason }) => {
-          if (this.socket === socket) this.socket = null
+          if (this.socket === socket) this.socket = undefined
           logger.debug(`websocket closed with ${code}`)
           reconnect(initial, reason.toString() || `failed to connect to ${url}, code: ${code}`)
         })
@@ -125,7 +116,7 @@ export namespace Adapter {
       return this.bot.isActive
     }
 
-    setStatus(status: Status, error: Error = null) {
+    setStatus(status: Status, error?: Error) {
       this.bot.status = status
       this.bot.error = error
     }

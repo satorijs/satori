@@ -1,13 +1,13 @@
 {
   "name": "@satorijs/plugin-server",
   "description": "Basic API server for Satori protocol",
-  "version": "2.7.1",
+  "version": "3.0.0-alpha.0",
   "type": "module",
   "exports": {
     ".": {
+      "types": "./lib/index.d.ts",
       "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs",
-      "types": "./lib/index.d.ts"
+      "import": "./lib/index.mjs"
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json"
@@ -34,13 +34,28 @@
     "basic",
     "api"
   ],
-  "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.3",
-    "@satorijs/core": "^4.2.1",
-    "@types/node": "^22.1.0",
-    "cordis": "^3.18.0"
+  "cordis": {
+    "service": {
+      "inject": [
+        "http",
+        "logger",
+        "server"
+      ]
+    }
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.2.1"
+    "@cordisjs/plugin-http": "^1.2.0",
+    "@cordisjs/plugin-server": "^1.2.0",
+    "@satorijs/core": "^5.0.0-alpha.0"
+  },
+  "devDependencies": {
+    "@cordisjs/plugin-http": "^1.2.0",
+    "@cordisjs/plugin-server": "^1.2.0",
+    "@satorijs/core": "^5.0.0-alpha.0",
+    "@types/node": "^22.13.10",
+    "cordis": "^4.0.0-beta.3"
+  },
+  "dependencies": {
+    "cosmokit": "^1.8.0"
   }
 }
