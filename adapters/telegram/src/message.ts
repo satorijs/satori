@@ -121,6 +121,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           delete this.payload.reply_to_message_id
           this.payload.caption = ''
           this.rows = []
+          this.asset = []
         } else {
           const sendMap = [
             ['audio', ['sendAudio', 'audio']],
@@ -149,6 +150,7 @@ export class TelegramMessageEncoder<C extends Context = Context> extends Message
           await this.addResult(result)
           this.payload.caption = ''
           this.rows = []
+          this.asset = []
           delete this.payload.reply_to_message_id
         }
       } else {
