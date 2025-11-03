@@ -2120,6 +2120,15 @@ export interface ArchiveItem {
   item_result_regular?: string
 }
 
+export interface ArchiveItemValue {
+  /** 薪资项ID */
+  item_id: string
+  /** 薪资项的值 */
+  item_value: string
+  /** 员工转正后薪资项的值，仅用于开启试用期的薪资方案，以及员工处于实习期 */
+  item_value_regular?: string
+}
+
 export interface ArchiveReportData {
   /** 用户ID */
   member_id: string
@@ -3232,6 +3241,13 @@ export interface BlockIdRelation {
   block_id?: string
 }
 
+export interface BlockIdToImageUrl {
+  /** 块 ID */
+  block_id: string
+  /** 图片 URL */
+  image_url: string
+}
+
 export interface BlockRole {
   /** Block ID */
   block_id: string
@@ -3928,6 +3944,13 @@ export interface Collaborator {
   id_list?: string[]
 }
 
+export const enum ColorType {
+  /** 系统颜色 */
+  SystemColor = 0,
+  /** 自定义颜色 */
+  CustomColor = 1,
+}
+
 export interface CombinedJobObjectValueMap {
   /** 结构 ID */
   object_id?: string
@@ -4043,6 +4066,8 @@ export interface CommonSchema {
   is_customized?: boolean
   /** 是否必填 */
   is_required?: boolean
+  /** 是否可见 */
+  is_visible?: boolean
   /** 是否启用 */
   active_status?: 1 | 2
   /** 字段列表 */
@@ -4064,6 +4089,8 @@ export interface CommonSchemaChild {
   is_customized?: boolean
   /** 是否必填 */
   is_required?: boolean
+  /** 是否可见 */
+  is_visible?: boolean
   /** 是否启用 */
   active_status?: 1 | 2
 }
@@ -4086,7 +4113,7 @@ export interface CommonSchemaOption {
 
 export interface CommonSchemaSetting {
   /** 字段类型 */
-  object_type?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 13
+  object_type?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
   /** 配置信息 */
   config?: CommonSchemaConfig
 }
@@ -4142,15 +4169,21 @@ export interface CompensationCost {
 }
 
 export interface CompensationCostItem {
-  /** 发薪人数 */
-  number_of_individuals_for_payment?: number
   /** 成本项数据 */
   compensation_costs?: CompensationCost[]
 }
 
 export interface CompositeShape {
   /** 基础图形的具体类型 */
-  type: 'round_rect2' | 'ellipse' | 'hexagon' | 'cylinder' | 'parallelogram' | 'trapezoid' | 'triangle' | 'round_rect' | 'step' | 'diamond' | 'rect' | 'star' | 'bubble' | 'pentagon' | 'forward_arrow' | 'document_shape' | 'condition_shape' | 'cloud' | 'cross' | 'step2' | 'predefined_process' | 'delay_shape' | 'off_page_connector' | 'note_shape' | 'data_process' | 'data_store' | 'data_store2' | 'data_store3' | 'star2' | 'star3' | 'star4' | 'actor' | 'brace' | 'condition_shape2' | 'double_arrow' | 'data_flow_round_rect3' | 'rect_bubble' | 'manual_input' | 'flow_chart_round_rect' | 'flow_chart_round_rect2' | 'flow_chart_diamond' | 'flow_chart_parallelogram' | 'flow_chart_cylinder' | 'flow_chart_trapezoid' | 'flow_chart_hexagon' | 'data_flow_round_rect' | 'data_flow_ellipse' | 'backward_arrow' | 'brace_reverse' | 'flow_chart_mq' | 'horiz_cylinder' | 'class_interface' | 'classifier' | 'circular_ring' | 'pie' | 'right_triangle' | 'octagon' | 'state_start' | 'state_end' | 'state_concurrence' | 'component_shape' | 'component_shape2' | 'component_interface' | 'component_required_interface' | 'component_assembly' | 'cube'
+  type: 'round_rect2' | 'ellipse' | 'hexagon' | 'cylinder' | 'parallelogram' | 'trapezoid' | 'triangle' | 'round_rect' | 'step' | 'diamond' | 'rect' | 'star' | 'bubble' | 'pentagon' | 'forward_arrow' | 'document_shape' | 'condition_shape' | 'cloud' | 'cross' | 'step2' | 'predefined_process' | 'delay_shape' | 'off_page_connector' | 'note_shape' | 'data_process' | 'data_store' | 'data_store2' | 'data_store3' | 'star2' | 'star3' | 'star4' | 'actor' | 'brace' | 'condition_shape2' | 'double_arrow' | 'data_flow_round_rect3' | 'rect_bubble' | 'manual_input' | 'flow_chart_round_rect' | 'flow_chart_round_rect2' | 'flow_chart_diamond' | 'flow_chart_parallelogram' | 'flow_chart_cylinder' | 'flow_chart_trapezoid' | 'flow_chart_hexagon' | 'data_flow_round_rect' | 'data_flow_ellipse' | 'backward_arrow' | 'brace_reverse' | 'flow_chart_mq' | 'horiz_cylinder' | 'class_interface' | 'classifier' | 'circular_ring' | 'pie' | 'right_triangle' | 'octagon' | 'state_start' | 'state_end' | 'state_concurrence' | 'component_shape' | 'component_shape2' | 'component_interface' | 'component_required_interface' | 'component_assembly' | 'cube' | 'boundary' | 'control' | 'entity' | 'data_base' | 'boundary' | 'queue' | 'collection' | 'actor_lifeline' | 'object_lifeline' | 'mind_node_full_round_rect' | 'mind_node_round_rect' | 'mind_node_text'
+  /** 饼图属性，type=pie时需要设置 */
+  pie?: Pie
+  /** 圆环属性，type=circular_ring时需要设置 */
+  circular_ring?: Pie
+  /** 梯形属性，type=trapezoid时可以设置 */
+  trapezoid?: Trapezoid
+  /** 六面体属性，type=cube时可以设置 */
+  cube?: Cube
 }
 
 export interface CompositeTalentAwardInfo {
@@ -4325,22 +4358,89 @@ export interface Condition {
 }
 
 export interface Connector {
-  /** 连线连接的起点图形 */
-  start_object?: ConnectorAttachedObject
-  /** 连线连接的终点图形 */
-  end_object?: ConnectorAttachedObject
+  /** 连线端点信息 */
+  start?: ConnectorInfo
+  /** 连线端点信息 */
+  end?: ConnectorInfo
   /** 连线文本 */
   captions?: ConnectorCaption
+  /** 连线类型 */
+  shape?: ConnectorLineShape
+  /** 连线转向点 */
+  turning_points?: Point[]
+  /** 连线上的文本方向是否自动跟随连线方向 */
+  caption_auto_direction?: boolean
+  /** 文本在连线上的相对位置，范围0-1，0表示在连线的起始点，1表示在连线的终点 */
+  caption_position?: number
+  /** 指定连线坐标及长宽。为 true 时需要用户设置连线的坐标及长宽信息。为 false 时会根据连线的开始、结束端点自动计算连线的坐标及长宽信息 */
+  specified_coordinate?: boolean
+}
+
+export const enum ConnectorArrowStyle {
+  /** 无箭头样式 */
+  None = 'none',
+  /** 线型箭头 */
+  LineArrow = 'line_arrow',
+  /** 三角形箭头 */
+  TriangleArrow = 'triangle_arrow',
+  /** 空心三角形箭头 */
+  EmptyTriangleArrow = 'empty_triangle_arrow',
+  /** 圆形箭头 */
+  CircleArrow = 'circle_arrow',
+  /** 空心圆形箭头 */
+  EmptyCircleArrow = 'empty_circle_arrow',
+  /** 菱形箭头 */
+  DiamondArrow = 'diamond_arrow',
+  /** 空心菱形箭头 */
+  EmptyDiamondArrow = 'empty_diamond_arrow',
+  /** 单箭头 */
+  SingleArrow = 'single_arrow',
+  /** 多箭头 */
+  MultiArrow = 'multi_arrow',
+  /** 精确单箭头 */
+  ExactSingleArrow = 'exact_single_arrow',
+  /** 零个或多个箭头 */
+  ZeroOrMultiArrow = 'zero_or_multi_arrow',
+  /** 零个或单个箭头 */
+  ZeroOrSingleArrow = 'zero_or_single_arrow',
+  /** 单个或多个箭头 */
+  SingleOrMultiArrow = 'single_or_multi_arrow',
+  /** x型箭头 */
+  XArrow = 'x_arrow',
 }
 
 export interface ConnectorAttachedObject {
   /** 连接图形的 id */
   id?: string
+  /** 连接图形的方向 */
+  snap_to?: SnapTo
+  /** 连接图形的相对坐标，0-1 */
+  position?: Point
 }
 
 export interface ConnectorCaption {
   /** 文本 */
   data?: Text[]
+}
+
+export interface ConnectorInfo {
+  /** 连接图形信息 */
+  attached_object?: ConnectorAttachedObject
+  /** 连线端点在画布内的坐标，position与attached_object二选一 */
+  position?: Point
+  /** 连线端点箭头样式 */
+  arrow_style?: ConnectorArrowStyle
+}
+
+export const enum ConnectorLineShape {
+  /** 直线 */
+  Straight = 'straight',
+  /** 折线 */
+  Polyline = 'polyline',
+  /** 曲线 */
+  Curve = 'curve',
+  /** 直角折线 */
+  RightAngledPolyline = 'right_angled_polyline',
 }
 
 export interface ConnectorParam {
@@ -4548,6 +4648,8 @@ export interface CostAllocationReportData {
   data_summary_dimensions?: DataSummaryDimension[]
   /** 成本项数据 */
   compensation_cost_item?: CompensationCostItem
+  /** 员工id */
+  employment_id?: string
 }
 
 export interface CostCenter {
@@ -4845,6 +4947,11 @@ export interface Criterion {
   conditions?: Condition[]
   /** 逻辑关系 */
   logic_expression?: string
+}
+
+export interface Cube {
+  /** 六面体控制点，相对六面体外接矩形的相对坐标。默认控制点为外接矩形长的0.8，宽的0.25 */
+  control_point?: Point
 }
 
 export interface Currency {
@@ -5286,6 +5393,8 @@ export interface DataSummaryDimension {
   dimension_value_id?: string
   /** 算薪项汇总维度时，当算薪项是特定枚举值，会使用该字段返回枚举值ID以及枚举值Key */
   enum_dimension?: EnumObject
+  /** 维度引用对象的基础信息，当维度为引用类型字段才会有值，目前支持的引用对象类型见type */
+  dimension_value_lookup_info?: DimensionValueLookupInfo
   /** 维度名称，自定义维度使用 */
   dimension_names?: I18nContent[]
   /** 数据维度表头，自定义维度使用 */
@@ -5422,15 +5531,6 @@ export interface DepartmentI18nName {
   en_us?: string
 }
 
-export interface DepartmentIdConvertResult {
-  /** ID */
-  id: string
-  /** 部门ID */
-  department_id?: string
-  /** 部门OpenID */
-  open_department_id?: string
-}
-
 export interface DepartmentLeader {
   /** 负责人类型 */
   leaderType: 1 | 2
@@ -5562,6 +5662,47 @@ export interface Device {
   name: string
 }
 
+export interface DeviceRecord {
+  /** 设备认证编码 */
+  device_record_id: string
+  /** 版本号 */
+  version: string
+  /** 当前登录用户ID */
+  current_user_id?: string
+  /** 设备名称 */
+  device_name?: string
+  /** 设备型号 */
+  model?: string
+  /** 操作系统 */
+  device_system: 1 | 2 | 3 | 4 | 5 | 6
+  /** 生产序列号 */
+  serial_number?: string
+  /** 硬盘序列号 */
+  disk_serial_number?: string
+  /** 主板UUID */
+  uuid?: string
+  /** MAC地址 */
+  mac_address?: string
+  /** Android标识符 */
+  android_id?: string
+  /** iOS供应商标识符 */
+  idfv?: string
+  /** Harmony供应商标识符 */
+  aaid?: string
+  /** 设备归属 */
+  device_ownership: 0 | 1 | 2
+  /** 可信状态 */
+  device_status: 0 | 1 | 2
+  /** 认证方式 */
+  certification_level: 0 | 1 | 2
+  /** 设备类型 */
+  device_terminal_type: 0 | 1 | 2
+  /** 最近登录用户ID */
+  latest_user_id?: string
+  /** 设备指纹列表 */
+  dids?: string[]
+}
+
 export interface Diagram {
   /** 绘图类型 */
   diagram_type?: 1 | 2
@@ -5667,6 +5808,15 @@ export interface DimensionOption {
   name?: I18n
   /** 选项对应的分数 */
   score_val?: number
+}
+
+export interface DimensionValueLookupInfo {
+  /** 引用对象类型 */
+  type?: string
+  /** 引用对象的id，可根据相关API查询到对象的完整信息 */
+  id?: string
+  /** 引用对象的code，目前下面的对象会有code */
+  code?: string
 }
 
 export interface DirectProjectLeaderRecordInfo {
@@ -6100,17 +6250,6 @@ export interface EmployeeEntity {
   work_info?: EmployeeWorkEntity
 }
 
-export interface EmployeeIdConvertResult {
-  /** ID */
-  id: string
-  /** 员工ID */
-  employee_id?: string
-  /** 员工OpenID */
-  open_employee_id?: string
-  /** 员工UnionID */
-  union_employee_id?: string
-}
-
 export interface EmployeeJobData {
   /** Employment ID */
   employment_id: string
@@ -6216,6 +6355,116 @@ export interface EmployeesAdditionalJobWriteResp {
   position_id?: string
   /** 人员子类型 ID */
   employee_subtype_id?: string
+}
+
+export interface EmployeesInternationalAssignment {
+  /** 外派工作地点 ID  - 可通过[【查询单个地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/get)获取详细信息 */
+  work_location_id?: string
+  /** 外派任职公司 ID- 可通过[【查询单个公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/get)获取详细信息 */
+  service_company?: string
+  /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+  work_shift?: Enum
+  /** 工时制度ID-  可通过[【查询单个工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/get)获取详细信息 */
+  working_hours_type_id?: string
+  /** 人员类型ID- 可通过[【查询单个人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/get)获取详细信息 */
+  employee_type_id?: string
+  /** 周工作时长 */
+  weekly_working_hours_v2?: number
+  /** 部门 ID- 可通过[【查询单个部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/get)获取详细信息- 类型与 department_id_type 一致 */
+  department_id?: string
+  /** 职务 ID- 可通过[【查询单个职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/get)获取详细信息 */
+  job_id?: string
+  /** 序列 ID- 可通过[【查询单个序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/get)获取详细信息 */
+  job_family_id?: string
+  /** 职级 ID- 可通过[【查询单个职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/get)获取详细信息 */
+  job_level_id?: string
+  /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取详细信息 */
+  job_grade_id?: string
+  /** 薪资类型 - 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+  compensation_type?: Enum
+  /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  direct_manager_id?: string
+  /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  dotted_line_manager_id?: string
+  /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
+  work_calendar_id?: string
+  /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+  position_id?: string
+  /** 雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  employment_id?: string
+  /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+  custom_fields?: ObjectFieldData[]
+  /** 外派原因说明 */
+  international_assignment_reason?: string
+  /** 备注 */
+  description?: string
+  /** 预计结束日期- 格式：yyyy-mm-dd */
+  international_assignment_expected_end_date?: string
+  /** 外派状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_status */
+  international_assignment_status?: Enum
+  /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+  international_assignment_type?: Enum
+  /** 开始日期- 格式：yyyy-mm-dd */
+  effective_time?: string
+  /** 结束日期- 格式：yyyy-mm-dd- 在外派未结束时，该值默认为 9999-12-31 */
+  expiration_time?: string
+  /** 外派ID */
+  id?: string
+}
+
+export interface EmployeesInternationalAssignmentResp {
+  /** 外派工作地点 ID  - 可通过[【查询单个地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/get)获取详细信息 */
+  work_location_id?: string
+  /** 外派任职公司 ID- 可通过[【查询单个公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/get)获取详细信息 */
+  service_company?: string
+  /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+  work_shift?: Enum
+  /** 工时制度ID-  可通过[【查询单个工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/get)获取详细信息 */
+  working_hours_type_id?: string
+  /** 人员类型ID- 可通过[【查询单个人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/get)获取详细信息 */
+  employee_type_id?: string
+  /** 周工作时长 */
+  weekly_working_hours_v2?: number
+  /** 部门 ID- 可通过[【查询单个部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/department/get)获取详细信息- 类型与 department_id_type 一致 */
+  department_id?: string
+  /** 职务 ID- 可通过[【查询单个职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job/get)获取详细信息 */
+  job_id?: string
+  /** 序列 ID- 可通过[【查询单个序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/get)获取详细信息 */
+  job_family_id?: string
+  /** 职级 ID- 可通过[【查询单个职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/get)获取详细信息 */
+  job_level_id?: string
+  /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取详细信息 */
+  job_grade_id?: string
+  /** 薪资类型 - 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+  compensation_type?: Enum
+  /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  direct_manager_id?: string
+  /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  dotted_line_manager_id?: string
+  /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
+  work_calendar_id?: string
+  /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+  position_id?: string
+  /** 雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型与 user_id_type 一致 */
+  employment_id?: string
+  /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+  custom_fields?: ObjectFieldData[]
+  /** 外派原因说明 */
+  international_assignment_reason?: string
+  /** 备注 */
+  description?: string
+  /** 预计结束日期- 格式：yyyy-mm-dd */
+  international_assignment_expected_end_date?: string
+  /** 外派状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_status */
+  international_assignment_status?: Enum
+  /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+  international_assignment_type?: Enum
+  /** 开始日期- 格式：yyyy-mm-dd */
+  effective_time?: string
+  /** 结束日期- 格式：yyyy-mm-dd- 在外派未结束时，该值默认为 9999-12-31 */
+  expiration_time?: string
+  /** 外派ID */
+  id?: string
 }
 
 export const enum EmployeeStaffStatusDirectory {
@@ -7228,7 +7477,7 @@ export interface FieldVariableValueToFile {
   /** 文件名称 */
   file_name?: string
   /** 文件大小，单位：Byte */
-  length?: string
+  length?: number
   /** 文件类型，如`application/pdf` */
   mime_type?: string
 }
@@ -7270,6 +7519,8 @@ export interface FieldVariableValueToRecord {
   variable_api_name?: string
   /** 变量值，对应subValues中的key */
   sub_value_key?: string
+  /** 记录唯一ID */
+  record_id?: string
 }
 
 export interface File {
@@ -9092,6 +9343,36 @@ export interface JobFamily {
   job_family_id?: string
 }
 
+export interface JobFamilyTimeline {
+  /** 序列版本信息 */
+  job_family_version_data?: JobFamilyVersionData[]
+}
+
+export interface JobFamilyVersionData {
+  /** 序列 ID */
+  job_family_id?: string
+  /** 序列版本 ID */
+  job_family_version_id?: string
+  /** 序列名称 */
+  job_family_names?: I18n[]
+  /** 生效日期 */
+  effective_date?: string
+  /** 失效时间 */
+  expiration_date?: string
+  /** 是否启用 */
+  active?: boolean
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 可选 */
+  selectable?: boolean
+  /** 上级序列 */
+  parent_job_family_id?: string
+  /** 通道 ID 列表 */
+  pathway_ids?: string[]
+  /** 编码 */
+  code?: string
+}
+
 export interface JobFunction {
   /** 职能分类 ID */
   id?: string
@@ -9348,6 +9629,11 @@ export interface JobStorefront {
   remark?: I18n
 }
 
+export interface JobTimeline {
+  /** 职务版本信息 */
+  job_version_data?: JobVersionData[]
+}
+
 export interface JobTitle {
   /** 职务ID */
   job_title_id?: string
@@ -9373,6 +9659,35 @@ export interface JobUserInfo {
   id?: string
   /** 名称 */
   name?: I18n
+}
+
+export interface JobVersionData {
+  /** 职务 ID */
+  job_id?: string
+  /** 职务版本 ID */
+  job_version_id?: string
+  /** 职务名称 */
+  job_names?: I18n[]
+  /** 生效日期 */
+  effective_date?: string
+  /** 失效时间 */
+  expiration_date?: string
+  /** 是否启用 */
+  active?: boolean
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 编码 */
+  code?: string
+  /** 职务头衔 */
+  job_titles?: I18n[]
+  /** 序列 */
+  job_family_ids?: string[]
+  /** 职级 */
+  job_level_ids?: string[]
+  /** 通道ID */
+  pathway_id?: string
+  /** 工时制度，引用WorkingHoursType的ID */
+  working_hours_type_id?: string
 }
 
 export interface KeyresultData {
@@ -9674,6 +9989,13 @@ export interface LeaveType {
   updated_by: string
 }
 
+export interface Lifeline {
+  /** 生命线长度 */
+  size?: number
+  /** 生命线类型 */
+  type?: string
+}
+
 export interface Link {
   /** 超链接指向的 url (需要 url_encode) */
   url: string
@@ -9823,6 +10145,175 @@ export interface LookupWithAvatar {
   tenant_id?: string
   /** 用户邮箱 */
   email?: string
+}
+
+export interface LumpSumPayment {
+  /** 一次性支付记录id */
+  id?: string
+  /** 外部幂等id，由上游业务决定 */
+  unique_id?: string
+  /** 员工id，具体类型由入参中的 user_id_type 指定 */
+  user_id?: string
+  /** 总金额，字符串表达的数字 */
+  total_amount?: string
+  /** 绑定期，单位为月 */
+  binding_period?: number
+  /** 币种id */
+  currency_id?: string
+  /** 发放次数 */
+  issuance_frequency?: number
+  /** 薪酬项id */
+  item_id?: string
+  /** 备注 */
+  remark?: string
+  /** 发放规则描述文本 */
+  issuance_detail_text?: I18n
+  /** 申请来源 */
+  apply_source?: 1 | 2 | 3 | 4 | 5 | 6 | 7
+  /** 应退回金额（税前） */
+  return_amount_before_tax?: string
+  /** 应退回金额（税后） */
+  return_amount_after_tax?: string
+  /** 绑定期内离职类型 */
+  binding_period_offboarding_type?: 'yes' | 'no' | 'default'
+  /** 创建时间 */
+  create_time?: string
+  /** 更新时间 */
+  modify_time?: string
+  /** 所属期开始日期 */
+  reference_period_start_date?: string
+  /** 所属期结束日期 */
+  reference_period_end_date?: string
+  /** 发放明细列表 */
+  details?: LumpSumPaymentDetail[]
+  /** 绑定期带小数 */
+  binding_period_decimal?: string
+}
+
+export interface LumpSumPaymentDetail {
+  /** 一次性支付记录明细id */
+  id?: string
+  /** 一次性支付记录id */
+  record_id?: string
+  /** 员工id，具体类型由入参中的 user_id_type 指定 */
+  user_id?: string
+  /** 一次性支付明细发放金额，可转数字的字符串 */
+  issuance_amount?: string
+  /** 发放状态 */
+  issuance_status?: 'to_be_issued' | 'not_issued'
+  /** 发放方式 */
+  issuance_way?: 'with_salary' | 'with_cash' | 'with_year_end_bonus'
+  /** 发放日期 */
+  issuance_time?: string
+  /** 币种id */
+  currency_id?: string
+  /** 申请发放日期 */
+  belong_time?: string
+  /** 创建时间 */
+  create_time?: string
+  /** 更新时间 */
+  modify_time?: string
+  /** 发放国家ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+  /** 发放薪资组ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list进行查询） */
+  issuance_pay_group_id?: string
+}
+
+export interface LumpSumPaymentDetailForCreate {
+  /** 一次性支付明细发放金额，可转数字的字符串 */
+  issuance_amount: string
+  /** 发放状态 */
+  issuance_status: 'to_be_issued' | 'not_issued'
+  /** 发放方式 */
+  issuance_way: 'with_salary' | 'with_cash' | 'with_year_end_bonus'
+  /** 发放日期 */
+  issuance_time: string
+  /** 申请发放日期 */
+  belong_time: string
+  /** 发放国家ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+  /** 发放薪资组ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list进行查询） */
+  issuance_pay_group_id?: string
+}
+
+export interface LumpSumPaymentDetailForUpdate {
+  /** 一次性支付记录明细id。传入已有的id代表直接在原明细上进行更新，不传则代表创建新的明细 */
+  id?: string
+  /** 一次性支付明细发放金额，可转数字的字符串 */
+  issuance_amount?: string
+  /** 发放状态 */
+  issuance_status?: 'to_be_issued' | 'not_issued'
+  /** 发放方式 */
+  issuance_way?: 'with_salary' | 'with_cash' | 'with_year_end_bonus'
+  /** 发放日期 */
+  issuance_time?: string
+  /** 申请发放日期 */
+  belong_time?: string
+  /** 发放国家ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+  /** 发放薪资组ID（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list进行查询） */
+  issuance_pay_group_id?: string
+}
+
+export interface LumpSumPaymentForCreate {
+  /** 外部幂等id，由上游业务决定 */
+  unique_id: string
+  /** 员工id，具体类型由入参中的 user_id_type 指定 */
+  user_id: string
+  /** 总金额，字符串表达的数字 */
+  total_amount: string
+  /** 绑定期，单位为月 */
+  binding_period: number
+  /** 币种id */
+  currency_id: string
+  /** 发放次数，必须与 details 的长度一致 */
+  issuance_frequency: number
+  /** 薪酬项id（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/compensation-v1/item/list?appId=cli_a3077e2bb03c100d 进行查询） */
+  item_id: string
+  /** 所属期开始日期 */
+  reference_period_start_date?: string
+  /** 所属期结束日期 */
+  reference_period_end_date?: string
+  /** 发放明细列表 */
+  details: LumpSumPaymentDetailForCreate[]
+  /** 备注 */
+  remark?: string
+  /** 绑定期带小数 */
+  binding_period_decimal?: string
+}
+
+export interface LumpSumPaymentForUpdate {
+  /** 一次性支付记录id */
+  id?: string
+  /** 总金额，字符串表达的数字 */
+  total_amount: string
+  /** 绑定期，单位为月 */
+  binding_period?: number
+  /** 币种id */
+  currency_id: string
+  /** 发放次数，必须与details的长度一致 */
+  issuance_frequency: number
+  /** 备注 */
+  remark?: string
+  /** 所属期开始日期 */
+  reference_period_start_date?: string
+  /** 所属期结束日期 */
+  reference_period_end_date?: string
+  /** 发放明细列表 */
+  details: LumpSumPaymentDetailForUpdate[]
+  /** 绑定期带小数 */
+  binding_period_decimal?: string
+}
+
+export interface LumpSumPaymentOperateResult {
+  /** 操作的记录的 id */
+  id?: string
+  /** 操作的记录的 unique_id */
+  unique_id?: string
+  /** 操作结果状态码 */
+  code?: 0 | 21270201 | 21270202 | 21270203 | 21270205 | 21270206 | 21270207 | 21270208 | 21270209 | 21270210 | 21270211 | 21270213 | 21270214 | 21270215 | 21270217 | 21270218 | 21270219 | 21270220 | 21270221 | 21270222 | 21270223 | 21270224 | 21270225 | 21270226 | 21270227 | 21270228 | 21270229 | 21270230 | 21270070
+  /** 操作结果描述 */
+  message?: string
 }
 
 export interface Machine {
@@ -10476,9 +10967,52 @@ export interface MetricTemplate {
   groups?: MetricGroup[]
 }
 
-export interface MindMap {
-  /** 思维导图父节点 id ，为空表示是思维导图的根节点 */
-  parent_id?: string
+export const enum MindMapLayout {
+  /** 上下布局 */
+  UpDown = 'up_down',
+  /** 左右布局 */
+  LeftRight = 'left_right',
+  /** 左树布局 */
+  TreeLeft = 'tree_left',
+  /** 右树布局 */
+  TreeRight = 'tree_right',
+  /** 左右交替平衡树布局 */
+  TreeBalance = 'tree_balance',
+  /** 垂直时间线布局 */
+  VerticalTimeLine = 'vertical_time_line',
+  /** 水平时间线布局 */
+  HorizontalTimeLine = 'horizontal_time_line',
+}
+
+export interface MindMapNode {
+  /** 思维导图节点的父节点，必须为思维导图节点 */
+  parent_id: string
+  /** 思维导图节点图形类型 */
+  type?: MindMapType
+  /** 思维导图节点在兄弟节点中的位置index */
+  z_index?: number
+  /** 子节点相对根节点的方向（根节点下的子节点设置才生效） */
+  layout_position?: 'left' | 'right' | 'up' | 'down'
+  /** 是否收起子节点 */
+  collapsed?: boolean
+}
+
+export interface MindMapRoot {
+  /** 思维导图布局方式 */
+  layout?: MindMapLayout
+  /** 思维导图根节点图形类型 */
+  type?: MindMapType
+  /** 思维导图图形连接线样式 */
+  line_style?: 'curve' | 'right_angle' | 'round_angle'
+}
+
+export const enum MindMapType {
+  /** 思维导图文本节点类型 */
+  MindMapText = 'mind_map_text',
+  /** 思维导图全圆角矩形节点类型 */
+  MindMapFullRoundRect = 'mind_map_full_round_rect',
+  /** 思维导图矩形节点类型 */
+  MindMapRoundRect = 'mind_map_round_rect',
 }
 
 export interface Mindnote {
@@ -11129,6 +11663,19 @@ export interface OfferApplyFormSchema {
   id?: string
   /** 模块列表 */
   module_list?: OfferApplyFormModuleInfo[]
+}
+
+export interface OfferApprovalTemplate {
+  /** ID */
+  id?: string
+  /** 名称 */
+  name?: I18n
+  /** 创建时间 */
+  create_time?: string
+  /** 备注 */
+  remark?: string
+  /** 适用部门 */
+  department_list?: Department[]
 }
 
 export interface OfferAttachmentInfo {
@@ -11976,6 +12523,24 @@ export interface PageResponse {
   page_token?: string
 }
 
+export interface Paint {
+  /** 画笔类型 */
+  type?: PaintType
+  /** 画板线段，由系列坐标点表示 */
+  lines?: Point[]
+  /** 画笔粗细，单位px */
+  width?: number
+  /** 画笔颜色 */
+  color?: string
+}
+
+export const enum PaintType {
+  /** 马克笔 */
+  Marker = 'marker',
+  /** 高亮笔 */
+  Highlight = 'highlight',
+}
+
 export interface Participant {
   /** 参会者 */
   participant_name?: string
@@ -12070,6 +12635,19 @@ export interface PatchTag {
 export interface PatchTagFailReason {
   /** 名称重复的标签id */
   duplicate_id?: string
+}
+
+export interface Pathway {
+  /** 通道 ID */
+  pathway_id?: string
+  /** 编码 */
+  code?: string
+  /** 名称 */
+  names?: I18n[]
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 启用 */
+  active?: boolean
 }
 
 export interface Paygroup {
@@ -12429,6 +13007,17 @@ export interface Phrase {
   span: Span
 }
 
+export interface Pie {
+  /** 开始径向边角度，水平向右x轴正方向为0度，顺时针方向角度值递增 */
+  start_radial_line_angle: number
+  /** 圆心角角度，角度方向为始径向边逆时针方向 */
+  central_angle: number
+  /** 半径长度 */
+  radius: number
+  /** 扇区占比，0为一个圆周线，1为一个圆盘 */
+  sector_ratio?: number
+}
+
 export interface Pin {
   /** Pin的消息ID */
   message_id: string
@@ -12523,6 +13112,13 @@ export interface PlusMenu {
   mobile_app_link?: string
 }
 
+export interface Point {
+  /** 点位置x坐标 */
+  x?: number
+  /** 点位置y坐标 */
+  y?: number
+}
+
 export interface PortalJobPost {
   /** 职位广告 ID */
   id?: string
@@ -12578,6 +13174,137 @@ export interface PortalJobPost {
   job_function?: IdNameObject
   /** 职位广告地址列表 */
   address_list?: CommonAddress[]
+}
+
+export interface Position {
+  /** 岗位 ID */
+  position_id?: string
+  /** 编码 */
+  code?: string
+  /** 名称 */
+  names?: I18n[]
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 状态 */
+  active: boolean
+  /** 序列 */
+  job_family_id_list?: string[]
+  /** 成本中心 */
+  cost_center_id?: string
+  /** 职务 */
+  job_id?: string
+  /** 职级 */
+  job_level_id_list?: string[]
+  /** 人员类型 */
+  employee_type_id_list?: string[]
+  /** 职等 */
+  job_grade_id_list?: string[]
+  /** 工作地点 */
+  work_location_id_list?: string[]
+  /** 工时制度 */
+  working_hours_type_id?: string
+  /** 部门 */
+  department_id: string
+  /** 直属上级岗位 */
+  direct_leader_id?: string
+  /** 虚线上级岗位 */
+  dotted_line_leader_id?: string
+  /** 是否关键岗位 */
+  is_key_position?: boolean
+  /** 生效日期 */
+  effective_time: string
+  /** 失效日期 */
+  expiration_time: string
+  /** 自定义字段 */
+  custom_fields?: CustomFieldData[]
+  /** 创建人 */
+  created_by?: string
+}
+
+export interface PositionAdjustmentInfo {
+  /** 原序列 ID */
+  original_job_families?: string[]
+  /** 新序列 ID */
+  target_job_families?: string[]
+  /** 原所属部门 ID */
+  original_department?: string
+  /** 新所属部门 ID */
+  target_department?: string
+  /** 新所属部门 ID，新建部门审批完成前会返回 td_xxx 的临时 ID */
+  target_draft_department?: string
+  /** 原岗位默认成本中心 ID */
+  original_cost_center?: string
+  /** 新岗位默认成本中心 ID */
+  target_cost_center?: string
+  /** 原工时制度 ID */
+  original_working_hours_type?: string
+  /** 新工时制度 ID */
+  target_working_hours_type?: string
+  /** 原职务 ID */
+  original_job?: string
+  /** 新职务 ID */
+  target_job?: string
+  /** 原是否关键岗位 */
+  original_is_key_position?: boolean
+  /** 新是否关键岗位 */
+  target_is_key_position?: boolean
+  /** 原人员类型 ID */
+  original_employee_types?: string[]
+  /** 新人员类型 ID */
+  target_employee_types?: string[]
+  /** 原名称 */
+  original_names?: I18n[]
+  /** 新名称 */
+  target_names?: I18n[]
+  /** 原职等 ID */
+  original_job_grades?: string[]
+  /** 新职等 ID */
+  target_job_grades?: string[]
+  /** 原编码 */
+  original_code?: string
+  /** 新编码 */
+  target_code?: string
+  /** 原职级 ID */
+  original_job_levels?: string[]
+  /** 新职级 ID */
+  target_job_levels?: string[]
+  /** 原状态 */
+  original_active?: boolean
+  /** 新状态 */
+  target_active?: boolean
+  /** 原直线上级（岗位） ID */
+  original_direct_leader?: string
+  /** 新直线上级（岗位） ID */
+  target_direct_leader?: string
+  /** 新直线上级（岗位） ID，新建岗位审批完成前会返回 td_xxx 的临时 ID */
+  target_draft_direct_leader?: string
+  /** 原工作地点 ID */
+  original_work_locations?: string[]
+  /** 新工作地点 ID */
+  target_work_locations?: string[]
+  /** 原描述 */
+  original_descriptions?: I18n[]
+  /** 新描述 */
+  target_descriptions?: I18n[]
+  /** 原部门全路径，从根部门开始自上而下返回部门 ID 列表 */
+  original_department_id_paths?: OrgdraftDepartmentId[]
+  /** 新部门全路径，从根部门开始自上而下返回部门 ID 列表 */
+  target_department_id_paths?: OrgdraftDepartmentId[]
+  /** 自定义字段 */
+  custom_fields?: ChangeFieldPair[]
+}
+
+export interface PositionChange {
+  /** 岗位调整记录 ID */
+  position_change_id?: string
+  /** 岗位 ID */
+  position_id?: string
+  /** 调整过程岗位 ID 。对于在本次调整中新建的岗位，在调整未生效前会返回格式为 td_xxx 的过程岗位 ID，生效后将返回正式的岗位 ID */
+  draft_position_id?: string
+  /** 调整类型 */
+  position_change_type?: 'Unknown' | 'Create' | 'Modify' | 'Inactive'
+  /** 调整详细信息 */
+  position_adjustment_info?: PositionAdjustmentInfo
 }
 
 export interface Post {
@@ -13054,6 +13781,13 @@ export interface ProcessFormVariableV2 {
   variable_value?: FieldVariableValueToForReview
   /** 在list_values和record_values中引用的变量 */
   sub_values?: FieldVariableSubVlaueForReview[]
+}
+
+export interface ProcessInfo {
+  /** 组织架构调整流程 ID */
+  process_id?: string
+  /** 组织架构调整流程状态 */
+  approval_group_status?: '0' | '1' | '2' | '3' | '4' | '5'
 }
 
 export interface ProcessLink {
@@ -13960,6 +14694,88 @@ export interface RecRuleCondition {
   operator?: 'is' | 'isNot' | 'contains' | 'doesNotContain' | 'isEmpty' | 'isNotEmpty'
   /** 单选或多选字段的选项id */
   values?: string[]
+}
+
+export interface RecurringPayment {
+  /** 经常性支付记录id */
+  id?: string
+  /** 外部幂等id，由上游业务决定 */
+  unique_id?: string
+  /** 员工id，具体类型由入参中的 user_id_type 指定 */
+  user_id?: string
+  /** 薪酬项id */
+  item_id?: string
+  /** 发放方式 */
+  issuance_type?: 'with_salary' | 'with_cash' | 'with_physical_distribution' | 'with_year_end_bonus'
+  /** 单次发放金额 */
+  each_amount?: string
+  /** 发放开始日期 */
+  start_date?: string
+  /** 发放结束日期 */
+  end_date?: string
+  /** 发放频率 */
+  issuance_period?: 'year' | 'half_year' | 'quarterly' | 'bimonthly' | 'month' | 'biweekly' | 'week' | 'day' | 'hour'
+  /** 币种id */
+  currency_id?: string
+  /** 备注 */
+  remark?: string
+  /** 发放国家id（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+}
+
+export interface RecurringPaymentForCreate {
+  /** 外部幂等id，由上游业务决定 */
+  unique_id: string
+  /** 员工id，具体类型由入参中的 user_id_type 指定 */
+  user_id: string
+  /** 薪酬项id（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/compensation-v1/item/list?appId=cli_a3077e2bb03c100d 进行查询） */
+  item_id: string
+  /** 每次发放金额 */
+  each_amount: string
+  /** 发放开始时间 */
+  start_date: string
+  /** 发放结束时间 */
+  end_date: string
+  /** 币种id */
+  currency_id: string
+  /** 发放方式 */
+  issuance_type: 'with_salary' | 'with_cash' | 'with_physical_distribution' | 'with_year_end_bonus'
+  /** 发放频率 */
+  issuance_period: 'year' | 'half_year' | 'quarterly' | 'bimonthly' | 'month' | 'biweekly' | 'week' | 'day' | 'hour'
+  /** 备注 */
+  remark?: string
+  /** 发放国家id（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+}
+
+export interface RecurringPaymentForUpdate {
+  /** 经常性支付记录id */
+  id: string
+  /** 每次发放金额 */
+  each_amount: string
+  /** 发放开始时间 */
+  start_date: string
+  /** 发放结束时间 */
+  end_date: string
+  /** 币种id */
+  currency_id: string
+  /** 发放方式 */
+  issuance_type: 'with_salary' | 'with_cash' | 'with_physical_distribution' | 'with_year_end_bonus'
+  /** 原因 */
+  remark?: string
+  /** 发放国家id（可通过 https://open.larkoffice.com/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search进行查询） */
+  issuance_country_region_id?: string
+}
+
+export interface RecurringPaymentOperateResult {
+  /** 操作记录的id */
+  id?: string
+  /** 操作的记录的 unique_id */
+  unique_id?: string
+  /** 操作结果状态码 */
+  code?: 0 | 21280001 | 21280002 | 21280003 | 21270304 | 21270305 | 21270306 | 21270307 | 21270308 | 21270309 | 21270310 | 21270311 | 21270312 | 21270313 | 21270314 | 21270315 | 21270316 | 21270317 | 21270318
+  /** 操作结果描述 */
+  message?: string
 }
 
 export interface ReferenceObject {
@@ -15641,6 +16457,163 @@ export interface SkillGlobalVariable {
   channel?: Channel
 }
 
+export const enum SnapTo {
+  /** 连接方向自动匹配 */
+  Auto = 'auto',
+  /** 连接图形顶部方向 */
+  Top = 'top',
+  /** 连接图形右边方向 */
+  Right = 'right',
+  /** 连接图形底部方向 */
+  Bottom = 'bottom',
+  /** 连接图形左边方向 */
+  Left = 'left',
+}
+
+export interface SocialArchive {
+  /** 员工ID */
+  user_id: string
+  /** 员工参保档案，包含社保、公积金档案 */
+  details: SocialArchiveDetail[]
+}
+
+export interface SocialArchiveAdjustRecord {
+  /** 员工ID */
+  user_id?: string
+  /** 类型，increase: 增员; attrition: 减员 */
+  record_type?: 'increase' | 'attrition'
+  /** 员工增减员记录，包括社保、公积金记录 */
+  details?: SocialArchiveDetail[]
+}
+
+export interface SocialArchiveDetail {
+  /** 调整说明 */
+  description: I18n
+  /** 类型。social_insurance: 社保; provident_fund: 公积金 */
+  insurance_type: 'social_insurance' | 'provident_fund'
+  /** 参保状态，非「参保」状态下，基数、险种数据等为空 */
+  insurance_status: 'contribution' | 'not_contribution' | 'stopped_contribution'
+  /** 档案时间轴对象ID，仅参保档案对象会包含 */
+  id?: string
+  /** 档案时间轴对象版本ID，仅参保档案对象会包含 */
+  tid?: string
+  /** 参保方案ID，详细信息可通过「查询参保方案」接口获取 */
+  plan_id?: string
+  /** 参保方案版本ID */
+  plan_tid?: string
+  /** 参保城市ID，可通过获取地点信息接口查询详细信息 */
+  location_id?: string
+  /** 社保缴纳主体ID，可通过获取公司主体接口查询详细信息 */
+  company_id?: string
+  /** 社保账户类型 */
+  account_type?: 'associated_company' | 'supplier'
+  /** 社保账号 */
+  insurance_account?: string
+  /** 申报缴纳基数 */
+  base_salary?: string
+  /** 险种数据详情 */
+  insurance_details?: SocialArchiveItem[]
+  /** 档案生效时间，HHHH-MM-DD */
+  effective_date?: string
+}
+
+export interface SocialArchiveItem {
+  /** 险种ID，详细信息可通过社保险种接口查询 */
+  insurance_id: string
+  /** 企业缴纳金额 */
+  company_deduction: string
+  /** 险种缴纳配置 */
+  company_setting: SocialPlanItemSetting
+  /** 企业缴纳金额 */
+  personal_deduction: string
+  /** 险种缴纳配置 */
+  personal_setting: SocialPlanItemSetting
+  /** 缴纳频率 */
+  payment_frequency: 'annually' | 'monthly' | 'quarterly'
+  /** 缴纳月份 */
+  payment_months: number[]
+}
+
+export interface SocialInsurance {
+  /** 险种唯一ID */
+  id: string
+  /** 险种名称 */
+  name: I18n
+  /** 险种类型. social_insurance: 社保; provident_fund: 公积金 */
+  insurance_type: 'social_insurance' | 'provident_fund'
+  /** 启用状态 */
+  active: boolean
+  /** 是否为系统预置险种。养老保险、医疗保险、失业保险、工伤保险、生育保险、住房公积金为系统预置险种。 */
+  is_system: boolean
+}
+
+export interface SocialPlan {
+  /** 参保方案ID */
+  plan_id: string
+  /** 参保方案版本ID */
+  plan_tid: string
+  /** 参保方案名称 */
+  name: I18n
+  /** 生效时间，HHHH-MM-DD */
+  effective_date: string
+  /** 是否启用 */
+  active: boolean
+  /** 险种类型. social_insurance: 社保; provident_fund: 公积金 */
+  insurance_type: 'social_insurance' | 'provident_fund'
+  /** 参保方案适用范围 */
+  scope?: SocialPlanScope
+  /** 参保信息 */
+  item_detail: SocialPlanItemDetail[]
+  /** 备注 */
+  remark: I18n
+}
+
+export interface SocialPlanCondition {
+  /** 适用范围左值 */
+  left_type?: 1 | 2
+  /** 适用范围操作 */
+  operator?: 1 | 2
+  /** 适用范围右值 */
+  right_values?: string[]
+}
+
+export interface SocialPlanItemDetail {
+  /** 险种ID，详细信息可通过社保险种接口查询 */
+  item_id: string
+  /** 险种名 */
+  item_name: I18n
+  /** 险种缴纳配置 */
+  item_setting_of_person: SocialPlanItemSetting
+  /** 险种缴纳配置 */
+  item_setting_of_company: SocialPlanItemSetting
+  /** 缴纳频率 */
+  payment_frequency: 'annually' | 'monthly' | 'quarterly'
+  /** 缴纳月份 */
+  payment_months: number[]
+}
+
+export interface SocialPlanItemSetting {
+  /** 基数下限，浮点数，保留二位小数 */
+  lower_limit: string
+  /** 基数上限，浮点数，保留二位小数 */
+  upper_limit: string
+  /** 缴纳比例，浮点数，默认填充到二位小数，支持输入到四位，单位为 % */
+  payment_ratio: string
+  /** 缴纳金舍入规则。rounding: 四舍五入; round_up: 向上舍入; round_down: 向下舍入 */
+  payment_rounding_rule: 'rounding' | 'round_up' | 'round_down'
+  /** 缴纳金小数位数，0-6之间选择 */
+  payment_decimals: number
+  /** 附加固定金额，浮点数，保留二位小数 */
+  fixed_payment: string
+}
+
+export interface SocialPlanScope {
+  /** 是否适用于全部 */
+  is_all: boolean
+  /** 适用范围，二维。外层or连接，内层and连接 */
+  rules?: SocialPlanCondition[][]
+}
+
 export interface Sort {
   /** 字段名称 */
   field_name?: string
@@ -15766,6 +16739,13 @@ export interface Statistics {
   dislike_count: number
 }
 
+export interface StickyNote {
+  /** 用户id */
+  user_id?: string
+  /** 是否展示用户信息 */
+  show_author_info?: boolean
+}
+
 export interface StreamConfig {
   /** 仅包含字母数字和下划线的 16 位字符串作为同一数据流的标识，用户生成 */
   stream_id: string
@@ -15780,18 +16760,30 @@ export interface StreamConfig {
 }
 
 export interface Style {
+  /** 填充颜色，16 进制 rbg 值 */
+  fill_color?: string
   /** 填充透明度 */
   fill_opacity?: number
   /** 边框样式 */
   border_style?: 'solid' | 'none' | 'dash' | 'dot'
   /** 边框宽度 */
-  border_width?: 'extra_narrow' | 'narrow' | 'medium' | 'wide'
+  border_width?: 'extra_narrow' | 'narrow' | 'medium' | 'bold'
   /** 边框透明度 */
   border_opacity?: number
   /** 水平翻折 */
   h_flip?: boolean
   /** 垂直翻折 */
   v_flip?: boolean
+  /** 边框颜色，16 进制 rgb 值 */
+  border_color?: string
+  /** 填充颜色主题配色编码值 */
+  theme_fill_color_code?: number
+  /** 边框颜色主题配色编码值 */
+  theme_border_color_code?: number
+  /** 填充颜色类型：0=系统颜色，取theme_fill_color_code，1=自定义颜色，取fill_color */
+  fill_color_type?: ColorType
+  /** 边框颜色类型：0=系统颜色，取theme_border_color_code，1=自定义颜色，取border_color */
+  border_color_type?: ColorType
 }
 
 export interface Subdivision {
@@ -15861,6 +16853,11 @@ export interface SupportCostCenterItem {
   cost_center_id?: string
   /** 分摊比例 */
   rate?: number
+}
+
+export interface Svg {
+  /** svg code */
+  svg_code?: string
 }
 
 export interface SystemFields {
@@ -17389,6 +18386,11 @@ export interface TransferType {
   updated_time?: string
 }
 
+export interface Trapezoid {
+  /** 梯形上底长（短边）。默认为下底边长度的2/3，不能超过下底边长度。 */
+  top_length?: number
+}
+
 export interface TripartiteAgreementInfo {
   /** 三方协议 ID */
   id?: string
@@ -17911,6 +18913,13 @@ export interface UserFlow {
   external_id?: string
   /** 唯一幂等键 */
   idempotent_id?: string
+}
+
+export interface UserFreebusy {
+  /** 日历上请求时间区间内的忙闲信息 */
+  freebusy_items?: Freebusy[]
+  /** 日历的创建者userID */
+  user_id?: string
 }
 
 export interface UserInfo {
@@ -18732,21 +19741,17 @@ export interface WeekdaySchedule {
 
 export interface WhiteboardNode {
   /** 节点 id */
-  id: string
-  /** 节点图形类型，目前创建节点仅支持创建图片、文本、基础图形等类型，读取到不支持创建的图形时只返回一些基础信息，如 id、type、text、style 等 */
-  type: 'image' | 'text_shape' | 'group' | 'composite_shape' | 'svg' | 'connector' | 'table' | 'life_line' | 'activation' | 'section' | 'table_uml' | 'table_er' | 'sticky_note' | 'mind_map' | 'paint'
+  id?: string
+  /** 节点图形类型，目前创建节点仅支持创建图片、文本、基础图形等类型 */
+  type: 'image' | 'text_shape' | 'group' | 'composite_shape' | 'svg' | 'connector' | 'table' | 'life_line' | 'activation' | 'section' | 'table_uml' | 'table_er' | 'sticky_note' | 'mind_map' | 'paint' | 'combined_fragment'
   /** 父节点 id */
   parent_id?: string
-  /** 子节点 */
-  children?: string[]
   /** 图形相对画布的 x 轴位置信息（存在父容器时为相对父容器的坐标，父容器为组合图形 group 时，坐标是穿透的），单位为 px */
   x?: number
   /** 图形相对画布的 y 轴位置信息（存在父容器时为相对父容器的坐标，父容器为组合图形 group 时，坐标是穿透的），单位为 px */
   y?: number
   /** 图形旋转角度 */
   angle?: number
-  /** 图形宽度，单位为 px */
-  width?: number
   /** 图形高度，单位为 px */
   height?: number
   /** 图形内文字 */
@@ -18759,12 +19764,28 @@ export interface WhiteboardNode {
   composite_shape?: CompositeShape
   /** 连线属性 */
   connector?: Connector
+  /** 图形宽度，单位为 px */
+  width?: number
   /** 分区属性 */
   section?: Section
   /** 表格属性 */
   table?: Table
-  /** 思维导图属性 */
-  mind_map?: MindMap
+  /** 图形是否锁定 */
+  locked?: boolean
+  /** 图形在兄弟节点中的层级，层级大的会覆盖层级小的 */
+  z_index?: number
+  /** 生命对象属性 */
+  lifeline?: Lifeline
+  /** 画笔属性 */
+  paint?: Paint
+  /** svg图形属性 */
+  svg?: Svg
+  /** 便签图形属性 */
+  sticky_note?: StickyNote
+  /** 思维导图节点属性 */
+  mind_map_node?: MindMapNode
+  /** 思维导图根节点属性 */
+  mind_map_root?: MindMapRoot
 }
 
 export interface WikiCatalog {

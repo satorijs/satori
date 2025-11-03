@@ -94,7 +94,7 @@ export namespace Im {
        */
       urgentPhone(message_id: string, body: UrgentPhoneRequest, query?: UrgentPhoneQuery): Promise<UrgentPhoneResponse>
       /**
-       * 更新应用发送的消息卡片
+       * 更新已发送的消息卡片
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/patch
        */
       patch(message_id: string, body: PatchRequest): Promise<void>

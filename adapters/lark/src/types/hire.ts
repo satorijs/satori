@@ -9,6 +9,7 @@ declare module '../internal' {
 
 export namespace Hire {
   export interface Methods {
+    portalApplySchema: PortalApplySchema.Methods
     location: Location.Methods
     role: Role.Methods
     userRole: UserRole.Methods
@@ -28,6 +29,7 @@ export namespace Hire {
     interviewRoundType: InterviewRoundType.Methods
     interviewRegistrationSchema: InterviewRegistrationSchema.Methods
     interviewer: Interviewer.Methods
+    offerApprovalTemplate: OfferApprovalTemplate.Methods
     offerCustomField: OfferCustomField.Methods
     offerApplicationForm: OfferApplicationForm.Methods
     referral: Referral.Methods
@@ -76,6 +78,16 @@ export namespace Hire {
     attachment: Attachment.Methods
     talentOperationLog: TalentOperationLog.Methods
     offerSchema: OfferSchema.Methods
+  }
+
+  export namespace PortalApplySchema {
+    export interface Methods {
+      /**
+       * 获取申请表模板列表
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/portal_apply_schema/list
+       */
+      list(query?: Pagination): Paginated<Lark.RegistrationSchema>
+    }
   }
 
   export namespace Location {
@@ -1235,6 +1247,21 @@ export namespace Hire {
     export interface PatchResponse {
       /** 面试官信息 */
       interviewer?: Lark.Interviewer
+    }
+  }
+
+  export namespace OfferApprovalTemplate {
+    export interface Methods {
+      /**
+       * 获取 Offer 审批流列表
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/offer_approval_template/list
+       */
+      list(query?: ListQuery): Paginated<Lark.OfferApprovalTemplate>
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 此次调用中使用的部门 ID 的类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_admin_department_id'
     }
   }
 
@@ -3461,6 +3488,11 @@ export namespace Hire {
        * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/background_check_order/list
        */
       list(query?: ListQuery): Paginated<Lark.BackgroundCheckOrder>
+      /**
+       * 查询背调信息列表
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/background_check_order/batch_query
+       */
+      batchQuery(body: BatchQueryRequest, query?: BatchQueryQuery): Paginated<Lark.BackgroundCheckOrder>
     }
 
     export interface ListQuery extends Pagination {
@@ -3472,6 +3504,28 @@ export namespace Hire {
       update_start_time?: string
       /** 最晚更新时间，毫秒级时间戳 */
       update_end_time?: string
+    }
+
+    export interface BatchQueryRequest {
+      /** 背调订单 ID 列表 */
+      background_check_order_id_list?: string[]
+      /** 最早更新时间,毫秒级时间戳 */
+      update_start_time?: string
+      /** 最晚更新时间,毫秒级时间戳 */
+      update_end_time?: string
+      /** 最早创建时间,毫秒级时间戳 */
+      begin_start_time?: string
+      /** 最晚创建时间,毫秒级时间戳 */
+      begin_end_time?: string
+      /** 投递 ID */
+      application_id?: string
+      /** 订单状态 */
+      order_status?: '2' | '3' | '4' | '5' | '6' | '8' | '9'
+    }
+
+    export interface BatchQueryQuery extends Pagination {
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
     }
   }
 
@@ -4349,6 +4403,9 @@ export namespace Hire {
 }
 
 Internal.define({
+  '/hire/v1/portal_apply_schemas': {
+    GET: { name: 'hire.portalApplySchema.list', pagination: { argIndex: 0 } },
+  },
   '/hire/v1/locations/query': {
     POST: { name: 'hire.location.query', pagination: { argIndex: 1 } },
   },
@@ -4452,6 +4509,9 @@ Internal.define({
   },
   '/hire/v1/interviewers/{interviewer_id}': {
     PATCH: 'hire.interviewer.patch',
+  },
+  '/hire/v1/offer_approval_templates': {
+    GET: { name: 'hire.offerApprovalTemplate.list', pagination: { argIndex: 0 } },
   },
   '/hire/v1/offer_custom_fields/{offer_custom_field_id}': {
     PUT: 'hire.offerCustomField.update',
@@ -4700,6 +4760,9 @@ Internal.define({
   },
   '/hire/v1/background_check_orders': {
     GET: { name: 'hire.backgroundCheckOrder.list', pagination: { argIndex: 0 } },
+  },
+  '/hire/v1/background_check_orders/batch_query': {
+    POST: { name: 'hire.backgroundCheckOrder.batchQuery', pagination: { argIndex: 1 } },
   },
   '/hire/v1/tripartite_agreements': {
     POST: 'hire.tripartiteAgreement.create',

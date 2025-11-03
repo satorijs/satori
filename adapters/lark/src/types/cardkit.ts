@@ -21,12 +21,12 @@ export namespace Cardkit {
        */
       create(body: CreateRequest): Promise<CreateResponse>
       /**
-       * 更新卡片配置
+       * 更新卡片实体配置
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card/settings
        */
       settings(card_id: string, body: SettingsRequest): Promise<void>
       /**
-       * 批量更新卡片实体
+       * 局部更新卡片实体
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/cardkit-v1/card/batch_update
        */
       batchUpdate(card_id: string, body: BatchUpdateRequest): Promise<void>
