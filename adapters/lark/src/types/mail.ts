@@ -458,7 +458,13 @@ export namespace Mail {
       name?: string
       /** The mail group's description */
       description?: string
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -477,7 +483,13 @@ export namespace Mail {
       include_external_member?: boolean
       /** Value is true if all company members are in this mail group */
       include_all_company_member?: boolean
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -488,7 +500,13 @@ export namespace Mail {
       name?: string
       /** The mail group's description */
       description?: string
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -507,7 +525,13 @@ export namespace Mail {
       include_external_member?: boolean
       /** Value is true if all company members are in this mail group */
       include_all_company_member?: boolean
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -518,7 +542,13 @@ export namespace Mail {
       name?: string
       /** The mail group's description */
       description?: string
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -537,7 +567,13 @@ export namespace Mail {
       include_external_member?: boolean
       /** Value is true if all company members are in this mail group */
       include_all_company_member?: boolean
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -556,7 +592,13 @@ export namespace Mail {
       include_external_member?: boolean
       /** Value is true if all company members are in this mail group */
       include_all_company_member?: boolean
-      /** Who can send mail to this mail group. Possible values are:- ANYONE: Any Internet user can send mail to this mail group- ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group- ALL_GROUP_MEMBERS: Any group member can send mail to this mail group- CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure */
+      /**
+       * Who can send mail to this mail group. Possible values are:
+       * - ANYONE: Any Internet user can send mail to this mail group
+       * - ALL_INTERNAL_USERS: Anyone in the team can send mail to this mail group
+       * - ALL_GROUP_MEMBERS: Any group member can send mail to this mail group
+       * - CUSTOM_MEMBERS: Only custom members can send mail to this mail group, define in mailgroup.permission_members resoure
+       */
       who_can_send_mail?: 'ANYONE' | 'ALL_INTERNAL_USERS' | 'ALL_GROUP_MEMBERS' | 'CUSTOM_MEMBERS'
     }
 
@@ -653,7 +695,16 @@ export namespace Mail {
         user_id?: string
         /** The member's department id. Value is valid when type is DEPARTMENT */
         department_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         * - COMPANY: member is the company
+         * - EXTERNAL_USER: internet user outside the organization
+         * - MAIL_GROUP: member is another mail group
+         * - PUBLIC_MAILBOX: member is a public mailbox
+         * - OTHER_MEMBER: other internal member
+         */
         type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
       }
 
@@ -673,7 +724,16 @@ export namespace Mail {
         user_id?: string
         /** The member's department id. Value is valid when type is DEPARTMENT */
         department_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         * - COMPANY: member is the company
+         * - EXTERNAL_USER: internet user outside the organization
+         * - MAIL_GROUP: member is another mail group
+         * - PUBLIC_MAILBOX: member is a public mailbox
+         * - OTHER_MEMBER: other internal member
+         */
         type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
       }
 
@@ -693,7 +753,16 @@ export namespace Mail {
         user_id?: string
         /** The member's department id. Value is valid when type is DEPARTMENT */
         department_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department- COMPANY: member is the company- EXTERNAL_USER: internet user outside the organization- MAIL_GROUP: member is another mail group- PUBLIC_MAILBOX: member is a public mailbox- OTHER_MEMBER: other internal member */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         * - COMPANY: member is the company
+         * - EXTERNAL_USER: internet user outside the organization
+         * - MAIL_GROUP: member is another mail group
+         * - PUBLIC_MAILBOX: member is a public mailbox
+         * - OTHER_MEMBER: other internal member
+         */
         type?: 'USER' | 'DEPARTMENT' | 'COMPANY' | 'EXTERNAL_USER' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX' | 'OTHER_MEMBER'
       }
 
@@ -803,7 +872,11 @@ export namespace Mail {
         department_id?: string
         /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
         email?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         */
         type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
       }
 
@@ -823,7 +896,11 @@ export namespace Mail {
         department_id?: string
         /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
         email?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         */
         type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
       }
 
@@ -843,7 +920,11 @@ export namespace Mail {
         department_id?: string
         /** The member's email address. Value is valid when type is MAIL_GROUP/PUBLIC_MAILBOX */
         email?: string
-        /** The type of member. Possible values are:- USER: internal user in the team- DEPARTMENT: member is a department */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         * - DEPARTMENT: member is a department
+         */
         type?: 'USER' | 'DEPARTMENT' | 'MAIL_GROUP' | 'PUBLIC_MAILBOX'
       }
 
@@ -1029,7 +1110,10 @@ export namespace Mail {
       export interface CreateRequest {
         /** The member's user id. Value is valid when type is USER */
         user_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         */
         type?: 'USER'
       }
 
@@ -1043,7 +1127,10 @@ export namespace Mail {
         member_id?: string
         /** The member's user id. Value is valid when type is USER */
         user_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         */
         type?: 'USER'
       }
 
@@ -1057,7 +1144,10 @@ export namespace Mail {
         member_id?: string
         /** The member's user id. Value is valid when type is USER */
         user_id?: string
-        /** The type of member. Possible values are:- USER: internal user in the team */
+        /**
+         * The type of member. Possible values are:
+         * - USER: internal user in the team
+         */
         type?: 'USER'
       }
 

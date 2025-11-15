@@ -211,7 +211,10 @@ export namespace Drive {
       file_name: string
       /** 上传点类型。 */
       parent_type: 'explorer'
-      /** 文件夹token，获取方式见 [概述](/ssl:ttdoc/ukTMukTMukTM/uUDN04SN0QjL1QDN/files/guide/introduction) */
+      /**
+       * 文件夹token，
+       * 获取方式见 [概述](https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/files/guide/introduction)
+       */
       parent_node: string
       /** 文件大小（以字节为单位）。 */
       size: number
@@ -1049,7 +1052,10 @@ export namespace Drive {
       }
 
       export interface UpdateQuery {
-        /** 更新权限后是否通知对方**注意：** 使用`tenant_access_token`访问不支持该参数 */
+        /**
+         * 更新权限后是否通知对方
+         * **注意：** 使用`tenant_access_token`访问不支持该参数
+         */
         need_notification?: boolean
         /** 文件类型，放于query参数中，如：`?type=doc` */
         type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
@@ -1063,7 +1069,18 @@ export namespace Drive {
       export interface ListQuery {
         /** 文件类型，需要与文件的 token 相匹配 */
         type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
-        /** 指定返回的协作者字段信息，如无指定则默认不返回**可选值有：** - `name`：协作者名- `type`：协作者类型- `avatar`：头像- `external_label`：外部标签**注意：** - 你可以使用特殊值`*`指定返回目前支持的所有字段- 你可以使用`,`分隔若干个你想指定返回的字段，如：`name,avatar`- 按需指定返回字段接口性能更好 */
+        /**
+         * 指定返回的协作者字段信息，如无指定则默认不返回
+         * **可选值有：**
+         * - `name`：协作者名
+         * - `type`：协作者类型
+         * - `avatar`：头像
+         * - `external_label`：外部标签
+         * **注意：**
+         * - 你可以使用特殊值`*`指定返回目前支持的所有字段
+         * - 你可以使用`,`分隔若干个你想指定返回的字段，如：`name,avatar`
+         * - 按需指定返回字段接口性能更好
+         */
         fields?: string
         /** 协作者的权限角色类型 */
         perm_type?: 'container' | 'single_page'

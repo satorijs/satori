@@ -454,15 +454,36 @@ export namespace Bitable {
         }
 
         export interface ListQuery extends Pagination {
-          /** 视图 id注意：如 filter 或 sort 有值，view_id 会被忽略。 */
+          /**
+           * 视图 id
+           * 注意：如 filter 或 sort 有值，view_id 会被忽略。
+           */
           view_id?: string
-          /** 筛选参数注意：1.筛选记录的表达式不超过2000个字符。2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。3.仅支持字段在页面展示字符值进行筛选。详细请参考[记录筛选开发指南](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter) */
+          /**
+           * 筛选参数
+           * 注意：
+           * 1.筛选记录的表达式不超过2000个字符。
+           * 2.不支持对“人员”以及“关联字段”的属性进行过滤筛选，如人员的 OpenID。
+           * 3.仅支持字段在页面展示字符值进行筛选。
+           * 详细请参考[记录筛选开发指南](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/filter)
+           */
           filter?: string
-          /** 排序参数注意：1.表达式需要不超过1000字符。2.不支持对带“公式”和“关联字段”的表的使用。3.使用引号将字段名称和顺序逆序连接起来。 */
+          /**
+           * 排序参数
+           * 注意：
+           * 1.表达式需要不超过1000字符。
+           * 2.不支持对带“公式”和“关联字段”的表的使用。
+           * 3.使用引号将字段名称和顺序逆序连接起来。
+           */
           sort?: string
           /** 字段名称 */
           field_names?: string
-          /** 控制多行文本字段数据的返回格式，true 表示以数组形式返回。注意：1.多行文本中如果有超链接部分，则会返回链接的 URL。2.目前可以返回多行文本中 URL 类型为多维表格链接、飞书 doc、飞书 sheet的URL类型以及@人员的数据结构。 */
+          /**
+           * 控制多行文本字段数据的返回格式，true 表示以数组形式返回。
+           * 注意：
+           * 1.多行文本中如果有超链接部分，则会返回链接的 URL。
+           * 2.目前可以返回多行文本中 URL 类型为多维表格链接、飞书 doc、飞书 sheet的URL类型以及@人员的数据结构。
+           */
           text_field_as_array?: boolean
           /** 此次调用中使用的用户ID的类型 */
           user_id_type?: 'user_id' | 'union_id' | 'open_id'

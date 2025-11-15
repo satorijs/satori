@@ -1882,7 +1882,7 @@ export namespace Hire {
     }
 
     export interface CombinedCreateRequest {
-      /** 简历来源 ID，可通过[获取简历来源列表](/ssl:ttdoc/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query)接口查询 */
+      /** 简历来源 ID，可通过[获取简历来源列表](https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query)接口查询 */
       init_source_id?: string
       /** 简历来源 ID */
       resume_source_id?: string
@@ -1935,7 +1935,7 @@ export namespace Hire {
     export interface CombinedUpdateRequest {
       /** 人才 ID */
       talent_id: string
-      /** 简历来源 ID，可通过[获取简历来源列表](/ssl:ttdoc/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query)接口查询 */
+      /** 简历来源 ID，可通过[获取简历来源列表](https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/talent_object/query)接口查询 */
       init_source_id?: string
       /** 文件夹 ID 列表 */
       folder_id_list?: string[]
@@ -3081,7 +3081,7 @@ export namespace Hire {
       exam_resource_name: string
       /** 笔试分数 */
       score: number
-      /** 报告附件，使用[创建附件](/ssl:ttdoc/ukTMukTMukTM/uIDN1YjLyQTN24iM0UjN/create_attachment)上传，获取附件ID，支持的文件格式：JPG、JPEG、PNG、PDF，不超过 100MB。 */
+      /** 报告附件，使用[创建附件](https://open.feishu.cn/document/ukTMukTMukTM/uIDN1YjLyQTN24iM0UjN/create_attachment)上传，获取附件ID，支持的文件格式：JPG、JPEG、PNG、PDF，不超过 100MB。 */
       uuid?: string
       /** 添加人 ID */
       operator_id: string

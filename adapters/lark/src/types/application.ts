@@ -479,7 +479,12 @@ export namespace Application {
       date: string
       /** 活跃周期的统计类型 */
       cycle_type: DepartmentOverviewRequestCycleType
-      /** 查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户） 以及多级子部门的使用数据。-  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。- 若不填写则返回整个租户的数据 */
+      /**
+       * 查询的部门id，获取方法可参考[部门ID概述](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)
+       * -  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户） 以及多级子部门的使用数据。
+       * -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。
+       * - 若不填写则返回整个租户的数据
+       */
       department_id?: string
       /** 是否需要查询部门下多层子部门的数据。未设置或为0时，仅查询department_id对应的部门。设置为n时，查询department_id及其n级子部门的数据。仅在department_id参数传递时有效，最大值为4。 */
       recursion?: number
@@ -508,7 +513,11 @@ export namespace Application {
       date: string
       /** 枚举值：day，week，month；week指自然周，返回当前日期所在周的数据；不满一周则从周一到当前日期算。month指自然月，返回当前日期所在月的数据。 */
       cycle_type: MessagePushOverviewRequestCycleType
-      /** 需要查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）； -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。返回当前部门的使用数据； 若不填写，则返回当前租户的使用数据 */
+      /**
+       * 需要查询的部门id，获取方法可参考[部门ID概述](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)
+       * -  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）；
+       * -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。返回当前部门的使用数据； 若不填写，则返回当前租户的使用数据
+       */
       department_id?: string
     }
 
@@ -536,7 +545,11 @@ export namespace Application {
       date: string
       /** 活跃周期的统计类型 */
       cycle_type: OverviewRequestCycleType
-      /** 查询的部门id，获取方法可参考[部门ID概述](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)-  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）； -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。 */
+      /**
+       * 查询的部门id，获取方法可参考[部门ID概述](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview)
+       * -  若部门id为空，则返回当前租户的使用数据；若填写部门id，则返回当前部门的使用数据（包含子部门的用户）；
+       * -  若路径参数中department_id_type为空或者为open_department_id，则此处应该填写部门的 open_department_id；若路径参数中department_id_type为department_id，则此处应该填写部门的 department_id。
+       */
       department_id?: string
       /** 能力类型，按能力类型进行筛选，返回对应能力的活跃数据 */
       ability: 'app' | 'mp' | 'h5' | 'bot'
@@ -607,7 +620,10 @@ export namespace Application {
     export interface ListQuery extends Pagination {
       /** 查询的起始日期，格式为yyyy-mm-dd。不填则默认为当前日期减去180天。 */
       from_date?: string
-      /** 查询的结束日期，格式为yyyy-mm-dd。不填默认为当前日期。只能查询 180 天内的数据。 */
+      /**
+       * 查询的结束日期，格式为yyyy-mm-dd。不填默认为当前日期。
+       * 只能查询 180 天内的数据。
+       */
       to_date?: string
       /** 反馈类型，不填写则表示查询所有反馈类型。 */
       feedback_type?: ListQueryFeedbackType

@@ -85,7 +85,10 @@ export namespace Corehr {
     }
 
     export interface QueryQuery {
-      /** 所属对象 apiname，支持一个或多个当前数量限制为 20 个 */
+      /**
+       * 所属对象 apiname，支持一个或多个
+       * 当前数量限制为 20 个
+       */
       object_api_name_list: string[]
     }
 
@@ -128,9 +131,9 @@ export namespace Corehr {
       }
 
       export interface AddEnumOptionRequest {
-        /** 所属对象 API name，可通过[获取飞书人事对象列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
+        /** 所属对象 API name，可通过[获取飞书人事对象列表](https://open.feishu.cn/document/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
         object_api_name: string
-        /** 枚举字段 API name，可通过[获取自定义字段列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
+        /** 枚举字段 API name，可通过[获取自定义字段列表](https://open.feishu.cn/document/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
         enum_field_api_name: string
         /** 新增枚举选项列表 */
         enum_field_options: Lark.EnumFieldOption[]
@@ -149,9 +152,9 @@ export namespace Corehr {
       }
 
       export interface EditEnumOptionRequest {
-        /** 所属对象 API name，可通过[获取飞书人事对象列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
+        /** 所属对象 API name，可通过[获取飞书人事对象列表](https://open.feishu.cn/document/server-docs/corehr-v1/basic-infomation/custom_field/list_object_api_name)接口中返回的 `object_api_name` 字段获取 */
         object_api_name: string
-        /** 枚举字段 API name，可通过[获取自定义字段列表](/ssl:ttdoc/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
+        /** 枚举字段 API name，可通过[获取自定义字段列表](https://open.feishu.cn/document/server-docs/corehr-v1/basic-infomation/custom_field/query)接口中返回的 `custom_api_name` 字段获取 */
         enum_field_api_name: string
         /** 枚举选项 */
         enum_field_option: Lark.EnumFieldOption
@@ -264,7 +267,7 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 国家/地区 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.country_region_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.country_region_id` 等字段中获取 */
+        /** 国家/地区 ID 列表，可从[批量查询地点](https://open.feishu.cn/document/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.country_region_id`、[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.country_region_id` 等字段中获取 */
         country_region_id_list?: string[]
         /** 状态列表 */
         status_list?: SearchRequestStatus[]
@@ -314,9 +317,9 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 省份/主要行政区 ID 列表，可通过[查询省份/主要行政区信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search)接口列举，或从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.region_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.region_id` 等字段中获取 */
+        /** 省份/主要行政区 ID 列表，可通过[查询省份/主要行政区信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region_subdivision/search)接口列举，或从[批量查询地点](https://open.feishu.cn/document/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.region_id`、[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.region_id` 等字段中获取 */
         country_region_subdivision_id_list?: string[]
-        /** 城市 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_id_v2` 等字段中获取 */
+        /** 城市 ID 列表，可从[批量查询地点](https://open.feishu.cn/document/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_id_v2`、[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_id_v2` 等字段中获取 */
         city_id_list?: string[]
         /** 状态列表 */
         status_list?: SearchRequestStatus[]
@@ -340,9 +343,9 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 所属城市 ID 列表，可通过[查询城市信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search)接口列举，或从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_v2_id`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_v2_id` 等字段中获取 */
+        /** 所属城市 ID 列表，可通过[查询城市信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search)接口列举，或从[批量查询地点](https://open.feishu.cn/document/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.city_v2_id`、[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.city_v2_id` 等字段中获取 */
         city_id_list?: string[]
-        /** 区/县 ID 列表，可从[批量查询地点](/ssl:ttdoc/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.district_id_v2`、[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.district_id_v2` 等字段中获取 */
+        /** 区/县 ID 列表，可从[批量查询地点](https://open.feishu.cn/document/server-docs/corehr-v1/organization-management/location/list)接口返回的 `location.address.district_id_v2`、[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.address_list.district_id_v2` 等字段中获取 */
         district_id_list?: string[]
         /** 状态列表 */
         status_list?: SearchRequestStatus[]
@@ -366,9 +369,9 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 国籍 ID 列表，可从[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)接口返回的 `person_info.nationality_id_v2` 等字段中获取 */
+        /** 国籍 ID 列表，可从[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)接口返回的 `person_info.nationality_id_v2` 等字段中获取 */
         nationality_id_list?: string[]
-        /** 国家/地区 ID 列表，可通过[查询国家/地区信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search)接口列举 */
+        /** 国家/地区 ID 列表，可通过[查询国家/地区信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-country_region/search)接口列举 */
         country_region_id_list?: string[]
         /** 状态列表 */
         status_list?: SearchRequestStatus[]
@@ -392,7 +395,7 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 银行 ID 列表，可通过[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段获取 */
+        /** 银行 ID 列表，可通过[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)、[批量查询员工信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段获取 */
         bank_id_list?: string[]
         /** 银行名称列表，支持对银行名称精确搜索 */
         bank_name_list?: string[]
@@ -422,9 +425,9 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 银行 ID 列表，可通过[查询银行信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search)列举，或从[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段中获取 */
+        /** 银行 ID 列表，可通过[查询银行信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-bank/search)列举，或从[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)、[批量查询员工信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_id_v2` 字段中获取 */
         bank_id_list?: string[]
-        /** 支行 ID 列表，可通过[搜索员工信息](/ssl:ttdoc/server-docs/corehr-v1/employee/search)、[批量查询员工信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_branch_id_v2` 字段获取 */
+        /** 支行 ID 列表，可通过[搜索员工信息](https://open.feishu.cn/document/server-docs/corehr-v1/employee/search)、[批量查询员工信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)等接口返回的 `person_info.bank_account_list.bank_branch_id_v2` 字段获取 */
         bank_branch_id_list?: string[]
         /** 支行名称列表，支持对支行名称精确搜索 */
         bank_branch_name_list?: string[]
@@ -456,7 +459,7 @@ export namespace Corehr {
       }
 
       export interface SearchRequest {
-        /** 货币 ID 列表，可通过[批量查询薪资方案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)、[批量查询员工薪资档案](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/archive/query)等接口返回的 `currency_id` 字段获取 */
+        /** 货币 ID 列表，可通过[批量查询薪资方案](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)、[批量查询员工薪资档案](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/compensation-v1/archive/query)等接口返回的 `currency_id` 字段获取 */
         currency_id_list?: string[]
         /** 状态列表 */
         status_list?: SearchRequestStatus[]
@@ -865,37 +868,98 @@ export namespace Corehr {
       additional_national_id_number_list?: string[]
       /** 公民身份类型列表，精确匹配查询 */
       citizenship_status_list?: string[]
-      /** 成本中心 ID 列表- 可通过 [【搜索成本中心信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/search) 获取 */
+      /**
+       * 成本中心 ID 列表
+       * - 可通过 [【搜索成本中心信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/cost_center/search) 获取
+       */
       cost_center_id_list?: string[]
-      /** 任职公司 ID 列表- [【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+      /**
+       * 任职公司 ID 列表
+       * - [【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取
+       */
       service_company_list?: string[]
-      /** 任职公司 ID 列表（含下级）- [【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+      /**
+       * 任职公司 ID 列表（含下级）
+       * - [【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取
+       */
       service_company_list_include_sub?: string[]
-      /** 序列 ID 列表 - [【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+      /**
+       * 序列 ID 列表
+       * - [【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取
+       */
       job_family_id_list?: string[]
-      /** 序列 ID 列表（含下级） - [【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+      /**
+       * 序列 ID 列表（含下级）
+       * - [【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取
+       */
       job_family_id_list_include_sub?: string[]
-      /** 职级 ID 列表- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取- 需要有字段读取权限 */
+      /**
+       * 职级 ID 列表
+       * - 可通过[【批量查询职级】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取
+       * - 需要有字段读取权限
+       */
       job_level_id_list?: string[]
-      /** 职等 ID 列表- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取- 需要有字段读取权限 */
+      /**
+       * 职等 ID 列表
+       * - 可通过[【查询职等】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取
+       * - 需要有字段读取权限
+       */
       job_grade_id_list?: string[]
-      /** 职务 ID 列表- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取- 需要有字段读取权限 */
+      /**
+       * 职务 ID 列表
+       * - 可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取
+       * - 需要有字段读取权限
+       */
       job_id_list?: string[]
-      /** 岗位 ID 列表 - 功能灰度中，如有需求请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) - 需要有字段读取权限 */
+      /**
+       * 岗位 ID 列表
+       * - 功能灰度中，如有需求请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)
+       * - 需要有字段读取权限
+       */
       position_id_list?: string[]
-      /** 岗位 ID 列表（含下级） - 功能灰度中，如有需求请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) - 需要有字段读取权限 */
+      /**
+       * 岗位 ID 列表（含下级）
+       * - 功能灰度中，如有需求请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)
+       * - 需要有字段读取权限
+       */
       position_id_list_include_sub?: string[]
-      /** 工时制度 ID 列表- 可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取- 需要有字段读取权限 */
+      /**
+       * 工时制度 ID 列表
+       * - 可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取
+       * - 需要有字段读取权限
+       */
       working_hours_type_id_list?: string[]
-      /** 国籍 ID 列表- 可通过[【查询国籍信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search)获取- 需要有字段读取权限 */
+      /**
+       * 国籍 ID 列表
+       * - 可通过[【查询国籍信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-nationality/search)获取
+       * - 需要有字段读取权限
+       */
       nationality_id_list?: string[]
-      /** 员工所属薪资组 ID 列表 - 可通过 [【获取薪资组基本信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list) 获取 - 需要有字段读取权限 */
+      /**
+       * 员工所属薪资组 ID 列表
+       * - 可通过 [【获取薪资组基本信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list) 获取
+       * - 需要有字段读取权限
+       */
       pay_group_id_list?: string[]
-      /** 员工所属外派薪资组 ID 列表- 可通过 [【获取薪资组基本信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list) 获取- 需要有字段读取权限 */
+      /**
+       * 员工所属外派薪资组 ID 列表
+       * - 可通过 [【获取薪资组基本信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/payroll-v1/paygroup/list) 获取
+       * - 需要有字段读取权限
+       */
       assignment_pay_group_id_list?: string[]
-      /** 员工当前合同类型列表- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)查询  - object_api_name：contract  - custom_api_name：contract_type- 需要有字段读取权限 */
+      /**
+       * 员工当前合同类型列表
+       * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)查询
+       * - object_api_name：contract
+       * - custom_api_name：contract_type
+       * - 需要有字段读取权限
+       */
       contract_type_list?: string[]
-      /** 员工当前所属薪资方案 ID 列表- 可通过[【批量查询薪资方案】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)获取- 需要有字段读取权限 */
+      /**
+       * 员工当前所属薪资方案 ID 列表
+       * - 可通过[【批量查询薪资方案】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/compensation-v1/plan/list)获取
+       * - 需要有字段读取权限
+       */
       archive_cpst_plan_id_list?: string[]
     }
 
@@ -920,7 +984,11 @@ export namespace Corehr {
     export interface CreateQuery {
       /** 幂等标识，服务端会忽略client_token重复的请求 */
       client_token?: string
-      /** 是否为离职重聘：false: 否，系统直接标为非离职重聘人员，不再做重复判断"true: 是，要求rehire_employment_id */
+      /**
+       * 是否为离职重聘：
+       * false: 否，系统直接标为非离职重聘人员，不再做重复判断"
+       * true: 是，要求rehire_employment_id
+       */
       rehire?: boolean
       /** 离职重聘员工雇佣ID, rehire */
       rehire_employment_id?: string
@@ -1411,7 +1479,11 @@ export namespace Corehr {
       user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
       /** 此次调用中使用的部门 ID 类型 */
       department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
-      /** 是否强校验。值为 true 时，会对入参进行业务校验，并产生异动记录、发送异动事件。- 默认值：false- 仅在新增任职版本时生效，当 version_id 不为空时该字段不生效 */
+      /**
+       * 是否强校验。值为 true 时，会对入参进行业务校验，并产生异动记录、发送异动事件。
+       * - 默认值：false
+       * - 仅在新增任职版本时生效，当 version_id 不为空时该字段不生效
+       */
       strict_verify?: string
     }
 
@@ -1484,9 +1556,19 @@ export namespace Corehr {
         department_id?: string
         /** 员工雇佣 ID 列表 */
         employment_ids?: string[]
-        /** 是否仅查询主职- true：仅返回 primary_job_data 为 true 的任职记录- false：仅返回 primary_job_data 为 false 的任职记录- 不传：返回全部 */
+        /**
+         * 是否仅查询主职
+         * - true：仅返回 primary_job_data 为 true 的任职记录
+         * - false：仅返回 primary_job_data 为 false 的任职记录
+         * - 不传：返回全部
+         */
         primary_job_data?: boolean
-        /** 任职原因- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：assignment_start_reason */
+        /**
+         * 任职原因
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：assignment_start_reason
+         */
         assignment_start_reasons?: string[]
       }
 
@@ -1508,9 +1590,19 @@ export namespace Corehr {
         effective_date_end?: string
         /** 查看数据日期，默认为今天 */
         data_date?: string
-        /** 是否仅查询主职- true：仅返回 primary_job_data 为 true 的任职记录- false：仅返回 primary_job_data 为 false 的任职记录- 不传：返回全部 */
+        /**
+         * 是否仅查询主职
+         * - true：仅返回 primary_job_data 为 true 的任职记录
+         * - false：仅返回 primary_job_data 为 false 的任职记录
+         * - 不传：返回全部
+         */
         primary_job_data?: boolean
-        /** 任职原因- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：assignment_start_reason */
+        /**
+         * 任职原因
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：assignment_start_reason
+         */
         assignment_start_reasons?: string[]
       }
 
@@ -1552,53 +1644,129 @@ export namespace Corehr {
       }
 
       export interface CreateRequest {
-        /** 外派工作地点 ID  - 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取 */
+        /**
+         * 外派工作地点 ID
+         * - 可通过[【批量查询地点】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取
+         */
         work_location_id: string
-        /** 外派任职公司 ID- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+        /**
+         * 外派任职公司 ID
+         * - 可通过[【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取
+         */
         service_company?: string
-        /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+        /**
+         * 排班类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：work_shift
+         */
         work_shift?: string
-        /** 周工作时长- 限制两位小数 */
+        /**
+         * 周工作时长
+         * - 限制两位小数
+         */
         weekly_working_hours_v2?: number
-        /** 工时制度ID-  可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取 */
+        /**
+         * 工时制度ID
+         * -  可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取
+         */
         working_hours_type_id?: string
-        /** 人员类型ID- 可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        /**
+         * 人员类型ID
+         * - 可通过[【批量查询人员类型】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取
+         */
         employee_type_id?: string
-        /** 部门 ID- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        /**
+         * 部门 ID
+         * - 可通过[【批量查询部门】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取
+         * - 类型与 department_id_type 一致
+         */
         department_id?: string
-        /** 职务 ID- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取 */
+        /**
+         * 职务 ID
+         * - 可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取
+         */
         job_id?: string
-        /** 序列 ID- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        /**
+         * 序列 ID
+         * - 可通过[【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取
+         */
         job_family_id?: string
-        /** 职级 ID- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取 */
+        /**
+         * 职级 ID
+         * - 可通过[【批量查询职级】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取
+         */
         job_level_id?: string
-        /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取 */
+        /**
+         * 职等 ID
+         * - 可通过[【查询职等】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取
+         */
         job_grade_id?: string
-        /** 薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+        /**
+         * 薪资类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：compensation_type
+         */
         compensation_type?: string
-        /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 直属上级雇佣 ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         direct_manager_id?: string
-        /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 虚线上级雇佣 ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         dotted_line_manager_id?: string
-        /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取 */
+        /**
+         * 工作日历 ID
+         * - 可通过[【查询工作日历】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取
+         */
         work_calendar_id?: string
-        /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+        /**
+         * 岗位 ID
+         * - 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)
+         */
         position_id?: string
-        /** 雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 雇佣 ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         employment_id: string
-        /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+        /**
+         * 自定义字段
+         * - 请参考[【自定义字段说明】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide)
+         */
         custom_fields?: Lark.ObjectFieldData[]
         /** 外派原因说明 */
         international_assignment_reason?: string
         /** 备注 */
         description?: string
-        /** 预计结束日期- 格式：yyyy-mm-dd */
+        /**
+         * 预计结束日期
+         * - 格式：yyyy-mm-dd
+         */
         international_assignment_expected_end_date?: string
-        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+        /**
+         * 外派类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：international_assignment
+         * - custom_api_name：international_assignment_type
+         */
         international_assignment_type: string
-        /** 开始日期- 格式：yyyy-mm-dd */
+        /**
+         * 开始日期
+         * - 格式：yyyy-mm-dd
+         */
         effective_time: string
-        /** 结束日期- 格式：yyyy-mm-dd */
+        /**
+         * 结束日期
+         * - 格式：yyyy-mm-dd
+         */
         expiration_time?: string
       }
 
@@ -1617,51 +1785,123 @@ export namespace Corehr {
       }
 
       export interface PatchRequest {
-        /** 外派工作地点 ID  - 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取 */
+        /**
+         * 外派工作地点 ID
+         * - 可通过[【批量查询地点】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取
+         */
         work_location_id?: string
-        /** 外派任职公司 ID- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+        /**
+         * 外派任职公司 ID
+         * - 可通过[【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取
+         */
         service_company?: string
-        /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+        /**
+         * 排班类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：work_shift
+         */
         work_shift?: string
-        /** 周工作时长- 限制两位小数 */
+        /**
+         * 周工作时长
+         * - 限制两位小数
+         */
         weekly_working_hours_v2?: number
-        /** 工时制度ID-  可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取 */
+        /**
+         * 工时制度ID
+         * -  可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取
+         */
         working_hours_type_id?: string
-        /** 人员类型ID- 可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        /**
+         * 人员类型ID
+         * - 可通过[【批量查询人员类型】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取
+         */
         employee_type_id?: string
-        /** 部门 ID- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        /**
+         * 部门 ID
+         * - 可通过[【批量查询部门】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取
+         * - 类型与 department_id_type 一致
+         */
         department_id?: string
-        /** 职务 ID- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取 */
+        /**
+         * 职务 ID
+         * - 可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取
+         */
         job_id?: string
-        /** 序列 ID- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        /**
+         * 序列 ID
+         * - 可通过[【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取
+         */
         job_family_id?: string
-        /** 职级 ID- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取 */
+        /**
+         * 职级 ID
+         * - 可通过[【批量查询职级】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取
+         */
         job_level_id?: string
-        /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取 */
+        /**
+         * 职等 ID
+         * - 可通过[【查询职等】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取
+         */
         job_grade_id?: string
-        /** 薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+        /**
+         * 薪资类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：compensation_type
+         */
         compensation_type?: string
-        /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 直属上级雇佣 ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         direct_manager_id?: string
-        /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 虚线上级雇佣 ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         dotted_line_manager_id?: string
-        /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取 */
+        /**
+         * 工作日历 ID
+         * - 可通过[【查询工作日历】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取
+         */
         work_calendar_id?: string
-        /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+        /**
+         * 岗位 ID
+         * - 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)
+         */
         position_id?: string
-        /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+        /**
+         * 自定义字段
+         * - 请参考[【自定义字段说明】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide)
+         */
         custom_fields?: Lark.ObjectFieldData[]
         /** 外派原因说明 */
         international_assignment_reason?: string
         /** 备注 */
         description?: string
-        /** 预计结束日期- 格式：yyyy-mm-dd */
+        /**
+         * 预计结束日期
+         * - 格式：yyyy-mm-dd
+         */
         international_assignment_expected_end_date?: string
-        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+        /**
+         * 外派类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：international_assignment
+         * - custom_api_name：international_assignment_type
+         */
         international_assignment_type?: string
-        /** 开始日期- 格式：yyyy-mm-dd */
+        /**
+         * 开始日期
+         * - 格式：yyyy-mm-dd
+         */
         effective_time?: string
-        /** 结束日期- 格式：yyyy-mm-dd */
+        /**
+         * 结束日期
+         * - 格式：yyyy-mm-dd
+         */
         expiration_time?: string
       }
 
@@ -1684,51 +1924,164 @@ export namespace Corehr {
         user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
         /** 此次调用中使用的部门 ID 类型 */
         department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
-        /** 雇佣ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型必须与 user_id_type 一致 */
+        /**
+         * 雇佣ID
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息
+         * - 类型必须与 user_id_type 一致
+         */
         employment_ids?: string[]
         /** 外派 ID */
         international_assignment_ids?: string[]
-        /** 外派开始日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        /**
+         * 外派开始日期
+         * - 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd
+         */
         effective_time?: string
-        /** 外派结束日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        /**
+         * 外派结束日期
+         * - 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd
+         */
         expiration_time?: string
-        /** 雇佣状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：employment  - custom_api_name：employment_status */
+        /**
+         * 雇佣状态
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：employment
+         * - custom_api_name：employment_status
+         */
         employment_status_list?: string[]
-        /** 外派工作地点- 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取- 需要以下权限点之一：  - [读取外派地点](corehr:employment.international_assignment.work_location:read)  - [读写外派地点](corehr:employment.international_assignment.work_location:write) */
+        /**
+         * 外派工作地点
+         * - 可通过[【批量查询地点】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取
+         * - 需要以下权限点之一：
+         * - [读取外派地点](corehr:employment.international_assignment.work_location:read)
+         * - [读写外派地点](corehr:employment.international_assignment.work_location:write)
+         */
         work_location_id_list?: string[]
-        /** 外派部门- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        /**
+         * 外派部门
+         * - 可通过[【批量查询部门】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取
+         * - 类型与 department_id_type 一致
+         */
         department_id_list?: string[]
-        /** 外派直属上级- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 外派直属上级
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         direct_manager_id_list?: string[]
-        /** 外派虚线上级- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        /**
+         * 外派虚线上级
+         * - 可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取
+         * - 类型与 user_id_type 一致
+         */
         dotted_line_manager_id_list?: string[]
-        /** 外派岗位- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)- 需要以下权限点之一：  - [读取外派岗位](corehr:employment.international_assignment.position:read)  - [读写外派岗位](corehr:employment.international_assignment.position:write) */
+        /**
+         * 外派岗位
+         * - 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)
+         * - 需要以下权限点之一：
+         * - [读取外派岗位](corehr:employment.international_assignment.position:read)
+         * - [读写外派岗位](corehr:employment.international_assignment.position:write)
+         */
         position_id_list?: string[]
-        /** 外派职务- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取- 需要以下权限点之一：    - [读取外派职务](corehr:employment.international_assignment.job:read)    - [读写外派职务](corehr:employment.international_assignment.job:write) */
+        /**
+         * 外派职务
+         * - 可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取
+         * - 需要以下权限点之一：
+         * - [读取外派职务](corehr:employment.international_assignment.job:read)
+         * - [读写外派职务](corehr:employment.international_assignment.job:write)
+         */
         job_id_list?: string[]
-        /** 外派序列- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        /**
+         * 外派序列
+         * - 可通过[【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取
+         */
         job_family_id_list?: string[]
-        /** 外派职级- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取- 需要以下权限点之一：    - [读取外派职级](corehr:employment.international_assignment.job_level:read)    - [读写外派职级](corehr:employment.international_assignment.job_level:write) */
+        /**
+         * 外派职级
+         * - 可通过[【批量查询职级】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取
+         * - 需要以下权限点之一：
+         * - [读取外派职级](corehr:employment.international_assignment.job_level:read)
+         * - [读写外派职级](corehr:employment.international_assignment.job_level:write)
+         */
         job_level_id_list?: string[]
-        /** 外派职等- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取- 需要以下权限点之一：      - [读取外派职等](corehr:employment.international_assignment.job_grade:read)      - [读写外派职等](corehr:employment.international_assignment.job_grade:write) */
+        /**
+         * 外派职等
+         * - 可通过[【查询职等】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取
+         * - 需要以下权限点之一：
+         * - [读取外派职等](corehr:employment.international_assignment.job_grade:read)
+         * - [读写外派职等](corehr:employment.international_assignment.job_grade:write)
+         */
         job_grade_id_list?: string[]
-        /** 外派工时制度- 可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取- 需要以下权限点之一：      - [读取外派工时制度](corehr:employment.international_assignment.working_hours_type:read)      - [读写外派工时制度](corehr:employment.international_assignment.working_hours_type:write) */
+        /**
+         * 外派工时制度
+         * - 可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取
+         * - 需要以下权限点之一：
+         * - [读取外派工时制度](corehr:employment.international_assignment.working_hours_type:read)
+         * - [读写外派工时制度](corehr:employment.international_assignment.working_hours_type:write)
+         */
         working_hours_type_id_list?: string[]
-        /** 外派任职公司- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取- 需要以下权限点之一：    - [读取外派公司](corehr:employment.international_assignment.service_company:read)    - [读写外派公司](corehr:employment.international_assignment.service_company:write) */
+        /**
+         * 外派任职公司
+         * - 可通过[【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取
+         * - 需要以下权限点之一：
+         * - [读取外派公司](corehr:employment.international_assignment.service_company:read)
+         * - [读写外派公司](corehr:employment.international_assignment.service_company:write)
+         */
         service_company_list?: string[]
-        /** 外派周工作时长- 限制两位小数- 需要以下权限点之一：    - [读取外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:read)    - [读写外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:write) */
+        /**
+         * 外派周工作时长
+         * - 限制两位小数
+         * - 需要以下权限点之一：
+         * - [读取外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:read)
+         * - [读写外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:write)
+         */
         weekly_working_hours_v2?: number
-        /** 外派排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：job_data    - custom_api_name：work_shift- 需要以下权限点之一：    - [读取外派排班类型](corehr:employment.international_assignment.work_shift:read)    - [读写外派排班类型](corehr:employment.international_assignment.work_shift:write) */
+        /**
+         * 外派排班类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：work_shift
+         * - 需要以下权限点之一：
+         * - [读取外派排班类型](corehr:employment.international_assignment.work_shift:read)
+         * - [读写外派排班类型](corehr:employment.international_assignment.work_shift:write)
+         */
         work_shift_list?: string[]
-        /** 外派薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type- 需要以下权限点之一：  - [读取外派薪资类型](corehr:employment.international_assignment.compensation_type:read)  - [读写外派薪资类型](corehr:employment.international_assignment.compensation_type:write) */
+        /**
+         * 外派薪资类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：job_data
+         * - custom_api_name：compensation_type
+         * - 需要以下权限点之一：
+         * - [读取外派薪资类型](corehr:employment.international_assignment.compensation_type:read)
+         * - [读写外派薪资类型](corehr:employment.international_assignment.compensation_type:write)
+         */
         compensation_type_list?: string[]
-        /** 外派预计结束日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        /**
+         * 外派预计结束日期
+         * - 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd
+         */
         international_assignment_expected_end_date?: string
-        /** 外派状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：international_assignment    - custom_api_name：international_assignment_status */
+        /**
+         * 外派状态
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：international_assignment
+         * - custom_api_name：international_assignment_status
+         */
         international_assignment_status_list?: string[]
-        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：international_assignment    - custom_api_name：international_assignment_type */
+        /**
+         * 外派类型
+         * - 可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name：international_assignment
+         * - custom_api_name：international_assignment_type
+         */
         international_assignment_type_list?: string[]
-        /** 外派工作日历- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息- 需要以下权限点之一：    - [读取外派工作日历](corehr:employment.international_assignment.work_calendar:read)    - [读写外派工作日历](corehr:employment.international_assignment.work_calendar:write) */
+        /**
+         * 外派工作日历
+         * - 可通过[【查询工作日历】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息
+         * - 需要以下权限点之一：
+         * - [读取外派工作日历](corehr:employment.international_assignment.work_calendar:read)
+         * - [读写外派工作日历](corehr:employment.international_assignment.work_calendar:write)
+         */
         work_calendar_id_list?: string[]
       }
 
@@ -1769,39 +2122,47 @@ export namespace Corehr {
       }
 
       export interface CreateRequest {
-        /** 人员类型 ID，可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        /** 人员类型 ID，可通过[【批量查询人员类型】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
         employee_type_id: string
-        /** 工时制度 ID，可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
+        /** 工时制度 ID，可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
         working_hours_type_id?: string
-        /** 工作地点 ID，可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取详细信息 */
+        /** 工作地点 ID，可通过[【批量查询地点】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取详细信息 */
         work_location_id?: string
-        /** 部门 ID，可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取详细信息；类型与department_id_type一致 */
+        /** 部门 ID，可通过[【批量查询部门】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取详细信息；类型与department_id_type一致 */
         department_id: string
-        /** 职务 ID，可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取详细信息 */
+        /** 职务 ID，可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取详细信息 */
         job_id?: string
-        /** 职级 ID，可通过[【批量查询职级】](/ssl:ttdoc//uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取详细信息 */
+        /** 职级 ID，可通过[【批量查询职级】](https://open.feishu.cn/document//uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取详细信息 */
         job_level_id?: string
-        /** 序列 ID，可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取详细信息 */
+        /** 序列 ID，可通过[【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取详细信息 */
         job_family_id?: string
-        /** 雇佣 ID，可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
+        /** 雇佣 ID，可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
         employment_id: string
         /** 兼职开始日期 */
         start_date: string
         /** 兼职结束日期，不可清空 */
         end_date?: string
-        /** 直属上级的雇佣ID，可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
+        /** 直属上级的雇佣ID，可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
         direct_manager_id?: string
-        /** 虚线上级的雇佣ID，可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
+        /** 虚线上级的雇佣ID，可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
         dotted_line_manager_id?: string
-        /** 排班类型，可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：- object_api_name = "job_data"- custom_api_name = "work_shift" */
+        /**
+         * 排班类型，可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name = "job_data"
+         * - custom_api_name = "work_shift"
+         */
         work_shift?: Lark.Enum
-        /** 薪资类型，可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：- object_api_name = "job_data"- custom_api_name = "compensation_type" */
+        /**
+         * 薪资类型，可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name = "job_data"
+         * - custom_api_name = "compensation_type"
+         */
         compensation_type?: Lark.Enum
-        /** 任职公司，可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取详细信息 */
+        /** 任职公司，可通过[【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取详细信息 */
         service_company?: string
         /** 周工作时长【0~168】 */
         weekly_working_hours?: string
-        /** 工作日历ID，可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
+        /** 工作日历ID，可通过[【查询工作日历】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
         work_calendar_id?: string
         /** 岗位 ID */
         position_id?: string
@@ -1823,37 +2184,45 @@ export namespace Corehr {
       }
 
       export interface PatchRequest {
-        /** 人员类型 ID，可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        /** 人员类型 ID，可通过[【批量查询人员类型】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
         employee_type_id?: string
-        /** 工时制度 ID，可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
+        /** 工时制度 ID，可通过[【批量查询工时制度】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取详细信息 */
         working_hours_type_id?: string
-        /** 工作地点 ID，可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取详细信息 */
+        /** 工作地点 ID，可通过[【批量查询地点】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取详细信息 */
         work_location_id?: string
-        /** 部门 ID，可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取详细信息；类型与department_id_type一致 */
+        /** 部门 ID，可通过[【批量查询部门】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取详细信息；类型与department_id_type一致 */
         department_id?: string
-        /** 职务 ID，可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取详细信息 */
+        /** 职务 ID，可通过[【批量查询职务】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取详细信息 */
         job_id?: string
-        /** 职级 ID，可通过[【批量查询职级】](/ssl:ttdoc//uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取详细信息 */
+        /** 职级 ID，可通过[【批量查询职级】](https://open.feishu.cn/document//uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取详细信息 */
         job_level_id?: string
-        /** 序列 ID，可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取详细信息 */
+        /** 序列 ID，可通过[【批量查询序列】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取详细信息 */
         job_family_id?: string
         /** 兼职开始日期 */
         start_date?: string
         /** 兼职结束日期，不可清空 */
         end_date?: string
-        /** 直属上级的雇佣ID，可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
+        /** 直属上级的雇佣ID，可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
         direct_manager_id?: string
-        /** 虚线上级的雇佣ID，可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
+        /** 虚线上级的雇佣ID，可通过[【批量查询员工信息】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息；类型与user_id_type一致 */
         dotted_line_manager_id?: string
-        /** 排班类型，可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：- object_api_name = "job_data"- custom_api_name = "work_shift" */
+        /**
+         * 排班类型，可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name = "job_data"
+         * - custom_api_name = "work_shift"
+         */
         work_shift?: Lark.Enum
-        /** 薪资类型，可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：- object_api_name = "job_data"- custom_api_name = "compensation_type" */
+        /**
+         * 薪资类型，可通过[【获取字段详情】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：
+         * - object_api_name = "job_data"
+         * - custom_api_name = "compensation_type"
+         */
         compensation_type?: Lark.Enum
-        /** 任职公司，可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取详细信息 */
+        /** 任职公司，可通过[【批量查询公司】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取详细信息 */
         service_company?: string
         /** 周工作时长【0~168】 */
         weekly_working_hours?: string
-        /** 工作日历ID，可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
+        /** 工作日历ID，可通过[【查询工作日历】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息 */
         work_calendar_id?: string
         /** 岗位 ID */
         position_id?: string
@@ -2371,13 +2740,19 @@ export namespace Corehr {
       active?: boolean
       /** 当通过上级部门 ID 查询时，填写 true 返回所有子部门，填写 false 只返回直接下级部门 */
       get_all_children?: boolean
-      /** manager ID 列表**字段权限要求：按照部门负责人搜索 (corehr:department.manager.search:read)** */
+      /**
+       * manager ID 列表
+       * **字段权限要求：按照部门负责人搜索 (corehr:department.manager.search:read)**
+       */
       manager_list?: string[]
       /** 部门 ID 列表 */
       department_id_list?: string[]
       /** 部门名称列表，需精确匹配 */
       name_list?: string[]
-      /** 上级部门 ID ，可查询直接下级部门**字段权限要求：按照上级部门搜索 (corehr:department.organize.search:read) ** */
+      /**
+       * 上级部门 ID ，可查询直接下级部门
+       * **字段权限要求：按照上级部门搜索 (corehr:department.organize.search:read) **
+       */
       parent_department_id?: string
       /** 部门 code 列表 */
       code_list?: string[]
@@ -4248,11 +4623,22 @@ export namespace Corehr {
       basic_info_update?: Lark.BasicInfoUpdate
       /** 更新待入职（prehire）信息 */
       offer_info_update?: Lark.OfferInfoUpdate
-      /** 指定需要更新的系统字段，只支持最多下钻一层，格式如下： - basic_info_update字段：basic_info_update.name（对name整体进行覆盖更新）；basic_info_update.emails（对邮箱整体进行更新） - offer_info_update字段：offer_info_update.onboarding_method - 招聘ID：ats_application_id */
+      /**
+       * 指定需要更新的系统字段，只支持最多下钻一层，格式如下：
+       * - basic_info_update字段：basic_info_update.name（对name整体进行覆盖更新）；basic_info_update.emails（对邮箱整体进行更新）
+       * - offer_info_update字段：offer_info_update.onboarding_method
+       * - 招聘ID：ats_application_id
+       */
       standard_update_fields?: string[]
-      /** 指定需要更新的PreHire对象上的自定义字段，格式如下： - custom_field1__c */
+      /**
+       * 指定需要更新的PreHire对象上的自定义字段，格式如下：
+       * - custom_field1__c
+       */
       custom_update_fields?: string[]
-      /** 指定需要更新的Person对象上的自定义字段，格式如下： - custom_field1__c */
+      /**
+       * 指定需要更新的Person对象上的自定义字段，格式如下：
+       * - custom_field1__c
+       */
       person_custom_update_fields?: string[]
     }
 
@@ -4264,7 +4650,18 @@ export namespace Corehr {
     export interface QueryRequest {
       /** 待入职人员 ID 列表；如果该字段非空，则不按照page_size、page_token分页方式查询 */
       pre_hire_ids?: string[]
-      /** 返回数据的字段列表，填写方式：- 为空时只返回 pre_hire_id- 不为空时按照传入的字段返回数据，格式如下：    - person_info 字段：person_info.gender，person_info.age    - employment_info 字段：employment_info.department    - onboarding_info 字段：onboarding_info.onboarding_date    - probation_info 字段：probation_info.probation_period    - contract_info 字段：contract_info.contract_type- 如果要返回所有下级，只用传上级结构体名称，例如 person_info- 返回数据越多，查询接口性能越慢，请按需填写返回字段 */
+      /**
+       * 返回数据的字段列表，填写方式：
+       * - 为空时只返回 pre_hire_id
+       * - 不为空时按照传入的字段返回数据，格式如下：
+       * - person_info 字段：person_info.gender，person_info.age
+       * - employment_info 字段：employment_info.department
+       * - onboarding_info 字段：onboarding_info.onboarding_date
+       * - probation_info 字段：probation_info.probation_period
+       * - contract_info 字段：contract_info.contract_type
+       * - 如果要返回所有下级，只用传上级结构体名称，例如 person_info
+       * - 返回数据越多，查询接口性能越慢，请按需填写返回字段
+       */
       fields?: string[]
     }
 
@@ -4308,7 +4705,18 @@ export namespace Corehr {
       key_word?: string
       /** 是否离职重聘 */
       rehire?: 'to_be_confirmed' | 'no' | 'yes'
-      /** 返回数据的字段列表，填写方式：- 为空时只返回 pre_hire_id- 不为空时按照传入的字段返回数据，格式如下：    - person_info 字段：person_info.gender，person_info.age    - employment_info 字段：employment_info.department    - onboarding_info 字段：onboarding_info.onboarding_date    - probation_info 字段：probation_info.probation_period    - contract_info 字段：contract_info.contract_type- 如果要返回所有下级，只用传上级结构体名称，例如 person_info- 返回数据越多，查询接口性能越慢，请按需填写返回字段 */
+      /**
+       * 返回数据的字段列表，填写方式：
+       * - 为空时只返回 pre_hire_id
+       * - 不为空时按照传入的字段返回数据，格式如下：
+       * - person_info 字段：person_info.gender，person_info.age
+       * - employment_info 字段：employment_info.department
+       * - onboarding_info 字段：onboarding_info.onboarding_date
+       * - probation_info 字段：probation_info.probation_period
+       * - contract_info 字段：contract_info.contract_type
+       * - 如果要返回所有下级，只用传上级结构体名称，例如 person_info
+       * - 返回数据越多，查询接口性能越慢，请按需填写返回字段
+       */
       fields?: string[]
     }
 
@@ -4881,7 +5289,10 @@ export namespace Corehr {
       employment_id: string
       /** 离职日期 */
       offboarding_date: string
-      /** 离职原因，可通过接口[【查询员工离职原因列表】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/query)获取 */
+      /**
+       * 离职原因，可通过接口
+       * [【查询员工离职原因列表】](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/offboarding/query)获取
+       */
       offboarding_reason_unique_identifier: string
       /** 离职原因说明，长度限制6000 */
       offboarding_reason_explanation?: string
@@ -5230,7 +5641,12 @@ export namespace Corehr {
       employment_id: string
       /** 授予数量 */
       granting_quantity: string
-      /** 授予时长单位可选值有：- 1: 天- 2: 小时 */
+      /**
+       * 授予时长单位
+       * 可选值有：
+       * - 1: 天
+       * - 2: 小时
+       */
       granting_unit: number
       /** 生效时间 */
       effective_date: string
@@ -5290,7 +5706,12 @@ export namespace Corehr {
     }
 
     export interface LeaveTypesQuery extends Pagination {
-      /** 假期类型状态（不传则为全部）可选值有：- 1：已启用- 2：已停用 */
+      /**
+       * 假期类型状态（不传则为全部）
+       * 可选值有：
+       * - 1：已启用
+       * - 2：已停用
+       */
       status?: string
       /** 用户 ID 类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
@@ -5314,7 +5735,19 @@ export namespace Corehr {
       employment_id_list?: string[]
       /** 休假发起人 ID 列表，最大 100 个 */
       initiator_id_list?: string[]
-      /** 请假记录的状态可选值有：- 1：已通过- 2：审批中- 3：审批中（更正）- 4：审批中（取消休假）- 5：审批中（返岗）- 6：已返岗- 7：已拒绝- 8：已取消- 9：已撤回 */
+      /**
+       * 请假记录的状态
+       * 可选值有：
+       * - 1：已通过
+       * - 2：审批中
+       * - 3：审批中（更正）
+       * - 4：审批中（取消休假）
+       * - 5：审批中（返岗）
+       * - 6：已返岗
+       * - 7：已拒绝
+       * - 8：已取消
+       * - 9：已撤回
+       */
       leave_request_status?: string[]
       /** 假期类型 ID 列表，枚举值可通过【获取假期类型列表】接口获取 */
       leave_type_id_list?: string[]
@@ -5613,7 +6046,12 @@ export namespace Corehr {
       role_id: string
       /** 管理范围信息 */
       management_scope_list: Lark.ManagementScope[]
-      /** 查找方式可选值有：- 1：只查找指定 部门/工作地点/公司/社保城市，如无授权信息则返回为空- 2：当指定的 部门/工作地点/公司/社保城市 无授权信息，向上查找第一个授权记录并直接返回 */
+      /**
+       * 查找方式
+       * 可选值有：
+       * - 1：只查找指定 部门/工作地点/公司/社保城市，如无授权信息则返回为空
+       * - 2：当指定的 部门/工作地点/公司/社保城市 无授权信息，向上查找第一个授权记录并直接返回
+       */
       search_method: string
       /** 页码标识，获取第一页传空，每次查询会返回下一页的page_token */
       page_token?: string
