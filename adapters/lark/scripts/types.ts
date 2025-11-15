@@ -133,7 +133,18 @@ function formatEnum(options: SchemaOption[], type: string): string {
   if (!options.length) return ''
   const quote = type === 'string' ? "'" : ''
   return options.map((option) => {
-    const desc = option.description ? `  /** ${option.description.replace(/\n/g, '').trim()} */\n` : ''
+    const lines = option.description
+      .replace(/<br>/g, '\n')
+      .split('\n')
+      .map(line => line
+        .replace(/\/ssl:ttdoc\//g, 'https://open.feishu.cn/document/')
+        .trim())
+      .filter(line => line)
+    const desc = lines.length > 1
+      ? `  /**\n${lines.map(line => `   * ${line}`).join('\n')}\n   */\n`
+      : lines.length === 1
+        ? `  /** ${lines[0]} */\n`
+        : ''
     return `${desc}  ${capitalize(camelize(option.name))} = ${quote}${option.value}${quote},`
   }).join('\n') + '\n'
 }
@@ -142,7 +153,18 @@ function formatObject(properties: Schema[], parentName: string, project?: Projec
   if (!properties.length) return ''
   return properties.map((schema) => {
     const name = parentName ? parentName + capitalize(camelize(schema.name)) : undefined
-    const desc = schema.description ? `  /** ${schema.description.replace(/\n/g, '').trim()} */\n` : ''
+    const lines = schema.description
+      .replace(/<br>/g, '\n')
+      .split('\n')
+      .map(line => line
+        .replace(/\/ssl:ttdoc\//g, 'https://open.feishu.cn/document/')
+        .trim())
+      .filter(line => line)
+    const desc = lines.length > 1
+      ? `  /**\n${lines.map(line => `   * ${line}`).join('\n')}\n   */\n`
+      : lines.length === 1
+        ? `  /** ${lines[0]} */\n`
+        : ''
     return `${desc}  ${schema.name}${schema.required ? '' : '?'}: ${formatType(schema, name!, project, ns, false)}`
   }).join('\n') + '\n'
 }

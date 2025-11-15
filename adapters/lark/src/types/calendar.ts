@@ -228,7 +228,7 @@ export namespace Calendar {
       time_min: string
       /** 查询时段结束时间，需要url编码 */
       time_max: string
-      /** 用户user_id，输入时与 room_id 二选一。参见[用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
+      /** 用户user_id，输入时与 room_id 二选一。参见[用户相关的 ID 概念](https://open.feishu.cn/document/home/user-identity-introduction/introduction) */
       user_id?: string
       /** 会议室room_id，输入时与 user_id 二选一 */
       room_id?: string
@@ -631,7 +631,10 @@ export namespace Calendar {
       }
 
       export interface CreateRequest {
-        /** 新增参与人列表；<br>- 单次请求会议室的数量限制为100。 */
+        /**
+         * 新增参与人列表；
+         * - 单次请求会议室的数量限制为100。
+         */
         attendees?: Lark.CalendarEventAttendee[]
         /** 是否给参与人发送bot通知 默认为true */
         need_notification?: boolean
@@ -654,7 +657,7 @@ export namespace Calendar {
       }
 
       export interface BatchDeleteRequest {
-        /** 要移除的参与人 ID 列表。参见[参与人ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/introduction#4998889c) */
+        /** 要移除的参与人 ID 列表。参见[参与人ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar-event-attendee/introduction#4998889c) */
         attendee_ids?: string[]
         /** 需要删除的参与人类型实体ID，作为attendee_ids字段的补充。 */
         delete_ids?: Lark.CalendarEventAttendeeId[]
@@ -720,7 +723,11 @@ export namespace Calendar {
       end_time: string
       /** 休假日程标题，可自定义例如："请假中(全天) / 1-Day Time Off"，"请假中(半天) / 0.5-Day Time Off"，"长期休假中 / Leave of Absence"，"请假中" */
       title?: string
-      /** 休假日程描述，可自定义,例如："若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked." */
+      /**
+       * 休假日程描述，可自定义,例如：
+       * "若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。
+       * If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked."
+       */
       description?: string
     }
 
@@ -742,7 +749,11 @@ export namespace Calendar {
       end_time: string
       /** 休假日程标题，可自定义例如："请假中(全天) / 1-Day Time Off"，"请假中(半天) / 0.5-Day Time Off"，"长期休假中 / Leave of Absence"，"请假中" */
       title?: string
-      /** 休假日程描述，可自定义,例如："若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked." */
+      /**
+       * 休假日程描述，可自定义,例如：
+       * "若拒绝或删除此日程，飞书中相应的“请假”标签将自动消失，而请假系统中的休假申请不会被撤销。
+       * If the event is rejected or deleted, corresponding "On Leave" tag in Feishu will disappear, while the leave request in the time off system will not be revoked."
+       */
       description?: string
     }
   }

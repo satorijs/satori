@@ -103,9 +103,14 @@ export namespace Im {
     export interface CreateRequest {
       /** 依据receive_id_type的值，填写对应的消息接收者id */
       receive_id: string
-      /** 消息类型 包括：text、post、image、file、audio、media、sticker、interactive、share_chat、share_user等，类型定义请参考[发送消息content说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json) */
+      /** 消息类型 包括：text、post、image、file、audio、media、sticker、interactive、share_chat、share_user等，类型定义请参考[发送消息content说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json) */
       msg_type: string
-      /** 消息内容，json结构序列化后的字符串。不同msg_type对应不同内容。消息类型 包括：text、post、image、file、audio、media、sticker、interactive、share_chat、share_user等，具体格式说明参考：[发送消息content说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json)<b>请求体大小限制</b>：- 文本消息请求体最大不能超过150KB- 卡片及富文本消息请求体最大不能超过30KB */
+      /**
+       * 消息内容，json结构序列化后的字符串。不同msg_type对应不同内容。消息类型 包括：text、post、image、file、audio、media、sticker、interactive、share_chat、share_user等，具体格式说明参考：[发送消息content说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json)
+       * <b>请求体大小限制</b>：
+       * - 文本消息请求体最大不能超过150KB
+       * - 卡片及富文本消息请求体最大不能超过30KB
+       */
       content: string
       /** 由开发者生成的唯一字符串序列，用于发送消息请求去重；持有相同uuid的请求1小时内至多成功执行一次 */
       uuid?: string
@@ -148,7 +153,7 @@ export namespace Im {
     }
 
     export interface ReplyRequest {
-      /** 消息内容 json 格式，格式说明参考: [发送消息content说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json) */
+      /** 消息内容 json 格式，格式说明参考: [发送消息content说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json) */
       content: string
       /** 消息类型，包括：text、post、image、file、audio、media、sticker、interactive、share_card、share_user */
       msg_type: string
@@ -304,7 +309,7 @@ export namespace Im {
     export interface ListQuery extends Pagination {
       /** 容器类型 ，目前可选值仅有"chat"，包含单聊（p2p）和群聊（group） */
       container_id_type: string
-      /** 容器的id，即chat的id，详情参见[群ID 说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-id-description) */
+      /** 容器的id，即chat的id，详情参见[群ID 说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/chat-id-description) */
       container_id: string
       /** 历史信息的起始时间（秒级时间戳） */
       start_time?: string
@@ -370,7 +375,7 @@ export namespace Im {
     }
 
     export interface PatchRequest {
-      /** 消息内容 json 格式，[发送消息 content 说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json)，参考文档中的卡片格式 */
+      /** 消息内容 json 格式，[发送消息 content 说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/im-v1/message/create_json)，参考文档中的卡片格式 */
       content: string
     }
 
@@ -425,7 +430,10 @@ export namespace Im {
       }
 
       export interface ListQuery extends Pagination {
-        /** 待查询消息reaction的类型[emoji类型列举](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/emojis-introduce)。- 不传入该参数，表示拉取所有类型reaction */
+        /**
+         * 待查询消息reaction的类型[emoji类型列举](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/emojis-introduce)。
+         * - 不传入该参数，表示拉取所有类型reaction
+         */
         reaction_type?: string
         /** 当操作人为用户时返回用户ID的类型 */
         user_id_type?: 'open_id' | 'union_id' | 'user_id'
@@ -545,7 +553,10 @@ export namespace Im {
     export interface CreateForm {
       /** 图片类型 */
       image_type: 'message' | 'avatar'
-      /** 图片内容 **注意：** 上传的图片大小不能超过10MB */
+      /**
+       * 图片内容
+       * **注意：** 上传的图片大小不能超过10MB
+       */
       image: Blob
     }
 
@@ -689,31 +700,67 @@ export namespace Im {
     }
 
     export interface CreateRequest {
-      /** 群头像对应的 Image Key，可通过[上传图片](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create)获取（注意：上传图片的 ==image_type== 需要指定为 ==avatar==） */
+      /** 群头像对应的 Image Key，可通过[上传图片](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/image/create)获取（注意：上传图片的 ==image_type== 需要指定为 ==avatar==） */
       avatar?: string
-      /** 群名称 **注意：** 公开群名称的长度不得少于2个字符 */
+      /**
+       * 群名称
+       * **注意：** 公开群名称的长度不得少于2个字符
+       */
       name?: string
       /** 群描述 */
       description?: string
       /** 群国际化名称 */
       i18n_names?: Lark.I18nNames
-      /** 创建群时指定的群主，不填时指定建群的机器人为群主。群主 ID，ID值与查询参数中的 user_id_type 对应。不同 ID 的说明参见 [用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
+      /**
+       * 创建群时指定的群主，不填时指定建群的机器人为群主。
+       * 群主 ID，ID值与查询参数中的 user_id_type 对应。
+       * 不同 ID 的说明参见 [用户相关的 ID 概念](https://open.feishu.cn/document/home/user-identity-introduction/introduction)
+       */
       owner_id?: string
       /** 创建群时邀请的群成员，id 类型为 user_id_type */
       user_id_list?: string[]
-      /** 创建群时邀请的群机器人 **注意：** 拉机器人入群请使用 ==app_id== */
+      /**
+       * 创建群时邀请的群机器人
+       * **注意：** 拉机器人入群请使用 ==app_id==
+       */
       bot_id_list?: string[]
       /** 群消息模式 */
       group_message_type?: 'chat' | 'thread'
-      /** 群模式**可选值有**：- `group`：群组 */
+      /**
+       * 群模式
+       * **可选值有**：
+       * - `group`：群组
+       */
       chat_mode?: string
-      /** 群类型**可选值有**：- `private`：私有群- `public`：公开群 */
+      /**
+       * 群类型
+       * **可选值有**：
+       * - `private`：私有群
+       * - `public`：公开群
+       */
       chat_type?: string
-      /** 入群消息可见性**可选值有**：- `only_owner`：仅群主和管理员可见- `all_members`：所有成员可见- `not_anyone`：任何人均不可见 */
+      /**
+       * 入群消息可见性
+       * **可选值有**：
+       * - `only_owner`：仅群主和管理员可见
+       * - `all_members`：所有成员可见
+       * - `not_anyone`：任何人均不可见
+       */
       join_message_visibility?: string
-      /** 退群消息可见性**可选值有**：- `only_owner`：仅群主和管理员可见- `all_members`：所有成员可见- `not_anyone`：任何人均不可见 */
+      /**
+       * 退群消息可见性
+       * **可选值有**：
+       * - `only_owner`：仅群主和管理员可见
+       * - `all_members`：所有成员可见
+       * - `not_anyone`：任何人均不可见
+       */
       leave_message_visibility?: string
-      /** 加群审批**可选值有**：- `no_approval_required`：无需审批- `approval_required`：需要审批 */
+      /**
+       * 加群审批
+       * **可选值有**：
+       * - `no_approval_required`：无需审批
+       * - `approval_required`：需要审批
+       */
       membership_approval?: string
       /** 防泄密模式设置 */
       restricted_mode_setting?: Lark.RestrictedModeSetting
@@ -1071,12 +1118,18 @@ export namespace Im {
       }
 
       export interface CreateRequest {
-        /** 成员列表<b>注意：</b>每次请求，最多拉50个用户或者5个机器人，并且群组最多容纳15个机器人 */
+        /**
+         * 成员列表
+         * <b>注意：</b>每次请求，最多拉50个用户或者5个机器人，并且群组最多容纳15个机器人
+         */
         id_list?: string[]
       }
 
       export interface CreateQuery {
-        /** 进群成员 id 类型 open_id/user_id/union_id/app_id<b>注意：</b>拉机器人入群请使用 ==app_id== */
+        /**
+         * 进群成员 id 类型 open_id/user_id/union_id/app_id
+         * <b>注意：</b>拉机器人入群请使用 ==app_id==
+         */
         member_id_type?: 'user_id' | 'union_id' | 'open_id' | 'app_id'
         /** 出现不可用ID后的处理方式 0/1/2 */
         succeed_type?: 0 | 1 | 2
@@ -1107,7 +1160,7 @@ export namespace Im {
       }
 
       export interface GetQuery extends Pagination {
-        /** 群成员 用户 ID 类型，详情参见 [用户相关的 ID 概念](/ssl:ttdoc/home/user-identity-introduction/introduction) */
+        /** 群成员 用户 ID 类型，详情参见 [用户相关的 ID 概念](https://open.feishu.cn/document/home/user-identity-introduction/introduction) */
         member_id_type?: 'user_id' | 'union_id' | 'open_id'
       }
 
@@ -1145,7 +1198,10 @@ export namespace Im {
       export interface PatchRequest {
         /** 文档当前版本号 int64 类型，get 接口会返回 */
         revision: string
-        /** 修改文档请求的序列化字段更新公告信息的格式和更新[云文档](/ssl:ttdoc/ukTMukTMukTM/uYDM2YjL2AjN24iNwYjN)格式相同 */
+        /**
+         * 修改文档请求的序列化字段
+         * 更新公告信息的格式和更新[云文档](https://open.feishu.cn/document/ukTMukTMukTM/uYDM2YjL2AjN24iNwYjN)格式相同
+         */
         requests?: string[]
       }
 

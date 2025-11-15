@@ -181,7 +181,10 @@ export namespace Contact {
     export interface CreateQuery {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型。不同 ID 的说明参见[部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型。
+       * 不同 ID 的说明参见[部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
       /** 用于幂等判断是否为同一请求，避免重复创建。字符串类型，自行生成。 */
       client_token?: string
@@ -279,7 +282,10 @@ export namespace Contact {
     export interface GetQuery {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型不同 ID 的说明 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型
+       * 不同 ID 的说明 [部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
     }
 
@@ -304,16 +310,32 @@ export namespace Contact {
     export interface FindByDepartmentQuery extends Pagination {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型部门ID类型的区别参见[部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型
+       * 部门ID类型的区别参见[部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
-      /** 填写该字段表示获取该部门下用户，必填。根部门的部门ID为0。ID值与查询参数中的department_id_type 对应。不同 ID 的说明与department_id的获取方式参见 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 填写该字段表示获取该部门下用户，必填。根部门的部门ID为0。
+       * ID值与查询参数中的department_id_type 对应。
+       * 不同 ID 的说明与department_id的获取方式参见 [部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id: string
     }
 
     export interface BatchGetIdRequest {
-      /** 要查询的用户邮箱，最多 50 条。注意，emails与mobiles相互独立，每条用户邮箱返回对应的用户ID。本接口返回的用户ID数量为emails数量与mobiles数量的和。 */
+      /**
+       * 要查询的用户邮箱，最多 50 条。
+       * 注意，emails与mobiles相互独立，每条用户邮箱返回对应的用户ID。
+       * 本接口返回的用户ID数量为emails数量与mobiles数量的和。
+       */
       emails?: string[]
-      /** 要查询的用户手机号，最多 50 条。注意1. emails与mobiles相互独立，每条用户手机号返回对应的用户ID。2.  非中国大陆地区的手机号需要添加以 “+” 开头的国家 / 地区代码。 */
+      /**
+       * 要查询的用户手机号，最多 50 条。
+       * 注意
+       * 1. emails与mobiles相互独立，每条用户手机号返回对应的用户ID。
+       * 2.  非中国大陆地区的手机号需要添加以 “+” 开头的国家 / 地区代码。
+       */
       mobiles?: string[]
       /** 查询结果包含离职员工，可查询离职用户的ID */
       include_resigned?: boolean
@@ -495,7 +517,12 @@ export namespace Contact {
       description?: string
       /** 用户组的类型。默认为1表示普通用户组 */
       type?: CreateRequestType
-      /** 自定义用户组ID，可在创建时自定义，不自定义则由系统自动生成，已创建用户组不允许修改 group_id 。自定义group_id数据校验规则：最大长度：64 字符校验规则：数字、大小写字母的组合，不能包含空格 */
+      /**
+       * 自定义用户组ID，可在创建时自定义，不自定义则由系统自动生成，已创建用户组不允许修改 group_id 。
+       * 自定义group_id数据校验规则：
+       * 最大长度：64 字符
+       * 校验规则：数字、大小写字母的组合，不能包含空格
+       */
       group_id?: string
     }
 
@@ -514,7 +541,10 @@ export namespace Contact {
     export interface PatchRequest {
       /** 用户组的名字，企业内唯一，最大长度：100 字符 */
       name?: string
-      /** 用户组描述信息最大长度：500 字 */
+      /**
+       * 用户组描述信息
+       * 最大长度：500 字
+       */
       description?: string
     }
 
@@ -614,7 +644,11 @@ export namespace Contact {
       }
 
       export interface SimplelistQuery extends Pagination {
-        /** 欲获取成员ID类型。当member_type=user时候，member_id_type表示user_id_type，枚举值open_id, union_id和user_id。当member_type=department时候，member_id_type表示department_id_type，枚举值open_id和department_id。 */
+        /**
+         * 欲获取成员ID类型。
+         * 当member_type=user时候，member_id_type表示user_id_type，枚举值open_id, union_id和user_id。
+         * 当member_type=department时候，member_id_type表示department_id_type，枚举值open_id和department_id。
+         */
         member_id_type?: 'open_id' | 'union_id' | 'user_id' | 'department_id'
         /** 欲获取的用户组成员类型。 */
         member_type?: 'user' | 'department'
@@ -820,7 +854,10 @@ export namespace Contact {
     export interface CreateQuery {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型不同 ID 的说明参见[部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型
+       * 不同 ID 的说明参见[部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
       /** 用于幂等判断是否为同一请求，避免重复创建。字符串类型，自行生成。 */
       client_token?: string
@@ -915,7 +952,10 @@ export namespace Contact {
     export interface GetQuery {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型不同 ID 的说明 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型
+       * 不同 ID 的说明 [部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
     }
 
@@ -940,7 +980,10 @@ export namespace Contact {
     export interface ChildrenQuery extends Pagination {
       /** 此次调用中使用的用户ID的类型 */
       user_id_type?: 'user_id' | 'union_id' | 'open_id'
-      /** 此次调用中使用的部门ID的类型不同 ID 的说明与department_id的获取方式参见 [部门ID说明](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0) */
+      /**
+       * 此次调用中使用的部门ID的类型
+       * 不同 ID 的说明与department_id的获取方式参见 [部门ID说明](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/department/field-overview#23857fe0)
+       */
       department_id_type?: 'department_id' | 'open_department_id'
       /** 是否递归获取子部门 */
       fetch_child?: boolean

@@ -45,6 +45,11 @@ export namespace Board {
     export namespace Node {
       export interface Methods {
         /**
+         * 解析画板语法
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/board-v1/whiteboard-node/create_plantuml
+         */
+        createPlantuml(whiteboard_id: string, body: CreatePlantumlRequest): Promise<CreatePlantumlResponse>
+        /**
          * 创建节点
          * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/board-v1/whiteboard-node/create
          */
@@ -54,6 +59,20 @@ export namespace Board {
          * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/board-v1/whiteboard-node/list
          */
         list(whiteboard_id: string): Promise<ListResponse>
+      }
+
+      export interface CreatePlantumlRequest {
+        /** plant uml 代码 */
+        plant_uml_code: string
+        style_type?: Lark.StyleType
+        /** 语法类型 */
+        syntax_type?: Lark.SyntaxType
+        diagram_type?: Lark.DiagramType
+      }
+
+      export interface CreatePlantumlResponse {
+        /** 创建生成的plant uml节点id */
+        node_id?: string
       }
 
       export interface CreateRequest {
@@ -92,6 +111,9 @@ Internal.define({
   },
   '/board/v1/whiteboards/{whiteboard_id}/download_as_image': {
     GET: { name: 'board.whiteboard.downloadAsImage', type: 'binary' },
+  },
+  '/board/v1/whiteboards/{whiteboard_id}/nodes/plantuml': {
+    POST: 'board.whiteboard.node.createPlantuml',
   },
   '/board/v1/whiteboards/{whiteboard_id}/nodes': {
     POST: 'board.whiteboard.node.create',

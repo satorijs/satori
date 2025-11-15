@@ -221,7 +221,7 @@ export namespace Attendance {
     export interface BatchCreateRequest {
       /** 班表信息列表 */
       user_daily_shifts: Lark.UserDailyShift[]
-      /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
+      /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
       operator_id?: string
     }
 
@@ -318,7 +318,7 @@ export namespace Attendance {
     export interface CreateRequest {
       /** 6921319402260496386 */
       group: Lark.Group
-      /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
+      /** 操作人uid，如果您未操作[考勤管理后台“API 接入”流程](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/attendance-development-guidelines)，则此字段为必填字段 */
       operator_id?: string
     }
 
@@ -659,9 +659,15 @@ export namespace Attendance {
       stats_type: 'daily' | 'month'
       /** 开始时间 */
       start_date: number
-      /** 结束时间（时间间隔不超过 40 天） */
+      /**
+       * 结束时间
+       * （时间间隔不超过 40 天）
+       */
       end_date: number
-      /** 查询的用户 ID 列表（用户数量不超过 200） */
+      /**
+       * 查询的用户 ID 列表
+       * （用户数量不超过 200）
+       */
       user_ids?: string[]
       /** 是否需要历史数据 */
       need_history?: boolean
@@ -764,7 +770,7 @@ export namespace Attendance {
     }
 
     export interface ProcessRequest {
-      /** 审批实例 ID，获取方式：1）[获取审批通过数据](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/query) 2）[写入审批结果](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/create) 3）[通知补卡审批发起（补卡情况下）](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_task_remedy/create) */
+      /** 审批实例 ID，获取方式：1）[获取审批通过数据](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/query) 2）[写入审批结果](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_approval/create) 3）[通知补卡审批发起（补卡情况下）](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/attendance-v1/user_task_remedy/create) */
       approval_id: string
       /** 审批类型，leave：请假，out：外出，overtime：加班，trip：出差，remedy：补卡 */
       approval_type: string

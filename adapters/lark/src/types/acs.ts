@@ -226,7 +226,10 @@ export namespace Acs {
     export interface ListQuery extends Pagination {
       /** 记录开始时间，单位秒 */
       from: number
-      /** 记录结束时间，单位秒，时间跨度不能超过30天 */
+      /**
+       * 记录结束时间，单位秒，
+       * 时间跨度不能超过30天
+       */
       to: number
       /** 门禁设备 ID */
       device_id?: string

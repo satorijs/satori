@@ -224,11 +224,11 @@ export namespace Helpdesk {
     export interface StartServiceRequest {
       /** 是否直接进入人工(若appointed_agents填写了，该值为必填) */
       human_service?: boolean
-      /** 客服 open ids (获取方式参考[获取单个用户信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/get))，human_service需要为true */
+      /** 客服 open ids (获取方式参考[获取单个用户信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/get))，human_service需要为true */
       appointed_agents?: string[]
-      /** 用户 open id,(获取方式参考[获取单个用户信息](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/get)) */
+      /** 用户 open id,(获取方式参考[获取单个用户信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/get)) */
       open_id: string
-      /** 工单来源自定义信息，长度限制1024字符，如设置，[获取工单详情](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket/get)会返回此信息 */
+      /** 工单来源自定义信息，长度限制1024字符，如设置，[获取工单详情](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket/get)会返回此信息 */
       customized_info?: string
     }
 
@@ -305,7 +305,10 @@ export namespace Helpdesk {
     export interface TicketImageQuery {
       /** 工单ID */
       ticket_id: string
-      /** 消息ID[查询消息ID](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket-message/list) */
+      /**
+       * 消息ID
+       * [查询消息ID](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/helpdesk-v1/ticket-message/list)
+       */
       msg_id: string
       /** index，当消息类型为post时，需指定图片index，index从0开始。当消息类型为img时，无需index */
       index?: number
@@ -347,7 +350,10 @@ export namespace Helpdesk {
       export interface CreateRequest {
         /** 消息类型；text：纯文本；post：富文本 */
         msg_type: string
-        /** - 纯文本，参考[发送文本消息](/ssl:ttdoc/ukTMukTMukTM/uUjNz4SN2MjL1YzM)中的content；- 富文本，参考[发送富文本消息](/ssl:ttdoc/ukTMukTMukTM/uMDMxEjLzATMx4yMwETM)中的content */
+        /**
+         * - 纯文本，参考[发送文本消息](https://open.feishu.cn/document/ukTMukTMukTM/uUjNz4SN2MjL1YzM)中的content；
+         * - 富文本，参考[发送富文本消息](https://open.feishu.cn/document/ukTMukTMukTM/uMDMxEjLzATMx4yMwETM)中的content
+         */
         content: string
       }
 
@@ -606,7 +612,10 @@ export namespace Helpdesk {
     }
 
     export interface SearchQuery extends Pagination {
-      /** 搜索query，query内容如果不是英文，包含中文空格等有两种编码策略：1. url编码 2. base64编码，同时加上base64=true参数 */
+      /**
+       * 搜索query
+       * ，query内容如果不是英文，包含中文空格等有两种编码策略：1. url编码 2. base64编码，同时加上base64=true参数
+       */
       query: string
       /** 是否转换为base64,输入true表示是，不填写表示否，中文需要转换为base64 */
       base64?: string

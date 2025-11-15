@@ -105,7 +105,10 @@ export namespace Authen {
       export interface CreateRequest {
         /** 授权类型，**固定值**： */
         grant_type: string
-        /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
+        /**
+         * 刷新 `user_access_token` 需要的凭证
+         * 获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`**
+         */
         refresh_token: string
       }
 
@@ -196,7 +199,10 @@ export namespace Authen {
     export interface CreateRequest {
       /** 授权类型，**固定值**： */
       grant_type: string
-      /** 刷新 `user_access_token` 需要的凭证<br>获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`** */
+      /**
+       * 刷新 `user_access_token` 需要的凭证
+       * 获取user_access_token`接口和本接口均返回 `refresh_token`，**每次请求，请注意使用最新获取到的`refresh_token`**
+       */
       refresh_token: string
     }
 

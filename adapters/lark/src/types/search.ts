@@ -193,7 +193,10 @@ export namespace Search {
     }
 
     export interface ListQuery extends Pagination {
-      /** 回包数据格式，0-全量数据；1-摘要数据。**注**：摘要数据仅包含"id"，"name"，"state"。 */
+      /**
+       * 回包数据格式，0-全量数据；1-摘要数据。
+       * **注**：摘要数据仅包含"id"，"name"，"state"。
+       */
       view?: ListQueryView
     }
 
