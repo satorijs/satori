@@ -1,6 +1,7 @@
 import { Bot, Context, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
 import { Im } from './types'
 import { HttpServer } from './http'
+import { WsClient } from './ws'
 import { LarkMessageEncoder } from './message'
 import { Internal } from './internal'
 import * as Utils from './utils'
@@ -14,7 +15,7 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
   ppt: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 }
 
-export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config> {
+export class LarkBot<C extends Context = Context, T extends LarkBot.Config = LarkBot.Config> extends Bot<C, T> {
   static inject = ['server', 'http']
   static MessageEncoder = LarkMessageEncoder
 
@@ -23,7 +24,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
   assetsQuester: HTTP
   internal: Internal<C>
 
-  constructor(ctx: C, config: LarkBot.Config) {
+  constructor(ctx: C, config: T) {
     super(ctx, config, 'lark')
 
     this.http = ctx.http.extend({
@@ -32,7 +33,11 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     this.assetsQuester = ctx.http
     this.internal = new Internal(this)
 
-    ctx.plugin(HttpServer, this)
+    if (config.protocol === 'http') {
+      ctx.plugin(HttpServer, this)
+    } else if (config.protocol === 'ws') {
+      ctx.plugin(WsClient, this as any)
+    }
 
     this.defineInternalRoute('/*path', async ({ params, method, headers, body, query }) => {
       const response = await this.http('/' + params.path, {
@@ -78,6 +83,7 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
     // 剩余有效期小于 30 分钟时，调用本接口会返回一个新的 tenant_access_token，此时会同时存在两个有效的 tenant_access_token。
     // 剩余有效期大于等于 30 分钟时，调用本接口会返回原有的 tenant_access_token。
     // 初次获得 token 后的半小时内必须刷新一次，因为初次获得的 token 可能是 1.5 小时前生成的。
+    if (!this.isActive) return
     let timeout = Time.minute * 20
     try {
       const { tenant_access_token: token } = await this.internal.auth.tenantAccessTokenInternal({
@@ -170,16 +176,18 @@ export class LarkBot<C extends Context = Context> extends Bot<C, LarkBot.Config>
 }
 
 export namespace LarkBot {
-  export interface Config extends HttpServer.Options, HTTP.Config {
+  export interface BaseConfig extends HTTP.Config {
     appId: string
     appSecret: string
     encryptKey?: string
     verificationToken?: string
   }
 
+  export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
+
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
-      platform: Schema.union(['feishu', 'lark']).required().description('平台名称。'),
+      platform: Schema.union(['feishu', 'lark']).default('feishu').description('平台名称。'),
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
       encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
@@ -188,17 +196,33 @@ export namespace LarkBot {
     Schema.union([
       Schema.intersect([
         Schema.object({
-          platform: Schema.const('feishu').required(),
+          platform: Schema.const('feishu') as any,
         }),
         HTTP.createConfig('https://open.feishu.cn/open-apis'),
-        HttpServer.createConfig('/feishu'),
+        Schema.object({
+          protocol: process.env.KOISHI_ENV === 'browser'
+            ? Schema.const('ws').default('ws')
+            : Schema.union(['http', 'ws']).description('选择要使用的协议。').default('ws'),
+        }),
+        Schema.union([
+          HttpServer.createConfig('/feishu'),
+          WsClient.Options,
+        ]),
       ]),
       Schema.intersect([
         Schema.object({
           platform: Schema.const('lark').required(),
         }),
         HTTP.createConfig('https://open.larksuite.com/open-apis'),
-        HttpServer.createConfig('/lark'),
+        Schema.object({
+          protocol: process.env.KOISHI_ENV === 'browser'
+            ? Schema.const('ws').default('ws')
+            : Schema.union(['http', 'ws']).description('选择要使用的协议。').default('ws'),
+        }),
+        Schema.union([
+          HttpServer.createConfig('/lark'),
+          WsClient.Options,
+        ]),
       ]),
     ]),
   ])
