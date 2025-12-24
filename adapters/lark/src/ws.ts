@@ -22,17 +22,10 @@ interface FrameSegment {
   data: Uint8Array
 }
 
-interface ClientConfig {
-  deviceId: string
-  serviceId: number
-  pingInterval: number
-  reconnectCount: number
-  reconnectInterval: number
-  reconnectNonce: number
-}
-
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, LarkBot<C, LarkBot.BaseConfig & WsClient.Options>> {
-  _config: ClientConfig
+  _deviceId: string
+  _serviceId: number
+  _pingInterval: number = 90000
   _ping: NodeJS.Timeout
   _cache: Record<string, FrameSegment[]> = {}
   _frame: pb.Type
@@ -74,14 +67,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
     if (code !== 0) throw new Error(`failed to get gateway url: ${code} ${msg}`)
 
     const urlObj = new URL(url)
-    this._config = {
-      deviceId: urlObj.searchParams.get('device_id'),
-      serviceId: parseInt(urlObj.searchParams.get('service_id')),
-      pingInterval: config.PingInterval * 1000,
-      reconnectCount: config.ReconnectCount,
-      reconnectInterval: config.ReconnectInterval * 1000,
-      reconnectNonce: config.ReconnectNonce * 1000,
-    }
+    this._deviceId = urlObj.searchParams.get('device_id')
+    this._serviceId = +urlObj.searchParams.get('service_id')
+    this._pingInterval = config.PingInterval * 1000
 
     return this.bot.ctx.http.ws(url)
   }
@@ -96,20 +84,24 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
         key: 'type',
         value: MessageType.ping,
       }],
-      service: this._config.serviceId,
+      service: this._serviceId,
       method: FrameType.control,
       SeqID: 0,
       LogID: 0,
     }
     this.send(frame)
-    this._ping = setTimeout(() => this.ping(), this._config.pingInterval)
+    this._ping = setTimeout(() => this.ping(), this._pingInterval)
   }
 
   async accept() {
     await this.bot.initialize()
 
     this.socket.addEventListener('message', async ({ data }) => {
-      const frame = this._frame.decode(new Uint8Array(data as any)) as any
+      const frame: {
+        headers: { key: string; value: string }[]
+        method: FrameType
+        payload?: Uint8Array
+      } = this._frame.decode(new Uint8Array(data as any)) as any
       const headers: {
         message_id: string
         type: MessageType
@@ -120,19 +112,8 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
         return acc
       }, {} as any)
 
-      if (frame.method === FrameType.control) {
-        if (headers.type === MessageType.pong) {
-          this.bot.logger.debug('pong')
-          if (frame.payload) {
-            const cfg = JSON.parse(new TextDecoder('utf-8').decode(frame.payload))
-            Object.assign(this._config, {
-              pingInterval: cfg.PingInterval * 1000,
-              reconnectCount: cfg.ReconnectCount,
-              reconnectInterval: cfg.ReconnectInterval * 1000,
-              reconnectNonce: cfg.ReconnectNonce * 1000,
-            })
-          }
-        }
+      if (frame.method === FrameType.control && headers.type === MessageType.pong) {
+        this.bot.logger.debug('pong')
         return
       }
 
