@@ -11,11 +11,16 @@ interface Response<T = any> {
   data: T
 }
 
-export interface ApiMeta {
+export const enum MetaType {
+  API = 1,
+  EVENT = 2,
+}
+
+export interface Meta {
   Name: string
   Project: string
   Resource: string
-  Type: 1
+  Type: MetaType
   Version: string
 }
 
@@ -27,13 +32,29 @@ interface Api {
   fullPath: string
   id: string
   isCharge: boolean
-  meta: ApiMeta
+  meta: Meta
   name: string
   orderMark: string
   supportAppTypes: string[]
   tags: string[]
   updateTime: number
   url: string
+}
+
+interface Event {
+  bizTag: string
+  detail: string
+  fullDose: boolean
+  fullPath: string
+  id: string
+  meta: Meta
+  name: string
+  orderMark: string
+  supportAppTypes: string[]
+  tags: string[]
+  updateTime: number
+  url: string
+  version: string
 }
 
 interface BizInfo {
@@ -43,6 +64,11 @@ interface BizInfo {
 
 interface ApiList {
   apis: Api[]
+  bizInfos: BizInfo[]
+}
+
+interface EventList {
+  events: Event[]
   bizInfos: BizInfo[]
 }
 
@@ -113,7 +139,7 @@ async function request<T>(url: string) {
   return body.data
 }
 
-async function getDetail(api: Api) {
+async function getApiDetail(api: Api) {
   const path = new URL(`../temp/api/${api.id}.json`, import.meta.url)
   try {
     return JSON.parse(await readFile(path, 'utf8')) as ApiDetail
@@ -285,17 +311,24 @@ function formatNamespace(name: string, ns: Namespace): string {
 
 async function start() {
   await mkdir(new URL('../temp/api', import.meta.url), { recursive: true })
+  await mkdir(new URL('../temp/event', import.meta.url), { recursive: true })
   await mkdir(new URL('../src/types', import.meta.url), { recursive: true })
+
   // https://open.feishu.cn/document/server-docs/api-call-guide/server-api-list
-  const data = await request<ApiList>('https://open.feishu.cn/api/tools/server-side-api/list')
-  data.apis = data.apis.filter(api => api.meta.Version !== 'old')
-  await writeFile(new URL('../temp/apis.json', import.meta.url), JSON.stringify(data))
-  const details = await pMap(data.apis, getDetail, {
+  let { apis } = await request<ApiList>('https://open.feishu.cn/api/tools/server-side-api/list')
+  apis = apis.filter(api => api.meta.Version !== 'old')
+  await writeFile(new URL('../temp/apis.json', import.meta.url), JSON.stringify(apis))
+  const details = await pMap(apis, getApiDetail, {
     concurrency: 10,
   })
 
+  // https://open.feishu.cn/document/server-docs/event-subscription-guide/event-list
+  let { events } = await request<EventList>('https://open.feishu.cn/api/tools/server-side-event/list')
+  events = events.filter(api => api.meta.Version !== 'old')
+  await writeFile(new URL('../temp/events.json', import.meta.url), JSON.stringify(events))
+
   const projectVersions: Record<string, Set<string>> = {}
-  data.apis.forEach(api => {
+  apis.forEach(api => {
     (projectVersions[api.meta.Project] ??= new Set()).add(api.meta.Version)
   })
   console.log(projectVersions)
@@ -316,7 +349,7 @@ async function start() {
 
   Object.entries(methods).forEach(([route, index]) => {
     const detail = details[index]
-    const summary = data.apis[index]
+    const summary = apis[index]
     const project = projects[detail.project] ||= {
       namespace: {
         methods: [],
