@@ -3,7 +3,7 @@ import {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C>> {
+export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
   private logger: Logger
@@ -14,14 +14,14 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
     this.logger = ctx.logger('lark')
   }
 
-  fork(ctx: C, bot: LarkBot<C>) {
+  fork(ctx: C, bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
     super.fork(ctx, bot)
 
     this._refreshCipher()
     return bot.initialize()
   }
 
-  async connect(bot: LarkBot) {
+  async connect(bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
     const { path } = bot.config
     bot.ctx.server.post(path, (ctx) => {
       this._refreshCipher()
@@ -70,7 +70,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
       }
 
       // dispatch message
-      bot.logger.debug('received decryped event: %o', body)
+      bot.logger.debug('received decrypted event: %o', body)
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
@@ -124,15 +124,21 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
 
 export namespace HttpServer {
   export interface Options {
+    protocol: 'http'
     selfUrl?: string
     path?: string
+    encryptKey?: string
+    verificationToken?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
 
   export const createConfig = (path: string): Schema<Options> => Schema.object({
+    protocol: Schema.const('http'),
     path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+    encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
+    verificationToken: Schema.string().description('事件推送的验证令牌。'),
     verifyToken: Schema.boolean().description('是否验证令牌。'),
     verifySignature: Schema.boolean().description('是否验证签名。'),
   }).description('服务端设置')
