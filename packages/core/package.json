@@ -61,7 +61,7 @@
     "@satorijs/element": "^3.1.8",
     "@satorijs/protocol": "^1.6.1",
     "cordis": "^3.18.1",
-    "cosmokit": "^1.7.2",
+    "cosmokit": "^1.8.1",
     "path-to-regexp": "^8.2.0"
   }
 }

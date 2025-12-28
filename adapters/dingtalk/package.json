@@ -28,10 +28,11 @@
     "chatbot",
     "satori",
     "im",
-    "chat"
+    "chat",
+    "钉钉"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.7",
+    "@cordisjs/plugin-server": "^0.2.9",
     "@cordisjs/plugin-server-temp": "^0.5.0",
     "@satorijs/core": "^4.5.2",
     "cordis": "^3.18.1"
