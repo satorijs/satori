@@ -5,14 +5,14 @@ import pb from 'protobufjs/light'
 
 enum FrameType {
   control = 0,
-  data = 1
+  data = 1,
 }
 
 enum MessageType {
   event = 'event',
   card = 'card',
   ping = 'ping',
-  pong = 'pong'
+  pong = 'pong',
 }
 
 interface FrameSegment {

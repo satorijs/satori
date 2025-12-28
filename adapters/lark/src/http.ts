@@ -70,7 +70,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
       }
 
       // dispatch message
-      bot.logger.debug('received decryped event: %o', body)
+      bot.logger.debug('received decrypted event: %o', body)
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
@@ -127,6 +127,8 @@ export namespace HttpServer {
     protocol: 'http'
     selfUrl?: string
     path?: string
+    encryptKey?: string
+    verificationToken?: string
     verifyToken?: boolean
     verifySignature?: boolean
   }
@@ -135,6 +137,8 @@ export namespace HttpServer {
     protocol: Schema.const('http').required(),
     path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+    encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
+    verificationToken: Schema.string().description('事件推送的验证令牌。'),
     verifyToken: Schema.boolean().description('是否验证令牌。'),
     verifySignature: Schema.boolean().description('是否验证签名。'),
   }).description('服务端设置')

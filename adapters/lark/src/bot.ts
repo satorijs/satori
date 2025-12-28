@@ -179,8 +179,6 @@ export namespace LarkBot {
   export interface BaseConfig extends HTTP.Config {
     appId: string
     appSecret: string
-    encryptKey?: string
-    verificationToken?: string
   }
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
@@ -190,8 +188,6 @@ export namespace LarkBot {
       platform: Schema.union(['feishu', 'lark']).default('feishu').description('平台名称。'),
       appId: Schema.string().required().description('机器人的应用 ID。'),
       appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
-      encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
-      verificationToken: Schema.string().description('事件推送的验证令牌。'),
     }),
     Schema.union([
       Schema.intersect([
