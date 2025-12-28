@@ -176,7 +176,7 @@ export namespace WsClient {
 
   export const Options: Schema<Options> = Schema.intersect([
     Schema.object({
-      protocol: Schema.const('ws') as any,
+      protocol: Schema.const('ws').required(),
     }),
     Adapter.WsClientConfig,
   ])

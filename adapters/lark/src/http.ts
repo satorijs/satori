@@ -134,7 +134,7 @@ export namespace HttpServer {
   }
 
   export const createConfig = (path: string): Schema<Options> => Schema.object({
-    protocol: Schema.const('http').required(),
+    protocol: Schema.const('http'),
     path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
     selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
     encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
