@@ -1,6 +1,6 @@
 {
   "name": "@satorijs/adapter-kook",
-  "description": "KOOK (开黑啦) Adapter for Satorijs",
+  "description": "KOOK Adapter for Satorijs",
   "version": "4.7.0",
   "type": "module",
   "main": "lib/index.cjs",
@@ -27,10 +27,11 @@
     "chatbot",
     "satori",
     "im",
-    "chat"
+    "chat",
+    "开黑啦"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.7",
+    "@cordisjs/plugin-server": "^0.2.9",
     "@satorijs/core": "^4.5.2",
     "cordis": "^3.18.1"
   },

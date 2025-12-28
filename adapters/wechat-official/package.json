@@ -27,10 +27,12 @@
     "chatbot",
     "satori",
     "im",
-    "chat"
+    "chat",
+    "微信",
+    "微信公众号"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^0.2.7",
+    "@cordisjs/plugin-server": "^0.2.9",
     "@satorijs/core": "^4.5.2",
     "@types/xml2js": "^0.4.14",
     "cordis": "^3.18.1"

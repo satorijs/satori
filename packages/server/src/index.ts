@@ -4,7 +4,7 @@ import {} from '@cordisjs/plugin-server'
 import WebSocket from 'ws'
 import { Readable } from 'node:stream'
 import { readFile } from 'node:fs/promises'
-import { Middleware, ParameterizedContext } from 'koa'
+import { DefaultState, Middleware, ParameterizedContext } from 'koa'
 
 declare module '@satorijs/core' {
   interface Satori {
@@ -35,7 +35,7 @@ class SatoriServer extends Service<SatoriServer.Config> {
     const logger = ctx.logger('server')
     const path = sanitize(config.path)
 
-    function checkAuth(koa: ParameterizedContext) {
+    function checkAuth<T>(koa: ParameterizedContext<DefaultState, T, unknown>) {
       if (!config.token) return
       if (koa.request.headers.authorization !== `Bearer ${config.token}`) {
         koa.body = 'invalid token'
