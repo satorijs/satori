@@ -16,6 +16,7 @@ export namespace Apaas {
     userTask: UserTask.Methods
     approvalTask: ApprovalTask.Methods
     approvalInstance: ApprovalInstance.Methods
+    workspace: Workspace.Methods
   }
 
   export namespace App {
@@ -731,6 +732,175 @@ export namespace Apaas {
       opinion: string
     }
   }
+
+  export namespace Workspace {
+    export interface Methods {
+      table: Table.Methods
+      view: View.Methods
+      /**
+       * 执行SQL
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace/sql_commands
+       */
+      sqlCommands(workspace_id: string, body: SqlCommandsRequest): Promise<SqlCommandsResponse>
+    }
+
+    export interface SqlCommandsRequest {
+      /** 要执行的 SQL 语句 */
+      sql: string
+    }
+
+    export interface SqlCommandsResponse {
+      /** 如果是 SELECT 命令，返回的是查询结果的 JSON 序列化字符串。如果是其他无返回的命令，如 DELETE 等，result 为空。 */
+      result: string
+    }
+
+    export namespace Table {
+      export interface Methods {
+        /**
+         * 查询数据表数据记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_get
+         */
+        recordsGet(workspace_id: string, table_name: string, query?: RecordsGetQuery): Promise<RecordsGetResponse>
+        /**
+         * 向数据表中添加或更新记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_post
+         */
+        recordsPost(workspace_id: string, table_name: string, body: RecordsPostRequest, query?: RecordsPostQuery): Promise<RecordsPostResponse>
+        /**
+         * 按条件更新数据表中的记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_patch
+         */
+        recordsPatch(workspace_id: string, table_name: string, body: RecordsPatchRequest, query?: RecordsPatchQuery): Promise<RecordsPatchResponse>
+        /**
+         * 批量更新数据表中的记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_batch_update
+         */
+        recordsBatchUpdate(workspace_id: string, table_name: string, body: RecordsBatchUpdateRequest): Promise<RecordsBatchUpdateResponse>
+        /**
+         * 删除数据表中的记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_delete
+         */
+        recordsDelete(workspace_id: string, table_name: string, query?: RecordsDeleteQuery): Promise<void>
+      }
+
+      export interface RecordsGetQuery extends Pagination {
+        /**
+         * 返回的列，默认为 *，即返回所有列。
+         * 遵循 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#vertical-filtering
+         */
+        select?: string
+        /** 筛选条件，尊许 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#horizontal-filtering */
+        filter?: string
+        /**
+         * 排序条件，如果没指定 asc/desc，默认为 asc，null 值可排在最前或最后。
+         * 尊许 PostgREST 语法，详情可查看
+         * https://docs.postgrest.org/en/v13/references/api/tables_views.html#ordering
+         */
+        order?: string
+      }
+
+      export interface RecordsGetResponse {
+        /** 是否还有更多项 */
+        has_more: boolean
+        /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+        page_token: string
+        /** 符合条件的记录总数 */
+        total: number
+        /** 数据记录列表，格式为数组序列化后的 JSONString */
+        items: string
+      }
+
+      export interface RecordsPostRequest {
+        /** 要插入的数据记录列表，单次支持最多 500 条 */
+        records: string
+      }
+
+      export interface RecordsPostQuery {
+        /** UPSERT 时使用，指定列，多列英文逗号拼接 */
+        columns?: string
+        /**
+         * UPSERT 时使用，指定使用哪一个或多个具有唯一约束的字段作为冲突判断依据，默认为表主键。
+         * 假设 user_products 表有一个由 user_id 和 product_id 组成的复合唯一约束。
+         */
+        on_conflict?: string
+      }
+
+      export interface RecordsPostResponse {
+        /** 按照记录顺序创建或更新的记录 ID 列表 */
+        record_ids: Lark.Uuid[]
+      }
+
+      export interface RecordsPatchRequest {
+        /** 要更新的数据记录信息 */
+        record: string
+      }
+
+      export interface RecordsPatchQuery {
+        /** 筛选条件，尊许 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#horizontal-filtering */
+        filter: string
+      }
+
+      export interface RecordsPatchResponse {
+        /** 更新的记录唯一ID列表 */
+        record_ids: Lark.Uuid[]
+      }
+
+      export interface RecordsBatchUpdateRequest {
+        /** 要更新的数据记录列表，单次支持最多 500条，每行 record 都必须包含主键 _id，且不同行要更新的字段需保持一致 */
+        records: string
+      }
+
+      export interface RecordsBatchUpdateResponse {
+        /** 更新的记录唯一ID列表 */
+        record_ids: Lark.Uuid[]
+      }
+
+      export interface RecordsDeleteQuery {
+        /**
+         * 筛选条件，尊许 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#horizontal-filtering
+         * 此处用法和查询数据记录一致
+         */
+        filter: string
+      }
+    }
+
+    export namespace View {
+      export interface Methods {
+        /**
+         * 查询视图数据记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-view/views_get
+         */
+        viewsGet(workspace_id: string, view_name: string, query?: ViewsGetQuery): Promise<ViewsGetResponse>
+      }
+
+      export interface ViewsGetQuery extends Pagination {
+        /**
+         * 返回的列，默认为 *，即返回所有列。
+         * 遵循 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#vertical-filtering
+         */
+        select?: string
+        /** 筛选条件，尊许 PostgREST 语法，详情可查看 https://docs.postgrest.org/en/v13/references/api/tables_views.html#horizontal-filtering */
+        filter?: string
+        /**
+         * 排序条件，如果没指定 asc/desc，默认为 asc，null 值可排在最前或最后。
+         * 尊许 PostgREST 语法，详情可查看
+         * https://docs.postgrest.org/en/v13/references/api/tables_views.html#ordering
+         */
+        order?: string
+      }
+
+      export interface ViewsGetResponse {
+        /** 是否还有更多项 */
+        has_more: boolean
+        /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+        page_token: string
+        /** 符合条件的记录总数 */
+        total: number
+        /** 数据记录列表，格式为数组序列化后的 JSONString */
+        items: string
+      }
+    }
+  }
 }
 
 Internal.define({
@@ -842,5 +1012,20 @@ Internal.define({
   },
   '/apaas/v1/user_tasks/{task_id}/chat_group': {
     POST: 'apaas.userTask.chatGroup',
+  },
+  '/apaas/v1/workspaces/{workspace_id}/tables/{table_name}/records': {
+    GET: 'apaas.workspace.table.recordsGet',
+    POST: 'apaas.workspace.table.recordsPost',
+    PATCH: 'apaas.workspace.table.recordsPatch',
+    DELETE: 'apaas.workspace.table.recordsDelete',
+  },
+  '/apaas/v1/workspaces/{workspace_id}/tables/{table_name}/records_batch_update': {
+    PATCH: 'apaas.workspace.table.recordsBatchUpdate',
+  },
+  '/apaas/v1/workspaces/{workspace_id}/views/{view_name}/records': {
+    GET: 'apaas.workspace.view.viewsGet',
+  },
+  '/apaas/v1/workspaces/{workspace_id}/sql_commands': {
+    POST: 'apaas.workspace.sqlCommands',
   },
 })

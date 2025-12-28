@@ -130,11 +130,6 @@ export namespace Approval {
        */
       get(instance_id: string, query?: GetQuery): Promise<GetResponse>
       /**
-       * 批量获取审批实例 ID
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/list
-       */
-      list(query?: ListQuery): Paginated<string, 'instance_code_list'>
-      /**
        * 退回审批任务
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/instance/specified_rollback
        */
@@ -312,15 +307,6 @@ export namespace Approval {
       reverted?: boolean
       /** 审批实例 Code */
       instance_code: string
-    }
-
-    export interface ListQuery extends Pagination {
-      /** 审批定义唯一标识 */
-      approval_code: string
-      /** 审批实例创建时间区间（毫秒） */
-      start_time: string
-      /** 审批实例创建时间区间（毫秒） */
-      end_time: string
     }
 
     export interface SpecifiedRollbackRequest {
@@ -924,7 +910,6 @@ Internal.define({
   },
   '/approval/v4/instances': {
     POST: 'approval.instance.create',
-    GET: { name: 'approval.instance.list', pagination: { argIndex: 0, itemsKey: 'instance_code_list' } },
   },
   '/approval/v4/instances/cancel': {
     POST: 'approval.instance.cancel',
