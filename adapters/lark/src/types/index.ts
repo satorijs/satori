@@ -4082,8 +4082,6 @@ export interface CommonSchema {
   is_customized?: boolean
   /** 是否必填 */
   is_required?: boolean
-  /** 是否可见 */
-  is_visible?: boolean
   /** 是否启用 */
   active_status?: 1 | 2
   /** 字段列表 */
@@ -4105,8 +4103,6 @@ export interface CommonSchemaChild {
   is_customized?: boolean
   /** 是否必填 */
   is_required?: boolean
-  /** 是否可见 */
-  is_visible?: boolean
   /** 是否启用 */
   active_status?: 1 | 2
 }
@@ -4129,7 +4125,7 @@ export interface CommonSchemaOption {
 
 export interface CommonSchemaSetting {
   /** 字段类型 */
-  object_type?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13
+  object_type?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 13
   /** 配置信息 */
   config?: CommonSchemaConfig
 }
@@ -16754,6 +16750,287 @@ export interface SignatureAttachment {
   file_template_type_name?: string
 }
 
+export interface SignatureEnumInfoLabel {
+  /** zh-CN */
+  zh?: string
+  /** en-US */
+  en?: string
+}
+
+export interface SignatureFile {
+  /** 电子签文件ID */
+  signature_file_id: string
+  /** 名称 */
+  names?: I18n[]
+  /** 创建时间 */
+  create_time?: string
+  /** 更新时间 */
+  update_time?: string
+  /** 雇员 id */
+  employment_id?: string
+  /** 待入职 id */
+  pre_hire_id?: string
+  /** 电子签文件状态，枚举值可通过文档【飞书人事枚举常量】电子签文件状态（signature_file_state）枚举定义部分获得 */
+  signature_file_state?: Enum
+  /** 供应商侧的合同编号，作为幂等key */
+  contract_code?: string
+  /** 电子签文件生效日期 */
+  effective_date?: string
+  /** 电子签模板ID */
+  template_id?: string
+  /** 签署链接 */
+  sign_url?: string
+}
+
+export interface SignatureMetaInfo {
+  /** 元数据api_name */
+  api_name?: string
+  /** wukong id */
+  wk_id?: string
+  /** 多语描述 */
+  label?: I18n[]
+}
+
+export interface SignatureNode {
+  /** 电子签节点列表 */
+  user_infos?: SignatureUserInfo[]
+  /** 电子签文件节点状态 */
+  state: string
+  /** 节点完成时间 */
+  finish_time?: string
+  /** 节点最近更新时间 */
+  updated_time?: string
+  /** 当前节点是否为正在处理的节点 */
+  is_ongoing: boolean
+  /** 当前操作节点的角色名称 */
+  role_label: SignatureEnumInfoLabel
+  /** 签署角色 */
+  sign_role?: string
+}
+
+export interface SignatureSignatoryLabel {
+  /** 电子签模板签订人类型 */
+  template_signatory_type: Enum
+  /** 中英文描述 */
+  label: I18n[]
+  /** 主数据apiname */
+  apiname?: string
+}
+
+export interface SignatureTemplate {
+  /** 电子签模板id */
+  id?: string
+  /** 简略信息 */
+  brief_info?: SignatureTemplateBriefInfo
+  /** 模板内容信息 */
+  content_info?: SignatureTemplateContentInfo
+}
+
+export interface SignatureTemplateBriefInfo {
+  /** id */
+  id?: string
+  /** 名称 支持多语 */
+  label?: I18n[]
+  /** 模版类别 */
+  category?: Enum
+  /** 模版用法 */
+  usage?: Enum
+  /** 模版签署人标签 */
+  signatory_labels?: SignatureSignatoryLabel[]
+  /** 是否激活 */
+  active?: boolean
+  /** 创建人 */
+  create_by?: string
+  /** 修改人 */
+  modify_by?: string
+  /** 适用范围 */
+  applicability?: Enum
+  /** 创建方法 */
+  creation_method?: string
+  /** 版本 */
+  version?: string
+  /** 更新时间 */
+  update_time?: string
+  /** 创建时间 */
+  create_time?: string
+  /** 模板设置，包含开启骑缝章的类型等 */
+  template_setting?: SignatureTemplateSetting
+  /** 模板适用区域 */
+  template_region_info?: SignatureTemplateRegionInfo
+  /** 模板编码 */
+  template_code?: string
+  /** 模板描述 支持多语 */
+  template_desc?: I18n[]
+}
+
+export interface SignatureTemplateCombinationFieldInfo {
+  /** total_apiname */
+  total_apiname: string
+  /** apiname */
+  apiname: string
+  /** 中英文描述 */
+  title: I18n[]
+  /** 适用区域名称 */
+  contents?: SignatureTemplateCombinationSubFieldInfo[][]
+  /** 电子签模板字段源类型 */
+  source: Enum
+}
+
+export interface SignatureTemplateCombinationFieldInfoV2 {
+  /** total_apiname */
+  total_apiname: string
+  /** apiname */
+  apiname: string
+  /** 电子签模板字段源类型 */
+  source?: Enum
+}
+
+export interface SignatureTemplateCombinationSubFieldInfo {
+  /** 字段类型枚举 */
+  field_type: Enum
+  /** 公共字段信息 */
+  info?: SignatureTemplateCommonFieldInfo
+  /** 双语描述 */
+  label?: I18n[]
+}
+
+export interface SignatureTemplateCommonFieldInfo {
+  /** 模板字段源类型；枚举值填到enum_name中，如："System" "MainData" */
+  source: Enum
+  /** 主数据apiname */
+  apiname: string
+}
+
+export interface SignatureTemplateContentInfo {
+  /** 模版内容list */
+  contents?: SignatureTemplateContentItem[]
+  /** 自定义字段列表 */
+  custom_fields?: SignatureTemplateCustomField[]
+  /** 筛选条件列表 */
+  filter_fields?: SignatureTemplateFilter[]
+  /** 模板公共字段信息列表 */
+  using_fields?: SignatureTemplateCommonFieldInfo[]
+  /** 系统设置字段列表 */
+  system_setting_fields?: SignatureTemplateField[]
+}
+
+export interface SignatureTemplateContentItem {
+  /** 电子签模版内容的类型 */
+  content_type: Enum
+  /** 显示规则左值 */
+  filter_apiname?: string
+  /** 模版内容 */
+  content?: string
+  /** 中英文描述 */
+  label?: I18n[]
+  /** 内容描述 */
+  content_desc?: string
+}
+
+export interface SignatureTemplateCustomField {
+  /** 中英文描述 */
+  label?: I18n[]
+  /** 主数据apiname */
+  apiname: string
+  /** 用户自定义字段类型 */
+  custom_field_type: Enum
+  /** 是否使用到 */
+  used: boolean
+  /** 是否需要 */
+  is_required?: boolean
+  /** 自定义描述 */
+  custom_desc?: string
+  /** 电子签模版公共字段信息 */
+  common_info?: SignatureTemplateCommonFieldInfo
+}
+
+export interface SignatureTemplateField {
+  /** 模板字段值类型枚举 */
+  field_type: Enum
+  /** 双语描述 */
+  label?: I18n[]
+  /** 通用字段信息 */
+  common_info?: SignatureTemplateCommonFieldInfo
+  /** 组合字段信息 */
+  combination_info?: SignatureTemplateCombinationFieldInfo
+  /** 子模板配置信息列表对应的string，避免循环引用问题 */
+  children?: string
+  /** 组合字段信息v2 */
+  combination_info_v2?: SignatureTemplateCombinationFieldInfoV2
+}
+
+export interface SignatureTemplateFilter {
+  /** 双语描述 */
+  label: I18n[]
+  /** 主数据apiname */
+  apiname: string
+  /** 过滤条件列表 */
+  filters?: SignatureTemplateFilterItem[]
+  /** 多个生效条件的logic */
+  logic?: Enum
+  /** 是否被校验 */
+  is_checked?: boolean
+  /** 过滤条件描述 */
+  filter_desc?: string
+  /** 过滤条件列表，使用string类型描述list的原因是为了避免循环引用问题，因为该list的item类型就是这个数据类型 */
+  criterion_list?: string
+}
+
+export interface SignatureTemplateFilterItem {
+  /** 左值 */
+  left: string
+  /** 右值列表 */
+  rights?: string[]
+  /** 操作符 */
+  op: Enum
+}
+
+export interface SignatureTemplateInfoWithThumbnail {
+  /** id */
+  id?: string
+  /** 名称 支持多语 */
+  label?: I18n[]
+  /** 模版类别 */
+  category?: Enum
+  /** 模版用法 */
+  usage?: Enum
+  /** 创建日期 */
+  create_time?: string
+  /** 修改日期 */
+  modify_time?: string
+  /** 创建人 */
+  created_by?: SignatureUserInfo
+  /** 修改人 */
+  updated_by?: SignatureUserInfo
+  /** 缩略图url */
+  thumbnail_url?: string
+  /** 模版签署人标签 */
+  signatory_labels?: SignatureSignatoryLabel[]
+  /** 模板编码 */
+  template_code?: string
+  /** 模板描述 */
+  template_desc?: string
+  /** 模板适用区域 */
+  template_region_info?: SignatureTemplateRegionInfo
+}
+
+export interface SignatureTemplateRegionInfo {
+  /** 是否全球适用 */
+  is_global_scope?: string
+  /** 适用区域名称 */
+  meta_infos?: SignatureMetaInfo[]
+}
+
+export interface SignatureTemplateSetting {
+  /** 骑缝章类型 */
+  page_seal_types?: string[]
+}
+
+export interface SignatureUserInfo {
+  /** employmentID */
+  id: string
+}
+
 export interface Skill {
   /** 技能 ID */
   id?: string
@@ -18261,6 +18538,13 @@ export interface Term {
   to: string
 }
 
+export interface TerminateSignatureFailIdAndReason {
+  /** 终止操作失败的文件ID */
+  signature_file_id: string
+  /** 终止失败的原因 */
+  fail_reason: string
+}
+
 export interface TerminationReason {
   /** 终止原因 ID */
   id?: string
@@ -19591,6 +19875,8 @@ export interface UserViewDetail {
   /** 用户的最近查看时间timestamp（ms级别） */
   view_time?: string
 }
+
+export type Uuid = string
 
 export interface Value {
   /** 字符串值 */

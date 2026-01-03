@@ -448,11 +448,13 @@ export namespace MessageContent {
         vertical_align?: 'top' | 'center' | 'bottom'
         horizontal_align?: 'left' | 'center' | 'right'
         data_type?: 'text' | 'lark_md' | 'options' | 'number' | 'persons' | 'date' | 'markdown'
+        // only applicable when data_type is 'number'
         format?: {
-          percision?: number
+          precision?: number
           symbol?: string
           separator?: string
         }
+        // only applicable when data_type is 'date'
         date_format?: string
       }
     }

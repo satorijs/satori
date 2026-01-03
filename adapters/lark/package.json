@@ -42,5 +42,8 @@
   },
   "peerDependencies": {
     "@satorijs/core": "^5.0.0-alpha.0"
+  },
+  "dependencies": {
+    "protobufjs": "^8.0.0"
   }
 }

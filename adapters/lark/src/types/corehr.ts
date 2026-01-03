@@ -43,6 +43,10 @@ export namespace Corehr {
     transferType: TransferType.Methods
     transferReason: TransferReason.Methods
     offboarding: Offboarding.Methods
+    signatureFile: SignatureFile.Methods
+    signatureNode: SignatureNode.Methods
+    signatureTemplate: SignatureTemplate.Methods
+    signatureTemplateInfoWithThumbnail: SignatureTemplateInfoWithThumbnail.Methods
     contract: Contract.Methods
     workforcePlanDetailRow: WorkforcePlanDetailRow.Methods
     reportDetailRow: ReportDetailRow.Methods
@@ -5335,6 +5339,194 @@ export namespace Corehr {
     }
   }
 
+  export namespace SignatureFile {
+    export interface Methods {
+      /**
+       * 终止电子签文件
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_file/terminate
+       */
+      terminate(body: TerminateRequest, query?: TerminateQuery): Promise<TerminateResponse>
+      /**
+       * 获取电子签文件列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_file/list
+       */
+      list(query?: ListQuery): Paginated<Lark.SignatureFile>
+      /**
+       * 查询电子签文件详情
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_file/query
+       */
+      query(body: QueryRequest, query?: QueryQuery): Paginated<Lark.SignatureFile>
+      /**
+       * 根据流程获取电子签文件信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_file/list_by_biz_id
+       */
+      listByBizId(query?: ListByBizIdQuery): Promise<ListByBizIdResponse>
+      /**
+       * 下载电子签文件
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_file/download
+       */
+      download(signature_file_id: string): Promise<ArrayBuffer>
+    }
+
+    export interface TerminateRequest {
+      /** 欲终止的电子签文件id列表 */
+      ids: string[]
+      /** 操作人ID */
+      operator: string
+      /** 终止原因 */
+      terminate_reason: string
+    }
+
+    export interface TerminateQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface TerminateResponse {
+      /** 欲终止的文件总数量 */
+      total_count?: number
+      /** 成功总数量 */
+      success_count?: number
+      /** 失败总数量 */
+      fail_count?: number
+      /** 终止成功的文件id列表 */
+      success_file_id_list?: string[]
+      /** 终止失败的文件id和对应的原因列表 */
+      fail_file_id_and_reasons?: Lark.TerminateSignatureFailIdAndReason[]
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 电子签文件id */
+      signature_file_id?: string
+      /** 电子签文件状态状态，多个状态之间为「或」的关系 */
+      states?: string
+      /** 更新时间早于等于某个时间点，按照东八区时区 */
+      update_time_start?: string
+      /** 更新时间晚于等于某个时间点，按照东八区时区 */
+      update_time_end?: string
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+      /** 根据电子签模板id列表筛选电子签文件,返回的电子签文件使用的模板id在该list中 */
+      template_ids?: string
+    }
+
+    export interface QueryRequest {
+      /** 电子签文件状态状态列表，多个状态之间为「或」的关系 */
+      states?: string[]
+      /** 电子签模板ID列表，返回的电子签文件使用的模板id在该list中 */
+      template_ids?: string[]
+    }
+
+    export interface QueryQuery extends Pagination {
+      /** 电子签文件id */
+      signature_file_id?: string
+      /** 更新时间早于等于某个时间点，按照东八区时区 */
+      update_time_start?: string
+      /** 更新时间晚于等于某个时间点，按照东八区时区 */
+      update_time_end?: string
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface ListByBizIdQuery {
+      /** 业务自定义流程ID */
+      biz_process_id: string
+      /** 业务类型，开放平台平应用可以传递"OpenAPI" */
+      biz_type: string
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+      /** 是否需要签署链接 */
+      select_sign_url?: boolean
+    }
+
+    export interface ListByBizIdResponse {
+      /** 返回的流程关联的电子签文件列表 */
+      signature_files?: Lark.SignatureFile[]
+      /** 批量签署链接 */
+      batch_sign_url?: string
+    }
+  }
+
+  export namespace SignatureNode {
+    export interface Methods {
+      /**
+       * 获取文件签署节点信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_node/list_by_file_id
+       */
+      listByFileId(query?: ListByFileIdQuery): Promise<ListByFileIdResponse>
+    }
+
+    export interface ListByFileIdQuery {
+      /** 电子签文件id */
+      file_id: string
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface ListByFileIdResponse {
+      /** 返回的电子签节点列表 */
+      signature_nodes?: Lark.SignatureNode[]
+    }
+  }
+
+  export namespace SignatureTemplate {
+    export interface Methods {
+      /**
+       * 获取电子签模板内容
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_template/search
+       */
+      search(query?: SearchQuery): Promise<SearchResponse>
+    }
+
+    export interface SearchQuery {
+      /** 电子签模板ids,用英文逗号分隔;如果不传 则返回所有模版信息（字节线上几百条） */
+      template_ids?: string
+      /** 是否需要自定义字段,如-自定义签署方、合同变更前后公司等 */
+      select_custom_field?: boolean
+    }
+
+    export interface SearchResponse {
+      /** 返回的电子签模板list */
+      signature_templates?: Lark.SignatureTemplate[]
+    }
+  }
+
+  export namespace SignatureTemplateInfoWithThumbnail {
+    export interface Methods {
+      /**
+       * 获取电子签模板列表
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/signature_template_info_with_thumbnail/list
+       */
+      list(query?: ListQuery): Promise<ListResponse> & AsyncIterableIterator<Lark.SignatureTemplateInfoWithThumbnail>
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 模版名 */
+      name?: string
+      /** 模板类别;多个类别之间使用英文,分隔 */
+      category_apiname?: string
+      /** 模板用途;多个用途之间使用英文,分隔 */
+      usage_apiname?: string
+      /** 是否停用 */
+      active?: boolean
+      /** 是否需要模板适用区域信息;默认false，不会返回region_info信息 */
+      need_region_info?: boolean
+      /** 电子签适用范围 */
+      applicability_apinames?: string[]
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface ListResponse {
+      /** 电子签模板缩略图列表 */
+      items?: Lark.SignatureTemplateInfoWithThumbnail[]
+      /** 查询偏移量；下次查询可以从page_token开始查询 */
+      page_token?: number
+      /** 数据总数 */
+      count?: number
+    }
+  }
+
   export namespace Contract {
     export interface Methods {
       /**
@@ -7022,6 +7214,30 @@ Internal.define({
   },
   '/corehr/v1/offboardings/search': {
     POST: { name: 'corehr.offboarding.search', pagination: { argIndex: 1 } },
+  },
+  '/corehr/v2/signature_files/terminate': {
+    POST: 'corehr.signatureFile.terminate',
+  },
+  '/corehr/v2/signature_files': {
+    GET: { name: 'corehr.signatureFile.list', pagination: { argIndex: 0 } },
+  },
+  '/corehr/v2/signature_files/query': {
+    POST: { name: 'corehr.signatureFile.query', pagination: { argIndex: 1 } },
+  },
+  '/corehr/v2/signature_nodes/list_by_file_id': {
+    GET: 'corehr.signatureNode.listByFileId',
+  },
+  '/corehr/v2/signature_files/list_by_biz_id': {
+    GET: 'corehr.signatureFile.listByBizId',
+  },
+  '/corehr/v2/signature_files/{signature_file_id}/download': {
+    POST: { name: 'corehr.signatureFile.download', type: 'binary' },
+  },
+  '/corehr/v2/signature_templates/search': {
+    GET: 'corehr.signatureTemplate.search',
+  },
+  '/corehr/v2/signature_template_info_with_thumbnails': {
+    GET: { name: 'corehr.signatureTemplateInfoWithThumbnail.list', pagination: { argIndex: 0 } },
   },
   '/corehr/v1/contracts': {
     POST: 'corehr.contract.create',

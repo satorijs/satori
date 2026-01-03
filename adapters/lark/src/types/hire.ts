@@ -9,7 +9,6 @@ declare module '../internal' {
 
 export namespace Hire {
   export interface Methods {
-    portalApplySchema: PortalApplySchema.Methods
     location: Location.Methods
     role: Role.Methods
     userRole: UserRole.Methods
@@ -34,6 +33,7 @@ export namespace Hire {
     offerApplicationForm: OfferApplicationForm.Methods
     referral: Referral.Methods
     referralWebsite: ReferralWebsite.Methods
+    portalApplySchema: PortalApplySchema.Methods
     website: Website.Methods
     agency: Agency.Methods
     talent: Talent.Methods
@@ -78,16 +78,6 @@ export namespace Hire {
     attachment: Attachment.Methods
     talentOperationLog: TalentOperationLog.Methods
     offerSchema: OfferSchema.Methods
-  }
-
-  export namespace PortalApplySchema {
-    export interface Methods {
-      /**
-       * 获取申请表模板列表
-       * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/portal_apply_schema/list
-       */
-      list(query?: Pagination): Paginated<Lark.RegistrationSchema>
-    }
   }
 
   export namespace Location {
@@ -1397,6 +1387,16 @@ export namespace Hire {
       export interface GetResponse {
         job_post?: Lark.PortalJobPost
       }
+    }
+  }
+
+  export namespace PortalApplySchema {
+    export interface Methods {
+      /**
+       * 获取申请表模板列表
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uMzM1YjLzMTN24yMzUjN/hire-v1/portal_apply_schema/list
+       */
+      list(query?: Pagination): Paginated<Lark.RegistrationSchema>
     }
   }
 
@@ -4403,9 +4403,6 @@ export namespace Hire {
 }
 
 Internal.define({
-  '/hire/v1/portal_apply_schemas': {
-    GET: { name: 'hire.portalApplySchema.list', pagination: { argIndex: 0 } },
-  },
   '/hire/v1/locations/query': {
     POST: { name: 'hire.location.query', pagination: { argIndex: 1 } },
   },
@@ -4533,6 +4530,9 @@ Internal.define({
   },
   '/hire/v1/referrals/get_by_application': {
     GET: 'hire.referral.getByApplication',
+  },
+  '/hire/v1/portal_apply_schemas': {
+    GET: { name: 'hire.portalApplySchema.list', pagination: { argIndex: 0 } },
   },
   '/hire/v1/websites/{website_id}/channels': {
     POST: 'hire.website.channel.create',

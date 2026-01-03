@@ -130,13 +130,13 @@ export class Internal<C extends Context = Context> {
               const { argIndex, itemsKey = 'items', tokenKey = 'page_token' } = route.pagination
               const iterArgs = [...args]
               iterArgs[argIndex] = { ...args[argIndex] }
-              type Pagniation = { data: any[]; next?: any }
-              let pagination: Pagniation | undefined
+              type Pagination = { data: any[]; next?: any }
+              let pagination: Pagination | undefined
               result.next = async function () {
-                pagination ??= await this[Symbol.for('satori.pagination')]() as Pagniation
+                pagination ??= await this[Symbol.for('satori.pagination')]() as Pagination
                 if (pagination.data.length) return { done: false, value: pagination.data.shift() }
                 if (!pagination.next) return { done: true, value: undefined }
-                pagination = await this[Symbol.for('satori.pagination')]() as Pagniation
+                pagination = await this[Symbol.for('satori.pagination')]() as Pagination
                 return this.next()
               }
               result[Symbol.asyncIterator] = function () {
