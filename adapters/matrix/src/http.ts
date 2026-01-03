@@ -1,6 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
 import { Context as KoaContext } from 'koa'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'

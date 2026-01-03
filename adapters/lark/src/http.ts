@@ -1,5 +1,5 @@
 import { Adapter, Context, Logger, Schema } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
 

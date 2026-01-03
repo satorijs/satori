@@ -1,5 +1,5 @@
 import { Adapter, Context, sanitize, Schema, trimSlash } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'

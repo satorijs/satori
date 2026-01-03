@@ -35,7 +35,7 @@
     "@satorijs/core": "^5.0.0-alpha.0",
     "@types/node-imap": "^0.9.3",
     "@types/nodemailer": "^6.4.17",
-    "cordis": "^4.0.0-alpha.7"
+    "cordis": "^4.0.0-beta.5"
   },
   "peerDependencies": {
     "@satorijs/core": "^5.0.0-alpha.0"

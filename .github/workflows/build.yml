@@ -66,9 +66,10 @@ jobs:
   publish:
     needs: build
 
+    # TODO: refs/heads/main
     if: >-
       github.event_name == 'push' &&
-      contains(fromJson('["refs/heads/main", "refs/heads/v4"]'), github.ref)
+      contains(fromJson('["refs/heads/v4"]'), github.ref)
 
     permissions:
       id-token: write

@@ -1,5 +1,5 @@
 import { Adapter, Context } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'
 import { Message } from './types'

@@ -1,4 +1,6 @@
-import { Bot, Context, HTTP, Schema } from '@satorijs/core'
+import { Bot, Context, Schema } from '@satorijs/core'
+import type { HTTP } from '@cordisjs/plugin-http'
+import type { Logger } from '@cordisjs/plugin-logger'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -13,6 +15,8 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
   public http: HTTP
   public internal: Internal
   private refreshTokenTimer: NodeJS.Timeout
+
+  private logger: Logger
 
   constructor(ctx: C, config: DingtalkBot.Config) {
     super(ctx, config, 'dingtalk')

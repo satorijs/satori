@@ -1,5 +1,7 @@
-import { Adapter, Context, HTTP, Logger, remove, Schema } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import { Adapter, Context, remove, Schema, Service } from '@satorijs/core'
+import type { HTTP } from '@cordisjs/plugin-http'
+import type { Logger } from '@cordisjs/plugin-logger'
+import type {} from '@cordisjs/plugin-server'
 import { Internal } from './internal'
 import { WhatsAppBot } from './bot'
 import { WebhookBody } from './types'
@@ -103,29 +105,28 @@ export class WhatsAppAdapter<C extends Context = Context> extends Adapter<C, Wha
   constructor(ctx: C, public config: WhatsAppAdapter.Config) {
     super(ctx)
     ctx.plugin(HttpServer, this)
+  }
 
-    const http = ctx.http.extend({
+  async [Service.init]() {
+    const http = this.ctx.http.extend({
       headers: {
-        Authorization: `Bearer ${config.systemToken}`,
+        Authorization: `Bearer ${this.config.systemToken}`,
       },
-    }).extend(config)
+    }).extend(this.config)
     const internal = new Internal(http)
-
-    ctx.on('ready', async () => {
-      const data = await internal.getPhoneNumbers(config.id)
-      for (const item of data) {
-        const bot = new WhatsAppBot(ctx)
-        bot.selfId = item.id
-        bot.adapter = this
-        bot.internal = internal
-        bot.user = {
-          id: item.id,
-          name: item.display_phone_number,
-        }
-        this.bots.push(bot)
-        bot.online()
+    const data = await internal.getPhoneNumbers(this.config.id)
+    for (const item of data) {
+      const bot = new WhatsAppBot(this.ctx)
+      bot.selfId = item.id
+      bot.adapter = this
+      bot.internal = internal
+      bot.user = {
+        id: item.id,
+        name: item.display_phone_number,
       }
-    })
+      this.bots.push(bot)
+      bot.online()
+    }
   }
 }
 

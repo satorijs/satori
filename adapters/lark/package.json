@@ -34,10 +34,10 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-server": "^1.1.0",
+    "@cordisjs/plugin-server": "^1.2.0",
     "@satorijs/core": "^5.0.0-alpha.0",
-    "cordis": "^4.0.0-alpha.7",
-    "cosmokit": "^1.7.4",
+    "cordis": "^4.0.0-beta.5",
+    "cosmokit": "^1.8.1",
     "dedent": "^1.5.3"
   },
   "peerDependencies": {

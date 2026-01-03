@@ -1,5 +1,5 @@
 import { Adapter, Context, Schema } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'

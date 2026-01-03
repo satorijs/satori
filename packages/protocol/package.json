@@ -28,6 +28,6 @@
   ],
   "dependencies": {
     "@cordisjs/element": "^0.3.0",
-    "cosmokit": "^1.8.0"
+    "cosmokit": "^1.8.1"
   }
 }

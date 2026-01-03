@@ -1,5 +1,5 @@
 import { Adapter, Context, Logger } from '@satorijs/core'
-import {} from '@cordisjs/plugin-server'
+import type {} from '@cordisjs/plugin-server'
 import { DingtalkBot } from './bot'
 import crypto from 'node:crypto'
 import { Message } from './types'
