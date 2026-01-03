@@ -29,11 +29,14 @@ export namespace Corehr {
     company: Company.Methods
     costCenter: CostCenter.Methods
     customOrg: CustomOrg.Methods
+    draft: Draft.Methods
     approvalGroups: ApprovalGroups.Methods
     jobFamily: JobFamily.Methods
     jobLevel: JobLevel.Methods
     jobGrade: JobGrade.Methods
+    pathway: Pathway.Methods
     job: Job.Methods
+    position: Position.Methods
     preHire: PreHire.Methods
     probation: Probation.Methods
     jobChange: JobChange.Methods
@@ -1449,6 +1452,7 @@ export namespace Corehr {
   export namespace Employees {
     export interface Methods {
       jobData: JobData.Methods
+      internationalAssignment: InternationalAssignment.Methods
       additionalJob: AdditionalJob.Methods
       bp: Bp.Methods
     }
@@ -1520,6 +1524,223 @@ export namespace Corehr {
       export interface BatchGetResponse {
         /** 查询的雇佣信息 */
         items?: Lark.EmployeeJobData[]
+      }
+    }
+
+    export namespace InternationalAssignment {
+      export interface Methods {
+        /**
+         * 创建外派信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-international_assignment/create
+         */
+        create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+        /**
+         * 更新外派信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-international_assignment/patch
+         */
+        patch(international_assignment_id: string, body: PatchRequest, query?: PatchQuery): Promise<PatchResponse>
+        /**
+         * 批量查询外派信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-international_assignment/list
+         */
+        list(query?: ListQuery): Promise<ListResponse>
+        /**
+         * 删除外派信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employees-international_assignment/delete
+         */
+        delete(international_assignment_id: string): Promise<void>
+      }
+
+      export interface CreateRequest {
+        /** 外派工作地点 ID  - 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取 */
+        work_location_id: string
+        /** 外派任职公司 ID- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+        service_company?: string
+        /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+        work_shift?: string
+        /** 周工作时长- 限制两位小数 */
+        weekly_working_hours_v2?: number
+        /** 工时制度ID-  可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取 */
+        working_hours_type_id?: string
+        /** 人员类型ID- 可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        employee_type_id?: string
+        /** 部门 ID- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        department_id?: string
+        /** 职务 ID- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取 */
+        job_id?: string
+        /** 序列 ID- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        job_family_id?: string
+        /** 职级 ID- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取 */
+        job_level_id?: string
+        /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取 */
+        job_grade_id?: string
+        /** 薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+        compensation_type?: string
+        /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        direct_manager_id?: string
+        /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        dotted_line_manager_id?: string
+        /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取 */
+        work_calendar_id?: string
+        /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+        position_id?: string
+        /** 雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        employment_id: string
+        /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+        custom_fields?: Lark.ObjectFieldData[]
+        /** 外派原因说明 */
+        international_assignment_reason?: string
+        /** 备注 */
+        description?: string
+        /** 预计结束日期- 格式：yyyy-mm-dd */
+        international_assignment_expected_end_date?: string
+        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+        international_assignment_type: string
+        /** 开始日期- 格式：yyyy-mm-dd */
+        effective_time: string
+        /** 结束日期- 格式：yyyy-mm-dd */
+        expiration_time?: string
+      }
+
+      export interface CreateQuery {
+        /** 幂等标识，服务端会忽略 client_token 重复的请求 */
+        client_token?: string
+        /** 用户 ID 类型 */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+        /** 此次调用中使用的部门 ID 类型 */
+        department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+      }
+
+      export interface CreateResponse {
+        /** 外派信息 */
+        international_assignment?: Lark.EmployeesInternationalAssignmentResp
+      }
+
+      export interface PatchRequest {
+        /** 外派工作地点 ID  - 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取 */
+        work_location_id?: string
+        /** 外派任职公司 ID- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取 */
+        service_company?: string
+        /** 排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：work_shift */
+        work_shift?: string
+        /** 周工作时长- 限制两位小数 */
+        weekly_working_hours_v2?: number
+        /** 工时制度ID-  可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取 */
+        working_hours_type_id?: string
+        /** 人员类型ID- 可通过[【批量查询人员类型】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/employee_type/list)获取 */
+        employee_type_id?: string
+        /** 部门 ID- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        department_id?: string
+        /** 职务 ID- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取 */
+        job_id?: string
+        /** 序列 ID- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        job_family_id?: string
+        /** 职级 ID- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取 */
+        job_level_id?: string
+        /** 职等 ID- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取 */
+        job_grade_id?: string
+        /** 薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type */
+        compensation_type?: string
+        /** 直属上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        direct_manager_id?: string
+        /** 虚线上级雇佣 ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        dotted_line_manager_id?: string
+        /** 工作日历 ID- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取 */
+        work_calendar_id?: string
+        /** 岗位 ID- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW) */
+        position_id?: string
+        /** 自定义字段- 请参考[【自定义字段说明】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom-fields-guide) */
+        custom_fields?: Lark.ObjectFieldData[]
+        /** 外派原因说明 */
+        international_assignment_reason?: string
+        /** 备注 */
+        description?: string
+        /** 预计结束日期- 格式：yyyy-mm-dd */
+        international_assignment_expected_end_date?: string
+        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：international_assignment  - custom_api_name：international_assignment_type */
+        international_assignment_type?: string
+        /** 开始日期- 格式：yyyy-mm-dd */
+        effective_time?: string
+        /** 结束日期- 格式：yyyy-mm-dd */
+        expiration_time?: string
+      }
+
+      export interface PatchQuery {
+        /** 幂等标识，服务端会忽略client_token重复的请求 */
+        client_token?: string
+        /** 用户 ID 类型 */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+        /** 此次调用中使用的部门 ID 类型 */
+        department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+      }
+
+      export interface PatchResponse {
+        /** 外派信息 */
+        international_assignment?: Lark.EmployeesInternationalAssignmentResp
+      }
+
+      export interface ListQuery extends Pagination {
+        /** 用户 ID 类型 */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+        /** 此次调用中使用的部门 ID 类型 */
+        department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+        /** 雇佣ID- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取详细信息- 类型必须与 user_id_type 一致 */
+        employment_ids?: string[]
+        /** 外派 ID */
+        international_assignment_ids?: string[]
+        /** 外派开始日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        effective_time?: string
+        /** 外派结束日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        expiration_time?: string
+        /** 雇佣状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：employment  - custom_api_name：employment_status */
+        employment_status_list?: string[]
+        /** 外派工作地点- 可通过[【批量查询地点】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/location/list)获取- 需要以下权限点之一：  - [读取外派地点](corehr:employment.international_assignment.work_location:read)  - [读写外派地点](corehr:employment.international_assignment.work_location:write) */
+        work_location_id_list?: string[]
+        /** 外派部门- 可通过[【批量查询部门】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/department/batch_get)获取- 类型与 department_id_type 一致 */
+        department_id_list?: string[]
+        /** 外派直属上级- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        direct_manager_id_list?: string[]
+        /** 外派虚线上级- 可通过[【批量查询员工信息】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get)获取- 类型与 user_id_type 一致 */
+        dotted_line_manager_id_list?: string[]
+        /** 外派岗位- 功能灰度中，请联系[技术支持](https://applink.feishu.cn/TLJpeNdW)- 需要以下权限点之一：  - [读取外派岗位](corehr:employment.international_assignment.position:read)  - [读写外派岗位](corehr:employment.international_assignment.position:write) */
+        position_id_list?: string[]
+        /** 外派职务- 可通过[【批量查询职务】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list)获取- 需要以下权限点之一：    - [读取外派职务](corehr:employment.international_assignment.job:read)    - [读写外派职务](corehr:employment.international_assignment.job:write) */
+        job_id_list?: string[]
+        /** 外派序列- 可通过[【批量查询序列】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/list)获取 */
+        job_family_id_list?: string[]
+        /** 外派职级- 可通过[【批量查询职级】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_level/list)获取- 需要以下权限点之一：    - [读取外派职级](corehr:employment.international_assignment.job_level:read)    - [读写外派职级](corehr:employment.international_assignment.job_level:write) */
+        job_level_id_list?: string[]
+        /** 外派职等- 可通过[【查询职等】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_grade/query)获取- 需要以下权限点之一：      - [读取外派职等](corehr:employment.international_assignment.job_grade:read)      - [读写外派职等](corehr:employment.international_assignment.job_grade:write) */
+        job_grade_id_list?: string[]
+        /** 外派工时制度- 可通过[【批量查询工时制度】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/working_hours_type/list)获取- 需要以下权限点之一：      - [读取外派工时制度](corehr:employment.international_assignment.working_hours_type:read)      - [读写外派工时制度](corehr:employment.international_assignment.working_hours_type:write) */
+        working_hours_type_id_list?: string[]
+        /** 外派任职公司- 可通过[【批量查询公司】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/company/list)获取- 需要以下权限点之一：    - [读取外派公司](corehr:employment.international_assignment.service_company:read)    - [读写外派公司](corehr:employment.international_assignment.service_company:write) */
+        service_company_list?: string[]
+        /** 外派周工作时长- 限制两位小数- 需要以下权限点之一：    - [读取外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:read)    - [读写外派周工作时长](corehr:employment.international_assignment.weekly_working_hours:write) */
+        weekly_working_hours_v2?: number
+        /** 外派排班类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：job_data    - custom_api_name：work_shift- 需要以下权限点之一：    - [读取外派排班类型](corehr:employment.international_assignment.work_shift:read)    - [读写外派排班类型](corehr:employment.international_assignment.work_shift:write) */
+        work_shift_list?: string[]
+        /** 外派薪资类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：  - object_api_name：job_data  - custom_api_name：compensation_type- 需要以下权限点之一：  - [读取外派薪资类型](corehr:employment.international_assignment.compensation_type:read)  - [读写外派薪资类型](corehr:employment.international_assignment.compensation_type:write) */
+        compensation_type_list?: string[]
+        /** 外派预计结束日期- 范围筛选，格式：yyyy-mm-dd~yyyy-mm-dd */
+        international_assignment_expected_end_date?: string
+        /** 外派状态- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：international_assignment    - custom_api_name：international_assignment_status */
+        international_assignment_status_list?: string[]
+        /** 外派类型- 可通过[【获取字段详情】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/custom_field/get_by_param)接口查询，查询参数如下：    - object_api_name：international_assignment    - custom_api_name：international_assignment_type */
+        international_assignment_type_list?: string[]
+        /** 外派工作日历- 可通过[【查询工作日历】](/ssl:ttdoc/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/leave/work_calendar)获取详细信息- 需要以下权限点之一：    - [读取外派工作日历](corehr:employment.international_assignment.work_calendar:read)    - [读写外派工作日历](corehr:employment.international_assignment.work_calendar:write) */
+        work_calendar_id_list?: string[]
+      }
+
+      export interface ListResponse {
+        /** 外派信息 */
+        items?: Lark.EmployeesInternationalAssignment[]
+        /** 无权限的雇佣ID - 在指定雇佣ID查询时请检查该参数 - 类型与 user_id_type 一致 */
+        no_authority_ids?: string[]
+        /** 翻页 */
+        page_token?: string
+        /** 是否有更多项 */
+        has_more?: boolean
       }
     }
 
@@ -2993,8 +3214,37 @@ export namespace Corehr {
     }
   }
 
+  export namespace Draft {
+    export interface Methods {
+      /**
+       * 根据组织架构调整 ID 查询发起的流程信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/draft/get
+       */
+      get(draft_id: string, query?: GetQuery): Promise<GetResponse>
+    }
+
+    export interface GetQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface GetResponse {
+      /** 组织架构调整 ID */
+      draft_id?: string
+      /** 组织架构调整状态 */
+      draft_status?: '0' | '1' | '2' | '3'
+      /** 组织架构调整流程信息列表 */
+      process_infos?: Lark.ProcessInfo[]
+    }
+  }
+
   export namespace ApprovalGroups {
     export interface Methods {
+      /**
+       * 批量查询岗位调整内容
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/open_query_position_change_list_by_ids
+       */
+      openQueryPositionChangeListByIds(body: OpenQueryPositionChangeListByIdsRequest, query?: OpenQueryPositionChangeListByIdsQuery): Promise<OpenQueryPositionChangeListByIdsResponse>
       /**
        * 根据流程 ID 查询组织架构调整记录
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/get
@@ -3010,6 +3260,27 @@ export namespace Corehr {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/approval_groups/open_query_job_change_list_by_ids
        */
       openQueryJobChangeListByIds(body: OpenQueryJobChangeListByIdsRequest, query?: OpenQueryJobChangeListByIdsQuery): Promise<OpenQueryJobChangeListByIdsResponse>
+    }
+
+    export interface OpenQueryPositionChangeListByIdsRequest {
+      /** 岗位调整记录 ID List */
+      position_change_ids?: string[]
+      /** 是否返回部门全路径 */
+      need_department_path?: boolean
+    }
+
+    export interface OpenQueryPositionChangeListByIdsQuery {
+      /** 组织架构调整流程 ID */
+      process_id: string
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+    }
+
+    export interface OpenQueryPositionChangeListByIdsResponse {
+      /** 岗位调整记录信息列表 */
+      position_changes?: Lark.PositionChange[]
     }
 
     export interface GetQuery {
@@ -3093,10 +3364,15 @@ export namespace Corehr {
        */
       queryRecentChange(query?: QueryRecentChangeQuery): Promise<QueryRecentChangeResponse>
       /**
-       * 通过序列 ID 批量获取序列信息
+       * 根据条件批量获取序列信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_family/batch_get
        */
       batchGet(body: BatchGetRequest): Promise<BatchGetResponse>
+      /**
+       * 查询指定时间范围序列版本
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_family/query_multi_timeline
+       */
+      queryMultiTimeline(body: QueryMultiTimelineRequest): Promise<QueryMultiTimelineResponse>
       /**
        * 删除序列
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/corehr-v1/job_family/delete
@@ -3184,6 +3460,22 @@ export namespace Corehr {
       /** 查询的序列信息 */
       items?: Lark.JobFamily[]
     }
+
+    export interface QueryMultiTimelineRequest {
+      /** 序列 ID 列表 */
+      job_family_ids: string[]
+      /** 查询开始时间（包含） */
+      start_date?: string
+      /** 查询结束时间(包含) */
+      end_date?: string
+      /** 返回数据的字段列表，可选["job_family_name", "code", "active", "parent_job_family_id", "description", "effective_date"] */
+      fields?: string[]
+    }
+
+    export interface QueryMultiTimelineResponse {
+      /** 序列信息 */
+      items?: Lark.JobFamilyTimeline[]
+    }
   }
 
   export namespace JobLevel {
@@ -3214,7 +3506,7 @@ export namespace Corehr {
        */
       queryRecentChange(query?: QueryRecentChangeQuery): Promise<QueryRecentChangeResponse>
       /**
-       * 通过职级 ID 批量获取职级信息
+       * 根据条件批量获取职级信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job_level/batch_get
        */
       batchGet(body: BatchGetRequest): Promise<BatchGetResponse>
@@ -3407,6 +3699,86 @@ export namespace Corehr {
     }
   }
 
+  export namespace Pathway {
+    export interface Methods {
+      /**
+       * 创建通道
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pathway/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 更新通道
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pathway/patch
+       */
+      patch(pathway_id: string, body: PatchRequest, query?: PatchQuery): Promise<void>
+      /**
+       * 删除通道
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pathway/delete
+       */
+      delete(pathway_id: string): Promise<void>
+      /**
+       * 启停用通道
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pathway/active
+       */
+      active(body: ActiveRequest): Promise<void>
+      /**
+       * 获取通道信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pathway/batch_get
+       */
+      batchGet(body: BatchGetRequest): Promise<BatchGetResponse>
+    }
+
+    export interface CreateRequest {
+      /** 编码 */
+      code?: string
+      /** 名称 */
+      names: Lark.I18n[]
+      /** 描述 */
+      descriptions?: Lark.I18n[]
+    }
+
+    export interface CreateQuery {
+      /** 根据client_token是否一致来判断是否为同一请求 */
+      client_token?: string
+    }
+
+    export interface CreateResponse {
+      /** 通道ID */
+      pathway_id?: string
+    }
+
+    export interface PatchRequest {
+      /** 编码 */
+      code?: string
+      /** 名称 */
+      names?: Lark.I18n[]
+      /** 描述 */
+      descriptions?: Lark.I18n[]
+    }
+
+    export interface PatchQuery {
+      /** 根据client_token是否一致来判断是否为同一请求 */
+      client_token?: string
+    }
+
+    export interface ActiveRequest {
+      /** 通道ID */
+      pathway_id: string
+      /** 启用停用状态 */
+      active: boolean
+    }
+
+    export interface BatchGetRequest {
+      /** 通道 ID 列表 */
+      pathway_ids: string[]
+    }
+
+    export interface BatchGetResponse {
+      /** 查询的通道信息 */
+      items?: Lark.Pathway[]
+    }
+  }
+
   export namespace Job {
     export interface Methods {
       /**
@@ -3434,6 +3806,16 @@ export namespace Corehr {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/list
        */
       list(query?: ListQuery): Paginated<Lark.Job>
+      /**
+       * 根据条件批量获取职务
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/batch_get
+       */
+      batchGet(body: BatchGetRequest, query?: BatchGetQuery): Promise<BatchGetResponse>
+      /**
+       * 查询指定时间范围职务版本
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/query_multi_timeline
+       */
+      queryMultiTimeline(body: QueryMultiTimelineRequest): Promise<QueryMultiTimelineResponse>
       /**
        * 查询当前生效信息发生变更的职务
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/job/query_recent_change
@@ -3517,6 +3899,41 @@ export namespace Corehr {
       query_language?: string
     }
 
+    export interface BatchGetRequest {
+      /** 职务 ID 列表 */
+      job_ids?: string[]
+      /** 职务 Code 列表 */
+      job_codes?: string[]
+      /** 返回数据的字段列表 */
+      fields?: string[]
+    }
+
+    export interface BatchGetQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface BatchGetResponse {
+      /** 查询的职务信息 */
+      items?: Lark.Job[]
+    }
+
+    export interface QueryMultiTimelineRequest {
+      /** 职务 ID 列表 */
+      job_ids: string[]
+      /** 查询开始时间（包含） */
+      start_date?: string
+      /** 查询结束时间(包含) */
+      end_date?: string
+      /** 返回数据的字段列表，可选["job_name", "code", "active", "parent_job", "description", "effective_date", "expiration_date"] */
+      fields?: string[]
+    }
+
+    export interface QueryMultiTimelineResponse {
+      /** 职务信息 */
+      items?: Lark.JobTimeline[]
+    }
+
     export interface QueryRecentChangeQuery extends Pagination {
       /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
       start_date: string
@@ -3533,6 +3950,188 @@ export namespace Corehr {
       has_more?: boolean
       /** 删除的职务 ID 列表 */
       deleted_job_ids?: string[]
+    }
+  }
+
+  export namespace Position {
+    export interface Methods {
+      /**
+       * 创建岗位信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 更新岗位信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/patch
+       */
+      patch(position_id: string, body: PatchRequest, query?: PatchQuery): Promise<void>
+      /**
+       * 查询岗位信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/query
+       */
+      query(body: QueryRequest, query?: QueryQuery): Paginated<Lark.Position>
+      /**
+       * 查询指定时范围内当前版本信息发生变更的岗位
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/query_recent_change
+       */
+      queryRecentChange(query?: QueryRecentChangeQuery): Promise<QueryRecentChangeResponse>
+      /**
+       * 启停用岗位
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/active
+       */
+      active(body: ActiveRequest): Promise<void>
+      /**
+       * 删除岗位
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/position/del_position
+       */
+      delPosition(body: DelPositionRequest): Promise<void>
+    }
+
+    export interface CreateRequest {
+      /** 编码 */
+      code?: string
+      /** 名称 */
+      names: Lark.I18n[]
+      /** 描述 */
+      descriptions?: Lark.I18n[]
+      /** 序列 */
+      job_family_ids?: string[]
+      /** 成本中心 */
+      cost_center_id?: string
+      /** 职务 */
+      job_id: string
+      /** 职级 */
+      job_level_ids?: string[]
+      /** 人员类型 */
+      employee_type_ids?: string[]
+      /** 职等 */
+      job_grade_ids?: string[]
+      /** 工作地点 */
+      work_location_ids?: string[]
+      /** 工时制度 */
+      working_hours_type_id?: string
+      /** 部门 */
+      department_id: string
+      /** 直属上级岗位 */
+      direct_leader_id?: string
+      /** 虚线上级岗位 */
+      dotted_line_leader_id?: string
+      /** 是否关键岗位 */
+      is_key_position?: boolean
+      /** 生效日期 */
+      effective_time: string
+      /** 自定义字段 */
+      custom_fields?: Lark.CustomFieldData[]
+    }
+
+    export interface CreateQuery {
+      /** 根据client_token是否一致来判断是否为同一请求 */
+      client_token?: string
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+    }
+
+    export interface CreateResponse {
+      /** 岗位ID */
+      position_id?: string
+    }
+
+    export interface PatchRequest {
+      /** 编码 */
+      code?: string
+      /** 名称 */
+      names?: Lark.I18n[]
+      /** 描述 */
+      descriptions?: Lark.I18n[]
+      /** 序列 */
+      job_family_ids?: string[]
+      /** 成本中心 */
+      cost_center_id?: string
+      /** 职务 */
+      job_id?: string
+      /** 职级 */
+      job_level_ids?: string[]
+      /** 人员类型 */
+      employee_type_ids?: string[]
+      /** 职等 */
+      job_grade_ids?: string[]
+      /** 工作地点 */
+      work_location_ids?: string[]
+      /** 工时制度 */
+      working_hours_type_id?: string
+      /** 部门 */
+      department_id?: string
+      /** 直属上级岗位 */
+      direct_leader_id?: string
+      /** 虚线上级岗位 */
+      dotted_line_leader_id?: string
+      /** 是否关键岗位 */
+      is_key_position?: boolean
+      /** 生效日期 */
+      effective_time: string
+      /** 自定义字段 */
+      custom_fields?: Lark.CustomFieldData[]
+    }
+
+    export interface PatchQuery {
+      /** 根据client_token是否一致来判断是否为同一请求 */
+      client_token?: string
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+    }
+
+    export interface QueryRequest {
+      /** 部门 ID 列表 */
+      department_ids?: string[]
+      /** 生效日期 */
+      effective_time?: string
+      /** 启停用状态 */
+      active?: boolean
+      /** 返回数据的字段列表 */
+      fields?: string[]
+      /** 岗位 ID 列表 */
+      position_ids?: string[]
+      /** 岗位 Code 列表 */
+      position_codes?: string[]
+    }
+
+    export interface QueryQuery extends Pagination {
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+    }
+
+    export interface QueryRecentChangeQuery extends Pagination {
+      /** 查询的开始时间，支持"yyyy-MM-dd HH:MM:SS" */
+      start_date: string
+      /** 查询的结束时间，格式 "yyyy-MM-dd HH:MM:SS" */
+      end_date: string
+    }
+
+    export interface QueryRecentChangeResponse {
+      /** 岗位 ID 列表 */
+      position_ids?: string[]
+      /** 下一页页码 */
+      page_token?: string
+      /** 是否有下一页 */
+      has_more?: boolean
+      /** 删除的岗位 ID 列表 */
+      deleted_position_ids?: string[]
+    }
+
+    export interface ActiveRequest {
+      /** 岗位ID */
+      position_id: string
+      /** 启用停用状态 */
+      active: boolean
+      /** 生效时间 */
+      effective_time: string
+    }
+
+    export interface DelPositionRequest {
+      /** 岗位ID */
+      position_id: string
     }
   }
 
@@ -3578,6 +4177,11 @@ export namespace Corehr {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/transit_task
        */
       transitTask(pre_hire_id: string, body: TransitTaskRequest): Promise<TransitTaskResponse>
+      /**
+       * 流转入职任务
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/transform_onboarding_task
+       */
+      transformOnboardingTask(body: TransformOnboardingTaskRequest): Promise<TransformOnboardingTaskResponse>
       /**
        * 操作员工完成入职
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/pre_hire/complete
@@ -3721,6 +4325,24 @@ export namespace Corehr {
     }
 
     export interface TransitTaskResponse {
+      /** 是否成功流转任务 */
+      success?: boolean
+    }
+
+    export interface TransformOnboardingTaskRequest {
+      /** 待入职ID，可从待入职列表接口获取 */
+      pre_hire_id: string
+      /** 任务的标识ID,入职系统的任务分为预置任务和自定义任务，预置任务的task_code是系统写死的，如职位信息任务的task_code为1，自定义任务的task_code为一串UUID。待入职人员任务的task_code可以通过查询待入职接口获取 */
+      task_code: string
+      /** 流转类型，描述对任务做何种流转，manual_start_task表示手动开启任务，submit_task表示提交任务，review_task表示审批任务 */
+      transform_type: string
+      /** 审批结果，approve表示通过，reject表示拒绝，当审批任务时，该字段需要传值，否则报错 */
+      review_decision?: string
+      /** 审批原因，审批任务时，如果审批通过，审批原因可以不填；如果审批拒绝，审批原因必填 */
+      reason?: string
+    }
+
+    export interface TransformOnboardingTaskResponse {
       /** 是否成功流转任务 */
       success?: boolean
     }
@@ -5021,6 +5643,11 @@ export namespace Corehr {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/get
        */
       get(process_id: string, query?: GetQuery): Promise<GetResponse>
+      /**
+       * 获取流程数据
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process/flow_variable_data
+       */
+      flowVariableData(process_id: string, query?: FlowVariableDataQuery): Promise<FlowVariableDataResponse>
     }
 
     export interface ListQuery extends Pagination {
@@ -5104,6 +5731,22 @@ export namespace Corehr {
       original_process_id?: string
       /** 是否最新的「已完成」的更正流程 */
       is_last_completed_correct_process?: boolean
+    }
+
+    export interface FlowVariableDataQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+      /** 需要查询变量key */
+      variable_keys?: string[]
+    }
+
+    export interface FlowVariableDataResponse {
+      /** 流程数据 */
+      field_variable_values?: Lark.FieldVariableValue[]
+      /** 流程实例id */
+      process_id?: string
     }
 
     export namespace FormVariableData {
@@ -5591,6 +6234,14 @@ Internal.define({
   '/corehr/v2/employees/job_datas/batch_get': {
     POST: 'corehr.employees.jobData.batchGet',
   },
+  '/corehr/v2/employees/international_assignments': {
+    POST: 'corehr.employees.internationalAssignment.create',
+    GET: 'corehr.employees.internationalAssignment.list',
+  },
+  '/corehr/v2/employees/international_assignments/{international_assignment_id}': {
+    PATCH: 'corehr.employees.internationalAssignment.patch',
+    DELETE: 'corehr.employees.internationalAssignment.delete',
+  },
   '/corehr/v2/employees/additional_jobs': {
     POST: 'corehr.employees.additionalJob.create',
   },
@@ -5743,6 +6394,12 @@ Internal.define({
   '/corehr/v2/custom_orgs/delete_org': {
     POST: 'corehr.customOrg.deleteOrg',
   },
+  '/corehr/v2/drafts/{draft_id}': {
+    GET: 'corehr.draft.get',
+  },
+  '/corehr/v2/approval_groups/open_query_position_change_list_by_ids': {
+    POST: 'corehr.approvalGroups.openQueryPositionChangeListByIds',
+  },
   '/corehr/v2/approval_groups/{process_id}': {
     GET: 'corehr.approvalGroups.get',
   },
@@ -5766,6 +6423,9 @@ Internal.define({
   },
   '/corehr/v2/job_families/batch_get': {
     POST: 'corehr.jobFamily.batchGet',
+  },
+  '/corehr/v2/job_families/query_multi_timeline': {
+    POST: 'corehr.jobFamily.queryMultiTimeline',
   },
   '/corehr/v1/job_levels': {
     POST: 'corehr.jobLevel.create',
@@ -5795,6 +6455,19 @@ Internal.define({
   '/corehr/v2/job_grades/query_recent_change': {
     GET: 'corehr.jobGrade.queryRecentChange',
   },
+  '/corehr/v2/pathways': {
+    POST: 'corehr.pathway.create',
+  },
+  '/corehr/v2/pathways/{pathway_id}': {
+    PATCH: 'corehr.pathway.patch',
+    DELETE: 'corehr.pathway.delete',
+  },
+  '/corehr/v2/pathways/active': {
+    POST: 'corehr.pathway.active',
+  },
+  '/corehr/v2/pathways/batch_get': {
+    POST: 'corehr.pathway.batchGet',
+  },
   '/corehr/v1/jobs': {
     POST: 'corehr.job.create',
   },
@@ -5808,8 +6481,32 @@ Internal.define({
   '/corehr/v2/jobs': {
     GET: { name: 'corehr.job.list', pagination: { argIndex: 0 } },
   },
+  '/corehr/v2/jobs/batch_get': {
+    POST: 'corehr.job.batchGet',
+  },
+  '/corehr/v2/jobs/query_multi_timeline': {
+    POST: 'corehr.job.queryMultiTimeline',
+  },
   '/corehr/v2/jobs/query_recent_change': {
     GET: 'corehr.job.queryRecentChange',
+  },
+  '/corehr/v2/positions': {
+    POST: 'corehr.position.create',
+  },
+  '/corehr/v2/positions/{position_id}': {
+    PATCH: 'corehr.position.patch',
+  },
+  '/corehr/v2/positions/query': {
+    POST: { name: 'corehr.position.query', pagination: { argIndex: 1 } },
+  },
+  '/corehr/v2/positions/query_recent_change': {
+    GET: 'corehr.position.queryRecentChange',
+  },
+  '/corehr/v2/positions/active': {
+    POST: 'corehr.position.active',
+  },
+  '/corehr/v2/positions/del_position': {
+    POST: 'corehr.position.delPosition',
   },
   '/corehr/v2/pre_hires/withdraw_onboarding': {
     POST: 'corehr.preHire.withdrawOnboarding',
@@ -5832,6 +6529,9 @@ Internal.define({
   },
   '/corehr/v2/pre_hires/{pre_hire_id}/transit_task': {
     POST: 'corehr.preHire.transitTask',
+  },
+  '/corehr/v2/pre_hires/transform_onboarding_task': {
+    POST: 'corehr.preHire.transformOnboardingTask',
   },
   '/corehr/v2/pre_hires/{pre_hire_id}/complete': {
     POST: 'corehr.preHire.complete',
@@ -5980,6 +6680,9 @@ Internal.define({
   },
   '/corehr/v2/processes/{process_id}': {
     GET: 'corehr.process.get',
+  },
+  '/corehr/v2/processes/{process_id}/flow_variable_data': {
+    GET: 'corehr.process.flowVariableData',
   },
   '/corehr/v2/processes/{process_id}/form_variable_data': {
     GET: 'corehr.process.formVariableData.get',

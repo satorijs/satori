@@ -9,12 +9,23 @@ declare module '../internal' {
 
 export namespace Apaas {
   export interface Methods {
+    app: App.Methods
     seatAssignment: SeatAssignment.Methods
     seatActivity: SeatActivity.Methods
     application: Application.Methods
     userTask: UserTask.Methods
     approvalTask: ApprovalTask.Methods
     approvalInstance: ApprovalInstance.Methods
+  }
+
+  export namespace App {
+    export interface Methods {
+      /**
+       * 查看应用基本信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/app/list
+       */
+      list(query?: Pagination): Paginated<Lark.App>
+    }
   }
 
   export namespace SeatAssignment {
@@ -50,8 +61,8 @@ export namespace Apaas {
   export namespace Application {
     export interface Methods {
       auditLog: AuditLog.Methods
-      role: Role.Methods
       recordPermission: RecordPermission.Methods
+      role: Role.Methods
       object: Object.Methods
       function: Function.Methods
       environmentVariable: EnvironmentVariable.Methods
@@ -167,6 +178,37 @@ export namespace Apaas {
       }
     }
 
+    export namespace RecordPermission {
+      export interface Methods {
+        member: Member.Methods
+      }
+
+      export namespace Member {
+        export interface Methods {
+          /**
+           * 批量删除记录权限用户授权
+           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-record_permission-member/batch_remove_authorization
+           */
+          batchRemoveAuthorization(namespace: string, record_permission_api_name: string, body: BatchRemoveAuthorizationRequest): Promise<void>
+          /**
+           * 批量创建记录权限用户授权
+           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-record_permission-member/batch_create_authorization
+           */
+          batchCreateAuthorization(namespace: string, record_permission_api_name: string, body: BatchCreateAuthorizationRequest): Promise<void>
+        }
+
+        export interface BatchRemoveAuthorizationRequest {
+          /** 需要删除的用户 ID 列表 */
+          user_ids?: string[]
+        }
+
+        export interface BatchCreateAuthorizationRequest {
+          /** 需要新增的用户 ID 列表 */
+          user_ids?: string[]
+        }
+      }
+    }
+
     export namespace Role {
       export interface Methods {
         member: Member.Methods
@@ -215,37 +257,6 @@ export namespace Apaas {
         export interface GetResponse {
           /** 角色成员 */
           role_member?: Lark.RoleMember
-        }
-      }
-    }
-
-    export namespace RecordPermission {
-      export interface Methods {
-        member: Member.Methods
-      }
-
-      export namespace Member {
-        export interface Methods {
-          /**
-           * 批量删除记录权限用户授权
-           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-record_permission-member/batch_remove_authorization
-           */
-          batchRemoveAuthorization(namespace: string, record_permission_api_name: string, body: BatchRemoveAuthorizationRequest): Promise<void>
-          /**
-           * 批量创建记录权限用户授权
-           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/application-record_permission-member/batch_create_authorization
-           */
-          batchCreateAuthorization(namespace: string, record_permission_api_name: string, body: BatchCreateAuthorizationRequest): Promise<void>
-        }
-
-        export interface BatchRemoveAuthorizationRequest {
-          /** 需要删除的用户 ID 列表 */
-          user_ids?: string[]
-        }
-
-        export interface BatchCreateAuthorizationRequest {
-          /** 需要新增的用户 ID 列表 */
-          user_ids?: string[]
         }
       }
     }
@@ -723,6 +734,9 @@ export namespace Apaas {
 }
 
 Internal.define({
+  '/apaas/v1/apps': {
+    GET: { name: 'apaas.app.list', pagination: { argIndex: 0 } },
+  },
   '/apaas/v1/seat_assignments': {
     GET: { name: 'apaas.seatAssignment.list', pagination: { argIndex: 0 } },
   },
@@ -741,6 +755,12 @@ Internal.define({
   '/apaas/v1/applications/{namespace}/audit_log/data_change_log_detail': {
     GET: 'apaas.application.auditLog.dataChangeLogDetail',
   },
+  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_remove_authorization': {
+    POST: 'apaas.application.recordPermission.member.batchRemoveAuthorization',
+  },
+  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_create_authorization': {
+    POST: 'apaas.application.recordPermission.member.batchCreateAuthorization',
+  },
   '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member/batch_remove_authorization': {
     POST: 'apaas.application.role.member.batchRemoveAuthorization',
   },
@@ -749,12 +769,6 @@ Internal.define({
   },
   '/apaas/v1/applications/{namespace}/roles/{role_api_name}/member': {
     GET: 'apaas.application.role.member.get',
-  },
-  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_remove_authorization': {
-    POST: 'apaas.application.recordPermission.member.batchRemoveAuthorization',
-  },
-  '/apaas/v1/applications/{namespace}/record_permissions/{record_permission_api_name}/member/batch_create_authorization': {
-    POST: 'apaas.application.recordPermission.member.batchCreateAuthorization',
   },
   '/apaas/v1/applications/{namespace}/objects/oql_query': {
     POST: 'apaas.application.object.oqlQuery',

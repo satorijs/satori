@@ -242,7 +242,7 @@ export namespace Performance {
   export namespace ReviewTemplate {
     export interface Methods {
       /**
-       * 获取评估模板配置
+       * 获取绩效模板配置
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/review_template/query
        */
       query(body: QueryRequest, query?: Pagination): Paginated<Lark.ReviewTemplate, 'review_templates'>

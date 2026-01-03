@@ -959,40 +959,65 @@ export namespace Drive {
     export namespace Member {
       export interface Methods {
         /**
-         * 批量增加协作者权限
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/batch_create
-         */
-        batchCreate(token: string, body: BatchCreateRequest, query?: BatchCreateQuery): Promise<BatchCreateResponse>
-        /**
-         * 转移所有者
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/transfer_owner
-         */
-        transferOwner(token: string, body: TransferOwnerRequest, query?: TransferOwnerQuery): Promise<void>
-        /**
-         * 判断当前用户是否有某权限
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/auth
-         */
-        auth(token: string, query?: AuthQuery): Promise<AuthResponse>
-        /**
-         * 获取协作者列表
-         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/list
-         */
-        list(token: string, query?: ListQuery): Promise<ListResponse>
-        /**
          * 增加协作者权限
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/create
          */
         create(token: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+        /**
+         * 批量增加协作者权限
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/batch_create
+         */
+        batchCreate(token: string, body: BatchCreateRequest, query?: BatchCreateQuery): Promise<BatchCreateResponse>
         /**
          * 更新协作者权限
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/update
          */
         update(token: string, member_id: string, body: UpdateRequest, query?: UpdateQuery): Promise<UpdateResponse>
         /**
-         * 移除协作者权限
+         * 获取云文档协作者
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/list
+         */
+        list(token: string, query?: ListQuery): Promise<ListResponse>
+        /**
+         * 移除云文档协作者权限
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/delete
          */
         delete(token: string, member_id: string, body: DeleteRequest, query?: DeleteQuery): Promise<void>
+        /**
+         * 转移云文档所有者
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/transfer_owner
+         */
+        transferOwner(token: string, body: TransferOwnerRequest, query?: TransferOwnerQuery): Promise<void>
+        /**
+         * 判断用户云文档权限
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-member/auth
+         */
+        auth(token: string, query?: AuthQuery): Promise<AuthResponse>
+      }
+
+      export interface CreateRequest {
+        /** 协作者ID类型 */
+        member_type: 'email' | 'openid' | 'unionid' | 'openchat' | 'opendepartmentid' | 'userid' | 'groupid' | 'wikispaceid'
+        /** 协作者ID，与协作者ID类型需要对应 */
+        member_id: string
+        /** 协作者的权限角色 */
+        perm: 'view' | 'edit' | 'full_access'
+        /** 协作者的权限角色类型 */
+        perm_type?: 'container' | 'single_page'
+        /** 协作者类型 */
+        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
+      }
+
+      export interface CreateQuery {
+        /** 文件类型，需要与文件的 token 相匹配 */
+        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'folder' | 'mindnote' | 'minutes' | 'slides'
+        /** 添加权限后是否通知对方 */
+        need_notification?: boolean
+      }
+
+      export interface CreateResponse {
+        /** 本次添加权限的用户信息 */
+        member?: Lark.BaseMember
       }
 
       export interface BatchCreateRequest {
@@ -1010,6 +1035,57 @@ export namespace Drive {
       export interface BatchCreateResponse {
         /** 协作者列表 */
         members?: Lark.BaseMember[]
+      }
+
+      export interface UpdateRequest {
+        /** 协作者ID类型 */
+        member_type: 'email' | 'openid' | 'unionid' | 'openchat' | 'opendepartmentid' | 'userid' | 'groupid' | 'wikispaceid'
+        /** 协作者的权限角色 */
+        perm: 'view' | 'edit' | 'full_access'
+        /** 协作者的权限角色类型 */
+        perm_type?: 'container' | 'single_page'
+        /** 协作者类型 */
+        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
+      }
+
+      export interface UpdateQuery {
+        /** 更新权限后是否通知对方**注意：** 使用`tenant_access_token`访问不支持该参数 */
+        need_notification?: boolean
+        /** 文件类型，放于query参数中，如：`?type=doc` */
+        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+      }
+
+      export interface UpdateResponse {
+        /** 本次更新权限的用户信息 */
+        member?: Lark.BaseMember
+      }
+
+      export interface ListQuery {
+        /** 文件类型，需要与文件的 token 相匹配 */
+        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+        /** 指定返回的协作者字段信息，如无指定则默认不返回**可选值有：** - `name`：协作者名- `type`：协作者类型- `avatar`：头像- `external_label`：外部标签**注意：** - 你可以使用特殊值`*`指定返回目前支持的所有字段- 你可以使用`,`分隔若干个你想指定返回的字段，如：`name,avatar`- 按需指定返回字段接口性能更好 */
+        fields?: string
+        /** 协作者的权限角色类型 */
+        perm_type?: 'container' | 'single_page'
+      }
+
+      export interface ListResponse {
+        /** 返回的列表数据 */
+        items?: Lark.Member[]
+      }
+
+      export interface DeleteRequest {
+        /** 协作者类型 */
+        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
+        /** 协作者的权限角色类型 */
+        perm_type?: 'container' | 'single_page'
+      }
+
+      export interface DeleteQuery {
+        /** 文件类型，放于query参数中，如：`?type=doc` */
+        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'folder' | 'mindnote' | 'minutes' | 'slides'
+        /** 权限成员类型，放于query参数中，如：`?member_type=openid` */
+        member_type: 'email' | 'openid' | 'openchat' | 'opendepartmentid' | 'userid' | 'unionid' | 'groupid' | 'wikispaceid'
       }
 
       export interface TransferOwnerRequest {
@@ -1043,107 +1119,21 @@ export namespace Drive {
         /** 是否有权限 */
         auth_result: boolean
       }
-
-      export interface ListQuery {
-        /** 文件类型，需要与文件的 token 相匹配 */
-        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
-        /** 指定返回的协作者字段信息，如无指定则默认不返回**可选值有：** - `name`：协作者名- `type`：协作者类型- `avatar`：头像- `external_label`：外部标签**注意：** - 你可以使用特殊值`*`指定返回目前支持的所有字段- 你可以使用`,`分隔若干个你想指定返回的字段，如：`name,avatar`- 按需指定返回字段接口性能更好 */
-        fields?: string
-        /** 协作者的权限角色类型 */
-        perm_type?: 'container' | 'single_page'
-      }
-
-      export interface ListResponse {
-        /** 返回的列表数据 */
-        items?: Lark.Member[]
-      }
-
-      export interface CreateRequest {
-        /** 协作者ID类型 */
-        member_type: 'email' | 'openid' | 'unionid' | 'openchat' | 'opendepartmentid' | 'userid' | 'groupid' | 'wikispaceid'
-        /** 协作者ID，与协作者ID类型需要对应 */
-        member_id: string
-        /** 协作者的权限角色 */
-        perm: 'view' | 'edit' | 'full_access'
-        /** 协作者的权限角色类型 */
-        perm_type?: 'container' | 'single_page'
-        /** 协作者类型 */
-        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
-      }
-
-      export interface CreateQuery {
-        /** 文件类型，需要与文件的 token 相匹配 */
-        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'folder' | 'mindnote' | 'minutes' | 'slides'
-        /** 添加权限后是否通知对方 */
-        need_notification?: boolean
-      }
-
-      export interface CreateResponse {
-        /** 本次添加权限的用户信息 */
-        member?: Lark.BaseMember
-      }
-
-      export interface UpdateRequest {
-        /** 协作者ID类型 */
-        member_type: 'email' | 'openid' | 'unionid' | 'openchat' | 'opendepartmentid' | 'userid' | 'groupid' | 'wikispaceid'
-        /** 协作者的权限角色 */
-        perm: 'view' | 'edit' | 'full_access'
-        /** 协作者的权限角色类型 */
-        perm_type?: 'container' | 'single_page'
-        /** 协作者类型 */
-        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
-      }
-
-      export interface UpdateQuery {
-        /** 更新权限后是否通知对方**注意：** 使用`tenant_access_token`访问不支持该参数 */
-        need_notification?: boolean
-        /** 文件类型，放于query参数中，如：`?type=doc` */
-        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
-      }
-
-      export interface UpdateResponse {
-        /** 本次更新权限的用户信息 */
-        member?: Lark.BaseMember
-      }
-
-      export interface DeleteRequest {
-        /** 协作者类型 */
-        type?: 'user' | 'chat' | 'department' | 'group' | 'wiki_space_member' | 'wiki_space_viewer' | 'wiki_space_editor'
-        /** 协作者的权限角色类型 */
-        perm_type?: 'container' | 'single_page'
-      }
-
-      export interface DeleteQuery {
-        /** 文件类型，放于query参数中，如：`?type=doc` */
-        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'folder' | 'mindnote' | 'minutes' | 'slides'
-        /** 权限成员类型，放于query参数中，如：`?member_type=openid` */
-        member_type: 'email' | 'openid' | 'openchat' | 'opendepartmentid' | 'userid' | 'unionid' | 'groupid' | 'wikispaceid'
-      }
     }
 
     export namespace Public {
       export interface Methods {
         password: Password.Methods
         /**
-         * 获取云文档权限设置
-         * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/permission-public/get
-         */
-        get(token: string, query?: GetQuery): Promise<GetResponse>
-        /**
          * 更新云文档权限设置
          * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/permission-public/patch
          */
         patch(token: string, body: PatchRequest, query?: PatchQuery): Promise<PatchResponse>
-      }
-
-      export interface GetQuery {
-        /** 文件类型，需要与文件的 token 相匹配 */
-        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
-      }
-
-      export interface GetResponse {
-        /** 返回的文档公共设置 */
-        permission_public?: Lark.PermissionPublic
+        /**
+         * 获取云文档权限设置
+         * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/permission-public/get
+         */
+        get(token: string, query?: GetQuery): Promise<GetResponse>
       }
 
       export interface PatchRequest {
@@ -1173,20 +1163,30 @@ export namespace Drive {
         permission_public?: Lark.PermissionPublic
       }
 
+      export interface GetQuery {
+        /** 文件类型，需要与文件的 token 相匹配 */
+        type: 'doc' | 'sheet' | 'file' | 'wiki' | 'bitable' | 'docx' | 'mindnote' | 'minutes' | 'slides'
+      }
+
+      export interface GetResponse {
+        /** 返回的文档公共设置 */
+        permission_public?: Lark.PermissionPublic
+      }
+
       export namespace Password {
         export interface Methods {
           /**
-           * 开启密码
+           * 启用云文档密码
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-public-password/create
            */
           create(token: string, query?: CreateQuery): Promise<CreateResponse>
           /**
-           * 刷新密码
+           * 刷新云文档密码
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-public-password/update
            */
           update(token: string, query?: UpdateQuery): Promise<UpdateResponse>
           /**
-           * 关闭密码
+           * 停用云文档密码
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/permission-public-password/delete
            */
           delete(token: string, query?: DeleteQuery): Promise<void>
@@ -1320,8 +1320,16 @@ Internal.define({
   '/drive/v1/files/{file_token}/delete_subscribe': {
     DELETE: 'drive.file.deleteSubscribe',
   },
+  '/drive/v1/permissions/{token}/members': {
+    POST: 'drive.permission.member.create',
+    GET: 'drive.permission.member.list',
+  },
   '/drive/v1/permissions/{token}/members/batch_create': {
     POST: 'drive.permission.member.batchCreate',
+  },
+  '/drive/v1/permissions/{token}/members/{member_id}': {
+    PUT: 'drive.permission.member.update',
+    DELETE: 'drive.permission.member.delete',
   },
   '/drive/v1/permissions/{token}/members/transfer_owner': {
     POST: 'drive.permission.member.transferOwner',
@@ -1329,22 +1337,14 @@ Internal.define({
   '/drive/v1/permissions/{token}/members/auth': {
     GET: 'drive.permission.member.auth',
   },
-  '/drive/v1/permissions/{token}/members': {
-    GET: 'drive.permission.member.list',
-    POST: 'drive.permission.member.create',
-  },
-  '/drive/v1/permissions/{token}/members/{member_id}': {
-    PUT: 'drive.permission.member.update',
-    DELETE: 'drive.permission.member.delete',
+  '/drive/v2/permissions/{token}/public': {
+    PATCH: 'drive.permission.public.patch',
+    GET: 'drive.permission.public.get',
   },
   '/drive/v1/permissions/{token}/public/password': {
     POST: 'drive.permission.public.password.create',
     PUT: 'drive.permission.public.password.update',
     DELETE: 'drive.permission.public.password.delete',
-  },
-  '/drive/v2/permissions/{token}/public': {
-    GET: 'drive.permission.public.get',
-    PATCH: 'drive.permission.public.patch',
   },
   '/drive/v1/files/{file_token}/comments': {
     GET: { name: 'drive.file.comment.list', pagination: { argIndex: 1 } },

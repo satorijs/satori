@@ -208,6 +208,11 @@ export namespace Docx {
        * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document/raw_content
        */
       rawContent(document_id: string, query?: RawContentQuery): Promise<RawContentResponse>
+      /**
+       * Markdown/HTML 内容转换为文档块
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uUDN04SN0QjL1QDN/document-docx/docx-v1/document/convert
+       */
+      convert(body: ConvertRequest, query?: ConvertQuery): Promise<ConvertResponse>
     }
 
     export interface CreateRequest {
@@ -244,6 +249,27 @@ export namespace Docx {
     export interface RawContentResponse {
       /** 文档纯文本 */
       content?: string
+    }
+
+    export interface ConvertRequest {
+      /** 内容类型 */
+      content_type: 'markdown' | 'html'
+      /** 文本内容 */
+      content: string
+    }
+
+    export interface ConvertQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface ConvertResponse {
+      /** 第一级 Block 对应的临时 ID 列表， index 代表了 Block 的顺序 */
+      first_level_block_ids?: string[]
+      /** 带有父子关系的 Block 列表 */
+      blocks?: Lark.Block[]
+      /** 如果要转换的内容中带有图片，这里记录了临时 Block ID 和 Image URL 的对应关系 */
+      block_id_to_image_urls?: Lark.BlockIdToImageUrl[]
     }
 
     export namespace Block {
@@ -530,5 +556,8 @@ Internal.define({
   },
   '/docx/v1/documents/{document_id}/blocks/{block_id}/children/batch_delete': {
     DELETE: 'docx.document.block.children.batchDelete',
+  },
+  '/docx/v1/documents/blocks/convert': {
+    POST: 'docx.document.convert',
   },
 })

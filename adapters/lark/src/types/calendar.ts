@@ -31,10 +31,20 @@ export namespace Calendar {
      */
     primary(query?: PrimaryQuery): Promise<PrimaryResponse>
     /**
+     * 批量获取主日历信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/primarys
+     */
+    primarys(body: PrimarysRequest, query?: PrimarysQuery): Promise<PrimarysResponse>
+    /**
      * 查询日历信息
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/get
      */
     get(calendar_id: string): Promise<GetResponse>
+    /**
+     * 批量查询日历信息
+     * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/mget
+     */
+    mget(body: MgetRequest): Promise<MgetResponse>
     /**
      * 查询日历列表
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/calendar/list
@@ -100,6 +110,21 @@ export namespace Calendar {
     calendars?: Lark.UserCalendar[]
   }
 
+  export interface PrimarysRequest {
+    /** 用户ID列表 */
+    user_ids: string[]
+  }
+
+  export interface PrimarysQuery {
+    /** 此次调用中使用的用户ID的类型 */
+    user_id_type?: 'user_id' | 'union_id' | 'open_id'
+  }
+
+  export interface PrimarysResponse {
+    /** 主日历列表 */
+    calendars?: Lark.UserCalendar[]
+  }
+
   export interface GetResponse {
     /** 日历OpenId */
     calendar_id: string
@@ -121,6 +146,16 @@ export namespace Calendar {
     is_third_party?: boolean
     /** 当前身份对于该日历的访问权限 */
     role?: 'unknown' | 'free_busy_reader' | 'reader' | 'writer' | 'owner'
+  }
+
+  export interface MgetRequest {
+    /** 日历ID列表 */
+    calendar_ids: string[]
+  }
+
+  export interface MgetResponse {
+    /** 日历列表 */
+    calendars?: Lark.Calendar[]
   }
 
   export interface ListQuery extends Pagination {
@@ -181,6 +216,11 @@ export namespace Calendar {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/freebusy/list
        */
       list(body: ListRequest, query?: ListQuery): Promise<ListResponse>
+      /**
+       * 批量查询主日历日程忙闲信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/calendar-v4/freebusy/batch
+       */
+      batch(body: BatchRequest, query?: BatchQuery): Promise<BatchResponse>
     }
 
     export interface ListRequest {
@@ -206,6 +246,29 @@ export namespace Calendar {
     export interface ListResponse {
       /** 日历上请求时间区间内的忙闲信息 */
       freebusy_list?: Lark.Freebusy[]
+    }
+
+    export interface BatchRequest {
+      /** 获取忙闲信息的开始时间，RFC3339 date_time格式；time_min与time_max的时间区间不能超过3个月。 */
+      time_min: string
+      /** 获取忙闲信息的开始时间，RFC3339 date_time格式；time_min与time_max的时间区间不能超过3个月。 */
+      time_max: string
+      /** 用户ID列表 */
+      user_ids: string[]
+      /** 是否包含绑定的三方日历中的日程，不传默认为true，即包含。 */
+      include_external_calendar?: boolean
+      /** 是否包含标记为空闲的日程，不传默认为true，即包含空闲日程。 */
+      only_busy?: boolean
+    }
+
+    export interface BatchQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface BatchResponse {
+      /** 用户忙闲信息列表 */
+      freebusy_lists?: Lark.UserFreebusy[]
     }
   }
 
@@ -789,8 +852,17 @@ Internal.define({
   '/calendar/v4/calendars/primary': {
     POST: 'calendar.primary',
   },
+  '/calendar/v4/calendars/primarys': {
+    POST: 'calendar.primarys',
+  },
+  '/calendar/v4/calendars/mget': {
+    POST: 'calendar.mget',
+  },
   '/calendar/v4/freebusy/list': {
     POST: 'calendar.freebusy.list',
+  },
+  '/calendar/v4/freebusy/batch': {
+    POST: 'calendar.freebusy.batch',
   },
   '/calendar/v4/calendars/search': {
     POST: { name: 'calendar.search', pagination: { argIndex: 1 } },

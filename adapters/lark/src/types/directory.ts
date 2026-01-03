@@ -24,7 +24,7 @@ export namespace Directory {
        */
       create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
       /**
-       * 更新员工
+       * 更新员工信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/employee/patch
        */
       patch(employee_id: string, body: PatchRequest, query?: PatchQuery): Promise<void>
@@ -59,15 +59,10 @@ export namespace Directory {
        */
       filter(body: FilterRequest, query?: FilterQuery): Promise<FilterResponse>
       /**
-       * 搜索员工
+       * 搜索员工信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/employee/search
        */
       search(body: SearchRequest, query?: SearchQuery): Promise<SearchResponse>
-      /**
-       * 转换员工 ID
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/employee/idconvert
-       */
-      idconvert(body: IdconvertRequest, query?: IdconvertQuery): Promise<IdconvertResponse>
     }
 
     export interface CreateRequest {
@@ -214,23 +209,6 @@ export namespace Directory {
       /** 字段异常信息 */
       abnormals?: Lark.AbnormalRecord[]
     }
-
-    export interface IdconvertRequest {
-      /** 用户ID列表 */
-      employee_ids: string[]
-    }
-
-    export interface IdconvertQuery {
-      /** 员工ID类型 */
-      employee_id_type?: 'open_id' | 'union_id' | 'employee_id'
-    }
-
-    export interface IdconvertResponse {
-      /** id转换结果列表 */
-      id_convert_results?: Lark.EmployeeIdConvertResult[]
-      /** 异常信息列表 */
-      abnormals?: Lark.AbnormalRecord[]
-    }
   }
 
   export namespace Department {
@@ -256,7 +234,7 @@ export namespace Directory {
        */
       mget(body: MgetRequest, query?: MgetQuery): Promise<MgetResponse>
       /**
-       * 批量获取部门列表
+       * 获取部门列表
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/department/filter
        */
       filter(body: FilterRequest, query?: FilterQuery): Promise<FilterResponse>
@@ -265,11 +243,6 @@ export namespace Directory {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/department/search
        */
       search(body: SearchRequest, query?: SearchQuery): Promise<SearchResponse>
-      /**
-       * 转换部门 ID
-       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/directory-v1/department/idconvert
-       */
-      idconvert(body: IdconvertRequest, query?: IdconvertQuery): Promise<IdconvertResponse>
     }
 
     export interface CreateRequest {
@@ -374,23 +347,6 @@ export namespace Directory {
       /** 分页结果 */
       page_response?: Lark.PageResponse
       /** 字段异常信息 */
-      abnormals?: Lark.AbnormalRecord[]
-    }
-
-    export interface IdconvertRequest {
-      /** 部门ID列表 */
-      department_ids: string[]
-    }
-
-    export interface IdconvertQuery {
-      /** 部门ID类型 */
-      department_id_type?: 'department_id' | 'open_department_id'
-    }
-
-    export interface IdconvertResponse {
-      /** id转换结果列表 */
-      id_convert_results?: Lark.DepartmentIdConvertResult[]
-      /** 异常信息列表 */
       abnormals?: Lark.AbnormalRecord[]
     }
   }
@@ -530,9 +486,6 @@ Internal.define({
   '/directory/v1/employees/search': {
     POST: 'directory.employee.search',
   },
-  '/directory/v1/employees/idconvert': {
-    POST: 'directory.employee.idconvert',
-  },
   '/directory/v1/departments': {
     POST: 'directory.department.create',
   },
@@ -548,9 +501,6 @@ Internal.define({
   },
   '/directory/v1/departments/search': {
     POST: 'directory.department.search',
-  },
-  '/directory/v1/departments/idconvert': {
-    POST: 'directory.department.idconvert',
   },
   '/directory/v1/share_entities': {
     GET: 'directory.collborationShareEntity.list',

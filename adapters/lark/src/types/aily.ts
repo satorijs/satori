@@ -71,17 +71,17 @@ export namespace Aily {
     export namespace AilyMessage {
       export interface Methods {
         /**
-         * 发送智能伙伴消息
+         * 发送 Aily 消息
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/create
          */
         create(aily_session_id: string, body: CreateRequest): Promise<CreateResponse>
         /**
-         * 获取智能伙伴消息
+         * 获取 Aily 消息
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/get
          */
         get(aily_session_id: string, aily_message_id: string): Promise<GetResponse>
         /**
-         * 列出智能伙伴消息
+         * 列出 Aily 消息
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/aily-v1/aily_session-aily_message/list
          */
         list(aily_session_id: string, query?: ListQuery): Paginated<Lark.AilyMessage, 'messages'>
