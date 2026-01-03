@@ -27,7 +27,8 @@
     "chatbot",
     "satori",
     "im",
-    "chat"
+    "chat",
+    "开黑啦"
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^1.1.0",
