@@ -1,9 +1,9 @@
 name: Bug Report
-discription: 报告在使用过程中遇到的问题
+description: 报告在使用过程中遇到的问题
 title: "[Bug]: "
 labels:
   - bug
-  
+
 body:
   - type: textarea
     id: what-happened
