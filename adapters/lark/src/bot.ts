@@ -16,7 +16,7 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
 }
 
 export class LarkBot<C extends Context = Context, T extends LarkBot.Config = LarkBot.Config> extends Bot<C, T> {
-  static inject = ['server', 'http']
+  static inject = ['http']
   static MessageEncoder = LarkMessageEncoder
 
   _refresher?: NodeJS.Timeout
