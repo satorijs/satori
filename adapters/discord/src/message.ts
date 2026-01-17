@@ -270,7 +270,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       } else if (this.listType === 'ul') {
         this.buffer += '- '
       }
-      this.render(children)
+      await this.render(children)
       this.buffer += '\n'
     } else if (type === 'at') {
       if (attrs.id) {
