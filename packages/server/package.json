@@ -37,7 +37,7 @@
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.9",
     "@satorijs/core": "^4.5.2",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.9",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
