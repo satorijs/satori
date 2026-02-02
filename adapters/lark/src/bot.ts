@@ -83,7 +83,6 @@ export class LarkBot<C extends Context = Context, T extends LarkBot.Config = Lar
     // 剩余有效期小于 30 分钟时，调用本接口会返回一个新的 tenant_access_token，此时会同时存在两个有效的 tenant_access_token。
     // 剩余有效期大于等于 30 分钟时，调用本接口会返回原有的 tenant_access_token。
     // 初次获得 token 后的半小时内必须刷新一次，因为初次获得的 token 可能是 1.5 小时前生成的。
-    if (!this.isActive) return
     let timeout = Time.minute * 20
     try {
       const { tenant_access_token: token } = await this.internal.auth.tenantAccessTokenInternal({
