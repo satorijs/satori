@@ -737,6 +737,7 @@ export namespace Apaas {
     export interface Methods {
       table: Table.Methods
       view: View.Methods
+      enum: Enum.Methods
       /**
        * 执行SQL
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace/sql_commands
@@ -756,6 +757,16 @@ export namespace Apaas {
 
     export namespace Table {
       export interface Methods {
+        /**
+         * 获取工作空间下的数据表列表
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/list
+         */
+        list(workspace_id: string, query?: Pagination): Paginated<Lark.WorkspaceDataTable>
+        /**
+         * 获取数据表详细信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/table_get
+         */
+        tableGet(workspace_id: string, table_name: string): Promise<TableGetResponse>
         /**
          * 查询数据表数据记录
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_get
@@ -781,6 +792,15 @@ export namespace Apaas {
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-table/records_delete
          */
         recordsDelete(workspace_id: string, table_name: string, query?: RecordsDeleteQuery): Promise<void>
+      }
+
+      export interface TableGetResponse {
+        /** 数据表名，如 student */
+        name: string
+        /** 数据表描述 */
+        description: string
+        /** 数据表列 */
+        columns: Lark.WorkspaceDataTableColumnInfo[]
       }
 
       export interface RecordsGetQuery extends Pagination {
@@ -900,6 +920,34 @@ export namespace Apaas {
         items: string
       }
     }
+
+    export namespace Enum {
+      export interface Methods {
+        /**
+         * 获取工作空间下的自定义枚举列表
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-enum/list
+         */
+        list(workspace_id: string, query?: Pagination): Paginated<Lark.WorkspaceEnum>
+        /**
+         * 获取自定义枚举详细信息
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/apaas-v1/workspace-enum/enum_get
+         */
+        enumGet(workspace_id: string, enum_name: string): Promise<EnumGetResponse>
+      }
+
+      export interface EnumGetResponse {
+        /** 枚举名称 */
+        name: string
+        /** 枚举描述 */
+        description: string
+        /** 枚举值列表 */
+        options: string[]
+        /** 创建时间，毫秒时间戳 */
+        created_at: string
+        /** 创建人 */
+        created_by: Lark.WorkspaceUserInfo
+      }
+    }
   }
 }
 
@@ -1013,6 +1061,12 @@ Internal.define({
   '/apaas/v1/user_tasks/{task_id}/chat_group': {
     POST: 'apaas.userTask.chatGroup',
   },
+  '/apaas/v1/workspaces/{workspace_id}/tables': {
+    GET: { name: 'apaas.workspace.table.list', pagination: { argIndex: 1 } },
+  },
+  '/apaas/v1/workspaces/{workspace_id}/tables/{table_name}': {
+    GET: 'apaas.workspace.table.tableGet',
+  },
   '/apaas/v1/workspaces/{workspace_id}/tables/{table_name}/records': {
     GET: 'apaas.workspace.table.recordsGet',
     POST: 'apaas.workspace.table.recordsPost',
@@ -1024,6 +1078,12 @@ Internal.define({
   },
   '/apaas/v1/workspaces/{workspace_id}/views/{view_name}/records': {
     GET: 'apaas.workspace.view.viewsGet',
+  },
+  '/apaas/v1/workspaces/{workspace_id}/enums': {
+    GET: { name: 'apaas.workspace.enum.list', pagination: { argIndex: 1 } },
+  },
+  '/apaas/v1/workspaces/{workspace_id}/enums/{enum_name}': {
+    GET: 'apaas.workspace.enum.enumGet',
   },
   '/apaas/v1/workspaces/{workspace_id}/sql_commands': {
     POST: 'apaas.workspace.sqlCommands',
