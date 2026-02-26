@@ -48,7 +48,7 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
     }
     await this.getLogin()
     const sync = await this.syncRooms()
-    // dispatch invitiations
+    // dispatch invitations
     if (!sync?.rooms?.invite) return
     setTimeout(() => Object.entries(sync.rooms.invite).forEach(([roomId, room]) => {
       const event = room.invite_state.events.find(event =>
@@ -110,7 +110,7 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
         return {
           user: decodeUser(content, event.state_key),
           isBot: !!this.ctx.bots.find(bot => bot.userId === event.state_key),
-          roles: [levels.users[event.state_key].toString()],
+          roles: [{ id: levels.users[event.state_key].toString() }],
         }
       })
     return { data }

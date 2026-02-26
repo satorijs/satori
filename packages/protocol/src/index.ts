@@ -195,12 +195,12 @@ export interface Guild {
 
 export interface GuildRole {
   id: string
-  name: string
-  color: number
-  position: number
-  permissions: bigint
-  hoist: boolean
-  mentionable: boolean
+  name?: string
+  color?: number
+  position?: number
+  permissions?: bigint
+  hoist?: boolean
+  mentionable?: boolean
 }
 
 export interface User {
@@ -289,7 +289,7 @@ export interface GuildMember {
   nick?: string
   avatar?: string
   title?: string
-  roles?: string[]
+  roles?: GuildRole[]
   joinedAt?: number
 }
 
