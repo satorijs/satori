@@ -398,8 +398,6 @@ export interface Event {
   _data?: any
   /** @deprecated */
   subtype?: string
-  /** @deprecated */
-  subsubtype?: string
 }
 
 export interface Meta {

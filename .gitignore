@@ -10,7 +10,9 @@ temp
 /external
 tsconfig.temp.json
 
-todo.md
+TODO.md
+CLAUDE.md
+
 yarn.lock
 yalc.lock
 node_modules
@@ -21,6 +23,7 @@ package-lock.json
 tsconfig.tsbuildinfo
 report.*.json
 
+.claude
 .eslintcache
 .DS_Store
 .idea
