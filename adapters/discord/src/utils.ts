@@ -334,11 +334,21 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     session.event.button = {
       id,
     }
+  } else if (input.t === 'CHANNEL_CREATE') {
+    session.type = 'channel-added'
+    session.guildId = input.d.guild_id
+    session.channelId = input.d.id
+    session.event.channel = decodeChannel(input.d)
   } else if (input.t === 'CHANNEL_UPDATE') {
     session.type = 'channel-updated'
     session.guildId = input.d.guild_id
-    session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.id
+    session.event.channel = decodeChannel(input.d)
+  } else if (input.t === 'CHANNEL_DELETE') {
+    session.type = 'channel-removed'
+    session.guildId = input.d.guild_id
+    session.channelId = input.d.id
+    session.event.channel = decodeChannel(input.d)
   } else {
     return
   }
