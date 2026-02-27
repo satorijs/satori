@@ -125,8 +125,8 @@ export interface Methods {
   // user
   getLogin(): Promise<Login>
   getUser(userId: string, guildId?: string): Promise<User>
-  getFriendList(next?: string): Promise<List<User>>
-  getFriendIter(): AsyncIterable<User>
+  getFriendList(next?: string): Promise<List<Friend>>
+  getFriendIter(): AsyncIterable<Friend>
   deleteFriend(userId: string): Promise<void>
 
   // guild
@@ -283,6 +283,11 @@ export function transformKey(source: any, callback: (key: string) => string) {
   }))
 }
 
+export interface Friend {
+  user?: User
+  nick?: string
+}
+
 export interface GuildMember {
   user?: User
   name?: string
@@ -387,6 +392,7 @@ export interface Event {
   argv?: Argv
   channel?: Channel
   guild?: Guild
+  friend?: Friend
   member?: GuildMember
   message?: Message
   operator?: User
