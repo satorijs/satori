@@ -121,6 +121,11 @@ export function setupReaction(session: Session, data: QQ.MessageReaction) {
 
 export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, input: QQ.DispatchPayload) {
   let session = bot.session()
+  session.event.referrer = {
+    id: input.id,
+    t: input.t,
+    d: {},
+  }
 
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',
     'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT', 'INTERACTION_CREATE'].includes(input.t)) {
@@ -133,6 +138,9 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
   if (input.t === 'MESSAGE_CREATE' || input.t === 'AT_MESSAGE_CREATE' || input.t === 'DIRECT_MESSAGE_CREATE') {
     if (bot.config.type === 'private' && input.t === 'AT_MESSAGE_CREATE' && bot.config.intents & QQ.Intents.GUILD_MESSAGES) return
     session.type = 'message'
+    session.event.referrer.d = {
+      id: input.d.id,
+    }
     await decodeMessage(bot, input.d, session.event.message = {}, session.event)
   } else if (input.t === 'MESSAGE_REACTION_ADD') {
     if (input.d.target.type !== 'ReactionTargetType_MSG') return
@@ -174,12 +182,18 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
   } else if (input.t === 'GROUP_AT_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = false
+    session.event.referrer.d = {
+      id: input.d.id,
+    }
     decodeGroupMessage(bot, input.d, session.event.message = {}, session.event)
     session.channelId = session.guildId
     session.elements.unshift(h.at(session.selfId))
   } else if (input.t === 'C2C_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = true
+    session.event.referrer.d = {
+      id: input.d.id,
+    }
     decodeGroupMessage(bot, input.d, session.event.message = {}, session.event)
     session.channelId = session.userId
   } else if (input.t === 'FRIEND_ADD') {
