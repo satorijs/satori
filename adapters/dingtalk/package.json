@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-dingtalk",
   "description": "DingTalk (钉钉) Adapter for Satorijs",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -34,10 +34,10 @@
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.9",
     "@cordisjs/plugin-server-temp": "^0.5.0",
-    "@satorijs/core": "^4.5.2",
+    "@satorijs/core": "^4.6.0",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.2"
+    "@satorijs/core": "^4.6.0"
   }
 }

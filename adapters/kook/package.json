@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/adapter-kook",
   "description": "KOOK Adapter for Satorijs",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "type": "module",
   "main": "lib/index.cjs",
   "typings": "lib/index.d.ts",
@@ -32,10 +32,10 @@
   ],
   "devDependencies": {
     "@cordisjs/plugin-server": "^0.2.9",
-    "@satorijs/core": "^4.5.2",
+    "@satorijs/core": "^4.6.0",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.5.2"
+    "@satorijs/core": "^4.6.0"
   }
 }
