@@ -27,6 +27,10 @@ declare global {
         name?: string
         avatar?: string
       }
+      emoji: {
+        id?: string
+        name?: string
+      }
       img: ResourceElement
       audio: ResourceElement
       video: ResourceElement
@@ -540,6 +544,7 @@ namespace Element {
   export const at = createFactory<[id: any]>('at', 'id')
   export const sharp = createFactory<[id: any]>('sharp', 'id')
   export const quote = createFactory<[id: any]>('quote', 'id')
+  export const emoji = createFactory<[id: any]>('emoji', 'id')
   export const image = createAssetFactory('img')
   export const img = createAssetFactory('img')
   export const video = createAssetFactory('video')

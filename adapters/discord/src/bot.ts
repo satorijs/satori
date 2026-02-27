@@ -155,28 +155,28 @@ export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.C
     return { data: channels.map(Discord.decodeChannel) }
   }
 
-  createReaction(channelId: string, messageId: string, emoji: string) {
-    return this.internal.createReaction(channelId, messageId, emoji)
+  createReaction(channelId: string, messageId: string, emojiId: string) {
+    return this.internal.createReaction(channelId, messageId, emojiId)
   }
 
-  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string) {
+  deleteReaction(channelId: string, messageId: string, emojiId: string, userId?: string) {
     if (!userId) {
-      return this.internal.deleteOwnReaction(channelId, messageId, emoji)
+      return this.internal.deleteOwnReaction(channelId, messageId, emojiId)
     } else {
-      return this.internal.deleteUserReaction(channelId, messageId, emoji, userId)
+      return this.internal.deleteUserReaction(channelId, messageId, emojiId, userId)
     }
   }
 
-  clearReaction(channelId: string, messageId: string, emoji?: string) {
-    if (!emoji) {
+  clearReaction(channelId: string, messageId: string, emojiId?: string) {
+    if (!emojiId) {
       return this.internal.deleteAllReactions(channelId, messageId)
     } else {
-      return this.internal.deleteAllReactionsForEmoji(channelId, messageId, emoji)
+      return this.internal.deleteAllReactionsForEmoji(channelId, messageId, emojiId)
     }
   }
 
-  async getReactionList(channelId: string, messageId: string, emoji: string, after?: string) {
-    const data = await this.internal.getReactions(channelId, messageId, emoji, { after, limit: 100 })
+  async getReactionList(channelId: string, messageId: string, emojiId: string, after?: string) {
+    const data = await this.internal.getReactions(channelId, messageId, emojiId, { after, limit: 100 })
     return { data: data.map(Discord.decodeUser), next: data[99]?.id }
   }
 

@@ -121,8 +121,8 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
     return data.find(member => member.user.id === userId)
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string) {
-    await this.internal.sendReaction(channelId, messageId, emoji)
+  async createReaction(channelId: string, messageId: string, emojiId: string) {
+    await this.internal.sendReaction(channelId, messageId, emojiId)
   }
 
   async handleFriendRequest() { }

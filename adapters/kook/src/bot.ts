@@ -62,19 +62,19 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     }
   }
 
-  async $createReaction(channelId: string, msg_id: string, emoji: string) {
+  async $createReaction(channelId: string, msg_id: string, emojiId: string) {
     if (isDirectChannel(channelId)) {
-      await this.request('POST', '/direct-message/add-reaction', { msg_id, emoji })
+      await this.request('POST', '/direct-message/add-reaction', { msg_id, emoji: emojiId })
     } else {
-      await this.request('POST', '/message/add-reaction', { msg_id, emoji })
+      await this.request('POST', '/message/add-reaction', { msg_id, emoji: emojiId })
     }
   }
 
-  async $deleteReaction(channelId: string, messageId: string, emoji: string, user_id?: string) {
+  async $deleteReaction(channelId: string, messageId: string, emojiId: string, user_id?: string) {
     if (isDirectChannel(channelId)) {
-      await this.request('POST', '/direct-message/delete-reaction', { msg_id: messageId, emoji })
+      await this.request('POST', '/direct-message/delete-reaction', { msg_id: messageId, emoji: emojiId })
     } else {
-      await this.request('POST', '/message/delete-reaction', { msg_id: messageId, emoji, user_id })
+      await this.request('POST', '/message/delete-reaction', { msg_id: messageId, emoji: emojiId, user_id })
     }
   }
 
@@ -128,28 +128,28 @@ export class KookBot<C extends Context = Context, T extends KookBot.Config = Koo
     return { id: code, type: Universal.Channel.Type.DIRECT }
   }
 
-  createReaction(channelId: string, messageId: string, emoji: string) {
+  createReaction(channelId: string, messageId: string, emojiId: string) {
     if (isDirectChannel(channelId)) {
-      return this.internal.addDirectMessageReaction({ msg_id: messageId, emoji })
+      return this.internal.addDirectMessageReaction({ msg_id: messageId, emoji: emojiId })
     } else {
-      return this.internal.addMessageReaction({ msg_id: messageId, emoji })
+      return this.internal.addMessageReaction({ msg_id: messageId, emoji: emojiId })
     }
   }
 
-  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string) {
+  deleteReaction(channelId: string, messageId: string, emojiId: string, userId?: string) {
     if (isDirectChannel(channelId)) {
-      return this.internal.deleteDirectMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+      return this.internal.deleteDirectMessageReaction({ msg_id: messageId, emoji: emojiId, user_id: userId })
     } else {
-      return this.internal.deleteMessageReaction({ msg_id: messageId, emoji, user_id: userId })
+      return this.internal.deleteMessageReaction({ msg_id: messageId, emoji: emojiId, user_id: userId })
     }
   }
 
-  async getReactionList(channelId: string, messageId: string, emoji: string) {
+  async getReactionList(channelId: string, messageId: string, emojiId: string) {
     let users: Kook.User[]
     if (isDirectChannel(channelId)) {
-      users = await this.internal.getDirectMessageReactionList({ msg_id: messageId, emoji })
+      users = await this.internal.getDirectMessageReactionList({ msg_id: messageId, emoji: emojiId })
     } else {
-      users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji })
+      users = await this.internal.getMessageReactionList({ msg_id: messageId, emoji: emojiId })
     }
     return { data: users.map(adaptUser) }
   }

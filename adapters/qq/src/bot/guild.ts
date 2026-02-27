@@ -100,8 +100,8 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     })
   }
 
-  async getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<Universal.List<Universal.User>> {
-    const [type, id] = emoji.split(':')
+  async getReactionList(channelId: string, messageId: string, emojiId: string, next?: string): Promise<Universal.List<Universal.User>> {
+    const [type, id] = emojiId.split(':')
     const { users, cookie } = await this.internal.getReactions(channelId, messageId, type, id, {
       limit: 50,
       cookie: next,
@@ -109,13 +109,13 @@ export class QQGuildBot<C extends Context = Context> extends Bot<C> {
     return { next: cookie, data: users.map(decodeUser) }
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string) {
-    const [type, id] = emoji.split(':')
+  async createReaction(channelId: string, messageId: string, emojiId: string) {
+    const [type, id] = emojiId.split(':')
     await this.internal.createReaction(channelId, messageId, type, id)
   }
 
-  async deleteReaction(channelId: string, messageId: string, emoji: string) {
-    const [type, id] = emoji.split(':')
+  async deleteReaction(channelId: string, messageId: string, emojiId: string) {
+    const [type, id] = emojiId.split(':')
     await this.internal.deleteReaction(channelId, messageId, type, id)
   }
 

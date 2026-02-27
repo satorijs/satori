@@ -52,10 +52,10 @@ export const Methods: Dict<Method> = {
   'message.get': Method('getMessage', ['channel_id', 'message_id']),
   'message.list': Method('getMessageList', ['channel_id', 'next', 'direction', 'limit', 'order']),
 
-  'reaction.create': Method('createReaction', ['channel_id', 'message_id', 'emoji']),
-  'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji', 'user_id']),
-  'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji']),
-  'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji', 'next']),
+  'reaction.create': Method('createReaction', ['channel_id', 'message_id', 'emoji_id']),
+  'reaction.delete': Method('deleteReaction', ['channel_id', 'message_id', 'emoji_id', 'user_id']),
+  'reaction.clear': Method('clearReaction', ['channel_id', 'message_id', 'emoji_id']),
+  'reaction.list': Method('getReactionList', ['channel_id', 'message_id', 'emoji_id', 'next']),
 
   'upload.create': Method('createUpload', [], true),
 
@@ -113,11 +113,11 @@ export interface Methods {
   deleteMessage(channelId: string, messageId: string): Promise<void>
 
   // reaction
-  createReaction(channelId: string, messageId: string, emoji: string): Promise<void>
-  deleteReaction(channelId: string, messageId: string, emoji: string, userId?: string): Promise<void>
-  clearReaction(channelId: string, messageId: string, emoji?: string): Promise<void>
-  getReactionList(channelId: string, messageId: string, emoji: string, next?: string): Promise<List<User>>
-  getReactionIter(channelId: string, messageId: string, emoji: string): AsyncIterable<User>
+  createReaction(channelId: string, messageId: string, emojiId: string): Promise<void>
+  deleteReaction(channelId: string, messageId: string, emojiId: string, userId?: string): Promise<void>
+  clearReaction(channelId: string, messageId: string, emojiId?: string): Promise<void>
+  getReactionList(channelId: string, messageId: string, emojiId: string, next?: string): Promise<List<User>>
+  getReactionIter(channelId: string, messageId: string, emojiId: string): AsyncIterable<User>
 
   // upload
   createUpload(...uploads: Upload[]): Promise<string[]>
@@ -201,6 +201,11 @@ export interface GuildRole {
   permissions?: bigint
   hoist?: boolean
   mentionable?: boolean
+}
+
+export interface Emoji {
+  id: string
+  name?: string
 }
 
 export interface User {
@@ -396,6 +401,7 @@ export interface Event {
   member?: GuildMember
   message?: Message
   operator?: User
+  emoji?: Emoji
   role?: GuildRole
   user?: User
   button?: Button
