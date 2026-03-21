@@ -39,13 +39,14 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
+    const test = config.test ? '/test' : ''
     this.http = this.ctx.http.extend({
       ...config,
-      endpoint: `${config.endpoint}/bot${config.token}`,
+      endpoint: `${config.endpoint}/bot${config.token}${test}`,
     })
     this.file = this.ctx.http.extend({
       ...config,
-      endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
+      endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}${test}`,
     })
     this.internal = new Telegram.Internal(this)
     if (config.protocol === 'server') {
@@ -240,6 +241,7 @@ export namespace TelegramBot {
   export interface BaseConfig extends HTTP.Config {
     protocol: 'server' | 'polling'
     token: string
+    test: boolean
     files?: Config.Files
     slash?: boolean
   }
@@ -257,6 +259,7 @@ export namespace TelegramBot {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+      test: Schema.boolean().description('是否为 Telegram 测试服务器上的机器人。'),
       protocol: process.env.KOISHI_ENV === 'browser'
         ? Schema.const('polling').default('polling')
         : Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
