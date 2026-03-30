@@ -1232,6 +1232,10 @@ export interface UserMessage {
   timestamp: string
   group_id: string
   attachments?: Attachment[] // not listed in document?
+  message_scene?: {
+    source: string
+    ext?: string[]
+  }
 }
 
 export enum ChatType {
