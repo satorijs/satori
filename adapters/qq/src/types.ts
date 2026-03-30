@@ -1228,6 +1228,7 @@ export interface UserMessage {
   id: string
   author: {
     id: string
+    username?: string
   }
   content: string
   timestamp: string
