@@ -872,12 +872,10 @@ export interface APIPermissionDemand {
 export interface Options {
   id: string
   secret: string
-  token: string
   type: 'public' | 'private'
   /** 是否开启沙箱模式 */
   sandbox?: boolean
   endpoint?: string
-  authType?: 'bot' | 'bearer'
   /** 重连次数 */
   retryTimes?: number
   /** 重连时间间隔，单位 ms */
