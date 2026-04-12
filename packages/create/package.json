@@ -27,7 +27,7 @@
     "boilerplate"
   ],
   "devDependencies": {
-    "@types/node": "^25.0.3"
+    "@types/node": "^25.3.5"
   },
   "dependencies": {
     "create-cordis": "^0.2.6"

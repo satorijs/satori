@@ -1,11 +1,10 @@
 {
   "extends": "./tsconfig.base",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
-      "@satorijs/adapter-*": ["adapters/*/src"],
-      "@satorijs/plugin-*": ["packages/*/src"],
-      "@satorijs/*": ["packages/*/src"],
+      "@satorijs/adapter-*": ["./adapters/*/src"],
+      "@satorijs/plugin-*": ["./packages/*/src"],
+      "@satorijs/*": ["./packages/*/src"],
     },
   },
   "files": [],
