@@ -1,10 +1,11 @@
-import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, HTTP, Universal } from '@satorijs/core'
 import { HttpPolling } from './polling'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
 // @ts-ignore
 import { version } from '../package.json'
 import { decodeGuild, decodeMessage, decodeUser } from './utils'
+import z from 'schemastery'
 
 export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
@@ -107,12 +108,12 @@ export namespace ZulipBot {
     key: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      email: Schema.string().required().description('Bot Email'),
-      key: Schema.string().required().role('secret').description('API Key'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      email: z.string().required().description('Bot Email'),
+      key: z.string().required().role('secret').description('API Key'),
     }),
-    Schema.union([
+    z.union([
       HttpPolling.Options,
     ]).description('推送设置'),
     HTTP.createConfig(),

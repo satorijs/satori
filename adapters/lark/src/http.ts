@@ -1,7 +1,8 @@
-import { Adapter, Context, Logger, Schema } from '@satorijs/core'
+import { Adapter, Context, Logger } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
+import z from 'schemastery'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
@@ -23,49 +24,61 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
 
   async connect(bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
     const { path } = bot.config
-    this.ctx.server.post(path, (ctx) => {
+    this.ctx.server.post(path, async (req, res) => {
       this._refreshCipher()
+
+      const rawBody = await req.text()
+      const parsedBody = JSON.parse(rawBody)
 
       // compare signature if encryptKey is set
       // But not every message contains signature
       // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
-      const signature = ctx.get('X-Lark-Signature')
+      const signature = req.headers.get('X-Lark-Signature')
       const enabledSignatureVerify = this.bots.filter((bot) => bot.config.verifySignature)
       if (signature && enabledSignatureVerify.length) {
         const result = enabledSignatureVerify.some((bot) => {
-          const timestamp = ctx.get('X-Lark-Request-Timestamp')
-          const nonce = ctx.get('X-Lark-Request-Nonce')
-          const body = ctx.request.body[Symbol.for('unparsedBody')]
-          const actualSignature = this.ciphers[bot.config.appId]?.calculateSignature(timestamp, nonce, body)
+          const timestamp = req.headers.get('X-Lark-Request-Timestamp')
+          const nonce = req.headers.get('X-Lark-Request-Nonce')
+          const actualSignature = this.ciphers[bot.config.appId]?.calculateSignature(timestamp, nonce, rawBody)
           if (actualSignature === signature) return true
           else return false
         })
-        if (!result) return (ctx.status = 403)
+        if (!result) {
+          res.status = 403
+          return
+        }
       }
 
       // only accept JSON body
-      if (!ctx.request.is('json')) return ctx.status = 415
+      if (!req.headers.get('content-type')?.includes('json')) {
+        res.status = 415
+        return
+      }
 
       // try to decrypt message first if encryptKey is set
-      const body = this._tryDecryptBody(ctx.request.body)
+      const body = this._tryDecryptBody(parsedBody)
       // respond challenge message
       // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/request-url-configuration-case
       if (body?.type === 'url_verification' && body?.challenge && typeof body.challenge === 'string') {
-        ctx.response.body = { challenge: body.challenge }
+        res.headers.set('content-type', 'application/json')
+        res.body = JSON.stringify({ challenge: body.challenge })
         return
       }
 
       // compare verification token
       const enabledVerifyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
       if (enabledVerifyTokenVerify.length) {
-        const token = ctx.request.body?.token
+        const token = parsedBody?.token
         // only compare token if token exists
         if (token) {
           const result = enabledVerifyTokenVerify.some((bot) => {
             if (token === bot.config.verificationToken) return true
             else return false
           })
-          if (!result) return (ctx.status = 403)
+          if (!result) {
+            res.status = 403
+            return
+          }
         }
       }
 
@@ -74,8 +87,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
-      ctx.body = {}
-      return ctx.status = 200
+      res.headers.set('content-type', 'application/json')
+      res.body = JSON.stringify({})
+      res.status = 200
     })
   }
 
@@ -133,13 +147,13 @@ export namespace HttpServer {
     verifySignature?: boolean
   }
 
-  export const createConfig = (path: string): Schema<Options> => Schema.object({
-    protocol: Schema.const('http'),
-    path: Schema.string().role('url').description('要连接的服务器地址。').default(path),
-    selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
-    encryptKey: Schema.string().role('secret').description('机器人的 Encrypt Key。'),
-    verificationToken: Schema.string().description('事件推送的验证令牌。'),
-    verifyToken: Schema.boolean().description('是否验证令牌。'),
-    verifySignature: Schema.boolean().description('是否验证签名。'),
+  export const createConfig = (path: string): z<Options> => z.object({
+    protocol: z.const('http'),
+    path: z.string().role('url').description('要连接的服务器地址。').default(path),
+    selfUrl: z.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+    encryptKey: z.string().role('secret').description('机器人的 Encrypt Key。'),
+    verificationToken: z.string().description('事件推送的验证令牌。'),
+    verifyToken: z.boolean().description('是否验证令牌。'),
+    verifySignature: z.boolean().description('是否验证签名。'),
   }).description('服务端设置')
 }

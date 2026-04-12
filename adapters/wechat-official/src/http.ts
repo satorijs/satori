@@ -14,39 +14,57 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
     await bot.ensureCustom()
 
     // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
-    bot.ctx.server.get('/wechat-official', async (ctx) => {
+    bot.ctx.server.get('/wechat-official', async (req, res) => {
       let success = false
-      const { signature, timestamp, nonce, echostr } = ctx.request.query
+      const signature = req.query.get('signature')
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const echostr = req.query.get('echostr')
 
       for (const bot of this.bots) {
-        const localSign = getSignature(bot.config.token, timestamp?.toString(), nonce?.toString(), '')
+        const localSign = getSignature(bot.config.token, timestamp, nonce, '')
         if (localSign === signature) {
           success = true
           break
         }
       }
-      if (!success) return ctx.status = 403
-      ctx.status = 200
-      ctx.body = echostr
+      if (!success) {
+        res.status = 403
+        return
+      }
+      res.status = 200
+      res.body = echostr
     })
 
-    bot.ctx.server.post('/wechat-official', async (ctx) => {
-      const { timestamp, nonce, msg_signature } = ctx.request.query
-      bot.logger.debug('%c', ctx.request.body)
+    bot.ctx.server.post('/wechat-official', async (req, res) => {
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const msg_signature = req.query.get('msg_signature')
+      const rawBody = await req.text()
+      bot.logger.debug('%c', rawBody)
       let { xml: data }: {
         xml: Message
-      } = await xml2js.parseStringPromise(ctx.request.body, {
+      } = await xml2js.parseStringPromise(rawBody, {
         explicitArray: false,
       })
       const botId = data.ToUserName
       const localBot = this.bots.find((bot) => bot.selfId === botId)
-      if (!localBot) return ctx.status = 403
+      if (!localBot) {
+        res.status = 403
+        return
+      }
 
       if (data.Encrypt) {
-        const localSign = getSignature(localBot.config.token, timestamp?.toString(), nonce?.toString(), data.Encrypt)
-        if (localSign !== msg_signature) return ctx.status = 403
+        const localSign = getSignature(localBot.config.token, timestamp, nonce, data.Encrypt)
+        if (localSign !== msg_signature) {
+          res.status = 403
+          return
+        }
         const { message, id } = decrypt(bot.config.aesKey, data.Encrypt)
-        if (id !== localBot.config.appid) return ctx.status = 403
+        if (id !== localBot.config.appid) {
+          res.status = 403
+          return
+        }
         const { xml: data2 } = await xml2js.parseStringPromise(message, {
           explicitArray: false,
         })
@@ -60,8 +78,8 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
       const promise = new Promise((resolve, reject) => {
         if (localBot.config.customerService) return resolve('success')
         const timeout = setTimeout(() => {
-          ctx.status = 200
-          ctx.body = 'success'
+          res.status = 200
+          res.body = 'success'
           reject(new Error('timeout'))
         }, 4500)
         resolveFunction = (text: string) => {
@@ -82,7 +100,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
             headless: true,
           })
           const encrypted = encrypt(localBot.config.aesKey, result, localBot.config.appid)
-          const sign = getSignature(localBot.config.token, timestamp?.toString(), nonce?.toString(), encrypted)
+          const sign = getSignature(localBot.config.token, timestamp, nonce, encrypted)
           const xml = builder.buildObject({
             xml: {
               Encrypt: encrypted,
@@ -91,23 +109,27 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
               MsgSignature: sign,
             },
           })
-          return ctx.body = xml
+          res.body = xml
+          return
         }
 
-        ctx.status = 200
-        ctx.body = result
+        res.status = 200
+        res.body = result
       } catch (error) {
         localBot.logger.warn('resolve timeout')
-        ctx.status = 200
-        ctx.body = 'success'
+        res.status = 200
+        res.body = 'success'
       }
     })
 
-    bot.ctx.server.get('/wechat-official/assets/:self_id/:media_id', async (ctx) => {
-      const mediaId = ctx.params.media_id
-      const selfId = ctx.params.self_id
+    bot.ctx.server.get('/wechat-official/assets/:self_id/:media_id', async (req, res) => {
+      const mediaId = req.params.media_id
+      const selfId = req.params.self_id
       const localBot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!localBot) return ctx.status = 404
+      if (!localBot) {
+        res.status = 404
+        return
+      }
       const resp = await localBot.http<ReadableStream>(`/cgi-bin/media/get`, {
         method: 'GET',
         responseType: 'stream',
@@ -116,11 +138,11 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOf
           media_id: mediaId,
         },
       })
-      ctx.type = resp.headers.get('content-type')
-      ctx.set('date', resp.headers.get('date'))
-      ctx.set('cache-control', resp.headers.get('cache-control'))
-      ctx.response.body = resp.data
-      ctx.status = 200
+      res.headers.set('content-type', resp.headers.get('content-type')!)
+      res.headers.set('date', resp.headers.get('date')!)
+      res.headers.set('cache-control', resp.headers.get('cache-control')!)
+      res.body = resp.data
+      res.status = 200
     })
 
     bot.online()

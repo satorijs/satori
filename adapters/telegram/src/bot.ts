@@ -1,4 +1,4 @@
-import { Binary, Bot, Context, Dict, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
+import { Binary, Bot, Context, Dict, h, HTTP, Time, Universal } from '@satorijs/core'
 import { pathToFileURL } from 'url'
 import * as Telegram from './types'
 import { decodeGuildMember, decodeUser } from './utils'
@@ -6,6 +6,7 @@ import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
 import { fileTypeFromBuffer } from 'file-type'
+import z from 'schemastery'
 
 export class SenderError extends Error {
   constructor(args: Dict<any>, url: string, retcode: number, selfId: string) {
@@ -254,26 +255,26 @@ export namespace TelegramBot {
     }
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      token: z.string().description('机器人的用户令牌。').role('secret').required(),
       protocol: process.env.KOISHI_ENV === 'browser'
-        ? Schema.const('polling').default('polling')
-        : Schema.union(['server', 'polling']).description('选择要使用的协议。').required(),
+        ? z.const('polling').default('polling')
+        : z.union(['server', 'polling']).description('选择要使用的协议。').required(),
     }),
-    Schema.union([
+    z.union([
       HttpServer.Options,
       HttpPolling.Options,
     ]).description('推送设置'),
-    Schema.object({
-      slash: Schema.boolean().description('是否启用斜线指令。').default(true),
+    z.object({
+      slash: z.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
     HTTP.createConfig('https://api.telegram.org'),
-    Schema.object({
-      files: Schema.object({
-        endpoint: Schema.string().description('文件请求的终结点。'),
-        local: Schema.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
-        server: Schema.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
+    z.object({
+      files: z.object({
+        endpoint: z.string().description('文件请求的终结点。'),
+        local: z.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
+        server: z.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
       }),
     }).hidden(process.env.KOISHI_ENV === 'browser').description('文件设置'),
   ] as const)

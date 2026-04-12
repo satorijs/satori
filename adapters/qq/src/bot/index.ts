@@ -1,4 +1,4 @@
-import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, HTTP, Universal } from '@satorijs/core'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
@@ -6,6 +6,7 @@ import { QQMessageEncoder } from '../message'
 import { GroupInternal } from '../internal'
 import { HttpServer } from '../http'
 import { decodeUser } from '../utils'
+import z from 'schemastery'
 
 interface GetAppAccessTokenResult {
   access_token: string
@@ -132,26 +133,26 @@ export namespace QQBot {
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      id: Schema.string().description('机器人 id。').required(),
-      secret: Schema.string().description('机器人密钥。').role('secret'),
-      token: Schema.string().description('机器人令牌。').role('secret'),
-      type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
-      sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),
-      endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
-      authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
-      intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
-      retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
-      protocol: Schema.union(['websocket', 'webhook']).description('选择要使用的协议。').default('websocket'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      id: z.string().description('机器人 id。').required(),
+      secret: z.string().description('机器人密钥。').role('secret'),
+      token: z.string().description('机器人令牌。').role('secret'),
+      type: z.union(['public', 'private'] as const).description('机器人类型。').required(),
+      sandbox: z.boolean().description('是否开启沙箱模式。').default(false),
+      endpoint: z.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
+      authType: z.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
+      intents: z.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
+      retryWhen: z.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
+      protocol: z.union(['websocket', 'webhook']).description('选择要使用的协议。').default('websocket'),
     }),
-    Schema.union([
+    z.union([
       WsClient.Options,
       HttpServer.Options,
     ]),
-    Schema.object({
-      manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
-      gatewayUrl: Schema.string().role('link').description('覆写 WebSocket 地址。'),
+    z.object({
+      manualAcknowledge: z.boolean().description('手动响应回调消息。').default(false),
+      gatewayUrl: z.string().role('link').description('覆写 WebSocket 地址。'),
     }).description('高级设置'),
   ] as const)
 }

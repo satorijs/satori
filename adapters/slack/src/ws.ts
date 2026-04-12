@@ -1,7 +1,8 @@
-import { Adapter, Context, Schema } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
+import z from 'schemastery'
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Options>> {
   async prepare() {
@@ -42,9 +43,9 @@ export namespace WsClient {
     protocol: 'ws'
   }
 
-  export const Options: Schema<Options> = Schema.intersect([
-    Schema.object({
-      protocol: Schema.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
+  export const Options: z<Options> = z.intersect([
+    z.object({
+      protocol: z.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
     }),
     Adapter.WsClientConfig,
   ])

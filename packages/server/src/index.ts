@@ -1,9 +1,10 @@
-import { Context, Inject, Schema, Service, Session, Universal } from '@satorijs/core'
+import { Context, Inject, Service, Session, Universal } from '@satorijs/core'
 import { camelCase, snakeCase, Time } from 'cosmokit'
 import { Request, Response } from '@cordisjs/plugin-server'
 import type {} from '@cordisjs/plugin-http'
 import type {} from '@cordisjs/plugin-logger'
 import { WebSocket } from 'ws'
+import z from 'schemastery'
 
 declare module '@satorijs/core' {
   interface Satori {
@@ -273,10 +274,10 @@ namespace SatoriServer {
     token?: string
   }
 
-  export const Webhook: Schema<Webhook> = Schema.object({
-    enabled: Schema.boolean().default(true),
-    url: Schema.string(),
-    token: Schema.string(),
+  export const Webhook: z<Webhook> = z.object({
+    enabled: z.boolean().default(true),
+    url: z.string(),
+    token: z.string(),
   })
 
   export interface Config {
@@ -287,17 +288,17 @@ namespace SatoriServer {
     webhooks: Webhook[]
   }
 
-  export const Config: Schema<Config> = Schema.object({
-    path: Schema.string().default('/satori'),
-    token: Schema.string().experimental(),
-    api: Schema.object({
-      // enabled: Schema.boolean().default(true),
+  export const Config: z<Config> = z.object({
+    path: z.string().default('/satori'),
+    token: z.string().experimental(),
+    api: z.object({
+      // enabled: z.boolean().default(true),
     }),
-    websocket: Schema.object({
-      // enabled: Schema.boolean().default(true),
-      resumeTimeout: Schema.number().default(Time.minute * 5),
+    websocket: z.object({
+      // enabled: z.boolean().default(true),
+      resumeTimeout: z.number().default(Time.minute * 5),
     }),
-    webhooks: Schema.array(Webhook),
+    webhooks: z.array(Webhook),
   })
 }
 

@@ -1,6 +1,7 @@
-import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, HTTP, Universal } from '@satorijs/core'
 import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
+import z from 'schemastery'
 
 export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Config> {
   static inject = ['server', 'http']
@@ -127,13 +128,13 @@ export namespace WecomBot {
     secret: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      corpId: Schema.string().required(),
-      agentId: Schema.string().description('AgentID').required(),
-      secret: Schema.string().role('secret').description('AppSecret').required(),
-      token: Schema.string().role('secret').description('Webhook Token').required(),
-      aesKey: Schema.string().role('secret').description('EncodingAESKey'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      corpId: z.string().required(),
+      agentId: z.string().description('AgentID').required(),
+      secret: z.string().role('secret').description('AppSecret').required(),
+      token: z.string().role('secret').description('Webhook Token').required(),
+      aesKey: z.string().role('secret').description('EncodingAESKey'),
     }),
     HTTP.createConfig('https://qyapi.weixin.qq.com/'),
   ])

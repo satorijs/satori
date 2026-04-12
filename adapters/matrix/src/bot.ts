@@ -1,8 +1,9 @@
-import { Bot, Context, HTTP, omit, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, HTTP, omit, Universal } from '@satorijs/core'
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
 import { adaptMessage, decodeUser, dispatchSession } from './utils'
+import z from 'schemastery'
 
 export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
@@ -157,15 +158,15 @@ export namespace MatrixBot {
     path?: string
   }
 
-  export const Config: Schema<Config> = Schema.object({
-    name: Schema.string().description('机器人的名称，如果设置了将会在启动时为机器人更改。'),
-    avatar: Schema.string().description('机器人的头像地址，如果设置了将会在启动时为机器人更改。'),
-    id: Schema.string().description('机器人的 ID。机器人最后的用户名将会是 `@{id}:{host}`。').required(),
-    host: Schema.string().description('Matrix Homeserver 域名。').required(),
-    hsToken: Schema.string().description('hs_token').role('secret').required(),
-    asToken: Schema.string().description('as_token').role('secret').required(),
-    endpoint: Schema.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
-    path: Schema.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
+  export const Config: z<Config> = z.object({
+    name: z.string().description('机器人的名称，如果设置了将会在启动时为机器人更改。'),
+    avatar: z.string().description('机器人的头像地址，如果设置了将会在启动时为机器人更改。'),
+    id: z.string().description('机器人的 ID。机器人最后的用户名将会是 `@{id}:{host}`。').required(),
+    host: z.string().description('Matrix Homeserver 域名。').required(),
+    hsToken: z.string().description('hs_token').role('secret').required(),
+    asToken: z.string().description('as_token').role('secret').required(),
+    endpoint: z.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
+    path: z.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
     ...omit(HTTP.Config.dict, ['endpoint']),
   })
 }

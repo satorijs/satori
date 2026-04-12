@@ -1,4 +1,4 @@
-import { Adapter, Context, remove, Schema, Service } from '@satorijs/core'
+import { Adapter, Context, remove, Service } from '@satorijs/core'
 import type { HTTP } from '@cordisjs/plugin-http'
 import type { Logger } from '@cordisjs/plugin-logger'
 import type {} from '@cordisjs/plugin-server'
@@ -8,6 +8,7 @@ import { WebhookBody } from './types'
 import { decodeSession } from './utils'
 import internal from 'stream'
 import crypto from 'crypto'
+import z from 'schemastery'
 
 class HttpServer {
   static inject = ['server']
@@ -19,24 +20,30 @@ class HttpServer {
     this.logger = ctx.logger('whatsapp')
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
-    ctx.server.post('/whatsapp', async (ctx) => {
-      const received = ctx.get('X-Hub-Signature-256').split('sha256=')[1]
-      if (!received) return ctx.status = 403
+    ctx.server.post('/whatsapp', async (req, res) => {
+      const received = (req.headers.get('X-Hub-Signature-256') || '').split('sha256=')[1]
+      if (!received) {
+        res.status = 403
+        return
+      }
 
-      const payload = ctx.request.body[Symbol.for('unparsedBody')]
+      const rawBody = await req.text()
       const adapters = this.adapters.filter((adapter) => {
         const expected = crypto
           .createHmac('sha256', adapter.config.secret)
-          .update(payload)
+          .update(rawBody)
           .digest('hex')
         return expected === received
       })
-      if (!adapters.length) return ctx.status = 403
+      if (!adapters.length) {
+        res.status = 403
+        return
+      }
 
-      const parsed = ctx.request.body as WebhookBody
+      const parsed = JSON.parse(rawBody) as WebhookBody
       this.logger.debug(parsed)
-      ctx.body = 'ok'
-      ctx.status = 200
+      res.body = 'ok'
+      res.status = 200
       if (parsed.object !== 'whatsapp_business_account') return
       for (const entry of parsed.entry) {
         const phone_number_id = entry.changes[0].value.metadata.phone_number_id
@@ -48,25 +55,27 @@ class HttpServer {
       }
     })
 
-    ctx.server.get('/whatsapp', async (ctx) => {
-      this.logger.debug(ctx.query)
-      const verifyToken = ctx.query['hub.verify_token']
-      const challenge = ctx.query['hub.challenge']
+    ctx.server.get('/whatsapp', async (req, res) => {
+      const verifyToken = req.query.get('hub.verify_token')
+      const challenge = req.query.get('hub.challenge')
       for (const adapter of this.adapters) {
         if (adapter.config.verifyToken === verifyToken) {
-          ctx.body = challenge
-          ctx.status = 200
+          res.body = challenge
+          res.status = 200
           return
         }
       }
-      return ctx.status = 403
+      res.status = 403
     })
 
-    ctx.server.get('/whatsapp/assets/:self_id/:media_id', async (ctx) => {
-      const mediaId = ctx.params.media_id
-      const selfId = ctx.params.self_id
+    ctx.server.get('/whatsapp/assets/:self_id/:media_id', async (req, res) => {
+      const mediaId = req.params.media_id
+      const selfId = req.params.self_id
       const bot = this.getBot(selfId)
-      if (!bot) return ctx.status = 404
+      if (!bot) {
+        res.status = 404
+        return
+      }
 
       const fetched = await bot.internal.getMedia(mediaId)
       this.logger.debug(fetched.url)
@@ -74,10 +83,10 @@ class HttpServer {
         method: 'GET',
         responseType: 'stream',
       })
-      ctx.type = resp.headers.get('content-type')
-      ctx.set('cache-control', resp.headers.get('cache-control'))
-      ctx.response.body = resp.data
-      ctx.status = 200
+      res.headers.set('content-type', resp.headers.get('content-type')!)
+      res.headers.set('cache-control', resp.headers.get('cache-control')!)
+      res.body = resp.data
+      res.status = 200
     })
   }
 
@@ -138,12 +147,12 @@ export namespace WhatsAppAdapter {
     secret: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      secret: Schema.string().role('secret').description('App Secret').required(),
-      systemToken: Schema.string().role('secret').description('System User Token').required(),
-      verifyToken: Schema.string().role('secret').description('Verify Token').required(),
-      id: Schema.string().description('WhatsApp Business Account ID').required(),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      secret: z.string().role('secret').description('App Secret').required(),
+      systemToken: z.string().role('secret').description('System User Token').required(),
+      verifyToken: z.string().role('secret').description('Verify Token').required(),
+      id: z.string().description('WhatsApp Business Account ID').required(),
     }),
     HTTP.createConfig('https://graph.facebook.com'),
   ] as const)

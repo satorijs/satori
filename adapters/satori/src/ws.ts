@@ -1,7 +1,8 @@
-import { Adapter, camelize, Context, Schema, Service, Time, Universal } from '@satorijs/core'
+import { Adapter, camelize, Context, Service, Time, Universal } from '@satorijs/core'
 import type { HTTP } from '@cordisjs/plugin-http'
 import type { Logger } from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
+import z from 'schemastery'
 
 export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> = SatoriBot<C>> extends Adapter.WsClientBase<C, B> {
   static schema = true as any
@@ -154,10 +155,10 @@ export namespace SatoriAdapter {
     token?: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      baseUrl: Schema.string().description('API 终结点。').required(),
-      token: Schema.string().description('API 访问令牌。'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      baseUrl: z.string().description('API 终结点。').required(),
+      token: z.string().description('API 访问令牌。'),
     }),
     Adapter.WsClientConfig,
   ] as const)

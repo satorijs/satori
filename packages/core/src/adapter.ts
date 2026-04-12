@@ -1,8 +1,9 @@
 import { Awaitable, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
 import type {} from '@cordisjs/plugin-logger'
-import { Context, z } from 'cordis'
+import { Context } from 'cordis'
 import { Bot } from './bot'
+import z from 'schemastery'
 
 export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
   public bots: B[] = []

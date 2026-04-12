@@ -1,10 +1,11 @@
-import { Bot, Context, h, HTTP, Schema, Time, Universal } from '@satorijs/core'
+import { Bot, Context, h, HTTP, Time, Universal } from '@satorijs/core'
 import { Im } from './types'
 import { HttpServer } from './http'
 import { WsClient } from './ws'
 import { LarkMessageEncoder } from './message'
 import { Internal } from './internal'
 import * as Utils from './utils'
+import z from 'schemastery'
 
 const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, string[]> = {
   opus: ['audio/opus'],
@@ -182,32 +183,32 @@ export namespace LarkBot {
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      platform: Schema.union(['feishu', 'lark']).default('feishu').description('平台名称。'),
-      appId: Schema.string().required().description('机器人的应用 ID。'),
-      appSecret: Schema.string().role('secret').required().description('机器人的应用密钥。'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      platform: z.union(['feishu', 'lark']).default('feishu').description('平台名称。'),
+      appId: z.string().required().description('机器人的应用 ID。'),
+      appSecret: z.string().role('secret').required().description('机器人的应用密钥。'),
       protocol: process.env.KOISHI_ENV === 'browser'
-        ? Schema.const('ws').default('ws')
-        : Schema.union(['http', 'ws']).description('选择要使用的协议。').default('http'),
+        ? z.const('ws').default('ws')
+        : z.union(['http', 'ws']).description('选择要使用的协议。').default('http'),
     }),
-    Schema.union([
-      Schema.intersect([
-        Schema.object({
-          platform: Schema.const('lark').required(),
+    z.union([
+      z.intersect([
+        z.object({
+          platform: z.const('lark').required(),
         }),
         HTTP.createConfig('https://open.larksuite.com/open-apis'),
-        Schema.union([
+        z.union([
           HttpServer.createConfig('/lark'),
           WsClient.Options,
         ]),
       ]),
-      Schema.intersect([
-        Schema.object({
-          platform: Schema.const('feishu') as any,
+      z.intersect([
+        z.object({
+          platform: z.const('feishu') as any,
         }),
         HTTP.createConfig('https://open.feishu.cn/open-apis'),
-        Schema.union([
+        z.union([
           HttpServer.createConfig('/feishu'),
           WsClient.Options,
         ]),

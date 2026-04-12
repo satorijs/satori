@@ -1,7 +1,8 @@
-import { Adapter, Context, Schema } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
+import z from 'schemastery'
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, QQBot<C, QQBot.Config & WsClient.Options>> {
   _sessionId = ''
@@ -116,9 +117,9 @@ export namespace WsClient {
     protocol?: 'websocket'
   }
 
-  export const Options: Schema<Options> = Schema.intersect([
-    Schema.object({
-      protocol: Schema.const('websocket').required(false),
+  export const Options: z<Options> = z.intersect([
+    z.object({
+      protocol: z.const('websocket').required(false),
     }),
     Adapter.WsClientConfig,
   ])

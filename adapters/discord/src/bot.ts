@@ -1,8 +1,9 @@
-import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, Fragment, h, HTTP, Universal } from '@satorijs/core'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
+import z from 'schemastery'
 
 // @ts-ignore
 import { version } from '../package.json'
@@ -234,22 +235,22 @@ export namespace DiscordBot {
     slash?: boolean
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      type: Schema.union(['bot', 'user']).default('bot').description('登录方式'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      type: z.union(['bot', 'user']).default('bot').description('登录方式'),
     }),
-    Schema.union([
-      Schema.object({
-        type: Schema.const('bot'),
-        token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+    z.union([
+      z.object({
+        type: z.const('bot'),
+        token: z.string().description('机器人的用户令牌。').role('secret').required(),
       }),
-      Schema.object({
-        type: Schema.const('user'),
-        token: Schema.string().description('从网页端获取的用户令牌。').role('secret').required(),
+      z.object({
+        type: z.const('user'),
+        token: z.string().description('从网页端获取的用户令牌。').role('secret').required(),
       }),
     ]),
-    Schema.object({
-      slash: Schema.boolean().description('是否启用斜线指令。').default(true),
+    z.object({
+      slash: z.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
     WsClient.Options,
     DiscordMessageEncoder.Config,

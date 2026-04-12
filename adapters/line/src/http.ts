@@ -10,15 +10,20 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
   static inject = ['server']
 
   async connect(bot: LineBot<C>) {
-    bot.ctx.server.post('/line', async (ctx) => {
-      const sign = ctx.headers['x-line-signature']?.toString()
-      const parsed = ctx.request.body as WebhookRequestBody
+    bot.ctx.server.post('/line', async (req, res) => {
+      const sign = req.headers.get('x-line-signature')
+      const rawBody = await req.text()
+      const parsed = JSON.parse(rawBody) as WebhookRequestBody
       const { destination } = parsed
       const bot = this.bots.find(bot => bot.selfId === destination)
-      if (!bot) return ctx.status = 403
-      const hash = crypto.createHmac('SHA256', bot?.config?.secret).update(ctx.request.body[Symbol.for('unparsedBody')] || '').digest('base64')
+      if (!bot) {
+        res.status = 403
+        return
+      }
+      const hash = crypto.createHmac('SHA256', bot?.config?.secret).update(rawBody || '').digest('base64')
       if (hash !== sign) {
-        return ctx.status = 403
+        res.status = 403
+        return
       }
       bot.logger.debug(parsed)
       for (const event of parsed.events) {
@@ -26,22 +31,25 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<
         if (sessions.length) sessions.forEach(bot.dispatch.bind(bot))
         bot.logger.debug(sessions)
       }
-      ctx.status = 200
-      ctx.body = 'ok'
+      res.status = 200
+      res.body = 'ok'
     })
-    bot.ctx.server.get('/line/assets/:self_id/:message_id', async (ctx) => {
-      const messageId = ctx.params.message_id
-      const selfId = ctx.params.self_id
+    bot.ctx.server.get('/line/assets/:self_id/:message_id', async (req, res) => {
+      const messageId = req.params.message_id
+      const selfId = req.params.self_id
       const bot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!bot) return ctx.status = 404
+      if (!bot) {
+        res.status = 404
+        return
+      }
       const resp = await bot.contentHttp.axios<internal.Readable>(`/v2/bot/message/${messageId}/content`, {
         method: 'GET',
         responseType: 'stream',
       })
-      ctx.type = resp.headers.get('content-type')
-      ctx.set('cache-control', resp.headers.get('cache-control'))
-      ctx.response.body = resp.data
-      ctx.status = 200
+      res.headers.set('content-type', resp.headers.get('content-type')!)
+      res.headers.set('cache-control', resp.headers.get('cache-control')!)
+      res.body = resp.data
+      res.status = 200
     })
     await bot.getLogin()
     await bot.internal.setWebhookEndpoint({

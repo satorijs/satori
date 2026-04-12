@@ -1,8 +1,9 @@
-import { Adapter, Context, sanitize, Schema, trimSlash } from '@satorijs/core'
+import { Adapter, Context, sanitize, trimSlash } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
+import z from 'schemastery'
 
 export { Telegram }
 
@@ -18,13 +19,16 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Telegram
       selfUrl = this.ctx.server.config.selfUrl
     }
 
-    this.ctx.server.post(path, async (ctx) => {
-      const payload: Telegram.Update = ctx.request.body
-      const token = ctx.request.query.token as string
+    this.ctx.server.post(path, async (req, res) => {
+      const payload: Telegram.Update = await req.json()
+      const token = req.query.get('token')!
       const [selfId] = token.split(':')
       const bot = this.bots.find(bot => bot.selfId === selfId)
-      if (!(bot?.config?.token === token)) return ctx.status = 403
-      ctx.body = 'OK'
+      if (!(bot?.config?.token === token)) {
+        res.status = 403
+        return
+      }
+      res.body = 'OK'
       await handleUpdate(payload, bot)
     })
 
@@ -46,9 +50,9 @@ export namespace HttpServer {
     selfUrl?: string
   }
 
-  export const Options: Schema<Options> = Schema.object({
-    protocol: Schema.const('server').required(),
-    path: Schema.string().description('服务器监听的路径。').default('/telegram'),
-    selfUrl: Schema.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
+  export const Options: z<Options> = z.object({
+    protocol: z.const('server').required(),
+    path: z.string().description('服务器监听的路径。').default('/telegram'),
+    selfUrl: z.string().role('link').description('服务器暴露在公网的地址。缺省时将使用全局配置。'),
   })
 }

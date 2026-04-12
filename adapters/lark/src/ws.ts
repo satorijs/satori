@@ -1,7 +1,8 @@
-import { Adapter, Context, Schema, Universal } from '@satorijs/core'
+import { Adapter, Context, Universal } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { adaptSession, EventPayload } from './utils'
 import pb from 'protobufjs/light'
+import z from 'schemastery'
 
 enum FrameType {
   control = 0,
@@ -172,9 +173,9 @@ export namespace WsClient {
     protocol: 'ws'
   }
 
-  export const Options: Schema<Options> = Schema.intersect([
-    Schema.object({
-      protocol: Schema.const('ws').required(),
+  export const Options: z<Options> = z.intersect([
+    z.object({
+      protocol: z.const('ws').required(),
     }),
     Adapter.WsClientConfig,
   ])

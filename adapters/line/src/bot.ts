@@ -1,7 +1,8 @@
-import { Bot, Context, HTTP, Schema } from '@satorijs/core'
+import { Bot, Context, HTTP } from '@satorijs/core'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
+import z from 'schemastery'
 
 export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
   static inject = ['server', 'http']
@@ -87,15 +88,15 @@ export namespace LineBot {
     content: HTTP.Config
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      token: Schema.string().required().description('机器人令牌。'),
-      secret: Schema.string().required().description('机器人密钥。'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      token: z.string().required().description('机器人令牌。'),
+      secret: z.string().required().description('机器人密钥。'),
     }),
-    Schema.object({
+    z.object({
       api: HTTP.createConfig('https://api.line.me/'),
     }),
-    Schema.object({
+    z.object({
       content: HTTP.createConfig('https://api-data.line.me/'),
     }),
   ])

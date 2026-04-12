@@ -1,7 +1,8 @@
-import { Bot, Context, HTTP, Schema } from '@satorijs/core'
+import { Bot, Context, HTTP } from '@satorijs/core'
 import { HttpServer } from './http'
 import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
+import z from 'schemastery'
 
 export class WechatOfficialBot<C extends Context = Context> extends Bot<C, WechatOfficialBot.Config> {
   static inject = ['server', 'http']
@@ -95,14 +96,14 @@ export namespace WechatOfficialBot {
     account: string
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      account: Schema.string().required(),
-      appid: Schema.string().description('AppID').required(),
-      secret: Schema.string().role('secret').description('AppSecret').required(),
-      token: Schema.string().role('secret').description('Webhook Token').required(),
-      aesKey: Schema.string().role('secret').description('EncodingAESKey'),
-      customerService: Schema.boolean().default(false).description('启用客服消息回复'),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      account: z.string().required(),
+      appid: z.string().description('AppID').required(),
+      secret: z.string().role('secret').description('AppSecret').required(),
+      token: z.string().role('secret').description('Webhook Token').required(),
+      aesKey: z.string().role('secret').description('EncodingAESKey'),
+      customerService: z.boolean().default(false).description('启用客服消息回复'),
     }),
     HTTP.createConfig('https://api.weixin.qq.com/'),
   ])

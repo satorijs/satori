@@ -1,7 +1,8 @@
-import { Adapter, Context, Logger, sanitize, Schema } from '@satorijs/core'
+import { Adapter, Context, Logger, sanitize } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
+import z from 'schemastery'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
@@ -13,14 +14,15 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<
     this.logger = ctx.logger('kook')
     let { path } = bot.config as HttpServer.Options
     path = sanitize(path)
-    ctx.server.post(path, async (ctx) => {
-      const { body } = ctx.request
+    ctx.server.post(path, async (req, res) => {
+      const body = await req.json()
       this.logger.debug('receive %o', body)
 
       const { challenge } = body.d
-      ctx.status = 200
+      res.status = 200
       if (challenge) {
-        ctx.body = { challenge }
+        res.headers.set('content-type', 'application/json')
+        res.body = JSON.stringify({ challenge })
         return
       }
 
@@ -47,10 +49,10 @@ export namespace HttpServer {
     verifyToken: string
   }
 
-  export const Options: Schema<Options> = Schema.object({
-    protocol: Schema.const('http').required(),
-    token: Schema.string().description('机器人令牌。').role('secret').required(),
-    verifyToken: Schema.string().description('验证令牌。').role('secret').required(),
-    path: Schema.string().description('服务器监听的路径。').default('/kook'),
+  export const Options: z<Options> = z.object({
+    protocol: z.const('http').required(),
+    token: z.string().description('机器人令牌。').role('secret').required(),
+    verifyToken: z.string().description('验证令牌。').role('secret').required(),
+    path: z.string().description('服务器监听的路径。').default('/kook'),
   })
 }

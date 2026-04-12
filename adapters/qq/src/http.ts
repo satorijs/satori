@@ -1,10 +1,10 @@
-import { Adapter, Binary, Context, Schema, Universal } from '@satorijs/core'
+import { Adapter, Binary, Context, Universal } from '@satorijs/core'
 import { getPublicKeyAsync, signAsync, verifyAsync } from '@noble/ed25519'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession } from './utils'
-import { IncomingHttpHeaders } from 'node:http'
 import { } from '@cordisjs/plugin-server'
+import z from 'schemastery'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>> {
   static inject = ['server']
@@ -15,26 +15,32 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
     }
     await this.initialize(bot)
 
-    bot.ctx.server.post(bot.config.path, async (ctx) => {
-      const bot = this.bots.find(bot => bot.config.id === ctx.get('X-Bot-Appid'))
-      if (!bot) return ctx.status = 403
+    bot.ctx.server.post(bot.config.path, async (req, res) => {
+      const bot = this.bots.find(bot => bot.config.id === req.headers.get('X-Bot-Appid'))
+      if (!bot) {
+        res.status = 403
+        return
+      }
 
-      ctx.status = 200
-      const payload: Payload = ctx.request.body
+      res.status = 200
+      const rawBody = await req.text()
+      const payload: Payload = JSON.parse(rawBody)
       if (payload.op === Opcode.ADDRESS_VERIFICATION) {
         const key = this.getPrivateKey(bot.config.secret)
         const data = payload.d.event_ts + payload.d.plain_token
         const sig = await signAsync(new TextEncoder().encode(data), key)
-        return ctx.body = {
+        res.headers.set('content-type', 'application/json')
+        res.body = JSON.stringify({
           plain_token: payload.d.plain_token,
           signature: Binary.toHex(sig),
-        }
+        })
+        return
       } else if (payload.op === Opcode.DISPATCH) {
         // https://bot.q.qq.com/wiki/develop/api-v2/dev-prepare/interface-framework/sign.html
         const key = this.getPrivateKey(bot.config.secret)
-        const body = ctx.request.body[Symbol.for('unparsedBody')]
-        if (!(await this.verify(key, ctx.request.header, body))) {
-          return ctx.status = 403
+        if (!(await this.verify(key, req.headers, rawBody))) {
+          res.status = 403
+          return
         }
 
         if (bot.status !== Universal.Status.ONLINE) {
@@ -49,10 +55,11 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
         if (session) bot.dispatch(session)
       }
 
-      ctx.body = {
+      res.headers.set('content-type', 'application/json')
+      res.body = JSON.stringify({
         d: {},
         op: Opcode.HTTP_CALLBACK_ACK,
-      }
+      })
     })
   }
 
@@ -79,9 +86,9 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, QQBot<C>
     return new TextEncoder().encode(seed)
   }
 
-  private async verify(privateKey: Uint8Array, header: IncomingHttpHeaders, body: string) {
-    const sig = Binary.fromHex(header['x-signature-ed25519'] as string)
-    const timestamp = header['x-signature-timestamp'] as string
+  private async verify(privateKey: Uint8Array, headers: Headers, body: string) {
+    const sig = Binary.fromHex(headers.get('x-signature-ed25519')!)
+    const timestamp = headers.get('x-signature-timestamp')!
     const msg = timestamp + body
     const pubKey = await getPublicKeyAsync(privateKey)
     return verifyAsync(new Uint8Array(sig), new TextEncoder().encode(msg), pubKey)
@@ -94,8 +101,8 @@ export namespace HttpServer {
     path: string
   }
 
-  export const Options: Schema<Options> = Schema.object({
-    protocol: Schema.const('webhook').required(),
-    path: Schema.string().role('url').description('服务器监听的路径。').default('/qq'),
+  export const Options: z<Options> = z.object({
+    protocol: z.const('webhook').required(),
+    path: z.string().role('url').description('服务器监听的路径。').default('/qq'),
   })
 }

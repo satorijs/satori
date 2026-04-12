@@ -1,9 +1,10 @@
-import { Adapter, Context, Schema } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
+import z from 'schemastery'
 
 export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
   static inject = ['server']
@@ -11,36 +12,38 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Options>) {
     const { signing } = bot.config
     await bot.getLogin()
-    this.ctx.server.post('/slack', async (ctx) => {
-      const timestamp = ctx.request.header['x-slack-request-timestamp'].toString()
-      const signature = ctx.request.header['x-slack-signature'].toString()
-      const requestBody = ctx.request.body[Symbol.for('unparsedBody')]
+    this.ctx.server.post('/slack', async (req, res) => {
+      const timestamp = req.headers.get('x-slack-request-timestamp')!
+      const signature = req.headers.get('x-slack-signature')!
+      const requestBody = await req.text()
 
       const hmac = crypto.createHmac('sha256', signing)
       const [version, hash] = signature.split('=')
 
       const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 60 * 5
       if (Number(timestamp) < fiveMinutesAgo) {
-        return ctx.status = 403
+        res.status = 403
+        return
       }
 
       hmac.update(`${version}:${timestamp}:${requestBody}`)
 
       if (hash !== hmac.digest('hex')) {
-        return ctx.status = 403
+        res.status = 403
+        return
       }
-      const { type } = ctx.request.body as SocketEvent
-      if (type === 'url_verification') {
-        ctx.status = 200
-        return ctx.body = {
-          challenge: ctx.request.body.challenge,
-        }
+      const body = JSON.parse(requestBody) as SocketEvent
+      if (body.type === 'url_verification') {
+        res.status = 200
+        res.headers.set('content-type', 'application/json')
+        res.body = JSON.stringify({ challenge: body.challenge })
+        return
       }
       // https://api.slack.com/apis/connections/events-api#receiving-events
-      if (type === 'event_callback') {
-        ctx.status = 200
-        ctx.body = 'ok'
-        const payload: EnvelopedEvent<SlackEvent> = ctx.request.body
+      if (body.type === 'event_callback') {
+        res.status = 200
+        res.body = 'ok'
+        const payload = body as unknown as EnvelopedEvent<SlackEvent>
         bot.logger.debug(payload)
         const session = await adaptSession(bot, payload)
         bot.logger.debug(session)
@@ -56,8 +59,8 @@ export namespace HttpServer {
     signing: string
   }
 
-  export const Options: Schema<Options> = Schema.object({
-    protocol: Schema.const('http').required(),
-    signing: Schema.string().required(),
+  export const Options: z<Options> = z.object({
+    protocol: z.const('http').required(),
+    signing: z.string().required(),
   })
 }

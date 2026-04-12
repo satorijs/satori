@@ -1,9 +1,10 @@
-import { Bot, Context, Fragment, h, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, Fragment, h, HTTP, Universal } from '@satorijs/core'
 import { adaptChannel, adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
+import z from 'schemastery'
 
 export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   static MessageEncoder = KookMessageEncoder
@@ -193,13 +194,13 @@ export namespace KookBot {
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
+  export const Config: z<Config> = z.intersect([
+    z.object({
       protocol: process.env.KOISHI_ENV === 'browser'
-        ? Schema.const('ws').default('ws')
-        : Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
+        ? z.const('ws').default('ws')
+        : z.union(['http', 'ws']).description('选择要使用的协议。').required(),
     }),
-    Schema.union([
+    z.union([
       WsClient.Options,
       HttpServer.Options,
     ]),

@@ -1,6 +1,7 @@
-import { Context, h, MessageEncoder, Schema } from '@satorijs/core'
+import { Context, h, MessageEncoder } from '@satorijs/core'
 import { KookBot } from './bot'
 import * as Kook from './types'
+import z from 'schemastery'
 
 declare global {
   namespace JSX {
@@ -277,11 +278,11 @@ export namespace KookMessageEncoder {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<KookMessageEncoder.Config> = Schema.object({
-    handleMixedContent: Schema.union([
-      Schema.const('separate').description('将每个不同形式的内容分开发送'),
-      Schema.const('card').description('使用卡片发送内容'),
-      Schema.const('mixed').description('使用混合模式发送内容'),
+  export const Config: z<KookMessageEncoder.Config> = z.object({
+    handleMixedContent: z.union([
+      z.const('separate').description('将每个不同形式的内容分开发送'),
+      z.const('card').description('使用卡片发送内容'),
+      z.const('mixed').description('使用混合模式发送内容'),
     ]).role('radio').description('发送图文等混合内容时采用的方式。').default('separate'),
   }).description('发送设置')
 }

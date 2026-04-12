@@ -1,6 +1,7 @@
-import { Adapter, Context, Schema } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
+import z from 'schemastery'
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DingtalkBot<C>> {
   async prepare() {
@@ -50,7 +51,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
 export namespace WsClient {
   export interface Options extends Adapter.WsClientConfig {}
 
-  export const Options: Schema<Options> = Schema.intersect([
+  export const Options: z<Options> = z.intersect([
     Adapter.WsClientConfig,
   ] as const)
 }

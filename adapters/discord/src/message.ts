@@ -1,7 +1,8 @@
-import { Context, Dict, h, MessageEncoder, Schema, Universal } from '@satorijs/core'
+import { Context, Dict, h, MessageEncoder, Universal } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, sanitize, sanitizeCode } from './utils'
+import z from 'schemastery'
 
 type RenderMode = 'default' | 'figure'
 
@@ -453,16 +454,16 @@ export namespace DiscordMessageEncoder {
     handleMixedContent?: HandleMixedContent
   }
 
-  export const Config: Schema<DiscordMessageEncoder.Config> = Schema.object({
-    handleExternalAsset: Schema.union([
-      Schema.const('download').description('先下载后发送'),
-      Schema.const('direct').description('直接发送链接'),
-      Schema.const('auto').description('发送一个 HEAD 请求，根据返回的 Content-Type 决定发送方式'),
+  export const Config: z<DiscordMessageEncoder.Config> = z.object({
+    handleExternalAsset: z.union([
+      z.const('download').description('先下载后发送'),
+      z.const('direct').description('直接发送链接'),
+      z.const('auto').description('发送一个 HEAD 请求，根据返回的 Content-Type 决定发送方式'),
     ]).role('radio').description('发送外链资源时采用的方式。').default('auto'),
-    handleMixedContent: Schema.union([
-      Schema.const('separate').description('将每个不同形式的内容分开发送'),
-      Schema.const('attach').description('图片前如果有文本内容，则将文本作为图片的附带信息进行发送'),
-      Schema.const('auto').description('如果图片本身采用直接发送则与前面的文本分开，否则将文本作为图片的附带信息发送'),
+    handleMixedContent: z.union([
+      z.const('separate').description('将每个不同形式的内容分开发送'),
+      z.const('attach').description('图片前如果有文本内容，则将文本作为图片的附带信息进行发送'),
+      z.const('auto').description('如果图片本身采用直接发送则与前面的文本分开，否则将文本作为图片的附带信息发送'),
     ]).role('radio').description('发送图文等混合内容时采用的方式。').default('auto'),
   }).description('发送设置')
 }

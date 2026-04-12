@@ -1,10 +1,11 @@
-import { Bot, Context, Schema } from '@satorijs/core'
+import { Bot, Context } from '@satorijs/core'
 import type { HTTP } from '@cordisjs/plugin-http'
 import type { Logger } from '@cordisjs/plugin-logger'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
 import { Internal } from './internal'
+import z from 'schemastery'
 
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
 export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot.Config> {
@@ -116,16 +117,16 @@ export namespace DingtalkBot {
     oldApi: HTTP.Config
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
+  export const Config: z<Config> = z.intersect([
+    z.object({
       protocol: process.env.KOISHI_ENV === 'browser'
-        ? Schema.const('ws').default('ws')
-        : Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
+        ? z.const('ws').default('ws')
+        : z.union(['http', 'ws']).description('选择要使用的协议。').required(),
     }),
-    Schema.object({
-      secret: Schema.string().required().description('机器人密钥。'),
-      agentId: Schema.number().description('AgentId'),
-      appkey: Schema.string().required(),
+    z.object({
+      secret: z.string().required().description('机器人密钥。'),
+      agentId: z.number().description('AgentId'),
+      appkey: z.string().required(),
       api: HTTP.createConfig('https://api.dingtalk.com/v1.0/'),
       oldApi: HTTP.createConfig('https://oapi.dingtalk.com/'),
     }),

@@ -1,6 +1,7 @@
-import { Adapter, Context, Schema, Time, Universal } from '@satorijs/core'
+import { Adapter, Context, Time, Universal } from '@satorijs/core'
 import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
+import z from 'schemastery'
 
 export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBot<C>> {
   static reusable = true
@@ -69,10 +70,10 @@ export namespace HttpPolling {
     retryInterval?: number
   }
 
-  export const Options: Schema<Options> = Schema.object({
-    protocol: Schema.const('polling').required(process.env.KOISHI_ENV !== 'browser'),
-    // pollingTimeout: Schema.natural().role('ms').default(Time.second * 25).description('通过长轮询获取更新时请求的超时 (单位为毫秒)。'),
-    retryTimes: Schema.natural().description('连接时的最大重试次数。').default(6),
-    retryInterval: Schema.natural().role('ms').default(Time.second * 5).description('长轮询断开后的重试时间间隔 (单位为毫秒)。'),
+  export const Options: z<Options> = z.object({
+    protocol: z.const('polling').required(process.env.KOISHI_ENV !== 'browser'),
+    // pollingTimeout: z.natural().role('ms').default(Time.second * 25).description('通过长轮询获取更新时请求的超时 (单位为毫秒)。'),
+    retryTimes: z.natural().description('连接时的最大重试次数。').default(6),
+    retryInterval: z.natural().role('ms').default(Time.second * 5).description('长轮询断开后的重试时间间隔 (单位为毫秒)。'),
   })
 }

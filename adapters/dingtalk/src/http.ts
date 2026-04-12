@@ -21,21 +21,30 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, Dingtalk
     bot.online()
 
     // https://open.dingtalk.com/document/orgapp/receive-message
-    this.ctx.server.post('/dingtalk', async (ctx) => {
-      const timestamp = ctx.get('timestamp')
-      const sign = ctx.get('sign')
+    this.ctx.server.post('/dingtalk', async (req, res) => {
+      const timestamp = req.headers.get('timestamp')
+      const sign = req.headers.get('sign')
+      if (!timestamp || !sign) {
+        res.status = 403
+        return
+      }
 
-      if (!timestamp || !sign) return ctx.status = 403
       const timeDiff = Math.abs(Date.now() - Number(timestamp))
-      if (timeDiff > 3600000) return ctx.status = 401
+      if (timeDiff > 3600000) {
+        res.status = 401
+        return
+      }
       const signContent = timestamp + '\n' + bot.config.secret
       const computedSign = crypto
         .createHmac('sha256', bot.config.secret)
         .update(signContent)
         .digest('base64')
 
-      if (computedSign !== sign) return ctx.status = 403
-      const body = ctx.request.body as Message
+      if (computedSign !== sign) {
+        res.status = 403
+        return
+      }
+      const body = await req.json() as Message
       this.logger.debug(body)
       const session = await decodeMessage(bot, body)
       this.logger.debug(session)

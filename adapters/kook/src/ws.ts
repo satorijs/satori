@@ -1,7 +1,8 @@
-import { Adapter, Context, Schema, Time, Universal } from '@satorijs/core'
+import { Adapter, Context, Time, Universal } from '@satorijs/core'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
+import z from 'schemastery'
 
 const heartbeatIntervals = [6, 2, 4]
 
@@ -70,10 +71,10 @@ export namespace WsClient {
     token: string
   }
 
-  export const Options: Schema<Options> = Schema.intersect([
-    Schema.object({
-      protocol: Schema.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
-      token: Schema.string().description('机器人的用户令牌。').role('secret').required(),
+  export const Options: z<Options> = z.intersect([
+    z.object({
+      protocol: z.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
+      token: z.string().description('机器人的用户令牌。').role('secret').required(),
     }),
     Adapter.WsClientConfig,
   ])

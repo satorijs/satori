@@ -1,10 +1,11 @@
-import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, HTTP, Universal } from '@satorijs/core'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptMessage, decodeChannel, decodeGuild, decodeGuildMember, decodeUser } from './utils'
 import { SlackMessageEncoder } from './message'
 import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types'
 import { Internal, Token } from './types/internal'
+import z from 'schemastery'
 
 export class SlackBot<C extends Context = Context, T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
   static MessageEncoder = SlackMessageEncoder
@@ -187,13 +188,13 @@ export namespace SlackBot {
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 
-  export const Config: Schema<Config> = Schema.intersect([
-    Schema.object({
-      protocol: Schema.union(['http', 'ws']).description('选择要使用的协议。').required(),
-      token: Schema.string().description('App-Level Token.').role('secret').required(),
-      botToken: Schema.string().description('OAuth Token.').role('secret').required(),
+  export const Config: z<Config> = z.intersect([
+    z.object({
+      protocol: z.union(['http', 'ws']).description('选择要使用的协议。').required(),
+      token: z.string().description('App-Level Token.').role('secret').required(),
+      botToken: z.string().description('OAuth Token.').role('secret').required(),
     }),
-    Schema.union([
+    z.union([
       WsClient.Options,
       HttpServer.Options,
     ]),

@@ -1,7 +1,8 @@
-import { Adapter, Context, Schema } from '@satorijs/core'
+import { Adapter, Context } from '@satorijs/core'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
+import z from 'schemastery'
 
 export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DiscordBot<C>> {
   _d = 0
@@ -110,9 +111,9 @@ export namespace WsClient {
     intents?: number
   }
 
-  export const Options: Schema<Options> = Schema.intersect([
-    Schema.object({
-      intents: Schema.bitset(Gateway.Intent).description('需要订阅的机器人事件。').default(0
+  export const Options: z<Options> = z.intersect([
+    z.object({
+      intents: z.bitset(Gateway.Intent).description('需要订阅的机器人事件。').default(0
         | Gateway.Intent.GUILD_MESSAGES
         | Gateway.Intent.GUILD_MESSAGE_REACTIONS
         | Gateway.Intent.DIRECT_MESSAGES
