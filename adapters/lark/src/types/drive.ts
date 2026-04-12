@@ -14,7 +14,9 @@ export namespace Drive {
     importTask: ImportTask.Methods
     exportTask: ExportTask.Methods
     media: Media.Methods
+    user: User.Methods
     permission: Permission.Methods
+    commentReaction: CommentReaction.Methods
   }
 
   export namespace File {
@@ -604,6 +606,11 @@ export namespace Drive {
       export namespace Reply {
         export interface Methods {
           /**
+           * 添加回复
+           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/create
+           */
+          create(file_token: string, comment_id: string, body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+          /**
            * 获取回复信息
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/list
            */
@@ -618,6 +625,35 @@ export namespace Drive {
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/file-comment-reply/delete
            */
           delete(file_token: string, comment_id: string, reply_id: string, query?: DeleteQuery): Promise<void>
+        }
+
+        export interface CreateRequest {
+          /** 回复内容 */
+          content: Lark.ReplyContent
+        }
+
+        export interface CreateQuery {
+          /** 文档类型 */
+          file_type: 'doc' | 'sheet' | 'file' | 'docx'
+          /** 此次调用中使用的用户ID的类型 */
+          user_id_type?: 'user_id' | 'union_id' | 'open_id'
+        }
+
+        export interface CreateResponse {
+          /** 回复内容 */
+          content: Lark.ReplyContent
+          /** 回复 ID */
+          reply_id?: string
+          /** 用户 ID */
+          user_id?: string
+          /** 创建时间 */
+          create_time?: number
+          /** 更新时间 */
+          update_time?: number
+          /** 回复的其他内容，图片 Token 等 */
+          extra?: Lark.ReplyExtra
+          /** 评论回复卡片上对应的表情回复信息 */
+          reactions?: Lark.FileCommentV2BatchQueryReactionData[]
         }
 
         export interface ListQuery extends Pagination {
@@ -953,6 +989,46 @@ export namespace Drive {
     }
   }
 
+  export namespace User {
+    export interface Methods {
+      /**
+       * 订阅用户云文档事件
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/user/subscription
+       */
+      subscription(body: SubscriptionRequest): Promise<void>
+      /**
+       * 取消用户云文档事件订阅
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/user/remove_subscription
+       */
+      removeSubscription(query?: RemoveSubscriptionQuery): Promise<void>
+      /**
+       * 查询用户云文档事件订阅状态
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/drive-v1/user/subscription_status
+       */
+      subscriptionStatus(query?: SubscriptionStatusQuery): Promise<SubscriptionStatusResponse>
+    }
+
+    export interface SubscriptionRequest {
+      /** 事件类型 */
+      event_type: string
+    }
+
+    export interface RemoveSubscriptionQuery {
+      /** 事件类型 */
+      event_type: string
+    }
+
+    export interface SubscriptionStatusQuery {
+      /** 事件类型 */
+      event_type: string
+    }
+
+    export interface SubscriptionStatusResponse {
+      /** 订阅状态 */
+      data: string
+    }
+  }
+
   export namespace Permission {
     export interface Methods {
       member: Member.Methods
@@ -1236,6 +1312,30 @@ export namespace Drive {
       }
     }
   }
+
+  export namespace CommentReaction {
+    export interface Methods {
+      /**
+       * 添加/取消表情回应
+       * @see https://open.feishu.cn/document/ukTMukTMukTM/uIzNzUjLyczM14iM3MTN/drive-v2/comment_reaction/update_reaction
+       */
+      updateReaction(file_token: string, body: UpdateReactionRequest, query?: UpdateReactionQuery): Promise<void>
+    }
+
+    export interface UpdateReactionRequest {
+      /** 操作类型: add/delete */
+      action: 'add' | 'delete'
+      /** 回复 ID */
+      reply_id: string
+      /** reaction 类型 */
+      reaction_type: string
+    }
+
+    export interface UpdateReactionQuery {
+      /** 文件类型，用于区分不同类型的云文档，可选值需参考开放平台文件类型枚举规范。 */
+      file_type: string
+    }
+  }
 }
 
 Internal.define({
@@ -1337,6 +1437,15 @@ Internal.define({
   '/drive/v1/files/{file_token}/delete_subscribe': {
     DELETE: 'drive.file.deleteSubscribe',
   },
+  '/drive/v1/user/subscription': {
+    POST: 'drive.user.subscription',
+  },
+  '/drive/v1/user/remove_subscription': {
+    DELETE: 'drive.user.removeSubscription',
+  },
+  '/drive/v1/user/subscription_status': {
+    GET: 'drive.user.subscriptionStatus',
+  },
   '/drive/v1/permissions/{token}/members': {
     POST: 'drive.permission.member.create',
     GET: 'drive.permission.member.list',
@@ -1375,11 +1484,15 @@ Internal.define({
     GET: 'drive.file.comment.get',
   },
   '/drive/v1/files/{file_token}/comments/{comment_id}/replies': {
+    POST: 'drive.file.comment.reply.create',
     GET: { name: 'drive.file.comment.reply.list', pagination: { argIndex: 2 } },
   },
   '/drive/v1/files/{file_token}/comments/{comment_id}/replies/{reply_id}': {
     PUT: 'drive.file.comment.reply.update',
     DELETE: 'drive.file.comment.reply.delete',
+  },
+  '/drive/v2/files/{file_token}/comments/reaction': {
+    POST: 'drive.commentReaction.updateReaction',
   },
   '/drive/v1/files/{file_token}/subscriptions/{subscription_id}': {
     GET: 'drive.file.subscription.get',

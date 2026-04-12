@@ -18,10 +18,24 @@ export namespace Minutes {
       transcript: Transcript.Methods
       statistics: Statistics.Methods
       /**
+       * 获取妙记AI产物
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/minutes-v1/minute/artifacts
+       */
+      artifacts(minute_token: string): Promise<ArtifactsResponse>
+      /**
        * 获取妙记信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/minutes-v1/minute/get
        */
       get(minute_token: string, query?: GetQuery): Promise<GetResponse>
+    }
+
+    export interface ArtifactsResponse {
+      /** 妙记总结 */
+      summary?: string
+      /** 妙记章节 */
+      minute_chapters?: Lark.MinuteChapter[]
+      /** 妙记待办 */
+      minute_todos?: Lark.MinuteTodo[]
     }
 
     export interface GetQuery {
@@ -99,6 +113,9 @@ Internal.define({
   },
   '/minutes/v1/minutes/{minute_token}/statistics': {
     GET: 'minutes.minute.statistics.get',
+  },
+  '/minutes/v1/minutes/{minute_token}/artifacts': {
+    GET: 'minutes.minute.artifacts',
   },
   '/minutes/v1/minutes/{minute_token}': {
     GET: 'minutes.minute.get',

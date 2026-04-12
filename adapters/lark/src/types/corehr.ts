@@ -59,6 +59,7 @@ export namespace Corehr {
     bp: Bp.Methods
     assignedUser: AssignedUser.Methods
     process: Process.Methods
+    processStart: ProcessStart.Methods
     processRevoke: ProcessRevoke.Methods
     processWithdraw: ProcessWithdraw.Methods
     approver: Approver.Methods
@@ -783,6 +784,7 @@ export namespace Corehr {
 
   export namespace Employee {
     export interface Methods {
+      customOrg: CustomOrg.Methods
       /**
        * 批量查询员工信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee/batch_get
@@ -1009,6 +1011,141 @@ export namespace Corehr {
       contract_id?: string
       /** 任职信息 ID */
       job_data_id?: string
+    }
+
+    export namespace CustomOrg {
+      export interface Methods {
+        /**
+         * 新增人员自定义组织变更记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee-custom_org/create_emp_custom_org
+         */
+        createEmpCustomOrg(body: CreateEmpCustomOrgRequest, query?: CreateEmpCustomOrgQuery): Promise<CreateEmpCustomOrgResponse>
+        /**
+         * 更新人员自定义组织变更记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee-custom_org/edit_emp_custom_org
+         */
+        editEmpCustomOrg(body: EditEmpCustomOrgRequest, query?: EditEmpCustomOrgQuery): Promise<EditEmpCustomOrgResponse>
+        /**
+         * 查询单个人员自定义组织变更记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee-custom_org/querybyid
+         */
+        querybyid(query?: QuerybyidQuery): Promise<QuerybyidResponse>
+        /**
+         * 批量查询人员自定义组织变更记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee-custom_org/employment_custom_org_record
+         */
+        employmentCustomOrgRecord(query?: EmploymentCustomOrgRecordQuery): Promise<EmploymentCustomOrgRecordResponse>
+        /**
+         * 删除人员自定义组织变更记录
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/employee-custom_org/del
+         */
+        del(body: DelRequest, query?: DelQuery): Promise<DelResponse>
+      }
+
+      export interface CreateEmpCustomOrgRequest {
+        /** 用户ID */
+        user_id: string
+        /** 自定义组织类型编码 */
+        object_api_name: string
+        /** 自定义组织列表 */
+        custom_org_with_rates: Lark.CustomOrgWithRate[]
+        /** 变更原因 */
+        start_reason?: string
+        /** 生效时间 */
+        effective_time: string
+      }
+
+      export interface CreateEmpCustomOrgQuery {
+        /** 此次调用中使用的用户ID的类型 */
+        user_id_type: 'people_corehr_id' | 'open_id' | 'union_id' | 'user_id'
+      }
+
+      export interface CreateEmpCustomOrgResponse {
+        /** 自定义组织ID */
+        job_data_custom_org_id: string
+        /** 版本ID */
+        version_id: string
+      }
+
+      export interface EditEmpCustomOrgRequest {
+        /** 用户ID */
+        user_id: string
+        /** 自定义组织类型编码 */
+        object_api_name: string
+        /** 自定义组织ID */
+        job_data_custom_org_id: string
+        /** 版本ID */
+        version_id: string
+        /** 自定义组织列表 */
+        custom_org_with_rates: Lark.CustomOrgWithRate[]
+        /** 生效时间 */
+        effective_time: string
+        /** 变更原因 */
+        start_reason?: string
+      }
+
+      export interface EditEmpCustomOrgQuery {
+        /** 此次调用中使用的用户ID的类型 */
+        user_id_type: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
+      }
+
+      export interface EditEmpCustomOrgResponse {
+        /** 添加成功 */
+        data?: string
+      }
+
+      export interface QuerybyidQuery {
+        /** 自定义组织ID */
+        job_data_custom_org_id: string
+        /** 版本IDs 。为空是查 全部的版本记录 */
+        version_id?: string[]
+        /** 自定义组织类型编码 */
+        object_api_name: string
+        /** 用户ID标识 */
+        user_id_type: 'people_corehr_id' | 'open_id' | 'union_id' | 'user_id'
+      }
+
+      export interface QuerybyidResponse {
+        /** 详情 */
+        custom_org: Lark.EmpCustomOrgList[]
+        /** 用户编码 */
+        user_id?: string
+      }
+
+      export interface EmploymentCustomOrgRecordQuery {
+        /** 用户ID */
+        user_ids: string[]
+        /** 用户 ID 类型 */
+        user_id_type: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
+        /** 组织类型编码，可在「飞书人事-设置-组织设置」中相应的自定义组织目录下查看 */
+        object_api_names: string[]
+      }
+
+      export interface EmploymentCustomOrgRecordResponse {
+        /** 自定义组织列表 */
+        custom_org_list?: Lark.EmpCustomOrgList[]
+      }
+
+      export interface DelRequest {
+        /** 用户ID */
+        user_id: string
+        /** 自定义组织ID */
+        job_data_custom_org_id: string
+        /** 版本ID */
+        version_id: string
+        /** 自定义组织类型编码 */
+        object_api_name: string
+      }
+
+      export interface DelQuery {
+        /** 此次调用中使用的用户ID的类型 */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+      }
+
+      export interface DelResponse {
+        /** 返回值 */
+        data: string
+      }
     }
   }
 
@@ -2824,6 +2961,11 @@ export namespace Corehr {
        */
       queryRecentChange(query?: QueryRecentChangeQuery): Promise<QueryRecentChangeResponse>
       /**
+       * 查询指定时间范围地点版本
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/query_multi_timeline
+       */
+      queryMultiTimeline(body: QueryMultiTimelineRequest): Promise<QueryMultiTimelineResponse>
+      /**
        * 通过地点 ID 批量获取地点信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/location/batch_get
        */
@@ -2924,6 +3066,22 @@ export namespace Corehr {
       has_more?: boolean
       /** 删除的地点 ID 列表 */
       deleted_location_ids?: string[]
+    }
+
+    export interface QueryMultiTimelineRequest {
+      /** 地点 ID 列表 */
+      location_ids: string[]
+      /** 查询开始时间（包含） */
+      start_date?: string
+      /** 查询结束时间(包含) */
+      end_date?: string
+      /** 返回数据的字段列表，可选["location_name", "code", "active", "parent_location_id", "description", "effective_date"] */
+      fields?: string[]
+    }
+
+    export interface QueryMultiTimelineResponse {
+      /** 地点信息 */
+      items?: Lark.LocationTimeline[]
     }
 
     export interface BatchGetRequest {
@@ -3085,6 +3243,11 @@ export namespace Corehr {
        */
       list(query?: Pagination): Paginated<Lark.Company>
       /**
+       * 查询指定时间范围公司版本
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/query_multi_timeline
+       */
+      queryMultiTimeline(body: QueryMultiTimelineRequest): Promise<QueryMultiTimelineResponse>
+      /**
        * 查询当前生效信息变更公司
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/company/query_recent_change
        */
@@ -3201,6 +3364,22 @@ export namespace Corehr {
     export interface GetResponse {
       /** 公司信息 */
       company?: Lark.Company
+    }
+
+    export interface QueryMultiTimelineRequest {
+      /** 公司 ID 列表 */
+      company_ids: string[]
+      /** 查询开始时间（包含） */
+      start_date?: string
+      /** 查询结束时间(包含) */
+      end_date?: string
+      /** 返回数据的字段列表，可选["company_name", "code", "active", "description", "effective_date", "expiration_date"] */
+      fields?: string[]
+    }
+
+    export interface QueryMultiTimelineResponse {
+      /** 公司信息 */
+      items?: Lark.CompanyTimeline[]
     }
 
     export interface QueryRecentChangeQuery extends Pagination {
@@ -4779,6 +4958,11 @@ export namespace Corehr {
     export interface Methods {
       assessment: Assessment.Methods
       /**
+       * 编辑试用期
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/edit
+       */
+      edit(body: EditRequest, query?: EditQuery): Promise<void>
+      /**
        * 启用/停用试用期考核功能
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/enable_disable_assessment
        */
@@ -4798,6 +4982,36 @@ export namespace Corehr {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/probation/withdraw
        */
       withdraw(body: WithdrawRequest, query?: WithdrawQuery): Promise<void>
+    }
+
+    export interface EditRequest {
+      /** 试用期人员的雇佣 ID */
+      employment_id: string
+      /** 试用期开始日期，格式："YYYY-MM-DD"，填写时满足以下规则 - 「试用期开始日期」和「试用期预计结束日期」需要一同填写。 - 若该员工存在试用期记录，且同时填写「试用期开始日期」和「试用期预计结束日期」为空串，则删除该试用期记录。 - 若该员工不存在试用期记录，且填写「试用期开始日期」和「试用期预计结束日期」，则新增试用期记录。 - 若该员工不存在试用期记录，且未填写「试用期开始日期」和「试用期预计结束日期」，则试用期记录不会创建，其他写入数据不会生效。 - 入职日期 <= 试用期开始日期 <= 试用期预计结束日期 */
+      probation_start_date?: string
+      /** 试用期预计结束日期，格式："YYYY-MM-DD"，填写时满足以下规则 - 「试用期开始日期」和「试用期预计结束日期」需要一同填写。 - 若该员工存在试用期记录，且同时填写「试用期开始日期」和「试用期预计结束日期」为空串，则删除该试用期记录。 - 若该员工不存在试用期记录，且填写「试用期开始日期」和「试用期预计结束日期」，则新增试用期记录。 - 若该员工不存在试用期记录，且未填写「试用期开始日期」和「试用期预计结束日期」，则试用期记录不会创建，其他写入数据不会生效。 - 试用期开始日期 <= 试用期预计结束日期 */
+      probation_expected_end_date?: string
+      /** 试用期结果，填写时满足以下规则 - 填写「通过」时，必填「试用期实际结束日期」。 - 填写「延长」时，「延长后试用期预计结束日期」和「试用期预计延长时长」至少填写一项。 */
+      probation_outcome?: 'passed' | 'failed' | 'delayed'
+      /** 试用期实际结束日期，格式："YYYY-MM-DD"，填写时满足以下规则 - 需同时指定试用期结果为「通过」。 - 在试用期结果为空时，填写后将自动赋值试用期结果为「通过」。 - 试用期开始时间 <= 试用期实际结束日期 <= 试用期预计结束日期。 */
+      actual_probation_end_date?: string
+      /** 延长后试用期预计结束日期，格式："YYYY-MM-DD"，填写时满足以下规则 - 需同时指定「试用期结果」为「延期」。 - 若同时填写「试用期预计延长时长」，需保持两者数据一致。 - 延长后试用期预计结束日期 > 试用期预计结束日期。 */
+      probation_extend_expected_end_date?: string
+      /** 试用期预计延长时长，填写时满足以下规则 - 需同时指定「试用期结果」为「延期」。 - 填写时需要指定「试用期延长时长单位」。 - 若同时填写「延长后试用期预计结束日期」，需保持两者数据一致。 - 试用期预计延长时长 > 0。 */
+      extended_probation_period_duration?: number
+      /** 试用期延长时长单位，填写时满足以下规则 - 需要和「试用期预计延长时长」一同填写。 - 需同时指定「试用期结果」为「延期」。 */
+      extended_probation_period_unit?: 'day' | 'week' | 'month'
+      /** 备注 */
+      notes?: string
+      /** 员工自评 */
+      self_review?: string
+      /** 自定义字段（当前不支持附件类型字段写入） */
+      custom_fields?: Lark.CustomFieldData[]
+    }
+
+    export interface EditQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
     }
 
     export interface EnableDisableAssessmentRequest {
@@ -6556,6 +6770,39 @@ export namespace Corehr {
     }
   }
 
+  export namespace ProcessStart {
+    export interface Methods {
+      /**
+       * 发起流程
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process_start/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+    }
+
+    export interface CreateRequest {
+      /** 流程定义ID */
+      flow_definition_id: string
+      /** 发起人用户ID，按user_id_type类型传递。如果system_initiator为false，则必填；为true时非必填。 */
+      initiator_id?: string
+      /** 是否为系统身份发起流程。 true - 使用系统身份发起，若使用系统身份；false - 按照所传的人员身份审批 */
+      system_initiator?: boolean
+      /** 业务数据 */
+      flow_data?: Lark.ProcessFormVariableV2[]
+    }
+
+    export interface CreateQuery {
+      /** 用户 ID 类型 */
+      user_id_type?: 'open_id' | 'union_id' | 'user_id' | 'people_corehr_id'
+      /** 此次调用中使用的部门 ID 类型 */
+      department_id_type?: 'open_department_id' | 'department_id' | 'people_corehr_department_id'
+    }
+
+    export interface CreateResponse {
+      /** 流程实例id */
+      process_id?: string
+    }
+  }
+
   export namespace ProcessRevoke {
     export interface Methods {
       /**
@@ -6912,6 +7159,21 @@ Internal.define({
   '/corehr/v2/employees/additional_jobs/batch': {
     POST: { name: 'corehr.employees.additionalJob.batch', pagination: { argIndex: 1 } },
   },
+  '/corehr/v2/custom_org/create_emp_custom_org': {
+    POST: 'corehr.employee.customOrg.createEmpCustomOrg',
+  },
+  '/corehr/v2/custom_org/edit_emp_custom_org': {
+    POST: 'corehr.employee.customOrg.editEmpCustomOrg',
+  },
+  '/corehr/v2/custom_org/querybyid': {
+    GET: 'corehr.employee.customOrg.querybyid',
+  },
+  '/corehr/v2/custom_org/employment_custom_org_record': {
+    GET: 'corehr.employee.customOrg.employmentCustomOrgRecord',
+  },
+  '/corehr/v2/custom_org/del': {
+    POST: 'corehr.employee.customOrg.del',
+  },
   '/corehr/v2/default_cost_centers/update_version': {
     POST: 'corehr.defaultCostCenter.updateVersion',
   },
@@ -6982,6 +7244,9 @@ Internal.define({
   '/corehr/v2/locations/query_recent_change': {
     GET: 'corehr.location.queryRecentChange',
   },
+  '/corehr/v2/locations/query_multi_timeline': {
+    POST: 'corehr.location.queryMultiTimeline',
+  },
   '/corehr/v2/locations/batch_get': {
     POST: 'corehr.location.batchGet',
   },
@@ -7006,6 +7271,9 @@ Internal.define({
   },
   '/corehr/v2/companies/active': {
     POST: 'corehr.company.active',
+  },
+  '/corehr/v2/companies/query_multi_timeline': {
+    POST: 'corehr.company.queryMultiTimeline',
   },
   '/corehr/v2/companies/query_recent_change': {
     GET: 'corehr.company.queryRecentChange',
@@ -7196,6 +7464,9 @@ Internal.define({
   '/corehr/v2/pre_hires/{pre_hire_id}/complete': {
     POST: 'corehr.preHire.complete',
   },
+  '/corehr/v2/probation/edit': {
+    POST: 'corehr.probation.edit',
+  },
   '/corehr/v2/probation/assessments': {
     POST: 'corehr.probation.assessment.create',
   },
@@ -7373,6 +7644,9 @@ Internal.define({
   },
   '/corehr/v2/query_flow_data_template': {
     POST: 'corehr.process.queryFlowDataTemplate.create',
+  },
+  '/corehr/v2/process_start': {
+    POST: 'corehr.processStart.create',
   },
   '/corehr/v2/process_revoke/{process_id}': {
     PUT: 'corehr.processRevoke.update',

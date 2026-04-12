@@ -9,8 +9,13 @@ declare module '../internal' {
 
 export namespace Application {
   export interface Methods {
+    appAvatar: AppAvatar.Methods
     owner: Owner.Methods
     collaborators: Collaborators.Methods
+    base: Base.Methods
+    ability: Ability.Methods
+    config: Config.Methods
+    publish: Publish.Methods
     appVersion: AppVersion.Methods
     scope: Scope.Methods
     contactsRange: ContactsRange.Methods
@@ -186,6 +191,32 @@ export namespace Application {
     app_list?: Lark.Application[]
   }
 
+  export namespace AppAvatar {
+    export interface Methods {
+      upload: Upload.Methods
+    }
+
+    export namespace Upload {
+      export interface Methods {
+        /**
+         * 上传应用图标
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v7/application-v7/app_avatar-upload/create
+         */
+        create(form: CreateForm): Promise<CreateResponse>
+      }
+
+      export interface CreateForm {
+        /** 图片 */
+        avatar: Blob
+      }
+
+      export interface CreateResponse {
+        /** 图片 URL，给创建/更新应用使用 */
+        url?: string
+      }
+    }
+  }
+
   export namespace Owner {
     export interface Methods {
       /**
@@ -240,6 +271,106 @@ export namespace Application {
     export interface GetResponse {
       /** 协作者 */
       collaborators?: Lark.AppCollaborator[]
+    }
+  }
+
+  export namespace Base {
+    export interface Methods {
+      /**
+       * 更新应用基础信息配置
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v7/application-v7/application-base/patch
+       */
+      patch(app_id: string, body: PatchRequest): Promise<void>
+    }
+
+    export interface PatchRequest {
+      /** 应用名称描述多语种 */
+      i18ns?: Lark.AppI18nInfo[]
+      /** 应用icon图片链接 */
+      avatar_url?: string
+      /** 应用管理后台url链接 */
+      homepage_url?: string
+    }
+  }
+
+  export namespace Ability {
+    export interface Methods {
+      /**
+       * 更新应用能力配置
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v7/application-v7/application-ability/patch
+       */
+      patch(app_id: string, body: PatchRequest): Promise<void>
+    }
+
+    export interface PatchRequest {
+      /** 网页应用 */
+      web_app?: Lark.AppAbilityWeb
+      /** 机器人 */
+      bot?: Lark.AppAbilityBot
+    }
+  }
+
+  export namespace Config {
+    export interface Methods {
+      /**
+       * 更新应用开发配置
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v7/application-v7/application-config/patch
+       */
+      patch(app_id: string, body: PatchRequest, query?: PatchQuery): Promise<void>
+    }
+
+    export interface PatchRequest {
+      /** 权限配置 */
+      scope?: Lark.AppConfigScope
+      /** 事件配置 */
+      event?: Lark.AppConfigEvent
+      /** 安全配置 */
+      security?: Lark.AppConfigSecurity
+      /** 可见性范围配置 */
+      visibility?: Lark.AppConfigVisibility
+      /** 通讯录权限范围配置 */
+      contacts?: Lark.AppConfigContactsRange
+      /** 事件与回调加密策略 */
+      event_and_callback_encrypt_strategy?: Lark.EventAndCallbackEncryptStrategy
+      /** 回调配置 */
+      callback?: Lark.AppConfigCallback
+    }
+
+    export interface PatchQuery {
+      /** 部门id 类型 */
+      department_id_type?: 'open_department_id' | 'department_id'
+      /** open_id 类型 */
+      user_id_type?: 'open_id' | 'user_id' | 'union_id'
+    }
+  }
+
+  export namespace Publish {
+    export interface Methods {
+      /**
+       * 提交发布自建应用
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/application-v7/application-v7/application-publish/create
+       */
+      create(app_id: string, body: CreateRequest): Promise<CreateResponse>
+    }
+
+    export interface CreateRequest {
+      /** 移动端默认能力 */
+      mobile_default_ability?: 'gadget' | 'web_app' | 'bot'
+      /** PC端默认能力 */
+      pc_default_ability?: 'gadget' | 'web_app' | 'bot'
+      /** 申请理由 */
+      remark: string
+      /** 更新描述 */
+      changelog: string
+      /** 应用版本号 */
+      version?: string
+    }
+
+    export interface CreateResponse {
+      /** 应用版本ID */
+      version_id?: string
+      /** 应用版本号 */
+      version?: string
     }
   }
 
@@ -678,12 +809,27 @@ export namespace Application {
 }
 
 Internal.define({
+  '/application/v7/app_avatar/upload': {
+    POST: { name: 'application.appAvatar.upload.create', multipart: true },
+  },
   '/application/v6/applications/{app_id}/owner': {
     PUT: 'application.owner.update',
   },
   '/application/v6/applications/{app_id}/collaborators': {
     PUT: 'application.collaborators.update',
     GET: 'application.collaborators.get',
+  },
+  '/application/v7/applications/{app_id}/base': {
+    PATCH: 'application.base.patch',
+  },
+  '/application/v7/applications/{app_id}/ability': {
+    PATCH: 'application.ability.patch',
+  },
+  '/application/v7/applications/{app_id}/config': {
+    PATCH: 'application.config.patch',
+  },
+  '/application/v7/applications/{app_id}/publish': {
+    POST: 'application.publish.create',
   },
   '/application/v6/applications/{app_id}': {
     GET: 'application.get',

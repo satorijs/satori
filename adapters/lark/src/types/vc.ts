@@ -9,6 +9,7 @@ declare module '../internal' {
 
 export namespace Vc {
   export interface Methods {
+    note: Note.Methods
     reserve: Reserve.Methods
     meeting: Meeting.Methods
     report: Report.Methods
@@ -23,6 +24,26 @@ export namespace Vc {
     resourceReservationList: ResourceReservationList.Methods
     alert: Alert.Methods
     roomConfig: RoomConfig.Methods
+  }
+
+  export namespace Note {
+    export interface Methods {
+      /**
+       * 获取纪要详情
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/note/get
+       */
+      get(note_id: string, query?: GetQuery): Promise<GetResponse>
+    }
+
+    export interface GetQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface GetResponse {
+      /** 纪要信息 */
+      note?: Lark.Note
+    }
   }
 
   export namespace Reserve {
@@ -115,6 +136,11 @@ export namespace Vc {
     export interface Methods {
       recording: Recording.Methods
       /**
+       * 搜索会议记录
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/search
+       */
+      search(body: SearchRequest, query?: Pagination): Promise<SearchResponse> & AsyncIterableIterator<Lark.MeetingSearchItem>
+      /**
        * 邀请参会人
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/invite
        */
@@ -144,6 +170,27 @@ export namespace Vc {
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/vc-v1/meeting/list_by_no
        */
       listByNo(query?: ListByNoQuery): Paginated<Lark.Meeting, 'meeting_briefs'>
+    }
+
+    export interface SearchRequest {
+      /**
+       * 搜索关键词
+       * **数据校验规则：** 长度范围：1 字符 ～ 50 字符
+       */
+      query?: string
+      /** 视频会议过滤参数 */
+      meeting_filter?: Lark.MeetingFilter
+    }
+
+    export interface SearchResponse {
+      /** 匹配结果总数（辅助分页参考） */
+      total?: number
+      /** 是否有更多数据可供加载 */
+      has_more: boolean
+      /** 返回结果列表 */
+      items?: Lark.MeetingSearchItem[]
+      /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+      page_token?: string
     }
 
     export interface InviteRequest {
@@ -1362,6 +1409,9 @@ export namespace Vc {
 }
 
 Internal.define({
+  '/vc/v1/notes/{note_id}': {
+    GET: 'vc.note.get',
+  },
   '/vc/v1/reserves/apply': {
     POST: 'vc.reserve.apply',
   },
@@ -1372,6 +1422,9 @@ Internal.define({
   },
   '/vc/v1/reserves/{reserve_id}/get_active_meeting': {
     GET: 'vc.reserve.getActiveMeeting',
+  },
+  '/vc/v1/meetings/search': {
+    POST: { name: 'vc.meeting.search', pagination: { argIndex: 1 } },
   },
   '/vc/v1/meetings/{meeting_id}/invite': {
     PATCH: 'vc.meeting.invite',
