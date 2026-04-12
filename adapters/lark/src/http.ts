@@ -23,7 +23,7 @@ export class HttpServer<C extends Context = Context> extends Adapter<C, LarkBot<
 
   async connect(bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
     const { path } = bot.config
-    bot.ctx.server.post(path, (ctx) => {
+    this.ctx.server.post(path, (ctx) => {
       this._refreshCipher()
 
       // compare signature if encryptKey is set

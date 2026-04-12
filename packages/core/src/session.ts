@@ -163,7 +163,6 @@ export function defineAccessor(prototype: {}, name: string, keys: string[]) {
 
 defineAccessor(Session.prototype, 'type', ['event', 'type'])
 defineAccessor(Session.prototype, 'subtype', ['event', 'subtype'])
-defineAccessor(Session.prototype, 'subsubtype', ['event', 'subsubtype'])
 defineAccessor(Session.prototype, 'selfId', ['event', 'selfId'])
 defineAccessor(Session.prototype, 'platform', ['event', 'platform'])
 defineAccessor(Session.prototype, 'timestamp', ['event', 'timestamp'])

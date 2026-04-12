@@ -6260,6 +6260,7 @@ export namespace Corehr {
   export namespace Process {
     export interface Methods {
       formVariableData: FormVariableData.Methods
+      queryFlowDataTemplate: QueryFlowDataTemplate.Methods
       approver: Approver.Methods
       extra: Extra.Methods
       transfer: Transfer.Methods
@@ -6400,6 +6401,35 @@ export namespace Corehr {
         field_variable_values?: Lark.FieldVariableValue[]
         /** 流程实例id */
         process_id?: string
+      }
+    }
+
+    export namespace QueryFlowDataTemplate {
+      export interface Methods {
+        /**
+         * 查询流程数据参数模板
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/process-query_flow_data_template/create
+         */
+        create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      }
+
+      export interface CreateRequest {
+        /** 流程定义ID */
+        flow_definition_id: string
+        /** 需要传入的变量的ApiName。如果是多级下钻变量用"."分割 */
+        variable_api_names: string[]
+      }
+
+      export interface CreateQuery {
+        /** 此次调用中使用的用户ID的类型 */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id' | 'people_corehr_id'
+      }
+
+      export interface CreateResponse {
+        /** 流程参数模板 */
+        field_values: Lark.ProcessFormVariableV2[]
+        /** 错误信息 */
+        error_info?: string
       }
     }
 
@@ -7340,6 +7370,9 @@ Internal.define({
   },
   '/corehr/v2/processes/{process_id}/form_variable_data': {
     GET: 'corehr.process.formVariableData.get',
+  },
+  '/corehr/v2/query_flow_data_template': {
+    POST: 'corehr.process.queryFlowDataTemplate.create',
   },
   '/corehr/v2/process_revoke/{process_id}': {
     PUT: 'corehr.processRevoke.update',

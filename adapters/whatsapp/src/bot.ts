@@ -13,7 +13,7 @@ export class WhatsAppBot<C extends Context = Context> extends Bot<C> {
     super(ctx, {}, 'whatsapp')
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string): Promise<void> {
-    await this.internal.messageReaction(this.selfId, channelId, messageId, emoji)
+  async createReaction(channelId: string, messageId: string, emojiId: string): Promise<void> {
+    await this.internal.messageReaction(this.selfId, channelId, messageId, emojiId)
   }
 }

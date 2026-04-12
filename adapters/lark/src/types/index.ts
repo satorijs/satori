@@ -5919,6 +5919,59 @@ export interface District {
 
 export type Divider = unknown
 
+export interface DocFilter {
+  /** 文档所有者OpenID */
+  creator_ids?: string[]
+  /** 文档类型 */
+  doc_types?: ('DOC' | 'SHEET' | 'BITABLE' | 'MINDNOTE' | 'FILE' | 'WIKI' | 'DOCX' | 'FOLDER' | 'CATALOG' | 'SLIDES' | 'SHORTCUT')[]
+  /** 搜索文件夹内的文档（文件夹token列表） */
+  folder_tokens?: string[]
+  /** 仅搜文档标题 */
+  only_title?: boolean
+  /** 浏览文档的时间范围（秒级时间戳，包含start和end字段） */
+  open_time?: TimeRange
+  /** 排序方式 */
+  sort_type?: 'DEFAULT_TYPE' | 'OPEN_TIME' | 'EDIT_TIME' | 'EDIT_TIME_ASC' | 'ENTITY_CREATE_TIME_ASC' | 'ENTITY_CREATE_TIME_DESC' | 'CREATE_TIME' | 'CREATE_TIME_ASC'
+  /** 文档创建的时间范围（秒级时间戳，包含start和end字段） */
+  create_time?: TimeRange
+}
+
+export interface DocMeta {
+  /** 文档类型 */
+  doc_types?: 'DOC' | 'SHEET' | 'BITABLE' | 'MINDNOTE' | 'FILE' | 'WIKI' | 'DOCX' | 'FOLDER' | 'CATALOG' | 'SLIDES' | 'SHORTCUT'
+  /** 更新时间戳（秒） */
+  update_time?: number
+  /** 文档链接 */
+  url?: string
+  /** 所有者名称 */
+  owner_name?: string
+  /** 所有者OpenID */
+  owner_id?: string
+  /** 是否跨租户 */
+  is_cross_tenant?: boolean
+  /** 文档创建时间戳（秒） */
+  create_time?: number
+  /** 上次打开时间戳（秒） */
+  last_open_time?: number
+  /** 最后一次编辑用户OpenID */
+  edit_user_id?: string
+  /** 最后一次编辑用户名称 */
+  edit_user_name?: string
+  /** 文档token */
+  token?: string
+}
+
+export interface DocResUnit {
+  /** 标题高亮 */
+  title_highlighted?: string
+  /** 摘要高亮 */
+  summary_highlighted?: string
+  /** 结果类型 */
+  entity_type?: 'DOC' | 'WIKI'
+  /** 文档搜索元信息 */
+  result_meta?: DocMeta
+}
+
 export interface DocsBlock {
   /** BlockTypeID */
   block_type_id?: string
@@ -7695,6 +7748,15 @@ export interface FieldVariableValueToFile {
   mime_type?: string
 }
 
+export interface FieldVariableValueToFileForWrite {
+  /** 主数据的文件id */
+  open_file_id?: string
+  /** 文件名称 */
+  file_name?: string
+  /** 文件大小，单位：Byte */
+  length?: number
+}
+
 export interface FieldVariableValueToForReview {
   /** 文本值 */
   text_value?: string
@@ -7718,6 +7780,10 @@ export interface FieldVariableValueToForReview {
   employment_value?: string
   /** 数组类型值，里面包含多个值，每个元素都对应subValues中的key */
   list_values?: string[]
+  /** 文件类型字段值 */
+  file_value?: FieldVariableValueToFileForWrite
+  /** record类型字段值 */
+  record_values?: FieldVariableValueToRecord[]
 }
 
 export interface FieldVariableValueToObject {
@@ -18858,6 +18924,13 @@ export interface TimeInfo {
   timezone?: string
 }
 
+export interface TimeRange {
+  /** 时间范围的起始时间戳 */
+  start?: number
+  /** 时间范围的截止时间戳 */
+  end?: number
+}
+
 export interface TimeZone {
   /** 时区 ID */
   time_zone_id?: string
@@ -20416,6 +20489,23 @@ export interface WikiCatalog {
   wiki_token?: string
 }
 
+export interface WikiFilter {
+  /** Wiki所有者OpenID */
+  creator_ids?: string[]
+  /** Wiki类型 */
+  doc_types?: ('DOC' | 'SHEET' | 'BITABLE' | 'MINDNOTE' | 'FILE' | 'WIKI' | 'DOCX' | 'FOLDER' | 'CATALOG' | 'SLIDES' | 'SHORTCUT')[]
+  /** 搜索某个Space下的Wiki（Space ID列表） */
+  space_ids?: string[]
+  /** 仅搜Wiki标题 */
+  only_title?: boolean
+  /** 浏览文档的时间范围（秒级时间戳，包含start和end字段） */
+  open_time?: TimeRange
+  /** 排序方式 */
+  sort_type?: 'DEFAULT_TYPE' | 'OPEN_TIME' | 'EDIT_TIME' | 'EDIT_TIME_ASC' | 'ENTITY_CREATE_TIME_ASC' | 'ENTITY_CREATE_TIME_DESC' | 'CREATE_TIME' | 'CREATE_TIME_ASC'
+  /** Wiki创建的时间范围（秒级时间戳，包含start和end字段） */
+  create_time?: TimeRange
+}
+
 export interface WkCalendarDate {
   /** 工作日历WKID */
   calendar_id?: string
@@ -20611,6 +20701,58 @@ export interface WorkplaceAccessData {
 export interface WorkplaceWidget {
   /** 最低兼容 lark 版本号 */
   min_lark_version?: string
+}
+
+export interface WorkspaceDataTable {
+  /** 数据表名，如 student */
+  name: string
+  /** 数据表描述 */
+  description: string
+  /** 数据表列 */
+  columns: WorkspaceDataTableColumnInfo[]
+}
+
+export interface WorkspaceDataTableColumnInfo {
+  /** 列名 */
+  name: string
+  /** 列描述 */
+  description: string
+  /** 数据库数据类型 */
+  data_type: string
+  /** 是否是主键 */
+  is_primary_key: boolean
+  /** 是否唯一 */
+  is_unique: boolean
+  /** 是否是自增 */
+  is_auto_increment: boolean
+  /** 是否是数组类型 */
+  is_array: boolean
+  /** 是否允许为空 */
+  is_allow_null: boolean
+  /** 默认值 */
+  default_value: string
+}
+
+export interface WorkspaceEnum {
+  /** 枚举名称 */
+  name: string
+  /** 枚举描述 */
+  description: string
+  /** 枚举值列表 */
+  options: string[]
+  /** 创建时间，毫秒时间戳 */
+  created_at: number
+  /** 创建人 */
+  created_by?: WorkspaceUserInfo
+}
+
+export interface WorkspaceUserInfo {
+  /** 用户 id，如 1693861178143800 */
+  id?: string
+  /** 用户姓名，如王小小 */
+  name?: string
+  /** 用户头像 URL */
+  avatar?: string
 }
 
 export interface WriteUserGroupScopeData {

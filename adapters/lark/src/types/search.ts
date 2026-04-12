@@ -9,10 +9,45 @@ declare module '../internal' {
 
 export namespace Search {
   export interface Methods {
+    docWiki: DocWiki.Methods
     message: Message.Methods
     app: App.Methods
     dataSource: DataSource.Methods
     schema: Schema.Methods
+  }
+
+  export namespace DocWiki {
+    export interface Methods {
+      /**
+       * 搜索文档
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/search-v2/doc_wiki/search
+       */
+      search(body: SearchRequest): Promise<SearchResponse> & AsyncIterableIterator<Lark.DocResUnit>
+    }
+
+    export interface SearchRequest {
+      /** 搜索关键词 */
+      query: string
+      /** 文档过滤参数 */
+      doc_filter?: Lark.DocFilter
+      /** Wiki过滤参数 */
+      wiki_filter?: Lark.WikiFilter
+      /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该page_token获取查询结果 */
+      page_token?: string
+      /** 分页大小 */
+      page_size?: number
+    }
+
+    export interface SearchResponse {
+      /** 匹配结果总数（辅助分页参考） */
+      total?: number
+      /** 是否有更多数据可供加载 */
+      has_more: boolean
+      /** 搜索结果列表 */
+      res_units?: Lark.DocResUnit[]
+      /** 下一页分页标记，无更多结果时为空 */
+      page_token?: string
+    }
   }
 
   export namespace Message {
@@ -302,6 +337,9 @@ export namespace Search {
 }
 
 Internal.define({
+  '/search/v2/doc_wiki/search': {
+    POST: 'search.docWiki.search',
+  },
   '/search/v2/message': {
     POST: { name: 'search.message.create', pagination: { argIndex: 1 } },
   },

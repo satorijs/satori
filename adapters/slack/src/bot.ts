@@ -152,23 +152,23 @@ export class SlackBot<C extends Context = Context, T extends SlackBot.Config = S
     })) ?? []
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string) {
+  async createReaction(channelId: string, messageId: string, emojiId: string) {
     // reactions.write
     await this.internal.reactionsAdd(Token.BOT, {
       channel: channelId,
       timestamp: messageId,
-      name: emoji,
+      name: emojiId,
     })
   }
 
-  async clearReaction(channelId: string, messageId: string, emoji?: string) {
+  async clearReaction(channelId: string, messageId: string, emojiId?: string) {
     const { message } = await this.internal.reactionsGet(Token.BOT, {
       channel: channelId,
       timestamp: messageId,
       full: true,
     })
     for (const reaction of message.reactions) {
-      if (!emoji || reaction.name === emoji) {
+      if (!emojiId || reaction.name === emojiId) {
         await this.internal.reactionsRemove(Token.BOT, {
           channel: channelId,
           timestamp: messageId,

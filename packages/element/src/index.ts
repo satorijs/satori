@@ -30,6 +30,10 @@ declare global {
         name?: string
         avatar?: string
       }
+      emoji: {
+        id?: string
+        name?: string
+      }
       img: ResourceElement
       audio: ResourceElement
       video: ResourceElement

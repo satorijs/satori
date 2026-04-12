@@ -10,7 +10,9 @@ temp
 /external
 tsconfig.temp.json
 
-todo.md
+TODO.md
+CLAUDE.md
+
 yarn.lock
 yalc.lock
 node_modules

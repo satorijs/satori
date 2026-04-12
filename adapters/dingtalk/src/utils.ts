@@ -26,7 +26,7 @@ export async function decodeMessage<C extends Context>(bot: DingtalkBot<C>, body
   }
 
   session.event.member = {
-    roles: body.isAdmin ? ['admin'] : [],
+    roles: body.isAdmin ? [{ id: 'admin' }] : [],
   }
   session.timestamp = +body.createAt
   if (body.msgtype === 'text') {

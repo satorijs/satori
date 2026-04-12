@@ -48,7 +48,7 @@ export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config>
       start,
       limit: 1000,
     })
-    return { data: userIds.map(v => ({ id: v, userId: v })), next }
+    return { data: userIds.map(v => ({ user: { id: v } })), next }
   }
 
   async getGuild(guildId: string) {

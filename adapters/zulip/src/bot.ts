@@ -88,15 +88,15 @@ export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Confi
     return message.reactions.map(v => decodeUser(v.user))
   }
 
-  async createReaction(channelId: string, messageId: string, emoji: string) {
+  async createReaction(channelId: string, messageId: string, emojiId: string) {
     await this.internal.addReaction(messageId, {
-      emoji_name: emoji,
+      emoji_name: emojiId,
     })
   }
 
-  async deleteReaction(channelId: string, messageId: string, emoji: string) {
+  async deleteReaction(channelId: string, messageId: string, emojiId: string) {
     await this.internal.removeReaction(messageId, {
-      emoji_name: emoji,
+      emoji_name: emojiId,
     })
   }
 }

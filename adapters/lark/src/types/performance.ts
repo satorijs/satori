@@ -15,6 +15,7 @@ export namespace Performance {
     additionalInformations: AdditionalInformations.Methods
     userGroupUserRel: UserGroupUserRel.Methods
     reviewee: Reviewee.Methods
+    userInfo: UserInfo.Methods
     reviewTemplate: ReviewTemplate.Methods
     indicator: Indicator.Methods
     question: Question.Methods
@@ -236,6 +237,36 @@ export namespace Performance {
       has_more?: boolean
       /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
       page_token?: string
+    }
+  }
+
+  export namespace UserInfo {
+    export interface Methods {
+      /**
+       * 获取绩效周期的人员信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/performance-v2/user_info/query
+       */
+      query(body: QueryRequest, query?: QueryQuery): Promise<QueryResponse>
+    }
+
+    export interface QueryRequest {
+      /** 评估周期 ID 列表，semester_id 可通过【获取周期】获得 */
+      semester_id: string
+      /** 人员 ID 列表，ID 类型与user_id_type 的取值一致 */
+      user_ids: string[]
+    }
+
+    export interface QueryQuery {
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+      /** 指定查询结果中的部门 ID 类型。关于部门 ID 的详细介绍，可参见部门 ID 说明。 */
+      department_id_type?: string
+    }
+
+    export interface QueryResponse {
+      /** 评估周期 ID */
+      semester_id?: string
+      /** 人员的快照信息列表 */
+      user_infos?: Lark.UserInfo[]
     }
   }
 
@@ -552,6 +583,9 @@ Internal.define({
   },
   '/performance/v2/reviewees/query': {
     POST: 'performance.reviewee.query',
+  },
+  '/performance/v2/user_info/query': {
+    POST: 'performance.userInfo.query',
   },
   '/performance/v2/review_templates/query': {
     POST: { name: 'performance.reviewTemplate.query', pagination: { argIndex: 1, itemsKey: 'review_templates' } },

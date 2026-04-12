@@ -32,9 +32,6 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
 
   constructor(ctx: C, bot: LarkBot<C, LarkBot.BaseConfig & WsClient.Options>) {
     super(ctx, bot)
-  }
-
-  async prepare() {
     this._frame = pb.Root.fromJSON({
       nested: {
         Header: {
@@ -58,7 +55,9 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
         },
       },
     }).lookupType('Frame')
+  }
 
+  async prepare() {
     const baseUrl = this.bot.config.baseURL ?? new URL(this.bot.config.endpoint).origin
     const { code, data: { URL: url, ClientConfig: config }, msg } = await this.bot.http.post(`${baseUrl}/callback/ws/endpoint`, {
       AppID: this.bot.config.appId,
@@ -145,7 +144,6 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, L
 
     this.socket.addEventListener('close', (e) => {
       clearTimeout(this._ping)
-      this.bot.offline()
     })
     this.ping()
   }
