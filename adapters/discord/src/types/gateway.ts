@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { Activity, Assets, Buttons, Emoji, Internal, Party, Secrets, Timestamps, UpdatePresence, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/gateway#identify-identify-structure */
 export interface Gateway {
@@ -22,32 +22,41 @@ export namespace Gateway {
   /** https://discord.com/developers/docs/resources/gateway#update-presence-status-types */
   export enum StatusType {
     /** Online */
-    online = 'Online',
+    ONLINE = 'online',
     /** Do Not Disturb */
-    dnd = 'Do Not Disturb',
+    DND = 'dnd',
     /** AFK */
-    idle = 'AFK',
+    IDLE = 'idle',
     /** Invisible and shown as offline */
-    invisible = 'Invisible and shown as offline',
+    INVISIBLE = 'invisible',
     /** Offline */
-    offline = 'Offline',
+    OFFLINE = 'offline',
   }
 
   /** https://discord.com/developers/docs/resources/gateway#activity-object-activity-types */
   export enum ActivityType {
-    Playing = 'Playing',
-    Streaming = 'Streaming',
-    Listening = 'Listening',
-    Watching = 'Watching',
-    Custom = 'Custom',
-    Competing = 'Competing',
+    /** 0 */
+    PLAYING = 'playing',
+    /** 1 */
+    STREAMING = 'streaming',
+    /** 2 */
+    LISTENING = 'listening',
+    /** 3 */
+    WATCHING = 'watching',
+    /** 4 */
+    CUSTOM = 'custom',
+    /** 5 */
+    COMPETING = 'competing',
   }
 
   /** https://discord.com/developers/docs/resources/gateway#activity-object-status-display-types */
   export enum StatusDisplayType {
-    Name = 'Name',
-    State = 'State',
-    Details = 'Details',
+    /** 0 */
+    NAME = 'name',
+    /** 1 */
+    STATE = 'state',
+    /** 2 */
+    DETAILS = 'details',
   }
 
   /** https://discord.com/developers/docs/resources/gateway#activity-object-activity-flags */
@@ -100,7 +109,7 @@ export namespace Gateway {
   /** https://discord.com/developers/docs/resources/gateway#request-soundboard-sounds-request-soundboard-sounds-structure */
   export interface RequestSoundboardSounds {
     /** IDs of the guilds to get soundboard sounds for */
-    guild_ids: Snowflakes[]
+    guild_ids: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/gateway#update-voice-state-gateway-voice-state-update-structure */

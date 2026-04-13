@@ -27,24 +27,22 @@ export interface GuildTemplate {
 }
 
 export namespace GuildTemplate {
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/guild-template#create-guild-template-json-params */
-    export interface Create {
-      /** name of the template (1-100 characters) */
-      name: string
-      /** description for the template (0-120 characters) */
-      description?: string | null
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/guild-template#modify-guild-template-json-params */
-    export interface Modify {
-      /** name of the template (1-100 characters) */
-      name?: string
-      /** description for the template (0-120 characters) */
-      description?: string | null
-    }
+/** https://discord.com/developers/docs/resources/guild-template#create-guild-template-json-params */
+export interface CreateGuildTemplateParams {
+  /** name of the template (1-100 characters) */
+  name: string
+  /** description for the template (0-120 characters) */
+  description?: string | null
+}
 
-  }
+/** https://discord.com/developers/docs/resources/guild-template#modify-guild-template-json-params */
+export interface ModifyGuildTemplateParams {
+  /** name of the template (1-100 characters) */
+  name?: string
+  /** description for the template (0-120 characters) */
+  description?: string | null
 }
 
 declare module './internal' {
@@ -63,7 +61,7 @@ declare module './internal' {
      * Creates a template for the guild. Requires the `MANAGE_GUILD` permission. Returns the created guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#create-guild-template
      */
-    createGuildTemplate(guild_id: snowflake, params: GuildTemplate.Params.Create): Promise<CreatedGuildTemplate>
+    createGuildTemplate(guild_id: snowflake, params: CreateGuildTemplateParams): Promise<CreatedGuildTemplate>
     /**
      * Syncs the template to the guild's current state. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#sync-guild-template
@@ -73,7 +71,7 @@ declare module './internal' {
      * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#modify-guild-template
      */
-    modifyGuildTemplate(guild_id: snowflake, template_code: snowflake, params: GuildTemplate.Params.Modify): Promise<GuildTemplate>
+    modifyGuildTemplate(guild_id: snowflake, template_code: snowflake, params: ModifyGuildTemplateParams): Promise<GuildTemplate>
     /**
      * Deletes the template. Requires the `MANAGE_GUILD` permission. Returns the deleted guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#delete-guild-template

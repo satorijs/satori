@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake, timestamp } from '.'
+import { GuildScheduledEvent, Internal, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
 export interface Invite {
@@ -78,22 +78,20 @@ export namespace Invite {
     topic: string
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */
-    export interface GetInvite {
-      /** whether the invite should contain approximate member counts */
-      with_counts?: boolean
-      /** the guild scheduled event to include with the invite */
-      guild_scheduled_event_id?: snowflake
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/invite#update-target-users-form-params */
-    export interface UpdateTargetUsers {
-      /** a csv file with a single column of user IDs for all the users able to accept this invite */
-      target_users_file: any
-    }
+/** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */
+export interface GetInviteParams {
+  /** whether the invite should contain approximate member counts */
+  with_counts?: Boolean
+  /** the guild scheduled event to include with the invite */
+  guild_scheduled_event_id?: snowflake
+}
 
-  }
+/** https://discord.com/developers/docs/resources/invite#update-target-users-form-params */
+export interface UpdateTargetUsersParams {
+  /** a csv file with a single column of user IDs for all the users able to accept this invite */
+  target_users_file: any
 }
 
 declare module './internal' {
@@ -102,7 +100,7 @@ declare module './internal' {
      * Returns an invite object for the given code.
      * @see https://discord.com/developers/docs/resources/invite#get-invite
      */
-    getInvite(invite_code: snowflake, params: Invite.Params.Params): Promise<void>
+    getInvite(invite_code: snowflake, params: GetInviteParams): Promise<void>
     /**
      * Delete an invite. Requires the `MANAGE_CHANNELS` permission on the channel this invite belongs to, or `MANAGE_GUILD` to remove any invite across the guild. Returns an invite object on success. Fires an Invite Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/invite#delete-invite
@@ -117,7 +115,7 @@ declare module './internal' {
      * Updates the users allowed to see and accept this invite. Uploading a file with invalid user IDs will result in a 400 with the invalid IDs described. Requires the caller to be the inviter or have the `MANAGE_GUILD` permission.
      * @see https://discord.com/developers/docs/resources/invite#update-target-users
      */
-    updateTargetUsers(invite_code: snowflake, params: Invite.Params.Params): Promise<void>
+    updateTargetUsers(invite_code: snowflake, params: UpdateTargetUsersParams): Promise<void>
     /**
      * Processing target users from a CSV when creating or updating an invite is done asynchronously. This endpoint allows you to check the status of that job. Requires the caller to be the inviter, or have `MANAGE_GUILD` permission, or have `VIEW_AUDIT_LOG` permission.
      * @see https://discord.com/developers/docs/resources/invite#get-target-users-job-status

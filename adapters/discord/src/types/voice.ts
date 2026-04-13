@@ -1,4 +1,4 @@
-import { Internal, snowflake, timestamp } from '.'
+import { GuildMember, Internal, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure */
 export interface Voice {
@@ -45,26 +45,24 @@ export namespace Voice {
     custom: boolean
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/voice#modify-current-user-voice-state-json-params */
-    export interface Modify {
-      /** the id of the channel the user is currently in */
-      channel_id?: snowflake
-      /** toggles the user's suppress state */
-      suppress?: boolean
-      /** sets the user's request to speak */
-      request_to_speak_timestamp?: timestamp | null
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/voice#modify-user-voice-state-json-params */
-    export interface Modify {
-      /** the id of the channel the user is currently in */
-      channel_id?: snowflake
-      /** toggles the user's suppress state */
-      suppress?: boolean
-    }
+/** https://discord.com/developers/docs/resources/voice#modify-current-user-voice-state-json-params */
+export interface ModifyCurrentUserVoiceStateParams {
+  /** the id of the channel the user is currently in */
+  channel_id?: snowflake
+  /** toggles the user's suppress state */
+  suppress?: boolean
+  /** sets the user's request to speak */
+  request_to_speak_timestamp?: timestamp | null
+}
 
-  }
+/** https://discord.com/developers/docs/resources/voice#modify-user-voice-state-json-params */
+export interface ModifyUserVoiceStateParams {
+  /** the id of the channel the user is currently in */
+  channel_id?: snowflake
+  /** toggles the user's suppress state */
+  suppress?: boolean
 }
 
 declare module './internal' {
@@ -88,12 +86,12 @@ declare module './internal' {
      * Updates the current user's voice state. Returns `204 No Content` on success. Fires a Voice State Update Gateway event.
      * @see https://discord.com/developers/docs/resources/voice#modify-current-user-voice-state
      */
-    modifyCurrentUserVoiceState(guild_id: snowflake, params: Voice.Params.Modify): Promise<void>
+    modifyCurrentUserVoiceState(guild_id: snowflake, params: ModifyCurrentUserVoiceStateParams): Promise<void>
     /**
      * Updates another user's voice state. Returns `204 No Content` on success. Fires a Voice State Update Gateway event.
      * @see https://discord.com/developers/docs/resources/voice#modify-user-voice-state
      */
-    modifyUserVoiceState(guild_id: snowflake, user_id: snowflake, params: Voice.Params.Modify): Promise<void>
+    modifyUserVoiceState(guild_id: snowflake, user_id: snowflake, params: ModifyUserVoiceStateParams): Promise<void>
   }
 }
 

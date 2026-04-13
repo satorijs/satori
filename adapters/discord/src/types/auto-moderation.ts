@@ -21,9 +21,9 @@ export interface AutoModeration {
   /** whether the rule is enabled */
   enabled: boolean
   /** the role ids that should not be affected by the rule (Maximum of 20) */
-  exempt_roles: Snowflakes[]
+  exempt_roles: snowflake[]
   /** the channel ids that should not be affected by the rule (Maximum of 50) */
-  exempt_channels: Snowflakes[]
+  exempt_channels: snowflake[]
 }
 
 export namespace AutoModeration {
@@ -76,47 +76,45 @@ export namespace AutoModeration {
     /** the type of action */
     type: ActionType
     /** additional metadata needed during execution for this specific action type */
-    metadata? *: ActionMetadata
+    metadata?: ActionMetadata
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule-json-params */
-    export interface Create {
-      /** the rule name */
-      name: string
-      /** the event type */
-      event_type: integer
-      /** the trigger type */
-      trigger_type: integer
-      /** the trigger metadata */
-      trigger_metadata? *: any
-      /** the actions which will execute when the rule is triggered */
-      actions: Action[]
-      /** whether the rule is enabled (False by default) */
-      enabled?: boolean
-      /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exempt_roles?: Snowflakes[]
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule-json-params */
-    export interface Modify {
-      /** the rule name */
-      name: string
-      /** the event type */
-      event_type: integer
-      /** the trigger metadata */
-      trigger_metadata? *: any
-      /** the actions which will execute when the rule is triggered */
-      actions: Action[]
-      /** whether the rule is enabled */
-      enabled: boolean
-      /** the role ids that should not be affected by the rule (Maximum of 20) */
-      exempt_roles: Snowflakes[]
-      /** the channel ids that should not be affected by the rule (Maximum of 50) */
-      exempt_channels: Snowflakes[]
-    }
+/** https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule-json-params */
+export interface CreateAutoModerationRuleParams {
+  /** the rule name */
+  name: string
+  /** the event type */
+  event_type: integer
+  /** the trigger type */
+  trigger_type: integer
+  /** the trigger metadata */
+  trigger_metadata?: any
+  /** the actions which will execute when the rule is triggered */
+  actions: Action[]
+  /** whether the rule is enabled (False by default) */
+  enabled?: boolean
+  /** the role ids that should not be affected by the rule (Maximum of 20) */
+  exempt_roles?: snowflake[]
+}
 
-  }
+/** https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule-json-params */
+export interface ModifyAutoModerationRuleParams {
+  /** the rule name */
+  name: string
+  /** the event type */
+  event_type: integer
+  /** the trigger metadata */
+  trigger_metadata?: any
+  /** the actions which will execute when the rule is triggered */
+  actions: Action[]
+  /** whether the rule is enabled */
+  enabled: boolean
+  /** the role ids that should not be affected by the rule (Maximum of 20) */
+  exempt_roles: snowflake[]
+  /** the channel ids that should not be affected by the rule (Maximum of 50) */
+  exempt_channels: snowflake[]
 }
 
 declare module './internal' {
@@ -135,12 +133,12 @@ declare module './internal' {
      * Create a new rule. Returns an auto moderation rule on success. Fires an Auto Moderation Rule Create Gateway event.
      * @see https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule
      */
-    createAutoModerationRule(guild_id: snowflake, params: AutoModeration.Params.Create): Promise<void>
+    createAutoModerationRule(guild_id: snowflake, params: CreateAutoModerationRuleParams): Promise<void>
     /**
      * Modify an existing rule. Returns an auto moderation rule on success. Fires an Auto Moderation Rule Update Gateway event.
      * @see https://discord.com/developers/docs/resources/auto-moderation#modify-auto-moderation-rule
      */
-    modifyAutoModerationRule(guild_id: snowflake, auto_moderation_rule_id: snowflake, params: AutoModeration.Params.Modify): Promise<void>
+    modifyAutoModerationRule(guild_id: snowflake, auto_moderation_rule_id: snowflake, params: ModifyAutoModerationRuleParams): Promise<void>
     /**
      * Delete a rule. Returns a `204` on success. Fires an Auto Moderation Rule Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/auto-moderation#delete-auto-moderation-rule

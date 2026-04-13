@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake, timestamp } from '.'
+import { Application, InteractionType, Internal, MessageComponent, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/message#message-object-message-activity-structure */
 export interface Message {
@@ -11,42 +11,79 @@ export interface Message {
 export namespace Message {
   /** https://discord.com/developers/docs/resources/message#message-object-message-types */
   export enum Type {
+    /** true */
     DEFAULT = 0,
+    /** false */
     RECIPIENT_ADD = 1,
+    /** false */
     RECIPIENT_REMOVE = 2,
+    /** false */
     CALL = 3,
+    /** false */
     CHANNEL_NAME_CHANGE = 4,
+    /** false */
     CHANNEL_ICON_CHANGE = 5,
+    /** true */
     CHANNEL_PINNED_MESSAGE = 6,
+    /** true */
     USER_JOIN = 7,
+    /** true */
     GUILD_BOOST = 8,
+    /** true */
     GUILD_BOOST_TIER_1 = 9,
+    /** true */
     GUILD_BOOST_TIER_2 = 10,
+    /** true */
     GUILD_BOOST_TIER_3 = 11,
+    /** true */
     CHANNEL_FOLLOW_ADD = 12,
+    /** true */
     GUILD_DISCOVERY_DISQUALIFIED = 14,
+    /** true */
     GUILD_DISCOVERY_REQUALIFIED = 15,
+    /** true */
     GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16,
+    /** true */
     GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17,
+    /** true */
     THREAD_CREATED = 18,
+    /** true */
     REPLY = 19,
+    /** true */
     CHAT_INPUT_COMMAND = 20,
+    /** false */
     THREAD_STARTER_MESSAGE = 21,
+    /** true */
     GUILD_INVITE_REMINDER = 22,
+    /** true */
     CONTEXT_MENU_COMMAND = 23,
+    /** true* */
     AUTO_MODERATION_ACTION = 24,
+    /** true */
     ROLE_SUBSCRIPTION_PURCHASE = 25,
+    /** true */
     INTERACTION_PREMIUM_UPSELL = 26,
+    /** true */
     STAGE_START = 27,
+    /** true */
     STAGE_END = 28,
+    /** true */
     STAGE_SPEAKER = 29,
+    /** true */
     STAGE_TOPIC = 31,
+    /** true */
     GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32,
+    /** true */
     GUILD_INCIDENT_ALERT_MODE_ENABLED = 36,
+    /** true */
     GUILD_INCIDENT_ALERT_MODE_DISABLED = 37,
+    /** true */
     GUILD_INCIDENT_REPORT_RAID = 38,
+    /** true */
     GUILD_INCIDENT_REPORT_FALSE_ALARM = 39,
+    /** true */
     PURCHASE_NOTIFICATION = 44,
+    /** true */
     POLL_RESULT = 46,
   }
 
@@ -91,19 +128,19 @@ export namespace Message {
   /** https://discord.com/developers/docs/resources/message#embed-object-embed-types */
   export enum EmbedType {
     /** generic embed rendered from embed attributes */
-    rich = 'generic embed rendered from embed attributes',
+    RICH = 'rich',
     /** image embed */
-    image = 'image embed',
+    IMAGE = 'image',
     /** video embed */
-    video = 'video embed',
+    VIDEO = 'video',
     /** animated gif image embed rendered as a video embed */
-    gifv = 'animated gif image embed rendered as a video embed',
+    GIFV = 'gifv',
     /** article embed */
-    article = 'article embed',
+    ARTICLE = 'article',
     /** link embed */
-    link = 'link embed',
+    LINK = 'link',
     /** poll result embed */
-    poll_result = '[poll result embed](/developers/resources/message#embed-fields-by-embed-type-poll-result-embed-fields)',
+    POLL_RESULT = 'poll_result',
   }
 
   /** https://discord.com/developers/docs/resources/message#embed-object-embed-flags */
@@ -135,16 +172,16 @@ export namespace Message {
   /** https://discord.com/developers/docs/resources/message#allowed-mentions-object-allowed-mention-types */
   export enum AllowedMentionType {
     /** Controls role mentions */
-    Role Mentions = '"roles"',
+    ROLE_MENTIONS = 'roles',
     /** Controls user mentions */
-    User Mentions = '"users"',
+    USER_MENTIONS = 'users',
     /** Controls @everyone and @here mentions */
-    Everyone Mentions = '"everyone"',
+    EVERYONE_MENTIONS = 'everyone',
   }
 
   /** https://discord.com/developers/docs/resources/message#base-theme-types */
   export enum BaseThemeType {
-    UNSET \[1\] = 0,
+    UNSET = 0,
     DARK = 1,
     LIGHT = 2,
     DARKER = 3,
@@ -154,47 +191,47 @@ export namespace Message {
   /** https://discord.com/developers/docs/resources/message#search-guild-messages-author-types */
   export enum AuthorType {
     /** Return messages sent by user accounts */
-    user = 'Return messages sent by user accounts',
+    USER = 'user',
     /** Return messages sent by bot accounts */
-    bot = 'Return messages sent by bot accounts',
+    BOT = 'bot',
     /** Return messages sent by webhooks */
-    webhook = 'Return messages sent by webhooks',
+    WEBHOOK = 'webhook',
   }
 
   /** https://discord.com/developers/docs/resources/message#search-guild-messages-search-has-types */
   export enum SearchHasType {
     /** Return messages that have an image */
-    image = 'Return messages that have an image',
+    IMAGE = 'image',
     /** Return messages that have a sound attachment */
-    sound = 'Return messages that have a sound attachment',
+    SOUND = 'sound',
     /** Return messages that have a video */
-    video = 'Return messages that have a video',
+    VIDEO = 'video',
     /** Return messages that have an attachment */
-    file = 'Return messages that have an attachment',
+    FILE = 'file',
     /** Return messages that have a sent sticker */
-    sticker = 'Return messages that have a sent sticker',
+    STICKER = 'sticker',
     /** Return messages that have an embed */
-    embed = 'Return messages that have an embed',
+    EMBED = 'embed',
     /** Return messages that have a link */
-    link = 'Return messages that have a link',
+    LINK = 'link',
     /** Return messages that have a poll */
-    poll = 'Return messages that have a poll',
+    POLL = 'poll',
     /** Return messages that have a forwarded message */
-    snapshot = 'Return messages that have a forwarded message',
+    SNAPSHOT = 'snapshot',
   }
 
   /** https://discord.com/developers/docs/resources/message#search-guild-messages-search-embed-types */
   export enum SearchEmbedType {
     /** Return messages that have an image embed */
-    image = 'Return messages that have an image embed',
+    IMAGE = 'image',
     /** Return messages that have a video embed */
-    video = 'Return messages that have a video embed',
+    VIDEO = 'video',
     /** Return messages that have a gifv embed */
-    gif \[1\] = 'Return messages that have a gifv embed',
+    GIF = 'gif',
     /** Return messages that have a sound embed */
-    sound = 'Return messages that have a sound embed',
+    SOUND = 'sound',
     /** Return messages that have an article embed */
-    article = 'Return messages that have an article embed',
+    ARTICLE = 'article',
   }
 
   /** https://discord.com/developers/docs/resources/message#get-reactions-reaction-types */
@@ -256,7 +293,7 @@ export namespace Message {
   /** https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure */
   export interface CallObject {
     /** array of user object ids that participated in the call */
-    participants: Snowflakes[]
+    participants: snowflake[]
     /** time when call ended */
     ended_timestamp?: timestamp | null
   }
@@ -475,150 +512,148 @@ export namespace Message {
     has_more: boolean
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/message#get-channel-messages-query-string-params */
-    export interface GetChannelMessages {
-      /** Get messages around this message ID */
-      around?: snowflake
-      /** Get messages before this message ID */
-      before?: snowflake
-      /** Get messages after this message ID */
-      after?: snowflake
-      /** Max number of messages to return (1-100) */
-      limit?: integer
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/message#search-guild-messages-query-string-params */
-    export interface SearchGuildMessages {
-      /** Max number of messages to return (1-25, default 25) */
-      limit?: integer
-      /** Number to offset the returned messages by (max 9975) */
-      offset?: integer
-      /** Get messages before this message ID */
-      max_id?: snowflake
-      /** Get messages after this message ID */
-      min_id?: snowflake
-      /** Max number of words to skip between matching tokens in the search `content` (max 100, default 2) */
-      slop?: integer
-      /** Filter messages by content (max 1024 characters) */
-      content?: string
-      /** Filter messages by these channels (max 500) */
-      channel_id?: Snowflakes[]
-      /** Filter messages by author type */
-      author_type?: Strings[]
-      /** Filter messages by these authors (max 100) */
-      author_id?: Snowflakes[]
-      /** Filter messages that mention these users (max 100) */
-      mentions?: Snowflakes[]
-      /** Filter messages that mention these roles (max 100) */
-      mentions_role_id?: Snowflakes[]
-      /** Filter messages that do or do not mention @everyone */
-      mention_everyone?: boolean
-      /** Filter messages that reply to these users (max 100) */
-      replied_to_user_id?: Snowflakes[]
-      /** Filter messages that reply to these messages (max 100) */
-      replied_to_message_id?: Snowflakes[]
-      /** Filter messages by whether they are or are not pinned */
-      pinned?: boolean
-      /** Filter messages by whether or not they have specific things */
-      has?: Strings[]
-      /** Filter messages by embed type */
-      embed_type?: Strings[]
-      /** Filter messages by embed provider (case-sensitive, e.g. `Tenor`) (max 256 characters, max 100) */
-      embed_provider?: Strings[]
-      /** Filter messages by link hostname (e.g. `discordapp.com`) (max 256 characters, max 100) */
-      link_hostname?: Strings[]
-      /** Filter messages by attachment filename (max 1024 characters, max 100) */
-      attachment_filename?: Strings[]
-      /** Filter messages by attachment extension (e.g. `txt`) (max 256 characters, max 100) */
-      attachment_extension?: Strings[]
-      /** The sorting algorithm to use */
-      sort_by? \[1\]: string
-      /** The direction to sort (`asc` or `desc`, default `desc`) */
-      sort_order? \[1\]: string
-      /** Whether to include results from age-restricted channels (default false) */
-      include_nsfw?: boolean
-    }
+/** https://discord.com/developers/docs/resources/message#get-channel-messages-query-string-params */
+export interface GetChannelMessagesParams {
+  /** Get messages around this message ID */
+  around?: snowflake
+  /** Get messages before this message ID */
+  before?: snowflake
+  /** Get messages after this message ID */
+  after?: snowflake
+  /** Max number of messages to return (1-100) */
+  limit?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/message#create-message-json/form-params */
-    export interface Create {
-      /** Message contents (up to 2000 characters) */
-      content?: string
-      /** Can be used to verify a message was sent (up to 25 characters). Value will appear in the Message Create event. */
-      nonce?: IntegerOrString
-      /** `true` if this is a TTS message */
-      tts?: boolean
-      /** Up to 10 `rich` embeds (up to 6000 characters) */
-      embeds?: Embed[]
-      /** Allowed mentions for the message */
-      allowed_mentions?: AllowedMention
-      /** Include to make your message a reply or a forward */
-      message_reference?: MessageReference
-      /** Components to include with the message */
-      components?: MessageComponent[]
-      /** IDs of up to 3 stickers in the server to send in the message */
-      sticker_ids?: Snowflakes[]
-      /** Contents of the file being sent. See Uploading Files */
-      files[n]?: any
-      /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
-      payload_json?: string
-      /** Attachment objects with filename and description. See Uploading Files */
-      attachments?: PartialAttachment[]
-      /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS`, `SUPPRESS_NOTIFICATIONS`, `IS_VOICE_MESSAGE`, and `IS_COMPONENTS_V2` can be set) */
-      flags?: integer
-      /** If true and nonce is present, it will be checked for uniqueness in the past few minutes. If another message was created by the same author with the same nonce, that message will be returned and no new message will be created. */
-      enforce_nonce?: boolean
-      /** A poll! */
-      poll?: PollRequest
-      /** The custom client-side theme to share via the message */
-      shared_client_theme?: SharedClientTheme
-    }
+/** https://discord.com/developers/docs/resources/message#search-guild-messages-query-string-params */
+export interface SearchGuildMessagesParams {
+  /** Max number of messages to return (1-25, default 25) */
+  limit?: integer
+  /** Number to offset the returned messages by (max 9975) */
+  offset?: integer
+  /** Get messages before this message ID */
+  max_id?: snowflake
+  /** Get messages after this message ID */
+  min_id?: snowflake
+  /** Max number of words to skip between matching tokens in the search `content` (max 100, default 2) */
+  slop?: integer
+  /** Filter messages by content (max 1024 characters) */
+  content?: string
+  /** Filter messages by these channels (max 500) */
+  channel_id?: snowflake[]
+  /** Filter messages by author type */
+  author_type?: string[]
+  /** Filter messages by these authors (max 100) */
+  author_id?: snowflake[]
+  /** Filter messages that mention these users (max 100) */
+  mentions?: snowflake[]
+  /** Filter messages that mention these roles (max 100) */
+  mentions_role_id?: snowflake[]
+  /** Filter messages that do or do not mention @everyone */
+  mention_everyone?: Boolean
+  /** Filter messages that reply to these users (max 100) */
+  replied_to_user_id?: snowflake[]
+  /** Filter messages that reply to these messages (max 100) */
+  replied_to_message_id?: snowflake[]
+  /** Filter messages by whether they are or are not pinned */
+  pinned?: Boolean
+  /** Filter messages by whether or not they have specific things */
+  has?: string[]
+  /** Filter messages by embed type */
+  embed_type?: string[]
+  /** Filter messages by embed provider (case-sensitive, e.g. `Tenor`) (max 256 characters, max 100) */
+  embed_provider?: string[]
+  /** Filter messages by link hostname (e.g. `discordapp.com`) (max 256 characters, max 100) */
+  link_hostname?: string[]
+  /** Filter messages by attachment filename (max 1024 characters, max 100) */
+  attachment_filename?: string[]
+  /** Filter messages by attachment extension (e.g. `txt`) (max 256 characters, max 100) */
+  attachment_extension?: string[]
+  /** The sorting algorithm to use */
+  sort_by? \: string
+  /** The direction to sort (`asc` or `desc`, default `desc`) */
+  sort_order? \: string
+  /** Whether to include results from age-restricted channels (default false) */
+  include_nsfw?: Boolean
+}
 
-    /** https://discord.com/developers/docs/resources/message#get-reactions-query-string-params */
-    export interface GetReactions {
-      /** The type of reaction */
-      type?: integer
-      /** Get users after this user ID */
-      after?: snowflake
-      /** Max number of users to return (1-100) */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/message#create-message-json/form-params */
+export interface CreateMessageParams {
+  /** Message contents (up to 2000 characters) */
+  content?: string
+  /** Can be used to verify a message was sent (up to 25 characters). Value will appear in the Message Create event. */
+  nonce?: IntegerOrString
+  /** `true` if this is a TTS message */
+  tts?: boolean
+  /** Up to 10 `rich` embeds (up to 6000 characters) */
+  embeds?: Embed[]
+  /** Allowed mentions for the message */
+  allowed_mentions?: AllowedMention
+  /** Include to make your message a reply or a forward */
+  message_reference?: MessageReference
+  /** Components to include with the message */
+  components?: MessageComponent[]
+  /** IDs of up to 3 stickers in the server to send in the message */
+  sticker_ids?: snowflake[]
+  /** Contents of the file being sent. See Uploading Files */
+  files?: any
+  /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
+  payload_json?: string
+  /** Attachment objects with filename and description. See Uploading Files */
+  attachments?: PartialAttachment[]
+  /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS`, `SUPPRESS_NOTIFICATIONS`, `IS_VOICE_MESSAGE`, and `IS_COMPONENTS_V2` can be set) */
+  flags?: integer
+  /** If true and nonce is present, it will be checked for uniqueness in the past few minutes. If another message was created by the same author with the same nonce, that message will be returned and no new message will be created. */
+  enforce_nonce?: boolean
+  /** A poll! */
+  poll?: PollRequest
+  /** The custom client-side theme to share via the message */
+  shared_client_theme?: SharedClientTheme
+}
 
-    /** https://discord.com/developers/docs/resources/message#edit-message-json/form-params */
-    export interface Modify {
-      /** Message contents (up to 2000 characters) */
-      content: string
-      /** Up to 10 `rich` embeds (up to 6000 characters) */
-      embeds: Embed[]
-      /** Edit the flags of a message (`SUPPRESS_EMBEDS` and `IS_COMPONENTS_V2` only) */
-      flags: integer
-      /** Allowed mentions for the message */
-      allowed_mentions: AllowedMention
-      /** Components to include with the message */
-      components: MessageComponent[]
-      /** Contents of the file being sent/edited. See Uploading Files */
-      files[n]: any
-      /** JSON-encoded body of non-file params (multipart/form-data only). See Uploading Files */
-      payload_json: string
-      /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-      attachments: Attachment[]
-    }
+/** https://discord.com/developers/docs/resources/message#get-reactions-query-string-params */
+export interface GetReactionsParams {
+  /** The type of reaction */
+  type?: integer
+  /** Get users after this user ID */
+  after?: snowflake
+  /** Max number of users to return (1-100) */
+  limit?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/message#bulk-delete-messages-json-params */
-    export interface BulkDeleteMessages {
-      /** an array of message ids to delete (2-100) */
-      messages: Snowflakes[]
-    }
+/** https://discord.com/developers/docs/resources/message#edit-message-json/form-params */
+export interface EditMessageParams {
+  /** Message contents (up to 2000 characters) */
+  content: string
+  /** Up to 10 `rich` embeds (up to 6000 characters) */
+  embeds: Embed[]
+  /** Edit the flags of a message (`SUPPRESS_EMBEDS` and `IS_COMPONENTS_V2` only) */
+  flags: integer
+  /** Allowed mentions for the message */
+  allowed_mentions: AllowedMention
+  /** Components to include with the message */
+  components: MessageComponent[]
+  /** Contents of the file being sent/edited. See Uploading Files */
+  files: any
+  /** JSON-encoded body of non-file params (multipart/form-data only). See Uploading Files */
+  payload_json: string
+  /** Attached files to keep and possible descriptions for new files. See Uploading Files */
+  attachments: Attachment[]
+}
 
-    /** https://discord.com/developers/docs/resources/message#get-channel-pins-query-string-params */
-    export interface GetChannelPins {
-      /** Get messages pinned before this timestamp */
-      before?: timestamp
-      /** Max number of pins to return (1-50) */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/message#bulk-delete-messages-json-params */
+export interface BulkDeleteMessagesParams {
+  /** an array of message ids to delete (2-100) */
+  messages: snowflake[]
+}
 
-  }
+/** https://discord.com/developers/docs/resources/message#get-channel-pins-query-string-params */
+export interface GetChannelPinsParams {
+  /** Get messages pinned before this timestamp */
+  before?: timestamp
+  /** Max number of pins to return (1-50) */
+  limit?: integer
 }
 
 declare module './internal' {
@@ -627,12 +662,12 @@ declare module './internal' {
      * Retrieves the messages in a channel. Returns an array of message objects from newest to oldest on success.
      * @see https://discord.com/developers/docs/resources/message#get-channel-messages
      */
-    getChannelMessages(channel_id: snowflake, params: Message.Params.Params): Promise<Message[]>
+    getChannelMessages(channel_id: snowflake, params: GetChannelMessagesParams): Promise<Message[]>
     /**
      * Returns a list of messages without the `reactions` key that match a search query in the guild. Requires the `READ_MESSAGE_HISTORY` permission.
      * @see https://discord.com/developers/docs/resources/message#search-guild-messages
      */
-    searchGuildMessages(guild_id: snowflake, params: Message.Params.Params): Promise<void>
+    searchGuildMessages(guild_id: snowflake, params: SearchGuildMessagesParams): Promise<void>
     /**
      * Retrieves a specific message in the channel. Returns a message object on success.
      * @see https://discord.com/developers/docs/resources/message#get-channel-message
@@ -642,7 +677,7 @@ declare module './internal' {
      * <Warning>
      * @see https://discord.com/developers/docs/resources/message#create-message
      */
-    createMessage(channel_id: snowflake, params: Message.Params.Create): Promise<void>
+    createMessage(channel_id: snowflake, params: CreateMessageParams): Promise<void>
     /**
      * Crosspost a message in an Announcement Channel to following channels. This endpoint requires the `SEND_MESSAGES` permission, if the current user sent the message, or additionally the `MANAGE_MESSAGES` permission, for all other messages, to be present for the current user.
      * @see https://discord.com/developers/docs/resources/message#crosspost-message
@@ -667,7 +702,7 @@ declare module './internal' {
      * Get a list of users that reacted with this emoji. Returns an array of user objects on success.
      * @see https://discord.com/developers/docs/resources/message#get-reactions
      */
-    getReactions(channel_id: snowflake, message_id: snowflake, emoji_id: snowflake, params: Message.Params.Params): Promise<User[]>
+    getReactions(channel_id: snowflake, message_id: snowflake, emoji_id: snowflake, params: GetReactionsParams): Promise<User[]>
     /**
      * Deletes all reactions on a message. This endpoint requires the `MANAGE_MESSAGES` permission to be present on the current user. Fires a Message Reaction Remove All Gateway event.
      * @see https://discord.com/developers/docs/resources/message#delete-all-reactions
@@ -682,7 +717,7 @@ declare module './internal' {
      * Edit a previously sent message. The fields `content`, `embeds`, `flags` and `components` can be edited by the original message author. Other users can only edit `flags` and only if they have the `MANAGE_MESSAGES` permission in the corresponding channel. When specifying flags, ensure to include all previously set flags/bits in addition to ones that you are modifying. Only `flags` documented in the table below may be modified by users (unsupported flag changes are currently ignored without error).
      * @see https://discord.com/developers/docs/resources/message#edit-message
      */
-    editMessage(channel_id: snowflake, message_id: snowflake, params: Message.Params.Modify): Promise<void>
+    editMessage(channel_id: snowflake, message_id: snowflake, params: EditMessageParams): Promise<void>
     /**
      * Delete a message. If operating on a guild channel and trying to delete a message that was not sent by the current user, this endpoint requires the `MANAGE_MESSAGES` permission. Returns a 204 empty response on success. Fires a Message Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/message#delete-message
@@ -692,12 +727,12 @@ declare module './internal' {
      * Delete multiple messages in a single request. This endpoint can only be used on guild channels and requires the `MANAGE_MESSAGES` permission. Returns a 204 empty response on success. Fires a Message Delete Bulk Gateway event.
      * @see https://discord.com/developers/docs/resources/message#bulk-delete-messages
      */
-    bulkDeleteMessages(channel_id: snowflake, params: Message.Params.Params): Promise<void>
+    bulkDeleteMessages(channel_id: snowflake, params: BulkDeleteMessagesParams): Promise<void>
     /**
      * Retrieves the list of pins in a channel. Requires the `VIEW_CHANNEL` permission. If the user is missing the `READ_MESSAGE_HISTORY` permission in the channel, then no pins will be returned.
      * @see https://discord.com/developers/docs/resources/message#get-channel-pins
      */
-    getChannelPins(channel_id: snowflake, params: Message.Params.Params): Promise<void>
+    getChannelPins(channel_id: snowflake, params: GetChannelPinsParams): Promise<void>
     /**
      * Pin a message in a channel. Requires the `PIN_MESSAGES` permission. Fires a Channel Pins Update Gateway event.
      * @see https://discord.com/developers/docs/resources/message#pin-message

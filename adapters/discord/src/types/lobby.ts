@@ -18,7 +18,7 @@ export namespace Lobby {
   /** https://discord.com/developers/docs/resources/lobby#lobby-member-object-lobby-member-flags */
   export enum MemberFlag {
     /** user can link a text channel to a lobby */
-    CanLinkLobby = 1<<0,
+    CANLINKLOBBY = 1<<0,
   }
 
   /** https://discord.com/developers/docs/resources/lobby#lobby-member-object-lobby-member-structure */

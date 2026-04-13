@@ -5,7 +5,7 @@ export interface Poll {
   /** The question of the poll. Only `text` is supported. */
   question: PollMedia
   /** Each of the answers available in the poll. */
-  answers: ListOfPollAnswer
+  answers: PollAnswer[]
   /** The time when the poll ends. */
   expiry: Is08601Timestamp | null
   /** Whether a user can select multiple answers */
@@ -22,7 +22,7 @@ export namespace Poll {
     /** The question of the poll. Only `text` is supported. */
     question: PollMedia
     /** Each of the answers available in the poll, up to 10 */
-    answers: ListOfPollAnswer
+    answers: PollAnswer[]
     /** Number of hours the poll should be open for, up to 32 days. Defaults to 24 */
     duration?: integer
     /** Whether a user can select multiple answers. Defaults to false */
@@ -50,7 +50,7 @@ export namespace Poll {
     /** Whether the votes have been precisely counted */
     is_finalized: boolean
     /** The counts for each answer */
-    answer_counts: ListOfPollAnswerCount
+    answer_counts: PollAnswerCount[]
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-results-object-poll-answer-count-object-structure */
@@ -63,16 +63,14 @@ export namespace Poll {
     me_voted: boolean
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/poll#get-answer-voters-query-string-params */
-    export interface GetAnswerVoters {
-      /** Get users after this user ID */
-      after?: snowflake
-      /** Max number of users to return (1-100) */
-      limit?: integer
-    }
+}
 
-  }
+/** https://discord.com/developers/docs/resources/poll#get-answer-voters-query-string-params */
+export interface GetAnswerVotersParams {
+  /** Get users after this user ID */
+  after?: snowflake
+  /** Max number of users to return (1-100) */
+  limit?: integer
 }
 
 declare module './internal' {
@@ -81,7 +79,7 @@ declare module './internal' {
      * Get a list of users that voted for this specific answer.
      * @see https://discord.com/developers/docs/resources/poll#get-answer-voters
      */
-    getAnswerVoters(channel_id: snowflake, message_id: snowflake, params: Poll.Params.Params): Promise<void>
+    getAnswerVoters(channel_id: snowflake, message_id: snowflake, params: GetAnswerVotersParams): Promise<void>
     /**
      * Immediately ends the poll. You cannot end polls from other users.
      * @see https://discord.com/developers/docs/resources/poll#end-poll

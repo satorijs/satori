@@ -21,40 +21,38 @@ export interface Emoji {
 }
 
 export namespace Emoji {
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/emoji#create-guild-emoji-json-params */
-    export interface Create {
-      /** name of the emoji */
-      name: string
-      /** the 128x128 emoji image */
-      image: ImageData
-      /** roles allowed to use this emoji */
-      roles: Snowflakes[]
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/emoji#modify-guild-emoji-json-params */
-    export interface Modify {
-      /** name of the emoji */
-      name: string
-      /** roles allowed to use this emoji */
-      roles: Snowflakes[] | null
-    }
+/** https://discord.com/developers/docs/resources/emoji#create-guild-emoji-json-params */
+export interface CreateGuildEmojiParams {
+  /** name of the emoji */
+  name: string
+  /** the 128x128 emoji image */
+  image: ImageData
+  /** roles allowed to use this emoji */
+  roles: snowflake[]
+}
 
-    /** https://discord.com/developers/docs/resources/emoji#create-application-emoji-json-params */
-    export interface Create {
-      /** name of the emoji */
-      name: string
-      /** the 128x128 emoji image */
-      image: ImageData
-    }
+/** https://discord.com/developers/docs/resources/emoji#modify-guild-emoji-json-params */
+export interface ModifyGuildEmojiParams {
+  /** name of the emoji */
+  name: string
+  /** roles allowed to use this emoji */
+  roles: snowflake[] | null
+}
 
-    /** https://discord.com/developers/docs/resources/emoji#modify-application-emoji-json-params */
-    export interface Modify {
-      /** name of the emoji */
-      name: string
-    }
+/** https://discord.com/developers/docs/resources/emoji#create-application-emoji-json-params */
+export interface CreateApplicationEmojiParams {
+  /** name of the emoji */
+  name: string
+  /** the 128x128 emoji image */
+  image: ImageData
+}
 
-  }
+/** https://discord.com/developers/docs/resources/emoji#modify-application-emoji-json-params */
+export interface ModifyApplicationEmojiParams {
+  /** name of the emoji */
+  name: string
 }
 
 declare module './internal' {
@@ -73,12 +71,12 @@ declare module './internal' {
      * Create a new emoji for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new emoji object on success. Fires a Guild Emojis Update Gateway event.
      * @see https://discord.com/developers/docs/resources/emoji#create-guild-emoji
      */
-    createGuildEmoji(guild_id: snowflake, params: Emoji.Params.Create): Promise<Emoji>
+    createGuildEmoji(guild_id: snowflake, params: CreateGuildEmojiParams): Promise<Emoji>
     /**
      * Modify the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated emoji object on success. Fires a Guild Emojis Update Gateway event.
      * @see https://discord.com/developers/docs/resources/emoji#modify-guild-emoji
      */
-    modifyGuildEmoji(guild_id: snowflake, emoji_id: snowflake, params: Emoji.Params.Modify): Promise<Emoji>
+    modifyGuildEmoji(guild_id: snowflake, emoji_id: snowflake, params: ModifyGuildEmojiParams): Promise<Emoji>
     /**
      * Delete the given emoji. For emojis created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other emojis, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Emojis Update Gateway event.
      * @see https://discord.com/developers/docs/resources/emoji#delete-guild-emoji
@@ -98,12 +96,12 @@ declare module './internal' {
      * Create a new emoji for the application. Returns the new emoji object on success.
      * @see https://discord.com/developers/docs/resources/emoji#create-application-emoji
      */
-    createApplicationEmoji(application_id: snowflake, params: Emoji.Params.Create): Promise<Emoji>
+    createApplicationEmoji(application_id: snowflake, params: CreateApplicationEmojiParams): Promise<Emoji>
     /**
      * Modify the given emoji. Returns the updated emoji object on success.
      * @see https://discord.com/developers/docs/resources/emoji#modify-application-emoji
      */
-    modifyApplicationEmoji(application_id: snowflake, emoji_id: snowflake, params: Emoji.Params.Modify): Promise<Emoji>
+    modifyApplicationEmoji(application_id: snowflake, emoji_id: snowflake, params: ModifyApplicationEmojiParams): Promise<Emoji>
     /**
      * Delete the given emoji. Returns `204 No Content` on success.
      * @see https://discord.com/developers/docs/resources/emoji#delete-application-emoji

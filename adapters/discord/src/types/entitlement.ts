@@ -45,38 +45,36 @@ export namespace Entitlement {
     APPLICATION_SUBSCRIPTION = 8,
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/entitlement#list-entitlements-query-string-params */
-    export interface ListEntitlements {
-      /** User ID to look up entitlements for */
-      user_id?: snowflake
-      /** Optional list of SKU IDs to check entitlements for */
-      sku_ids?: CommaDelimitedSetOfSnowflakes
-      /** Retrieve entitlements before this entitlement ID */
-      before?: snowflake
-      /** Retrieve entitlements after this entitlement ID */
-      after?: snowflake
-      /** Number of entitlements to return, 1-100, default 100 */
-      limit?: integer
-      /** Guild ID to look up entitlements for */
-      guild_id?: snowflake
-      /** Whether or not ended entitlements should be omitted. Defaults to false, ended entitlements are included by default. */
-      exclude_ended?: boolean
-      /** Whether or not deleted entitlements should be omitted. Defaults to true, deleted entitlements are not included by default. */
-      exclude_deleted?: boolean
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/entitlement#create-test-entitlement-json-params */
-    export interface Create {
-      /** ID of the SKU to grant the entitlement to */
-      sku_id: string
-      /** ID of the guild or user to grant the entitlement to */
-      owner_id: string
-      /** `1` for a guild subscription, `2` for a user subscription */
-      owner_type: integer
-    }
+/** https://discord.com/developers/docs/resources/entitlement#list-entitlements-query-string-params */
+export interface ListEntitlementsParams {
+  /** User ID to look up entitlements for */
+  user_id?: snowflake
+  /** Optional list of SKU IDs to check entitlements for */
+  sku_ids?: CommaDelimitedSetOfSnowflakes
+  /** Retrieve entitlements before this entitlement ID */
+  before?: snowflake
+  /** Retrieve entitlements after this entitlement ID */
+  after?: snowflake
+  /** Number of entitlements to return, 1-100, default 100 */
+  limit?: integer
+  /** Guild ID to look up entitlements for */
+  guild_id?: snowflake
+  /** Whether or not ended entitlements should be omitted. Defaults to false, ended entitlements are included by default. */
+  exclude_ended?: Boolean
+  /** Whether or not deleted entitlements should be omitted. Defaults to true, deleted entitlements are not included by default. */
+  exclude_deleted?: Boolean
+}
 
-  }
+/** https://discord.com/developers/docs/resources/entitlement#create-test-entitlement-json-params */
+export interface CreateTestEntitlementParams {
+  /** ID of the SKU to grant the entitlement to */
+  sku_id: string
+  /** ID of the guild or user to grant the entitlement to */
+  owner_id: string
+  /** `1` for a guild subscription, `2` for a user subscription */
+  owner_type: integer
 }
 
 declare module './internal' {
@@ -85,7 +83,7 @@ declare module './internal' {
      * Returns all entitlements for a given app, active and expired.
      * @see https://discord.com/developers/docs/resources/entitlement#list-entitlements
      */
-    listEntitlements(application_id: snowflake, params: Entitlement.Params.Params): Promise<void>
+    listEntitlements(application_id: snowflake, params: ListEntitlementsParams): Promise<void>
     /**
      * Returns an entitlement.
      * @see https://discord.com/developers/docs/resources/entitlement#get-entitlement
@@ -100,7 +98,7 @@ declare module './internal' {
      * Creates a test entitlement to a given SKU for a given guild or user. Discord will act as though that user or guild has entitlement to your premium offering.
      * @see https://discord.com/developers/docs/resources/entitlement#create-test-entitlement
      */
-    createTestEntitlement(application_id: snowflake, params: Entitlement.Params.Create): Promise<void>
+    createTestEntitlement(application_id: snowflake, params: CreateTestEntitlementParams): Promise<void>
     /**
      * Deletes a currently-active test entitlement. Discord will act as though that user or guild _no longer has_ entitlement to your premium offering.
      * @see https://discord.com/developers/docs/resources/entitlement#delete-test-entitlement

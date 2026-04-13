@@ -58,6 +58,9 @@ const sources: { dir: string; files: Record<string, string> }[] = [
 
 const generatedFiles: string[] = []
 
+// Track cross-file type imports: resource name → Set of type names
+const crossImports = new Map<string, Set<string>>()
+
 for (const source of sources) {
   for (const [file, outName] of Object.entries(source.files)) {
     const path = join(source.dir, file)
@@ -157,6 +160,8 @@ function toPascalCase(str: string): string {
 }
 
 function toCamelCase(str: string): string {
+  // Handle slash-separated alternatives: "Delete/Close Channel" → "Delete Channel"
+  str = str.replace(/\/\w+/, '')
   const p = toPascalCase(str)
   return p.charAt(0).toLowerCase() + p.slice(1)
 }
@@ -182,23 +187,56 @@ function parseTable(table: string): string[][] {
   return [lines[0], ...lines.slice(2)].map(line => line.split('|').slice(1, -1).map(cell => cell.trim()))
 }
 
-/** Resolve a markdown link type to a TS type name: [user](/developers/resources/user#user-object) object → User */
-function resolveTypeRef(raw: string): string {
-  // Remove markdown links but keep link text
+/** Extract resource file name from a Discord docs URL */
+function extractResourceFromUrl(url: string): string | undefined {
+  const match = url.match(/\/developers\/(?:resources|interactions|topics|events|components)\/([^#]+)/)
+  if (!match) return undefined
+  return match[1]
+}
+
+/** Resolve a markdown link type to a TS type name, tracking imports from other files */
+function resolveTypeRef(raw: string, currentResource: string): string {
+  // Strip footnote markers like \*
+  raw = raw.replace(/\\\*/g, '').trim()
+
+  // Try to extract type from markdown link: [type name](url)
+  const linkMatch = raw.match(/^(?:array of\s+|list of\s+)?\[([^\]]+)\]\(([^)]+)\)\s*objects?$/i)
+    || raw.match(/^(?:array of\s+|list of\s+)?\[([^\]]+)\]\(([^)]+)\)$/i)
+  if (linkMatch) {
+    const isArray = /^(?:array|list) of\s+/i.test(raw)
+    const [, linkText, url] = linkMatch
+    const resource = extractResourceFromUrl(url)
+    const typeName = toPascalCase(linkText.replace(/\s*objects?$/i, ''))
+
+    // Track cross-file imports
+    if (resource && resource !== currentResource) {
+      if (!crossImports.has(currentResource)) crossImports.set(currentResource, new Set())
+      crossImports.get(currentResource)!.add(typeName)
+    }
+
+    return isArray ? typeName + '[]' : typeName
+  }
+
+  // Remove markdown links but keep link text (for complex expressions)
   let cleaned = raw.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
   // "array of X objects" → X[]
   if (/^array of\s+/i.test(cleaned)) {
     const inner = cleaned.replace(/^array of\s+/i, '').replace(/\s*objects?$/i, '').trim()
-    return toPascalCase(inner) + '[]'
+    return resolveTypeRef(inner, currentResource) + '[]'
+  }
+  // "list of X objects" → X[]
+  if (/^list of\s+/i.test(cleaned)) {
+    const inner = cleaned.replace(/^list of\s+/i, '').replace(/\s*objects?$/i, '').trim()
+    return resolveTypeRef(inner, currentResource) + '[]'
   }
   // "X object" → X
   cleaned = cleaned.replace(/\s*objects?$/i, '').trim()
   if (!cleaned) return 'any'
-  // Map primitives
+  // Map primitives (including plurals)
   const lower = cleaned.toLowerCase()
-  if (lower === 'snowflake') return 'snowflake'
-  if (lower === 'string') return 'string'
-  if (lower === 'integer' || lower === 'int') return 'integer'
+  if (lower === 'snowflake' || lower === 'snowflakes') return 'snowflake'
+  if (lower === 'string' || lower === 'strings') return 'string'
+  if (lower === 'integer' || lower === 'int' || lower === 'integers') return 'integer'
   if (lower === 'boolean' || lower === 'bool') return 'boolean'
   if (lower === 'float' || lower === 'number') return 'number'
   if (lower === 'file contents' || lower === 'file') return 'any'
@@ -223,9 +261,9 @@ function processResource(filePath: string, outputName?: string) {
   const content = readFileSync(filePath, 'utf-8')
   const resourceName = outputName || basename(filePath, '.mdx')
 
-  const objects = parseObjects(content)
+  const objects = parseObjects(content, resourceName)
   const enums = parseEnums(content)
-  const endpoints = parseEndpoints(content)
+  const endpoints = parseEndpoints(content, resourceName)
 
   // Build enum anchor → enum name map for field type resolution
   const enumMap = new Map<string, string>()
@@ -256,7 +294,7 @@ function processResource(filePath: string, outputName?: string) {
   console.log(`Written: ${outPath}\n`)
 }
 
-function parseObjects(content: string): ObjectDef[] {
+function parseObjects(content: string, resourceName: string): ObjectDef[] {
   const results: ObjectDef[] = []
   const re = /<ManualAnchor id="([^"]+)" \/>\s*\n###### (.+Structure)\s*\n([\s\S]*?)(?=\n(?:###|<ManualAnchor|<Route|\*|<Info|<Warning|<Note|```)|\$)/g
   let match
@@ -267,15 +305,22 @@ function parseObjects(content: string): ObjectDef[] {
     const rows = parseTable(table)
     if (rows.length < 2) continue
     const fields: Field[] = rows.slice(1).map(row => {
-      let name = (row[0] || '').replace(/\\\*/g, '').trim()
+      let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
+      // Strip field[n] patterns (e.g., files[n])
+      name = name.replace(/\[.*?\]/g, '')
       const optional = name.endsWith('?')
       if (optional) name = name.slice(0, -1)
       let rawType = (row[1] || '').trim()
-      const nullable = rawType.startsWith('?')
+      let nullable = rawType.startsWith('?')
       if (nullable) rawType = rawType.slice(1)
+      // Also handle trailing ? as nullable: "String?" → nullable String
+      if (rawType.endsWith('?')) {
+        nullable = true
+        rawType = rawType.slice(0, -1)
+      }
       const description = (row[2] || '').trim()
       // const descClean = description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-      const tsType = resolveTypeRef(rawType)
+      const tsType = resolveTypeRef(rawType, resourceName)
       return { name, rawType, tsType, description, optional, nullable }
     }).filter(f => f.name)
     results.push({ anchor, heading, fields })
@@ -299,16 +344,26 @@ function parseEnums(content: string): EnumDef[] {
       : header.indexOf('permission') >= 0 ? header.indexOf('permission')
         : header.indexOf('flag') >= 0 ? header.indexOf('flag')
           : header.indexOf('name') >= 0 ? header.indexOf('name') : 0
-    const valueIdx = header.indexOf('value') >= 0 ? header.indexOf('value') : 1
-    const descIdx = header.indexOf('description')
+    const valueIdx = header.indexOf('value') >= 0 ? header.indexOf('value') : -1
+    const descIdx = header.indexOf('description') >= 0 ? header.indexOf('description')
+      : header.findIndex((h, i) => i !== typeIdx && i !== valueIdx)
     const values: EnumValue[] = rows.slice(1).map(row => {
-      const name = (row[typeIdx] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
-      let value = (row[valueIdx] || '').trim()
+      let name = (row[typeIdx] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
+      // Strip backticks from enum names
+      name = name.replace(/`/g, '')
+      // Strip escaped brackets like \[1\]
+      name = name.replace(/\\\[.*?\\\]/g, '').trim()
+      // Normalize enum member names to UPPER_SNAKE_CASE
+      name = name.replace(/[\s-]+/g, '_').toUpperCase()
+      // When no value column, use name as value (lowercased for string enums)
+      let value = valueIdx >= 0 ? (row[valueIdx] || '').trim() : name.toLowerCase()
       // Extract bit shift: `0x...` `(1 << N)` → 1 << N
       const bitShift = value.match(/\((\d+\s*<<\s*\d+)\)/)
       if (bitShift) value = bitShift[1].replace(/\s+/g, ' ')
       // Strip backticks
       value = value.replace(/`/g, '').trim()
+      // Strip embedded double quotes from string values: "roles" → roles
+      value = value.replace(/^"(.*)"$/, '$1')
       const description = descIdx >= 0 ? (row[descIdx] || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim() : ''
       return { name, value, description }
     }).filter(v => v.name && v.value)
@@ -317,7 +372,7 @@ function parseEnums(content: string): EnumDef[] {
   return results
 }
 
-function parseEndpoints(content: string): Endpoint[] {
+function parseEndpoints(content: string, resourceName: string): Endpoint[] {
   const results: Endpoint[] = []
   const re = /## (.+)\n<Route method="(\w+)">(.+?)<\/Route>\s*\n\n([\s\S]*?)(?=\n## |\n---\s*$|$)/g
   let match
@@ -337,14 +392,19 @@ function parseEndpoints(content: string): Endpoint[] {
             anchor: paramsMatch[1],
             heading: 'Params',
             fields: rows.slice(1).map(row => {
-              let name = (row[0] || '').replace(/\\\*/g, '').trim()
+              let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
+              name = name.replace(/\[.*?\]/g, '')
               const optional = name.endsWith('?')
               if (optional) name = name.slice(0, -1)
               let rawType = (row[1] || '').trim()
-              const nullable = rawType.startsWith('?')
+              let nullable = rawType.startsWith('?')
               if (nullable) rawType = rawType.slice(1)
+              if (rawType.endsWith('?')) {
+                nullable = true
+                rawType = rawType.slice(0, -1)
+              }
               const desc = (row[2] || '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
-              return { name, rawType, tsType: resolveTypeRef(rawType), description: desc, optional, nullable }
+              return { name, rawType, tsType: resolveTypeRef(rawType, resourceName), description: desc, optional, nullable }
             }).filter(f => f.name),
           }
         }
@@ -391,7 +451,11 @@ function generateTypeScript(
     if (f.tsType === 'snowflake' || f.tsType.includes('snowflake')) imports.add('snowflake')
     if (f.tsType === 'integer' || f.tsType.includes('integer')) imports.add('integer')
     if (f.tsType === 'timestamp' || f.tsType.includes('timestamp')) imports.add('timestamp')
-    if (f.tsType === 'User' || f.tsType.includes('User')) imports.add('User')
+  }
+  // Add cross-file imports tracked by resolveTypeRef
+  const crossFileTypes = crossImports.get(resourceName)
+  if (crossFileTypes) {
+    for (const t of crossFileTypes) imports.add(t)
   }
   lines.push(`import { ${[...imports].sort().join(', ')} } from '.'`)
   lines.push('')
@@ -460,27 +524,26 @@ function generateTypeScript(
       lines.push('')
     }
 
-    // Params
+    // Params: methodName + Params (e.g., GetGuildParams, ModifyGuildParams)
+    // These go outside the namespace
     const paramDefs = endpoints.filter(e => e.params)
-    if (paramDefs.length > 0) {
-      lines.push('  export namespace Params {')
-      for (const ep of paramDefs) {
-        const name = ep.title.includes('Create') ? 'Create'
-          : ep.title.includes('Modify') || ep.title.includes('Edit') ? 'Modify'
-            : toPascalCase(ep.title)
-        lines.push(`    /** https://discord.com/developers/docs/resources/${resourceName}#${ep.params!.anchor} */`)
-        lines.push(`    export interface ${name} {`)
-        for (const f of ep.params!.fields) {
-          lines.push(`      /** ${f.description} */`)
-          lines.push(`      ${f.name}${f.optional ? '?' : ''}: ${f.tsType}${f.nullable ? ' | null' : ''}`)
-        }
-        lines.push('    }')
-        lines.push('')
-      }
-      lines.push('  }')
-    }
 
     lines.push('}')
+    lines.push('')
+
+    for (const ep of paramDefs) {
+      const methodName = toCamelCase(ep.title)
+      const paramInterfaceName = methodName.charAt(0).toUpperCase() + methodName.slice(1) + 'Params'
+      lines.push(`/** https://discord.com/developers/docs/resources/${resourceName}#${ep.params!.anchor} */`)
+      lines.push(`export interface ${paramInterfaceName} {`)
+      for (const f of ep.params!.fields) {
+        lines.push(`  /** ${f.description} */`)
+        lines.push(`  ${f.name}${f.optional ? '?' : ''}: ${f.tsType}${f.nullable ? ' | null' : ''}`)
+      }
+      lines.push('}')
+      lines.push('')
+    }
+  } else {
     lines.push('')
   }
 
@@ -500,10 +563,8 @@ function generateTypeScript(
 
       // Body params
       if (ep.params) {
-        const paramName = ep.title.includes('Create') ? 'Create'
-          : ep.title.includes('Modify') || ep.title.includes('Edit') ? 'Modify'
-            : 'Params'
-        args.push(`params: ${mainName}.Params.${paramName}`)
+        const paramInterfaceName = methodName.charAt(0).toUpperCase() + methodName.slice(1) + 'Params'
+        args.push(`params: ${paramInterfaceName}`)
       }
 
       // Return type

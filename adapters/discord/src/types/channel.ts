@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake, timestamp } from '.'
+import { GuildMember, Internal, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
 export interface Channel {
@@ -63,7 +63,7 @@ export interface Channel {
   /** the set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   available_tags?: Tag[]
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  applied_tags?: Snowflakes[]
+  applied_tags?: snowflake[]
   /** the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   default_reaction_emoji?: DefaultReaction | null
   /** the initial `rate_limit_per_user` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
@@ -78,31 +78,31 @@ export namespace Channel {
   /** https://discord.com/developers/docs/resources/channel#channel-object-channel-types */
   export enum Type {
     /** a text channel within a server */
-    GUILD_TEXT = 0,
+    GUILD_TEXT = 'guild_text',
     /** a direct message between users */
-    DM = 1,
+    DM = 'dm',
     /** a voice channel within a server */
-    GUILD_VOICE = 2,
+    GUILD_VOICE = 'guild_voice',
     /** a direct message between multiple users */
-    GROUP_DM = 3,
+    GROUP_DM = 'group_dm',
     /** an organizational category that contains up to 50 channels */
-    GUILD_CATEGORY = 4,
+    GUILD_CATEGORY = 'guild_category',
     /** a channel that users can follow and crosspost into their own server (formerly news channels) */
-    GUILD_ANNOUNCEMENT = 5,
+    GUILD_ANNOUNCEMENT = 'guild_announcement',
     /** a temporary sub-channel within a GUILD_ANNOUNCEMENT channel */
-    ANNOUNCEMENT_THREAD = 10,
+    ANNOUNCEMENT_THREAD = 'announcement_thread',
     /** a temporary sub-channel within a GUILD_TEXT or GUILD_FORUM channel */
-    PUBLIC_THREAD = 11,
+    PUBLIC_THREAD = 'public_thread',
     /** a temporary sub-channel within a GUILD_TEXT channel that is only viewable by those invited and those with the MANAGE_THREADS permission */
-    PRIVATE_THREAD = 12,
+    PRIVATE_THREAD = 'private_thread',
     /** a voice channel for hosting events with an audience */
-    GUILD_STAGE_VOICE = 13,
+    GUILD_STAGE_VOICE = 'guild_stage_voice',
     /** the channel in a hub containing the listed servers */
-    GUILD_DIRECTORY = 14,
+    GUILD_DIRECTORY = 'guild_directory',
     /** Channel that can only contain threads */
-    GUILD_FORUM = 15,
+    GUILD_FORUM = 'guild_forum',
     /** Channel that can only contain threads, similar to `GUILD_FORUM` channels */
-    GUILD_MEDIA = 16,
+    GUILD_MEDIA = 'guild_media',
   }
 
   /** https://discord.com/developers/docs/resources/channel#channel-object-channel-flags */
@@ -205,138 +205,136 @@ export namespace Channel {
     emoji_name: string | null
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/channel#edit-channel-permissions-json-params */
-    export interface Modify {
-      /** the bitwise value of all allowed permissions (default `"0"`) */
-      allow?: String?
-      /** the bitwise value of all disallowed permissions (default `"0"`) */
-      deny?: String?
-      /** 0 for a role or 1 for a member */
-      type: integer
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/channel#create-channel-invite-jsonform-params */
-    export interface Create {
-      /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) */
-      max_age: integer
-      /** max number of uses or 0 for unlimited. between 0 and 100 */
-      max_uses: integer
-      /** whether this invite only grants temporary membership */
-      temporary: boolean
-      /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) */
-      unique: boolean
-      /** the type of target for this voice channel invite */
-      target_type: integer
-      /** the id of the user whose stream to display for this invite, required if `target_type` is 1, the user must be streaming in the channel */
-      target_user_id: snowflake
-      /** the id of the embedded application to open for this invite, required if `target_type` is 2, the application must have the `EMBEDDED` flag */
-      target_application_id: snowflake
-      /** a csv file with a single column of user IDs for all the users able to accept this invite */
-      target_users_file?: any
-      /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. */
-      payload_json?: string
-      /** the role ID(s) for roles in the guild given to the users that accept this invite */
-      role_ids?: Snowflakes[]
-    }
+/** https://discord.com/developers/docs/resources/channel#edit-channel-permissions-json-params */
+export interface EditChannelPermissionsParams {
+  /** the bitwise value of all allowed permissions (default `"0"`) */
+  allow?: string | null
+  /** the bitwise value of all disallowed permissions (default `"0"`) */
+  deny?: string | null
+  /** 0 for a role or 1 for a member */
+  type: integer
+}
 
-    /** https://discord.com/developers/docs/resources/channel#follow-announcement-channel-json-params */
-    export interface FollowAnnouncementChannel {
-      /** id of target channel */
-      webhook_channel_id: snowflake
-    }
+/** https://discord.com/developers/docs/resources/channel#create-channel-invite-jsonform-params */
+export interface CreateChannelInviteParams {
+  /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) */
+  max_age: integer
+  /** max number of uses or 0 for unlimited. between 0 and 100 */
+  max_uses: integer
+  /** whether this invite only grants temporary membership */
+  temporary: boolean
+  /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) */
+  unique: boolean
+  /** the type of target for this voice channel invite */
+  target_type: integer
+  /** the id of the user whose stream to display for this invite, required if `target_type` is 1, the user must be streaming in the channel */
+  target_user_id: snowflake
+  /** the id of the embedded application to open for this invite, required if `target_type` is 2, the application must have the `EMBEDDED` flag */
+  target_application_id: snowflake
+  /** a csv file with a single column of user IDs for all the users able to accept this invite */
+  target_users_file?: any
+  /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. */
+  payload_json?: string
+  /** the role ID(s) for roles in the guild given to the users that accept this invite */
+  role_ids?: snowflake[]
+}
 
-    /** https://discord.com/developers/docs/resources/channel#group-dm-add-recipient-json-params */
-    export interface GroupDmAddRecipient {
-      /** access token of a user that has granted your app the `gdm.join` scope */
-      access_token: string
-      /** nickname of the user being added */
-      nick: string
-    }
+/** https://discord.com/developers/docs/resources/channel#follow-announcement-channel-json-params */
+export interface FollowAnnouncementChannelParams {
+  /** id of target channel */
+  webhook_channel_id: snowflake
+}
 
-    /** https://discord.com/developers/docs/resources/channel#start-thread-from-message-json-params */
-    export interface StartThreadFromMessage {
-      /** 1-100 character channel name */
-      name: string
-      /** the thread will stop showing in the channel list after `auto_archive_duration` minutes of inactivity, can be set to: 60, 1440, 4320, 10080 */
-      auto_archive_duration?: integer
-      /** amount of seconds a user has to wait before sending another message (0-21600) */
-      rate_limit_per_user?: integer | null
-    }
+/** https://discord.com/developers/docs/resources/channel#group-dm-add-recipient-json-params */
+export interface GroupDmAddRecipientParams {
+  /** access token of a user that has granted your app the `gdm.join` scope */
+  access_token: string
+  /** nickname of the user being added */
+  nick: string
+}
 
-    /** https://discord.com/developers/docs/resources/channel#start-thread-without-message-json-params */
-    export interface StartThreadWithoutMessage {
-      /** 1-100 character channel name */
-      name: string
-      /** the thread will stop showing in the channel list after `auto_archive_duration` minutes of inactivity, can be set to: 60, 1440, 4320, 10080 */
-      auto_archive_duration?: integer
-      /** the type of thread to create */
-      type?: integer
-      /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
-      invitable?: boolean
-      /** amount of seconds a user has to wait before sending another message (0-21600) */
-      rate_limit_per_user?: integer | null
-    }
+/** https://discord.com/developers/docs/resources/channel#start-thread-from-message-json-params */
+export interface StartThreadFromMessageParams {
+  /** 1-100 character channel name */
+  name: string
+  /** the thread will stop showing in the channel list after `auto_archive_duration` minutes of inactivity, can be set to: 60, 1440, 4320, 10080 */
+  auto_archive_duration?: integer
+  /** amount of seconds a user has to wait before sending another message (0-21600) */
+  rate_limit_per_user?: integer | null
+}
 
-    /** https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel-jsonform-params */
-    export interface StartThreadInForumOrMediaChannel {
-      /** 1-100 character channel name */
-      name: string
-      /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
-      auto_archive_duration?: integer
-      /** amount of seconds a user has to wait before sending another message (0-21600) */
-      rate_limit_per_user?: integer | null
-      /** contents of the first message in the forum/media thread */
-      message: AForumThreadMessageParams
-      /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-      applied_tags?: Snowflakes[]
-      /** Contents of the file being sent. See Uploading Files */
-      files[n]?: any
-      /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
-      payload_json?: string
-    }
+/** https://discord.com/developers/docs/resources/channel#start-thread-without-message-json-params */
+export interface StartThreadWithoutMessageParams {
+  /** 1-100 character channel name */
+  name: string
+  /** the thread will stop showing in the channel list after `auto_archive_duration` minutes of inactivity, can be set to: 60, 1440, 4320, 10080 */
+  auto_archive_duration?: integer
+  /** the type of thread to create */
+  type?: integer
+  /** whether non-moderators can add other non-moderators to a thread; only available when creating a private thread */
+  invitable?: boolean
+  /** amount of seconds a user has to wait before sending another message (0-21600) */
+  rate_limit_per_user?: integer | null
+}
 
-    /** https://discord.com/developers/docs/resources/channel#get-thread-member-query-string-params */
-    export interface GetThreadMember {
-      /** Whether to include a guild member object for the thread member */
-      with_member?: boolean
-    }
+/** https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel-jsonform-params */
+export interface StartThreadInForumOrMediaChannelParams {
+  /** 1-100 character channel name */
+  name: string
+  /** duration in minutes to automatically archive the thread after recent activity, can be set to: 60, 1440, 4320, 10080 */
+  auto_archive_duration?: integer
+  /** amount of seconds a user has to wait before sending another message (0-21600) */
+  rate_limit_per_user?: integer | null
+  /** contents of the first message in the forum/media thread */
+  message: AForumThreadMessageParams
+  /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
+  applied_tags?: snowflake[]
+  /** Contents of the file being sent. See Uploading Files */
+  files?: any
+  /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
+  payload_json?: string
+}
 
-    /** https://discord.com/developers/docs/resources/channel#list-thread-members-query-string-params */
-    export interface ListThreadMembers {
-      /** Whether to include a guild member object for each thread member */
-      with_member?: boolean
-      /** Get thread members after this user ID */
-      after?: snowflake
-      /** Max number of thread members to return (1-100). Defaults to 100. */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/channel#get-thread-member-query-string-params */
+export interface GetThreadMemberParams {
+  /** Whether to include a guild member object for the thread member */
+  with_member?: Boolean
+}
 
-    /** https://discord.com/developers/docs/resources/channel#list-public-archived-threads-query-string-params */
-    export interface ListPublicArchivedThreads {
-      /** returns threads archived before this timestamp */
-      before?: timestamp
-      /** optional maximum number of threads to return */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/channel#list-thread-members-query-string-params */
+export interface ListThreadMembersParams {
+  /** Whether to include a guild member object for each thread member */
+  with_member?: Boolean
+  /** Get thread members after this user ID */
+  after?: snowflake
+  /** Max number of thread members to return (1-100). Defaults to 100. */
+  limit?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/channel#list-private-archived-threads-query-string-params */
-    export interface ListPrivateArchivedThreads {
-      /** returns threads archived before this timestamp */
-      before?: timestamp
-      /** optional maximum number of threads to return */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/channel#list-public-archived-threads-query-string-params */
+export interface ListPublicArchivedThreadsParams {
+  /** returns threads archived before this timestamp */
+  before?: timestamp
+  /** optional maximum number of threads to return */
+  limit?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads-query-string-params */
-    export interface ListJoinedPrivateArchivedThreads {
-      /** returns threads before this id */
-      before?: snowflake
-      /** optional maximum number of threads to return */
-      limit?: integer
-    }
+/** https://discord.com/developers/docs/resources/channel#list-private-archived-threads-query-string-params */
+export interface ListPrivateArchivedThreadsParams {
+  /** returns threads archived before this timestamp */
+  before?: timestamp
+  /** optional maximum number of threads to return */
+  limit?: integer
+}
 
-  }
+/** https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads-query-string-params */
+export interface ListJoinedPrivateArchivedThreadsParams {
+  /** returns threads before this id */
+  before?: snowflake
+  /** optional maximum number of threads to return */
+  limit?: integer
 }
 
 declare module './internal' {
@@ -355,12 +353,12 @@ declare module './internal' {
      * Delete a channel, or close a private message. Requires the `MANAGE_CHANNELS` permission for the guild, or `MANAGE_THREADS` if the channel is a thread. Deleting a category does not delete its child channels; they will have their `parent_id` removed and a Channel Update Gateway event will fire for each of them. Returns a channel object on success. Fires a Channel Delete Gateway event (or Thread Delete if the channel was a thread).
      * @see https://discord.com/developers/docs/resources/channel#delete/close-channel
      */
-    delete/closeChannel(channel_id: snowflake): Promise<Channel>
+    deleteChannel(channel_id: snowflake): Promise<Channel>
     /**
      * Edit the channel permission overwrites for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Only permissions your bot has in the guild or parent channel (if applicable) can be allowed/denied (unless your bot has a `MANAGE_ROLES` overwrite in the channel). Returns a 204 empty response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions.
      * @see https://discord.com/developers/docs/resources/channel#edit-channel-permissions
      */
-    editChannelPermissions(channel_id: snowflake, overwrite_id: snowflake, params: Channel.Params.Modify): Promise<void>
+    editChannelPermissions(channel_id: snowflake, overwrite_id: snowflake, params: EditChannelPermissionsParams): Promise<void>
     /**
      * Returns a list of invite objects (with invite metadata) for the channel. Only usable for guild channels. Requires the `MANAGE_CHANNELS` permission.
      * @see https://discord.com/developers/docs/resources/channel#get-channel-invites
@@ -370,7 +368,7 @@ declare module './internal' {
      * Create a new invite object for the channel. Only usable for guild channels. Requires the `CREATE_INSTANT_INVITE` permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object (`{}`). Returns an invite object. Fires an Invite Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#create-channel-invite
      */
-    createChannelInvite(channel_id: snowflake, params: Channel.Params.Create): Promise<void>
+    createChannelInvite(channel_id: snowflake, params: CreateChannelInviteParams): Promise<void>
     /**
      * Delete a channel permission overwrite for a user or role in a channel. Only usable for guild channels. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Channel Update Gateway event. For more information about permissions, see permissions
      * @see https://discord.com/developers/docs/resources/channel#delete-channel-permission
@@ -380,7 +378,7 @@ declare module './internal' {
      * Follow an Announcement Channel to send messages to a target channel. Requires the `MANAGE_WEBHOOKS` permission in the target channel. Returns a followed channel object. Fires a Webhooks Update Gateway event for the target channel.
      * @see https://discord.com/developers/docs/resources/channel#follow-announcement-channel
      */
-    followAnnouncementChannel(channel_id: snowflake, params: Channel.Params.Params): Promise<FollowedChannel>
+    followAnnouncementChannel(channel_id: snowflake, params: FollowAnnouncementChannelParams): Promise<FollowedChannel>
     /**
      * Post a typing indicator for the specified channel, which expires after 10 seconds. Returns a 204 empty response on success. Fires a Typing Start Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
@@ -390,7 +388,7 @@ declare module './internal' {
      * Adds a recipient to a Group DM using their access token.
      * @see https://discord.com/developers/docs/resources/channel#group-dm-add-recipient
      */
-    groupDmAddRecipient(channel_id: snowflake, user_id: snowflake, params: Channel.Params.Params): Promise<void>
+    groupDmAddRecipient(channel_id: snowflake, user_id: snowflake, params: GroupDmAddRecipientParams): Promise<void>
     /**
      * Removes a recipient from a Group DM.
      * @see https://discord.com/developers/docs/resources/channel#group-dm-remove-recipient
@@ -400,17 +398,17 @@ declare module './internal' {
      * Creates a new thread from an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-from-message
      */
-    startThreadFromMessage(channel_id: snowflake, message_id: snowflake, params: Channel.Params.Params): Promise<void>
+    startThreadFromMessage(channel_id: snowflake, message_id: snowflake, params: StartThreadFromMessageParams): Promise<void>
     /**
      * Creates a new thread that is not connected to an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-without-message
      */
-    startThreadWithoutMessage(channel_id: snowflake, params: Channel.Params.Params): Promise<void>
+    startThreadWithoutMessage(channel_id: snowflake, params: StartThreadWithoutMessageParams): Promise<void>
     /**
      * Creates a new thread in a forum or a media channel, and sends a message within the created thread. Returns a channel, with a nested message object, on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and Message Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
      */
-    startThreadInForumOrMediaChannel(channel_id: snowflake, params: Channel.Params.Params): Promise<Channel,WithANestedMessage>
+    startThreadInForumOrMediaChannel(channel_id: snowflake, params: StartThreadInForumOrMediaChannelParams): Promise<Channel,WithANestedMessage>
     /**
      * Adds the current user to a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update and a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#join-thread
@@ -435,27 +433,27 @@ declare module './internal' {
      * Returns a thread member object for the specified user if they are a member of the thread, returns a 404 response otherwise.
      * @see https://discord.com/developers/docs/resources/channel#get-thread-member
      */
-    getThreadMember(channel_id: snowflake, user_id: snowflake, params: Channel.Params.Params): Promise<ThreadMember>
+    getThreadMember(channel_id: snowflake, user_id: snowflake, params: GetThreadMemberParams): Promise<ThreadMember>
     /**
      * <Warning>
      * @see https://discord.com/developers/docs/resources/channel#list-thread-members
      */
-    listThreadMembers(channel_id: snowflake, params: Channel.Params.Params): Promise<void>
+    listThreadMembers(channel_id: snowflake, params: ListThreadMembersParams): Promise<void>
     /**
      * Returns archived threads in the channel that are public. When called on a `GUILD_TEXT` channel, returns threads of type `PUBLIC_THREAD`. When called on a `GUILD_ANNOUNCEMENT` channel returns threads of type `ANNOUNCEMENT_THREAD`. Threads are ordered by `archive_timestamp`, in descending order. Requires the `READ_MESSAGE_HISTORY` permission.
      * @see https://discord.com/developers/docs/resources/channel#list-public-archived-threads
      */
-    listPublicArchivedThreads(channel_id: snowflake, params: Channel.Params.Params): Promise<void>
+    listPublicArchivedThreads(channel_id: snowflake, params: ListPublicArchivedThreadsParams): Promise<void>
     /**
      * Returns archived threads in the channel that are of type `PRIVATE_THREAD`. Threads are ordered by `archive_timestamp`, in descending order. Requires both the `READ_MESSAGE_HISTORY` and `MANAGE_THREADS` permissions.
      * @see https://discord.com/developers/docs/resources/channel#list-private-archived-threads
      */
-    listPrivateArchivedThreads(channel_id: snowflake, params: Channel.Params.Params): Promise<void>
+    listPrivateArchivedThreads(channel_id: snowflake, params: ListPrivateArchivedThreadsParams): Promise<void>
     /**
      * Returns archived threads in the channel that are of type `PRIVATE_THREAD`, and the user has joined. Threads are ordered by their `id`, in descending order. Requires the `READ_MESSAGE_HISTORY` permission.
      * @see https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads
      */
-    listJoinedPrivateArchivedThreads(channel_id: snowflake, params: Channel.Params.Params): Promise<void>
+    listJoinedPrivateArchivedThreads(channel_id: snowflake, params: ListJoinedPrivateArchivedThreadsParams): Promise<void>
   }
 }
 
@@ -463,7 +461,7 @@ Internal.define({
   '/channels/{channel.id}': {
     GET: 'getChannel',
     PATCH: 'modifyChannel',
-    DELETE: 'delete/closeChannel',
+    DELETE: 'deleteChannel',
   },
   '/channels/{channel.id}/permissions/{overwrite.id}': {
     PUT: 'editChannelPermissions',

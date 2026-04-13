@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { ApplicationCommandOption, ApplicationCommandOptionChoice, ApplicationCommandPermissionType, ApplicationCommandPermissions, ChannelTypes, CommandOptions, IntegrationTypes, InteractionContextTypes, Internal, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/command#application-command-object-application-command-structure */
 export interface Command {
@@ -29,9 +29,9 @@ export interface Command {
   /** Indicates whether the command is age-restricted, defaults to `false` */
   nsfw?: boolean
   /** Installation contexts where the command is available, only for globally-scoped commands. Defaults to your app's configured contexts */
-  integration_types?: ListOfIntegrationTypes
+  integration_types?: IntegrationTypes[]
   /** Interaction context(s) where the command can be used, only for globally-scoped commands. */
-  contexts?: ListOfInteractionContextTypes | null
+  contexts?: InteractionContextTypes[] | null
   /** Autoincrementing version identifier updated during substantial record changes */
   version: snowflake
   /** Determines whether the interaction is handled by the app's interactions handler or by Discord */
@@ -56,19 +56,26 @@ export namespace Command {
     SUB_COMMAND = 1,
     SUB_COMMAND_GROUP = 2,
     STRING = 3,
+    /** Any integer between -2^53+1 and 2^53-1 */
     INTEGER = 4,
     BOOLEAN = 5,
     USER = 6,
+    /** Includes all channel types + categories */
     CHANNEL = 7,
     ROLE = 8,
+    /** Includes users and roles */
     MENTIONABLE = 9,
+    /** Any double between -2^53 and 2^53 */
     NUMBER = 10,
+    /** attachment object */
     ATTACHMENT = 11,
   }
 
   /** https://discord.com/developers/docs/resources/command#application-command-object-entry-point-command-handler-types */
   export enum EntryPointCommandHandlerType {
+    /** The app handles the interaction using an interaction token */
     APP_HANDLER = 1,
+    /** Discord handles the interaction by launching an Activity and sending a follow-up message without coordinating with the app */
     DISCORD_LAUNCH_ACTIVITY = 2,
   }
 
@@ -118,7 +125,7 @@ export namespace Command {
     /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
     name_localizations?: DictionaryWithKeysInAvailableLocales | null
     /** Value for the choice, up to 100 characters if string */
-    value: String,Integer,OrDouble\*
+    value: String,Integer,OrDouble
   }
 
   /** https://discord.com/developers/docs/resources/command#application-command-permissions-object-guild-application-command-permissions-structure */
@@ -143,150 +150,148 @@ export namespace Command {
     permission: boolean
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/command#get-global-application-commands-query-string-params */
-    export interface GetGlobalApplicationCommands {
-      /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
-      with_localizations?: boolean
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/command#create-global-application-command-json-params */
-    export interface Create {
-      /** Name of command, 1-32 characters */
-      name: string
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      name_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** 1-100 character description for `CHAT_INPUT` commands */
-      description?: string
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      description_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** the parameters for the command, max of 25 */
-      options?: ApplicationCommandOption[]
-      /** Set of permissions represented as a bit set */
-      default_member_permissions?: string | null
-      /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dm_permission?: boolean | null
-      /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      default_permission?: boolean
-      /** Installation context(s) where the command is available */
-      integration_types?: ListOfIntegrationTypes
-      /** Interaction context(s) where the command can be used */
-      contexts?: ListOfInteractionContextTypes
-      /** Type of command, defaults `1` if not set */
-      type?: OneOfApplicationCommandType
-      /** Indicates whether the command is age-restricted */
-      nsfw?: boolean
-    }
+/** https://discord.com/developers/docs/resources/command#get-global-application-commands-query-string-params */
+export interface GetGlobalApplicationCommandsParams {
+  /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
+  with_localizations?: Boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#edit-global-application-command-json-params */
-    export interface Modify {
-      /** Name of command, 1-32 characters */
-      name?: string
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      name_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** 1-100 character description */
-      description?: string
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      description_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** the parameters for the command */
-      options?: ApplicationCommandOption[]
-      /** Set of permissions represented as a bit set */
-      default_member_permissions?: string | null
-      /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dm_permission?: boolean | null
-      /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      default_permission?: boolean
-      /** Installation context(s) where the command is available */
-      integration_types?: ListOfIntegrationTypes
-      /** Interaction context(s) where the command can be used */
-      contexts?: ListOfInteractionContextTypes
-      /** Indicates whether the command is age-restricted */
-      nsfw?: boolean
-    }
+/** https://discord.com/developers/docs/resources/command#create-global-application-command-json-params */
+export interface CreateGlobalApplicationCommandParams {
+  /** Name of command, 1-32 characters */
+  name: string
+  /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+  name_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** 1-100 character description for `CHAT_INPUT` commands */
+  description?: string
+  /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+  description_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** the parameters for the command, max of 25 */
+  options?: ApplicationCommandOption[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string | null
+  /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+  dm_permission?: boolean | null
+  /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+  default_permission?: boolean
+  /** Installation context(s) where the command is available */
+  integration_types?: IntegrationTypes[]
+  /** Interaction context(s) where the command can be used */
+  contexts?: InteractionContextTypes[]
+  /** Type of command, defaults `1` if not set */
+  type?: OneOfApplicationCommandType
+  /** Indicates whether the command is age-restricted */
+  nsfw?: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#get-guild-application-commands-query-string-params */
-    export interface GetGuildApplicationCommands {
-      /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
-      with_localizations?: boolean
-    }
+/** https://discord.com/developers/docs/resources/command#edit-global-application-command-json-params */
+export interface EditGlobalApplicationCommandParams {
+  /** Name of command, 1-32 characters */
+  name?: string
+  /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+  name_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** 1-100 character description */
+  description?: string
+  /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+  description_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** the parameters for the command */
+  options?: ApplicationCommandOption[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string | null
+  /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+  dm_permission?: boolean | null
+  /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+  default_permission?: boolean
+  /** Installation context(s) where the command is available */
+  integration_types?: IntegrationTypes[]
+  /** Interaction context(s) where the command can be used */
+  contexts?: InteractionContextTypes[]
+  /** Indicates whether the command is age-restricted */
+  nsfw?: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#create-guild-application-command-json-params */
-    export interface Create {
-      /** Name of command, 1-32 characters */
-      name: string
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      name_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** 1-100 character description for `CHAT_INPUT` commands */
-      description?: string
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      description_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** Parameters for the command, max of 25 */
-      options?: ApplicationCommandOption[]
-      /** Set of permissions represented as a bit set */
-      default_member_permissions?: string | null
-      /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      default_permission?: boolean
-      /** Type of command, defaults `1` if not set */
-      type?: OneOfApplicationCommandType
-      /** Indicates whether the command is age-restricted */
-      nsfw?: boolean
-    }
+/** https://discord.com/developers/docs/resources/command#get-guild-application-commands-query-string-params */
+export interface GetGuildApplicationCommandsParams {
+  /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
+  with_localizations?: Boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#edit-guild-application-command-json-params */
-    export interface Modify {
-      /** Name of command, 1-32 characters */
-      name?: string
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      name_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** 1-100 character description */
-      description?: string
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      description_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** Parameters for the command, max of  25 */
-      options?: ApplicationCommandOption[]
-      /** Set of permissions represented as a bit set */
-      default_member_permissions?: string | null
-      /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      default_permission?: boolean
-      /** Indicates whether the command is age-restricted */
-      nsfw?: boolean
-    }
+/** https://discord.com/developers/docs/resources/command#create-guild-application-command-json-params */
+export interface CreateGuildApplicationCommandParams {
+  /** Name of command, 1-32 characters */
+  name: string
+  /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+  name_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** 1-100 character description for `CHAT_INPUT` commands */
+  description?: string
+  /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+  description_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** Parameters for the command, max of 25 */
+  options?: ApplicationCommandOption[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string | null
+  /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+  default_permission?: boolean
+  /** Type of command, defaults `1` if not set */
+  type?: OneOfApplicationCommandType
+  /** Indicates whether the command is age-restricted */
+  nsfw?: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#bulk-overwrite-guild-application-commands-json-params */
-    export interface BulkOverwriteGuildApplicationCommands {
-      /** ID of the command, if known */
-      id?: snowflake
-      /** Name of command, 1-32 characters */
-      name: string
-      /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
-      name_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** 1-100 character description */
-      description: string
-      /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
-      description_localizations?: DictionaryWithKeysInAvailableLocales | null
-      /** Parameters for the command */
-      options?: ApplicationCommandOption[]
-      /** Set of permissions represented as a bit set */
-      default_member_permissions?: string | null
-      /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
-      dm_permission?: boolean | null
-      /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
-      default_permission?: boolean
-      /** Installation context(s) where the command is available, defaults to `GUILD_INSTALL` (`[0]`) */
-      integration_types: ListOfIntegrationTypes
-      /** Interaction context(s) where the command can be used, defaults to all contexts `[0,1,2]` */
-      contexts: ListOfInteractionContextTypes
-      /** Type of command, defaults `1` if not set */
-      type?: OneOfApplicationCommandType
-    }
+/** https://discord.com/developers/docs/resources/command#edit-guild-application-command-json-params */
+export interface EditGuildApplicationCommandParams {
+  /** Name of command, 1-32 characters */
+  name?: string
+  /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+  name_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** 1-100 character description */
+  description?: string
+  /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+  description_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** Parameters for the command, max of  25 */
+  options?: ApplicationCommandOption[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string | null
+  /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+  default_permission?: boolean
+  /** Indicates whether the command is age-restricted */
+  nsfw?: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/command#edit-application-command-permissions-json-params */
-    export interface Modify {
-      /** Permissions for the command in the guild */
-      permissions: ApplicationCommandPermissions[]
-    }
+/** https://discord.com/developers/docs/resources/command#bulk-overwrite-guild-application-commands-json-params */
+export interface BulkOverwriteGuildApplicationCommandsParams {
+  /** ID of the command, if known */
+  id?: snowflake
+  /** Name of command, 1-32 characters */
+  name: string
+  /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
+  name_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** 1-100 character description */
+  description: string
+  /** Localization dictionary for the `description` field. Values follow the same restrictions as `description` */
+  description_localizations?: DictionaryWithKeysInAvailableLocales | null
+  /** Parameters for the command */
+  options?: ApplicationCommandOption[]
+  /** Set of permissions represented as a bit set */
+  default_member_permissions?: string | null
+  /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
+  dm_permission?: boolean | null
+  /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
+  default_permission?: boolean
+  /** Installation context(s) where the command is available, defaults to `GUILD_INSTALL` (`[0]`) */
+  integration_types: IntegrationTypes[]
+  /** Interaction context(s) where the command can be used, defaults to all contexts `[0,1,2]` */
+  contexts: InteractionContextTypes[]
+  /** Type of command, defaults `1` if not set */
+  type?: OneOfApplicationCommandType
+}
 
-  }
+/** https://discord.com/developers/docs/resources/command#edit-application-command-permissions-json-params */
+export interface EditApplicationCommandPermissionsParams {
+  /** Permissions for the command in the guild */
+  permissions: ApplicationCommandPermissions[]
 }
 
 declare module './internal' {
@@ -295,12 +300,12 @@ declare module './internal' {
      * <Warning>
      * @see https://discord.com/developers/docs/resources/command#get-global-application-commands
      */
-    getGlobalApplicationCommands(application_id: snowflake, params: Command.Params.Params): Promise<void>
+    getGlobalApplicationCommands(application_id: snowflake, params: GetGlobalApplicationCommandsParams): Promise<void>
     /**
      * <Warning>
      * @see https://discord.com/developers/docs/resources/command#create-global-application-command
      */
-    createGlobalApplicationCommand(application_id: snowflake, params: Command.Params.Create): Promise<void>
+    createGlobalApplicationCommand(application_id: snowflake, params: CreateGlobalApplicationCommandParams): Promise<void>
     /**
      * Fetch a global command for your application. Returns an application command object.
      * @see https://discord.com/developers/docs/resources/command#get-global-application-command
@@ -310,7 +315,7 @@ declare module './internal' {
      * <Info>
      * @see https://discord.com/developers/docs/resources/command#edit-global-application-command
      */
-    editGlobalApplicationCommand(application_id: snowflake, command_id: snowflake, params: Command.Params.Modify): Promise<void>
+    editGlobalApplicationCommand(application_id: snowflake, command_id: snowflake, params: EditGlobalApplicationCommandParams): Promise<void>
     /**
      * Deletes a global command. Returns `204 No Content` on success.
      * @see https://discord.com/developers/docs/resources/command#delete-global-application-command
@@ -325,12 +330,12 @@ declare module './internal' {
      * <Warning>
      * @see https://discord.com/developers/docs/resources/command#get-guild-application-commands
      */
-    getGuildApplicationCommands(application_id: snowflake, guild_id: snowflake, params: Command.Params.Params): Promise<void>
+    getGuildApplicationCommands(application_id: snowflake, guild_id: snowflake, params: GetGuildApplicationCommandsParams): Promise<void>
     /**
      * <Danger>
      * @see https://discord.com/developers/docs/resources/command#create-guild-application-command
      */
-    createGuildApplicationCommand(application_id: snowflake, guild_id: snowflake, params: Command.Params.Create): Promise<void>
+    createGuildApplicationCommand(application_id: snowflake, guild_id: snowflake, params: CreateGuildApplicationCommandParams): Promise<void>
     /**
      * Fetch a guild command for your application. Returns an application command object.
      * @see https://discord.com/developers/docs/resources/command#get-guild-application-command
@@ -340,7 +345,7 @@ declare module './internal' {
      * <Info>
      * @see https://discord.com/developers/docs/resources/command#edit-guild-application-command
      */
-    editGuildApplicationCommand(application_id: snowflake, guild_id: snowflake, command_id: snowflake, params: Command.Params.Modify): Promise<void>
+    editGuildApplicationCommand(application_id: snowflake, guild_id: snowflake, command_id: snowflake, params: EditGuildApplicationCommandParams): Promise<void>
     /**
      * Delete a guild command. Returns `204 No Content` on success.
      * @see https://discord.com/developers/docs/resources/command#delete-guild-application-command
@@ -350,7 +355,7 @@ declare module './internal' {
      * Takes a list of application commands, overwriting the existing command list for this application for the targeted guild. Returns `200` and a list of application command objects.
      * @see https://discord.com/developers/docs/resources/command#bulk-overwrite-guild-application-commands
      */
-    bulkOverwriteGuildApplicationCommands(application_id: snowflake, guild_id: snowflake, params: Command.Params.Params): Promise<void>
+    bulkOverwriteGuildApplicationCommands(application_id: snowflake, guild_id: snowflake, params: BulkOverwriteGuildApplicationCommandsParams): Promise<void>
     /**
      * Fetches permissions for all commands for your application in a guild. Returns an array of guild application command permissions objects.
      * @see https://discord.com/developers/docs/resources/command#get-guild-application-command-permissions
@@ -365,7 +370,7 @@ declare module './internal' {
      * <Warning>
      * @see https://discord.com/developers/docs/resources/command#edit-application-command-permissions
      */
-    editApplicationCommandPermissions(application_id: snowflake, guild_id: snowflake, command_id: snowflake, params: Command.Params.Modify): Promise<void>
+    editApplicationCommandPermissions(application_id: snowflake, guild_id: snowflake, command_id: snowflake, params: EditApplicationCommandPermissionsParams): Promise<void>
     /**
      * <Danger>
      * @see https://discord.com/developers/docs/resources/command#batch-edit-application-command-permissions

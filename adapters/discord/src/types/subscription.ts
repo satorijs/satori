@@ -1,5 +1,6 @@
 import { Internal } from '.'
 
+
 declare module './internal' {
   interface Internal {
     /**

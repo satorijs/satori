@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake, timestamp } from '.'
+import { AvatarDecorationData, Collectibles, DefaultReaction, Emoji, Internal, Oauth2Scopes, Role, RoleColors, Sticker, Tag, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/guild#guild-object-guild-structure */
 export interface Guild {
@@ -200,7 +200,7 @@ export namespace Guild {
     /** the member's guild banner hash */
     banner?: string | null
     /** array of role object ids */
-    roles: Snowflakes[]
+    roles: snowflake[]
     /** when the user joined the guild */
     joined_at: timestamp | null
     /** when the user started boosting the guild */
@@ -316,7 +316,7 @@ export namespace Guild {
     /** Prompts shown during onboarding and in customize community */
     prompts: OnboardingPrompt[]
     /** Channel IDs that members get opted into automatically */
-    default_channel_ids: Snowflakes[]
+    default_channel_ids: snowflake[]
     /** Whether onboarding is enabled in the guild */
     enabled: boolean
     /** Current mode of onboarding */
@@ -346,9 +346,9 @@ export namespace Guild {
     /** ID of the prompt option */
     id: snowflake
     /** IDs for channels a member is added to when the option is selected */
-    channel_ids: Snowflakes[]
+    channel_ids: snowflake[]
     /** IDs for roles assigned to a member when the option is selected */
-    role_ids: Snowflakes[]
+    role_ids: snowflake[]
     /** Emoji of the option (see below) */
     emoji?: Emoji
     /** Emoji ID of the option (see below) */
@@ -375,306 +375,304 @@ export namespace Guild {
     raid_detected_at?: timestamp | null
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/guild#get-guild-query-string-params */
-    export interface GetGuild {
-      /** when `true`, will return approximate member and presence counts for the guild */
-      with_counts?: boolean
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-json-params */
-    export interface Modify {
-      /** guild name */
-      name: string
-      /** guild voice region id (deprecated) */
-      region: string | null
-      /** verification level */
-      verification_level: integer | null
-      /** default message notification level */
-      default_message_notifications: integer | null
-      /** explicit content filter level */
-      explicit_content_filter: integer | null
-      /** id for afk channel */
-      afk_channel_id: snowflake | null
-      /** afk timeout in seconds, can be set to: 60, 300, 900, 1800, 3600 */
-      afk_timeout: integer
-      /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the `ANIMATED_ICON` feature) */
-      icon: ImageData | null
-      /** base64 16:9 png/jpeg image for the guild splash (when the server has the `INVITE_SPLASH` feature) */
-      splash: ImageData | null
-      /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the `DISCOVERABLE` feature) */
-      discovery_splash: ImageData | null
-      /** base64 16:9 png/jpeg image for the guild banner (when the server has the `BANNER` feature; can be animated gif when the server has the `ANIMATED_BANNER` feature) */
-      banner: ImageData | null
-      /** the id of the channel where guild notices such as welcome messages and boost events are posted */
-      system_channel_id: snowflake | null
-      /** system channel flags */
-      system_channel_flags: integer
-      /** the id of the channel where Community guilds display rules and/or guidelines */
-      rules_channel_id: snowflake | null
-      /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
-      public_updates_channel_id: snowflake | null
-      /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
-      preferred_locale: string | null
-      /** enabled guild features */
-      features: GuildFeatureStrings[]
-      /** the description for the guild */
-      description: string | null
-      /** whether the guild's boost progress bar should be enabled */
-      premium_progress_bar_enabled: boolean
-      /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
-      safety_alerts_channel_id: snowflake | null
-    }
+/** https://discord.com/developers/docs/resources/guild#get-guild-query-string-params */
+export interface GetGuildParams {
+  /** when `true`, will return approximate member and presence counts for the guild */
+  with_counts?: Boolean
+}
 
-    /** https://discord.com/developers/docs/resources/guild#create-guild-channel-json-params */
-    export interface Create {
-      /** channel name (1-100 characters) */
-      name: string
-      /** the type of channel */
-      type: integer
-      /** channel topic (0-1024 characters) */
-      topic: string
-      /** the bitrate (in bits per second) of the voice or stage channel; min 8000 */
-      bitrate: integer
-      /** the user limit of the voice channel */
-      user_limit: integer
-      /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `BYPASS_SLOWMODE`, are unaffected */
-      rate_limit_per_user: integer
-      /** sorting position of the channel (channels with the same position are sorted by id) */
-      position: integer
-      /** the channel's permission overwrites */
-      permission_overwrites: PartialOverwrite[]
-      /** id of the parent category for a channel */
-      parent_id: snowflake
-      /** whether the channel is age-restricted */
-      nsfw: boolean
-      /** channel voice region id of the voice or stage channel, automatic when set to null */
-      rtc_region: string
-      /** the camera video quality mode of the voice channel */
-      video_quality_mode: integer
-      /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
-      default_auto_archive_duration: integer
-      /** emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-      default_reaction_emoji: DefaultReaction
-      /** set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-      available_tags: Tag[]
-      /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels */
-      default_sort_order: integer
-      /** the default forum layout view used to display posts in `GUILD_FORUM` channels */
-      default_forum_layout: integer
-      /** the initial `rate_limit_per_user` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
-      default_thread_rate_limit_per_user: integer
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-json-params */
+export interface ModifyGuildParams {
+  /** guild name */
+  name: string
+  /** guild voice region id (deprecated) */
+  region: string | null
+  /** verification level */
+  verification_level: integer | null
+  /** default message notification level */
+  default_message_notifications: integer | null
+  /** explicit content filter level */
+  explicit_content_filter: integer | null
+  /** id for afk channel */
+  afk_channel_id: snowflake | null
+  /** afk timeout in seconds, can be set to: 60, 300, 900, 1800, 3600 */
+  afk_timeout: integer
+  /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the `ANIMATED_ICON` feature) */
+  icon: ImageData | null
+  /** base64 16:9 png/jpeg image for the guild splash (when the server has the `INVITE_SPLASH` feature) */
+  splash: ImageData | null
+  /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the `DISCOVERABLE` feature) */
+  discovery_splash: ImageData | null
+  /** base64 16:9 png/jpeg image for the guild banner (when the server has the `BANNER` feature; can be animated gif when the server has the `ANIMATED_BANNER` feature) */
+  banner: ImageData | null
+  /** the id of the channel where guild notices such as welcome messages and boost events are posted */
+  system_channel_id: snowflake | null
+  /** system channel flags */
+  system_channel_flags: integer
+  /** the id of the channel where Community guilds display rules and/or guidelines */
+  rules_channel_id: snowflake | null
+  /** the id of the channel where admins and moderators of Community guilds receive notices from Discord */
+  public_updates_channel_id: snowflake | null
+  /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
+  preferred_locale: string | null
+  /** enabled guild features */
+  features: GuildFeatureStrings[]
+  /** the description for the guild */
+  description: string | null
+  /** whether the guild's boost progress bar should be enabled */
+  premium_progress_bar_enabled: boolean
+  /** the id of the channel where admins and moderators of Community guilds receive safety alerts from Discord */
+  safety_alerts_channel_id: snowflake | null
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions-json-params */
-    export interface Modify {
-      /** channel id */
-      id: snowflake
-      /** sorting position of the channel (channels with the same position are sorted by id) */
-      position?: integer | null
-      /** syncs the permission overwrites with the new parent, if moving to a new category */
-      lock_permissions?: boolean | null
-      /** the new parent ID for the channel that is moved */
-      parent_id?: snowflake | null
-    }
+/** https://discord.com/developers/docs/resources/guild#create-guild-channel-json-params */
+export interface CreateGuildChannelParams {
+  /** channel name (1-100 characters) */
+  name: string
+  /** the type of channel */
+  type: integer
+  /** channel topic (0-1024 characters) */
+  topic: string
+  /** the bitrate (in bits per second) of the voice or stage channel; min 8000 */
+  bitrate: integer
+  /** the user limit of the voice channel */
+  user_limit: integer
+  /** amount of seconds a user has to wait before sending another message (0-21600); bots, as well as users with the permission `BYPASS_SLOWMODE`, are unaffected */
+  rate_limit_per_user: integer
+  /** sorting position of the channel (channels with the same position are sorted by id) */
+  position: integer
+  /** the channel's permission overwrites */
+  permission_overwrites: PartialOverwrite[]
+  /** id of the parent category for a channel */
+  parent_id: snowflake
+  /** whether the channel is age-restricted */
+  nsfw: boolean
+  /** channel voice region id of the voice or stage channel, automatic when set to null */
+  rtc_region: string
+  /** the camera video quality mode of the voice channel */
+  video_quality_mode: integer
+  /** the default duration that the clients use (not the API) for newly created threads in the channel, in minutes, to automatically archive the thread after recent activity */
+  default_auto_archive_duration: integer
+  /** emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
+  default_reaction_emoji: DefaultReaction
+  /** set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
+  available_tags: Tag[]
+  /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels */
+  default_sort_order: integer
+  /** the default forum layout view used to display posts in `GUILD_FORUM` channels */
+  default_forum_layout: integer
+  /** the initial `rate_limit_per_user` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
+  default_thread_rate_limit_per_user: integer
+}
 
-    /** https://discord.com/developers/docs/resources/guild#list-guild-members-query-string-params */
-    export interface ListGuildMembers {
-      /** max number of members to return (1-1000) */
-      limit: integer
-      /** the highest user id in the previous page */
-      after: snowflake
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions-json-params */
+export interface ModifyGuildChannelPositionsParams {
+  /** channel id */
+  id: snowflake
+  /** sorting position of the channel (channels with the same position are sorted by id) */
+  position?: integer | null
+  /** syncs the permission overwrites with the new parent, if moving to a new category */
+  lock_permissions?: boolean | null
+  /** the new parent ID for the channel that is moved */
+  parent_id?: snowflake | null
+}
 
-    /** https://discord.com/developers/docs/resources/guild#search-guild-members-query-string-params */
-    export interface SearchGuildMembers {
-      /** Query string to match username(s) and nickname(s) against. */
-      query: string
-      /** max number of members to return (1-1000) */
-      limit: integer
-    }
+/** https://discord.com/developers/docs/resources/guild#list-guild-members-query-string-params */
+export interface ListGuildMembersParams {
+  /** max number of members to return (1-1000) */
+  limit: integer
+  /** the highest user id in the previous page */
+  after: snowflake
+}
 
-    /** https://discord.com/developers/docs/resources/guild#add-guild-member-json-params */
-    export interface AddGuildMember {
-      /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
-      access_token: string
-      /** value to set user's nickname to */
-      nick: string
-      /** array of role ids the member is assigned */
-      roles: Snowflakes[]
-      /** whether the user is muted in voice channels */
-      mute: boolean
-      /** whether the user is deafened in voice channels */
-      deaf: boolean
-    }
+/** https://discord.com/developers/docs/resources/guild#search-guild-members-query-string-params */
+export interface SearchGuildMembersParams {
+  /** Query string to match username(s) and nickname(s) against. */
+  query: string
+  /** max number of members to return (1-1000) */
+  limit: integer
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-member-json-params */
-    export interface Modify {
-      /** value to set user's nickname to */
-      nick: string
-      /** array of role ids the member is assigned */
-      roles: Snowflakes[]
-      /** whether the user is muted in voice channels. Will throw a 400 error if the user is not in a voice channel */
-      mute: boolean
-      /** whether the user is deafened in voice channels. Will throw a 400 error if the user is not in a voice channel */
-      deaf: boolean
-      /** id of channel to move user to (if they are connected to voice) */
-      channel_id: snowflake
-      /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the ADMINISTRATOR permission or is the owner of the guild */
-      communication_disabled_until: timestamp
-      /** guild member flags */
-      flags: integer
-    }
+/** https://discord.com/developers/docs/resources/guild#add-guild-member-json-params */
+export interface AddGuildMemberParams {
+  /** an oauth2 access token granted with the `guilds.join` to the bot's application for the user you want to add to the guild */
+  access_token: string
+  /** value to set user's nickname to */
+  nick: string
+  /** array of role ids the member is assigned */
+  roles: snowflake[]
+  /** whether the user is muted in voice channels */
+  mute: boolean
+  /** whether the user is deafened in voice channels */
+  deaf: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-current-member-json-params */
-    export interface Modify {
-      /** value to set user's nickname to */
-      nick?: string | null
-      /** data URI base64 encoded banner image */
-      banner?: string | null
-      /** data URI base64 encoded avatar image */
-      avatar?: string | null
-      /** guild member bio */
-      bio?: string | null
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-member-json-params */
+export interface ModifyGuildMemberParams {
+  /** value to set user's nickname to */
+  nick: string
+  /** array of role ids the member is assigned */
+  roles: snowflake[]
+  /** whether the user is muted in voice channels. Will throw a 400 error if the user is not in a voice channel */
+  mute: boolean
+  /** whether the user is deafened in voice channels. Will throw a 400 error if the user is not in a voice channel */
+  deaf: boolean
+  /** id of channel to move user to (if they are connected to voice) */
+  channel_id: snowflake
+  /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout. Will throw a 403 error if the user has the ADMINISTRATOR permission or is the owner of the guild */
+  communication_disabled_until: timestamp
+  /** guild member flags */
+  flags: integer
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-current-user-nick-json-params */
-    export interface Modify {
-      /** value to set user's nickname to */
-      nick?: string | null
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-current-member-json-params */
+export interface ModifyCurrentMemberParams {
+  /** value to set user's nickname to */
+  nick?: string | null
+  /** data URI base64 encoded banner image */
+  banner?: string | null
+  /** data URI base64 encoded avatar image */
+  avatar?: string | null
+  /** guild member bio */
+  bio?: string | null
+}
 
-    /** https://discord.com/developers/docs/resources/guild#get-guild-bans-query-string-params */
-    export interface GetGuildBans {
-      /** number of users to return (up to maximum 1000) */
-      limit?: number
-      /** consider only users before given user id */
-      before?: snowflake
-      /** consider only users after given user id */
-      after?: snowflake
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-current-user-nick-json-params */
+export interface ModifyCurrentUserNickParams {
+  /** value to set user's nickname to */
+  nick?: string | null
+}
 
-    /** https://discord.com/developers/docs/resources/guild#create-guild-ban-json-params */
-    export interface Create {
-      /** number of days to delete messages for (0-7) (deprecated) */
-      delete_message_days?: integer
-      /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-      delete_message_seconds?: integer
-    }
+/** https://discord.com/developers/docs/resources/guild#get-guild-bans-query-string-params */
+export interface GetGuildBansParams {
+  /** number of users to return (up to maximum 1000) */
+  limit?: number
+  /** consider only users before given user id */
+  before?: snowflake
+  /** consider only users after given user id */
+  after?: snowflake
+}
 
-    /** https://discord.com/developers/docs/resources/guild#bulk-guild-ban-json-params */
-    export interface BulkGuildBan {
-      /** list of user ids to ban (max 200) */
-      user_ids: Snowflakes[]
-      /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
-      delete_message_seconds?: integer
-    }
+/** https://discord.com/developers/docs/resources/guild#create-guild-ban-json-params */
+export interface CreateGuildBanParams {
+  /** number of days to delete messages for (0-7) (deprecated) */
+  delete_message_days?: integer
+  /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
+  delete_message_seconds?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/guild#create-guild-role-json-params */
-    export interface Create {
-      /** name of the role, max 100 characters */
-      name: string
-      /** bitwise value of the enabled/disabled permissions */
-      permissions: string
-      /** **Deprecated** RGB color value */
-      color*: integer
-      /** the role's colors */
-      colors: RoleColors
-      /** whether the role should be displayed separately in the sidebar */
-      hoist: boolean
-      /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: ImageData | null
-      /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicode_emoji: string | null
-      /** whether the role should be mentionable */
-      mentionable: boolean
-    }
+/** https://discord.com/developers/docs/resources/guild#bulk-guild-ban-json-params */
+export interface BulkGuildBanParams {
+  /** list of user ids to ban (max 200) */
+  user_ids: snowflake[]
+  /** number of seconds to delete messages for, between 0 and 604800 (7 days) */
+  delete_message_seconds?: integer
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-role-positions-json-params */
-    export interface Modify {
-      /** role */
-      id: snowflake
-      /** sorting position of the role (roles with the same position are sorted by id) */
-      position?: integer | null
-    }
+/** https://discord.com/developers/docs/resources/guild#create-guild-role-json-params */
+export interface CreateGuildRoleParams {
+  /** name of the role, max 100 characters */
+  name: string
+  /** bitwise value of the enabled/disabled permissions */
+  permissions: string
+  /** **Deprecated** RGB color value */
+  color: integer
+  /** the role's colors */
+  colors: RoleColors
+  /** whether the role should be displayed separately in the sidebar */
+  hoist: boolean
+  /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
+  icon: ImageData | null
+  /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
+  unicode_emoji: string | null
+  /** whether the role should be mentionable */
+  mentionable: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-role-json-params */
-    export interface Modify {
-      /** name of the role, max 100 characters */
-      name: string
-      /** bitwise value of the enabled/disabled permissions */
-      permissions: string
-      /** **Deprecated** RGB color value */
-      color*: integer
-      /** the role's colors */
-      colors: RoleColors
-      /** whether the role should be displayed separately in the sidebar */
-      hoist: boolean
-      /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-      icon: ImageData
-      /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
-      unicode_emoji: string
-      /** whether the role should be mentionable */
-      mentionable: boolean
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-role-positions-json-params */
+export interface ModifyGuildRolePositionsParams {
+  /** role */
+  id: snowflake
+  /** sorting position of the role (roles with the same position are sorted by id) */
+  position?: integer | null
+}
 
-    /** https://discord.com/developers/docs/resources/guild#get-guild-prune-count-query-string-params */
-    export interface GetGuildPruneCount {
-      /** number of days to count prune for (1-30) */
-      days: integer
-      /** role(s) to include */
-      include_roles: String;CommaDelimitedArrayOfSnowflakes
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-role-json-params */
+export interface ModifyGuildRoleParams {
+  /** name of the role, max 100 characters */
+  name: string
+  /** bitwise value of the enabled/disabled permissions */
+  permissions: string
+  /** **Deprecated** RGB color value */
+  color: integer
+  /** the role's colors */
+  colors: RoleColors
+  /** whether the role should be displayed separately in the sidebar */
+  hoist: boolean
+  /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
+  icon: ImageData
+  /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
+  unicode_emoji: string
+  /** whether the role should be mentionable */
+  mentionable: boolean
+}
 
-    /** https://discord.com/developers/docs/resources/guild#begin-guild-prune-json-params */
-    export interface BeginGuildPrune {
-      /** number of days to prune (1-30) */
-      days: integer
-      /** whether `pruned` is returned, discouraged for large guilds */
-      compute_prune_count: boolean
-      /** role(s) to include */
-      include_roles: Snowflakes[]
-      /** reason for the prune (deprecated) */
-      reason?: string
-    }
+/** https://discord.com/developers/docs/resources/guild#get-guild-prune-count-query-string-params */
+export interface GetGuildPruneCountParams {
+  /** number of days to count prune for (1-30) */
+  days: integer
+  /** role(s) to include */
+  include_roles: String;CommaDelimitedArrayOfSnowflakes
+}
 
-    /** https://discord.com/developers/docs/resources/guild#get-guild-widget-image-query-string-params */
-    export interface GetGuildWidgetImage {
-      /** style of the widget image returned (see below) */
-      style: string
-    }
+/** https://discord.com/developers/docs/resources/guild#begin-guild-prune-json-params */
+export interface BeginGuildPruneParams {
+  /** number of days to prune (1-30) */
+  days: integer
+  /** whether `pruned` is returned, discouraged for large guilds */
+  compute_prune_count: boolean
+  /** role(s) to include */
+  include_roles: snowflake[]
+  /** reason for the prune (deprecated) */
+  reason?: string
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen-json-params */
-    export interface Modify {
-      /** whether the welcome screen is enabled */
-      enabled: boolean
-      /** channels linked in the welcome screen and their display options */
-      welcome_channels: WelcomeScreenChannel[]
-      /** the server description to show in the welcome screen */
-      description: string
-    }
+/** https://discord.com/developers/docs/resources/guild#get-guild-widget-image-query-string-params */
+export interface GetGuildWidgetImageParams {
+  /** style of the widget image returned (see below) */
+  style: string
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-onboarding-json-params */
-    export interface Modify {
-      /** Prompts shown during onboarding and in customize community */
-      prompts: OnboardingPrompt[]
-      /** Channel IDs that members get opted into automatically */
-      default_channel_ids: Snowflakes[]
-      /** Whether onboarding is enabled in the guild */
-      enabled: boolean
-      /** Current mode of onboarding */
-      mode: OnboardingMode
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen-json-params */
+export interface ModifyGuildWelcomeScreenParams {
+  /** whether the welcome screen is enabled */
+  enabled: boolean
+  /** channels linked in the welcome screen and their display options */
+  welcome_channels: WelcomeScreenChannel[]
+  /** the server description to show in the welcome screen */
+  description: string
+}
 
-    /** https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions-json-params */
-    export interface Modify {
-      /** when invites will be enabled again */
-      invites_disabled_until?: Iso8601Timestamp\* | null
-      /** when direct messages will be enabled again */
-      dms_disabled_until?: Iso8601Timestamp\* | null
-    }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-onboarding-json-params */
+export interface ModifyGuildOnboardingParams {
+  /** Prompts shown during onboarding and in customize community */
+  prompts: OnboardingPrompt[]
+  /** Channel IDs that members get opted into automatically */
+  default_channel_ids: snowflake[]
+  /** Whether onboarding is enabled in the guild */
+  enabled: boolean
+  /** Current mode of onboarding */
+  mode: OnboardingMode
+}
 
-  }
+/** https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions-json-params */
+export interface ModifyGuildIncidentActionsParams {
+  /** when invites will be enabled again */
+  invites_disabled_until?: timestamp | null
+  /** when direct messages will be enabled again */
+  dms_disabled_until?: timestamp | null
 }
 
 declare module './internal' {
@@ -683,7 +681,7 @@ declare module './internal' {
      * Returns the guild object for the given id. If `with_counts` is set to `true`, this endpoint will also return `approximate_member_count` and `approximate_presence_count` for the guild.
      * @see https://discord.com/developers/docs/resources/guild#get-guild
      */
-    getGuild(guild_id: snowflake, params: Guild.Params.Params): Promise<Guild>
+    getGuild(guild_id: snowflake, params: GetGuildParams): Promise<Guild>
     /**
      * Returns the guild preview object for the given id.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-preview
@@ -693,7 +691,7 @@ declare module './internal' {
      * Modify a guild's settings. Requires the `MANAGE_GUILD` permission. Returns the updated guild object on success. Fires a Guild Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild
      */
-    modifyGuild(guild_id: snowflake, params: Guild.Params.Modify): Promise<Guild>
+    modifyGuild(guild_id: snowflake, params: ModifyGuildParams): Promise<Guild>
     /**
      * Returns a list of guild channel objects. Does not include threads.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-channels
@@ -703,12 +701,12 @@ declare module './internal' {
      * Create a new channel object for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new channel object on success. Fires a Channel Create Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#create-guild-channel
      */
-    createGuildChannel(guild_id: snowflake, params: Guild.Params.Create): Promise<Channel>
+    createGuildChannel(guild_id: snowflake, params: CreateGuildChannelParams): Promise<Channel>
     /**
      * Modify the positions of a set of channel objects for the guild. Requires `MANAGE_CHANNELS` permission. Returns a 204 empty response on success. Fires multiple Channel Update Gateway events.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-channel-positions
      */
-    modifyGuildChannelPositions(guild_id: snowflake, params: Guild.Params.Modify): Promise<void>
+    modifyGuildChannelPositions(guild_id: snowflake, params: ModifyGuildChannelPositionsParams): Promise<void>
     /**
      * Returns all active threads in the guild, including public and private threads. Threads are ordered by their `id`, in descending order.
      * @see https://discord.com/developers/docs/resources/guild#list-active-guild-threads
@@ -723,32 +721,32 @@ declare module './internal' {
      * Returns a list of guild member objects that are members of the guild.
      * @see https://discord.com/developers/docs/resources/guild#list-guild-members
      */
-    listGuildMembers(guild_id: snowflake, params: Guild.Params.Params): Promise<ListOfGuildMember>
+    listGuildMembers(guild_id: snowflake, params: ListGuildMembersParams): Promise<ListOfGuildMember>
     /**
      * Returns a list of guild member objects whose username or nickname starts with a provided string.
      * @see https://discord.com/developers/docs/resources/guild#search-guild-members
      */
-    searchGuildMembers(guild_id: snowflake, params: Guild.Params.Params): Promise<ListOfGuildMember>
+    searchGuildMembers(guild_id: snowflake, params: SearchGuildMembersParams): Promise<ListOfGuildMember>
     /**
      * Adds a user to the guild, provided you have a valid oauth2 access token for the user with the `guilds.join` scope. Returns a 201 Created with the guild member as the body, or 204 No Content if the user is already a member of the guild. Fires a Guild Member Add Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#add-guild-member
      */
-    addGuildMember(guild_id: snowflake, user_id: snowflake, params: Guild.Params.Params): Promise<void>
+    addGuildMember(guild_id: snowflake, user_id: snowflake, params: AddGuildMemberParams): Promise<void>
     /**
      * Modify attributes of a guild member. Returns a 200 OK with the guild member as the body. Fires a Guild Member Update Gateway event. If the `channel_id` is set to null, this will force the target user to be disconnected from voice.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-member
      */
-    modifyGuildMember(guild_id: snowflake, user_id: snowflake, params: Guild.Params.Modify): Promise<void>
+    modifyGuildMember(guild_id: snowflake, user_id: snowflake, params: ModifyGuildMemberParams): Promise<void>
     /**
      * Modifies the current member in a guild. Returns a 200 with the updated member object on success. Fires a Guild Member Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-current-member
      */
-    modifyCurrentMember(guild_id: snowflake, params: Guild.Params.Modify): Promise<200WithTheUpdatedMember>
+    modifyCurrentMember(guild_id: snowflake, params: ModifyCurrentMemberParams): Promise<200WithTheUpdatedMember>
     /**
      * <Danger>
      * @see https://discord.com/developers/docs/resources/guild#modify-current-user-nick
      */
-    modifyCurrentUserNick(guild_id: snowflake, params: Guild.Params.Modify): Promise<void>
+    modifyCurrentUserNick(guild_id: snowflake, params: ModifyCurrentUserNickParams): Promise<void>
     /**
      * Adds a role to a guild member. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Member Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#add-guild-member-role
@@ -768,7 +766,7 @@ declare module './internal' {
      * Returns a list of ban objects for the users banned from this guild. Requires the `BAN_MEMBERS` permission.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-bans
      */
-    getGuildBans(guild_id: snowflake, params: Guild.Params.Params): Promise<ListOfBan>
+    getGuildBans(guild_id: snowflake, params: GetGuildBansParams): Promise<ListOfBan>
     /**
      * Returns a ban object for the given user or a 404 not found if the ban cannot be found. Requires the `BAN_MEMBERS` permission.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-ban
@@ -778,7 +776,7 @@ declare module './internal' {
      * Create a guild ban, and optionally delete previous messages sent by the banned user. Requires the `BAN_MEMBERS` permission. Returns a 204 empty response on success. Fires a Guild Ban Add Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#create-guild-ban
      */
-    createGuildBan(guild_id: snowflake, user_id: snowflake, params: Guild.Params.Create): Promise<void>
+    createGuildBan(guild_id: snowflake, user_id: snowflake, params: CreateGuildBanParams): Promise<void>
     /**
      * Remove the ban for a user. Requires the `BAN_MEMBERS` permissions. Returns a 204 empty response on success. Fires a Guild Ban Remove Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#remove-guild-ban
@@ -788,7 +786,7 @@ declare module './internal' {
      * Ban up to 200 users from a guild, and optionally delete previous messages sent by the banned users. Requires both the `BAN_MEMBERS` and `MANAGE_GUILD` permissions. Returns a 200 response on success, including the fields `banned_users` with the IDs of the banned users and `failed_users` with IDs that could not be banned or were already banned.
      * @see https://discord.com/developers/docs/resources/guild#bulk-guild-ban
      */
-    bulkGuildBan(guild_id: snowflake, params: Guild.Params.Params): Promise<void>
+    bulkGuildBan(guild_id: snowflake, params: BulkGuildBanParams): Promise<void>
     /**
      * Returns a list of role objects for the guild.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-roles
@@ -808,17 +806,17 @@ declare module './internal' {
      * Create a new role for the guild. Requires the `MANAGE_ROLES` permission. Returns the new role object on success. Fires a Guild Role Create Gateway event. All JSON params are optional.
      * @see https://discord.com/developers/docs/resources/guild#create-guild-role
      */
-    createGuildRole(guild_id: snowflake, params: Guild.Params.Create): Promise<Role>
+    createGuildRole(guild_id: snowflake, params: CreateGuildRoleParams): Promise<Role>
     /**
      * Modify the positions of a set of role objects for the guild. Requires the `MANAGE_ROLES` permission. Returns a list of all of the guild's role objects on success. Fires multiple Guild Role Update Gateway events.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-role-positions
      */
-    modifyGuildRolePositions(guild_id: snowflake, params: Guild.Params.Modify): Promise<ListOfAllOfTheGuild'sRole>
+    modifyGuildRolePositions(guild_id: snowflake, params: ModifyGuildRolePositionsParams): Promise<ListOfAllOfTheGuild'sRole>
     /**
      * Modify a guild role. Requires the `MANAGE_ROLES` permission. Returns the updated role on success. Fires a Guild Role Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-role
      */
-    modifyGuildRole(guild_id: snowflake, role_id: snowflake, params: Guild.Params.Modify): Promise<void>
+    modifyGuildRole(guild_id: snowflake, role_id: snowflake, params: ModifyGuildRoleParams): Promise<void>
     /**
      * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Role Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#delete-guild-role
@@ -828,12 +826,12 @@ declare module './internal' {
      * Returns an object with one `pruned` key indicating the number of members that would be removed in a prune operation. Requires the `MANAGE_GUILD` and `KICK_MEMBERS` permissions.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-prune-count
      */
-    getGuildPruneCount(guild_id: snowflake, params: Guild.Params.Params): Promise<void>
+    getGuildPruneCount(guild_id: snowflake, params: GetGuildPruneCountParams): Promise<void>
     /**
      * Begin a prune operation. Requires the `MANAGE_GUILD` and `KICK_MEMBERS` permissions. Returns an object with one `pruned` key indicating the number of members that were removed in the prune operation. For large guilds it's recommended to set the `compute_prune_count` option to `false`, forcing `pruned` to `null`. Fires multiple Guild Member Remove Gateway events.
      * @see https://discord.com/developers/docs/resources/guild#begin-guild-prune
      */
-    beginGuildPrune(guild_id: snowflake, params: Guild.Params.Params): Promise<void>
+    beginGuildPrune(guild_id: snowflake, params: BeginGuildPruneParams): Promise<void>
     /**
      * Returns a list of voice region objects for the guild. Unlike the similar `/voice` route, this returns VIP servers when the guild is VIP-enabled.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-voice-regions
@@ -878,7 +876,7 @@ declare module './internal' {
      * Returns a PNG image widget for the guild. Requires no permissions or authentication.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-widget-image
      */
-    getGuildWidgetImage(guild_id: snowflake, params: Guild.Params.Params): Promise<void>
+    getGuildWidgetImage(guild_id: snowflake, params: GetGuildWidgetImageParams): Promise<void>
     /**
      * Returns the Welcome Screen object for the guild. If the welcome screen is not enabled, the `MANAGE_GUILD` permission is required.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-welcome-screen
@@ -888,7 +886,7 @@ declare module './internal' {
      * Modify the guild's Welcome Screen. Requires the `MANAGE_GUILD` permission. Returns the updated Welcome Screen object. May fire a Guild Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-welcome-screen
      */
-    modifyGuildWelcomeScreen(guild_id: snowflake, params: Guild.Params.Modify): Promise<WelcomeScreen>
+    modifyGuildWelcomeScreen(guild_id: snowflake, params: ModifyGuildWelcomeScreenParams): Promise<WelcomeScreen>
     /**
      * Returns the Onboarding object for the guild.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-onboarding
@@ -898,12 +896,12 @@ declare module './internal' {
      * Modifies the onboarding configuration of the guild. Returns a 200 with the Onboarding object for the guild. Requires the `MANAGE_GUILD` and `MANAGE_ROLES` permissions.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-onboarding
      */
-    modifyGuildOnboarding(guild_id: snowflake, params: Guild.Params.Modify): Promise<200WithTheOnboarding>
+    modifyGuildOnboarding(guild_id: snowflake, params: ModifyGuildOnboardingParams): Promise<200WithTheOnboarding>
     /**
      * Modifies the incident actions of the guild. Returns a 200 with the Incidents Data object for the guild. Requires the `MANAGE_GUILD` permission.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-incident-actions
      */
-    modifyGuildIncidentActions(guild_id: snowflake, params: Guild.Params.Modify): Promise<200WithTheIncidentsData>
+    modifyGuildIncidentActions(guild_id: snowflake, params: ModifyGuildIncidentActionsParams): Promise<200WithTheIncidentsData>
   }
 }
 

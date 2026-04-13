@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { Internal, RoleColors, RoleTags, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/permission#role-object-role-structure */
 export interface Permission {
@@ -7,7 +7,7 @@ export interface Permission {
   /** role name */
   name: string
   /** **Deprecated** integer representation of hexadecimal color code */
-  color*: integer
+  color: integer
   /** the role's colors */
   colors: RoleColors
   /** if this role is pinned in the user listing */

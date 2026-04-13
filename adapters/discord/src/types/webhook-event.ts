@@ -1,4 +1,4 @@
-import { Internal, User, integer } from '.'
+import { Guild, Internal, User, integer } from '.'
 
 /** https://discord.com/developers/docs/resources/webhook-event#application-authorized-application-authorized-structure */
 export interface WebhookEvent {
@@ -7,7 +7,7 @@ export interface WebhookEvent {
   /** User who authorized the app */
   user: User
   /** List of scopes the user authorized */
-  scopes: Strings[]
+  scopes: string[]
   /** Server which app was authorized for (when integration type is `0`) */
   guild?: Guild
 }

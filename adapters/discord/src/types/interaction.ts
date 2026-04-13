@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake } from '.'
+import { ApplicationCommandInteractionDataOption, ComponentInteractionResponse, Entitlement, GuildMember, InteractionCallbackData, InteractionCallbackType, InteractionContextType, InteractionData, InteractionType, Internal, Message, PartialChannel, PartialGuild, PartialMember, ResolvedData, SelectOptionValues, User, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-structure */
 export interface Interaction {
@@ -178,14 +178,12 @@ export namespace Interaction {
     data?: InteractionCallbackData
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/interaction#create-interaction-response-query-string-params */
-    export interface Create {
-      /** Whether to include an interaction callback object as the response */
-      with_response?: boolean
-    }
+}
 
-  }
+/** https://discord.com/developers/docs/resources/interaction#create-interaction-response-query-string-params */
+export interface CreateInteractionResponseParams {
+  /** Whether to include an interaction callback object as the response */
+  with_response?: Boolean
 }
 
 declare module './internal' {
@@ -194,7 +192,7 @@ declare module './internal' {
      * Create a response to an Interaction. Body is an interaction response. Returns `204` unless `with_response` is set to `true` which returns `200` with the body as interaction callback response.
      * @see https://discord.com/developers/docs/resources/interaction#create-interaction-response
      */
-    createInteractionResponse(interaction_id: snowflake, interaction_token: snowflake, params: Interaction.Params.Create): Promise<void>
+    createInteractionResponse(interaction_id: snowflake, interaction_token: snowflake, params: CreateInteractionResponseParams): Promise<void>
     /**
      * Returns the initial Interaction response. Functions the same as Get Webhook Message.
      * @see https://discord.com/developers/docs/resources/interaction#get-original-interaction-response

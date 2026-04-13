@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { ActionRowChildComponents, ChannelTypes, ContainerChildComponents, DefaultValue, Internal, LabelChildComponent, LabelInteractionResponseChildComponent, MediaGalleryItems, ResolvedData, SectionAccessoryComponent, SectionChildComponents, SelectOptions, UnfurledMediaItem, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/component#action-row-action-row-structure */
 export interface Component {
@@ -14,45 +14,45 @@ export namespace Component {
   /** https://discord.com/developers/docs/resources/component#component-object-component-types */
   export enum Type {
     /** Container to display a row of interactive components */
-    1 = '[Action Row](/developers/components/reference#action-row)',
+    1 = 1,
     /** Button object */
-    2 = '[Button](/developers/components/reference#button)',
+    2 = 2,
     /** Select menu for picking from defined text options */
-    3 = '[String Select](/developers/components/reference#string-select)',
+    3 = 3,
     /** Text input object */
-    4 = '[Text Input](/developers/components/reference#text-input)',
+    4 = 4,
     /** Select menu for users */
-    5 = '[User Select](/developers/components/reference#user-select)',
+    5 = 5,
     /** Select menu for roles */
-    6 = '[Role Select](/developers/components/reference#role-select)',
+    6 = 6,
     /** Select menu for mentionables (users *and* roles) */
-    7 = '[Mentionable Select](/developers/components/reference#mentionable-select)',
+    7 = 7,
     /** Select menu for channels */
-    8 = '[Channel Select](/developers/components/reference#channel-select)',
+    8 = 8,
     /** Container to display text alongside an accessory component */
-    9 = '[Section](/developers/components/reference#section)',
+    9 = 9,
     /** Markdown text */
-    10 = '[Text Display](/developers/components/reference#text-display)',
+    10 = 10,
     /** Small image that can be used as an accessory */
-    11 = '[Thumbnail](/developers/components/reference#thumbnail)',
+    11 = 11,
     /** Display images and other media */
-    12 = '[Media Gallery](/developers/components/reference#media-gallery)',
+    12 = 12,
     /** Displays an attached file */
-    13 = '[File](/developers/components/reference#file)',
+    13 = 13,
     /** Component to add vertical padding between other components */
-    14 = '[Separator](/developers/components/reference#separator)',
+    14 = 14,
     /** Container that visually groups a set of components */
-    17 = '[Container](/developers/components/reference#container)',
+    17 = 17,
     /** Container associating a label and description with a component */
-    18 = '[Label](/developers/components/reference#label)',
+    18 = 18,
     /** Component for uploading files */
-    19 = '[File Upload](/developers/components/reference#file-upload)',
+    19 = 19,
     /** Single-choice set of options */
-    21 = '[Radio Group](/developers/components/reference#radio-group)',
+    21 = 21,
     /** Multi-selectable group of checkboxes */
-    22 = '[Checkbox Group](/developers/components/reference#checkbox-group)',
+    22 = 22,
     /** Single checkbox for yes/no choice */
-    23 = '[Checkbox](/developers/components/reference#checkbox)',
+    23 = 23,
   }
 
   /** https://discord.com/developers/docs/resources/component#unfurled-media-item-unfurled-media-item-flags */
@@ -400,7 +400,7 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** The text of the selected options */
-    values: Strings[]
+    values: string[]
   }
 
   /** https://discord.com/developers/docs/resources/component#text-input-text-input-interaction-response-structure */
@@ -428,7 +428,7 @@ export namespace Component {
     /** Resolved entities from selected options */
     resolved: ResolvedData
     /** IDs of the selected users */
-    values: Snowflakes[]
+    values: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/component#role-select-role-select-interaction-response-structure */
@@ -444,7 +444,7 @@ export namespace Component {
     /** Resolved entities from selected options */
     resolved: ResolvedData
     /** IDs of the selected roles */
-    values: Snowflakes[]
+    values: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/component#mentionable-select-mentionable-select-interaction-response-structure */
@@ -460,7 +460,7 @@ export namespace Component {
     /** Resolved entities from selected options */
     resolved: ResolvedData
     /** IDs of the selected mentionables */
-    values: Snowflakes[]
+    values: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/component#channel-select-channel-select-interaction-response-structure */
@@ -476,7 +476,7 @@ export namespace Component {
     /** Resolved entities from selected options */
     resolved: ResolvedData
     /** IDs of the selected channels */
-    values: Snowflakes[]
+    values: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/component#text-display-text-display-interaction-response-structure */
@@ -506,7 +506,7 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** IDs of the uploaded files found in the resolved data */
-    values: Snowflakes[]
+    values: snowflake[]
   }
 
 }

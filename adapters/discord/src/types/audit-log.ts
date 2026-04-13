@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake } from '.'
+import { ApplicationCommands, AutoModerationRule, GuildScheduledEvent, Internal, User, Webhook, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure */
 export interface AuditLog {
@@ -39,22 +39,20 @@ export namespace AuditLog {
     reason?: string
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log-query-string-params */
-    export interface GetGuildAuditLog {
-      /** Entries from a specific user ID */
-      user_id?: snowflake
-      /** Entries for a specific audit log event */
-      action_type?: integer
-      /** Entries with ID less than a specific audit log entry ID */
-      before?: snowflake
-      /** Entries with ID greater than a specific audit log entry ID */
-      after?: snowflake
-      /** Maximum number of entries (between 1-100) to return, defaults to 50 */
-      limit?: integer
-    }
+}
 
-  }
+/** https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log-query-string-params */
+export interface GetGuildAuditLogParams {
+  /** Entries from a specific user ID */
+  user_id?: snowflake
+  /** Entries for a specific audit log event */
+  action_type?: integer
+  /** Entries with ID less than a specific audit log entry ID */
+  before?: snowflake
+  /** Entries with ID greater than a specific audit log entry ID */
+  after?: snowflake
+  /** Maximum number of entries (between 1-100) to return, defaults to 50 */
+  limit?: integer
 }
 
 declare module './internal' {
@@ -63,7 +61,7 @@ declare module './internal' {
      * Returns an audit log object for the guild. Requires the `VIEW_AUDIT_LOG` permission.
      * @see https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log
      */
-    getGuildAuditLog(guild_id: snowflake, params: AuditLog.Params.Params): Promise<void>
+    getGuildAuditLog(guild_id: snowflake, params: GetGuildAuditLogParams): Promise<void>
   }
 }
 

@@ -27,42 +27,40 @@ export namespace Soundboard {
     items: SoundboardSound[]
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound-json-params */
-    export interface SendSoundboardSound {
-      /** the id of the soundboard sound to play */
-      sound_id: snowflake
-      /** the id of the guild the soundboard sound is from, required to play sounds from different servers */
-      source_guild_id?: snowflake
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound-json-params */
-    export interface Create {
-      /** name of the soundboard sound (2-32 characters) */
-      name: string
-      /** the mp3 or ogg sound data, base64 encoded, similar to image data */
-      sound: DataUri
-      /** the volume of the soundboard sound, from 0 to 1, defaults to 1 */
-      volume?: Double | null
-      /** the id of the custom emoji for the soundboard sound */
-      emoji_id?: snowflake | null
-      /** the unicode character of a standard emoji for the soundboard sound */
-      emoji_name?: string | null
-    }
+/** https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound-json-params */
+export interface SendSoundboardSoundParams {
+  /** the id of the soundboard sound to play */
+  sound_id: snowflake
+  /** the id of the guild the soundboard sound is from, required to play sounds from different servers */
+  source_guild_id?: snowflake
+}
 
-    /** https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound-json-params */
-    export interface Modify {
-      /** name of the soundboard sound (2-32 characters) */
-      name: string
-      /** the volume of the soundboard sound, from 0 to 1 */
-      volume: Double | null
-      /** the id of the custom emoji for the soundboard sound */
-      emoji_id: snowflake | null
-      /** the unicode character of a standard emoji for the soundboard sound */
-      emoji_name: string | null
-    }
+/** https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound-json-params */
+export interface CreateGuildSoundboardSoundParams {
+  /** name of the soundboard sound (2-32 characters) */
+  name: string
+  /** the mp3 or ogg sound data, base64 encoded, similar to image data */
+  sound: DataUri
+  /** the volume of the soundboard sound, from 0 to 1, defaults to 1 */
+  volume?: Double | null
+  /** the id of the custom emoji for the soundboard sound */
+  emoji_id?: snowflake | null
+  /** the unicode character of a standard emoji for the soundboard sound */
+  emoji_name?: string | null
+}
 
-  }
+/** https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound-json-params */
+export interface ModifyGuildSoundboardSoundParams {
+  /** name of the soundboard sound (2-32 characters) */
+  name: string
+  /** the volume of the soundboard sound, from 0 to 1 */
+  volume: Double | null
+  /** the id of the custom emoji for the soundboard sound */
+  emoji_id: snowflake | null
+  /** the unicode character of a standard emoji for the soundboard sound */
+  emoji_name: string | null
 }
 
 declare module './internal' {
@@ -71,7 +69,7 @@ declare module './internal' {
      * Send a soundboard sound to a voice channel the user is connected to. Fires a Voice Channel Effect Send Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound
      */
-    sendSoundboardSound(channel_id: snowflake, params: Soundboard.Params.Params): Promise<void>
+    sendSoundboardSound(channel_id: snowflake, params: SendSoundboardSoundParams): Promise<void>
     /**
      * Returns an array of soundboard sound objects that can be used by all users.
      * @see https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds
@@ -91,12 +89,12 @@ declare module './internal' {
      * Create a new soundboard sound for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new soundboard sound object on success. Fires a Guild Soundboard Sound Create Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound
      */
-    createGuildSoundboardSound(guild_id: snowflake, params: Soundboard.Params.Create): Promise<SoundboardSound>
+    createGuildSoundboardSound(guild_id: snowflake, params: CreateGuildSoundboardSoundParams): Promise<SoundboardSound>
     /**
      * Modify the given soundboard sound. For sounds created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other sounds, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated soundboard sound object on success. Fires a Guild Soundboard Sound Update Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound
      */
-    modifyGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake, params: Soundboard.Params.Modify): Promise<SoundboardSound>
+    modifyGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake, params: ModifyGuildSoundboardSoundParams): Promise<SoundboardSound>
     /**
      * Delete the given soundboard sound. For sounds created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other sounds, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Soundboard Sound Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#delete-guild-soundboard-sound

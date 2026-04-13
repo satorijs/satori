@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake } from '.'
+import { Internal, Team, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/application#application-object-application-structure */
 export interface Application {
@@ -11,7 +11,7 @@ export interface Application {
   /** Description of the app */
   description: string
   /** List of RPC origin URLs, if RPC is enabled */
-  rpc_origins?: Strings[]
+  rpc_origins?: string[]
   /** When `false`, only the app owner can add the app to guilds */
   bot_public: boolean
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
@@ -47,7 +47,7 @@ export interface Application {
   /** Approximate count of users that have OAuth2 authorizations for the app */
   approximate_user_authorization_count?: integer
   /** Array of redirect URIs for the app */
-  redirect_uris?: Strings[]
+  redirect_uris?: string[]
   /** Interactions endpoint URL for the app */
   interactions_endpoint_url?: string | null
   /** Role connection verification URL for the app */
@@ -57,9 +57,9 @@ export interface Application {
   /** If webhook events are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord */
   event_webhooks_status?: ApplicationEventWebhookStatus
   /** List of Webhook event types the app subscribes to */
-  event_webhooks_types?: Strings[]
+  event_webhooks_types?: string[]
   /** List of tags describing the content and functionality of the app. Max of 5 tags. */
-  tags?: Strings[]
+  tags?: string[]
   /** Settings for the app's default in-app authorization link, if enabled */
   install_params?: InstallParams
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
@@ -72,9 +72,9 @@ export namespace Application {
   /** https://discord.com/developers/docs/resources/application#application-object-application-integration-types */
   export enum IntegrationType {
     /** App is installable to servers */
-    `GUILD_INSTALL` = 0,
+    GUILD_INSTALL = 'guild_install',
     /** App is installable to users */
-    `USER_INSTALL` = 1,
+    USER_INSTALL = 'user_install',
   }
 
   /** https://discord.com/developers/docs/resources/application#application-object-application-flags */
@@ -104,43 +104,41 @@ export namespace Application {
   /** https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure */
   export interface InstallParams {
     /** Scopes to add the application to the server with */
-    scopes: Strings[]
+    scopes: string[]
     /** Permissions to request for the bot role */
     permissions: string
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/application#edit-current-application-json-params */
-    export interface Modify {
-      /** Default custom authorization URL for the app, if enabled */
-      custom_install_url: string
-      /** Description of the app */
-      description: string
-      /** Role connection verification URL for the app */
-      role_connections_verification_url: string
-      /** Settings for the app's default in-app authorization link, if enabled */
-      install_params: InstallParams
-      /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
-      integration_types_config: DictionaryWithKeysOfApplicationIntegrationTypes
-      /** App's public flags */
-      flags: integer
-      /** Icon for the app */
-      icon: ImageData | null
-      /** Default rich presence invite cover image for the app */
-      cover_image: ImageData | null
-      /** Interactions endpoint URL for the app */
-      interactions_endpoint_url: string
-      /** List of tags describing the content and functionality of the app (max of 20 characters per tag). Max of 5 tags. */
-      tags: Strings[]
-      /** Event webhooks URL for the app to receive webhook events */
-      event_webhooks_url: string
-      /** If webhook events are enabled for the app. `1` to disable, and `2` to enable */
-      event_webhooks_status: ApplicationEventWebhookStatus
-      /** List of Webhook event types to subscribe to */
-      event_webhooks_types: Strings[]
-    }
+}
 
-  }
+/** https://discord.com/developers/docs/resources/application#edit-current-application-json-params */
+export interface EditCurrentApplicationParams {
+  /** Default custom authorization URL for the app, if enabled */
+  custom_install_url: string
+  /** Description of the app */
+  description: string
+  /** Role connection verification URL for the app */
+  role_connections_verification_url: string
+  /** Settings for the app's default in-app authorization link, if enabled */
+  install_params: InstallParams
+  /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
+  integration_types_config: DictionaryWithKeysOfApplicationIntegrationTypes
+  /** App's public flags */
+  flags: integer
+  /** Icon for the app */
+  icon: ImageData | null
+  /** Default rich presence invite cover image for the app */
+  cover_image: ImageData | null
+  /** Interactions endpoint URL for the app */
+  interactions_endpoint_url: string
+  /** List of tags describing the content and functionality of the app (max of 20 characters per tag). Max of 5 tags. */
+  tags: string[]
+  /** Event webhooks URL for the app to receive webhook events */
+  event_webhooks_url: string
+  /** If webhook events are enabled for the app. `1` to disable, and `2` to enable */
+  event_webhooks_status: ApplicationEventWebhookStatus
+  /** List of Webhook event types to subscribe to */
+  event_webhooks_types: string[]
 }
 
 declare module './internal' {
@@ -154,7 +152,7 @@ declare module './internal' {
      * Edit properties of the app associated with the requesting bot user. Only properties that are passed will be updated. Returns the updated application object on success.
      * @see https://discord.com/developers/docs/resources/application#edit-current-application
      */
-    editCurrentApplication(params: Application.Params.Modify): Promise<Application>
+    editCurrentApplication(params: EditCurrentApplicationParams): Promise<Application>
     /**
      * Returns a serialized activity instance, if it exists. Useful for preventing unwanted activity sessions.
      * @see https://discord.com/developers/docs/resources/application#get-application-activity-instance

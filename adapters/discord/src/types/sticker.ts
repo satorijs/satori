@@ -77,30 +77,28 @@ export namespace Sticker {
     sticker_packs: StickerPack[]
   }
 
-  export namespace Params {
-    /** https://discord.com/developers/docs/resources/sticker#create-guild-sticker-form-params */
-    export interface Create {
-      /** name of the sticker (2-30 characters) */
-      name: string
-      /** description of the sticker (empty or 2-100 characters) */
-      description: string
-      /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: string
-      /** the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KiB */
-      file: any
-    }
+}
 
-    /** https://discord.com/developers/docs/resources/sticker#modify-guild-sticker-json-params */
-    export interface Modify {
-      /** name of the sticker (2-30 characters) */
-      name: string
-      /** description of the sticker (2-100 characters) */
-      description: string | null
-      /** autocomplete/suggestion tags for the sticker (max 200 characters) */
-      tags: string
-    }
+/** https://discord.com/developers/docs/resources/sticker#create-guild-sticker-form-params */
+export interface CreateGuildStickerParams {
+  /** name of the sticker (2-30 characters) */
+  name: string
+  /** description of the sticker (empty or 2-100 characters) */
+  description: string
+  /** autocomplete/suggestion tags for the sticker (max 200 characters) */
+  tags: string
+  /** the sticker file to upload, must be a PNG, APNG, GIF, or Lottie JSON file, max 512 KiB */
+  file: any
+}
 
-  }
+/** https://discord.com/developers/docs/resources/sticker#modify-guild-sticker-json-params */
+export interface ModifyGuildStickerParams {
+  /** name of the sticker (2-30 characters) */
+  name: string
+  /** description of the sticker (2-100 characters) */
+  description: string | null
+  /** autocomplete/suggestion tags for the sticker (max 200 characters) */
+  tags: string
 }
 
 declare module './internal' {
@@ -134,12 +132,12 @@ declare module './internal' {
      * Create a new sticker for the guild. Send a `multipart/form-data` body. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new sticker object on success. Fires a Guild Stickers Update Gateway event.
      * @see https://discord.com/developers/docs/resources/sticker#create-guild-sticker
      */
-    createGuildSticker(guild_id: snowflake, params: Sticker.Params.Create): Promise<Sticker>
+    createGuildSticker(guild_id: snowflake, params: CreateGuildStickerParams): Promise<Sticker>
     /**
      * Modify the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated sticker object on success. Fires a Guild Stickers Update Gateway event.
      * @see https://discord.com/developers/docs/resources/sticker#modify-guild-sticker
      */
-    modifyGuildSticker(guild_id: snowflake, sticker_id: snowflake, params: Sticker.Params.Modify): Promise<Sticker>
+    modifyGuildSticker(guild_id: snowflake, sticker_id: snowflake, params: ModifyGuildStickerParams): Promise<Sticker>
     /**
      * Delete the given sticker. For stickers created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other stickers, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Stickers Update Gateway event.
      * @see https://discord.com/developers/docs/resources/sticker#delete-guild-sticker
