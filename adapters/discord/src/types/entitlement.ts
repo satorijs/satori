@@ -44,7 +44,6 @@ export namespace Entitlement {
     /** Entitlement was purchased as an app subscription */
     APPLICATION_SUBSCRIPTION = 8,
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/entitlement#list-entitlements-query-string-params */
@@ -52,7 +51,7 @@ export interface ListEntitlementsParams {
   /** User ID to look up entitlements for */
   user_id?: snowflake
   /** Optional list of SKU IDs to check entitlements for */
-  sku_ids?: CommaDelimitedSetOfSnowflakes
+  sku_ids?: string
   /** Retrieve entitlements before this entitlement ID */
   before?: snowflake
   /** Retrieve entitlements after this entitlement ID */

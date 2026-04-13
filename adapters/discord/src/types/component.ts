@@ -1,6 +1,6 @@
-import { ActionRowChildComponents, ChannelTypes, ContainerChildComponents, DefaultValue, Internal, LabelChildComponent, LabelInteractionResponseChildComponent, MediaGalleryItems, ResolvedData, SectionAccessoryComponent, SectionChildComponents, SelectOptions, UnfurledMediaItem, integer, snowflake } from '.'
+import { Channel, Emoji, Interaction, Internal, Reference, integer, snowflake } from '.'
 
-/** https://discord.com/developers/docs/resources/component#action-row-action-row-structure */
+/** https://discord.com/developers/docs/components/reference#action-row-action-row-structure */
 export interface Component {
   /** `1` for action row component */
   type: integer
@@ -11,7 +11,7 @@ export interface Component {
 }
 
 export namespace Component {
-  /** https://discord.com/developers/docs/resources/component#component-object-component-types */
+  /** https://discord.com/developers/docs/components/reference#component-object-component-types */
   export enum Type {
     /** Container to display a row of interactive components */
     1 = 1,
@@ -55,13 +55,13 @@ export namespace Component {
     23 = 23,
   }
 
-  /** https://discord.com/developers/docs/resources/component#unfurled-media-item-unfurled-media-item-flags */
+  /** https://discord.com/developers/docs/components/reference#unfurled-media-item-unfurled-media-item-flags */
   export enum UnfurledMediaItemFlag {
     /** This image is animated */
     IS_ANIMATED = 1 << 0,
   }
 
-  /** https://discord.com/developers/docs/resources/component#button-button-structure */
+  /** https://discord.com/developers/docs/components/reference#button-button-structure */
   export interface Button {
     /** `2` for a button */
     type: integer
@@ -72,7 +72,7 @@ export namespace Component {
     /** Text that appears on the button; max 80 characters */
     label?: string
     /** `name`, `id`, and `animated` */
-    emoji?: PartialEmoji
+    emoji?: Partial<Emoji>
     /** Developer-defined identifier for the button; 1-100 characters */
     custom_id: string
     /** Identifier for a purchasable SKU, only available when using premium-style buttons */
@@ -83,7 +83,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#string-select-string-select-structure */
+  /** https://discord.com/developers/docs/components/reference#string-select-string-select-structure */
   export interface StringSelect {
     /** `3` for string select */
     type: integer
@@ -105,7 +105,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#string-select-select-option-structure */
+  /** https://discord.com/developers/docs/components/reference#string-select-select-option-structure */
   export interface SelectOption {
     /** User-facing name of the option; max 100 characters */
     label: string
@@ -114,12 +114,12 @@ export namespace Component {
     /** Additional description of the option; max 100 characters */
     description?: string
     /** `id`, `name`, and `animated` */
-    emoji?: PartialEmoji
+    emoji?: Partial<Emoji>
     /** Will show this option as selected by default */
     default?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#text-input-text-input-structure */
+  /** https://discord.com/developers/docs/components/reference#text-input-text-input-structure */
   export interface TextInput {
     /** `4` for a text input */
     type: integer
@@ -141,7 +141,7 @@ export namespace Component {
     placeholder?: string
   }
 
-  /** https://discord.com/developers/docs/resources/component#user-select-user-select-structure */
+  /** https://discord.com/developers/docs/components/reference#user-select-user-select-structure */
   export interface UserSelect {
     /** `5` for user select */
     type: integer
@@ -163,7 +163,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#user-select-select-default-value-structure */
+  /** https://discord.com/developers/docs/components/reference#user-select-select-default-value-structure */
   export interface SelectDefaultValue {
     /** ID of a user, role, or channel */
     id: snowflake
@@ -171,7 +171,7 @@ export namespace Component {
     type: string
   }
 
-  /** https://discord.com/developers/docs/resources/component#role-select-role-select-structure */
+  /** https://discord.com/developers/docs/components/reference#role-select-role-select-structure */
   export interface RoleSelect {
     /** `6` for role select */
     type: integer
@@ -193,7 +193,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#mentionable-select-mentionable-select-structure */
+  /** https://discord.com/developers/docs/components/reference#mentionable-select-mentionable-select-structure */
   export interface MentionableSelect {
     /** `7` for mentionable select */
     type: integer
@@ -215,7 +215,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#channel-select-channel-select-structure */
+  /** https://discord.com/developers/docs/components/reference#channel-select-channel-select-structure */
   export interface ChannelSelect {
     /** `8` for channel select */
     type: integer
@@ -224,7 +224,7 @@ export namespace Component {
     /** ID for the select menu; 1-100 characters */
     custom_id: string
     /** List of channel types to include in the channel select component */
-    channel_types?: ChannelTypes[]
+    channel_types?: Channel.Types[]
     /** Placeholder text if nothing is selected; max 150 characters */
     placeholder?: string
     /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `min_values` and `max_values` */
@@ -239,7 +239,7 @@ export namespace Component {
     disabled?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#section-section-structure */
+  /** https://discord.com/developers/docs/components/reference#section-section-structure */
   export interface Section {
     /** `9` for section component */
     type: integer
@@ -251,7 +251,7 @@ export namespace Component {
     accessory: SectionAccessoryComponent
   }
 
-  /** https://discord.com/developers/docs/resources/component#text-display-text-display-structure */
+  /** https://discord.com/developers/docs/components/reference#text-display-text-display-structure */
   export interface TextDisplay {
     /** `10` for text display */
     type: integer
@@ -261,21 +261,21 @@ export namespace Component {
     content: string
   }
 
-  /** https://discord.com/developers/docs/resources/component#thumbnail-thumbnail-structure */
+  /** https://discord.com/developers/docs/components/reference#thumbnail-thumbnail-structure */
   export interface Thumbnail {
     /** `11` for thumbnail component */
     type: integer
     /** Optional identifier for component */
     id?: integer
     /** A url or attachment provided as an unfurled media item */
-    media: UnfurledMediaItem
+    media: Component.UnfurledMediaItem
     /** Alt text for the media, max 1024 characters */
     description?: string | null
     /** Whether the thumbnail should be a spoiler (or blurred out). Defaults to `false` */
     spoiler?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#media-gallery-media-gallery-structure */
+  /** https://discord.com/developers/docs/components/reference#media-gallery-media-gallery-structure */
   export interface MediaGallery {
     /** `12` for media gallery component */
     type: integer
@@ -285,24 +285,24 @@ export namespace Component {
     items: MediaGalleryItems[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#media-gallery-media-gallery-item-structure */
+  /** https://discord.com/developers/docs/components/reference#media-gallery-media-gallery-item-structure */
   export interface MediaGalleryItem {
     /** A url or attachment provided as an unfurled media item */
-    media: UnfurledMediaItem
+    media: Component.UnfurledMediaItem
     /** Alt text for the media, max 1024 characters */
     description?: string | null
     /** Whether the media should be a spoiler (or blurred out). Defaults to `false` */
     spoiler?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#file-file-structure */
+  /** https://discord.com/developers/docs/components/reference#file-file-structure */
   export interface File {
     /** `13` for a file component */
     type: integer
     /** Optional identifier for component */
     id?: integer
     /** This unfurled media item is unique in that it **only** supports attachment references using the `attachment://<filename>` syntax */
-    file: UnfurledMediaItem
+    file: Component.UnfurledMediaItem
     /** Whether the media should be a spoiler (or blurred out). Defaults to `false` */
     spoiler?: boolean
     /** The name of the file. This field is ignored and provided by the API as part of the response */
@@ -311,7 +311,7 @@ export namespace Component {
     size?: integer
   }
 
-  /** https://discord.com/developers/docs/resources/component#separator-separator-structure */
+  /** https://discord.com/developers/docs/components/reference#separator-separator-structure */
   export interface Separator {
     /** `14` for separator component */
     type: integer
@@ -323,7 +323,7 @@ export namespace Component {
     spacing?: integer
   }
 
-  /** https://discord.com/developers/docs/resources/component#container-container-structure */
+  /** https://discord.com/developers/docs/components/reference#container-container-structure */
   export interface Container {
     /** `17` for container component */
     type: integer
@@ -337,7 +337,7 @@ export namespace Component {
     spoiler?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#label-label-structure */
+  /** https://discord.com/developers/docs/components/reference#label-label-structure */
   export interface Label {
     /** `18` for a label */
     type: integer
@@ -351,7 +351,7 @@ export namespace Component {
     component: LabelChildComponent
   }
 
-  /** https://discord.com/developers/docs/resources/component#file-upload-file-upload-structure */
+  /** https://discord.com/developers/docs/components/reference#file-upload-file-upload-structure */
   export interface FileUpload {
     /** `19` for file upload */
     type: integer
@@ -367,7 +367,7 @@ export namespace Component {
     required?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/component#unfurled-media-item-unfurled-media-item-structure */
+  /** https://discord.com/developers/docs/components/reference#unfurled-media-item-unfurled-media-item-structure */
   export interface UnfurledMediaItem {
     /** Supports arbitrary urls and `attachment://<filename>` references */
     url: string
@@ -389,7 +389,7 @@ export namespace Component {
     attachment_id?: snowflake
   }
 
-  /** https://discord.com/developers/docs/resources/component#string-select-string-select-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#string-select-string-select-interaction-response-structure */
   export interface PackResult {
     /** `3` for a String Select */
     type: integer
@@ -403,7 +403,7 @@ export namespace Component {
     values: string[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#text-input-text-input-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#text-input-text-input-interaction-response-structure */
   export interface PackResult {
     /** `4` for a Text Input */
     type: integer
@@ -415,7 +415,7 @@ export namespace Component {
     value: string
   }
 
-  /** https://discord.com/developers/docs/resources/component#user-select-user-select-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#user-select-user-select-interaction-response-structure */
   export interface PackResult {
     /** `5` for a User Select */
     type: integer
@@ -426,12 +426,12 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** Resolved entities from selected options */
-    resolved: ResolvedData
+    resolved: Interaction.ResolvedData
     /** IDs of the selected users */
     values: snowflake[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#role-select-role-select-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#role-select-role-select-interaction-response-structure */
   export interface PackResult {
     /** `6` for a Role Select */
     type: integer
@@ -442,12 +442,12 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** Resolved entities from selected options */
-    resolved: ResolvedData
+    resolved: Interaction.ResolvedData
     /** IDs of the selected roles */
     values: snowflake[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#mentionable-select-mentionable-select-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#mentionable-select-mentionable-select-interaction-response-structure */
   export interface PackResult {
     /** `7` for a Mentionable Select */
     type: integer
@@ -458,12 +458,12 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** Resolved entities from selected options */
-    resolved: ResolvedData
+    resolved: Interaction.ResolvedData
     /** IDs of the selected mentionables */
     values: snowflake[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#channel-select-channel-select-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#channel-select-channel-select-interaction-response-structure */
   export interface PackResult {
     /** `8` for a Channel Select */
     type: integer
@@ -474,12 +474,12 @@ export namespace Component {
     /** Developer-defined identifier for the input; 1-100 characters */
     custom_id: string
     /** Resolved entities from selected options */
-    resolved: ResolvedData
+    resolved: Interaction.ResolvedData
     /** IDs of the selected channels */
     values: snowflake[]
   }
 
-  /** https://discord.com/developers/docs/resources/component#text-display-text-display-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#text-display-text-display-interaction-response-structure */
   export interface PackResult {
     /** `10` for a Text Display */
     type: integer
@@ -487,7 +487,7 @@ export namespace Component {
     id: integer
   }
 
-  /** https://discord.com/developers/docs/resources/component#label-label-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#label-label-interaction-response-structure */
   export interface PackResult {
     /** `18` for a Label */
     type: integer
@@ -497,7 +497,7 @@ export namespace Component {
     component: LabelInteractionResponseChildComponent
   }
 
-  /** https://discord.com/developers/docs/resources/component#file-upload-file-upload-interaction-response-structure */
+  /** https://discord.com/developers/docs/components/reference#file-upload-file-upload-interaction-response-structure */
   export interface PackResult {
     /** `19` for a File Upload */
     type: integer
@@ -508,6 +508,5 @@ export namespace Component {
     /** IDs of the uploaded files found in the resolved data */
     values: snowflake[]
   }
-
 }
 

@@ -1,4 +1,4 @@
-import { Application, InteractionType, Internal, MessageComponent, User, integer, snowflake, timestamp } from '.'
+import { Application, Emoji, Interaction, Internal, Reference, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/message#message-object-message-activity-structure */
 export interface Message {
@@ -234,6 +234,14 @@ export namespace Message {
     ARTICLE = 'article',
   }
 
+  /** https://discord.com/developers/docs/resources/message#search-guild-messages-search-sort-modes */
+  export enum SearchSortMode {
+    /** Sort by the message creation time (default) */
+    TIMESTAMP = 'timestamp',
+    /** Sort by the relevance of the message to the search query */
+    RELEVANCE = 'relevance',
+  }
+
   /** https://discord.com/developers/docs/resources/message#get-reactions-reaction-types */
   export enum ReactionType {
     NORMAL = 0,
@@ -245,11 +253,11 @@ export namespace Message {
     /** ID of the interaction */
     id: snowflake
     /** Type of interaction */
-    type: InteractionType
+    type: Interaction.Type
     /** User who triggered the interaction */
     user: User
     /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
-    authorizing_integration_owners: DictionaryWithKeysOfApplicationIntegrationTypes
+    authorizing_integration_owners: Record<string, any>
     /** ID of the original response message, present only on follow-up messages */
     original_response_message_id?: snowflake
     /** The user the command was run on, present only on user command interactions */
@@ -263,11 +271,11 @@ export namespace Message {
     /** ID of the interaction */
     id: snowflake
     /** Type of interaction */
-    type: InteractionType
+    type: Interaction.Type
     /** User who triggered the interaction */
     user: User
     /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
-    authorizing_integration_owners: DictionaryWithKeysOfApplicationIntegrationTypes
+    authorizing_integration_owners: Record<string, any>
     /** ID of the original response message, present only on follow-up messages */
     original_response_message_id?: snowflake
     /** ID of the message that contained the interactive component */
@@ -279,15 +287,15 @@ export namespace Message {
     /** ID of the interaction */
     id: snowflake
     /** Type of interaction */
-    type: InteractionType
+    type: Interaction.Type
     /** User who triggered the interaction */
     user: User
     /** IDs for installation context(s) related to an interaction. Details in Authorizing Integration Owners Object */
-    authorizing_integration_owners: DictionaryWithKeysOfApplicationIntegrationTypes
+    authorizing_integration_owners: Record<string, any>
     /** ID of the original response message, present only on follow-up messages */
     original_response_message_id?: snowflake
     /** Metadata for the interaction that was used to open the modal */
-    triggering_interaction_metadata: ApplicationCommandInteractionMetadataOrMessageComponentInteractionMetadata
+    triggering_interaction_metadata: Message.ApplicationCommandInteractionMetadata | Message.ComponentInteractionMetadata
   }
 
   /** https://discord.com/developers/docs/resources/message#message-call-object-message-call-object-structure */
@@ -309,9 +317,9 @@ export namespace Message {
     /** Whether the current user super-reacted using this emoji */
     me_burst: boolean
     /** emoji information */
-    emoji: PartialEmoji
+    emoji: Partial<Emoji>
     /** HEX colors used for super reaction */
-    burst_colors: Array
+    burst_colors: unknown[]
   }
 
   /** https://discord.com/developers/docs/resources/message#reaction-count-details-object-reaction-count-details-structure */
@@ -337,19 +345,19 @@ export namespace Message {
     /** color code of the embed */
     color?: integer
     /** footer information */
-    footer?: EmbedFooter
+    footer?: Message.EmbedFooter
     /** image information */
-    image?: EmbedImage
+    image?: Message.EmbedImage
     /** thumbnail information */
-    thumbnail?: EmbedImage
+    thumbnail?: Message.EmbedImage
     /** video information */
-    video?: EmbedVideo
+    video?: Message.EmbedVideo
     /** provider information */
-    provider?: EmbedProvider
+    provider?: Message.EmbedProvider
     /** author information */
-    author?: EmbedAuthor
+    author?: Message.EmbedAuthor
     /** fields information, max of 25 */
-    fields?: EmbedField[]
+    fields?: Message.EmbedField[]
     /** embed flags combined as a bitfield */
     flags?: integer
   }
@@ -511,7 +519,6 @@ export namespace Message {
     /**  */
     has_more: boolean
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/message#get-channel-messages-query-string-params */
@@ -571,9 +578,9 @@ export interface SearchGuildMessagesParams {
   /** Filter messages by attachment extension (e.g. `txt`) (max 256 characters, max 100) */
   attachment_extension?: string[]
   /** The sorting algorithm to use */
-  sort_by? \: string
+  sort_by?: string
   /** The direction to sort (`asc` or `desc`, default `desc`) */
-  sort_order? \: string
+  sort_order?: string
   /** Whether to include results from age-restricted channels (default false) */
   include_nsfw?: Boolean
 }
@@ -583,11 +590,11 @@ export interface CreateMessageParams {
   /** Message contents (up to 2000 characters) */
   content?: string
   /** Can be used to verify a message was sent (up to 25 characters). Value will appear in the Message Create event. */
-  nonce?: IntegerOrString
+  nonce?: integer | string
   /** `true` if this is a TTS message */
   tts?: boolean
   /** Up to 10 `rich` embeds (up to 6000 characters) */
-  embeds?: Embed[]
+  embeds?: Message.Embed[]
   /** Allowed mentions for the message */
   allowed_mentions?: AllowedMention
   /** Include to make your message a reply or a forward */
@@ -601,7 +608,7 @@ export interface CreateMessageParams {
   /** JSON-encoded body of non-file params, only for `multipart/form-data` requests. See Uploading Files */
   payload_json?: string
   /** Attachment objects with filename and description. See Uploading Files */
-  attachments?: PartialAttachment[]
+  attachments?: Partial<Message.Attachment>[]
   /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS`, `SUPPRESS_NOTIFICATIONS`, `IS_VOICE_MESSAGE`, and `IS_COMPONENTS_V2` can be set) */
   flags?: integer
   /** If true and nonce is present, it will be checked for uniqueness in the past few minutes. If another message was created by the same author with the same nonce, that message will be returned and no new message will be created. */
@@ -627,7 +634,7 @@ export interface EditMessageParams {
   /** Message contents (up to 2000 characters) */
   content: string
   /** Up to 10 `rich` embeds (up to 6000 characters) */
-  embeds: Embed[]
+  embeds: Message.Embed[]
   /** Edit the flags of a message (`SUPPRESS_EMBEDS` and `IS_COMPONENTS_V2` only) */
   flags: integer
   /** Allowed mentions for the message */
@@ -639,7 +646,7 @@ export interface EditMessageParams {
   /** JSON-encoded body of non-file params (multipart/form-data only). See Uploading Files */
   payload_json: string
   /** Attached files to keep and possible descriptions for new files. See Uploading Files */
-  attachments: Attachment[]
+  attachments: Message.Attachment[]
 }
 
 /** https://discord.com/developers/docs/resources/message#bulk-delete-messages-json-params */
@@ -747,17 +754,17 @@ declare module './internal' {
      * Gets the first 50 pinned messages in a channel, returning an array of message objects on success.
      * @see https://discord.com/developers/docs/resources/message#get-pinned-messages-(deprecated)
      */
-    getPinnedMessages(deprecated)(channel_id: snowflake): Promise<void>
+    getPinnedMessages(channel_id: snowflake): Promise<void>
     /**
      * This endpoint is deprecated. Use Pin Message instead.
      * @see https://discord.com/developers/docs/resources/message#pin-message-(deprecated)
      */
-    pinMessage(deprecated)(channel_id: snowflake, message_id: snowflake): Promise<void>
+    pinMessage(channel_id: snowflake, message_id: snowflake): Promise<void>
     /**
      * This endpoint is deprecated. Use Unpin Message instead.
      * @see https://discord.com/developers/docs/resources/message#unpin-message-(deprecated)
      */
-    unpinMessage(deprecated)(channel_id: snowflake, message_id: snowflake): Promise<void>
+    unpinMessage(channel_id: snowflake, message_id: snowflake): Promise<void>
   }
 }
 
@@ -802,10 +809,10 @@ Internal.define({
     DELETE: 'unpinMessage',
   },
   '/channels/{channel.id}/pins': {
-    GET: 'getPinnedMessages(deprecated)',
+    GET: 'getPinnedMessages',
   },
   '/channels/{channel.id}/pins/{message.id}': {
-    PUT: 'pinMessage(deprecated)',
-    DELETE: 'unpinMessage(deprecated)',
+    PUT: 'pinMessage',
+    DELETE: 'unpinMessage',
   },
 })

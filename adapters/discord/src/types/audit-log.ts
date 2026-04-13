@@ -1,17 +1,17 @@
-import { ApplicationCommands, AutoModerationRule, GuildScheduledEvent, Internal, User, Webhook, integer, snowflake } from '.'
+import { ApplicationCommands, AutoModeration, Guild, GuildScheduledEvent, Internal, User, Webhook, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/audit-log#audit-log-object-audit-log-structure */
 export interface AuditLog {
   /** List of application commands referenced in the audit log */
   application_commands: ApplicationCommands[]
   /** List of audit log entries, sorted from most to least recent */
-  audit_log_entries: AuditLogEntry[]
+  audit_log_entries: AuditLog.Entry[]
   /** List of auto moderation rules referenced in the audit log */
-  auto_moderation_rules: AutoModerationRule[]
+  auto_moderation_rules: AutoModeration[]
   /** List of guild scheduled events referenced in the audit log */
   guild_scheduled_events: GuildScheduledEvent[]
   /** List of partial integration objects */
-  integrations: PartialIntegration[]
+  integrations: Partial<Guild.Integration>[]
   /** List of threads referenced in the audit log\* */
   threads: ThreadSpecificChannel[]
   /** List of users referenced in the audit log */
@@ -26,7 +26,7 @@ export namespace AuditLog {
     /** ID of the affected entity (webhook, user, role, etc.) */
     target_id: string | null
     /** Changes made to the target_id */
-    changes?: AuditLogChange[]
+    changes?: AuditLog.Change[]
     /** User or app that made the changes */
     user_id: snowflake | null
     /** ID of the entry */
@@ -38,7 +38,6 @@ export namespace AuditLog {
     /** Reason for the change (1-512 characters) */
     reason?: string
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/audit-log#get-guild-audit-log-query-string-params */

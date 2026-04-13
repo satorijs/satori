@@ -78,7 +78,6 @@ export namespace AutoModeration {
     /** additional metadata needed during execution for this specific action type */
     metadata?: ActionMetadata
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/auto-moderation#create-auto-moderation-rule-json-params */
@@ -92,7 +91,7 @@ export interface CreateAutoModerationRuleParams {
   /** the trigger metadata */
   trigger_metadata?: any
   /** the actions which will execute when the rule is triggered */
-  actions: Action[]
+  actions: AutoModeration.Action[]
   /** whether the rule is enabled (False by default) */
   enabled?: boolean
   /** the role ids that should not be affected by the rule (Maximum of 20) */
@@ -108,7 +107,7 @@ export interface ModifyAutoModerationRuleParams {
   /** the trigger metadata */
   trigger_metadata?: any
   /** the actions which will execute when the rule is triggered */
-  actions: Action[]
+  actions: AutoModeration.Action[]
   /** whether the rule is enabled */
   enabled: boolean
   /** the role ids that should not be affected by the rule (Maximum of 20) */
@@ -123,7 +122,7 @@ declare module './internal' {
      * Get a list of all rules currently configured for the guild. Returns a list of auto moderation rule objects for the given guild.
      * @see https://discord.com/developers/docs/resources/auto-moderation#list-auto-moderation-rules-for-guild
      */
-    listAutoModerationRulesForGuild(guild_id: snowflake): Promise<ListOfAutoModerationRule>
+    listAutoModerationRulesForGuild(guild_id: snowflake): Promise<AutoModeration[]>
     /**
      * Get a single rule. Returns an auto moderation rule object.
      * @see https://discord.com/developers/docs/resources/auto-moderation#get-auto-moderation-rule

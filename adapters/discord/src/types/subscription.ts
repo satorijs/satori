@@ -1,4 +1,4 @@
-import { Internal } from '.'
+import { Internal, snowflake } from '.'
 
 
 declare module './internal' {
@@ -7,7 +7,7 @@ declare module './internal' {
      * Returns all subscriptions containing the SKU, filtered by user. Returns a list of subscription objects.
      * @see https://discord.com/developers/docs/resources/subscription#list-sku-subscriptions
      */
-    listSkuSubscriptions(sku_id: snowflake): Promise<ListOfSubscription>
+    listSkuSubscriptions(sku_id: snowflake): Promise<Subscription[]>
     /**
      * Get a subscription by its ID. Returns a subscription object.
      * @see https://discord.com/developers/docs/resources/subscription#get-sku-subscription

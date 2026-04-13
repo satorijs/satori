@@ -5,7 +5,7 @@ export interface Emoji {
   /** emoji id */
   id: snowflake | null
   /** emoji name */
-  name: String(canBeNullOnlyInReactionEmojiObjects) | null
+  name: string | null
   /** roles allowed to use this emoji */
   roles?: RoleObjectIds[]
   /** user that created this emoji */
@@ -61,7 +61,7 @@ declare module './internal' {
      * Returns a list of emoji objects for the given guild. Includes `user` fields if the bot has the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission.
      * @see https://discord.com/developers/docs/resources/emoji#list-guild-emojis
      */
-    listGuildEmojis(guild_id: snowflake): Promise<ListOfEmoji>
+    listGuildEmojis(guild_id: snowflake): Promise<Emoji[]>
     /**
      * Returns an emoji object for the given guild and emoji IDs. Includes the `user` field if the bot has the `MANAGE_GUILD_EXPRESSIONS` permission, or if the bot created the emoji and has the `CREATE_GUILD_EXPRESSIONS` permission.
      * @see https://discord.com/developers/docs/resources/emoji#get-guild-emoji

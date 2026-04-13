@@ -1,4 +1,4 @@
-import { Internal } from '.'
+import { Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object-application-role-connection-metadata-structure */
 export interface ApplicationRoleConnectionMetadata {
@@ -9,11 +9,11 @@ export interface ApplicationRoleConnectionMetadata {
   /** name of the metadata field (1-100 characters) */
   name: string
   /** translations of the name */
-  name_localizations?: DictionaryWithKeysInAvailableLocales
+  name_localizations?: Record<string, any>
   /** description of the metadata field (1-200 characters) */
   description: string
   /** translations of the description */
-  description_localizations?: DictionaryWithKeysInAvailableLocales
+  description_localizations?: Record<string, any>
 }
 
 export namespace ApplicationRoleConnectionMetadata {
@@ -36,7 +36,6 @@ export namespace ApplicationRoleConnectionMetadata {
     /** the metadata value (`integer`) is not equal to the guild's configured value (`integer`; `1`) */
     BOOLEAN_NOT_EQUAL = 8,
   }
-
 }
 
 declare module './internal' {
@@ -45,12 +44,12 @@ declare module './internal' {
      * Returns a list of application role connection metadata objects for the given application.
      * @see https://discord.com/developers/docs/resources/application-role-connection-metadata#get-application-role-connection-metadata-records
      */
-    getApplicationRoleConnectionMetadataRecords(application_id: snowflake): Promise<ListOfApplicationRoleConnectionMetadata>
+    getApplicationRoleConnectionMetadataRecords(application_id: snowflake): Promise<ApplicationRoleConnectionMetadata[]>
     /**
      * Updates and returns a list of application role connection metadata objects for the given application.
      * @see https://discord.com/developers/docs/resources/application-role-connection-metadata#update-application-role-connection-metadata-records
      */
-    updateApplicationRoleConnectionMetadataRecords(application_id: snowflake): Promise<ListOfApplicationRoleConnectionMetadata>
+    updateApplicationRoleConnectionMetadataRecords(application_id: snowflake): Promise<ApplicationRoleConnectionMetadata[]>
   }
 }
 

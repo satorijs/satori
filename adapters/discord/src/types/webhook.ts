@@ -1,4 +1,4 @@
-import { Internal, User, snowflake } from '.'
+import { Channel, Guild, Internal, Message, User, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure */
 export interface Webhook {
@@ -21,9 +21,9 @@ export interface Webhook {
   /** the bot/OAuth2 application that created this webhook */
   application_id: snowflake | null
   /** the guild of the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  source_guild?: PartialGuild
+  source_guild?: Partial<Guild>
   /** the channel that this webhook is following (returned for Channel Follower Webhooks) */
-  source_channel?: PartialChannel
+  source_channel?: Partial<Channel>
   /** the url used for executing the webhook (returned by the webhooks OAuth2 flow) */
   url?: string
 }
@@ -38,7 +38,6 @@ export namespace Webhook {
     /** Application webhooks are webhooks used with Interactions */
     APPLICATION = 3,
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/webhook#create-webhook-json-params */
@@ -116,12 +115,12 @@ declare module './internal' {
      * Returns a list of channel webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
      * @see https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
      */
-    getChannelWebhooks(channel_id: snowflake): Promise<ListOfChannelWebhook>
+    getChannelWebhooks(channel_id: snowflake): Promise<ChannelWebhook[]>
     /**
      * Returns a list of guild webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
      * @see https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
      */
-    getGuildWebhooks(guild_id: snowflake): Promise<ListOfGuildWebhook>
+    getGuildWebhooks(guild_id: snowflake): Promise<GuildWebhook[]>
     /**
      * Returns the new webhook object for the given id.
      * @see https://discord.com/developers/docs/resources/webhook#get-webhook
@@ -171,7 +170,7 @@ declare module './internal' {
      * Returns a previously-sent webhook message from the same token. Returns a message object on success.
      * @see https://discord.com/developers/docs/resources/webhook#get-webhook-message
      */
-    getWebhookMessage(webhook_id: snowflake, webhook_token: snowflake, message_id: snowflake, params: GetWebhookMessageParams): Promise<PreviouslySentWebhookMessageFromTheSameToken.ReturnsAMessage>
+    getWebhookMessage(webhook_id: snowflake, webhook_token: snowflake, message_id: snowflake, params: GetWebhookMessageParams): Promise<unknown>
     /**
      * Edits a previously-sent webhook message from the same token. Returns a message object on success.
      * @see https://discord.com/developers/docs/resources/webhook#edit-webhook-message

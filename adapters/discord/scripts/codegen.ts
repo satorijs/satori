@@ -61,11 +61,61 @@ const generatedFiles: string[] = []
 // Track cross-file type imports: resource name → Set of type names
 const crossImports = new Map<string, Set<string>>()
 
+// ===================== Pass 1: Collect all type definitions =====================
+// Maps full PascalCase name → { resource, namespaceName, shortName }
+interface TypeInfo {
+  resource: string // e.g., "guild"
+  namespaceName: string // e.g., "Guild"
+  shortName: string // e.g., "Member" (inside namespace) or "Guild" (main type)
+  isMain: boolean // true for the first/main object
+}
+const typeRegistry = new Map<string, TypeInfo>()
+
 for (const source of sources) {
   for (const [file, outName] of Object.entries(source.files)) {
     const path = join(source.dir, file)
+    if (!existsSync(path)) continue
+    const content = readFileSync(path, 'utf-8')
+    const resource = outName || basename(file, '.mdx')
+    const namespaceName = toPascalCase(resource)
+
+    // Collect object headings
+    const objRe = /<ManualAnchor id="([^"]+)" \/>\s*\n###### (.+Structure)\s*\n/g
+    let m: RegExpExecArray | null
+    let isFirst = true
+    while ((m = objRe.exec(content)) !== null) {
+      const fullName = toPascalCase(m[2].replace(/\s*Structure$/, ''))
+      const shortName = fullName.startsWith(namespaceName) && fullName !== namespaceName
+        ? fullName.slice(namespaceName.length) || fullName
+        : fullName
+      typeRegistry.set(fullName, { resource, namespaceName, shortName, isMain: isFirst })
+      isFirst = false
+    }
+
+    // Collect enum headings
+    const enumRe = /<ManualAnchor id="([^"]+)" \/>\s*\n###### (.+(?:Types?|Flags?|Modes?|Levels?))\s*\n/g
+    while ((m = enumRe.exec(content)) !== null) {
+      if (m[2].includes('Structure') || m[2].includes('Params')) continue
+      const fullName = toPascalCase(m[2])
+      const shortName = fullName.startsWith(namespaceName) && fullName !== namespaceName
+        ? fullName.slice(namespaceName.length) || fullName
+        : fullName
+      typeRegistry.set(fullName, { resource, namespaceName, shortName, isMain: false })
+    }
+  }
+}
+
+console.log(`Type registry: ${typeRegistry.size} types collected`)
+
+// ===================== Pass 2: Generate code =====================
+
+for (const source of sources) {
+  // Extract docs category from dir path: "developers/resources" → "resources"
+  const docsCategory = source.dir.replace(docsDir + '/', '').replace('developers/', '')
+  for (const [file, outName] of Object.entries(source.files)) {
+    const path = join(source.dir, file)
     if (existsSync(path)) {
-      processResource(path, outName)
+      processResource(path, outName, file, docsCategory)
       generatedFiles.push(outName)
     }
   }
@@ -97,7 +147,7 @@ function generateIndex() {
   const rows = parseTable(table)
   if (rows.length < 2) return
   const locales = rows.slice(1).map(row => (row[0] || '').trim()).filter(Boolean)
-  console.log(`=== locales (${locales.length}) ===`)
+  console.log(`locales: ${locales.length} entries`)
 
   lines.push(`/** @see https://discord.com/developers/docs/reference#locales */`)
   lines.push(`export type Locale = typeof Locale[number]`)
@@ -162,6 +212,8 @@ function toPascalCase(str: string): string {
 function toCamelCase(str: string): string {
   // Handle slash-separated alternatives: "Delete/Close Channel" → "Delete Channel"
   str = str.replace(/\/\w+/, '')
+  // Strip parenthetical suffixes: "Pin Message (Deprecated)" → "Pin Message"
+  str = str.replace(/\s*\([^)]*\)\s*$/, '')
   const p = toPascalCase(str)
   return p.charAt(0).toLowerCase() + p.slice(1)
 }
@@ -196,29 +248,55 @@ function extractResourceFromUrl(url: string): string | undefined {
 
 /** Resolve a markdown link type to a TS type name, tracking imports from other files */
 function resolveTypeRef(raw: string, currentResource: string): string {
-  // Strip footnote markers like \*
-  raw = raw.replace(/\\\*/g, '').trim()
+  // Strip footnote markers like \* and trailing *
+  raw = raw.replace(/\\\*/g, '').replace(/\s*\*\s*$/g, '').trim()
 
-  // Try to extract type from markdown link: [type name](url)
-  const linkMatch = raw.match(/^(?:array of\s+|list of\s+)?\[([^\]]+)\]\(([^)]+)\)\s*objects?$/i)
-    || raw.match(/^(?:array of\s+|list of\s+)?\[([^\]]+)\]\(([^)]+)\)$/i)
+  // Try to extract type from markdown link FIRST (before stripping parens)
+  const linkMatch = raw.match(/^(?:(?:array|list) of\s+)?(?:(?:a|the)\s+)?\[([^\]]+)\]\(([^)]+)\)\s*objects?$/i)
+    || raw.match(/^(?:(?:array|list) of\s+)?(?:(?:a|the)\s+)?\[([^\]]+)\]\(([^)]+)\)\s*(?:ids?)?$/i)
   if (linkMatch) {
     const isArray = /^(?:array|list) of\s+/i.test(raw)
     const [, linkText, url] = linkMatch
     const resource = extractResourceFromUrl(url)
-    const typeName = toPascalCase(linkText.replace(/\s*objects?$/i, ''))
+    const resourceName = resource ? toPascalCase(resource) : ''
+    const rawTypeName = toPascalCase(linkText.replace(/\s*objects?$/i, ''))
 
-    // Track cross-file imports
-    if (resource && resource !== currentResource) {
+    // Handle "ids" suffix: [role] object ids → snowflake[]
+    if (/\bids?\s*$/i.test(raw)) return 'snowflake[]'
+
+    // Look up in type registry for accurate resolution
+    let typeName = rawTypeName
+    const info = typeRegistry.get(rawTypeName)
+    if (info) {
+      if (info.resource === currentResource) {
+        // Same file: always use Namespace.ShortName for sub-types (works both inside and outside namespace)
+        typeName = info.isMain ? info.namespaceName : `${info.namespaceName}.${info.shortName}`
+      } else {
+        // Cross file: Namespace.ShortName
+        typeName = info.isMain ? info.namespaceName : `${info.namespaceName}.${info.shortName}`
+        if (!crossImports.has(currentResource)) crossImports.set(currentResource, new Set())
+        crossImports.get(currentResource)!.add(info.namespaceName)
+      }
+    } else if (resource && resource !== currentResource) {
+      // Not in registry but cross-file — import the namespace
       if (!crossImports.has(currentResource)) crossImports.set(currentResource, new Set())
-      crossImports.get(currentResource)!.add(typeName)
+      crossImports.get(currentResource)!.add(resourceName)
     }
 
     return isArray ? typeName + '[]' : typeName
   }
 
-  // Remove markdown links but keep link text (for complex expressions)
+  // Strip parenthetical annotations: "String(canBeNullOnly...)" → "String"
+  raw = raw.replace(/\([^)]*\)/g, '').trim()
+  // Remove markdown links but keep link text
   let cleaned = raw.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').trim()
+  // Strip standalone brackets: [user] → user, [boolean] → boolean
+  cleaned = cleaned.replace(/\[([^\]]+)\]/g, '$1').trim()
+  // "partial X object" → Partial<X>
+  if (/^partial\s+/i.test(cleaned)) {
+    const inner = cleaned.replace(/^partial\s+/i, '').replace(/\s*objects?$/i, '').trim()
+    return `Partial<${resolveTypeRef(inner, currentResource)}>`
+  }
   // "array of X objects" → X[]
   if (/^array of\s+/i.test(cleaned)) {
     const inner = cleaned.replace(/^array of\s+/i, '').replace(/\s*objects?$/i, '').trim()
@@ -232,17 +310,81 @@ function resolveTypeRef(raw: string, currentResource: string): string {
   // "X object" → X
   cleaned = cleaned.replace(/\s*objects?$/i, '').trim()
   if (!cleaned) return 'any'
+  // Standalone "array" without element type
+  if (cleaned.toLowerCase() === 'array') return 'unknown[]'
+  // "null" type
+  if (cleaned.toLowerCase() === 'null') return 'null'
+  // "one of X" → X
+  if (/^one of\s+/i.test(cleaned)) return resolveTypeRef(cleaned.replace(/^one of\s+/i, ''), currentResource)
+  // "dictionary with keys in/of ..." → Record<string, ...>
+  if (/^dictionary/i.test(cleaned)) return 'Record<string, any>'
+  // "map of snowflakes to X" → Record<snowflake, X>
+  if (/^map of snowflakes to\s+/i.test(cleaned)) {
+    const inner = cleaned.replace(/^map of snowflakes to\s+/i, '').replace(/\s*objects?$/i, '').trim()
+    return `Record<snowflake, ${resolveTypeRef(inner, currentResource)}>`
+  }
+  // Complex conditional types → simplify to number
+  if (/integer for .* options.*double for/i.test(cleaned)) return 'number'
   // Map primitives (including plurals)
   const lower = cleaned.toLowerCase()
   if (lower === 'snowflake' || lower === 'snowflakes') return 'snowflake'
   if (lower === 'string' || lower === 'strings') return 'string'
   if (lower === 'integer' || lower === 'int' || lower === 'integers') return 'integer'
   if (lower === 'boolean' || lower === 'bool') return 'boolean'
-  if (lower === 'float' || lower === 'number') return 'number'
+  if (lower === 'float' || lower === 'number' || lower === 'double') return 'number'
   if (lower === 'file contents' || lower === 'file') return 'any'
-  if (lower === 'iso8601 timestamp' || lower === 'timestamp') return 'timestamp'
-  // Otherwise PascalCase it
-  return toPascalCase(cleaned)
+  if (lower === 'iso8601 timestamp' || lower === 'timestamp' || lower === 'iso8601timestamp') return 'timestamp'
+  // dict<K, V> or dict\<K, V\> → Record<K, V>
+  const dictMatch = cleaned.match(/^dict\\?<(.+?),\s*(.+?)\\?>$/i)
+  if (dictMatch) {
+    const key = resolveTypeRef(dictMatch[1].replace(/\\/g, ''), currentResource)
+    const value = resolveTypeRef(dictMatch[2].replace(/\\/g, ''), currentResource)
+    return `Record<${key}, ${value}>`
+  }
+  // "string; comma-delimited ..." → string
+  if (cleaned.includes(';')) return resolveTypeRef(cleaned.split(';')[0].trim(), currentResource)
+  // "string, integer, or double" / "string, integer, double, or boolean" → union
+  if (/,.*\bor\b/i.test(cleaned)) {
+    const parts = cleaned.split(/,\s*|\s+or\s+/i).map(p => p.trim()).filter(Boolean)
+    return parts.map(p => resolveTypeRef(p, currentResource)).join(' | ')
+  }
+  // Compound types with "or" (no comma): "X or Y" → X | Y
+  if (/\bor\b/i.test(cleaned) && cleaned.split(/\s+or\s+/i).length >= 2) {
+    const parts = cleaned.split(/\s+or\s+/i).map(p => p.trim()).filter(Boolean)
+    if (parts.length >= 2) return parts.map(p => resolveTypeRef(p, currentResource)).join(' | ')
+  }
+  // Special Discord doc types
+  if (lower === 'data uri' || lower === 'datauri' || lower === 'image data') return 'string'
+  if (lower === 'dict') return 'Record<string, string>'
+  if (/^two integers/i.test(lower)) return '[integer, integer]'
+  if (/^comma.delimited/i.test(lower)) return 'string'
+  // Check if it looks like a valid identifier (PascalCase-able)
+  if (/^[a-zA-Z][\w\s-]*$/.test(cleaned)) {
+    const typeName = toPascalCase(cleaned)
+    // Look up in type registry
+    let info = typeRegistry.get(typeName)
+      // Also try prefixed with current resource namespace: "Member" → "GuildMember"
+      || typeRegistry.get(toPascalCase(currentResource) + typeName)
+    // If still not found, search registry for any type ending with this name
+    if (!info) {
+      for (const [key, val] of typeRegistry) {
+        if (key.endsWith(typeName) && val.shortName === typeName) { info = val; break }
+      }
+    }
+    if (info) {
+      if (info.resource === currentResource) {
+        return info.isMain ? info.namespaceName : `${info.namespaceName}.${info.shortName}`
+      } else {
+        if (!crossImports.has(currentResource)) crossImports.set(currentResource, new Set())
+        crossImports.get(currentResource)!.add(info.namespaceName)
+        return info.isMain ? info.namespaceName : `${info.namespaceName}.${info.shortName}`
+      }
+    }
+    return typeName
+  }
+  // Unrecognized type → unknown with warning
+  console.warn(`  ⚠ unrecognized type: "${raw}" → unknown`)
+  return 'unknown'
 }
 
 /** Check if a field description links to an enum, return the enum anchor if so */
@@ -257,9 +399,13 @@ function extractEnumRef(description: string): string | undefined {
 
 // ===================== Parser =====================
 
-function processResource(filePath: string, outputName?: string) {
+function processResource(filePath: string, outputName?: string, sourceFile?: string, docsCategory?: string) {
   const content = readFileSync(filePath, 'utf-8')
   const resourceName = outputName || basename(filePath, '.mdx')
+  // Build docs path slug: "interactions" + "application-commands.mdx" → "interactions/application-commands"
+  const docsSlug = docsCategory
+    ? `${docsCategory}/${(sourceFile || basename(filePath, '.mdx')).replace('.mdx', '')}`
+    : `resources/${resourceName}`
 
   const objects = parseObjects(content, resourceName)
   const enums = parseEnums(content)
@@ -283,12 +429,8 @@ function processResource(filePath: string, outputName?: string) {
     }
   }
 
-  console.log(`=== ${resourceName} ===`)
-  console.log(`Objects: ${objects.map(o => o.heading).join(', ')}`)
-  console.log(`Enums: ${enums.map(e => e.heading).join(', ')}`)
-  console.log(`Endpoints: ${endpoints.map(e => `${e.method} ${e.path}`).join(', ')}`)
-
-  const ts = generateTypeScript(resourceName, objects, enums, endpoints)
+  console.log(`${resourceName}: ${objects.length} objects, ${enums.length} enums, ${endpoints.length} endpoints`)
+  const ts = generateTypeScript(resourceName, docsSlug, objects, enums, endpoints)
   const outPath = join(outDir, `${resourceName}.ts`)
   writeFileSync(outPath, ts)
   console.log(`Written: ${outPath}\n`)
@@ -305,11 +447,13 @@ function parseObjects(content: string, resourceName: string): ObjectDef[] {
     const rows = parseTable(table)
     if (rows.length < 2) continue
     const fields: Field[] = rows.slice(1).map(row => {
-      let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
+      let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').replace(/\\/g, '').trim()
       // Strip field[n] patterns (e.g., files[n])
       name = name.replace(/\[.*?\]/g, '')
+      // Strip trailing whitespace that might have been between name and ?
+      name = name.trim()
       const optional = name.endsWith('?')
-      if (optional) name = name.slice(0, -1)
+      if (optional) name = name.slice(0, -1).trim()
       let rawType = (row[1] || '').trim()
       let nullable = rawType.startsWith('?')
       if (nullable) rawType = rawType.slice(1)
@@ -330,7 +474,7 @@ function parseObjects(content: string, resourceName: string): ObjectDef[] {
 
 function parseEnums(content: string): EnumDef[] {
   const results: EnumDef[] = []
-  const re = /<ManualAnchor id="([^"]+)" \/>\s*\n###### (.+(?:Types?|Flags))\s*\n([\s\S]*?)(?=\n(?:###|<ManualAnchor|<Route|```)|\$)/g
+  const re = /<ManualAnchor id="([^"]+)" \/>\s*\n###### (.+(?:Types?|Flags?|Modes?|Levels?))\s*\n([\s\S]*?)(?=\n(?:###|<ManualAnchor|<Route|```)|\$)/g
   let match
   while ((match = re.exec(content)) !== null) {
     const [, anchor, heading, block] = match
@@ -392,10 +536,11 @@ function parseEndpoints(content: string, resourceName: string): Endpoint[] {
             anchor: paramsMatch[1],
             heading: 'Params',
             fields: rows.slice(1).map(row => {
-              let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').trim()
+              let name = (row[0] || '').replace(/\\\*/g, '').replace(/\*/g, '').replace(/\\/g, '').trim()
               name = name.replace(/\[.*?\]/g, '')
+              name = name.trim()
               const optional = name.endsWith('?')
-              if (optional) name = name.slice(0, -1)
+              if (optional) name = name.slice(0, -1).trim()
               let rawType = (row[1] || '').trim()
               let nullable = rawType.startsWith('?')
               if (nullable) rawType = rawType.slice(1)
@@ -424,19 +569,37 @@ function extractEnumName(heading: string, mainName: string): string {
   return toPascalCase(name) || 'Type'
 }
 
-function resolveReturnType(desc: string, mainName: string): string {
-  if (desc.includes('204 No Content') || desc.includes('Returns `204')) return 'void'
-  // "Returns an array of X objects"
-  const arrayMatch = desc.match(/Returns (?:an )?(?:array|list) of (.+?) objects?/i)
-  if (arrayMatch) return toPascalCase(arrayMatch[1].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')) + '[]'
-  // "Returns the/a X object"
-  const objMatch = desc.match(/Returns (?:a |the (?:new |updated )?)(.+?) object/i)
-  if (objMatch) return toPascalCase(objMatch[1].replace(/\[([^\]]+)\]\([^)]+\)/g, '$1'))
+function resolveReturnType(desc: string, mainName: string, currentResource: string): string {
+  // Strip markdown links and possessives
+  desc = desc.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+  // Strip "on success" / "on error" suffixes
+  desc = desc.replace(/\s+on success.*/i, '')
+  // Strip filler: "all of the guild's" → ""
+  desc = desc.replace(/all of (?:the )?\w+'s /gi, '')
+
+  const resolve = (text: string, isArray = false): string => {
+    const name = resolveTypeRef(text.trim(), currentResource)
+    return isArray ? name + '[]' : name
+  }
+
+  if (desc.includes('204 No Content') || desc.includes('Returns `204') || desc.includes('204 empty response')) return 'void'
+  if (/Returns (?:a )?20\d\b/i.test(desc)) {
+    const withObj = desc.match(/20\d with (?:the (?:new |updated |modified )?)?(.+?) object/i)
+    if (withObj) return resolve(withObj[1])
+    return 'void'
+  }
+  const arrayMatch = desc.match(/Returns (?:an? )?(?:array|list) of (.+?) objects?/i)
+  if (arrayMatch) return resolve(arrayMatch[1], true)
+  const allOfMatch = desc.match(/Returns all of (?:the )?(?:\w+'s )?(.+?) objects?/i)
+  if (allOfMatch) return resolve(allOfMatch[1], true)
+  const objMatch = desc.match(/Returns (?:a |the (?:new |updated |modified )?)(.+?) object/i)
+  if (objMatch) return resolve(objMatch[1])
   return 'void'
 }
 
 function generateTypeScript(
   resourceName: string,
+  docsSlug: string,
   objects: ObjectDef[],
   enums: EnumDef[],
   endpoints: Endpoint[],
@@ -452,18 +615,23 @@ function generateTypeScript(
     if (f.tsType === 'integer' || f.tsType.includes('integer')) imports.add('integer')
     if (f.tsType === 'timestamp' || f.tsType.includes('timestamp')) imports.add('timestamp')
   }
+  // Endpoints with path params need snowflake
+  if (endpoints.some(ep => ep.path.includes('{'))) imports.add('snowflake')
+
   // Add cross-file imports tracked by resolveTypeRef
   const crossFileTypes = crossImports.get(resourceName)
   if (crossFileTypes) {
     for (const t of crossFileTypes) imports.add(t)
   }
-  lines.push(`import { ${[...imports].sort().join(', ')} } from '.'`)
+  // Placeholder for import — will be replaced after all types are resolved
+  const IMPORT_PLACEHOLDER = '$$IMPORT_PLACEHOLDER$$'
+  lines.push(IMPORT_PLACEHOLDER)
   lines.push('')
 
   // Main interface (first object)
   const mainObj = objects[0]
   if (mainObj) {
-    lines.push(`/** https://discord.com/developers/docs/resources/${resourceName}#${mainObj.anchor} */`)
+    lines.push(`/** https://discord.com/developers/docs/${docsSlug}#${mainObj.anchor} */`)
     lines.push(`export interface ${mainName} {`)
     for (const f of mainObj.fields) {
       lines.push(`  /** ${f.description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')} */`)
@@ -486,7 +654,7 @@ function generateTypeScript(
       const name = extractEnumName(e.heading, mainName)
       const isNumeric = e.values.every(v => /^\d+$/.test(v.value))
       const isBitfield = e.values.some(v => v.value.includes('<<'))
-      lines.push(`  /** https://discord.com/developers/docs/resources/${resourceName}#${e.anchor} */`)
+      lines.push(`  /** https://discord.com/developers/docs/${docsSlug}#${e.anchor} */`)
       lines.push(`  export enum ${name} {`)
       for (const v of e.values) {
         if (v.description) lines.push(`    /** ${v.description} */`)
@@ -501,7 +669,7 @@ function generateTypeScript(
     for (const obj of subObjects) {
       const fullName = toPascalCase(obj.heading.replace(/\s*Structure$/, ''))
       const shortName = fullName.replace(new RegExp(`^${mainName}`, 'i'), '') || fullName
-      lines.push(`  /** https://discord.com/developers/docs/resources/${resourceName}#${obj.anchor} */`)
+      lines.push(`  /** https://discord.com/developers/docs/${docsSlug}#${obj.anchor} */`)
       lines.push(`  export interface ${shortName} {`)
       for (const f of obj.fields) {
         lines.push(`    /** ${f.description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')} */`)
@@ -514,7 +682,7 @@ function generateTypeScript(
     // Response structures
     for (const obj of responseObjects) {
       const name = 'PackResult' // TODO: generalize
-      lines.push(`  /** https://discord.com/developers/docs/resources/${resourceName}#${obj.anchor} */`)
+      lines.push(`  /** https://discord.com/developers/docs/${docsSlug}#${obj.anchor} */`)
       lines.push(`  export interface ${name} {`)
       for (const f of obj.fields) {
         lines.push(`    /** ${f.description.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')} */`)
@@ -528,17 +696,33 @@ function generateTypeScript(
     // These go outside the namespace
     const paramDefs = endpoints.filter(e => e.params)
 
+    // Track types defined in the namespace for qualifying references in params
+    const namespacedTypes = new Set<string>()
+    for (const obj of subObjects) {
+      const fullName = toPascalCase(obj.heading.replace(/\s*Structure$/, ''))
+      namespacedTypes.add(fullName.replace(new RegExp(`^${mainName}`, 'i'), '') || fullName)
+    }
+    for (const e of enums) {
+      namespacedTypes.add(extractEnumName(e.heading, mainName))
+    }
+
     lines.push('}')
     lines.push('')
 
     for (const ep of paramDefs) {
       const methodName = toCamelCase(ep.title)
       const paramInterfaceName = methodName.charAt(0).toUpperCase() + methodName.slice(1) + 'Params'
-      lines.push(`/** https://discord.com/developers/docs/resources/${resourceName}#${ep.params!.anchor} */`)
+      lines.push(`/** https://discord.com/developers/docs/${docsSlug}#${ep.params!.anchor} */`)
       lines.push(`export interface ${paramInterfaceName} {`)
       for (const f of ep.params!.fields) {
+        // Qualify same-file namespace types
+        let tsType = f.tsType
+        const baseType = tsType.replace(/\[\]$/, '')
+        if (namespacedTypes.has(baseType)) {
+          tsType = `${mainName}.${tsType}`
+        }
         lines.push(`  /** ${f.description} */`)
-        lines.push(`  ${f.name}${f.optional ? '?' : ''}: ${f.tsType}${f.nullable ? ' | null' : ''}`)
+        lines.push(`  ${f.name}${f.optional ? '?' : ''}: ${tsType}${f.nullable ? ' | null' : ''}`)
       }
       lines.push('}')
       lines.push('')
@@ -568,11 +752,11 @@ function generateTypeScript(
       }
 
       // Return type
-      const returnType = resolveReturnType(ep.returnDesc, mainName)
+      const returnType = resolveReturnType(ep.returnDesc, mainName, resourceName)
 
       lines.push('    /**')
       lines.push(`     * ${ep.description}`)
-      lines.push(`     * @see https://discord.com/developers/docs/resources/${resourceName}#${ep.title.toLowerCase().replace(/\s+/g, '-')}`)
+      lines.push(`     * @see https://discord.com/developers/docs/${docsSlug}#${ep.title.toLowerCase().replace(/\s+/g, '-')}`)
       lines.push('     */')
       lines.push(`    ${methodName}(${args.join(', ')}): Promise<${returnType}>`)
     }
@@ -601,5 +785,15 @@ function generateTypeScript(
     lines.push('})')
   }
 
-  return lines.join('\n') + '\n'
+  // Finalize imports: collect any additional cross-file imports from return types
+  const finalCrossTypes = crossImports.get(resourceName)
+  if (finalCrossTypes) {
+    for (const t of finalCrossTypes) imports.add(t)
+  }
+  const importLine = `import { ${[...imports].sort().join(', ')} } from '.'`
+  // Clean up: remove blank lines before closing braces
+  const output = lines.join('\n')
+    .replace('$$IMPORT_PLACEHOLDER$$', importLine)
+    .replace(/\n\n(\s*\})/g, '\n$1')
+  return output + '\n'
 }

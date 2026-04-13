@@ -74,9 +74,8 @@ export namespace Sticker {
   /** https://discord.com/developers/docs/resources/sticker#list-sticker-packs-response-structure */
   export interface PackResult {
     /**  */
-    sticker_packs: StickerPack[]
+    sticker_packs: Sticker.Pack[]
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/sticker#create-guild-sticker-form-params */
@@ -117,7 +116,7 @@ declare module './internal' {
      * Returns a sticker pack object for the given sticker pack ID.
      * @see https://discord.com/developers/docs/resources/sticker#get-sticker-pack
      */
-    getStickerPack(pack_id: snowflake): Promise<StickerPack>
+    getStickerPack(pack_id: snowflake): Promise<Sticker.Pack>
     /**
      * Returns an array of sticker objects for the given guild. Includes `user` fields if the bot has the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission.
      * @see https://discord.com/developers/docs/resources/sticker#list-guild-stickers

@@ -1,4 +1,4 @@
-import { GuildMember, Internal, User, integer, snowflake, timestamp } from '.'
+import { Guild, Internal, Invite, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
 export interface Channel {
@@ -11,7 +11,7 @@ export interface Channel {
   /** sorting position of the channel (channels with the same position are sorted by id) */
   position?: integer
   /** explicit permission overwrites for members and roles */
-  permission_overwrites?: Overwrite[]
+  permission_overwrites?: Channel.Overwrite[]
   /** the name of the channel (1-100 characters) */
   name?: string | null
   /** the channel topic (0-4096 characters for `GUILD_FORUM` and `GUILD_MEDIA` channels, 0-1024 characters for all others) */
@@ -49,9 +49,9 @@ export interface Channel {
   /** an approximate count of users in a thread, stops counting at 50 */
   member_count?: integer
   /** thread-specific fields not needed by other channels */
-  thread_metadata?: AThreadMetadata
+  thread_metadata?: Channel.ThreadMetadata
   /** thread member object for the current user, if they have joined the thread, only included on certain API endpoints */
-  member?: AThreadMember
+  member?: Channel.ThreadMember
   /** default duration, copied onto newly created threads, in minutes, threads will stop showing in the channel list after the specified period of inactivity, can be set to: 60, 1440, 4320, 10080 */
   default_auto_archive_duration?: integer
   /** computed permissions for the invoking user in the channel, including overwrites, only included when part of the `resolved` data received on an interaction. This does not include implicit permissions, which may need to be checked separately */
@@ -65,7 +65,7 @@ export interface Channel {
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   applied_tags?: snowflake[]
   /** the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  default_reaction_emoji?: DefaultReaction | null
+  default_reaction_emoji?: Channel.DefaultReaction | null
   /** the initial `rate_limit_per_user` to set on newly created threads in a channel. this field is copied to the thread at creation time and does not live update. */
   default_thread_rate_limit_per_user?: integer
   /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels. Defaults to `null`, which indicates a preferred sort order hasn't been set by a channel admin */
@@ -103,6 +103,14 @@ export namespace Channel {
     GUILD_FORUM = 'guild_forum',
     /** Channel that can only contain threads, similar to `GUILD_FORUM` channels */
     GUILD_MEDIA = 'guild_media',
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#channel-object-video-quality-modes */
+  export enum VideoQualityMode {
+    /** Discord chooses the quality for optimal performance */
+    AUTO = 1,
+    /** 720p */
+    FULL = 2,
   }
 
   /** https://discord.com/developers/docs/resources/channel#channel-object-channel-flags */
@@ -180,7 +188,7 @@ export namespace Channel {
     /** Any user-thread settings, currently only used for notifications */
     flags: integer
     /** Additional information about the user */
-    member?: GuildMember
+    member?: Guild.Member
   }
 
   /** https://discord.com/developers/docs/resources/channel#default-reaction-object-default-reaction-structure */
@@ -204,7 +212,6 @@ export namespace Channel {
     /** the unicode character of the emoji \* */
     emoji_name: string | null
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/channel#edit-channel-permissions-json-params */
@@ -288,7 +295,7 @@ export interface StartThreadInForumOrMediaChannelParams {
   /** amount of seconds a user has to wait before sending another message (0-21600) */
   rate_limit_per_user?: integer | null
   /** contents of the first message in the forum/media thread */
-  message: AForumThreadMessageParams
+  message: ForumThreadMessageParams
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   applied_tags?: snowflake[]
   /** Contents of the file being sent. See Uploading Files */
@@ -363,7 +370,7 @@ declare module './internal' {
      * Returns a list of invite objects (with invite metadata) for the channel. Only usable for guild channels. Requires the `MANAGE_CHANNELS` permission.
      * @see https://discord.com/developers/docs/resources/channel#get-channel-invites
      */
-    getChannelInvites(channel_id: snowflake): Promise<ListOfInvite>
+    getChannelInvites(channel_id: snowflake): Promise<Invite[]>
     /**
      * Create a new invite object for the channel. Only usable for guild channels. Requires the `CREATE_INSTANT_INVITE` permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object (`{}`). Returns an invite object. Fires an Invite Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#create-channel-invite
@@ -378,7 +385,7 @@ declare module './internal' {
      * Follow an Announcement Channel to send messages to a target channel. Requires the `MANAGE_WEBHOOKS` permission in the target channel. Returns a followed channel object. Fires a Webhooks Update Gateway event for the target channel.
      * @see https://discord.com/developers/docs/resources/channel#follow-announcement-channel
      */
-    followAnnouncementChannel(channel_id: snowflake, params: FollowAnnouncementChannelParams): Promise<FollowedChannel>
+    followAnnouncementChannel(channel_id: snowflake, params: FollowAnnouncementChannelParams): Promise<Channel.FollowedChannel>
     /**
      * Post a typing indicator for the specified channel, which expires after 10 seconds. Returns a 204 empty response on success. Fires a Typing Start Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#trigger-typing-indicator
@@ -408,7 +415,7 @@ declare module './internal' {
      * Creates a new thread in a forum or a media channel, and sends a message within the created thread. Returns a channel, with a nested message object, on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and Message Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
      */
-    startThreadInForumOrMediaChannel(channel_id: snowflake, params: StartThreadInForumOrMediaChannelParams): Promise<Channel,WithANestedMessage>
+    startThreadInForumOrMediaChannel(channel_id: snowflake, params: StartThreadInForumOrMediaChannelParams): Promise<unknown>
     /**
      * Adds the current user to a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update and a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#join-thread
@@ -433,7 +440,7 @@ declare module './internal' {
      * Returns a thread member object for the specified user if they are a member of the thread, returns a 404 response otherwise.
      * @see https://discord.com/developers/docs/resources/channel#get-thread-member
      */
-    getThreadMember(channel_id: snowflake, user_id: snowflake, params: GetThreadMemberParams): Promise<ThreadMember>
+    getThreadMember(channel_id: snowflake, user_id: snowflake, params: GetThreadMemberParams): Promise<Channel.ThreadMember>
     /**
      * <Warning>
      * @see https://discord.com/developers/docs/resources/channel#list-thread-members

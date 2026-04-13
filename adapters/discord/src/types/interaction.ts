@@ -1,13 +1,13 @@
-import { ApplicationCommandInteractionDataOption, ComponentInteractionResponse, Entitlement, GuildMember, InteractionCallbackData, InteractionCallbackType, InteractionContextType, InteractionData, InteractionType, Internal, Message, PartialChannel, PartialGuild, PartialMember, ResolvedData, SelectOptionValues, User, integer, snowflake } from '.'
+import { Channel, Entitlement, Guild, Internal, Message, Permission, ReceivingAndResponding, Reference, User, integer, snowflake } from '.'
 
-/** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-structure */
+/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure */
 export interface Interaction {
   /** ID of the interaction */
   id: snowflake
   /** ID of the application this interaction is for */
   application_id: snowflake
   /** Type of interaction */
-  type: InteractionType
+  type: Interaction.Type
   /** Interaction data payload */
   data?: InteractionData
   /** Guild that the interaction was sent from */
@@ -19,7 +19,7 @@ export interface Interaction {
   /** Channel that the interaction was sent from */
   channel_id?: snowflake
   /** Guild member data for the invoking user, including permissions */
-  member?: GuildMember
+  member?: Guild.Member
   /** User object for the invoking user, if invoked in a DM */
   user?: User
   /** Continuation token for responding to the interaction */
@@ -37,7 +37,7 @@ export interface Interaction {
   /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
   entitlements: Entitlement[]
   /** Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details */
-  authorizing_integration_owners: DictionaryWithKeysOfApplicationIntegrationTypes
+  authorizing_integration_owners: Record<string, any>
   /** Context where the interaction was triggered from */
   context?: InteractionContextType
   /** Attachment size limit in bytes */
@@ -45,7 +45,7 @@ export interface Interaction {
 }
 
 export namespace Interaction {
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-type */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type */
   export enum Type {
     PING = 1,
     APPLICATION_COMMAND = 2,
@@ -54,7 +54,7 @@ export namespace Interaction {
     MODAL_SUBMIT = 5,
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-context-types */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types */
   export enum ContextType {
     /** Interaction can be used within servers */
     0 = 0,
@@ -64,7 +64,7 @@ export namespace Interaction {
     2 = 2,
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-response-object-interaction-callback-type */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-callback-type */
   export enum CallbackType {
     /** ACK a `Ping` */
     PONG = 1,
@@ -86,7 +86,7 @@ export namespace Interaction {
     LAUNCH_ACTIVITY = 12,
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-application-command-data-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure */
   export interface ApplicationCommandData {
     /** `ID` of the invoked command */
     id: snowflake
@@ -95,16 +95,16 @@ export namespace Interaction {
     /** `type` of the invoked command */
     type: integer
     /** Converted users + roles + channels + attachments */
-    resolved?: ResolvedData
+    resolved?: Interaction.ResolvedData
     /** Params + values from the user */
-    options?: ApplicationCommandInteractionDataOption[]
+    options?: Interaction.ApplicationCommandInteractionDataOption[]
     /** ID of the guild the command is registered to */
     guild_id?: snowflake
     /** ID of the user or message targeted by a user or message command */
     target_id?: snowflake
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-message-component-data-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure */
   export interface MessageComponentData {
     /** `custom_id` of the component */
     custom_id: string
@@ -113,55 +113,55 @@ export namespace Interaction {
     /** Values the user selected in a select menu component */
     values?: SelectOptionValues[]
     /** Resolved entities from selected options */
-    resolved?: ResolvedData
+    resolved?: Interaction.ResolvedData
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-modal-submit-data-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-modal-submit-data-structure */
   export interface ModalSubmitData {
     /** The custom ID provided for the modal */
     custom_id: string
     /** Values submitted by the user */
     components: ComponentInteractionResponse[]
     /** Resolved entities from selected options */
-    resolved?: ResolvedData
+    resolved?: Interaction.ResolvedData
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-resolved-data-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure */
   export interface ResolvedData {
     /** IDs and User objects */
-    users?: MapOfSnowflakesToUser
+    users?: Record<snowflake, User>
     /** IDs and partial Member objects */
-    members?: MapOfSnowflakesToPartialMember
+    members?: Record<snowflake, Partial<Guild.Member>>
     /** IDs and Role objects */
-    roles?: MapOfSnowflakesToRole
+    roles?: Record<snowflake, Permission>
     /** IDs and partial Channel objects */
-    channels?: MapOfSnowflakesToPartialChannel
+    channels?: Record<snowflake, Partial<Channel>>
     /** IDs and partial Message objects */
-    messages?: MapOfSnowflakesToPartialMessages
+    messages?: Record<snowflake, Partial<Messages>>
     /** IDs and attachment objects */
-    attachments?: MapOfSnowflakesToAttachment
+    attachments?: Record<snowflake, Message.Attachment>
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-object-application-command-interaction-data-option-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-interaction-data-option-structure */
   export interface ApplicationCommandInteractionDataOption {
     /** Name of the parameter */
     name: string
     /** Value of application command option type */
     type: integer
     /** Value of the option resulting from user input */
-    value?: String,Integer,Double,OrBoolean
+    value?: string | integer | number | OrBoolean
     /** Present if this option is a group or subcommand */
-    options?: ApplicationCommandInteractionDataOption[]
+    options?: Interaction.ApplicationCommandInteractionDataOption[]
     /** `true` if this option is the currently focused option for autocomplete */
     focused?: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#message-interaction-object-message-interaction-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#message-interaction-object-message-interaction-structure */
   export interface MessageInteraction {
     /** ID of the interaction */
     id: snowflake
     /** Type of interaction */
-    type: InteractionType
+    type: Interaction.Type
     /** Name of the application command, including subcommands and subcommand groups */
     name: string
     /** User who invoked the interaction */
@@ -170,17 +170,16 @@ export namespace Interaction {
     member?: PartialMember
   }
 
-  /** https://discord.com/developers/docs/resources/interaction#interaction-response-object-interaction-response-structure */
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure */
   export interface PackResult {
     /** Type of response */
-    type: InteractionCallbackType
+    type: Interaction.CallbackType
     /** An optional response message */
-    data?: InteractionCallbackData
+    data?: Interaction.CallbackData
   }
-
 }
 
-/** https://discord.com/developers/docs/resources/interaction#create-interaction-response-query-string-params */
+/** https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response-query-string-params */
 export interface CreateInteractionResponseParams {
   /** Whether to include an interaction callback object as the response */
   with_response?: Boolean
@@ -190,42 +189,42 @@ declare module './internal' {
   interface Internal {
     /**
      * Create a response to an Interaction. Body is an interaction response. Returns `204` unless `with_response` is set to `true` which returns `200` with the body as interaction callback response.
-     * @see https://discord.com/developers/docs/resources/interaction#create-interaction-response
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
      */
     createInteractionResponse(interaction_id: snowflake, interaction_token: snowflake, params: CreateInteractionResponseParams): Promise<void>
     /**
      * Returns the initial Interaction response. Functions the same as Get Webhook Message.
-     * @see https://discord.com/developers/docs/resources/interaction#get-original-interaction-response
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#get-original-interaction-response
      */
     getOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
      * Edits the initial Interaction response. Functions the same as Edit Webhook Message.
-     * @see https://discord.com/developers/docs/resources/interaction#edit-original-interaction-response
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
      */
     editOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
      * Deletes the initial Interaction response. Returns `204 No Content` on success.
-     * @see https://discord.com/developers/docs/resources/interaction#delete-original-interaction-response
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#delete-original-interaction-response
      */
     deleteOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
      * <Info>
-     * @see https://discord.com/developers/docs/resources/interaction#create-followup-message
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message
      */
     createFollowupMessage(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
      * Returns a followup message for an Interaction. Functions the same as Get Webhook Message.
-     * @see https://discord.com/developers/docs/resources/interaction#get-followup-message
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#get-followup-message
      */
     getFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
     /**
      * Edits a followup message for an Interaction. Functions the same as Edit Webhook Message.
-     * @see https://discord.com/developers/docs/resources/interaction#edit-followup-message
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#edit-followup-message
      */
     editFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
     /**
      * Deletes a followup message for an Interaction. Returns `204 No Content` on success.
-     * @see https://discord.com/developers/docs/resources/interaction#delete-followup-message
+     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#delete-followup-message
      */
     deleteFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
   }

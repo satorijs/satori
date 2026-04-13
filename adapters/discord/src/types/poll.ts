@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { Emoji, Internal, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure */
 export interface Poll {
@@ -34,7 +34,7 @@ export namespace Poll {
   /** https://discord.com/developers/docs/resources/poll#poll-media-object-poll-media-object-structure */
   export interface MediaObject {
     /** The emoji of the field */
-    emoji?: PartialEmoji
+    emoji?: Partial<Emoji>
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-answer-object-poll-answer-object-structure */
@@ -62,7 +62,6 @@ export namespace Poll {
     /** Whether the current user voted for this answer */
     me_voted: boolean
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/poll#get-answer-voters-query-string-params */

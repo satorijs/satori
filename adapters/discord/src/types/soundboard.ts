@@ -7,7 +7,7 @@ export interface Soundboard {
   /** the id of this sound */
   sound_id: snowflake
   /** the volume of this sound, from 0 to 1 */
-  volume: Double
+  volume: number
   /** the id of this sound's custom emoji */
   emoji_id: snowflake | null
   /** the unicode character of this sound's standard emoji */
@@ -24,9 +24,8 @@ export namespace Soundboard {
   /** https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds-response-structure */
   export interface PackResult {
     /**  */
-    items: SoundboardSound[]
+    items: Soundboard[]
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/soundboard#send-soundboard-sound-json-params */
@@ -42,9 +41,9 @@ export interface CreateGuildSoundboardSoundParams {
   /** name of the soundboard sound (2-32 characters) */
   name: string
   /** the mp3 or ogg sound data, base64 encoded, similar to image data */
-  sound: DataUri
+  sound: string
   /** the volume of the soundboard sound, from 0 to 1, defaults to 1 */
-  volume?: Double | null
+  volume?: number | null
   /** the id of the custom emoji for the soundboard sound */
   emoji_id?: snowflake | null
   /** the unicode character of a standard emoji for the soundboard sound */
@@ -56,7 +55,7 @@ export interface ModifyGuildSoundboardSoundParams {
   /** name of the soundboard sound (2-32 characters) */
   name: string
   /** the volume of the soundboard sound, from 0 to 1 */
-  volume: Double | null
+  volume: number | null
   /** the id of the custom emoji for the soundboard sound */
   emoji_id: snowflake | null
   /** the unicode character of a standard emoji for the soundboard sound */
@@ -74,7 +73,7 @@ declare module './internal' {
      * Returns an array of soundboard sound objects that can be used by all users.
      * @see https://discord.com/developers/docs/resources/soundboard#list-default-soundboard-sounds
      */
-    listDefaultSoundboardSounds(): Promise<SoundboardSound[]>
+    listDefaultSoundboardSounds(): Promise<Soundboard[]>
     /**
      * Returns a list of the guild's soundboard sounds. Includes `user` fields if the bot has the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission.
      * @see https://discord.com/developers/docs/resources/soundboard#list-guild-soundboard-sounds
@@ -84,17 +83,17 @@ declare module './internal' {
      * Returns a soundboard sound object for the given sound id. Includes the `user` field if the bot has the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission.
      * @see https://discord.com/developers/docs/resources/soundboard#get-guild-soundboard-sound
      */
-    getGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake): Promise<SoundboardSound>
+    getGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake): Promise<Soundboard>
     /**
      * Create a new soundboard sound for the guild. Requires the `CREATE_GUILD_EXPRESSIONS` permission. Returns the new soundboard sound object on success. Fires a Guild Soundboard Sound Create Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#create-guild-soundboard-sound
      */
-    createGuildSoundboardSound(guild_id: snowflake, params: CreateGuildSoundboardSoundParams): Promise<SoundboardSound>
+    createGuildSoundboardSound(guild_id: snowflake, params: CreateGuildSoundboardSoundParams): Promise<Soundboard>
     /**
      * Modify the given soundboard sound. For sounds created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other sounds, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns the updated soundboard sound object on success. Fires a Guild Soundboard Sound Update Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#modify-guild-soundboard-sound
      */
-    modifyGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake, params: ModifyGuildSoundboardSoundParams): Promise<SoundboardSound>
+    modifyGuildSoundboardSound(guild_id: snowflake, sound_id: snowflake, params: ModifyGuildSoundboardSoundParams): Promise<Soundboard>
     /**
      * Delete the given soundboard sound. For sounds created by the current user, requires either the `CREATE_GUILD_EXPRESSIONS` or `MANAGE_GUILD_EXPRESSIONS` permission. For other sounds, requires the `MANAGE_GUILD_EXPRESSIONS` permission. Returns `204 No Content` on success. Fires a Guild Soundboard Sound Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/soundboard#delete-guild-soundboard-sound

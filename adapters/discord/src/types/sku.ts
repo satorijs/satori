@@ -38,7 +38,6 @@ export namespace Sku {
     /** Recurring SKU purchased by a user for themselves. Grants access to the purchasing user in every server. */
     USER_SUBSCRIPTION = 1 << 8,
   }
-
 }
 
 declare module './internal' {

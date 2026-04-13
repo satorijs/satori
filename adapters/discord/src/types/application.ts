@@ -1,4 +1,4 @@
-import { Internal, Team, integer, snowflake } from '.'
+import { Guild, Internal, Teams, User, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/application#application-object-application-structure */
 export interface Application {
@@ -17,13 +17,13 @@ export interface Application {
   /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   bot_require_code_grant: boolean
   /** Partial user object for the bot user associated with the app */
-  bot?: PartialUser
+  bot?: Partial<User>
   /** URL of the app's Terms of Service */
   terms_of_service_url?: string
   /** URL of the app's Privacy Policy */
   privacy_policy_url?: string
   /** Partial user object for the owner of the app */
-  owner?: PartialUser
+  owner?: Partial<User>
   /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verify_key: string
   /** If the app belongs to a team, this will be a list of the members of that team */
@@ -31,7 +31,7 @@ export interface Application {
   /** Guild associated with the app. For example, a developer support server. */
   guild_id?: snowflake
   /** Partial object of the associated guild */
-  guild?: PartialGuild
+  guild?: Partial<Guild>
   /** If this app is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
   primary_sku_id?: snowflake
   /** If this app is a game sold on Discord, this field will be the URL slug that links to the store page */
@@ -61,9 +61,9 @@ export interface Application {
   /** List of tags describing the content and functionality of the app. Max of 5 tags. */
   tags?: string[]
   /** Settings for the app's default in-app authorization link, if enabled */
-  install_params?: InstallParams
+  install_params?: Application.InstallParams
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
-  integration_types_config?: DictionaryWithKeysOfApplicationIntegrationTypes
+  integration_types_config?: Record<string, any>
   /** Default custom authorization URL for the app, if enabled */
   custom_install_url?: string
 }
@@ -108,7 +108,6 @@ export namespace Application {
     /** Permissions to request for the bot role */
     permissions: string
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/application#edit-current-application-json-params */
@@ -120,9 +119,9 @@ export interface EditCurrentApplicationParams {
   /** Role connection verification URL for the app */
   role_connections_verification_url: string
   /** Settings for the app's default in-app authorization link, if enabled */
-  install_params: InstallParams
+  install_params: Application.InstallParams
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
-  integration_types_config: DictionaryWithKeysOfApplicationIntegrationTypes
+  integration_types_config: Record<string, any>
   /** App's public flags */
   flags: integer
   /** Icon for the app */

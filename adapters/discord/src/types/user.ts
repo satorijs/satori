@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { Guild, Internal, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/user#user-object-user-structure */
 export interface User {
@@ -35,7 +35,7 @@ export interface User {
   /** the public flags on a user's account */
   public_flags?: integer
   /** data for the user's avatar decoration */
-  avatar_decoration_data?: AvatarDecorationData | null
+  avatar_decoration_data?: User.AvatarDecorationData | null
   /** data for the user's collectibles */
   collectibles?: Collectibles | null
   /** the user's primary guild */
@@ -128,7 +128,7 @@ export namespace User {
     /** whether the connection is revoked */
     revoked?: boolean
     /** an array of partial server integrations */
-    integrations?: Array
+    integrations?: unknown[]
     /** whether the connection is verified */
     verified: boolean
     /** whether friend sync is enabled for this connection */
@@ -148,7 +148,6 @@ export namespace User {
     /** object mapping application role connection metadata keys to their `string`-ified value (max 100 characters) for the user on the platform a bot has connected */
     metadata: any
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/user#modify-current-user-json-params */
@@ -184,7 +183,7 @@ export interface CreateGroupDmParams {
   /** access tokens of users that have granted your app the `gdm.join` scope */
   access_tokens: string[]
   /** a dictionary of user ids to their respective nicknames */
-  nicks: Dict
+  nicks: Record<string, string>
 }
 
 /** https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection-json-params */
@@ -218,12 +217,12 @@ declare module './internal' {
      * Returns a list of partial guild objects the current user is a member of. For OAuth2, requires the `guilds` scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-guilds
      */
-    getCurrentUserGuilds(params: GetCurrentUserGuildsParams): Promise<ListOfPartialGuild>
+    getCurrentUserGuilds(params: GetCurrentUserGuildsParams): Promise<Partial<Guild>[]>
     /**
      * Returns a guild member object for the current user. Requires the `guilds.members.read` OAuth2 scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-guild-member
      */
-    getCurrentUserGuildMember(guild_id: snowflake): Promise<GuildMember>
+    getCurrentUserGuildMember(guild_id: snowflake): Promise<Guild.Member>
     /**
      * Leave a guild. Returns a 204 empty response on success. Fires a Guild Delete Gateway event and a Guild Member Remove Gateway event.
      * @see https://discord.com/developers/docs/resources/user#leave-guild
@@ -243,7 +242,7 @@ declare module './internal' {
      * Returns a list of connection objects. Requires the `connections` OAuth2 scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-connections
      */
-    getCurrentUserConnections(): Promise<ListOfConnection>
+    getCurrentUserConnections(): Promise<User.Connection[]>
     /**
      * Returns the application role connection for the user. Requires an OAuth2 access token with `role_connections.write` scope for the application specified in the path.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-application-role-connection

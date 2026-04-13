@@ -1,4 +1,4 @@
-import { GuildMember, Internal, snowflake, timestamp } from '.'
+import { Guild, Internal, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/voice#voice-state-object-voice-state-structure */
 export interface Voice {
@@ -9,7 +9,7 @@ export interface Voice {
   /** the user id this voice state is for */
   user_id: snowflake
   /** the guild member this voice state is for */
-  member?: GuildMember
+  member?: Guild.Member
   /** the session id for this voice state */
   session_id: string
   /** whether this user is deafened by the server */
@@ -44,7 +44,6 @@ export namespace Voice {
     /** whether this is a custom voice region (used for events/etc) */
     custom: boolean
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/voice#modify-current-user-voice-state-json-params */
@@ -71,7 +70,7 @@ declare module './internal' {
      * Returns an array of voice region objects that can be used when setting a voice or stage channel's `rtc_region`.
      * @see https://discord.com/developers/docs/resources/voice#list-voice-regions
      */
-    listVoiceRegions(): Promise<VoiceRegion[]>
+    listVoiceRegions(): Promise<Voice.Region[]>
     /**
      * Returns the current user's voice state in the guild.
      * @see https://discord.com/developers/docs/resources/voice#get-current-user-voice-state

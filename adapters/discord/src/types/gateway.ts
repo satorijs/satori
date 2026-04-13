@@ -1,6 +1,6 @@
-import { Activity, Assets, Buttons, Emoji, Internal, Party, Secrets, Timestamps, UpdatePresence, integer, snowflake } from '.'
+import { Emoji, GatewayEvents, Internal, integer, snowflake } from '.'
 
-/** https://discord.com/developers/docs/resources/gateway#identify-identify-structure */
+/** https://discord.com/developers/docs/events/gateway-events#identify-identify-structure */
 export interface Gateway {
   /** Authentication token */
   token: string
@@ -11,7 +11,7 @@ export interface Gateway {
   /** Value between 50 and 250, total number of members where the gateway will stop sending offline members in the guild member list */
   large_threshold?: integer
   /** Used for Guild Sharding */
-  shard?: TwoIntegers(shard_id,Num_shards)[]
+  shard?: [integer, integer][]
   /** Presence structure for initial presence information */
   presence?: UpdatePresence
   /** Gateway Intents you wish to receive */
@@ -19,7 +19,7 @@ export interface Gateway {
 }
 
 export namespace Gateway {
-  /** https://discord.com/developers/docs/resources/gateway#update-presence-status-types */
+  /** https://discord.com/developers/docs/events/gateway-events#update-presence-status-types */
   export enum StatusType {
     /** Online */
     ONLINE = 'online',
@@ -33,7 +33,7 @@ export namespace Gateway {
     OFFLINE = 'offline',
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#activity-object-activity-types */
+  /** https://discord.com/developers/docs/events/gateway-events#activity-object-activity-types */
   export enum ActivityType {
     /** 0 */
     PLAYING = 'playing',
@@ -49,7 +49,7 @@ export namespace Gateway {
     COMPETING = 'competing',
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#activity-object-status-display-types */
+  /** https://discord.com/developers/docs/events/gateway-events#activity-object-status-display-types */
   export enum StatusDisplayType {
     /** 0 */
     NAME = 'name',
@@ -59,7 +59,7 @@ export namespace Gateway {
     DETAILS = 'details',
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#activity-object-activity-flags */
+  /** https://discord.com/developers/docs/events/gateway-events#activity-object-activity-flags */
   export enum ActivityFlag {
     INSTANCE = 1 << 0,
     JOIN = 1 << 1,
@@ -72,7 +72,7 @@ export namespace Gateway {
     EMBEDDED = 1 << 8,
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#voice-channel-effect-send-animation-types */
+  /** https://discord.com/developers/docs/events/gateway-events#voice-channel-effect-send-animation-types */
   export enum AnimationType {
     /** A fun animation, sent by a Nitro subscriber */
     PREMIUM = 0,
@@ -80,7 +80,7 @@ export namespace Gateway {
     BASIC = 1,
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#resume-resume-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#resume-resume-structure */
   export interface Resume {
     /** Session token */
     token: string
@@ -90,7 +90,7 @@ export namespace Gateway {
     seq: integer
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#request-guild-members-request-guild-members-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#request-guild-members-request-guild-members-structure */
   export interface RequestGuildMembers {
     /** ID of the guild to get members for */
     guild_id: snowflake
@@ -101,18 +101,18 @@ export namespace Gateway {
     /** used to specify if we want the presences of the matched members */
     presences?: boolean
     /** used to specify which users you wish to fetch */
-    user_ids?: SnowflakeOrArrayOfSnowflakes
+    user_ids?: snowflake | snowflake[]
     /** nonce to identify the Guild Members Chunk response */
     nonce?: string
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#request-soundboard-sounds-request-soundboard-sounds-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#request-soundboard-sounds-request-soundboard-sounds-structure */
   export interface RequestSoundboardSounds {
     /** IDs of the guilds to get soundboard sounds for */
     guild_ids: snowflake[]
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#update-voice-state-gateway-voice-state-update-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#update-voice-state-gateway-voice-state-update-structure */
   export interface VoiceStateUpdate {
     /** ID of the guild */
     guild_id: snowflake
@@ -124,25 +124,25 @@ export namespace Gateway {
     self_deaf: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#update-presence-gateway-presence-update-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#update-presence-gateway-presence-update-structure */
   export interface PresenceUpdate {
     /** Unix time (in milliseconds) of when the client went idle, or null if the client is not idle */
     since: integer | null
     /** User's activities */
-    activities: Activity[]
+    activities: Gateway.Activity[]
     /** User's new status */
     status: string
     /** Whether or not the client is afk */
     afk: boolean
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#hello-hello-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#hello-hello-structure */
   export interface Hello {
     /** Interval (in milliseconds) an app should heartbeat with */
     heartbeat_interval: integer
   }
 
-  /** https://discord.com/developers/docs/resources/gateway#activity-object-activity-structure */
+  /** https://discord.com/developers/docs/events/gateway-events#activity-object-activity-structure */
   export interface Activity {
     /** Activity's name */
     name: string
@@ -181,6 +181,5 @@ export namespace Gateway {
     /** Custom buttons shown in the Rich Presence (max 2) */
     buttons?: Buttons[]
   }
-
 }
 

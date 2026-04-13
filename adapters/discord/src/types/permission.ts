@@ -1,6 +1,6 @@
-import { Internal, RoleColors, RoleTags, integer, snowflake } from '.'
+import { Internal, Permissions, integer, snowflake } from '.'
 
-/** https://discord.com/developers/docs/resources/permission#role-object-role-structure */
+/** https://discord.com/developers/docs/topics/permissions#role-object-role-structure */
 export interface Permission {
   /** role id */
   id: snowflake
@@ -25,13 +25,13 @@ export interface Permission {
   /** whether this role is mentionable */
   mentionable: boolean
   /** the tags this role has */
-  tags?: RoleTags
+  tags?: Permission.RoleTags
   /** role flags combined as a bitfield */
   flags: integer
 }
 
 export namespace Permission {
-  /** https://discord.com/developers/docs/resources/permission#permissions-bitwise-permission-flags */
+  /** https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags */
   export enum BitwisePermissionFlag {
     /** Allows creation of instant invites */
     CREATE_INSTANT_INVITE = 1 << 0,
@@ -137,21 +137,20 @@ export namespace Permission {
     BYPASS_SLOWMODE = 1 << 52,
   }
 
-  /** https://discord.com/developers/docs/resources/permission#role-object-role-tags-structure */
+  /** https://discord.com/developers/docs/topics/permissions#role-object-role-tags-structure */
   export interface RoleTags {
     /** the id of the bot this role belongs to */
     bot_id?: snowflake
     /** the id of the integration this role belongs to */
     integration_id?: snowflake
     /** whether this is the guild's Booster role */
-    premium_subscriber?: Null
+    premium_subscriber?: null
     /** the id of this role's subscription sku and listing */
     subscription_listing_id?: snowflake
     /** whether this role is available for purchase */
-    available_for_purchase?: Null
+    available_for_purchase?: null
     /** whether this role is a guild's linked role */
-    guild_connections?: Null
+    guild_connections?: null
   }
-
 }
 

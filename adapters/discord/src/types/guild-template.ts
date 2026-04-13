@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake, timestamp } from '.'
+import { Guild, Internal, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure */
 export interface GuildTemplate {
@@ -21,7 +21,7 @@ export interface GuildTemplate {
   /** the ID of the guild this template is based on */
   source_guild_id: snowflake
   /** the guild snapshot this template contains; placeholder IDs are given as integers */
-  serialized_source_guild: PartialGuild
+  serialized_source_guild: Partial<Guild>
   /** whether the template has unsynced changes */
   is_dirty: boolean | null
 }

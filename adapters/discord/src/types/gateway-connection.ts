@@ -5,12 +5,12 @@ declare module './internal' {
   interface Internal {
     /**
      * <Info>
-     * @see https://discord.com/developers/docs/resources/gateway-connection#get-gateway
+     * @see https://discord.com/developers/docs/events/gateway#get-gateway
      */
     getGateway(): Promise<void>
     /**
      * <Warning>
-     * @see https://discord.com/developers/docs/resources/gateway-connection#get-gateway-bot
+     * @see https://discord.com/developers/docs/events/gateway#get-gateway-bot
      */
     getGatewayBot(): Promise<void>
   }

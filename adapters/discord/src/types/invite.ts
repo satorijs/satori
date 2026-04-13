@@ -1,4 +1,4 @@
-import { GuildScheduledEvent, Internal, User, integer, snowflake, timestamp } from '.'
+import { Application, Channel, Guild, GuildScheduledEvent, Internal, Permission, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
 export interface Invite {
@@ -7,9 +7,9 @@ export interface Invite {
   /** the invite code (unique ID) */
   code: string
   /** the guild this invite is for */
-  guild?: PartialGuild
+  guild?: Partial<Guild>
   /** the channel this invite is for */
-  channel: PartialChannel | null
+  channel: Partial<Channel> | null
   /** the user who created the invite */
   inviter?: User
   /** the type of target for this voice channel invite */
@@ -17,7 +17,7 @@ export interface Invite {
   /** the user whose stream to display for this voice channel stream invite */
   target_user?: User
   /** the embedded application to open for this voice channel embedded application invite */
-  target_application?: PartialApplication
+  target_application?: Partial<Application>
   /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `with_counts` is `true` */
   approximate_presence_count?: integer
   /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `with_counts` is `true` */
@@ -29,7 +29,7 @@ export interface Invite {
   /** guild invite flags for guild invites */
   flags?: integer
   /** the roles assigned to the user upon accepting the invite. */
-  roles?: PartialRole[]
+  roles?: Partial<Permission>[]
 }
 
 export namespace Invite {
@@ -69,7 +69,7 @@ export namespace Invite {
   /** https://discord.com/developers/docs/resources/invite#invite-stage-instance-object-invite-stage-instance-structure */
   export interface StageInstance {
     /** the members speaking in the Stage */
-    members: PartialGuildMember[]
+    members: Partial<Guild.Member>[]
     /** the number of users in the Stage */
     participant_count: integer
     /** the number of users speaking in the Stage */
@@ -77,7 +77,6 @@ export namespace Invite {
     /** the topic of the Stage instance (1-120 characters) */
     topic: string
   }
-
 }
 
 /** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */

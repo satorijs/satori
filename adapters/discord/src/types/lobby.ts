@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { Channel, Internal, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/lobby#lobby-object-lobby-structure */
 export interface Lobby {
@@ -7,9 +7,9 @@ export interface Lobby {
   /** application that created the lobby */
   application_id: snowflake
   /** dictionary of string key/value pairs. The max total length is 1000. */
-  metadata: Dict\<string,String\> | null
+  metadata: Record<string, string> | null
   /** members of the lobby */
-  members: LobbyMember[]
+  members: Lobby.Member[]
   /** the guild channel linked to the lobby */
   linked_channel?: Channel
 }
@@ -26,11 +26,10 @@ export namespace Lobby {
     /** the id of the user */
     id: snowflake
     /** dictionary of string key/value pairs. The max total length is 1000. */
-    metadata?: Dict\<string,String\> | null
+    metadata?: Record<string, string> | null
     /** lobby member flags combined as a bitfield */
     flags?: integer
   }
-
 }
 
 declare module './internal' {
