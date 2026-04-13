@@ -4,7 +4,7 @@ import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
 import z from 'schemastery'
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends Adapter.WsClient<C, SlackBot<C, SlackBot.BaseConfig & WsClient.Options>> {
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)

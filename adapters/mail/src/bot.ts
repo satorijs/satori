@@ -3,13 +3,13 @@ import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class MailBot<C extends Context = Context> extends Bot<C, MailBot.Config> {
+export class MailBot extends Bot<C, MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
   static inject = ['http']
 
   internal: SMTP
 
-  constructor(ctx: C, config: MailBot.Config) {
+  constructor(ctx: Context, config: MailBot.Config) {
     super(ctx, config, 'mail')
     this.selfId = config.selfId || config.username
     this.user.name = this.config.username

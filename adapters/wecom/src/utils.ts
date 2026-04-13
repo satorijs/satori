@@ -2,7 +2,7 @@ import { Message } from './types'
 import { WecomBot } from './bot'
 import { Context, h } from '@satorijs/core'
 
-export async function decodeMessage<C extends Context>(bot: WecomBot<C>, message: Message) {
+export async function decodeMessage(bot: WecomBot, message: Message) {
   const session = bot.session()
   session.timestamp = message.CreateTime * 1000
   // session.wechatOfficial = message

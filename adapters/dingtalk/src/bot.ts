@@ -8,7 +8,7 @@ import { Internal } from './internal'
 import z from 'schemastery'
 
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
-export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot.Config> {
+export class DingtalkBot extends Bot<C, DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
   static inject = ['http']
 
@@ -19,7 +19,7 @@ export class DingtalkBot<C extends Context = Context> extends Bot<C, DingtalkBot
 
   private logger: Logger
 
-  constructor(ctx: C, config: DingtalkBot.Config) {
+  constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config, 'dingtalk')
     this.selfId = config.appkey
     this.http = ctx.http.extend(config.api)

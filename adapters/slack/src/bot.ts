@@ -7,14 +7,14 @@ import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types
 import { Internal, Token } from './types/internal'
 import z from 'schemastery'
 
-export class SlackBot<C extends Context = Context, T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
+export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
   static MessageEncoder = SlackMessageEncoder
   static inject = ['http']
 
   public http: HTTP
   public internal: Internal
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config, 'slack')
     this.http = ctx.http.extend(config)
     this.internal = new Internal(this, this.http)

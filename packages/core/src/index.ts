@@ -32,38 +32,38 @@ declare module 'cordis' {
     const session: unique symbol
   }
 
-  interface Events<C> {
+  interface Events {
     'satori/meta'(): void
-    'internal/session'(session: GetSession<C>): void
-    'interaction/command'(session: GetSession<C>): void
-    'interaction/button'(session: GetSession<C>): void
-    'message'(session: GetSession<C>): void
-    'message-created'(session: GetSession<C>): void
-    'message-deleted'(session: GetSession<C>): void
-    'message-updated'(session: GetSession<C>): void
-    'message-pinned'(session: GetSession<C>): void
-    'message-unpinned'(session: GetSession<C>): void
-    'guild-added'(session: GetSession<C>): void
-    'guild-removed'(session: GetSession<C>): void
-    'guild-updated'(session: GetSession<C>): void
-    'guild-member-added'(session: GetSession<C>): void
-    'guild-member-removed'(session: GetSession<C>): void
-    'guild-member-updated'(session: GetSession<C>): void
-    'guild-role-created'(session: GetSession<C>): void
-    'guild-role-deleted'(session: GetSession<C>): void
-    'guild-role-updated'(session: GetSession<C>): void
-    'reaction-added'(session: GetSession<C>): void
-    'reaction-removed'(session: GetSession<C>): void
-    'login-added'(session: GetSession<C>): void
-    'login-removed'(session: GetSession<C>): void
-    'login-updated'(session: GetSession<C>): void
-    'friend-request'(session: GetSession<C>): void
-    'guild-request'(session: GetSession<C>): void
-    'guild-member-request'(session: GetSession<C>): void
-    'before-send'(session: GetSession<C>, options: SendOptions): Awaitable<void | boolean>
-    'send'(session: GetSession<C>): void
-    'bot-connect'(client: Bot<C>): Awaitable<void>
-    'bot-disconnect'(client: Bot<C>): Awaitable<void>
+    'internal/session'(session: GetSession): void
+    'interaction/command'(session: GetSession): void
+    'interaction/button'(session: GetSession): void
+    'message'(session: GetSession): void
+    'message-created'(session: GetSession): void
+    'message-deleted'(session: GetSession): void
+    'message-updated'(session: GetSession): void
+    'message-pinned'(session: GetSession): void
+    'message-unpinned'(session: GetSession): void
+    'guild-added'(session: GetSession): void
+    'guild-removed'(session: GetSession): void
+    'guild-updated'(session: GetSession): void
+    'guild-member-added'(session: GetSession): void
+    'guild-member-removed'(session: GetSession): void
+    'guild-member-updated'(session: GetSession): void
+    'guild-role-created'(session: GetSession): void
+    'guild-role-deleted'(session: GetSession): void
+    'guild-role-updated'(session: GetSession): void
+    'reaction-added'(session: GetSession): void
+    'reaction-removed'(session: GetSession): void
+    'login-added'(session: GetSession): void
+    'login-removed'(session: GetSession): void
+    'login-updated'(session: GetSession): void
+    'friend-request'(session: GetSession): void
+    'guild-request'(session: GetSession): void
+    'guild-member-request'(session: GetSession): void
+    'before-send'(session: GetSession, options: SendOptions): Awaitable<void | boolean>
+    'send'(session: GetSession): void
+    'bot-connect'(client: Bot): Awaitable<void>
+    'bot-disconnect'(client: Bot): Awaitable<void>
   }
 }
 
@@ -75,7 +75,7 @@ export namespace Component {
   }
 }
 
-export type GetSession<C extends Context> = C[typeof Context.session]
+export type GetSession = C[typeof Context.session]
 
 class DisposableSet<T> {
   private sn = 0
@@ -121,17 +121,17 @@ class DisposableSet<T> {
   }
 }
 
-export class Satori<C extends Context = Context> extends Service<C> {
+export class Satori extends Service {
   public uid = Math.random().toString(36).slice(2)
   public proxyUrls: DisposableSet<string> = new DisposableSet(this.ctx)
 
-  public _internalRouter: InternalRouter<C>
+  public _internalRouter: InternalRouter
   public _tempStore: Dict<Response> = Object.create(null)
 
   public _loginSeq = 0
   public _sessionSeq = 0
 
-  constructor(ctx: C) {
+  constructor(ctx: Context) {
     super(ctx, 'satori')
     ctx.mixin('satori', ['bots', 'component'])
 
@@ -182,7 +182,7 @@ export class Satori<C extends Context = Context> extends Service<C> {
     })
   }
 
-  public bots = new Proxy([] as Bot<C>[], {
+  public bots = new Proxy([] as Bot[], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop)
@@ -198,7 +198,7 @@ export class Satori<C extends Context = Context> extends Service<C> {
       target.splice(bot, 1)
       return true
     },
-  }) as Bot<C>[] & Dict<Bot<C>>
+  }) as Bot[] & Dict<Bot>
 
   component(name: string, component: Component<C[typeof Context.session]>, options: Component.Options = {}) {
     const render: Component = async (attrs, children, session) => {

@@ -2,7 +2,7 @@ import { Message } from './types'
 import { WechatOfficialBot } from './bot'
 import { Context, h } from '@satorijs/core'
 
-export async function decodeMessage<C extends Context>(bot: WechatOfficialBot<C>, message: Message) {
+export async function decodeMessage(bot: WechatOfficialBot, message: Message) {
   const session = bot.session()
   // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_standard_messages.html
   session.timestamp = message.CreateTime * 1000

@@ -7,14 +7,14 @@ import { version } from '../package.json'
 import { decodeGuild, decodeMessage, decodeUser } from './utils'
 import z from 'schemastery'
 
-export class ZulipBot<C extends Context = Context> extends Bot<C, ZulipBot.Config> {
+export class ZulipBot extends Bot<C, ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
   static inject = ['http']
 
   public http: HTTP
   public internal: Internal
 
-  constructor(ctx: C, config: ZulipBot.Config) {
+  constructor(ctx: Context, config: ZulipBot.Config) {
     super(ctx, config, 'zulip')
     this.http = ctx.http.extend({
       headers: {

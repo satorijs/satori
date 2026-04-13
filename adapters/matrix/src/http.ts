@@ -4,12 +4,12 @@ import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'
 
-export class HttpAdapter<C extends Context = Context> extends Adapter<C, MatrixBot<C>> {
+export class HttpAdapter extends Adapter<C, MatrixBot> {
   static inject = ['server']
 
   private txnId: string = null
 
-  constructor(ctx: C) {
+  constructor(ctx: Context) {
     super(ctx)
     ctx.server.all('/*path', async (req, res, next) => {
       const reqPath = '/' + req.params.path

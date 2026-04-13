@@ -6,10 +6,10 @@ import { WebhookRequestBody } from './types'
 import { adaptSessions } from './utils'
 import internal from 'stream'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, LineBot<C>> {
+export class HttpServer extends Adapter<C, LineBot> {
   static inject = ['server']
 
-  async connect(bot: LineBot<C>) {
+  async connect(bot: LineBot) {
     bot.ctx.server.post('/line', async (req, res) => {
       const sign = req.headers.get('x-line-signature')
       const rawBody = await req.text()

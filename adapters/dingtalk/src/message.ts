@@ -15,7 +15,7 @@ export const unescape = (val: string) =>
   val
     .replace(/\u200b([\*_~`])/g, '$1')
 
-export class DingtalkMessageEncoder<C extends Context = Context> extends MessageEncoder<C, DingtalkBot<C>> {
+export class DingtalkMessageEncoder extends MessageEncoder<C, DingtalkBot> {
   buffer = ''
 
   /**

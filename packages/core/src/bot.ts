@@ -22,7 +22,7 @@ export interface Bot extends Methods {
   internal: any
 }
 
-export abstract class Bot<C extends Context = Context, T = any> {
+export abstract class Bot<T = any> {
   static reusable = true
   static MessageEncoder?: new (bot: Bot, channelId: string, referrer?: any, options?: SendOptions) => MessageEncoder
 
@@ -40,13 +40,13 @@ export abstract class Bot<C extends Context = Context, T = any> {
   public error: any
   public callbacks: Dict<Function> = {}
 
-  public _internalRouter: InternalRouter<C>
+  public _internalRouter: InternalRouter
 
   // Same as `this.ctx`, but with a more specific type.
   protected context: Context
   protected _status: Status = Status.OFFLINE
 
-  constructor(public ctx: C, public config: T, public adapterName: string) {
+  constructor(public ctx: Context, public config: T, public adapterName: string) {
     this.sn = ++ctx.satori._loginSeq
     this.internal = null
     this._internalRouter = new InternalRouter(ctx)

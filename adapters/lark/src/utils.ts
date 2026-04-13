@@ -169,8 +169,8 @@ export function adaptSender(sender: Sender, session: Session): Session {
   return session
 }
 
-export async function adaptMessage<C extends Context = Context>(
-  bot: LarkBot<C>,
+export async function adaptMessage(
+  bot: LarkBot,
   data: Events['im.message.receive_v1'],
   session: Session,
   details = true,
@@ -226,7 +226,7 @@ export async function adaptMessage<C extends Context = Context>(
   return session
 }
 
-export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: EventPayload) {
+export async function adaptSession(bot: LarkBot, body: EventPayload) {
   const session = bot.session()
   session.setInternal('lark', body)
   session.event.referrer = {
@@ -317,7 +317,7 @@ export async function adaptSession<C extends Context>(bot: LarkBot<C>, body: Eve
 }
 
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
-export async function decodeMessage<C extends Context = Context>(bot: LarkBot<C>, body: Message, details = true): Promise<Universal.Message> {
+export async function decodeMessage(bot: LarkBot, body: Message, details = true): Promise<Universal.Message> {
   const json = JSON.parse(body.body!.content)
   const content: h[] = []
   switch (body.msg_type) {

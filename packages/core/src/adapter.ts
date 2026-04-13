@@ -5,10 +5,10 @@ import { Context } from 'cordis'
 import { Bot } from './bot'
 import z from 'schemastery'
 
-export abstract class Adapter<C extends Context = Context, B extends Bot<C> = Bot<C>> {
+export abstract class Adapter<B extends Bot = Bot> {
   public bots: B[] = []
 
-  constructor(protected ctx: C) {}
+  constructor(protected ctx: Context) {}
   async connect(bot: B) {}
   async disconnect(bot: B) {}
 }
@@ -26,7 +26,7 @@ export namespace Adapter {
     retryLazy: z.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
   }).description('连接设置')
 
-  export abstract class WsClientBase<C extends Context, B extends Bot<C>> extends Adapter<C, B> {
+  export abstract class WsClientBase<B extends Bot> extends Adapter<C, B> {
     protected socket?: WebSocket
     protected connectionId = 0
 
@@ -35,7 +35,7 @@ export namespace Adapter {
     protected abstract getActive(): boolean
     protected abstract setStatus(status: Status, error?: Error): void
 
-    constructor(ctx: C, public config: WsClientConfig) {
+    constructor(ctx: Context, public config: WsClientConfig) {
       super(ctx)
     }
 
@@ -105,10 +105,10 @@ export namespace Adapter {
     }
   }
 
-  export abstract class WsClient<C extends Context, B extends Bot<C, WsClientConfig>> extends WsClientBase<C, B> {
+  export abstract class WsClient<B extends Bot<C, WsClientConfig>> extends WsClientBase<C, B> {
     static reusable = true
 
-    constructor(ctx: C, public bot: B) {
+    constructor(ctx: Context, public bot: B) {
       super(ctx, bot.config)
       bot.adapter = this
     }

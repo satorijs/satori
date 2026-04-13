@@ -9,8 +9,8 @@ export * from './utils'
 export * from './http'
 export * from './message'
 
-type LineEvents<C extends Context = Context> = {
-  [P in Line.WebhookEvent['type'] as `line/${hyphenate<P>}`]: (data: Line.WebhookEvent & { type: P }, bot: LineBot<C>) => void
+type LineEvents = {
+  [P in Line.WebhookEvent['type'] as `line/${hyphenate<P>}`]: (data: Line.WebhookEvent & { type: P }, bot: LineBot) => void
 }
 
 declare module '@satorijs/core' {
@@ -20,7 +20,7 @@ declare module '@satorijs/core' {
 }
 
 declare module 'cordis' {
-  interface Events<C> extends LineEvents<C> {}
+  interface Events extends LineEvents {}
 }
 
 export default LineBot

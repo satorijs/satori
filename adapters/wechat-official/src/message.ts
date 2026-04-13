@@ -4,7 +4,7 @@ import xml2js from 'xml2js'
 import { SendMessage } from './types'
 
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
-export class WechatOfficialMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WechatOfficialBot<C>> {
+export class WechatOfficialMessageEncoder extends MessageEncoder<C, WechatOfficialBot> {
   buffer = ''
   sent = false
 

@@ -53,7 +53,7 @@
     "@cordisjs/plugin-server": "^1.2.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "@types/node": "^25.3.5",
-    "cordis": "^4.0.0-rc.0"
+    "cordis": "^4.0.0-rc.1"
   },
   "dependencies": {
     "cosmokit": "^1.8.1"

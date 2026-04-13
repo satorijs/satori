@@ -6,7 +6,7 @@ import z from 'schemastery'
 
 const heartbeatIntervals = [6, 2, 4]
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, KookBot<C, KookBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends Adapter.WsClient<C, KookBot<C, KookBot.BaseConfig & WsClient.Options>> {
   _sn = 0
   _ping: NodeJS.Timeout
   _heartbeat: NodeJS.Timeout

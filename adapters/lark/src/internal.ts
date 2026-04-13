@@ -33,8 +33,8 @@ export interface InternalRoute {
   type?: 'raw-json' | 'binary'
 }
 
-export class Internal<C extends Context = Context> {
-  constructor(bot: LarkBot<C>, tree = Internal._tree) {
+export class Internal {
+  constructor(bot: LarkBot, tree = Internal._tree) {
     return new Proxy(this, {
       get: (target, prop) => {
         if (typeof prop === 'symbol') return Reflect.get(target, prop)

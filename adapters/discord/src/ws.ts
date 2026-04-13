@@ -4,7 +4,7 @@ import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
 import z from 'schemastery'
 
-export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, DiscordBot<C>> {
+export class WsClient extends Adapter.WsClient<C, DiscordBot> {
   _d = 0
   _ping?: NodeJS.Timeout
   _sessionId = ''

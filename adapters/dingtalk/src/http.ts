@@ -5,17 +5,17 @@ import crypto from 'node:crypto'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, DingtalkBot<C>> {
+export class HttpServer extends Adapter<C, DingtalkBot> {
   static inject = ['server']
 
   private logger: Logger
 
-  constructor(ctx: C, bot: DingtalkBot<C>) {
+  constructor(ctx: Context, bot: DingtalkBot) {
     super(ctx)
     this.logger = ctx.logger('dingtalk')
   }
 
-  async connect(bot: DingtalkBot<C>) {
+  async connect(bot: DingtalkBot) {
     await bot.refreshToken()
     await bot.getLogin()
     bot.online()

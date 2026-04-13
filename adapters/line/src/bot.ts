@@ -4,7 +4,7 @@ import { Internal } from './types'
 import { LineMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config> {
+export class LineBot extends Bot<C, LineBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = LineMessageEncoder
 
@@ -12,7 +12,7 @@ export class LineBot<C extends Context = Context> extends Bot<C, LineBot.Config>
   public contentHttp: HTTP
   public internal: Internal
 
-  constructor(ctx: C, config: LineBot.Config) {
+  constructor(ctx: Context, config: LineBot.Config) {
     super(ctx, config, 'line')
     if (!ctx.server.config.selfUrl) {
       this.logger.warn('selfUrl is not set, some features may not work')

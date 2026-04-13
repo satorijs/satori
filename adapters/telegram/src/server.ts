@@ -7,7 +7,7 @@ import z from 'schemastery'
 
 export { Telegram }
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
+export class HttpServer extends Adapter<C, TelegramBot> {
   static inject = ['server']
 
   async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Options>) {

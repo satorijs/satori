@@ -4,7 +4,7 @@ import type { Logger } from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
 
-export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> = SatoriBot<C>> extends Adapter.WsClientBase<C, B> {
+export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsClientBase<C, B> {
   static schema = true as any
   static reusable = true
   static inject = ['http']
@@ -18,7 +18,7 @@ export class SatoriAdapter<C extends Context = Context, B extends SatoriBot<C> =
 
   private _metaDispose?: () => void
 
-  constructor(public ctx: C, public config: SatoriAdapter.Config) {
+  constructor(public ctx: Context, public config: SatoriAdapter.Config) {
     super(ctx, config)
     this.logger = ctx.logger('satori')
     this.http = ctx.http.extend({

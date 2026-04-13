@@ -1,8 +1,8 @@
 import { Context, Dict, HTTP, makeArray } from '@satorijs/core'
 import { DiscordBot } from '../bot'
 
-export class Internal<C extends Context = Context> {
-  constructor(private bot: DiscordBot<C>) {}
+export class Internal {
+  constructor(private bot: DiscordBot) {}
 
   static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>) {
     for (const path in routes) {

@@ -5,12 +5,12 @@ import { MailBot } from './bot'
 import { Adapter, Context, Universal } from '@satorijs/core'
 import { dispatchSession } from './utils'
 
-export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
+export class IMAP extends Adapter<C, MailBot> {
   static reusable = true
 
   imap: NodeIMAP
 
-  constructor(ctx: C, public bot: MailBot<C>) {
+  constructor(ctx: Context, public bot: MailBot) {
     super(ctx)
     this.imap = new NodeIMAP({
       user: bot.config.username,
@@ -24,7 +24,7 @@ export class IMAP<C extends Context = Context> extends Adapter<C, MailBot<C>> {
     })
   }
 
-  async connect(bot: MailBot<C>) {
+  async connect(bot: MailBot) {
     this.imap.on('ready', () => {
       this.imap.openBox('INBOX', false, this.inbox.bind(this))
     })

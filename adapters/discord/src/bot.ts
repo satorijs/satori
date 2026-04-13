@@ -8,17 +8,17 @@ import z from 'schemastery'
 // @ts-ignore
 import { version } from '../package.json'
 
-export class DiscordBot<C extends Context = Context> extends Bot<C, DiscordBot.Config> {
+export class DiscordBot extends Bot<C, DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
   static inject = ['http']
 
   public http: HTTP
-  public internal: Internal<C>
+  public internal: Internal
   public webhooks: Record<string, Webhook | null> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
   public commands: Universal.Command[] = []
 
-  constructor(ctx: C, config: DiscordBot.Config) {
+  constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config, 'discord')
     this.http = ctx.http.extend({
       ...config,

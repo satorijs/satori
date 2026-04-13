@@ -4,7 +4,7 @@ import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
 import z from 'schemastery'
 
-export class WechatOfficialBot<C extends Context = Context> extends Bot<C, WechatOfficialBot.Config> {
+export class WechatOfficialBot extends Bot<C, WechatOfficialBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = WechatOfficialMessageEncoder
 
@@ -12,7 +12,7 @@ export class WechatOfficialBot<C extends Context = Context> extends Bot<C, Wecha
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 
-  constructor(ctx: C, config: WechatOfficialBot.Config) {
+  constructor(ctx: Context, config: WechatOfficialBot.Config) {
     super(ctx, config, 'wechat-official')
     this.selfId = config.account
     this.http = ctx.http.extend(config)

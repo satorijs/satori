@@ -6,7 +6,7 @@ import { Message } from './types'
 import { decodeMessage } from './utils'
 import { decrypt, encrypt, getSignature } from '@wecom/crypto'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, WechatOfficialBot<C>> {
+export class HttpServer extends Adapter<C, WechatOfficialBot> {
   static inject = ['server']
 
   async connect(bot: WechatOfficialBot) {

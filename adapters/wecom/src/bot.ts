@@ -3,7 +3,7 @@ import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Config> {
+export class WecomBot extends Bot<C, WecomBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = WecomMessageEncoder
 
@@ -11,7 +11,7 @@ export class WecomBot<C extends Context = Context> extends Bot<C, WecomBot.Confi
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 
-  constructor(ctx: C, config: WecomBot.Config) {
+  constructor(ctx: Context, config: WecomBot.Config) {
     super(ctx, config, 'wecom')
     this.selfId = config.agentId
     this.http = ctx.http.extend(config)

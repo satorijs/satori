@@ -3,7 +3,7 @@ import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpPolling<C extends Context = Context> extends Adapter<C, ZulipBot<C>> {
+export class HttpPolling extends Adapter<C, ZulipBot> {
   static reusable = true
 
   private timeout: NodeJS.Timeout

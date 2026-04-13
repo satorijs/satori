@@ -32,7 +32,7 @@ export function isDirectChannel(channelId: string) {
   return channelId.length > 30
 }
 
-export class KookMessageEncoder<C extends Context = Context> extends MessageEncoder<C, KookBot<C>> {
+export class KookMessageEncoder extends MessageEncoder<C, KookBot> {
   private path: string
   private params = {} as Partial<Kook.MessageParams>
   private additional = {} as Partial<Kook.MessageParams>

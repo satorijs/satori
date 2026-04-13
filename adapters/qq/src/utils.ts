@@ -119,7 +119,7 @@ export function setupReaction(session: Session, data: QQ.MessageReaction) {
   return session
 }
 
-export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, input: QQ.DispatchPayload) {
+export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
   let session = bot.session()
 
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',

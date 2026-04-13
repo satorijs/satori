@@ -12,7 +12,7 @@ export const unescape = (val: string) =>
     .replace(/^(&nbsp;)+/g, (match) => Array(match.length + 1).join(' '))
     .replace(/\u200b([\*_~`\->[\](#!@])/g, '$1')
 
-export class ZulipMessageEncoder<C extends Context = Context> extends MessageEncoder<C, ZulipBot<C>> {
+export class ZulipMessageEncoder extends MessageEncoder<C, ZulipBot> {
   buffer: string = ''
 
   async flush() {

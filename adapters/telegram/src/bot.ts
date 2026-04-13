@@ -26,7 +26,7 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<C extends Context = Context, T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
+export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
   static MessageEncoder = TelegramMessageEncoder
   static inject = ['http']
 
@@ -36,7 +36,7 @@ export class TelegramBot<C extends Context = Context, T extends TelegramBot.Conf
   local?: boolean
   server?: string
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config, 'telegram')
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local

@@ -6,14 +6,14 @@ import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class KookBot<C extends Context = Context, T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
+export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
   static MessageEncoder = KookMessageEncoder
   static inject = ['http']
 
   http: HTTP
   internal: Kook.Internal
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config, 'kook')
     this.http = ctx.http.extend({
       headers: {

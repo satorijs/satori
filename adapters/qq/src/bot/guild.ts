@@ -11,14 +11,14 @@ export namespace QQGuildBot {
   }
 }
 
-export class QQGuildBot<C extends Context = Context> extends Bot<C> {
+export class QQGuildBot extends Bot {
   declare parent: QQBot
   hidden = true
   public internal: GuildInternal
   public http: HTTP
   static MessageEncoder = QQGuildMessageEncoder
 
-  constructor(ctx: C, config: QQGuildBot.Config) {
+  constructor(ctx: Context, config: QQGuildBot.Config) {
     super(ctx, config, 'qq')
     this.parent = config.parent
     this.parent.guildBot = this

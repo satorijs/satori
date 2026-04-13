@@ -3,29 +3,29 @@ import { Dict, remove, valueMap } from 'cosmokit'
 import { ExtractParams, Key, pathToRegexp } from 'path-to-regexp-typed'
 import { Bot } from '.'
 
-export type InternalRouteCallback<C extends Context, T = any> = (
+export type InternalRouteCallback<T = any> = (
   request: Request & { params: T; query: URLSearchParams },
-  bot: Bot<C>,
+  bot: Bot,
 ) => Promise<Response>
 
-export interface InternalRoute<C extends Context> {
+export interface InternalRoute {
   regexp: RegExp
   keys: Key[]
-  callback: InternalRouteCallback<C>
+  callback: InternalRouteCallback
 }
 
-export class InternalRouter<C extends Context> {
+export class InternalRouter {
   public [Service.tracker] = {
     property: 'ctx',
   }
 
-  routes: InternalRoute<C>[] = []
+  routes: InternalRoute[] = []
 
   constructor(public ctx: Context) {}
 
   define<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
     return this.ctx.effect(() => {
-      const route: InternalRoute<C> = {
+      const route: InternalRoute = {
         ...pathToRegexp(path),
         callback,
       }
@@ -34,7 +34,7 @@ export class InternalRouter<C extends Context> {
     })
   }
 
-  handle(bot: Bot<C>, req: Request, path: string, query: URLSearchParams): undefined | Promise<Response> {
+  handle(bot: Bot, req: Request, path: string, query: URLSearchParams): undefined | Promise<Response> {
     for (const route of this.routes) {
       const capture = route.regexp.exec(path)
       if (!capture) continue

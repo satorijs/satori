@@ -200,7 +200,7 @@ function adaptReaction(data: Kook.Data, body: Kook.NoticeBody, session: Session)
   session['emoji'] = body.emoji.id
 }
 
-export async function adaptSession<C extends Context>(bot: KookBot<C>, input: any) {
+export async function adaptSession(bot: KookBot, input: any) {
   const session = bot.session()
   session.setInternal('kook', input)
   if (input.type === Kook.Type.system) {

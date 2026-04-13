@@ -3,7 +3,7 @@ import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import z from 'schemastery'
 
-export class HttpPolling<C extends Context = Context> extends Adapter<C, TelegramBot<C>> {
+export class HttpPolling extends Adapter<C, TelegramBot> {
   static reusable = true
 
   private offset = 0

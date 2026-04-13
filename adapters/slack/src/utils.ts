@@ -160,7 +160,7 @@ function setupReaction(session: Session, data: EnvelopedEvent<ReactionAddedEvent
   session.content = data.event.reaction
 }
 
-export async function adaptSession<C extends Context = Context>(bot: SlackBot<C>, payload: EnvelopedEvent<SlackEvent>) {
+export async function adaptSession(bot: SlackBot, payload: EnvelopedEvent<SlackEvent>) {
   const session = bot.session()
   // https://api.slack.com/events
   if (payload.event.type === 'message') {

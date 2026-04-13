@@ -16,16 +16,16 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
   ppt: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 }
 
-export class LarkBot<C extends Context = Context, T extends LarkBot.Config = LarkBot.Config> extends Bot<C, T> {
+export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<C, T> {
   static inject = ['http']
   static MessageEncoder = LarkMessageEncoder
 
   _refresher?: NodeJS.Timeout
   http: HTTP
   assetsQuester: HTTP
-  internal: Internal<C>
+  internal: Internal
 
-  constructor(ctx: C, config: T) {
+  constructor(ctx: Context, config: T) {
     super(ctx, config, 'lark')
 
     this.http = ctx.http.extend({

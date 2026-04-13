@@ -15,8 +15,8 @@ type ParamCase<S extends string> =
   ? `${L extends '_' ? '-' : Lowercase<L>}${ParamCase<R>}`
   : S
 
-type DiscordEvents<C extends Context = Context> = {
-  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T], bot: DiscordBot<C>) => void
+type DiscordEvents = {
+  [T in keyof Discord.GatewayEvents as `discord/${ParamCase<T>}`]: (input: Discord.GatewayEvents[T], bot: DiscordBot) => void
 }
 
 declare module '@satorijs/core' {
@@ -26,5 +26,5 @@ declare module '@satorijs/core' {
 }
 
 declare module 'cordis' {
-  interface Events<C> extends DiscordEvents<C> {}
+  interface Events extends DiscordEvents {}
 }

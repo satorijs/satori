@@ -9,7 +9,7 @@ class AggregateError extends Error {
   }
 }
 
-export abstract class MessageEncoder<C extends Context = Context, B extends Bot<C> = Bot<C>> {
+export abstract class MessageEncoder<B extends Bot = Bot> {
   public errors: Error[] = []
   public results: Message[] = []
   public session!: C[typeof Context.session]

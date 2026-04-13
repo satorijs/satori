@@ -6,7 +6,7 @@ import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, SlackBot<C>> {
+export class HttpServer extends Adapter<C, SlackBot> {
   static inject = ['server']
 
   async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Options>) {

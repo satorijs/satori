@@ -3,7 +3,7 @@ import { SatoriAdapter } from './ws'
 import type { HTTP } from '@cordisjs/plugin-http'
 import type { Logger } from '@cordisjs/plugin-logger'
 
-function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix = '') {
+function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
       const key = prefix.slice(1)
@@ -60,13 +60,13 @@ function createInternal<C extends Context = Context>(bot: SatoriBot<C>, prefix =
   })
 }
 
-export class SatoriBot<C extends Context = Context> extends Bot<C, Universal.Login> {
+export class SatoriBot extends Bot<C, Universal.Login> {
   declare adapter: SatoriAdapter<C, this>
 
   public internal = createInternal(this)
   public logger: Logger
 
-  constructor(ctx: C, config: Universal.Login) {
+  constructor(ctx: Context, config: Universal.Login) {
     super(ctx, config, config.adapter)
     this.logger = ctx.logger('satori')
     Object.assign(this, omit(config, ['sn', 'adapter']))

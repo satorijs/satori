@@ -24,7 +24,7 @@ const SUPPORTED_MEDIA = [
   'video/3gpp',
 ]
 
-export class WhatsAppMessageEncoder<C extends Context = Context> extends MessageEncoder<C, WhatsAppBot<C>> {
+export class WhatsAppMessageEncoder extends MessageEncoder<C, WhatsAppBot> {
   private buffer = ''
   quoteId: string = null
   private buttons: Button[] = []

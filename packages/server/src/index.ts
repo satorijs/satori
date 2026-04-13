@@ -28,10 +28,10 @@ const FILTER_HEADERS = [
 @Inject('http', true)
 @Inject('server', true, { path: '/satori' })
 @Inject('logger', true, { name: 'satori:server' })
-class SatoriServer<C extends Context = Context> extends Service<C> {
+class SatoriServer extends Service {
   private buffer: Session[] = []
 
-  constructor(ctx: C, public config: SatoriServer.Config) {
+  constructor(ctx: Context, public config: SatoriServer.Config) {
     super(ctx, 'satori.server')
 
     function checkAuth(req: Request, res: Response) {

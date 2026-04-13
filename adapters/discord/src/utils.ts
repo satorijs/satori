@@ -59,8 +59,8 @@ export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Discord.
   permissions: role.permissions ? '' + role.permissions : undefined,
 })
 
-export async function decodeMessage<C extends Context = Context>(
-  bot: DiscordBot<C>,
+export async function decodeMessage(
+  bot: DiscordBot,
   data: Discord.Message,
   message: Universal.Message,
   payload: Universal.MessageLike = message,
@@ -207,7 +207,7 @@ function setupReaction(session: Session, data: ReactionEvent) {
   session.content = id ? `${name}:${id}` : name
 }
 
-export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input: Discord.Gateway.Payload) {
+export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Payload) {
   const session = bot.session()
   session.setInternal('discord', input)
   if (input.t === 'MESSAGE_CREATE') {

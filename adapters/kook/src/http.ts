@@ -4,12 +4,12 @@ import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpServer<C extends Context = Context> extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Options>> {
+export class HttpServer extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
   private logger: Logger
 
-  constructor(ctx: C, bot: KookBot<C>) {
+  constructor(ctx: Context, bot: KookBot) {
     super(ctx)
     this.logger = ctx.logger('kook')
     let { path } = bot.config as HttpServer.Options

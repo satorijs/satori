@@ -18,5 +18,5 @@ declare module '@satorijs/core' {
 }
 
 declare module 'cordis' {
-  interface Events<C> extends Kook.Events<C> {}
+  interface Events extends Kook.Events {}
 }

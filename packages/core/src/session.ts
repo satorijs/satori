@@ -26,7 +26,7 @@ export interface Session {
   referrer: any
 }
 
-export class Session<C extends Context = Context> {
+export class Session {
   public [Service.tracker] = {
     associate: 'session',
     property: 'ctx',
@@ -34,12 +34,12 @@ export class Session<C extends Context = Context> {
 
   public id: number // for backward compatibility
   public sn: number
-  public bot!: Bot<C>
+  public bot!: Bot
   public app!: C['root']
   public event: Event
   public locales: string[] = []
 
-  constructor(bot: Bot<C>, event: Partial<Event>) {
+  constructor(bot: Bot, event: Partial<Event>) {
     event.selfId ??= bot.selfId
     event.platform ??= bot.platform
     event.timestamp ??= Date.now()

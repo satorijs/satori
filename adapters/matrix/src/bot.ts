@@ -5,7 +5,7 @@ import * as Matrix from './types'
 import { adaptMessage, decodeUser, dispatchSession } from './utils'
 import z from 'schemastery'
 
-export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Config> {
+export class MatrixBot extends Bot<C, MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
   static inject = ['http']
 
@@ -15,7 +15,7 @@ export class MatrixBot<C extends Context = Context> extends Bot<C, MatrixBot.Con
   rooms: string[] = []
   internal: Matrix.Internal
 
-  constructor(ctx: C, config: MatrixBot.Config) {
+  constructor(ctx: Context, config: MatrixBot.Config) {
     super(ctx, config, 'matrix')
     this.id = config.id
     this.user.id = `@${this.id}:${this.config.host}`

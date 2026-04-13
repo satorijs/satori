@@ -17,8 +17,8 @@ type ParamCase<S extends string> =
   ? `${L extends '_' ? '-' : Lowercase<L>}${ParamCase<R>}`
   : S
 
-type TelegramEvents<C extends Context = Context> = {
-  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: NonNullable<Telegram.Update[T]>, bot: TelegramBot<C>) => void
+type TelegramEvents = {
+  [T in Exclude<keyof Telegram.Update, 'update_id'> as `telegram/${ParamCase<T>}`]: (input: NonNullable<Telegram.Update[T]>, bot: TelegramBot) => void
 }
 
 declare module '@satorijs/core' {
@@ -28,5 +28,5 @@ declare module '@satorijs/core' {
 }
 
 declare module 'cordis' {
-  interface Events<C> extends TelegramEvents<C> {}
+  interface Events extends TelegramEvents {}
 }
