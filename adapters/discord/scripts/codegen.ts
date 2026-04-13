@@ -6,6 +6,7 @@ import { execSync } from 'node:child_process'
 
 const DOCS_REPO = process.env.DOCS_REPO || 'https://github.com/discord/discord-api-docs.git'
 const docsDir = join('/tmp', 'discord-api-docs')
+const outDir = join(import.meta.dirname!, '../src/types')
 
 // Clone or pull discord-api-docs
 if (existsSync(join(docsDir, '.git'))) {
@@ -55,14 +56,62 @@ const sources: { dir: string; files: Record<string, string> }[] = [
   },
 ]
 
+const generatedFiles: string[] = []
+
 for (const source of sources) {
   for (const [file, outName] of Object.entries(source.files)) {
     const path = join(source.dir, file)
-    if (existsSync(path)) processResource(path, outName)
+    if (existsSync(path)) {
+      processResource(path, outName)
+      generatedFiles.push(outName)
+    }
   }
 }
 
-// ===================== Types =====================
+function generateIndex() {
+  const manualFiles = ['internal', 'device', 'team']
+  const allExports = [...manualFiles, ...generatedFiles].sort()
+
+  const lines: string[] = []
+  for (const name of allExports) {
+    lines.push(`export * from './${name}'`)
+  }
+  lines.push('')
+  lines.push('export type integer = number')
+  lines.push('export type snowflake = string')
+  lines.push('export type timestamp = string')
+  lines.push('')
+
+  const refPath = join(docsDir, 'developers/reference.mdx')
+  const content = readFileSync(refPath, 'utf-8')
+  const match = content.match(/## Locales\n\n([\s\S]*?)(?=\n## |\n---\s*$|$)/)
+  if (!match) {
+    console.error('Could not find Locales section in reference.mdx')
+    return
+  }
+  const table = extractTable(match[1])
+  if (!table) return
+  const rows = parseTable(table)
+  if (rows.length < 2) return
+  const locales = rows.slice(1).map(row => (row[0] || '').trim()).filter(Boolean)
+  console.log(`=== locales (${locales.length}) ===`)
+
+  lines.push(`/** @see https://discord.com/developers/docs/reference#locales */`)
+  lines.push(`export type Locale = typeof Locale[number]`)
+  lines.push('')
+  lines.push(`export const Locale = [`)
+  for (let i = 0; i < locales.length; i += 5) {
+    const chunk = locales.slice(i, i + 5).map(l => `'${l}'`).join(', ')
+    lines.push(`  ${chunk},`)
+  }
+  lines.push(`] as const`)
+
+  const outPath = join(outDir, 'index.ts')
+  writeFileSync(outPath, lines.join('\n') + '\n')
+  console.log(`Written: ${outPath}\n`)
+}
+
+generateIndex()
 
 interface Field {
   name: string
@@ -202,7 +251,6 @@ function processResource(filePath: string, outputName?: string) {
   console.log(`Endpoints: ${endpoints.map(e => `${e.method} ${e.path}`).join(', ')}`)
 
   const ts = generateTypeScript(resourceName, objects, enums, endpoints)
-  const outDir = join(import.meta.dirname!, '../src/types')
   const outPath = join(outDir, `${resourceName}.ts`)
   writeFileSync(outPath, ts)
   console.log(`Written: ${outPath}\n`)
