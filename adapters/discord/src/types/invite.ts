@@ -1,13 +1,15 @@
-import { Application, Channel, Guild, GuildMember, GuildScheduledEvent, integer, Internal, snowflake, timestamp, User } from '.'
+import { Internal, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
 export interface Invite {
+  /** the type of invite */
+  type: Invite.Type
   /** the invite code (unique ID) */
   code: string
   /** the guild this invite is for */
-  guild?: Partial<Guild>
+  guild?: PartialGuild
   /** the channel this invite is for */
-  channel: Partial<Channel>
+  channel: PartialChannel | null
   /** the user who created the invite */
   inviter?: User
   /** the type of target for this voice channel invite */
@@ -15,28 +17,43 @@ export interface Invite {
   /** the user whose stream to display for this voice channel stream invite */
   target_user?: User
   /** the embedded application to open for this voice channel embedded application invite */
-  target_application?: Partial<Application>
-  /** approximate count of online members, returned from the GET /invites/<code> endpoint when with_counts is true */
+  target_application?: PartialApplication
+  /** approximate count of online members, returned from the `GET /invites/<code>` endpoint when `with_counts` is `true` */
   approximate_presence_count?: integer
-  /** approximate count of total members, returned from the GET /invites/<code> endpoint when with_counts is true */
+  /** approximate count of total members, returned from the `GET /invites/<code>` endpoint when `with_counts` is `true` */
   approximate_member_count?: integer
-  /** the expiration date of this invite, returned from the GET /invites/<code> endpoint when with_expiration is true */
-  expires_at?: timestamp
-  /** stage instance data if there is a public Stage instance in the Stage channel this invite is for */
-  stage_instance?: Invite.StageInstance
-  /** guild scheduled event data, only included if guild_scheduled_event_id contains a valid guild scheduled event id */
+  /** the expiration date of this invite */
+  expires_at: timestamp | null
+  /** guild scheduled event data, only included if `guild_scheduled_event_id` contains a valid guild scheduled event id */
   guild_scheduled_event?: GuildScheduledEvent
+  /** guild invite flags for guild invites */
+  flags?: integer
+  /** the roles assigned to the user upon accepting the invite. */
+  roles?: PartialRole[]
 }
 
 export namespace Invite {
+  /** https://discord.com/developers/docs/resources/invite#invite-object-invite-types */
+  export enum Type {
+    GUILD = 0,
+    GROUP_DM = 1,
+    FRIEND = 2,
+  }
+
   /** https://discord.com/developers/docs/resources/invite#invite-object-invite-target-types */
   export enum TargetType {
     STREAM = 1,
     EMBEDDED_APPLICATION = 2,
   }
 
+  /** https://discord.com/developers/docs/resources/invite#invite-object-guild-invite-flags */
+  export enum GuildInviteFlag {
+    /** this invite is a guest invite for a voice channel */
+    IS_GUEST_INVITE = 1 << 0,
+  }
+
   /** https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure */
-  export interface Metadata extends Invite {
+  export interface Metadata {
     /** number of times this invite has been used */
     uses: integer
     /** max number of times this invite can be used */
@@ -52,7 +69,7 @@ export namespace Invite {
   /** https://discord.com/developers/docs/resources/invite#invite-stage-instance-object-invite-stage-instance-structure */
   export interface StageInstance {
     /** the members speaking in the Stage */
-    members: Partial<GuildMember>[]
+    members: PartialGuildMember[]
     /** the number of users in the Stage */
     participant_count: integer
     /** the number of users speaking in the Stage */
@@ -61,81 +78,21 @@ export namespace Invite {
     topic: string
   }
 
-  export namespace Event {
-    /** https://discord.com/developers/docs/topics/gateway-events#invite-create-invite-create-event-fields */
-    export interface Create {
-      /** the channel the invite is for */
-      channel_id: snowflake
-      /** the unique invite code */
-      code: string
-      /** the time at which the invite was created */
-      created_at: timestamp
-      /** the guild of the invite */
-      guild_id?: snowflake
-      /** the user that created the invite */
-      inviter?: User
-      /** how long the invite is valid for (in seconds) */
-      max_age: integer
-      /** the maximum number of times the invite can be used */
-      max_uses: integer
-      /** the type of target for this voice channel invite */
-      target_type?: integer
-      /** the user whose stream to display for this voice channel stream invite */
-      target_user?: User
-      /** the embedded application to open for this voice channel embedded application invite */
-      target_application?: Partial<Application>
-      /** whether or not the invite is temporary (invited users will be kicked on disconnect unless they're assigned a role) */
-      temporary: boolean
-      /** how many times the invite has been used (always will be 0) */
-      uses: integer
+  export namespace Params {
+    /** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */
+    export interface GetInvite {
+      /** whether the invite should contain approximate member counts */
+      with_counts?: boolean
+      /** the guild scheduled event to include with the invite */
+      guild_scheduled_event_id?: snowflake
     }
 
-    /** https://discord.com/developers/docs/topics/gateway-events#invite-delete-invite-delete-event-fields */
-    export interface Delete {
-      /** the channel of the invite */
-      channel_id: snowflake
-      /** the guild of the invite */
-      guild_id?: snowflake
-      /** the unique invite code */
-      code: string
+    /** https://discord.com/developers/docs/resources/invite#update-target-users-form-params */
+    export interface UpdateTargetUsers {
+      /** a csv file with a single column of user IDs for all the users able to accept this invite */
+      target_users_file: any
     }
-  }
 
-  /** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */
-  export interface GetOptions {
-    /** whether to include invite metadata */
-    with_counts?: boolean
-    /** whether to include invite expiration date */
-    with_expiration?: boolean
-    /** the guild scheduled event to include with the invite */
-    guild_scheduled_event_id?: snowflake
-  }
-
-  /** https://discord.com/developers/docs/resources/channel#create-channel-invite-json-params */
-  export interface CreateParams {
-    /** duration of invite in seconds before expiry, or 0 for never. between 0 and 604800 (7 days) */
-    max_age: integer
-    /** max number of uses or 0 for unlimited. between 0 and 100 */
-    max_uses: integer
-    /** whether this invite only grants temporary membership */
-    temporary: boolean
-    /** if true, don't try to reuse a similar invite (useful for creating many unique one time use invites) */
-    unique: boolean
-    /** the type of target for this voice channel invite */
-    target_type: integer
-    /** the id of the user whose stream to display for this invite, required if target_type is 1, the user must be streaming in the channel */
-    target_user_id: snowflake
-    /** the id of the embedded application to open for this invite, required if target_type is 2, the application must have the EMBEDDED flag */
-    target_application_id: snowflake
-  }
-}
-
-declare module './gateway' {
-  interface GatewayEvents {
-    /** invite to a channel was created */
-    INVITE_CREATE: Invite.Event.Create
-    /** invite to a channel was deleted */
-    INVITE_DELETE: Invite.Event.Delete
   }
 }
 
@@ -145,32 +102,27 @@ declare module './internal' {
      * Returns an invite object for the given code.
      * @see https://discord.com/developers/docs/resources/invite#get-invite
      */
-    getInvite(code: string, params?: Invite.GetOptions): Promise<Invite>
+    getInvite(invite_code: snowflake, params: Invite.Params.Params): Promise<void>
     /**
-     * Delete an invite. Requires the MANAGE_CHANNELS permission on the channel this invite belongs to, or MANAGE_GUILD to remove any invite across the guild. Returns an invite object on success. Fires a Invite Delete Gateway event.
+     * Delete an invite. Requires the `MANAGE_CHANNELS` permission on the channel this invite belongs to, or `MANAGE_GUILD` to remove any invite across the guild. Returns an invite object on success. Fires an Invite Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/invite#delete-invite
      */
-    deleteInvite(code: string): Promise<Invite>
+    deleteInvite(invite_code: snowflake): Promise<void>
     /**
-     * Returns a list of invite objects (with invite metadata) for the guild. Requires the MANAGE_GUILD permission.
-     * @see https://discord.com/developers/docs/resources/guild#get-guild-invites
+     * Gets the users allowed to see and accept this invite. Response is a CSV file with the header `user_id` and each user ID from the original file passed to invite create on its own line. Requires the caller to be the inviter, or have `MANAGE_GUILD` permission, or have `VIEW_AUDIT_LOG` permission.
+     * @see https://discord.com/developers/docs/resources/invite#get-target-users
      */
-    getGuildInvites(guild_id: snowflake): Promise<Invite.Metadata[]>
+    getTargetUsers(invite_code: snowflake): Promise<void>
     /**
-     * Returns a partial invite object for guilds with that feature enabled. Requires the MANAGE_GUILD permission. code will be null if a vanity url for the guild is not set.
-     * @see https://discord.com/developers/docs/resources/guild#get-guild-vanity-url
+     * Updates the users allowed to see and accept this invite. Uploading a file with invalid user IDs will result in a 400 with the invalid IDs described. Requires the caller to be the inviter or have the `MANAGE_GUILD` permission.
+     * @see https://discord.com/developers/docs/resources/invite#update-target-users
      */
-    getGuildVanityURL(guild_id: snowflake): Promise<Partial<Invite>>
+    updateTargetUsers(invite_code: snowflake, params: Invite.Params.Params): Promise<void>
     /**
-     * Returns a list of invite objects (with invite metadata) for the channel. Only usable for guild channels. Requires the MANAGE_CHANNELS permission.
-     * @see https://discord.com/developers/docs/resources/channel#get-channel-invites
+     * Processing target users from a CSV when creating or updating an invite is done asynchronously. This endpoint allows you to check the status of that job. Requires the caller to be the inviter, or have `MANAGE_GUILD` permission, or have `VIEW_AUDIT_LOG` permission.
+     * @see https://discord.com/developers/docs/resources/invite#get-target-users-job-status
      */
-    getChannelInvites(channel_id: string): Promise<Invite.Metadata[]>
-    /**
-     * Create a new invite object for the channel. Only usable for guild channels. Requires the CREATE_INSTANT_INVITE permission. All JSON parameters for this route are optional, however the request body is not. If you are not sending any fields, you still have to send an empty JSON object ({}). Returns an invite object. Fires an Invite Create Gateway event.
-     * @see https://discord.com/developers/docs/resources/channel#create-channel-invite
-     */
-    createChannelInvite(channel_id: string, params: Invite.CreateParams): Promise<void>
+    getTargetUsersJobStatus(invite_code: snowflake): Promise<void>
   }
 }
 
@@ -179,14 +131,11 @@ Internal.define({
     GET: 'getInvite',
     DELETE: 'deleteInvite',
   },
-  '/guilds/{guild.id}/invites': {
-    GET: 'getGuildInvites',
+  '/invites/{invite.code}/target-users': {
+    GET: 'getTargetUsers',
+    PUT: 'updateTargetUsers',
   },
-  '/guilds/{guild.id}/vanity-url': {
-    GET: 'getGuildVanityURL',
-  },
-  '/channels/{channel.id}/invites': {
-    GET: 'getChannelInvites',
-    POST: 'createChannelInvite',
+  '/invites/{invite.code}/target-users/job-status': {
+    GET: 'getTargetUsersJobStatus',
   },
 })

@@ -5,7 +5,6 @@
   "private": true,
   "packageManager": "yarn@4.12.0",
   "workspaces": [
-    "docs",
     "external/*",
     "external/*/external/*",
     "external/*/external/*/external/*",
@@ -24,7 +23,8 @@
     "test:text": "shx rm -rf coverage && c8 -r text yarn test",
     "test:json": "shx rm -rf coverage && c8 -r json yarn test",
     "test:html": "shx rm -rf coverage && c8 -r html yarn test",
-    "sync:lark": "node --import tsx adapters/lark/scripts/types.ts"
+    "codegen:dc": "node --import tsx adapters/discord/scripts/codegen.ts",
+    "codegen:lark": "node --import tsx adapters/lark/scripts/codegen.ts"
   },
   "license": "MIT",
   "devDependencies": {

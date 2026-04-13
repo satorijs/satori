@@ -1,4 +1,4 @@
-import { Guild, integer, Internal, snowflake, timestamp, User } from '.'
+import { Internal, User, integer, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure */
 export interface GuildTemplate {
@@ -7,7 +7,7 @@ export interface GuildTemplate {
   /** template name */
   name: string
   /** the description for the template */
-  description?: string
+  description: string | null
   /** number of times this template has been used */
   usage_count: integer
   /** the ID of the user who created the template */
@@ -20,35 +20,30 @@ export interface GuildTemplate {
   updated_at: timestamp
   /** the ID of the guild this template is based on */
   source_guild_id: snowflake
-  /** the guild snapshot this template contains */
-  serialized_source_guild: Partial<Guild>
+  /** the guild snapshot this template contains; placeholder IDs are given as integers */
+  serialized_source_guild: PartialGuild
   /** whether the template has unsynced changes */
-  is_dirty?: boolean
+  is_dirty: boolean | null
 }
 
 export namespace GuildTemplate {
-  /** https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template-json-params */
-  export interface CreateGuildParams {
-    /** name of the guild (2-100 characters) */
-    name: string
-    /** base64 128x128 image for the guild icon */
-    icon?: string
-  }
+  export namespace Params {
+    /** https://discord.com/developers/docs/resources/guild-template#create-guild-template-json-params */
+    export interface Create {
+      /** name of the template (1-100 characters) */
+      name: string
+      /** description for the template (0-120 characters) */
+      description?: string | null
+    }
 
-  /** https://discord.com/developers/docs/resources/guild-template#create-guild-template-json-params */
-  export interface CreateParams {
-    /** name of the template (1-100 characters) */
-    name: string
-    /** description for the template (0-120 characters) */
-    description?: string
-  }
+    /** https://discord.com/developers/docs/resources/guild-template#modify-guild-template-json-params */
+    export interface Modify {
+      /** name of the template (1-100 characters) */
+      name?: string
+      /** description for the template (0-120 characters) */
+      description?: string | null
+    }
 
-  /** https://discord.com/developers/docs/resources/guild-template#modify-guild-template-json-params */
-  export interface ModifyParams {
-    /** name of the template (1-100 characters) */
-    name?: string
-    /** description for the template (0-120 characters) */
-    description?: string
   }
 }
 
@@ -58,44 +53,38 @@ declare module './internal' {
      * Returns a guild template object for the given code.
      * @see https://discord.com/developers/docs/resources/guild-template#get-guild-template
      */
-    getGuildTemplate(code: string): Promise<GuildTemplate>
+    getGuildTemplate(template_code: snowflake): Promise<GuildTemplate>
     /**
-     * Create a new guild based on a template. Returns a guild object on success. Fires a Guild Create Gateway event.
-     * @see https://discord.com/developers/docs/resources/guild-template#create-guild-from-guild-template
-     */
-    createGuildfromGuildTemplate(code: string, params: GuildTemplate.CreateGuildParams): Promise<Guild>
-    /**
-     * Returns an array of guild template objects. Requires the MANAGE_GUILD permission.
+     * Returns an array of guild template objects. Requires the `MANAGE_GUILD` permission.
      * @see https://discord.com/developers/docs/resources/guild-template#get-guild-templates
      */
     getGuildTemplates(guild_id: snowflake): Promise<GuildTemplate[]>
     /**
-     * Creates a template for the guild. Requires the MANAGE_GUILD permission. Returns the created guild template object on success.
+     * Creates a template for the guild. Requires the `MANAGE_GUILD` permission. Returns the created guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#create-guild-template
      */
-    createGuildTemplate(guild_id: snowflake, params: GuildTemplate.CreateParams): Promise<GuildTemplate>
+    createGuildTemplate(guild_id: snowflake, params: GuildTemplate.Params.Create): Promise<CreatedGuildTemplate>
     /**
-     * Syncs the template to the guild's current state. Requires the MANAGE_GUILD permission. Returns the guild template object on success.
+     * Syncs the template to the guild's current state. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#sync-guild-template
      */
-    syncGuildTemplate(guild_id: snowflake, code: string): Promise<GuildTemplate>
+    syncGuildTemplate(guild_id: snowflake, template_code: snowflake): Promise<GuildTemplate>
     /**
-     * Modifies the template's metadata. Requires the MANAGE_GUILD permission. Returns the guild template object on success.
+     * Modifies the template's metadata. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#modify-guild-template
      */
-    modifyGuildTemplate(guild_id: snowflake, code: string, params: GuildTemplate.ModifyParams): Promise<GuildTemplate>
+    modifyGuildTemplate(guild_id: snowflake, template_code: snowflake, params: GuildTemplate.Params.Modify): Promise<GuildTemplate>
     /**
-     * Deletes the template. Requires the MANAGE_GUILD permission. Returns the deleted guild template object on success.
+     * Deletes the template. Requires the `MANAGE_GUILD` permission. Returns the deleted guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#delete-guild-template
      */
-    deleteGuildTemplate(guild_id: snowflake, code: string): Promise<GuildTemplate>
+    deleteGuildTemplate(guild_id: snowflake, template_code: snowflake): Promise<DeletedGuildTemplate>
   }
 }
 
 Internal.define({
   '/guilds/templates/{template.code}': {
     GET: 'getGuildTemplate',
-    POST: 'createGuildfromGuildTemplate',
   },
   '/guilds/{guild.id}/templates': {
     GET: 'getGuildTemplates',

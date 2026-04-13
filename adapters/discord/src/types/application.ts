@@ -1,120 +1,174 @@
-import { Guild, integer, Internal, snowflake, Team, User } from '.'
+import { Internal, User, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/application#application-object-application-structure */
 export interface Application {
-  /** the id of the app */
+  /** ID of the app */
   id: snowflake
-  /** the name of the app */
+  /** Name of the app */
   name: string
-  /** the icon hash of the app */
-  icon?: string
-  /** the description of the app */
+  /** Icon hash of the app */
+  icon: string | null
+  /** Description of the app */
   description: string
-  /** an array of rpc origin urls, if rpc is enabled */
-  rpc_origins?: string[]
-  /** when false only app owner can join the app's bot to guilds */
+  /** List of RPC origin URLs, if RPC is enabled */
+  rpc_origins?: Strings[]
+  /** When `false`, only the app owner can add the app to guilds */
   bot_public: boolean
-  /** when true the app's bot will only join upon completion of the full oauth2 code grant flow */
+  /** When `true`, the app's bot will only join upon completion of the full OAuth2 code grant flow */
   bot_require_code_grant: boolean
-  /** the url of the app's terms of service */
+  /** Partial user object for the bot user associated with the app */
+  bot?: PartialUser
+  /** URL of the app's Terms of Service */
   terms_of_service_url?: string
-  /** the url of the app's privacy policy */
+  /** URL of the app's Privacy Policy */
   privacy_policy_url?: string
-  /** partial user object containing info on the owner of the application */
-  owner?: Partial<User>
-  /** deprecated, if this application is a game sold on Discord, this field will be the summary field for the store page of its primary sku */
-  summary: string
-  /** the hex encoded key for verification in interactions and the GameSDK's GetTicket */
+  /** Partial user object for the owner of the app */
+  owner?: PartialUser
+  /** Hex encoded key for verification in interactions and the GameSDK's GetTicket */
   verify_key: string
-  /** if the application belongs to a team, this will be a list of the members of that team */
-  team?: Team
-  /** if this application is a game sold on Discord, this field will be the guild to which it has been linked */
+  /** If the app belongs to a team, this will be a list of the members of that team */
+  team: Team | null
+  /** Guild associated with the app. For example, a developer support server. */
   guild_id?: snowflake
-  /** if this application is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
+  /** Partial object of the associated guild */
+  guild?: PartialGuild
+  /** If this app is a game sold on Discord, this field will be the id of the "Game SKU" that is created, if exists */
   primary_sku_id?: snowflake
-  /** if this application is a game sold on Discord, this field will be the URL slug that links to the store page */
+  /** If this app is a game sold on Discord, this field will be the URL slug that links to the store page */
   slug?: string
-  /** the application's default rich presence invite cover image hash */
+  /** App's default rich presence invite cover image hash */
   cover_image?: string
-  /** the application's public flags */
+  /** App's public flags */
   flags?: integer
-  /** up to 5 tags describing the content and functionality of the application */
-  tags?: [string, string?, string?, string?, string?]
-  /** settings for the application's default in-app authorization link, if enabled */
+  /** Approximate count of guilds the app has been added to */
+  approximate_guild_count?: integer
+  /** Approximate count of users that have installed the app (authorized with `application.commands` as a scope) */
+  approximate_user_install_count?: integer
+  /** Approximate count of users that have OAuth2 authorizations for the app */
+  approximate_user_authorization_count?: integer
+  /** Array of redirect URIs for the app */
+  redirect_uris?: Strings[]
+  /** Interactions endpoint URL for the app */
+  interactions_endpoint_url?: string | null
+  /** Role connection verification URL for the app */
+  role_connections_verification_url?: string | null
+  /** Event webhooks URL for the app to receive webhook events */
+  event_webhooks_url?: string | null
+  /** If webhook events are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord */
+  event_webhooks_status?: ApplicationEventWebhookStatus
+  /** List of Webhook event types the app subscribes to */
+  event_webhooks_types?: Strings[]
+  /** List of tags describing the content and functionality of the app. Max of 5 tags. */
+  tags?: Strings[]
+  /** Settings for the app's default in-app authorization link, if enabled */
   install_params?: InstallParams
-  /** the application's default custom authorization link, if enabled */
+  /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
+  integration_types_config?: DictionaryWithKeysOfApplicationIntegrationTypes
+  /** Default custom authorization URL for the app, if enabled */
   custom_install_url?: string
-  /** the application's role connection verification entry point, which when configured will render the app as a verification method in the guild role verification configuration */
-  role_connections_verification_url?: string
 }
 
-export interface InstallParams {
-  /** the scopes to add the application to the server with */
-  scopes: string[]
-  /** the permissions to request for the bot role */
-  permissions: string
-}
+export namespace Application {
+  /** https://discord.com/developers/docs/resources/application#application-object-application-integration-types */
+  export enum IntegrationType {
+    /** App is installable to servers */
+    `GUILD_INSTALL` = 0,
+    /** App is installable to users */
+    `USER_INSTALL` = 1,
+  }
 
-/** https://discord.com/developers/docs/resources/application#application-object-application-flags */
-export enum ApplicationFlag {
-  GATEWAY_PRESENCE = 1 << 12,
-  GATEWAY_PRESENCE_LIMITED = 1 << 13,
-  GATEWAY_GUILD_MEMBERS = 1 << 14,
-  GATEWAY_GUILD_MEMBERS_LIMITED = 1 << 15,
-  VERIFICATION_PENDING_GUILD_LIMIT = 1 << 16,
-  EMBEDDED = 1 << 17,
-  GATEWAY_MESSAGE_CONTENT = 1 << 18,
-  GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19,
-  APPLICATION_COMMAND_BADGE = 1 << 23,
-}
+  /** https://discord.com/developers/docs/resources/application#application-object-application-flags */
+  export enum Flag {
+    /** Indicates if an app uses the Auto Moderation API */
+    APPLICATION_AUTO_MODERATION_RULE_CREATE_BADGE = 1 << 6,
+    /** Intent required for bots in **100 or more servers** to receive `presence_update` events */
+    GATEWAY_PRESENCE = 1 << 12,
+    /** Intent required for bots in under 100 servers to receive `presence_update` events, found on the **Bot** page in your app's settings */
+    GATEWAY_PRESENCE_LIMITED = 1 << 13,
+    /** Intent required for bots in **100 or more servers** to receive member-related events like `guild_member_add`. See the list of member-related events under `GUILD_MEMBERS` */
+    GATEWAY_GUILD_MEMBERS = 1 << 14,
+    /** Intent required for bots in under 100 servers to receive member-related events like `guild_member_add`, found on the **Bot** page in your app's settings. See the list of member-related events under `GUILD_MEMBERS` */
+    GATEWAY_GUILD_MEMBERS_LIMITED = 1 << 15,
+    /** Indicates unusual growth of an app that prevents verification */
+    VERIFICATION_PENDING_GUILD_LIMIT = 1 << 16,
+    /** Indicates if an app is embedded within the Discord client (currently unavailable publicly) */
+    EMBEDDED = 1 << 17,
+    /** Intent required for bots in **100 or more servers** to receive message content */
+    GATEWAY_MESSAGE_CONTENT = 1 << 18,
+    /** Intent required for bots in under 100 servers to receive message content, found on the **Bot** page in your app's settings */
+    GATEWAY_MESSAGE_CONTENT_LIMITED = 1 << 19,
+    /** Indicates if an app has registered global application commands */
+    APPLICATION_COMMAND_BADGE = 1 << 23,
+  }
 
-/** https://discord.com/developers/docs/topics/gateway-events#ready-ready-event-fields */
-export interface ReadyEvent {
-  /** gateway version */
-  v: integer
-  /** information about the user including email */
-  user: User
-  /** the guilds the user is in */
-  guilds: Partial<Guild>[]
-  /** used for resuming connections */
-  session_id: string
-  /** gateway URL for resuming connections */
-  resume_gateway_url: string
-  /** the shard information associated with this session, if sent when identifying */
-  shard?: [shard_id: integer, num_shards: integer]
-  /** contains id and flags */
-  application: Partial<Application>
-}
+  /** https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure */
+  export interface InstallParams {
+    /** Scopes to add the application to the server with */
+    scopes: Strings[]
+    /** Permissions to request for the bot role */
+    permissions: string
+  }
 
-declare module './gateway' {
-  interface GatewayEvents {
-    /** contains the initial state information */
-    READY: ReadyEvent
-    /** response to Resume */
-    RESUMED: {}
+  export namespace Params {
+    /** https://discord.com/developers/docs/resources/application#edit-current-application-json-params */
+    export interface Modify {
+      /** Default custom authorization URL for the app, if enabled */
+      custom_install_url: string
+      /** Description of the app */
+      description: string
+      /** Role connection verification URL for the app */
+      role_connections_verification_url: string
+      /** Settings for the app's default in-app authorization link, if enabled */
+      install_params: InstallParams
+      /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
+      integration_types_config: DictionaryWithKeysOfApplicationIntegrationTypes
+      /** App's public flags */
+      flags: integer
+      /** Icon for the app */
+      icon: ImageData | null
+      /** Default rich presence invite cover image for the app */
+      cover_image: ImageData | null
+      /** Interactions endpoint URL for the app */
+      interactions_endpoint_url: string
+      /** List of tags describing the content and functionality of the app (max of 20 characters per tag). Max of 5 tags. */
+      tags: Strings[]
+      /** Event webhooks URL for the app to receive webhook events */
+      event_webhooks_url: string
+      /** If webhook events are enabled for the app. `1` to disable, and `2` to enable */
+      event_webhooks_status: ApplicationEventWebhookStatus
+      /** List of Webhook event types to subscribe to */
+      event_webhooks_types: Strings[]
+    }
+
   }
 }
 
 declare module './internal' {
   interface Internal {
     /**
-     * Returns the bot's application object.
-     * @see https://discord.com/developers/docs/topics/oauth2#get-current-bot-application-information
+     * Returns the application object associated with the requesting bot user.
+     * @see https://discord.com/developers/docs/resources/application#get-current-application
      */
-    getCurrentBotApplicationInformation(): Promise<Application>
+    getCurrentApplication(): Promise<Application>
     /**
-     * Returns info about the current authorization. Requires authentication with a bearer token.
-     * @see https://discord.com/developers/docs/topics/oauth2#get-current-authorization-information
+     * Edit properties of the app associated with the requesting bot user. Only properties that are passed will be updated. Returns the updated application object on success.
+     * @see https://discord.com/developers/docs/resources/application#edit-current-application
      */
-    getCurrentAuthorizationInformation(): Promise<any>
+    editCurrentApplication(params: Application.Params.Modify): Promise<Application>
+    /**
+     * Returns a serialized activity instance, if it exists. Useful for preventing unwanted activity sessions.
+     * @see https://discord.com/developers/docs/resources/application#get-application-activity-instance
+     */
+    getApplicationActivityInstance(application_id: snowflake): Promise<void>
   }
 }
 
 Internal.define({
-  '/oauth2/applications/@me': {
-    GET: 'getCurrentBotApplicationInformation',
+  '/applications/@me': {
+    GET: 'getCurrentApplication',
+    PATCH: 'editCurrentApplication',
   },
-  '/oauth2/@me': {
-    GET: 'getCurrentAuthorizationInformation',
+  '/applications/{application.id}/activity-instances/{instance_id}': {
+    GET: 'getApplicationActivityInstance',
   },
 })

@@ -1,4 +1,4 @@
-import { integer, Internal, snowflake } from '.'
+import { Internal, integer, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/stage-instance#stage-instance-object-stage-instance-structure */
 export interface StageInstance {
@@ -12,21 +12,13 @@ export interface StageInstance {
   topic: string
   /** The privacy level of the Stage instance */
   privacy_level: integer
-  /** Whether or not Stage Discovery is disabled */
+  /** Whether or not Stage Discovery is disabled (deprecated) */
   discoverable_disabled: boolean
   /** The id of the scheduled event for this Stage instance */
-  guild_scheduled_event_id?: snowflake
+  guild_scheduled_event_id: snowflake | null
 }
 
 export namespace StageInstance {
-  export namespace Event {
-    export interface Create extends StageInstance {}
-
-    export interface Delete extends StageInstance {}
-
-    export interface Update extends StageInstance {}
-  }
-
   export namespace Params {
     /** https://discord.com/developers/docs/resources/stage-instance#create-stage-instance-json-params */
     export interface Create {
@@ -38,48 +30,38 @@ export namespace StageInstance {
       privacy_level?: integer
       /** Notify @everyone that a Stage instance has started */
       send_start_notification?: boolean
+      /** The guild scheduled event associated with this Stage instance */
+      guild_scheduled_event_id?: snowflake
     }
 
     /** https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance-json-params */
     export interface Modify {
-      /** The topic of the Stage instance (1-120 characters) */
-      topic?: string
       /** The privacy level of the Stage instance */
       privacy_level?: integer
     }
-  }
-}
 
-declare module './gateway' {
-  interface GatewayEvents {
-    /** stage instance was created */
-    STAGE_INSTANCE_CREATE: StageInstance.Event.Create
-    /** stage instance was deleted or closed */
-    STAGE_INSTANCE_DELETE: StageInstance.Event.Delete
-    /** stage instance was updated */
-    STAGE_INSTANCE_UPDATE: StageInstance.Event.Update
   }
 }
 
 declare module './internal' {
   interface Internal {
     /**
-     * Creates a new Stage instance associated to a Stage channel.
+     * Creates a new Stage instance associated to a Stage channel. Returns that Stage instance. Fires a Stage Instance Create Gateway event.
      * @see https://discord.com/developers/docs/resources/stage-instance#create-stage-instance
      */
-    createStageInstance(params: StageInstance.Params.Create): Promise<StageInstance>
+    createStageInstance(params: StageInstance.Params.Create): Promise<void>
     /**
      * Gets the stage instance associated with the Stage channel, if it exists.
      * @see https://discord.com/developers/docs/resources/stage-instance#get-stage-instance
      */
-    getStageInstance(channel_id: snowflake): Promise<StageInstance>
+    getStageInstance(channel_id: snowflake): Promise<void>
     /**
-     * Updates fields of an existing Stage instance.
+     * Updates fields of an existing Stage instance. Returns the updated Stage instance. Fires a Stage Instance Update Gateway event.
      * @see https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
      */
-    modifyStageInstance(channel_id: snowflake, params: StageInstance.Params.Modify): Promise<StageInstance>
+    modifyStageInstance(channel_id: snowflake, params: StageInstance.Params.Modify): Promise<void>
     /**
-     * Deletes the Stage instance.
+     * Deletes the Stage instance. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance
      */
     deleteStageInstance(channel_id: snowflake): Promise<void>

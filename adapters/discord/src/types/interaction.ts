@@ -1,97 +1,51 @@
-import { AllowedMentions, ApplicationCommand, Attachment, Channel, Component, ComponentType, Embed, GuildMember, integer, Internal, Message, Role, snowflake, User } from '.'
-import * as Discord from '.'
+import { Internal, User, integer, snowflake } from '.'
 
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure */
+/** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-structure */
 export interface Interaction {
-  /** id of the interaction */
+  /** ID of the interaction */
   id: snowflake
-  /** id of the application this interaction is for */
+  /** ID of the application this interaction is for */
   application_id: snowflake
-  /** the type of interaction */
-  type: Interaction.Type
-  /** the command data payload */
+  /** Type of interaction */
+  type: InteractionType
+  /** Interaction data payload */
   data?: InteractionData
-  /** the guild it was sent from */
+  /** Guild that the interaction was sent from */
+  guild?: PartialGuild
+  /** Guild that the interaction was sent from */
   guild_id?: snowflake
-  /** the channel it was sent from */
+  /** Channel that the interaction was sent from */
+  channel?: PartialChannel
+  /** Channel that the interaction was sent from */
   channel_id?: snowflake
-  /** guild member data for the invoking user, including permissions */
+  /** Guild member data for the invoking user, including permissions */
   member?: GuildMember
-  /** user object for the invoking user, if invoked in a DM */
+  /** User object for the invoking user, if invoked in a DM */
   user?: User
-  /** a continuation token for responding to the interaction */
+  /** Continuation token for responding to the interaction */
   token: string
-  /** read-only property, always 1 */
+  /** Read-only property, always `1` */
   version: integer
-  /** for components, the message they were attached to */
+  /** For components or modals triggered by components, the message they were attached to */
   message?: Message
-  /** bitwise set of permissions the app or bot has within the channel the interaction was sent from */
-  app_permissions?: string
-  /** selected language of the invoking user */
+  /** Bitwise set of permissions the app has in the source location of the interaction */
+  app_permissions: string
+  /** Selected language of the invoking user */
   locale?: string
-  /** guild's preferred locale, if invoked in a guild */
+  /** Guild's preferred locale, if invoked in a guild */
   guild_locale?: string
-}
-
-export type InteractionData =
-  | InteractionData.ApplicationCommand
-  | InteractionData.MessageComponent
-  | InteractionData.ModalSubmit
-
-export namespace InteractionData {
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-data-structure */
-  export interface ApplicationCommand {
-    /** the ID of the invoked command */
-    id: snowflake
-    /** the name of the invoked command */
-    name: string
-    /** the type of the invoked command */
-    type: integer
-    /** converted users + roles + channels */
-    resolved?: ResolvedData
-    /** the params + values from the user */
-    options?: ApplicationCommand.Option[]
-    /** the id of the guild the command is registered to */
-    guild_id?: snowflake
-    /** id of the user or message targeted by a user or message command */
-    target_id?: snowflake
-  }
-
-  export namespace ApplicationCommand {
-    /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-interaction-data-option-structure */
-    export interface Option {
-      /** the name of the parameter */
-      name: string
-      /** value of application command option type */
-      type: Discord.ApplicationCommand.OptionType
-      /** the value of the pair */
-      value?: any
-      /** present if this option is a group or subcommand */
-      options?: Option[]
-      /** true if this option is the currently focused option for autocomplete */
-      focused?: boolean
-    }
-  }
-
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-message-component-data-structure */
-  export interface MessageComponent {
-    /** the custom_id of the component */
-    custom_id: string
-    /** the type of the component */
-    component_type: ComponentType
-    /** values the user selected in a select menu component */
-    values?: string[]
-  }
-
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-modal-submit-data-structure */
-  export interface ModalSubmit {
-    custom_id: string
-    components: Component[]
-  }
+  /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
+  entitlements: Entitlement[]
+  /** Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details */
+  authorizing_integration_owners: DictionaryWithKeysOfApplicationIntegrationTypes
+  /** Context where the interaction was triggered from */
+  context?: InteractionContextType
+  /** Attachment size limit in bytes */
+  attachment_size_limit: integer
 }
 
 export namespace Interaction {
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-type */
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-type */
   export enum Type {
     PING = 1,
     APPLICATION_COMMAND = 2,
@@ -99,173 +53,189 @@ export namespace Interaction {
     APPLICATION_COMMAND_AUTOCOMPLETE = 4,
     MODAL_SUBMIT = 5,
   }
-}
 
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure */
-export interface ResolvedData {
-  /** the ids and User objects */
-  users?: Record<snowflake, User>
-  /** the ids and partial Member objects */
-  members?: Record<snowflake, Partial<GuildMember>>
-  /** the ids and Role objects */
-  roles?: Record<snowflake, Role>
-  /** the ids and partial Channel objects */
-  channels?: Record<snowflake, Partial<Channel>>
-  /** the ids and partial Message objects */
-  messages?: Record<snowflake, Partial<Message>>
-  /** the ids and attachment objects */
-  attachments?: Record<snowflake, Attachment>
-}
-
-/** https://discord.com/developers/docs/interactions/receiving-and-responding#message-interaction-object-message-interaction-structure */
-export interface MessageInteraction {
-  /** id of the interaction */
-  id: snowflake
-  /** the type of interaction */
-  type: Interaction.Type
-  /** the name of the application command */
-  name: string
-  /** the user who invoked the interaction */
-  user: User
-  /** member who invoked the interaction in the guild */
-  member?: Partial<GuildMember>
-}
-
-export namespace Interaction {
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure */
-  export interface Response {
-    /** the type of response */
-    type: CallbackType
-    /** an optional response message */
-    data?: CallbackData
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-interaction-context-types */
+  export enum ContextType {
+    /** Interaction can be used within servers */
+    0 = 0,
+    /** Interaction can be used within DMs with the app's bot user */
+    1 = 1,
+    /** Interaction can be used within Group DMs and DMs other than the app's bot user */
+    2 = 2,
   }
 
-  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-callback-type */
+  /** https://discord.com/developers/docs/resources/interaction#interaction-response-object-interaction-callback-type */
   export enum CallbackType {
-    /** ACK a Ping */
+    /** ACK a `Ping` */
     PONG = 1,
-    /** respond to an interaction with a message */
+    /** Respond to an interaction with a message */
     CHANNEL_MESSAGE_WITH_SOURCE = 4,
     /** ACK an interaction and edit a response later, the user sees a loading state */
     DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5,
-    /**
-     * for components, ACK an interaction and edit the original message later; the user does not see a loading state
-     * (only valid for [component-based](https://discord.com/developers/docs/interactions/message-components) interactions)
-     */
+    /** For components, ACK an interaction and edit the original message later; the user does not see a loading state */
     DEFERRED_UPDATE_MESSAGE = 6,
-    /**
-     * for components, edit the message the component was attached to
-     * (only valid for [component-based](https://discord.com/developers/docs/interactions/message-components) interactions)
-     */
+    /** For components, edit the message the component was attached to */
     UPDATE_MESSAGE = 7,
-    /** respond to an autocomplete interaction with suggested choices */
+    /** Respond to an autocomplete interaction with suggested choices */
     APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8,
-    /**
-     * respond to an interaction with a popup modal
-     * (not available for `MODAL_SUBMIT` and `PING` interactions)
-     */
+    /** Respond to an interaction with a popup modal */
     MODAL = 9,
+    /** **Deprecated**; respond to an interaction with an upgrade button, only available for apps with monetization enabled */
+    PREMIUM_REQUIRED = 10,
+    /** Launch the Activity associated with the app. Only available for apps with Activities enabled */
+    LAUNCH_ACTIVITY = 12,
   }
 
-  export type CallbackData =
-    | CallbackData.Messages
-    | CallbackData.Autocomplete
-    | CallbackData.Modal
-
-  export namespace CallbackData {
-    /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-messages */
-    export interface Messages {
-      /** is the response TTS */
-      tts?: boolean
-      /** message content */
-      content?: string
-      /** supports up to 10 embeds */
-      embeds?: Embed[]
-      /** allowed mentions object */
-      allowed_mentions?: AllowedMentions
-      /** interaction callback data flags */
-      flags?: integer
-      /** message components */
-      components?: Component[]
-      /** attachment objects with filename and description */
-      attachments?: Partial<Attachment>[]
-    }
-
-    /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete */
-    export interface Autocomplete {
-      /** autocomplete choices (max of 25 choices) */
-      choices: ApplicationCommand.OptionChoice[]
-    }
-
-    /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal */
-    export interface Modal {
-      /** a developer-defined identifier for the modal, max 100 characters */
-      custom_id: string
-      /** the title of the popup modal, max 45 characters */
-      title: string
-      /** between 1 and 5 (inclusive) components that make up the modal */
-      components: Component[]
-    }
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-application-command-data-structure */
+  export interface ApplicationCommandData {
+    /** `ID` of the invoked command */
+    id: snowflake
+    /** `name` of the invoked command */
+    name: string
+    /** `type` of the invoked command */
+    type: integer
+    /** Converted users + roles + channels + attachments */
+    resolved?: ResolvedData
+    /** Params + values from the user */
+    options?: ApplicationCommandInteractionDataOption[]
+    /** ID of the guild the command is registered to */
+    guild_id?: snowflake
+    /** ID of the user or message targeted by a user or message command */
+    target_id?: snowflake
   }
-}
 
-export interface InteractionCreateEvent extends Interaction { }
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-message-component-data-structure */
+  export interface MessageComponentData {
+    /** `custom_id` of the component */
+    custom_id: string
+    /** type of the component */
+    component_type: integer
+    /** Values the user selected in a select menu component */
+    values?: SelectOptionValues[]
+    /** Resolved entities from selected options */
+    resolved?: ResolvedData
+  }
 
-declare module './gateway' {
-  interface GatewayEvents {
-    /** user used an interaction, such as an Application Command */
-    INTERACTION_CREATE: InteractionCreateEvent
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-modal-submit-data-structure */
+  export interface ModalSubmitData {
+    /** The custom ID provided for the modal */
+    custom_id: string
+    /** Values submitted by the user */
+    components: ComponentInteractionResponse[]
+    /** Resolved entities from selected options */
+    resolved?: ResolvedData
+  }
+
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-resolved-data-structure */
+  export interface ResolvedData {
+    /** IDs and User objects */
+    users?: MapOfSnowflakesToUser
+    /** IDs and partial Member objects */
+    members?: MapOfSnowflakesToPartialMember
+    /** IDs and Role objects */
+    roles?: MapOfSnowflakesToRole
+    /** IDs and partial Channel objects */
+    channels?: MapOfSnowflakesToPartialChannel
+    /** IDs and partial Message objects */
+    messages?: MapOfSnowflakesToPartialMessages
+    /** IDs and attachment objects */
+    attachments?: MapOfSnowflakesToAttachment
+  }
+
+  /** https://discord.com/developers/docs/resources/interaction#interaction-object-application-command-interaction-data-option-structure */
+  export interface ApplicationCommandInteractionDataOption {
+    /** Name of the parameter */
+    name: string
+    /** Value of application command option type */
+    type: integer
+    /** Value of the option resulting from user input */
+    value?: String,Integer,Double,OrBoolean
+    /** Present if this option is a group or subcommand */
+    options?: ApplicationCommandInteractionDataOption[]
+    /** `true` if this option is the currently focused option for autocomplete */
+    focused?: boolean
+  }
+
+  /** https://discord.com/developers/docs/resources/interaction#message-interaction-object-message-interaction-structure */
+  export interface MessageInteraction {
+    /** ID of the interaction */
+    id: snowflake
+    /** Type of interaction */
+    type: InteractionType
+    /** Name of the application command, including subcommands and subcommand groups */
+    name: string
+    /** User who invoked the interaction */
+    user: User
+    /** Member who invoked the interaction in the guild */
+    member?: PartialMember
+  }
+
+  /** https://discord.com/developers/docs/resources/interaction#interaction-response-object-interaction-response-structure */
+  export interface PackResult {
+    /** Type of response */
+    type: InteractionCallbackType
+    /** An optional response message */
+    data?: InteractionCallbackData
+  }
+
+  export namespace Params {
+    /** https://discord.com/developers/docs/resources/interaction#create-interaction-response-query-string-params */
+    export interface Create {
+      /** Whether to include an interaction callback object as the response */
+      with_response?: boolean
+    }
+
   }
 }
 
 declare module './internal' {
   interface Internal {
     /**
-     * Create a response to an Interaction from the gateway. Takes an interaction response. This endpoint also supports file attachments similar to the webhook endpoints. Refer to Uploading Files for details on uploading files and multipart/form-data requests.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
+     * Create a response to an Interaction. Body is an interaction response. Returns `204` unless `with_response` is set to `true` which returns `200` with the body as interaction callback response.
+     * @see https://discord.com/developers/docs/resources/interaction#create-interaction-response
      */
-    createInteractionResponse(interaction_id: snowflake, token: string, params: Interaction.Response): Promise<void>
+    createInteractionResponse(interaction_id: snowflake, interaction_token: snowflake, params: Interaction.Params.Create): Promise<void>
     /**
      * Returns the initial Interaction response. Functions the same as Get Webhook Message.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#get-original-interaction-response
+     * @see https://discord.com/developers/docs/resources/interaction#get-original-interaction-response
      */
-    getOriginalInteractionResponse(application_id: snowflake, token: string): Promise<Interaction.Response>
+    getOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
      * Edits the initial Interaction response. Functions the same as Edit Webhook Message.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#edit-original-interaction-response
+     * @see https://discord.com/developers/docs/resources/interaction#edit-original-interaction-response
      */
-    editOriginalInteractionResponse(application_id: snowflake, token: string): Promise<Interaction.Response>
+    editOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
-     * Deletes the initial Interaction response. Returns 204 No Content on success.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#delete-original-interaction-response
+     * Deletes the initial Interaction response. Returns `204 No Content` on success.
+     * @see https://discord.com/developers/docs/resources/interaction#delete-original-interaction-response
      */
-    deleteOriginalInteractionResponse(application_id: snowflake, token: string): Promise<void>
+    deleteOriginalInteractionResponse(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
-     * Create a followup message for an Interaction. Functions the same as Execute Webhook, but wait is always true, and flags can be set to 64 in the body to send an ephemeral message. The thread_id, avatar_url, and username parameters are not supported when using this endpoint for interaction followups.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#create-followup-message
+     * <Info>
+     * @see https://discord.com/developers/docs/resources/interaction#create-followup-message
      */
-    createFollowupMessage(application_id: snowflake, token: string): Promise<any>
+    createFollowupMessage(application_id: snowflake, interaction_token: snowflake): Promise<void>
     /**
-     * Returns a followup message for an Interaction. Functions the same as Get Webhook Message. Does not support ephemeral followups.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#get-followup-message
+     * Returns a followup message for an Interaction. Functions the same as Get Webhook Message.
+     * @see https://discord.com/developers/docs/resources/interaction#get-followup-message
      */
-    getFollowupMessage(application_id: snowflake, token: string, message_id: snowflake): Promise<any>
+    getFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
     /**
-     * Edits a followup message for an Interaction. Functions the same as Edit Webhook Message. Does not support ephemeral followups.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#edit-followup-message
+     * Edits a followup message for an Interaction. Functions the same as Edit Webhook Message.
+     * @see https://discord.com/developers/docs/resources/interaction#edit-followup-message
      */
-    editFollowupMessage(application_id: snowflake, token: string, message_id: snowflake): Promise<any>
+    editFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
     /**
-     * Deletes a followup message for an Interaction. Returns 204 No Content on success. Does not support ephemeral followups.
-     * @see https://discord.com/developers/docs/interactions/receiving-and-responding#delete-followup-message
+     * Deletes a followup message for an Interaction. Returns `204 No Content` on success.
+     * @see https://discord.com/developers/docs/resources/interaction#delete-followup-message
      */
-    deleteFollowupMessage(application_id: snowflake, token: string, message_id: snowflake): Promise<void>
+    deleteFollowupMessage(application_id: snowflake, interaction_token: snowflake, message_id: snowflake): Promise<void>
   }
 }
 
 Internal.define({
   '/interactions/{interaction.id}/{interaction.token}/callback': {
-    POST: 'createInteractionResponse',
+    POST: { name: 'createInteractionResponse', multipart: true },
   },
   '/webhooks/{application.id}/{interaction.token}/messages/@original': {
     GET: 'getOriginalInteractionResponse',
