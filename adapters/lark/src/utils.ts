@@ -220,7 +220,8 @@ export async function adaptMessage<C extends Context = Context>(
   session.guildId = data.message.chat_id
   session.content = content.map((c) => c.toString()).join(' ')
 
-  if (data.message.parent_id && details) {
+  // thread messages should not be treated as quotes
+  if (data.message.parent_id && !data.message.thread_id && details) {
     session.quote = await bot.getMessage(session.channelId, data.message.parent_id, false)
   }
   return session
