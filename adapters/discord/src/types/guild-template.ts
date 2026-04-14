@@ -1,4 +1,4 @@
-import { Guild, Internal, User, integer, snowflake, timestamp } from '.'
+import { Guild, integer, Internal, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/guild-template#guild-template-object-guild-template-structure */
 export interface GuildTemplate {
@@ -61,7 +61,7 @@ declare module './internal' {
      * Creates a template for the guild. Requires the `MANAGE_GUILD` permission. Returns the created guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#create-guild-template
      */
-    createGuildTemplate(guild_id: snowflake, params: CreateGuildTemplateParams): Promise<CreatedGuildTemplate>
+    createGuildTemplate(guild_id: snowflake, params: CreateGuildTemplateParams): Promise<GuildTemplate>
     /**
      * Syncs the template to the guild's current state. Requires the `MANAGE_GUILD` permission. Returns the guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#sync-guild-template
@@ -76,7 +76,7 @@ declare module './internal' {
      * Deletes the template. Requires the `MANAGE_GUILD` permission. Returns the deleted guild template object on success.
      * @see https://discord.com/developers/docs/resources/guild-template#delete-guild-template
      */
-    deleteGuildTemplate(guild_id: snowflake, template_code: snowflake): Promise<DeletedGuildTemplate>
+    deleteGuildTemplate(guild_id: snowflake, template_code: snowflake): Promise<GuildTemplate>
   }
 }
 

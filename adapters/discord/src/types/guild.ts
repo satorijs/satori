@@ -1,4 +1,4 @@
-import { Application, Channel, Emoji, Internal, Invite, Oauth2, Permission, Permissions, Sticker, User, Voice, integer, snowflake, timestamp } from '.'
+import { Channel, Emoji, integer, Internal, Invite, Permission, snowflake, Sticker, timestamp, User, Voice } from '.'
 
 /** https://discord.com/developers/docs/resources/guild#guild-object-guild-structure */
 export interface Guild {
@@ -41,7 +41,7 @@ export interface Guild {
   /** custom guild emojis */
   emojis: Emoji[]
   /** enabled guild features */
-  features: GuildFeatureStrings[]
+  features: Guild.Feature[]
   /** required MFA level for the guild */
   mfa_level: integer
   /** application id of the guild creator if it is bot-created */
@@ -141,6 +141,18 @@ export namespace Guild {
     AGE_RESTRICTED = 3,
   }
 
+  /** https://discord.com/developers/docs/resources/guild#guild-object-premium-tier */
+  export enum PremiumTier {
+    /** guild has not unlocked any Server Boost perks */
+    NONE = 'none',
+    /** guild has unlocked Server Boost level 1 perks */
+    TIER_1 = 'tier_1',
+    /** guild has unlocked Server Boost level 2 perks */
+    TIER_2 = 'tier_2',
+    /** guild has unlocked Server Boost level 3 perks */
+    TIER_3 = 'tier_3',
+  }
+
   /** https://discord.com/developers/docs/resources/guild#guild-object-system-channel-flags */
   export enum SystemChannelFlag {
     /** Suppress member join notifications */
@@ -155,6 +167,86 @@ export namespace Guild {
     SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATIONS = 1 << 4,
     /** Hide role subscription sticker reply buttons */
     SUPPRESS_ROLE_SUBSCRIPTION_PURCHASE_NOTIFICATION_REPLIES = 1 << 5,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild#guild-object-guild-features */
+  export enum Feature {
+    /** guild has access to set an animated guild banner image */
+    ANIMATED_BANNER = 'animated_banner',
+    /** guild has access to set an animated guild icon */
+    ANIMATED_ICON = 'animated_icon',
+    /** guild is using the old permissions configuration behavior */
+    APPLICATION_COMMAND_PERMISSIONS_V2 = 'application_command_permissions_v2',
+    /** guild has set up auto moderation rules */
+    AUTO_MODERATION = 'auto_moderation',
+    /** guild has access to set a guild banner image */
+    BANNER = 'banner',
+    /** guild can enable welcome screen, Membership Screening, stage channels and discovery, and receives community updates */
+    COMMUNITY = 'community',
+    /** guild has enabled monetization */
+    CREATOR_MONETIZABLE_PROVISIONAL = 'creator_monetizable_provisional',
+    /** guild has enabled the role subscription promo page */
+    CREATOR_STORE_PAGE = 'creator_store_page',
+    /** guild has been set as a support server on the App Directory */
+    DEVELOPER_SUPPORT_SERVER = 'developer_support_server',
+    /** guild is able to be discovered in the directory */
+    DISCOVERABLE = 'discoverable',
+    /** guild is able to be featured in the directory */
+    FEATURABLE = 'featurable',
+    /** guild has paused invites, preventing new users from joining */
+    INVITES_DISABLED = 'invites_disabled',
+    /** guild has access to set an invite splash background */
+    INVITE_SPLASH = 'invite_splash',
+    /** guild has enabled Membership Screening */
+    MEMBER_VERIFICATION_GATE_ENABLED = 'member_verification_gate_enabled',
+    /** guild has increased custom soundboard sound slots */
+    MORE_SOUNDBOARD = 'more_soundboard',
+    /** guild has increased custom sticker slots */
+    MORE_STICKERS = 'more_stickers',
+    /** guild has access to create announcement channels */
+    NEWS = 'news',
+    /** guild is partnered */
+    PARTNERED = 'partnered',
+    /** guild can be previewed before joining via Membership Screening or the directory */
+    PREVIEW_ENABLED = 'preview_enabled',
+    /** guild has disabled alerts for join raids in the configured safety alerts channel */
+    RAID_ALERTS_DISABLED = 'raid_alerts_disabled',
+    /** guild is able to set role icons */
+    ROLE_ICONS = 'role_icons',
+    /** guild has role subscriptions that can be purchased */
+    ROLE_SUBSCRIPTIONS_AVAILABLE_FOR_PURCHASE = 'role_subscriptions_available_for_purchase',
+    /** guild has enabled role subscriptions */
+    ROLE_SUBSCRIPTIONS_ENABLED = 'role_subscriptions_enabled',
+    /** guild has created soundboard sounds */
+    SOUNDBOARD = 'soundboard',
+    /** guild has enabled ticketed events */
+    TICKETED_EVENTS_ENABLED = 'ticketed_events_enabled',
+    /** guild has access to set a vanity URL */
+    VANITY_URL = 'vanity_url',
+    /** guild is verified */
+    VERIFIED = 'verified',
+    /** guild has access to set 384kbps bitrate in voice (previously VIP voice servers) */
+    VIP_REGIONS = 'vip_regions',
+    /** guild has enabled the welcome screen */
+    WELCOME_SCREEN_ENABLED = 'welcome_screen_enabled',
+    /** guild has access to guest invites */
+    GUESTS_ENABLED = 'guests_enabled',
+    /** guild has access to set guild tags */
+    GUILD_TAGS = 'guild_tags',
+    /** guild is able to set gradient colors to roles */
+    ENHANCED_ROLE_COLORS = 'enhanced_role_colors',
+  }
+
+  /** https://discord.com/developers/docs/resources/guild#guild-object-mutable-guild-features */
+  export enum MutableGuildFeature {
+    /** Administrator */
+    COMMUNITY = 'community',
+    /** Administrator* */
+    DISCOVERABLE = 'discoverable',
+    /** Manage Guild */
+    INVITES_DISABLED = 'invites_disabled',
+    /** Manage Guild */
+    RAID_ALERTS_DISABLED = 'raid_alerts_disabled',
   }
 
   /** https://discord.com/developers/docs/resources/guild#guild-member-object-guild-member-flags */
@@ -181,6 +273,12 @@ export namespace Guild {
     AUTOMOD_QUARANTINED_GUILD_TAG = 1 << 10,
   }
 
+  /** https://discord.com/developers/docs/resources/guild#integration-object-integration-expire-behaviors */
+  export enum IntegrationExpireBehavior {
+    REMOVE_ROLE = 0,
+    KICK = 1,
+  }
+
   /** https://discord.com/developers/docs/resources/guild#guild-onboarding-object-onboarding-mode */
   export enum OnboardingMode {
     /** Counts only Default Channels towards constraints */
@@ -193,6 +291,20 @@ export namespace Guild {
   export enum PromptType {
     MULTIPLE_CHOICE = 0,
     DROPDOWN = 1,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild#get-guild-widget-image-widget-style-options */
+  export enum WidgetStyleOptions {
+    /** shield style widget with Discord icon and guild members online count */
+    SHIELD = 'shield',
+    /** large image with guild icon, name and online count. "POWERED BY DISCORD" as the footer of the widget */
+    BANNER1 = 'banner1',
+    /** smaller widget style with guild icon, name and online count. Split on the right with Discord logo */
+    BANNER2 = 'banner2',
+    /** large image with guild icon, name and online count. In the footer, Discord logo on the left and "Chat Now" on the right */
+    BANNER3 = 'banner3',
+    /** large Discord logo at the top of the widget. Guild icon, name and online count in the middle portion of the widget and a "JOIN MY SERVER" button at the bottom */
+    BANNER4 = 'banner4',
   }
 
   /** https://discord.com/developers/docs/resources/guild#guild-preview-object-guild-preview-structure */
@@ -210,7 +322,7 @@ export namespace Guild {
     /** custom guild emojis */
     emojis: Emoji[]
     /** enabled guild features */
-    features: GuildFeatureStrings[]
+    features: Guild.Feature[]
     /** approximate number of members in this guild */
     approximate_member_count: integer
     /** approximate number of online members in this guild */
@@ -276,7 +388,7 @@ export namespace Guild {
     /** data for the member's guild avatar decoration */
     avatar_decoration_data?: User.AvatarDecorationData | null
     /** data for the member's collectibles */
-    collectibles?: Collectibles | null
+    collectibles?: User.Collectible | null
   }
 
   /** https://discord.com/developers/docs/resources/guild#integration-object-integration-structure */
@@ -296,13 +408,13 @@ export namespace Guild {
     /** whether emoticons should be synced for this integration (twitch only currently) */
     enable_emoticons?: boolean
     /** the behavior of expiring subscribers */
-    expire_behavior?: IntegrationExpireBehavior
+    expire_behavior?: Guild.IntegrationExpireBehavior
     /** the grace period (in days) before expiring subscribers */
     expire_grace_period?: integer
     /** user for this integration */
     user?: User
     /** integration account information */
-    account: Account
+    account: Guild.IntegrationAccount
     /** when this integration was last synced */
     synced_at?: timestamp
     /** how many subscribers this integration has */
@@ -310,9 +422,9 @@ export namespace Guild {
     /** has this integration been revoked */
     revoked?: boolean
     /** The bot/OAuth2 application for discord integrations */
-    application?: Application
+    application?: Guild.IntegrationApplication
     /** the scopes the application has been authorized for */
-    scopes?: Oauth2Scopes[]
+    scopes?: string[]
   }
 
   /** https://discord.com/developers/docs/resources/guild#integration-account-object-integration-account-structure */
@@ -384,7 +496,7 @@ export namespace Guild {
     /** ID of the prompt */
     id: snowflake
     /** Type of prompt */
-    type: PromptType
+    type: Guild.PromptType
     /** Options available within the prompt */
     options: Guild.PromptOption[]
     /** Title of the prompt */
@@ -430,12 +542,28 @@ export namespace Guild {
     /** when the raid was detected */
     raid_detected_at?: timestamp | null
   }
+
+  /** https://discord.com/developers/docs/resources/guild#list-active-guild-threads-response-body */
+  export interface PackResult {
+    /** the active threads */
+    threads: Channel[]
+    /** a thread member object for each returned thread the current user has joined */
+    members: Channel.ThreadMember[]
+  }
+
+  /** https://discord.com/developers/docs/resources/guild#bulk-guild-ban-bulk-ban-response */
+  export interface PackResult {
+    /** list of user ids, that were successfully banned */
+    banned_users: snowflake[]
+    /** list of user ids, that were not banned */
+    failed_users: snowflake[]
+  }
 }
 
 /** https://discord.com/developers/docs/resources/guild#get-guild-query-string-params */
 export interface GetGuildParams {
   /** when `true`, will return approximate member and presence counts for the guild */
-  with_counts?: Boolean
+  with_counts?: boolean
 }
 
 /** https://discord.com/developers/docs/resources/guild#modify-guild-json-params */
@@ -455,13 +583,13 @@ export interface ModifyGuildParams {
   /** afk timeout in seconds, can be set to: 60, 300, 900, 1800, 3600 */
   afk_timeout: integer
   /** base64 1024x1024 png/jpeg/gif image for the guild icon (can be animated gif when the server has the `ANIMATED_ICON` feature) */
-  icon: ImageData | null
+  icon: string | null
   /** base64 16:9 png/jpeg image for the guild splash (when the server has the `INVITE_SPLASH` feature) */
-  splash: ImageData | null
+  splash: string | null
   /** base64 16:9 png/jpeg image for the guild discovery splash (when the server has the `DISCOVERABLE` feature) */
-  discovery_splash: ImageData | null
+  discovery_splash: string | null
   /** base64 16:9 png/jpeg image for the guild banner (when the server has the `BANNER` feature; can be animated gif when the server has the `ANIMATED_BANNER` feature) */
-  banner: ImageData | null
+  banner: string | null
   /** the id of the channel where guild notices such as welcome messages and boost events are posted */
   system_channel_id: snowflake | null
   /** system channel flags */
@@ -473,7 +601,7 @@ export interface ModifyGuildParams {
   /** the preferred locale of a Community guild used in server discovery and notices from Discord; defaults to "en-US" */
   preferred_locale: string | null
   /** enabled guild features */
-  features: GuildFeatureStrings[]
+  features: Guild.Feature[]
   /** the description for the guild */
   description: string | null
   /** whether the guild's boost progress bar should be enabled */
@@ -513,7 +641,7 @@ export interface CreateGuildChannelParams {
   /** emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   default_reaction_emoji: Channel.DefaultReaction
   /** set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  available_tags: Tag[]
+  available_tags: Channel.ForumTag[]
   /** the default sort order type used to order posts in `GUILD_FORUM` and `GUILD_MEDIA` channels */
   default_sort_order: integer
   /** the default forum layout view used to display posts in `GUILD_FORUM` channels */
@@ -635,11 +763,11 @@ export interface CreateGuildRoleParams {
   /** **Deprecated** RGB color value */
   color: integer
   /** the role's colors */
-  colors: RoleColors
+  colors: Permission.RoleColors
   /** whether the role should be displayed separately in the sidebar */
   hoist: boolean
   /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-  icon: ImageData | null
+  icon: string | null
   /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
   unicode_emoji: string | null
   /** whether the role should be mentionable */
@@ -663,11 +791,11 @@ export interface ModifyGuildRoleParams {
   /** **Deprecated** RGB color value */
   color: integer
   /** the role's colors */
-  colors: RoleColors
+  colors: Permission.RoleColors
   /** whether the role should be displayed separately in the sidebar */
   hoist: boolean
   /** the role's icon image (if the guild has the `ROLE_ICONS` feature) */
-  icon: ImageData
+  icon: string
   /** the role's unicode emoji as a standard emoji (if the guild has the `ROLE_ICONS` feature) */
   unicode_emoji: string
   /** whether the role should be mentionable */
@@ -751,7 +879,7 @@ declare module './internal' {
      * Returns a list of guild channel objects. Does not include threads.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-channels
      */
-    getGuildChannels(guild_id: snowflake): Promise<GuildChannel[]>
+    getGuildChannels(guild_id: snowflake): Promise<Channel[]>
     /**
      * Create a new channel object for the guild. Requires the `MANAGE_CHANNELS` permission. If setting permission overwrites, only permissions your bot has in the guild can be allowed/denied. Setting `MANAGE_ROLES` permission in channels is only possible for guild administrators. Returns the new channel object on success. Fires a Channel Create Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#create-guild-channel
@@ -871,7 +999,7 @@ declare module './internal' {
      * Modify a guild role. Requires the `MANAGE_ROLES` permission. Returns the updated role on success. Fires a Guild Role Update Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#modify-guild-role
      */
-    modifyGuildRole(guild_id: snowflake, role_id: snowflake, params: ModifyGuildRoleParams): Promise<void>
+    modifyGuildRole(guild_id: snowflake, role_id: snowflake, params: ModifyGuildRoleParams): Promise<Permission>
     /**
      * Delete a guild role. Requires the `MANAGE_ROLES` permission. Returns a 204 empty response on success. Fires a Guild Role Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/guild#delete-guild-role
@@ -921,7 +1049,7 @@ declare module './internal' {
      * Returns the widget for the guild. Fires an Invite Create Gateway event when an invite channel is defined and a new Invite is generated.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-widget
      */
-    getGuildWidget(guild_id: snowflake): Promise<void>
+    getGuildWidget(guild_id: snowflake): Promise<Guild.Widget>
     /**
      * Returns a partial invite object for guilds with that feature enabled. Requires the `MANAGE_GUILD` permission. `code` will be null if a vanity url for the guild is not set.
      * @see https://discord.com/developers/docs/resources/guild#get-guild-vanity-url

@@ -1,4 +1,4 @@
-import { Channel, Entitlement, Guild, Internal, Message, Permission, ReceivingAndResponding, Reference, User, integer, snowflake } from '.'
+import { Application, Channel, Command, Component, Entitlement, Guild, integer, Internal, Message, Permission, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-structure */
 export interface Interaction {
@@ -9,13 +9,13 @@ export interface Interaction {
   /** Type of interaction */
   type: Interaction.Type
   /** Interaction data payload */
-  data?: InteractionData
+  data?: unknown
   /** Guild that the interaction was sent from */
-  guild?: PartialGuild
+  guild?: Partial<Guild>
   /** Guild that the interaction was sent from */
   guild_id?: snowflake
   /** Channel that the interaction was sent from */
-  channel?: PartialChannel
+  channel?: Partial<Channel>
   /** Channel that the interaction was sent from */
   channel_id?: snowflake
   /** Guild member data for the invoking user, including permissions */
@@ -37,9 +37,9 @@ export interface Interaction {
   /** For monetized apps, any entitlements for the invoking user, representing access to premium SKUs */
   entitlements: Entitlement[]
   /** Mapping of installation contexts that the interaction was authorized for to related user or guild IDs. See Authorizing Integration Owners Object for details */
-  authorizing_integration_owners: Record<string, any>
+  authorizing_integration_owners: Application.IntegrationType
   /** Context where the interaction was triggered from */
-  context?: InteractionContextType
+  context?: Interaction.ContextType
   /** Attachment size limit in bytes */
   attachment_size_limit: integer
 }
@@ -57,11 +57,11 @@ export namespace Interaction {
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-interaction-context-types */
   export enum ContextType {
     /** Interaction can be used within servers */
-    0 = 0,
+    GUILD = 0,
     /** Interaction can be used within DMs with the app's bot user */
-    1 = 1,
+    BOT_DM = 1,
     /** Interaction can be used within Group DMs and DMs other than the app's bot user */
-    2 = 2,
+    PRIVATE_CHANNEL = 2,
   }
 
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-callback-type */
@@ -111,7 +111,7 @@ export namespace Interaction {
     /** type of the component */
     component_type: integer
     /** Values the user selected in a select menu component */
-    values?: SelectOptionValues[]
+    values?: Component.SelectOption[]
     /** Resolved entities from selected options */
     resolved?: Interaction.ResolvedData
   }
@@ -121,7 +121,7 @@ export namespace Interaction {
     /** The custom ID provided for the modal */
     custom_id: string
     /** Values submitted by the user */
-    components: ComponentInteractionResponse[]
+    components: unknown[]
     /** Resolved entities from selected options */
     resolved?: Interaction.ResolvedData
   }
@@ -129,17 +129,17 @@ export namespace Interaction {
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-resolved-data-structure */
   export interface ResolvedData {
     /** IDs and User objects */
-    users?: Record<snowflake, User>
+    users?: User
     /** IDs and partial Member objects */
-    members?: Record<snowflake, Partial<Guild.Member>>
+    members?: Partial<Guild.Member>
     /** IDs and Role objects */
-    roles?: Record<snowflake, Permission>
+    roles?: Permission
     /** IDs and partial Channel objects */
-    channels?: Record<snowflake, Partial<Channel>>
+    channels?: Partial<Channel>
     /** IDs and partial Message objects */
-    messages?: Record<snowflake, Partial<Messages>>
+    messages?: Partial<Message>
     /** IDs and attachment objects */
-    attachments?: Record<snowflake, Message.Attachment>
+    attachments?: Message.Attachment
   }
 
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object-application-command-interaction-data-option-structure */
@@ -149,7 +149,7 @@ export namespace Interaction {
     /** Value of application command option type */
     type: integer
     /** Value of the option resulting from user input */
-    value?: string | integer | number | OrBoolean
+    value?: string | integer | number | boolean
     /** Present if this option is a group or subcommand */
     options?: Interaction.ApplicationCommandInteractionDataOption[]
     /** `true` if this option is the currently focused option for autocomplete */
@@ -167,7 +167,55 @@ export namespace Interaction {
     /** User who invoked the interaction */
     user: User
     /** Member who invoked the interaction in the guild */
-    member?: PartialMember
+    member?: Partial<Guild.Member>
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-autocomplete */
+  export interface Autocomplete {
+    /** autocomplete choices (max of 25 choices) */
+    choices: Command.ApplicationCommandOptionChoice[]
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-modal */
+  export interface Modal {
+    /** Developer-defined identifier for the modal, 1-100 characters */
+    custom_id: string
+    /** Title of the popup modal, max 45 characters */
+    title: string
+    /** Between 1 and 5 (inclusive) components that make up the modal */
+    components: Component.Type[]
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-object */
+  export interface Callback {
+    /** ID of the interaction */
+    id: snowflake
+    /** Interaction type */
+    type: Interaction.Type
+    /** Instance ID of the Activity if one was launched or joined */
+    activity_instance_id?: string
+    /** ID of the message that was created by the interaction */
+    response_message_id?: snowflake
+    /** Whether the message is in a loading state */
+    response_message_loading?: boolean
+    /** Whether the response message is ephemeral */
+    response_message_ephemeral?: boolean
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-resource-object */
+  export interface CallbackResource {
+    /** Interaction callback type */
+    type: Interaction.CallbackType
+    /** Represents the Activity launched by this interaction. */
+    activity_instance?: Interaction.CallbackActivityInstanceResource
+    /** Message created by the interaction. */
+    message?: Message
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-activity-instance-resource */
+  export interface CallbackActivityInstanceResource {
+    /** Instance ID of the Activity if one was launched or joined. */
+    id: string
   }
 
   /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-response-object-interaction-response-structure */
@@ -175,14 +223,22 @@ export namespace Interaction {
     /** Type of response */
     type: Interaction.CallbackType
     /** An optional response message */
-    data?: Interaction.CallbackData
+    data?: unknown
+  }
+
+  /** https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-callback-interaction-callback-response-object */
+  export interface PackResult {
+    /** The interaction object associated with the interaction response. */
+    interaction: Interaction.Callback
+    /** The resource that was created by the interaction response. */
+    resource?: Interaction.CallbackResource
   }
 }
 
 /** https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response-query-string-params */
 export interface CreateInteractionResponseParams {
   /** Whether to include an interaction callback object as the response */
-  with_response?: Boolean
+  with_response?: boolean
 }
 
 declare module './internal' {

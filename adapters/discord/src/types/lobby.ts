@@ -1,4 +1,4 @@
-import { Channel, Internal, integer, snowflake } from '.'
+import { Channel, integer, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/lobby#lobby-object-lobby-structure */
 export interface Lobby {

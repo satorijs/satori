@@ -1,64 +1,145 @@
-import { Channel, Emoji, Interaction, Internal, Reference, integer, snowflake } from '.'
+import { Channel, Emoji, integer, Interaction, snowflake } from '.'
 
-/** https://discord.com/developers/docs/components/reference#action-row-action-row-structure */
+/** https://discord.com/developers/docs/components/reference#anatomy-of-a-component-custom-id */
 export interface Component {
-  /** `1` for action row component */
-  type: integer
-  /** Optional identifier for component */
-  id?: integer
-  /** Up to 5 interactive button components or a single select component */
-  components: ActionRowChildComponents[]
+  /** Developer-defined identifier, 1-100 characters */
+  custom_id: string
 }
 
 export namespace Component {
   /** https://discord.com/developers/docs/components/reference#component-object-component-types */
   export enum Type {
     /** Container to display a row of interactive components */
-    1 = 1,
+    ACTION_ROW = 1,
     /** Button object */
-    2 = 2,
+    BUTTON = 2,
     /** Select menu for picking from defined text options */
-    3 = 3,
+    STRING_SELECT = 3,
     /** Text input object */
-    4 = 4,
+    TEXT_INPUT = 4,
     /** Select menu for users */
-    5 = 5,
+    USER_SELECT = 5,
     /** Select menu for roles */
-    6 = 6,
+    ROLE_SELECT = 6,
     /** Select menu for mentionables (users *and* roles) */
-    7 = 7,
+    MENTIONABLE_SELECT = 7,
     /** Select menu for channels */
-    8 = 8,
+    CHANNEL_SELECT = 8,
     /** Container to display text alongside an accessory component */
-    9 = 9,
+    SECTION = 9,
     /** Markdown text */
-    10 = 10,
+    TEXT_DISPLAY = 10,
     /** Small image that can be used as an accessory */
-    11 = 11,
+    THUMBNAIL = 11,
     /** Display images and other media */
-    12 = 12,
+    MEDIA_GALLERY = 12,
     /** Displays an attached file */
-    13 = 13,
+    FILE = 13,
     /** Component to add vertical padding between other components */
-    14 = 14,
+    SEPARATOR = 14,
     /** Container that visually groups a set of components */
-    17 = 17,
+    CONTAINER = 17,
     /** Container associating a label and description with a component */
-    18 = 18,
+    LABEL = 18,
     /** Component for uploading files */
-    19 = 19,
+    FILE_UPLOAD = 19,
     /** Single-choice set of options */
-    21 = 21,
+    RADIO_GROUP = 21,
     /** Multi-selectable group of checkboxes */
-    22 = 22,
+    CHECKBOX_GROUP = 22,
     /** Single checkbox for yes/no choice */
-    23 = 23,
+    CHECKBOX = 23,
+  }
+
+  /** https://discord.com/developers/docs/components/reference#action-row-action-row-child-components */
+  export enum ActionRowChildComponents {
+    /** An Action Row can contain up to 5 Buttons */
+    BUTTON = 'button',
+    /** A single String Select */
+    STRING_SELECT = 'string_select',
+    /** A single User Select */
+    USER_SELECT = 'user_select',
+    /** A single Role Select */
+    ROLE_SELECT = 'role_select',
+    /** A single Mentionable Select */
+    MENTIONABLE_SELECT = 'mentionable_select',
+    /** A single Channel Select */
+    CHANNEL_SELECT = 'channel_select',
+  }
+
+  /** https://discord.com/developers/docs/components/reference#button-button-styles */
+  export enum ButtonStyles {
+    /** The most important or recommended action in a group of options */
+    PRIMARY = 1,
+    /** Alternative or supporting actions */
+    SECONDARY = 2,
+    /** Positive confirmation or completion actions */
+    SUCCESS = 3,
+    /** An action with irreversible consequences */
+    DANGER = 4,
+    /** Navigates to a URL */
+    LINK = 5,
+    /** Purchase */
+    PREMIUM = 6,
+  }
+
+  /** https://discord.com/developers/docs/components/reference#text-input-text-input-styles */
+  export enum TextInputStyles {
+    /** Single-line input */
+    SHORT = 1,
+    /** Multi-line input */
+    PARAGRAPH = 2,
+  }
+
+  /** https://discord.com/developers/docs/components/reference#section-section-child-components */
+  export enum SectionChildComponents {
+    TEXT_DISPLAY = 'text_display',
+  }
+
+  /** https://discord.com/developers/docs/components/reference#section-section-accessory-components */
+  export enum SectionAccessoryComponents {
+    BUTTON = 'button',
+    THUMBNAIL = 'thumbnail',
+  }
+
+  /** https://discord.com/developers/docs/components/reference#container-container-child-components */
+  export enum ContainerChildComponents {
+    ACTION_ROW = 'action_row',
+    TEXT_DISPLAY = 'text_display',
+    SECTION = 'section',
+    MEDIA_GALLERY = 'media_gallery',
+    SEPARATOR = 'separator',
+    FILE = 'file',
+  }
+
+  /** https://discord.com/developers/docs/components/reference#label-label-child-components */
+  export enum LabelChildComponents {
+    TEXT_INPUT = 'text_input',
+    STRING_SELECT = 'string_select',
+    USER_SELECT = 'user_select',
+    ROLE_SELECT = 'role_select',
+    MENTIONABLE_SELECT = 'mentionable_select',
+    CHANNEL_SELECT = 'channel_select',
+    FILE_UPLOAD = 'file_upload',
+    RADIO_GROUP = 'radio_group',
+    CHECKBOX_GROUP = 'checkbox_group',
+    CHECKBOX = 'checkbox',
   }
 
   /** https://discord.com/developers/docs/components/reference#unfurled-media-item-unfurled-media-item-flags */
   export enum UnfurledMediaItemFlag {
     /** This image is animated */
     IS_ANIMATED = 1 << 0,
+  }
+
+  /** https://discord.com/developers/docs/components/reference#action-row-action-row-structure */
+  export interface ActionRow {
+    /** `1` for action row component */
+    type: integer
+    /** Optional identifier for component */
+    id?: integer
+    /** Up to 5 interactive button components or a single select component */
+    components: Component.ActionRowChildComponents[]
   }
 
   /** https://discord.com/developers/docs/components/reference#button-button-structure */
@@ -92,7 +173,7 @@ export namespace Component {
     /** ID for the select menu; 1-100 characters */
     custom_id: string
     /** Specified choices in a select menu; max 25 */
-    options: SelectOptions[]
+    options: Component.SelectOption[]
     /** Placeholder text if nothing is selected or default; max 150 characters */
     placeholder?: string
     /** Minimum number of items that must be chosen (defaults to 1); min 0 (see note), max 25 */
@@ -152,7 +233,7 @@ export namespace Component {
     /** Placeholder text if nothing is selected; max 150 characters */
     placeholder?: string
     /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `min_values` and `max_values` */
-    default_values?: DefaultValue[]
+    default_values?: Component.SelectDefaultValue[]
     /** Minimum number of items that must be chosen (defaults to 1); min 0 (see note), max 25 */
     min_values?: integer
     /** Maximum number of items that can be chosen (defaults to 1); max 25 */
@@ -182,7 +263,7 @@ export namespace Component {
     /** Placeholder text if nothing is selected; max 150 characters */
     placeholder?: string
     /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `min_values` and `max_values` */
-    default_values?: DefaultValue[]
+    default_values?: Component.SelectDefaultValue[]
     /** Minimum number of items that must be chosen (defaults to 1); min 0 (see note), max 25 */
     min_values?: integer
     /** Maximum number of items that can be chosen (defaults to 1); max 25 */
@@ -204,7 +285,7 @@ export namespace Component {
     /** Placeholder text if nothing is selected; max 150 characters */
     placeholder?: string
     /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `min_values` and `max_values` */
-    default_values?: DefaultValue[]
+    default_values?: Component.SelectDefaultValue[]
     /** Minimum number of items that must be chosen (defaults to 1); min 0 (see note), max 25 */
     min_values?: integer
     /** Maximum number of items that can be chosen (defaults to 1); max 25 */
@@ -224,11 +305,11 @@ export namespace Component {
     /** ID for the select menu; 1-100 characters */
     custom_id: string
     /** List of channel types to include in the channel select component */
-    channel_types?: Channel.Types[]
+    channel_types?: Channel.Type[]
     /** Placeholder text if nothing is selected; max 150 characters */
     placeholder?: string
     /** List of default values for auto-populated select menu components; number of default values must be in the range defined by `min_values` and `max_values` */
-    default_values?: DefaultValue[]
+    default_values?: Component.SelectDefaultValue[]
     /** Minimum number of items that must be chosen (defaults to 1); min 0 (see note), max 25 */
     min_values?: integer
     /** Maximum number of items that can be chosen (defaults to 1); max 25 */
@@ -246,9 +327,9 @@ export namespace Component {
     /** Optional identifier for component */
     id?: integer
     /** One to three child components representing the content of the section that is contextually associated to the accessory */
-    components: SectionChildComponents[]
+    components: Component.SectionChildComponents[]
     /** A component that is contextually associated to the content of the section */
-    accessory: SectionAccessoryComponent
+    accessory: Component.SectionAccessoryComponents
   }
 
   /** https://discord.com/developers/docs/components/reference#text-display-text-display-structure */
@@ -282,7 +363,7 @@ export namespace Component {
     /** Optional identifier for component */
     id?: integer
     /** 1 to 10 media gallery items */
-    items: MediaGalleryItems[]
+    items: Component.MediaGalleryItem[]
   }
 
   /** https://discord.com/developers/docs/components/reference#media-gallery-media-gallery-item-structure */
@@ -330,7 +411,7 @@ export namespace Component {
     /** Optional identifier for component */
     id?: integer
     /** Child components that are encapsulated within the Container */
-    components: ContainerChildComponents[]
+    components: Component.ContainerChildComponents[]
     /** Color for the accent on the container as RGB from `0x000000` to `0xFFFFFF` */
     accent_color?: integer | null
     /** Whether the container should be a spoiler (or blurred out). Defaults to `false`. */
@@ -348,7 +429,7 @@ export namespace Component {
     /** An optional description text for the label; max 100 characters */
     description?: string
     /** The component within the label */
-    component: LabelChildComponent
+    component: Component.LabelChildComponents
   }
 
   /** https://discord.com/developers/docs/components/reference#file-upload-file-upload-structure */
@@ -387,6 +468,74 @@ export namespace Component {
     flags?: integer
     /** The id of the uploaded attachment */
     attachment_id?: snowflake
+  }
+
+  /** https://discord.com/developers/docs/components/reference#radio-group-structure */
+  export interface RadioGroup {
+    /** `21` for radio group */
+    type: integer
+    /** Optional identifier for component */
+    id?: integer
+    /** Developer-defined identifier for the input; 1-100 characters */
+    custom_id: string
+    /** List of options to show; min 2, max 10 */
+    options: Component.RadioGroupOption[]
+    /** Whether a selection is required to submit the modal (defaults to `true`) */
+    required?: boolean
+  }
+
+  /** https://discord.com/developers/docs/components/reference#radio-group-option-structure */
+  export interface RadioGroupOption {
+    /** Dev-defined value of the option; max 100 characters */
+    value: string
+    /** User-facing label of the option; max 100 characters */
+    label: string
+    /** Optional description for the option; max 100 characters */
+    description?: string
+    /** Shows the option as selected by default */
+    default?: boolean
+  }
+
+  /** https://discord.com/developers/docs/components/reference#checkbox-group-structure */
+  export interface CheckboxGroup {
+    /** `22` for checkbox group */
+    type: integer
+    /** Optional identifier for component */
+    id?: integer
+    /** Developer-defined identifier for the input; 1-100 characters */
+    custom_id: string
+    /** List of options to show; min 1, max 10 */
+    options: Component.CheckboxGroupOption[]
+    /** Minimum number of items that must be chosen; min 0, max 10 (defaults to 1); */
+    min_values?: integer
+    /** Maximum number of items that can be chosen; min 1, max 10 (defaults to the number of options) */
+    max_values?: integer
+    /** Whether selecting within the group is required (defaults to `true`) */
+    required?: boolean
+  }
+
+  /** https://discord.com/developers/docs/components/reference#checkbox-group-option-structure */
+  export interface CheckboxGroupOption {
+    /** Dev-defined value of the option; max 100 characters */
+    value: string
+    /** User-facing label of the option; max 100 characters */
+    label: string
+    /** Optional description for the option; max 100 characters */
+    description?: string
+    /** Shows the option as selected by default */
+    default?: boolean
+  }
+
+  /** https://discord.com/developers/docs/components/reference#checkbox-structure */
+  export interface Checkbox {
+    /** `23` for checkbox */
+    type: integer
+    /** Optional identifier for component */
+    id?: integer
+    /** Developer-defined identifier for the input; 1-100 characters */
+    custom_id: string
+    /** Whether the checkbox is selected by default */
+    default?: boolean
   }
 
   /** https://discord.com/developers/docs/components/reference#string-select-string-select-interaction-response-structure */
@@ -494,7 +643,7 @@ export namespace Component {
     /** Unique identifier for the component */
     id: integer
     /** The component within the label */
-    component: LabelInteractionResponseChildComponent
+    component: unknown
   }
 
   /** https://discord.com/developers/docs/components/reference#file-upload-file-upload-interaction-response-structure */
@@ -509,4 +658,3 @@ export namespace Component {
     values: snowflake[]
   }
 }
-

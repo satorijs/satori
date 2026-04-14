@@ -3,7 +3,7 @@ import { Internal, snowflake } from '.'
 /** https://discord.com/developers/docs/resources/application-role-connection-metadata#application-role-connection-metadata-object-application-role-connection-metadata-structure */
 export interface ApplicationRoleConnectionMetadata {
   /** type of metadata value */
-  type: Applicationroleconnectionmetadatatype
+  type: ApplicationRoleConnectionMetadata.ApplicationRoleConnectionMetadataType
   /** dictionary key for the metadata field (must be `a-z`, `0-9`, or `_` characters; 1-50 characters) */
   key: string
   /** name of the metadata field (1-100 characters) */

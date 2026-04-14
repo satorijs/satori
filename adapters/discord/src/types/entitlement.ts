@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake, timestamp } from '.'
+import { integer, Internal, snowflake, timestamp } from '.'
 
 /** https://discord.com/developers/docs/resources/entitlement#entitlement-object-entitlement-structure */
 export interface Entitlement {
@@ -61,9 +61,9 @@ export interface ListEntitlementsParams {
   /** Guild ID to look up entitlements for */
   guild_id?: snowflake
   /** Whether or not ended entitlements should be omitted. Defaults to false, ended entitlements are included by default. */
-  exclude_ended?: Boolean
+  exclude_ended?: boolean
   /** Whether or not deleted entitlements should be omitted. Defaults to true, deleted entitlements are not included by default. */
-  exclude_deleted?: Boolean
+  exclude_deleted?: boolean
 }
 
 /** https://discord.com/developers/docs/resources/entitlement#create-test-entitlement-json-params */

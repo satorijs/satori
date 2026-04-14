@@ -1,4 +1,4 @@
-import { Guild, Internal, StageInstance, User, integer, snowflake, timestamp } from '.'
+import { Guild, integer, Internal, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-structure */
 export interface GuildScheduledEvent {
@@ -19,15 +19,15 @@ export interface GuildScheduledEvent {
   /** the time the scheduled event will end, required if entity_type is `EXTERNAL` */
   scheduled_end_time: timestamp | null
   /** the privacy level of the scheduled event */
-  privacy_level: StageInstance.PrivacyLevel
+  privacy_level: GuildScheduledEvent.GuildScheduledEventPrivacyLevel
   /** the status of the scheduled event */
-  status: EventStatus
+  status: GuildScheduledEvent.GuildScheduledEventStatus
   /** the type of the scheduled event */
-  entity_type: ScheduledEntityType
+  entity_type: GuildScheduledEvent.GuildScheduledEventEntityType
   /** the id of an entity associated with a guild scheduled event */
   entity_id: snowflake | null
   /** additional metadata for the guild scheduled event */
-  entity_metadata: EntityMetadata | null
+  entity_metadata: GuildScheduledEvent.EntityMetadata | null
   /** the user that created the scheduled event */
   creator?: User
   /** the number of users subscribed to the scheduled event */
@@ -35,7 +35,7 @@ export interface GuildScheduledEvent {
   /** the cover image hash of the scheduled event */
   image?: string | null
   /** the definition for how often this event should recur */
-  recurrence_rule: RecurrenceRule | null
+  recurrence_rule: GuildScheduledEvent.RecurrenceRule | null
 }
 
 export namespace GuildScheduledEvent {
@@ -62,6 +62,55 @@ export namespace GuildScheduledEvent {
     EXTERNAL = 'external',
   }
 
+  /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-status */
+  export enum GuildScheduledEventStatus {
+    SCHEDULED = 1,
+    ACTIVE = 2,
+    COMPLETED = 3,
+    CANCELED = 4,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule--frequency */
+  export enum GuildScheduledEventRecurrenceRuleFrequency {
+    YEARLY = 0,
+    MONTHLY = 1,
+    WEEKLY = 2,
+    DAILY = 3,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule--weekday */
+  export enum GuildScheduledEventRecurrenceRuleWeekday {
+    MONDAY = 0,
+    TUESDAY = 1,
+    WEDNESDAY = 2,
+    THURSDAY = 3,
+    FRIDAY = 4,
+    SATURDAY = 5,
+    SUNDAY = 6,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule--month */
+  export enum GuildScheduledEventRecurrenceRuleMonth {
+    JANUARY = 1,
+    FEBRUARY = 2,
+    MARCH = 3,
+    APRIL = 4,
+    MAY = 5,
+    JUNE = 6,
+    JULY = 7,
+    AUGUST = 8,
+    SEPTEMBER = 9,
+    OCTOBER = 10,
+    NOVEMBER = 11,
+    DECEMBER = 12,
+  }
+
+  /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-object-guild-scheduled-event-entity-metadata */
+  export interface EntityMetadata {
+    /** location of the event (1-100 characters) */
+    location?: string
+  }
+
   /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-user-object-guild-scheduled-event-user-structure */
   export interface User {
     /** the scheduled event id which the user subscribed to */
@@ -79,15 +128,15 @@ export namespace GuildScheduledEvent {
     /** Ending time of the recurrence interval */
     end: timestamp | null
     /** How often the event occurs */
-    frequency: RecurrenceRuleFrequency
+    frequency: GuildScheduledEvent.GuildScheduledEventRecurrenceRuleFrequency
     /** The spacing between the events, defined by `frequency`. For example, `frequency` of `WEEKLY` and an `interval` of `2` would be "every-other week" */
     interval: integer
     /** Set of specific days within a week for the event to recur on */
-    by_weekday: RecurrenceRuleWeekday[] | null
+    by_weekday: GuildScheduledEvent.GuildScheduledEventRecurrenceRuleWeekday[] | null
     /** List of specific days within a specific week (1-5) to recur on */
-    by_n_weekday: RecurrenceRuleN_weekday[] | null
+    by_n_weekday: GuildScheduledEvent.RecurrenceRuleNWeekday[] | null
     /** Set of specific months to recur on */
-    by_month: RecurrenceRuleMonth[] | null
+    by_month: GuildScheduledEvent.GuildScheduledEventRecurrenceRuleMonth[] | null
     /** Set of specific dates within a month to recur on */
     by_month_day: integer[] | null
     /** Set of days within a year to recur on (1-364) */
@@ -97,18 +146,18 @@ export namespace GuildScheduledEvent {
   }
 
   /** https://discord.com/developers/docs/resources/guild-scheduled-event#guild-scheduled-event-recurrence-rule-object-guild-scheduled-event-recurrence-rule--nweekday-structure */
-  export interface RecurrenceRuleN_weekday {
+  export interface RecurrenceRuleNWeekday {
     /** The week to reoccur on. 1 - 5 */
     n: integer
     /** The day within the week to reoccur on */
-    day: RecurrenceRuleWeekday
+    day: GuildScheduledEvent.GuildScheduledEventRecurrenceRuleWeekday
   }
 }
 
 /** https://discord.com/developers/docs/resources/guild-scheduled-event#list-scheduled-events-for-guild-query-string-params */
 export interface ListScheduledEventsForGuildParams {
   /** include number of users subscribed to each event */
-  with_user_count?: Boolean
+  with_user_count?: boolean
 }
 
 /** https://discord.com/developers/docs/resources/guild-scheduled-event#create-guild-scheduled-event-json-params */
@@ -116,11 +165,11 @@ export interface CreateGuildScheduledEventParams {
   /** the channel id of the scheduled event. */
   channel_id?: snowflake
   /** the entity metadata of the scheduled event */
-  entity_metadata?: EntityMetadata
+  entity_metadata?: GuildScheduledEvent.EntityMetadata
   /** the name of the scheduled event */
   name: string
   /** the privacy level of the scheduled event */
-  privacy_level: StageInstance.PrivacyLevel
+  privacy_level: GuildScheduledEvent.GuildScheduledEventPrivacyLevel
   /** the time to schedule the scheduled event */
   scheduled_start_time: timestamp
   /** the time when the scheduled event is scheduled to end */
@@ -128,9 +177,9 @@ export interface CreateGuildScheduledEventParams {
   /** the description of the scheduled event */
   description?: string
   /** the entity type of the scheduled event */
-  entity_type: EntityType
+  entity_type: GuildScheduledEvent.GuildScheduledEventEntityType
   /** the cover image of the scheduled event */
-  image?: ImageData
+  image?: string
   /** the definition for how often this event should recur */
   recurrence_rule?: GuildScheduledEvent.RecurrenceRule
 }
@@ -138,7 +187,7 @@ export interface CreateGuildScheduledEventParams {
 /** https://discord.com/developers/docs/resources/guild-scheduled-event#get-guild-scheduled-event-query-string-params */
 export interface GetGuildScheduledEventParams {
   /** include number of users subscribed to this event */
-  with_user_count?: Boolean
+  with_user_count?: boolean
 }
 
 /** https://discord.com/developers/docs/resources/guild-scheduled-event#modify-guild-scheduled-event-json-params */
@@ -146,11 +195,11 @@ export interface ModifyGuildScheduledEventParams {
   /** the channel id of the scheduled event, set to `null` if changing entity type to `EXTERNAL` */
   channel_id?: snowflake | null
   /** the entity metadata of the scheduled event */
-  entity_metadata?: EntityMetadata | null
+  entity_metadata?: GuildScheduledEvent.EntityMetadata | null
   /** the name of the scheduled event */
   name?: string
   /** the privacy level of the scheduled event */
-  privacy_level?: StageInstance.PrivacyLevel
+  privacy_level?: GuildScheduledEvent.GuildScheduledEventPrivacyLevel
   /** the time to schedule the scheduled event */
   scheduled_start_time?: timestamp
   /** the time when the scheduled event is scheduled to end */
@@ -158,11 +207,11 @@ export interface ModifyGuildScheduledEventParams {
   /** the description of the scheduled event */
   description?: string | null
   /** the entity type of the scheduled event */
-  entity_type?: EventEntityType
+  entity_type?: GuildScheduledEvent.GuildScheduledEventEntityType
   /** the status of the scheduled event */
-  status?: EventStatus
+  status?: GuildScheduledEvent.GuildScheduledEventStatus
   /** the cover image of the scheduled event */
-  image?: ImageData
+  image?: string
   /** the definition for how often this event should recur */
   recurrence_rule?: GuildScheduledEvent.RecurrenceRule | null
 }
@@ -172,7 +221,7 @@ export interface GetGuildScheduledEventUsersParams {
   /** number of users to return (up to maximum 100) */
   limit?: number
   /** include guild member data if it exists */
-  with_member?: Boolean
+  with_member?: boolean
   /** consider only users before given user id */
   before?: snowflake
   /** consider only users after given user id */

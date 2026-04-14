@@ -1,4 +1,4 @@
-import { Internal, User, integer, snowflake } from '.'
+import { integer, Internal, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/sticker#sticker-object-sticker-structure */
 export interface Sticker {

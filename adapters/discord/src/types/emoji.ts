@@ -1,4 +1,4 @@
-import { Internal, User, snowflake } from '.'
+import { Internal, Permission, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/emoji#emoji-object-emoji-structure */
 export interface Emoji {
@@ -7,7 +7,7 @@ export interface Emoji {
   /** emoji name */
   name: string | null
   /** roles allowed to use this emoji */
-  roles?: RoleObjectIds[]
+  roles?: Permission[]
   /** user that created this emoji */
   user?: User
   /** whether this emoji must be wrapped in colons */
@@ -28,7 +28,7 @@ export interface CreateGuildEmojiParams {
   /** name of the emoji */
   name: string
   /** the 128x128 emoji image */
-  image: ImageData
+  image: string
   /** roles allowed to use this emoji */
   roles: snowflake[]
 }
@@ -46,7 +46,7 @@ export interface CreateApplicationEmojiParams {
   /** name of the emoji */
   name: string
   /** the 128x128 emoji image */
-  image: ImageData
+  image: string
 }
 
 /** https://discord.com/developers/docs/resources/emoji#modify-application-emoji-json-params */

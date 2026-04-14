@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { integer, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-auto-moderation-rule-structure */
 export interface AutoModeration {
@@ -15,9 +15,9 @@ export interface AutoModeration {
   /** the rule trigger type */
   trigger_type: AutoModeration.TriggerType
   /** the rule trigger metadata */
-  trigger_metadata: any
+  trigger_metadata: AutoModeration.TriggerMetadata
   /** the actions which will execute when the rule is triggered */
-  actions: Action[]
+  actions: AutoModeration.Action[]
   /** whether the rule is enabled */
   enabled: boolean
   /** the role ids that should not be affected by the rule (Maximum of 20) */
@@ -59,6 +59,16 @@ export namespace AutoModeration {
     MEMBER_UPDATE = 2,
   }
 
+  /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-keyword-matching-strategies */
+  export enum KeywordMatchingStrategies {
+    /** **cat**ch, **Cat**apult, **CAt**tLE */
+    CAT = 'cat',
+    /** **tra**in, **tra**de, **TRA**ditional */
+    TRA = 'tra',
+    /** **the mat**rix */
+    THE_MAT = 'the_mat',
+  }
+
   /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-action-types */
   export enum ActionType {
     /** blocks a member's message and prevents it from being posted. A custom explanation can be specified and shown to members whenever their message is blocked. */
@@ -71,12 +81,38 @@ export namespace AutoModeration {
     BLOCK_MEMBER_INTERACTION = 4,
   }
 
+  /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-rule-object-trigger-metadata */
+  export interface TriggerMetadata {
+    /** KEYWORD, MEMBER_PROFILE */
+    keyword_filter: string[]
+    /** KEYWORD, MEMBER_PROFILE */
+    regex_patterns: string[]
+    /** KEYWORD_PRESET */
+    presets: AutoModeration.KeywordPresetType[]
+    /** KEYWORD, KEYWORD_PRESET, MEMBER_PROFILE */
+    allow_list: string[]
+    /** MENTION_SPAM */
+    mention_total_limit: integer
+    /** MENTION_SPAM */
+    mention_raid_protection_enabled: boolean
+  }
+
   /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-auto-moderation-action-structure */
   export interface Action {
     /** the type of action */
-    type: ActionType
+    type: AutoModeration.ActionType
     /** additional metadata needed during execution for this specific action type */
-    metadata?: ActionMetadata
+    metadata?: AutoModeration.ActionMetadata
+  }
+
+  /** https://discord.com/developers/docs/resources/auto-moderation#auto-moderation-action-object-action-metadata */
+  export interface ActionMetadata {
+    /** SEND_ALERT_MESSAGE */
+    channel_id: snowflake
+    /** TIMEOUT */
+    duration_seconds: integer
+    /** BLOCK_MESSAGE */
+    custom_message?: string
   }
 }
 
@@ -89,7 +125,7 @@ export interface CreateAutoModerationRuleParams {
   /** the trigger type */
   trigger_type: integer
   /** the trigger metadata */
-  trigger_metadata?: any
+  trigger_metadata?: AutoModeration.TriggerMetadata
   /** the actions which will execute when the rule is triggered */
   actions: AutoModeration.Action[]
   /** whether the rule is enabled (False by default) */
@@ -105,7 +141,7 @@ export interface ModifyAutoModerationRuleParams {
   /** the event type */
   event_type: integer
   /** the trigger metadata */
-  trigger_metadata?: any
+  trigger_metadata?: AutoModeration.TriggerMetadata
   /** the actions which will execute when the rule is triggered */
   actions: AutoModeration.Action[]
   /** whether the rule is enabled */

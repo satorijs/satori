@@ -1,4 +1,4 @@
-import { Internal, User, snowflake } from '.'
+import { Internal, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/soundboard#soundboard-sound-object-soundboard-sound-structure */
 export interface Soundboard {

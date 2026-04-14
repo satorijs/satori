@@ -1,4 +1,4 @@
-import { Guild, Internal, Invite, User, integer, snowflake, timestamp } from '.'
+import { Component, Guild, integer, Internal, Invite, Message, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/channel#channel-object-channel-structure */
 export interface Channel {
@@ -61,7 +61,7 @@ export interface Channel {
   /** number of messages ever sent in a thread, it's similar to `message_count` on message creation, but will not decrement the number when a message is deleted */
   total_message_sent?: integer
   /** the set of tags that can be used in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
-  available_tags?: Tag[]
+  available_tags?: Channel.ForumTag[]
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   applied_tags?: snowflake[]
   /** the emoji to show in the add reaction button on a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
@@ -212,6 +212,54 @@ export namespace Channel {
     /** the unicode character of the emoji \* */
     emoji_name: string | null
   }
+
+  /** https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel-forum-and-media-thread-message-params-object */
+  export interface ForumAndMediaThreadMessageParams {
+    /** Message contents (up to 2000 characters) */
+    content?: string
+    /** Up to 10 `rich` embeds (up to 6000 characters) */
+    embeds?: Message.Embed[]
+    /** Allowed mentions for the message */
+    allowed_mentions?: Message.AllowedMentionType
+    /** Components to include with the message */
+    components?: Component.Type[]
+    /** IDs of up to 3 stickers in the server to send in the message */
+    sticker_ids?: snowflake[]
+    /** Attachment objects with `filename` and `description`. See Uploading Files */
+    attachments?: Partial<Message.Attachment>[]
+    /** Message flags combined as a bitfield (only `SUPPRESS_EMBEDS` and `SUPPRESS_NOTIFICATIONS` can be set) */
+    flags?: integer
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#list-public-archived-threads-response-body */
+  export interface PackResult {
+    /** the public, archived threads */
+    threads: Channel[]
+    /** a thread member object for each returned thread the current user has joined */
+    members: Channel.ThreadMember[]
+    /** whether there are potentially additional threads that could be returned on a subsequent call */
+    has_more: boolean
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#list-private-archived-threads-response-body */
+  export interface PackResult {
+    /** the private, archived threads */
+    threads: Channel[]
+    /** a thread member object for each returned thread the current user has joined */
+    members: Channel.ThreadMember[]
+    /** whether there are potentially additional threads that could be returned on a subsequent call */
+    has_more: boolean
+  }
+
+  /** https://discord.com/developers/docs/resources/channel#list-joined-private-archived-threads-response-body */
+  export interface PackResult {
+    /** the private, archived threads the current user has joined */
+    threads: Channel[]
+    /** a thread member object for each returned thread the current user has joined */
+    members: Channel.ThreadMember[]
+    /** whether there are potentially additional threads that could be returned on a subsequent call */
+    has_more: boolean
+  }
 }
 
 /** https://discord.com/developers/docs/resources/channel#edit-channel-permissions-json-params */
@@ -295,7 +343,7 @@ export interface StartThreadInForumOrMediaChannelParams {
   /** amount of seconds a user has to wait before sending another message (0-21600) */
   rate_limit_per_user?: integer | null
   /** contents of the first message in the forum/media thread */
-  message: ForumThreadMessageParams
+  message: Channel.ForumAndMediaThreadMessageParams
   /** the IDs of the set of tags that have been applied to a thread in a `GUILD_FORUM` or a `GUILD_MEDIA` channel */
   applied_tags?: snowflake[]
   /** Contents of the file being sent. See Uploading Files */
@@ -307,13 +355,13 @@ export interface StartThreadInForumOrMediaChannelParams {
 /** https://discord.com/developers/docs/resources/channel#get-thread-member-query-string-params */
 export interface GetThreadMemberParams {
   /** Whether to include a guild member object for the thread member */
-  with_member?: Boolean
+  with_member?: boolean
 }
 
 /** https://discord.com/developers/docs/resources/channel#list-thread-members-query-string-params */
 export interface ListThreadMembersParams {
   /** Whether to include a guild member object for each thread member */
-  with_member?: Boolean
+  with_member?: boolean
   /** Get thread members after this user ID */
   after?: snowflake
   /** Max number of thread members to return (1-100). Defaults to 100. */
@@ -355,7 +403,7 @@ declare module './internal' {
      * Update a channel's settings. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters.
      * @see https://discord.com/developers/docs/resources/channel#modify-channel
      */
-    modifyChannel(channel_id: snowflake): Promise<void>
+    modifyChannel(channel_id: snowflake): Promise<Channel>
     /**
      * Delete a channel, or close a private message. Requires the `MANAGE_CHANNELS` permission for the guild, or `MANAGE_THREADS` if the channel is a thread. Deleting a category does not delete its child channels; they will have their `parent_id` removed and a Channel Update Gateway event will fire for each of them. Returns a channel object on success. Fires a Channel Delete Gateway event (or Thread Delete if the channel was a thread).
      * @see https://discord.com/developers/docs/resources/channel#delete/close-channel
@@ -405,17 +453,17 @@ declare module './internal' {
      * Creates a new thread from an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and a Message Update Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-from-message
      */
-    startThreadFromMessage(channel_id: snowflake, message_id: snowflake, params: StartThreadFromMessageParams): Promise<void>
+    startThreadFromMessage(channel_id: snowflake, message_id: snowflake, params: StartThreadFromMessageParams): Promise<Channel>
     /**
      * Creates a new thread that is not connected to an existing message. Returns a channel on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-without-message
      */
-    startThreadWithoutMessage(channel_id: snowflake, params: StartThreadWithoutMessageParams): Promise<void>
+    startThreadWithoutMessage(channel_id: snowflake, params: StartThreadWithoutMessageParams): Promise<Channel>
     /**
      * Creates a new thread in a forum or a media channel, and sends a message within the created thread. Returns a channel, with a nested message object, on success, and a 400 BAD REQUEST on invalid parameters. Fires a Thread Create and Message Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#start-thread-in-forum-or-media-channel
      */
-    startThreadInForumOrMediaChannel(channel_id: snowflake, params: StartThreadInForumOrMediaChannelParams): Promise<unknown>
+    startThreadInForumOrMediaChannel(channel_id: snowflake, params: StartThreadInForumOrMediaChannelParams): Promise<Channel>
     /**
      * Adds the current user to a thread. Also requires the thread is not archived. Returns a 204 empty response on success. Fires a Thread Members Update and a Thread Create Gateway event.
      * @see https://discord.com/developers/docs/resources/channel#join-thread

@@ -1,4 +1,4 @@
-import { Application, ApplicationCommands, Channel, Interaction, Internal, integer, snowflake } from '.'
+import { Application, Channel, integer, Interaction, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-structure */
 export interface Command {
@@ -19,7 +19,7 @@ export interface Command {
   /** Localization dictionary for `description` field. Values follow the same restrictions as `description` */
   description_localizations?: Record<string, any> | null
   /** Parameters for the command, max of 25 */
-  options?: CommandOptions[]
+  options?: Command.ApplicationCommandOption[]
   /** Set of permissions represented as a bit set */
   default_member_permissions: string | null
   /** **Deprecated (use `contexts` instead)**; Indicates whether the command is available in DMs with the app, only for globally-scoped commands. By default, commands are visible. */
@@ -29,26 +29,26 @@ export interface Command {
   /** Indicates whether the command is age-restricted, defaults to `false` */
   nsfw?: boolean
   /** Installation contexts where the command is available, only for globally-scoped commands. Defaults to your app's configured contexts */
-  integration_types?: IntegrationTypes[]
+  integration_types?: Application.IntegrationType[]
   /** Interaction context(s) where the command can be used, only for globally-scoped commands. */
-  contexts?: Interaction.ContextTypes[] | null
+  contexts?: Interaction.ContextType[] | null
   /** Autoincrementing version identifier updated during substantial record changes */
   version: snowflake
   /** Determines whether the interaction is handled by the app's interactions handler or by Discord */
-  handler?: CommandHandlerTypes
+  handler?: Command.EntryPointCommandHandlerType
 }
 
 export namespace Command {
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types */
   export enum ApplicationCommandType {
     /** Slash commands; a text-based command that shows up when a user types `/` */
-    1 = 1,
+    CHAT_INPUT = 1,
     /** A UI-based command that shows up when you right click or tap on a user */
-    2 = 2,
+    USER = 2,
     /** A UI-based command that shows up when you right click or tap on a message */
-    3 = 3,
+    MESSAGE = 3,
     /** A UI-based command that represents the primary way to invoke an app's Activity */
-    4 = 4,
+    PRIMARY_ENTRY_POINT = 4,
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type */
@@ -105,7 +105,7 @@ export namespace Command {
     /** If the option is a subcommand or subcommand group type, these nested options will be the parameters or subcommands respectively; up to 25 */
     options?: Command.ApplicationCommandOption[]
     /** The channels shown will be restricted to these types */
-    channel_types?: Channel.Types[]
+    channel_types?: Channel.Type[]
     /** The minimum value permitted */
     min_value?: number
     /** The maximum value permitted */
@@ -125,7 +125,7 @@ export namespace Command {
     /** Localization dictionary for the `name` field. Values follow the same restrictions as `name` */
     name_localizations?: Record<string, any> | null
     /** Value for the choice, up to 100 characters if string */
-    value: string | integer | OrDouble
+    value: string | integer | number
   }
 
   /** https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-guild-application-command-permissions-structure */
@@ -154,7 +154,7 @@ export namespace Command {
 /** https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands-query-string-params */
 export interface GetGlobalApplicationCommandsParams {
   /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
-  with_localizations?: Boolean
+  with_localizations?: boolean
 }
 
 /** https://discord.com/developers/docs/interactions/application-commands#create-global-application-command-json-params */
@@ -176,9 +176,9 @@ export interface CreateGlobalApplicationCommandParams {
   /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
   default_permission?: boolean
   /** Installation context(s) where the command is available */
-  integration_types?: IntegrationTypes[]
+  integration_types?: Application.IntegrationType[]
   /** Interaction context(s) where the command can be used */
-  contexts?: Interaction.ContextTypes[]
+  contexts?: Interaction.ContextType[]
   /** Type of command, defaults `1` if not set */
   type?: Command.ApplicationCommandType
   /** Indicates whether the command is age-restricted */
@@ -204,9 +204,9 @@ export interface EditGlobalApplicationCommandParams {
   /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
   default_permission?: boolean
   /** Installation context(s) where the command is available */
-  integration_types?: IntegrationTypes[]
+  integration_types?: Application.IntegrationType[]
   /** Interaction context(s) where the command can be used */
-  contexts?: Interaction.ContextTypes[]
+  contexts?: Interaction.ContextType[]
   /** Indicates whether the command is age-restricted */
   nsfw?: boolean
 }
@@ -214,7 +214,7 @@ export interface EditGlobalApplicationCommandParams {
 /** https://discord.com/developers/docs/interactions/application-commands#get-guild-application-commands-query-string-params */
 export interface GetGuildApplicationCommandsParams {
   /** Whether to include full localization dictionaries (`name_localizations` and `description_localizations`) in the returned objects, instead of the `name_localized` and `description_localized` fields. Default `false`. */
-  with_localizations?: Boolean
+  with_localizations?: boolean
 }
 
 /** https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command-json-params */
@@ -280,9 +280,9 @@ export interface BulkOverwriteGuildApplicationCommandsParams {
   /** Replaced by `default_member_permissions` and will be deprecated in the future. Indicates whether the command is enabled by default when the app is added to a guild. Defaults to `true` */
   default_permission?: boolean
   /** Installation context(s) where the command is available, defaults to `GUILD_INSTALL` (`[0]`) */
-  integration_types: IntegrationTypes[]
+  integration_types: Application.IntegrationType[]
   /** Interaction context(s) where the command can be used, defaults to all contexts `[0,1,2]` */
-  contexts: Interaction.ContextTypes[]
+  contexts: Interaction.ContextType[]
   /** Type of command, defaults `1` if not set */
   type?: Command.ApplicationCommandType
 }

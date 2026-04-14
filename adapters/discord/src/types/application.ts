@@ -1,4 +1,4 @@
-import { Guild, Internal, Teams, User, integer, snowflake } from '.'
+import { Guild, integer, Internal, snowflake, Team, User } from '.'
 
 /** https://discord.com/developers/docs/resources/application#application-object-application-structure */
 export interface Application {
@@ -55,7 +55,7 @@ export interface Application {
   /** Event webhooks URL for the app to receive webhook events */
   event_webhooks_url?: string | null
   /** If webhook events are enabled for the app. `1` (default) means disabled, `2` means enabled, and `3` means disabled by Discord */
-  event_webhooks_status?: ApplicationEventWebhookStatus
+  event_webhooks_status?: Application.EventWebhookStatus
   /** List of Webhook event types the app subscribes to */
   event_webhooks_types?: string[]
   /** List of tags describing the content and functionality of the app. Max of 5 tags. */
@@ -63,7 +63,7 @@ export interface Application {
   /** Settings for the app's default in-app authorization link, if enabled */
   install_params?: Application.InstallParams
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
-  integration_types_config?: Record<string, any>
+  integration_types_config?: Application.IntegrationType
   /** Default custom authorization URL for the app, if enabled */
   custom_install_url?: string
 }
@@ -75,6 +75,16 @@ export namespace Application {
     GUILD_INSTALL = 'guild_install',
     /** App is installable to users */
     USER_INSTALL = 'user_install',
+  }
+
+  /** https://discord.com/developers/docs/resources/application#application-object-application-event-webhook-status */
+  export enum EventWebhookStatus {
+    /** Webhook events are disabled by developer */
+    DISABLED = 1,
+    /** Webhook events are enabled by developer */
+    ENABLED = 2,
+    /** Webhook events are disabled by Discord, usually due to inactivity */
+    DISABLED_BY_DISCORD = 3,
   }
 
   /** https://discord.com/developers/docs/resources/application#application-object-application-flags */
@@ -101,12 +111,52 @@ export namespace Application {
     APPLICATION_COMMAND_BADGE = 1 << 23,
   }
 
+  /** https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-kind-enum */
+  export enum ActivityLocationKindEnum {
+    /** Location is a Guild Channel */
+    GC = 'gc',
+    /** Location is a Private Channel, such as a DM or GDM */
+    PC = 'pc',
+  }
+
+  /** https://discord.com/developers/docs/resources/application#application-object-application-integration-type-configuration-object */
+  export interface IntegrationTypeConfiguration {
+    /** Install params for each installation context's default in-app authorization link */
+    oauth2_install_params?: Application.InstallParams
+  }
+
   /** https://discord.com/developers/docs/resources/application#install-params-object-install-params-structure */
   export interface InstallParams {
     /** Scopes to add the application to the server with */
     scopes: string[]
     /** Permissions to request for the bot role */
     permissions: string
+  }
+
+  /** https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-instance-object */
+  export interface ActivityInstance {
+    /** Application ID */
+    application_id: snowflake
+    /** Activity Instance ID */
+    instance_id: string
+    /** Unique identifier for the launch */
+    launch_id: snowflake
+    /** Location the instance is running in */
+    location: Application.ActivityLocation
+    /** IDs of the Users currently connected to the instance */
+    users: User[]
+  }
+
+  /** https://discord.com/developers/docs/resources/application#get-application-activity-instance-activity-location-object */
+  export interface ActivityLocation {
+    /** Unique identifier for the location */
+    id: string
+    /** Enum describing kind of location */
+    kind: Application.ActivityLocationKindEnum
+    /** ID of the Channel */
+    channel_id: snowflake
+    /** ID of the Guild */
+    guild_id?: snowflake | null
   }
 }
 
@@ -121,13 +171,13 @@ export interface EditCurrentApplicationParams {
   /** Settings for the app's default in-app authorization link, if enabled */
   install_params: Application.InstallParams
   /** Default scopes and permissions for each supported installation context. Value for each key is an integration type configuration object */
-  integration_types_config: Record<string, any>
+  integration_types_config: Application.IntegrationType
   /** App's public flags */
   flags: integer
   /** Icon for the app */
-  icon: ImageData | null
+  icon: string | null
   /** Default rich presence invite cover image for the app */
-  cover_image: ImageData | null
+  cover_image: string | null
   /** Interactions endpoint URL for the app */
   interactions_endpoint_url: string
   /** List of tags describing the content and functionality of the app (max of 20 characters per tag). Max of 5 tags. */
@@ -135,7 +185,7 @@ export interface EditCurrentApplicationParams {
   /** Event webhooks URL for the app to receive webhook events */
   event_webhooks_url: string
   /** If webhook events are enabled for the app. `1` to disable, and `2` to enable */
-  event_webhooks_status: ApplicationEventWebhookStatus
+  event_webhooks_status: Application.EventWebhookStatus
   /** List of Webhook event types to subscribe to */
   event_webhooks_types: string[]
 }

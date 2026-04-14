@@ -1,15 +1,23 @@
 import { Context, Dict, HTTP, makeArray } from '@satorijs/core'
 import { DiscordBot } from '../bot'
 
+export interface InternalRoute {
+  name: string
+  multipart?: boolean
+}
+
 export class Internal<C extends Context = Context> {
   constructor(private bot: DiscordBot<C>) {}
 
-  static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>) {
+  static define(routes: Dict<Partial<Record<HTTP.Method, string | InternalRoute>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
         const method = key as HTTP.Method
-        for (const name of makeArray(routes[path][method])) {
-          Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
+        for (let route of makeArray(routes[path][method])) {
+          if (typeof route === 'string') {
+            route = { name: route }
+          }
+          Internal.prototype[route.name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
             const url = path.replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)

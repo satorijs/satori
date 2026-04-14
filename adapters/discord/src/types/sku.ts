@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { integer, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/sku#sku-object-sku-structure */
 export interface Sku {

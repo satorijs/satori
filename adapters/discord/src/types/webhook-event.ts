@@ -1,4 +1,4 @@
-import { Guild, Internal, User, integer } from '.'
+import { Guild, integer, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/events/webhook-events#application-authorized-application-authorized-structure */
 export interface WebhookEvent {
@@ -18,5 +18,16 @@ export namespace WebhookEvent {
     /** User who deauthorized the app */
     user: User
   }
-}
 
+  /** https://discord.com/developers/docs/events/webhook-events#payload-structure */
+  export interface Payload {
+    /** Version scheme for the webhook event. Currently always `1` */
+    version: integer
+    /** ID of your app */
+    application_id: snowflake
+    /** Type of webhook, either `0` for PING or `1` for webhook events */
+    type: unknown
+    /** Event data payload */
+    event?: unknown
+  }
+}

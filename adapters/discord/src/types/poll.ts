@@ -1,28 +1,28 @@
-import { Emoji, Internal, integer, snowflake } from '.'
+import { Emoji, integer, Internal, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/poll#poll-object-poll-object-structure */
 export interface Poll {
   /** The question of the poll. Only `text` is supported. */
-  question: PollMedia
+  question: Poll.Media
   /** Each of the answers available in the poll. */
-  answers: PollAnswer[]
+  answers: Poll.Answer[]
   /** The time when the poll ends. */
-  expiry: Is08601Timestamp | null
+  expiry: timestamp | null
   /** Whether a user can select multiple answers */
   allow_multiselect: boolean
   /** The layout type of the poll */
   layout_type: integer
   /** The results of the poll */
-  results?: PollResults
+  results?: Poll.Results
 }
 
 export namespace Poll {
   /** https://discord.com/developers/docs/resources/poll#poll-create-request-object-poll-create-request-object-structure */
-  export interface CreateRequestObject {
+  export interface CreateRequest {
     /** The question of the poll. Only `text` is supported. */
-    question: PollMedia
+    question: Poll.Media
     /** Each of the answers available in the poll, up to 10 */
-    answers: PollAnswer[]
+    answers: Poll.Answer[]
     /** Number of hours the poll should be open for, up to 32 days. Defaults to 24 */
     duration?: integer
     /** Whether a user can select multiple answers. Defaults to false */
@@ -32,35 +32,41 @@ export namespace Poll {
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-media-object-poll-media-object-structure */
-  export interface MediaObject {
+  export interface Media {
     /** The emoji of the field */
     emoji?: Partial<Emoji>
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-answer-object-poll-answer-object-structure */
-  export interface AnswerObject {
+  export interface Answer {
     /** The ID of the answer */
     answer_id: integer
     /** The data of the answer */
-    poll_media: PollMedia
+    poll_media: Poll.Media
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-results-object-poll-results-object-structure */
-  export interface ResultsObject {
+  export interface Results {
     /** Whether the votes have been precisely counted */
     is_finalized: boolean
     /** The counts for each answer */
-    answer_counts: PollAnswerCount[]
+    answer_counts: Poll.AnswerCount[]
   }
 
   /** https://discord.com/developers/docs/resources/poll#poll-results-object-poll-answer-count-object-structure */
-  export interface AnswerCountObject {
+  export interface AnswerCount {
     /** The `answer_id` */
     id: integer
     /** The number of votes for this answer */
     count: integer
     /** Whether the current user voted for this answer */
     me_voted: boolean
+  }
+
+  /** https://discord.com/developers/docs/resources/poll#get-answer-voters-response-body */
+  export interface PackResult {
+    /** Users who voted for this answer */
+    users: User[]
   }
 }
 

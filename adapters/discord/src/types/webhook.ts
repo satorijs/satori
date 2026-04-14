@@ -1,4 +1,4 @@
-import { Channel, Guild, Internal, Message, User, snowflake } from '.'
+import { Channel, Guild, Internal, Message, snowflake, User } from '.'
 
 /** https://discord.com/developers/docs/resources/webhook#webhook-object-webhook-structure */
 export interface Webhook {
@@ -45,7 +45,7 @@ export interface CreateWebhookParams {
   /** name of the webhook (1-80 characters) */
   name: string
   /** image for the default webhook avatar */
-  avatar?: ImageData | null
+  avatar?: string | null
 }
 
 /** https://discord.com/developers/docs/resources/webhook#modify-webhook-json-params */
@@ -53,7 +53,7 @@ export interface ModifyWebhookParams {
   /** the default name of the webhook */
   name: string
   /** image for the default webhook avatar */
-  avatar: ImageData | null
+  avatar: string | null
   /** the new channel id this webhook should be moved to */
   channel_id: snowflake
 }
@@ -61,11 +61,11 @@ export interface ModifyWebhookParams {
 /** https://discord.com/developers/docs/resources/webhook#execute-webhook-query-string-params */
 export interface ExecuteWebhookParams {
   /** waits for server confirmation of message send before response, and returns the created message body (defaults to `false`; when `false` a message that is not saved does not return an error) */
-  wait: Boolean
+  wait: boolean
   /** Send a message to the specified thread within a webhook's channel. The thread will automatically be unarchived. */
   thread_id: snowflake
   /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
-  with_components: Boolean
+  with_components: boolean
 }
 
 /** https://discord.com/developers/docs/resources/webhook#execute-slackcompatible-webhook-query-string-params */
@@ -73,7 +73,7 @@ export interface ExecuteSlackCompatibleWebhookParams {
   /** id of the thread to send the message in */
   thread_id: snowflake
   /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
-  wait: Boolean
+  wait: boolean
 }
 
 /** https://discord.com/developers/docs/resources/webhook#execute-githubcompatible-webhook-query-string-params */
@@ -81,7 +81,7 @@ export interface ExecuteGithubCompatibleWebhookParams {
   /** id of the thread to send the message in */
   thread_id: snowflake
   /** waits for server confirmation of message send before response (defaults to `true`; when `false` a message that is not saved does not return an error) */
-  wait: Boolean
+  wait: boolean
 }
 
 /** https://discord.com/developers/docs/resources/webhook#get-webhook-message-query-string-params */
@@ -95,7 +95,7 @@ export interface EditWebhookMessageParams {
   /** id of the thread the message is in */
   thread_id: snowflake
   /** whether to respect the `components` field of the request. When enabled, allows application-owned webhooks to use all components and non-owned webhooks to use non-interactive components. (defaults to `false`) */
-  with_components: Boolean
+  with_components: boolean
 }
 
 /** https://discord.com/developers/docs/resources/webhook#delete-webhook-message-query-string-params */
@@ -115,12 +115,12 @@ declare module './internal' {
      * Returns a list of channel webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
      * @see https://discord.com/developers/docs/resources/webhook#get-channel-webhooks
      */
-    getChannelWebhooks(channel_id: snowflake): Promise<ChannelWebhook[]>
+    getChannelWebhooks(channel_id: snowflake): Promise<Webhook[]>
     /**
      * Returns a list of guild webhook objects. Requires the `MANAGE_WEBHOOKS` permission.
      * @see https://discord.com/developers/docs/resources/webhook#get-guild-webhooks
      */
-    getGuildWebhooks(guild_id: snowflake): Promise<GuildWebhook[]>
+    getGuildWebhooks(guild_id: snowflake): Promise<Webhook[]>
     /**
      * Returns the new webhook object for the given id.
      * @see https://discord.com/developers/docs/resources/webhook#get-webhook
@@ -170,7 +170,7 @@ declare module './internal' {
      * Returns a previously-sent webhook message from the same token. Returns a message object on success.
      * @see https://discord.com/developers/docs/resources/webhook#get-webhook-message
      */
-    getWebhookMessage(webhook_id: snowflake, webhook_token: snowflake, message_id: snowflake, params: GetWebhookMessageParams): Promise<unknown>
+    getWebhookMessage(webhook_id: snowflake, webhook_token: snowflake, message_id: snowflake, params: GetWebhookMessageParams): Promise<Message>
     /**
      * Edits a previously-sent webhook message from the same token. Returns a message object on success.
      * @see https://discord.com/developers/docs/resources/webhook#edit-webhook-message

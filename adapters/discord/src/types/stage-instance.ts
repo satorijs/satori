@@ -1,4 +1,4 @@
-import { Internal, integer, snowflake } from '.'
+import { integer, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/stage-instance#stage-instance-object-stage-instance-structure */
 export interface StageInstance {
@@ -64,7 +64,7 @@ declare module './internal' {
      * Updates fields of an existing Stage instance. Returns the updated Stage instance. Fires a Stage Instance Update Gateway event.
      * @see https://discord.com/developers/docs/resources/stage-instance#modify-stage-instance
      */
-    modifyStageInstance(channel_id: snowflake, params: ModifyStageInstanceParams): Promise<void>
+    modifyStageInstance(channel_id: snowflake, params: ModifyStageInstanceParams): Promise<StageInstance>
     /**
      * Deletes the Stage instance. Returns `204 No Content`. Fires a Stage Instance Delete Gateway event.
      * @see https://discord.com/developers/docs/resources/stage-instance#delete-stage-instance

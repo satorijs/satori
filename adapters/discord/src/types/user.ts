@@ -1,4 +1,4 @@
-import { Guild, Internal, integer, snowflake } from '.'
+import { ApplicationRoleConnectionMetadata, Channel, Guild, integer, Internal, snowflake } from '.'
 
 /** https://discord.com/developers/docs/resources/user#user-object-user-structure */
 export interface User {
@@ -37,9 +37,9 @@ export interface User {
   /** data for the user's avatar decoration */
   avatar_decoration_data?: User.AvatarDecorationData | null
   /** data for the user's collectibles */
-  collectibles?: Collectibles | null
+  collectibles?: User.Collectible | null
   /** the user's primary guild */
-  primary_guild?: UserPrimaryGuild | null
+  primary_guild?: User.PrimaryGuild | null
 }
 
 export namespace User {
@@ -83,12 +83,54 @@ export namespace User {
     NITRO_BASIC = 3,
   }
 
+  /** https://discord.com/developers/docs/resources/user#connection-object-services */
+  export enum Services {
+    AMAZON_MUSIC = 'amazon-music',
+    BATTLE_NET = 'battlenet',
+    BUNGIE_NET = 'bungie',
+    BLUESKY = 'bluesky',
+    CRUNCHYROLL = 'crunchyroll',
+    DOMAIN = 'domain',
+    EBAY = 'ebay',
+    EPIC_GAMES = 'epicgames',
+    FACEBOOK = 'facebook',
+    GITHUB = 'github',
+    INSTAGRAM = 'instagram',
+    LEAGUE_OF_LEGENDS = 'leagueoflegends',
+    MASTODON = 'mastodon',
+    PAYPAL = 'paypal',
+    PLAYSTATION_NETWORK = 'playstation',
+    REDDIT = 'reddit',
+    RIOT_GAMES = 'riotgames',
+    ROBLOX = 'roblox',
+    SPOTIFY = 'spotify',
+    SKYPE = 'skype',
+    STEAM = 'steam',
+    TIKTOK = 'tiktok',
+    TWITCH = 'twitch',
+    X = 'twitter',
+    XBOX = 'xbox',
+    YOUTUBE = 'youtube',
+  }
+
   /** https://discord.com/developers/docs/resources/user#connection-object-visibility-types */
   export enum VisibilityType {
     /** invisible to everyone except the user themselves */
     NONE = 0,
     /** visible to everyone */
     EVERYONE = 1,
+  }
+
+  /** https://discord.com/developers/docs/resources/user#user-object-user-primary-guild */
+  export interface PrimaryGuild {
+    /** the id of the user's primary guild */
+    identity_guild_id: snowflake | null
+    /** whether the user is displaying the primary guild's server tag. This can be `null` if the system clears the identity, e.g. the server no longer supports tags. This will be `false` if the user manually removes their tag. */
+    identity_enabled: boolean | null
+    /** the text of the user's server tag. Limited to 4 characters */
+    tag: string | null
+    /** the server tag badge hash */
+    badge: string | null
   }
 
   /** https://discord.com/developers/docs/resources/user#avatar-decoration-data-object-avatar-decoration-data-structure */
@@ -102,7 +144,7 @@ export namespace User {
   /** https://discord.com/developers/docs/resources/user#collectibles-collectible-structure */
   export interface Collectible {
     /** object mapping of nameplate data */
-    nameplate?: any
+    nameplate?: User.Nameplate
   }
 
   /** https://discord.com/developers/docs/resources/user#nameplate-nameplate-structure */
@@ -128,7 +170,7 @@ export namespace User {
     /** whether the connection is revoked */
     revoked?: boolean
     /** an array of partial server integrations */
-    integrations?: unknown[]
+    integrations?: Guild.Integration[]
     /** whether the connection is verified */
     verified: boolean
     /** whether friend sync is enabled for this connection */
@@ -146,7 +188,7 @@ export namespace User {
     /** the vanity name of the platform a bot has connected (max 50 characters) */
     platform_name: string | null
     /** object mapping application role connection metadata keys to their `string`-ified value (max 100 characters) for the user on the platform a bot has connected */
-    metadata: any
+    metadata: ApplicationRoleConnectionMetadata
   }
 }
 
@@ -155,9 +197,9 @@ export interface ModifyCurrentUserParams {
   /** user's username, if changed may cause the user's discriminator to be randomized. */
   username: string
   /** if passed, modifies the user's avatar */
-  avatar: ImageData | null
+  avatar: string | null
   /** if passed, modifies the user's banner */
-  banner: ImageData | null
+  banner: string | null
 }
 
 /** https://discord.com/developers/docs/resources/user#get-current-user-guilds-query-string-params */
@@ -169,7 +211,7 @@ export interface GetCurrentUserGuildsParams {
   /** max number of guilds to return (1-200) */
   limit: integer
   /** include approximate member and presence counts in response */
-  with_counts: Boolean
+  with_counts: boolean
 }
 
 /** https://discord.com/developers/docs/resources/user#create-dm-json-params */
@@ -193,7 +235,7 @@ export interface UpdateCurrentUserApplicationRoleConnectionParams {
   /** the username on the platform a bot has connected (max 100 characters) */
   platform_username?: string
   /** object mapping application role connection metadata keys to their `string`-ified value (max 100 characters) for the user on the platform a bot has connected */
-  metadata?: any
+  metadata?: ApplicationRoleConnectionMetadata
 }
 
 declare module './internal' {
@@ -217,7 +259,7 @@ declare module './internal' {
      * Returns a list of partial guild objects the current user is a member of. For OAuth2, requires the `guilds` scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-guilds
      */
-    getCurrentUserGuilds(params: GetCurrentUserGuildsParams): Promise<Partial<Guild>[]>
+    getCurrentUserGuilds(params: GetCurrentUserGuildsParams): Promise<Guild[]>
     /**
      * Returns a guild member object for the current user. Requires the `guilds.members.read` OAuth2 scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-guild-member
@@ -232,12 +274,12 @@ declare module './internal' {
      * Create a new DM channel with a user. Returns a DM channel object (if one already exists, it will be returned instead).
      * @see https://discord.com/developers/docs/resources/user#create-dm
      */
-    createDm(params: CreateDmParams): Promise<DmChannel>
+    createDm(params: CreateDmParams): Promise<Channel>
     /**
      * Create a new group DM channel with multiple users. Returns a DM channel object. This endpoint was intended to be used with the now-deprecated GameBridge SDK. Fires a Channel Create Gateway event.
      * @see https://discord.com/developers/docs/resources/user#create-group-dm
      */
-    createGroupDm(params: CreateGroupDmParams): Promise<DmChannel>
+    createGroupDm(params: CreateGroupDmParams): Promise<Channel>
     /**
      * Returns a list of connection objects. Requires the `connections` OAuth2 scope.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-connections
@@ -247,12 +289,12 @@ declare module './internal' {
      * Returns the application role connection for the user. Requires an OAuth2 access token with `role_connections.write` scope for the application specified in the path.
      * @see https://discord.com/developers/docs/resources/user#get-current-user-application-role-connection
      */
-    getCurrentUserApplicationRoleConnection(application_id: snowflake): Promise<void>
+    getCurrentUserApplicationRoleConnection(application_id: snowflake): Promise<User.ApplicationRoleConnection>
     /**
      * Updates and returns the application role connection for the user. Requires an OAuth2 access token with `role_connections.write` scope for the application specified in the path.
      * @see https://discord.com/developers/docs/resources/user#update-current-user-application-role-connection
      */
-    updateCurrentUserApplicationRoleConnection(application_id: snowflake, params: UpdateCurrentUserApplicationRoleConnectionParams): Promise<void>
+    updateCurrentUserApplicationRoleConnection(application_id: snowflake, params: UpdateCurrentUserApplicationRoleConnectionParams): Promise<User.ApplicationRoleConnection>
   }
 }
 

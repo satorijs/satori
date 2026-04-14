@@ -1,4 +1,4 @@
-import { Application, Channel, Guild, GuildScheduledEvent, Internal, Permission, User, integer, snowflake, timestamp } from '.'
+import { Application, Channel, Guild, GuildScheduledEvent, integer, Internal, Permission, snowflake, timestamp, User } from '.'
 
 /** https://discord.com/developers/docs/resources/invite#invite-object-invite-structure */
 export interface Invite {
@@ -52,6 +52,18 @@ export namespace Invite {
     IS_GUEST_INVITE = 1 << 0,
   }
 
+  /** https://discord.com/developers/docs/resources/invite#get-target-users-job-status-status-codes */
+  export enum StatusCodes {
+    /** The default value. */
+    UNSPECIFIED = 'unspecified',
+    /** The job is still being processed. */
+    PROCESSING = 'processing',
+    /** The job has been completed successfully. */
+    COMPLETED = 'completed',
+    /** The job has failed, see `error_message` field for more details. */
+    FAILED = 'failed',
+  }
+
   /** https://discord.com/developers/docs/resources/invite#invite-metadata-object-invite-metadata-structure */
   export interface Metadata {
     /** number of times this invite has been used */
@@ -82,7 +94,7 @@ export namespace Invite {
 /** https://discord.com/developers/docs/resources/invite#get-invite-query-string-params */
 export interface GetInviteParams {
   /** whether the invite should contain approximate member counts */
-  with_counts?: Boolean
+  with_counts?: boolean
   /** the guild scheduled event to include with the invite */
   guild_scheduled_event_id?: snowflake
 }
