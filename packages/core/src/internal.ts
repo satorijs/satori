@@ -23,7 +23,7 @@ export class InternalRouter {
 
   constructor(public ctx: Context) {}
 
-  define<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
+  define<P extends string>(path: P, callback: InternalRouteCallback<ExtractParams<P>>) {
     return this.ctx.effect(() => {
       const route: InternalRoute = {
         ...pathToRegexp(path),

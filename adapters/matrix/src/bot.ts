@@ -5,7 +5,7 @@ import * as Matrix from './types'
 import { adaptMessage, decodeUser, dispatchSession } from './utils'
 import z from 'schemastery'
 
-export class MatrixBot extends Bot<C, MatrixBot.Config> {
+export class MatrixBot extends Bot<MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
   static inject = ['http']
 

@@ -7,7 +7,7 @@ export const escapeMarkdown = (val: string) =>
   val
     .replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
 
-export class QQGuildMessageEncoder extends MessageEncoder<C, QQGuildBot> {
+export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   private content: string = ''
   private file: Blob
   private filename: string
@@ -189,7 +189,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<C, QQGuildBot> {
 
 const MSG_TIMEOUT = 5 * 60 * 1000 - 2000// 5 mins
 
-export class QQMessageEncoder extends MessageEncoder<C, QQBot> {
+export class QQMessageEncoder extends MessageEncoder<QQBot> {
   private content: string = ''
   private passiveId: string
   private passiveSeq: number

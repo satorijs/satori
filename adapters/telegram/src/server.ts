@@ -7,10 +7,10 @@ import z from 'schemastery'
 
 export { Telegram }
 
-export class HttpServer extends Adapter<C, TelegramBot> {
+export class HttpServer extends Adapter<TelegramBot> {
   static inject = ['server']
 
-  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpServer.Options>) {
+  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Options>) {
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {

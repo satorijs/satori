@@ -3,13 +3,13 @@ import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import z from 'schemastery'
 
-export class HttpPolling extends Adapter<C, TelegramBot> {
+export class HttpPolling extends Adapter<TelegramBot> {
   static reusable = true
 
   private offset = 0
   private timeout: NodeJS.Timeout
 
-  async connect(bot: TelegramBot<C, TelegramBot.BaseConfig & HttpPolling.Options>) {
+  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Options>) {
     bot.initialize(async () => {
       let _retryCount = 0
       let _initial = true

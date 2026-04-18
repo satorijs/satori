@@ -16,7 +16,7 @@ class State {
   constructor(public type: 'message' | 'forward') { }
 }
 
-export class DiscordMessageEncoder extends MessageEncoder<C, DiscordBot> {
+export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   private stack: State[] = [new State('message')]
   private buffer: string = ''
   private addition: Dict = {}

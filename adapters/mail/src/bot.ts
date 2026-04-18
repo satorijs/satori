@@ -3,7 +3,7 @@ import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class MailBot extends Bot<C, MailBot.Config> {
+export class MailBot extends Bot<MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
   static inject = ['http']
 

@@ -7,7 +7,7 @@ import { version } from '../package.json'
 import { decodeGuild, decodeMessage, decodeUser } from './utils'
 import z from 'schemastery'
 
-export class ZulipBot extends Bot<C, ZulipBot.Config> {
+export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
   static inject = ['http']
 

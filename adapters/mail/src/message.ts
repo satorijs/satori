@@ -8,7 +8,7 @@ export function randomId() {
   return Array(8).fill(0).map(() => letters[Math.floor(Math.random() * letters.length)]).join('')
 }
 
-export class MailMessageEncoder extends MessageEncoder<C, MailBot> {
+export class MailMessageEncoder extends MessageEncoder<MailBot> {
   buffer = ''
   reply: string
   attachments: Attachment[] = []

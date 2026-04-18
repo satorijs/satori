@@ -1,7 +1,7 @@
 import { Context, MessageEncoder, segment, Universal } from '@satorijs/core'
 import { MatrixBot } from './bot'
 
-export class MatrixMessageEncoder extends MessageEncoder<C, MatrixBot> {
+export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
   private buffer: string = ''
   private reply: Universal.Message = null
 

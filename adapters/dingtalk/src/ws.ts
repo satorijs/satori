@@ -3,7 +3,7 @@ import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<C, DingtalkBot> {
+export class WsClient extends Adapter.WsClient<DingtalkBot> {
   async prepare() {
     await this.bot.refreshToken()
     await this.bot.getLogin()

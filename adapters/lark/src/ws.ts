@@ -23,7 +23,7 @@ interface FrameSegment {
   data: Uint8Array
 }
 
-export class WsClient extends Adapter.WsClient<C, LarkBot<C, LarkBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsClient.Options>> {
   _deviceId: string
   _serviceId: number
   _pingInterval: number = 90000
@@ -31,7 +31,7 @@ export class WsClient extends Adapter.WsClient<C, LarkBot<C, LarkBot.BaseConfig 
   _cache: Record<string, FrameSegment[]> = {}
   _frame: pb.Type
 
-  constructor(ctx: Context, bot: LarkBot<C, LarkBot.BaseConfig & WsClient.Options>) {
+  constructor(ctx: Context, bot: LarkBot<LarkBot.BaseConfig & WsClient.Options>) {
     super(ctx, bot)
     this._frame = pb.Root.fromJSON({
       nested: {

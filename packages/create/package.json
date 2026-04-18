@@ -30,6 +30,6 @@
     "@types/node": "^25.3.5"
   },
   "dependencies": {
-    "create-cordis": "^0.2.6"
+    "create-cordis": "^0.2.7"
   }
 }

@@ -6,10 +6,10 @@ import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<C, SlackBot> {
+export class HttpServer extends Adapter<SlackBot> {
   static inject = ['server']
 
-  async connect(bot: SlackBot<C, SlackBot.Config & HttpServer.Options>) {
+  async connect(bot: SlackBot<SlackBot.Config & HttpServer.Options>) {
     const { signing } = bot.config
     await bot.getLogin()
     this.ctx.server.post('/slack', async (req, res) => {

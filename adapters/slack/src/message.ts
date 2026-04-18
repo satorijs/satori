@@ -20,7 +20,7 @@ export const unescape = (val: string) =>
     .replace(/@\u200Beveryone/g, () => '@everyone')
     .replace(/@\u200Bhere/g, () => '@here')
 
-export class SlackMessageEncoder extends MessageEncoder<C, SlackBot> {
+export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   buffer = ''
   thread_ts = null
   elements: any[] = []

@@ -16,7 +16,7 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
   ppt: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 }
 
-export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<C, T> {
+export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
   static inject = ['http']
   static MessageEncoder = LarkMessageEncoder
 

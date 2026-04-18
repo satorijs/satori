@@ -4,7 +4,7 @@ import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'
 
-export class HttpAdapter extends Adapter<C, MatrixBot> {
+export class HttpAdapter extends Adapter<MatrixBot> {
   static inject = ['server']
 
   private txnId: string = null

@@ -13,7 +13,7 @@ interface GetAppAccessTokenResult {
   expires_in: number
 }
 
-export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<C, T> {
+export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
   static MessageEncoder = QQMessageEncoder
   static inject = {
     required: ['http'],

@@ -6,7 +6,7 @@ import { WebhookRequestBody } from './types'
 import { adaptSessions } from './utils'
 import internal from 'stream'
 
-export class HttpServer extends Adapter<C, LineBot> {
+export class HttpServer extends Adapter<LineBot> {
   static inject = ['server']
 
   async connect(bot: LineBot) {

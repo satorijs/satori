@@ -4,7 +4,7 @@ import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<C, QQBot<C, QQBot.Config & WsClient.Options>> {
+export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Options>> {
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout

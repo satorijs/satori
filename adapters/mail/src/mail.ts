@@ -5,7 +5,7 @@ import { MailBot } from './bot'
 import { Adapter, Context, Universal } from '@satorijs/core'
 import { dispatchSession } from './utils'
 
-export class IMAP extends Adapter<C, MailBot> {
+export class IMAP extends Adapter<MailBot> {
   static reusable = true
 
   imap: NodeIMAP

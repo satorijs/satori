@@ -4,7 +4,7 @@ import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<C, KookBot<C, KookBot.BaseConfig & HttpServer.Options>> {
+export class HttpServer extends Adapter<KookBot<KookBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
   private logger: Logger

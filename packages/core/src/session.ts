@@ -35,7 +35,7 @@ export class Session {
   public id: number // for backward compatibility
   public sn: number
   public bot!: Bot
-  public app!: C['root']
+  public app!: Context
   public event: Event
   public locales: string[] = []
 

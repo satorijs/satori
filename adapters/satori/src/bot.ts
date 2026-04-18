@@ -60,8 +60,8 @@ function createInternal(bot: SatoriBot, prefix = '') {
   })
 }
 
-export class SatoriBot extends Bot<C, Universal.Login> {
-  declare adapter: SatoriAdapter<C, this>
+export class SatoriBot extends Bot<Universal.Login> {
+  declare adapter: SatoriAdapter<this>
 
   public internal = createInternal(this)
   public logger: Logger

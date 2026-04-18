@@ -26,7 +26,7 @@ export interface TelegramResponse {
   result: any
 }
 
-export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<C, T> {
+export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   static MessageEncoder = TelegramMessageEncoder
   static inject = ['http']
 

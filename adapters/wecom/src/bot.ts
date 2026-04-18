@@ -3,7 +3,7 @@ import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class WecomBot extends Bot<C, WecomBot.Config> {
+export class WecomBot extends Bot<WecomBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = WecomMessageEncoder
 

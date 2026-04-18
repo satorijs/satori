@@ -6,7 +6,7 @@ import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<C, T> {
+export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   static MessageEncoder = KookMessageEncoder
   static inject = ['http']
 

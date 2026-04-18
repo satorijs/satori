@@ -26,7 +26,7 @@ export namespace Adapter {
     retryLazy: z.natural().role('ms').description('连接关闭后的重试时间间隔。').default(Time.minute),
   }).description('连接设置')
 
-  export abstract class WsClientBase<B extends Bot> extends Adapter<C, B> {
+  export abstract class WsClientBase<B extends Bot> extends Adapter<B> {
     protected socket?: WebSocket
     protected connectionId = 0
 
@@ -105,7 +105,7 @@ export namespace Adapter {
     }
   }
 
-  export abstract class WsClient<B extends Bot<C, WsClientConfig>> extends WsClientBase<C, B> {
+  export abstract class WsClient<B extends Bot<WsClientConfig>> extends WsClientBase<B> {
     static reusable = true
 
     constructor(ctx: Context, public bot: B) {

@@ -7,7 +7,7 @@ import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types
 import { Internal, Token } from './types/internal'
 import z from 'schemastery'
 
-export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<C, T> {
+export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
   static MessageEncoder = SlackMessageEncoder
   static inject = ['http']
 

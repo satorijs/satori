@@ -4,7 +4,7 @@ import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<C, LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>> {
+export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
   private logger: Logger
@@ -15,14 +15,14 @@ export class HttpServer extends Adapter<C, LarkBot<C, LarkBot.BaseConfig & HttpS
     this.logger = ctx.logger('lark')
   }
 
-  fork(ctx: Context, bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
+  fork(ctx: Context, bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
     super.fork(ctx, bot)
 
     this._refreshCipher()
     return bot.initialize()
   }
 
-  async connect(bot: LarkBot<C, LarkBot.BaseConfig & HttpServer.Options>) {
+  async connect(bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
     const { path } = bot.config
     this.ctx.server.post(path, async (req, res) => {
       this._refreshCipher()

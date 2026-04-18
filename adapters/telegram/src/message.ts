@@ -6,7 +6,7 @@ type RenderMode = 'default' | 'figure'
 
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
-export class TelegramMessageEncoder extends MessageEncoder<C, TelegramBot> {
+export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
   private asset: h[] = []
   private payload: Dict
   private mode: RenderMode = 'default'

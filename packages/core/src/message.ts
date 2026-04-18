@@ -1,7 +1,7 @@
-import { Context } from 'cordis'
 import { Bot } from './bot'
 import { Channel, Message, SendOptions } from '@satorijs/protocol'
 import * as h from '@cordisjs/element'
+import { Session } from './session'
 
 class AggregateError extends Error {
   constructor(public errors: Error[], message = '') {
@@ -12,7 +12,7 @@ class AggregateError extends Error {
 export abstract class MessageEncoder<B extends Bot = Bot> {
   public errors: Error[] = []
   public results: Message[] = []
-  public session!: C[typeof Context.session]
+  public session!: Session
 
   constructor(public bot: B, public channelId: string, public referrer?: any, public options: SendOptions = {}) {}
 

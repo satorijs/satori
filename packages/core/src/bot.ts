@@ -36,7 +36,7 @@ export abstract class Bot<T = any> {
   public platform?: string
   public features: string[]
   public hidden = false
-  public adapter!: Adapter<C, this>
+  public adapter!: Adapter<this>
   public error: any
   public callbacks: Dict<Function> = {}
 
@@ -76,7 +76,7 @@ export abstract class Bot<T = any> {
     return `internal${slash ? '/' : ':'}${this.platform}/${this.selfId}${path}${search}`
   }
 
-  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
+  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<ExtractParams<P>>) {
     return this._internalRouter.define(path, callback)
   }
 
@@ -158,11 +158,11 @@ export abstract class Bot<T = any> {
     return `${this.platform}:${this.selfId}`
   }
 
-  session(event: Partial<Event> = {}): C[typeof Context.session] {
+  session(event: Partial<Event> = {}): Session {
     return new Session(this, event)
   }
 
-  dispatch(session: C[typeof Context.session]) {
+  dispatch(session: Session) {
     let events = [session.type]
     for (const aliases of eventAliases) {
       if (aliases.includes(session.type)) {
@@ -221,11 +221,11 @@ export abstract class Bot<T = any> {
     return ids.map(id => this.getInternalUrl(`/_tmp/${id}`))
   }
 
-  async supports(name: string, session: Partial<C[typeof Context.session]> = {}) {
+  async supports(name: string, session: Partial<Session> = {}) {
     return !!this[Methods[name]?.name]
   }
 
-  async checkPermission(name: string, session: Partial<C[typeof Context.session]>) {
+  async checkPermission(name: string, session: Partial<Session>) {
     if (name.startsWith('bot.')) {
       return this.supports(name.slice(4), session)
     }

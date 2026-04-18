@@ -4,7 +4,7 @@ import { Internal } from './types'
 import { LineMessageEncoder } from './message'
 import z from 'schemastery'
 
-export class LineBot extends Bot<C, LineBot.Config> {
+export class LineBot extends Bot<LineBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = LineMessageEncoder
 

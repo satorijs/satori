@@ -6,7 +6,7 @@ import { adaptSession } from './utils'
 import { } from '@cordisjs/plugin-server'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<C, QQBot> {
+export class HttpServer extends Adapter<QQBot> {
   static inject = ['server']
 
   async connect(bot: QQBot) {

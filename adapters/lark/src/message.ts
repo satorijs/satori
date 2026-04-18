@@ -4,7 +4,7 @@ import { Im, Message } from './types'
 import { EventPayload, extractIdType } from './utils'
 import { MessageContent } from './content'
 
-export class LarkMessageEncoder extends MessageEncoder<C, LarkBot> {
+export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
   declare referrer?: EventPayload
 
   private quote: Dict | undefined

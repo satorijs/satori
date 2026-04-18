@@ -5,7 +5,7 @@ import crypto from 'node:crypto'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 
-export class HttpServer extends Adapter<C, DingtalkBot> {
+export class HttpServer extends Adapter<DingtalkBot> {
   static inject = ['server']
 
   private logger: Logger

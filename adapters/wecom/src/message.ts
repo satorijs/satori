@@ -3,7 +3,7 @@ import { WecomBot } from './bot'
 
 /** https://developer.work.weixin.qq.com/document/path/90236#%E6%94%AF%E6%8C%81%E7%9A%84markdown%E8%AF%AD%E6%B3%95 */
 
-export class WecomMessageEncoder extends MessageEncoder<C, WecomBot> {
+export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
   buffer = ''
 
   upsertSend(msgId: string, payload: any) {

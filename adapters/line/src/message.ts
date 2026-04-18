@@ -10,7 +10,7 @@ export const unescape = (val: string) =>
   val
     .replace(/\u200b([\*_~`])/g, '$1')
 
-export class LineMessageEncoder extends MessageEncoder<C, LineBot> {
+export class LineMessageEncoder extends MessageEncoder<LineBot> {
   buffer = ''
   blocks: Line.Message[] = []
   sender: Line.Sender = {}

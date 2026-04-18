@@ -22,10 +22,10 @@ export * from './session'
 
 declare module 'cordis' {
   export interface Context {
-    [Context.session]: Session<this>
-    satori: Satori<this>
-    bots: Bot<this>[] & Dict<Bot<this>>
-    component(name: string, component: Component<GetSession<this>>, options?: Component.Options): () => void
+    [Context.session]: Session
+    satori: Satori
+    bots: Bot[] & Dict<Bot>
+    component(name: string, component: Component<Session>, options?: Component.Options): () => void
   }
 
   export namespace Context {
@@ -34,34 +34,34 @@ declare module 'cordis' {
 
   interface Events {
     'satori/meta'(): void
-    'internal/session'(session: GetSession): void
-    'interaction/command'(session: GetSession): void
-    'interaction/button'(session: GetSession): void
-    'message'(session: GetSession): void
-    'message-created'(session: GetSession): void
-    'message-deleted'(session: GetSession): void
-    'message-updated'(session: GetSession): void
-    'message-pinned'(session: GetSession): void
-    'message-unpinned'(session: GetSession): void
-    'guild-added'(session: GetSession): void
-    'guild-removed'(session: GetSession): void
-    'guild-updated'(session: GetSession): void
-    'guild-member-added'(session: GetSession): void
-    'guild-member-removed'(session: GetSession): void
-    'guild-member-updated'(session: GetSession): void
-    'guild-role-created'(session: GetSession): void
-    'guild-role-deleted'(session: GetSession): void
-    'guild-role-updated'(session: GetSession): void
-    'reaction-added'(session: GetSession): void
-    'reaction-removed'(session: GetSession): void
-    'login-added'(session: GetSession): void
-    'login-removed'(session: GetSession): void
-    'login-updated'(session: GetSession): void
-    'friend-request'(session: GetSession): void
-    'guild-request'(session: GetSession): void
-    'guild-member-request'(session: GetSession): void
-    'before-send'(session: GetSession, options: SendOptions): Awaitable<void | boolean>
-    'send'(session: GetSession): void
+    'internal/session'(session: Session): void
+    'interaction/command'(session: Session): void
+    'interaction/button'(session: Session): void
+    'message'(session: Session): void
+    'message-created'(session: Session): void
+    'message-deleted'(session: Session): void
+    'message-updated'(session: Session): void
+    'message-pinned'(session: Session): void
+    'message-unpinned'(session: Session): void
+    'guild-added'(session: Session): void
+    'guild-removed'(session: Session): void
+    'guild-updated'(session: Session): void
+    'guild-member-added'(session: Session): void
+    'guild-member-removed'(session: Session): void
+    'guild-member-updated'(session: Session): void
+    'guild-role-created'(session: Session): void
+    'guild-role-deleted'(session: Session): void
+    'guild-role-updated'(session: Session): void
+    'reaction-added'(session: Session): void
+    'reaction-removed'(session: Session): void
+    'login-added'(session: Session): void
+    'login-removed'(session: Session): void
+    'login-updated'(session: Session): void
+    'friend-request'(session: Session): void
+    'guild-request'(session: Session): void
+    'guild-member-request'(session: Session): void
+    'before-send'(session: Session, options: SendOptions): Awaitable<void | boolean>
+    'send'(session: Session): void
     'bot-connect'(client: Bot): Awaitable<void>
     'bot-disconnect'(client: Bot): Awaitable<void>
   }
@@ -74,8 +74,6 @@ export namespace Component {
     session?: boolean
   }
 }
-
-export type GetSession = C[typeof Context.session]
 
 class DisposableSet<T> {
   private sn = 0
@@ -200,7 +198,7 @@ export class Satori extends Service {
     },
   }) as Bot[] & Dict<Bot>
 
-  component(name: string, component: Component<C[typeof Context.session]>, options: Component.Options = {}) {
+  component(name: string, component: Component<Session>, options: Component.Options = {}) {
     const render: Component = async (attrs, children, session) => {
       if (options.session && session.type === 'send') {
         throw new Error('interactive components is not available outside sessions')
@@ -211,7 +209,7 @@ export class Satori extends Service {
     return this.ctx.set('component:' + name, render)
   }
 
-  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<C, ExtractParams<P>>) {
+  defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<ExtractParams<P>>) {
     return this._internalRouter.define(path, callback)
   }
 

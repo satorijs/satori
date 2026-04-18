@@ -106,7 +106,7 @@ class HttpServer {
   }
 }
 
-export class WhatsAppAdapter extends Adapter<C, WhatsAppBot> {
+export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
   static inject = ['server', 'http']
   static schema = true as any
   static reusable = true

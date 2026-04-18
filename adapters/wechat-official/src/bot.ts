@@ -4,7 +4,7 @@ import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
 import z from 'schemastery'
 
-export class WechatOfficialBot extends Bot<C, WechatOfficialBot.Config> {
+export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   static inject = ['server', 'http']
   static MessageEncoder = WechatOfficialMessageEncoder
 

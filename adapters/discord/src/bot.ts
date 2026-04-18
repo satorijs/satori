@@ -8,7 +8,7 @@ import z from 'schemastery'
 // @ts-ignore
 import { version } from '../package.json'
 
-export class DiscordBot extends Bot<C, DiscordBot.Config> {
+export class DiscordBot extends Bot<DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
   static inject = ['http']
 

@@ -4,7 +4,7 @@ import type { Logger } from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
 
-export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsClientBase<C, B> {
+export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsClientBase<B> {
   static schema = true as any
   static reusable = true
   static inject = ['http']

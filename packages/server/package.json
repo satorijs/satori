@@ -44,16 +44,16 @@
     }
   },
   "peerDependencies": {
-    "@cordisjs/plugin-http": "^1.2.0",
-    "@cordisjs/plugin-server": "^1.2.0",
+    "@cordisjs/plugin-http": "^1.3.0",
+    "@cordisjs/plugin-server": "^1.3.0",
     "@satorijs/core": "^5.0.0-alpha.0"
   },
   "devDependencies": {
-    "@cordisjs/plugin-http": "^1.2.0",
-    "@cordisjs/plugin-server": "^1.2.0",
+    "@cordisjs/plugin-http": "^1.3.0",
+    "@cordisjs/plugin-server": "^1.3.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "@types/node": "^25.3.5",
-    "cordis": "^4.0.0-rc.1"
+    "cordis": "^4.0.0-rc.3"
   },
   "dependencies": {
     "cosmokit": "^1.8.1"
