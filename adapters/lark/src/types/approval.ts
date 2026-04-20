@@ -14,6 +14,7 @@ export namespace Approval {
     externalApproval: ExternalApproval.Methods
     externalInstance: ExternalInstance.Methods
     externalTask: ExternalTask.Methods
+    district: District.Methods
     /**
      * 创建审批定义
      * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/approval/create
@@ -913,6 +914,56 @@ export namespace Approval {
       status?: 'PENDING' | 'APPROVED' | 'REJECTED' | 'TRANSFERRED' | 'DONE'
     }
   }
+
+  export namespace District {
+    export interface Methods {
+      /**
+       * 查询地理库信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/district/list
+       */
+      list(query?: ListQuery): Promise<ListResponse>
+      /**
+       * 搜索地理库信息
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/approval-v4/district/search
+       */
+      search(body: SearchRequest, query?: SearchQuery): Promise<SearchResponse>
+    }
+
+    export interface ListQuery extends Pagination {
+      /** 指定根节点，仅遍历该节点下的数据，默认遍历根节点，返回值内容与list_type 参数有关 */
+      root_district_id?: string
+      /** 遍历类型，不同的类型内容会有差异 */
+      list_type?: 'sub_level' | 'leaf_level'
+      /** 返回指定语言的内容，默认返回英文数据 */
+      locale?: 'zh-CN' | 'en-US'
+    }
+
+    export interface ListResponse {
+      /** 地理库的版本，地理库更新时版本会同步更新，如果应用将地理数据存在本地，需要定时判断版本，在变化以及时更新本地数据 */
+      version?: string
+      has_more?: boolean
+      page_token?: string
+      /** 区域列表 */
+      items?: Lark.District[]
+    }
+
+    export interface SearchRequest {
+      /** 根据ID查询指定区域的信息 */
+      district_ids?: string[]
+      /** 关键字，用于模糊查询符合条件的地址信息 */
+      keyword?: string
+    }
+
+    export interface SearchQuery {
+      /** 语言 */
+      locale?: 'zh-CN' | 'en-US'
+    }
+
+    export interface SearchResponse {
+      /** 区域列表 */
+      items?: Lark.District[]
+    }
+  }
 }
 
 Internal.define({
@@ -998,5 +1049,11 @@ Internal.define({
   },
   '/approval/v4/approvals/{approval_code}/unsubscribe': {
     POST: 'approval.unsubscribe',
+  },
+  '/approval/v4/districts': {
+    GET: 'approval.district.list',
+  },
+  '/approval/v4/districts/search': {
+    POST: 'approval.district.search',
   },
 })

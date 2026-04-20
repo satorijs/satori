@@ -42,6 +42,7 @@ export * from './report'
 export * from './search'
 export * from './security_and_compliance'
 export * from './sheets'
+export * from './spark'
 export * from './speech_to_text'
 export * from './task'
 export * from './tenant'
@@ -949,6 +950,33 @@ export interface AppAbility {
   plus_menu?: PlusMenu
 }
 
+export interface AppAbilityBot {
+  /** 是否开启 */
+  enable: boolean
+  /** 消息卡片的回调地址 */
+  message_card_callback_url?: string
+  /** 国际化内容 */
+  i18ns?: AppAbilityBotI18n[]
+}
+
+export interface AppAbilityBotI18n {
+  /** 语种类型 */
+  i18n_key: 'zh_cn' | 'en_us' | 'ja_jp' | 'zh_hk' | 'zh_tw' | 'id_id' | 'ms_my' | 'de_de' | 'es_es' | 'fr_fr' | 'it_it' | 'pt_br' | 'vi_vn' | 'ru_ru' | 'th_th' | 'ko_kr'
+  /** 如何开始使用描述文案 */
+  get_started_desc: string
+}
+
+export interface AppAbilityWeb {
+  /** 是否开启网页应用能力 */
+  enable: boolean
+  /** PC端链接 */
+  pc_url?: string
+  /** PC端新页面打开方式 */
+  pc_new_page_open_mode?: 'new_tab' | 'browser'
+  /** 移动端链接 */
+  mobile_url?: string
+}
+
 export interface AppCollaborator {
   /** 人员类型 */
   type: 'administrator' | 'developer' | 'operator'
@@ -956,13 +984,85 @@ export interface AppCollaborator {
   user_id: string
 }
 
+export interface AppConfigCallback {
+  /** 回调类型 */
+  callback_type: 'webhook' | 'websocket'
+  /** 如果回调是 webhook，webhook 的请求地址 */
+  request_url?: string
+  /** 添加哪些回调 */
+  add_callbacks?: string[]
+  /** 移除哪些回调 */
+  remove_callbacks?: string[]
+}
+
+export interface AppConfigContactsRange {
+  /** 更新范围方式 */
+  contacts_range_type: 'equal_to_availability' | 'some' | 'all'
+  /** 通讯录可用人员列表 */
+  visible_list?: AppContactsRangeIdList
+}
+
+export interface AppConfigEvent {
+  /** 订阅方式 */
+  subscription_type: 'webhook' | 'websocket'
+  /** 接收事件的服务器地址 */
+  request_url?: string
+  /** 添加事件列表 */
+  add_events?: string[]
+  /** 删除事件列表 */
+  remove_events?: string[]
+}
+
+export interface AppConfigScope {
+  /** 新增权限 */
+  add_scopes?: AppConfigScopeItem[]
+  /** 删除权限 */
+  remove_scopes?: AppConfigScopeItem[]
+}
+
+export interface AppConfigScopeItem {
+  /** 权限名称 */
+  scope_name: string
+  /** 身份类型 */
+  token_type: 'user' | 'tenant'
+}
+
+export interface AppConfigSecurity {
+  /** 新增项 */
+  add?: AppConfigSecurityItem
+  /** 删除列表 */
+  remove?: AppConfigSecurityItem
+  /** 是否允许刷新 user_access_token */
+  allow_refresh_token?: boolean
+}
+
+export interface AppConfigSecurityItem {
+  /** 重定向URL */
+  redirect_urls?: string[]
+  /** IP白名单 IP需要填写调用方出口公网IP地址 */
+  allowed_ips?: string[]
+  /** H5可信域名仅可信域名内的 H5 可以访问 JSAPI，部分需要鉴权的 JSAPI 必填。 */
+  h5_trusted_domains?: string[]
+  /** Web-View 可信域名 */
+  web_view_trusted_domains?: string[]
+  /** 小程序协议名白名单 */
+  allowed_schemas?: string[]
+  /** 服务器可信域名 */
+  allowed_server_domains?: string[]
+}
+
+export interface AppConfigVisibility {
+  /** 是否全员可见,false:否;true:是;不填:继续当前状态不改变.如果可见范围为全员后添加的可用人员则无效,禁用人员仍然有效 */
+  is_visible_to_all: boolean
+  /** 可用人员列表 */
+  visible_list?: AppVisibilityIdList
+}
+
 export interface AppContactsRangeIdList {
   /** 成员id列表 */
   user_ids?: string[]
   /** 部门id列表 */
   department_ids?: string[]
-  /** 用户组列表 */
-  group_ids?: string[]
 }
 
 export interface AppDashboard {
@@ -970,6 +1070,17 @@ export interface AppDashboard {
   block_id: string
   /** 仪表盘名字 */
   name: string
+}
+
+export interface AppEnum {
+  /** 枚举名称 */
+  name: string
+  /** 枚举描述 */
+  description: string
+  /** 枚举值列表 */
+  options: string[]
+  /** 创建时间，毫秒时间戳 */
+  created_at: number
 }
 
 export interface AppFeedNotify {
@@ -1781,6 +1892,27 @@ export interface AppTable {
   name?: string
 }
 
+export interface AppTableColumn {
+  /** 列名 */
+  name: string
+  /** 列描述 */
+  description: string
+  /** 数据库数据类型 */
+  data_type: string
+  /** 是否是主键 */
+  is_primary_key: boolean
+  /** 是否唯一 */
+  is_unique: boolean
+  /** 是否是自增 */
+  is_auto_increment: boolean
+  /** 是否是数组类型 */
+  is_array: boolean
+  /** 是否允许为空 */
+  is_allow_null: boolean
+  /** 默认值 */
+  default_value: string
+}
+
 export interface AppTableCreateHeader {
   /** 字段名 */
   field_name: string
@@ -2035,8 +2167,6 @@ export interface AppVisibilityIdList {
   user_ids?: string[]
   /** 部门id列表(自定义部门id/open_department_id) */
   department_ids?: string[]
-  /** 用户组id */
-  group_ids?: string[]
 }
 
 export interface AppVisibleList {
@@ -3072,6 +3202,15 @@ export interface BasicInfoUpdate {
   hukou_location?: string
 }
 
+export interface BasicUser {
+  /** 用户ID */
+  user_id?: string
+  /** 用户名 */
+  name?: string
+  /** 用户国际化名 */
+  i18n_name?: I18nName
+}
+
 export interface BasicUserInfo {
   /** 用户 ID */
   id?: string
@@ -3253,6 +3392,15 @@ export interface BlockRole {
   block_id: string
   /** Block权限 */
   block_perm: 0 | 1
+}
+
+export interface BlockWorkflow {
+  /** 工作流唯一键 */
+  workflow_id?: string
+  /** 工作流标题 */
+  title?: string
+  /** 工作流状态 */
+  status?: 'Enable' | 'Disable'
 }
 
 export interface Board {
@@ -4169,6 +4317,64 @@ export interface Company {
   registered_office_address_info?: Address
   /** 办公地址详细信息 */
   office_address_info?: Address
+}
+
+export interface CompanyTimeline {
+  /** 公司版本信息 */
+  company_version_data?: CompanyVersionData[]
+  /** 性质 */
+  type?: Enum
+  /** 行业 */
+  industry_list?: Enum[]
+  /** 法定代表人 */
+  legal_representative?: I18n[]
+  /** 邮编 */
+  post_code?: string
+  /** 纳税人识别号 */
+  tax_payer_id?: string
+  /** 是否保密 */
+  confidential?: boolean
+  /** 主体类型 */
+  sub_type_list?: Enum[]
+  /** 是否为分公司 */
+  branch_company?: boolean
+  /** 主要负责人 */
+  primary_manager?: I18n[]
+  /** 默认币种 */
+  currency?: Currency
+  /** 电话 */
+  phone?: PhoneNumberAndAreaCode
+  /** 传真 */
+  fax?: PhoneNumberAndAreaCode
+  /** 完整注册地址 */
+  registered_office_address?: I18n[]
+  /** 完整办公地址 */
+  office_address?: I18n[]
+  /** 注册地址 */
+  registered_office_address_info?: Address
+  /** 办公地址 */
+  office_address_info?: Address
+}
+
+export interface CompanyVersionData {
+  /** 公司 ID */
+  company_id?: string
+  /** 公司版本 ID */
+  company_version_id?: string
+  /** 公司名称 */
+  company_names?: I18n[]
+  /** 上级公司 ID */
+  parent_company_id?: string
+  /** 生效日期 */
+  effective_date?: string
+  /** 失效日期 */
+  expiration_date?: string
+  /** 是否启用 */
+  active?: boolean
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 编码 */
+  code?: string
 }
 
 export type CompareOperator = string
@@ -5177,6 +5383,22 @@ export interface CustomOrg {
   custom_fields?: CustomFieldData[]
 }
 
+export interface CustomOrgList {
+  /** 自定义组织名称 */
+  custom_org_name?: I18nV2
+  /** 自定义组织ID */
+  custom_org_id?: string
+  /** 比例 */
+  rate?: string
+}
+
+export interface CustomOrgWithRate {
+  /** 自定义组织id */
+  id: string
+  /** 比例 */
+  rate?: string
+}
+
 export interface CustomWorkplaceAccessData {
   /** 定制工作台ID */
   custom_workplace_id?: string
@@ -5905,16 +6127,25 @@ export interface DisplayAppV2 {
 }
 
 export interface District {
-  /** 区/县 ID */
-  district_id?: string
+  /** 区域的唯一标识 */
+  id?: string
   /** 名称 */
-  name?: I18n[]
-  /** 所属城市 ID，详细信息可通过[查询城市信息](https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/corehr-v2/basic_info-city/search)接口获得 */
-  city_id?: string
-  /** 行政区划代码 */
-  subregion_code?: string
-  /** 状态 */
-  status?: 1 | 0
+  name?: string
+  /** 层级 */
+  level?: string
+  /** 是否有子区域 */
+  has_sub_district?: boolean
+  /** 父区域列表，顺序由叶子节点到根节点，不包含叶子节点本身，仅遍历方式为leaf_level时返回 */
+  parent_districts?: DistrictBaseInfo[]
+}
+
+export interface DistrictBaseInfo {
+  /** 区域的唯一标识 */
+  id?: string
+  /** 名称 */
+  name?: string
+  /** 层级 */
+  level?: string
 }
 
 export type Divider = unknown
@@ -6241,6 +6472,23 @@ export interface EmergencyContactForUpdate {
 export interface Emoji {
   /** emoji类型 */
   emoji_type: string
+}
+
+export interface EmpCustomOrgList {
+  /** 自定义组织列表 */
+  custom_org_list?: CustomOrgList[]
+  /** 生效时间 */
+  effective_time?: string
+  /** 变动原因 */
+  start_reason?: string
+  /** ID */
+  job_data_custom_org_id?: string
+  /** 版本号 */
+  version_id?: string
+  /** 自定义组织类型 */
+  object_api_name?: string
+  /** 用户id */
+  user_id?: string
 }
 
 export interface Employee {
@@ -7195,6 +7443,13 @@ export interface Event {
   subtype: string
 }
 
+export interface EventAndCallbackEncryptStrategy {
+  /** 加密key, 配置 Encrypt Key 后，开放平台将向请求地址推送加密后的事件 */
+  encryption_key?: string
+  /** 开放平台向应用推送的事件中都带有此 Token，应用可以据此 Token 验证推送的事件是否属于该应用。 */
+  verification_token?: string
+}
+
 export interface EventLocation {
   /** 地点名称 */
   name?: string
@@ -7596,6 +7851,13 @@ export interface FailedReason {
   user_id?: string
 }
 
+export interface FailMsgReactionDetails {
+  /** 消息id */
+  message_id?: string
+  /** 获取表情失败的原因 */
+  fail_reason?: 'invalid' | 'invalid_page_token' | 'no_permission'
+}
+
 export interface Faq {
   /** faq id */
   faq_id?: string
@@ -7666,10 +7928,26 @@ export interface Field {
 }
 
 export interface FieldGroup {
-  /** 可写权限的表单项的 id列表 */
-  writable: string[]
-  /** 可读权限的表单项的 id列表 */
-  readable: string[]
+  /** 字段编组的ID */
+  id?: string
+  /** 字段编组的名称 */
+  name: string
+  /** 字段编组的成员 */
+  children: FieldGroupChild[]
+  /** 字段编组的描述 */
+  description?: string
+}
+
+export interface FieldGroupChild {
+  /** 编组成员类型 */
+  type: FieldGroupChildType
+  /** 编组成员ID */
+  id: string
+}
+
+export const enum FieldGroupChildType {
+  /** 字段 */
+  Field = 'field',
 }
 
 export type FieldName = string
@@ -7851,6 +8129,15 @@ export interface FileCommentReply {
   update_time?: number
   /** 回复的其他内容，图片 Token 等 */
   extra?: ReplyExtra
+}
+
+export interface FileCommentV2BatchQueryReactionData {
+  /** 表情回复的唯一标识，用于区分不同类型的评论表情（如点赞、鼓掌等）。 */
+  reaction_key: string
+  /** 该表情回复的累计使用次数，统计范围为当前评论下所有用户的有效回复记录。 */
+  count: number
+  /** 用于在界面优先展示核心互动用户。用户ID可通过用户信息查询接口获取。 */
+  ahead_users?: string[]
 }
 
 export interface FileConfig {
@@ -8065,6 +8352,13 @@ export interface FoodProduceEntity {
 export interface FoodProduceLicense {
   /** 识别出的实体列表 */
   entities?: FoodProduceEntity[]
+}
+
+export const enum FormDisplayMode {
+  /** 传统布局 */
+  Traditional = 'traditional',
+  /** 一页一题布局 */
+  OneQuestionPerPage = 'one_question_per_page',
 }
 
 export interface Formula {
@@ -8350,6 +8644,13 @@ export interface I18nText {
   i18n_value?: Record<string, string>
 }
 
+export interface I18nV2 {
+  /** zh-CN */
+  zh_cn?: string
+  /** en-US */
+  en_us?: string
+}
+
 export interface IdCard {
   /** 识别的实体列表 */
   entities?: IdEntity[]
@@ -8359,6 +8660,17 @@ export interface IdCard {
   conners?: number[]
   /** 人像四角坐标[x0,y0,x1,y1,x2,y2,x3,y3] */
   face_conners?: number[]
+}
+
+export const enum IdConvertType {
+  /** 妙搭用户 ID 转飞书开放平台 Open ID */
+  ForceUserID2FeishuOpenID = 10,
+  /** 妙搭用户 ID 转飞书开放平台 Union ID */
+  ForceUserID2FeishuUnionID = 11,
+  /** 飞书开放平台 Open ID 转妙搭用户 ID */
+  FeishuOpenID2ForceUserID = 20,
+  /** 飞书开放平台 Union ID 转妙搭用户 ID */
+  FeishuUnionID2ForceUserID = 21,
 }
 
 export interface IdEntity {
@@ -8380,6 +8692,13 @@ export interface IdInfo {
   id?: string
   /** 目标 ID 值 */
   target_id?: string
+}
+
+export interface IdMapItem {
+  /** 源 ID */
+  source_id: string
+  /** 目标 ID */
+  target_id: string
 }
 
 export interface IdNameObject {
@@ -10413,6 +10732,44 @@ export interface LocationState {
   state_name_info?: LocationNameInfo
 }
 
+export interface LocationTimeline {
+  /** 地点版本信息 */
+  location_version_data?: LocationVersionData[]
+  /** 地址信息 */
+  address?: Address[]
+}
+
+export interface LocationVersionData {
+  /** 地点ID */
+  location_id?: string
+  /** 地点版本ID */
+  location_version_id?: string
+  /** 地点名称 */
+  location_names?: I18n[]
+  /** 上级地点ID */
+  parent_location_id?: string
+  /** 生效日期 */
+  effective_date?: string
+  /** 失效时间 */
+  expiration_date?: string
+  /** 是否启用 */
+  active?: boolean
+  /** 描述 */
+  descriptions?: I18n[]
+  /** 编码 */
+  code?: string
+  /** 地点用途 */
+  location_usages?: Enum[]
+  /** 区域设置 */
+  locale?: Enum
+  /** 时区 */
+  time_zone_id?: string
+  /** 默认语言 */
+  display_language_id?: string
+  /** 工时制度 */
+  working_hours_type_id?: string
+}
+
 export type Logic = string
 
 export interface LookupWithAvatar {
@@ -10792,6 +11149,17 @@ export interface MeetingAbility {
   use_pstn?: boolean
 }
 
+export interface MeetingFilter {
+  /** 组织者OpenID */
+  organizer_ids?: string[]
+  /** 参与者OpenID */
+  participant_ids?: string[]
+  /** 会议室ID */
+  open_room_ids?: string[]
+  /** 会议开始时间区间（iso8601格式） */
+  start_time?: TimeRange
+}
+
 export interface MeetingInfo {
   /** 9位会议号 */
   meeting_id?: string
@@ -10846,6 +11214,15 @@ export interface MeetingInviteStatus {
   status?: 1 | 2
 }
 
+export interface MeetingMeta {
+  /** 跳转链接 */
+  app_link?: string
+  /** 图标url */
+  avatar?: string
+  /** 描述，包含会议时间、组织者和会议ID */
+  description?: string
+}
+
 export interface MeetingParticipant {
   /** 用户ID */
   id?: string
@@ -10881,6 +11258,15 @@ export interface MeetingRecording {
   url?: string
   /** 录制总时长（单位msec） */
   duration?: string
+}
+
+export interface MeetingSearchItem {
+  /** 会议ID（视频会议的唯一标识，视频会议开始后才会产生） */
+  id?: string
+  /** 包含基本信息的卡片，用户搜索关键词命中的文本片段，使用<h></h>标签包裹标注 */
+  display_info?: string
+  /** 会议元信息 */
+  meta_data?: MeetingMeta
 }
 
 export interface MeetingSettings {
@@ -11049,6 +11435,13 @@ export interface MessageActionI18nInfo {
 export interface MessageBody {
   /** 消息jsonContent */
   content: string
+}
+
+export interface MessageQuery {
+  /** 消息ID */
+  message_id?: string
+  /** 分页标记，第一次请求不填，表示从头开始遍历；分页查询结果还有更多项时会同时返回新的 page_token，下次遍历可采用该 page_token 获取查询结果。 */
+  page_token?: string
 }
 
 export interface MessageReaction {
@@ -11335,9 +11728,27 @@ export interface Minute {
   url?: string
 }
 
+export interface MinuteChapter {
+  /** 章节标题，用于区分纪要内不同的讨论模块，需简洁明确概括章节核心内容 */
+  title?: string
+  /** 章节对应的讨论内容开始时间戳，单位为毫秒，用于定位会议录像或录音的对应片段。需与stop_ms配合使用，且数值需小于stop_ms。 */
+  start_ms?: string
+  /** 章节对应的讨论内容结束时间戳，单位为毫秒，用于定位会议录像或录音的对应片段。需与start_ms配合使用，且数值需大于start_ms。 */
+  stop_ms?: string
+  /** 章节的核心讨论内容摘要，需准确提炼该章节的决策结果、行动项、待跟进事项等关键信息。支持富文本格式，最大长度限制为10000字符。 */
+  summary_content?: string
+}
+
 export interface Minutes {
   /** 速记语音文本列表 */
   sentences?: Sentence[]
+}
+
+export interface MinuteTodo {
+  /** 待办内容 */
+  content?: string
+  /** 负责人 */
+  assignees?: string[]
 }
 
 export interface Mobile {
@@ -11556,22 +11967,30 @@ export interface NodeCc {
 }
 
 export interface Note {
-  /** ID备注 */
-  id?: string
-  /** 人才ID */
-  talent_id: string
-  /** 投递ID */
-  application_id?: string
-  /** 是否私密 */
-  is_private?: boolean
+  /** 纪要创建者 User ID */
+  creator_id: string
+  /** 纪要创建时间 */
+  create_time: string
+  /** 纪要产物 */
+  artifacts: NoteArtifactInfo[]
+  /** 关联引用 */
+  references: NoteReferenceInfo[]
+}
+
+export interface NoteArtifactInfo {
+  /** 纪要产物类型 */
+  artifact_type: 0 | 1 | 2
   /** 创建时间 */
-  create_time?: number
-  /** 更新时间 */
-  modify_time?: number
-  /** 创建人ID */
-  creator_id?: string
-  /** 内容 */
-  content: string
+  create_time: string
+  /** 产物doc token */
+  doc_token: string
+}
+
+export interface NoteReferenceInfo {
+  /** 纪要关联引用类型 */
+  reference_type: 0 | 1
+  /** 纪要关联引用的doc token */
+  doc_token: string
 }
 
 export interface Notification {
@@ -14958,6 +15377,24 @@ export interface Rating {
   symbol?: string
 }
 
+export interface Reaction {
+  /** 表情ID */
+  reaction_id?: string
+  /** 操作者信息 */
+  operator?: Operator
+  /** 表情添加时间 */
+  action_time?: string
+  /** 表情类型 */
+  emoji_type?: string
+}
+
+export interface ReactionCount {
+  /** 表情类型 */
+  reaction_type?: string
+  /** 表情数量 */
+  count?: string
+}
+
 export interface ReactionList {
   /** 表情类型 */
   type?: string
@@ -17519,6 +17956,24 @@ export interface SubscribeUser {
   user_id: string
 }
 
+export interface SuccessMsgReactionCount {
+  /** 消息ID */
+  message_id?: string
+  /** 消息上不同表情的数量 */
+  reaction_count?: ReactionCount[]
+}
+
+export interface SuccessMsgReactionDetails {
+  /** 消息id */
+  message_id?: string
+  /** 是否还有更多项 */
+  has_more?: boolean
+  /** 分页标记，当 has_more 为 true 时，会同时返回新的 page_token，否则不返回 page_token */
+  page_token?: string
+  /** 表情实体 */
+  message_reaction_items?: Reaction[]
+}
+
 export interface SupportCostCenterItem {
   /** 支持的成本中心id */
   cost_center_id?: string
@@ -18925,10 +19380,10 @@ export interface TimeInfo {
 }
 
 export interface TimeRange {
-  /** 时间范围的起始时间戳 */
-  start?: number
-  /** 时间范围的截止时间戳 */
-  end?: number
+  /** 起始时间（iso8601，精确到秒） */
+  start_time?: string
+  /** 截止时间（iso8601，精确到秒） */
+  end_time?: string
 }
 
 export interface TimeZone {
@@ -19315,6 +19770,11 @@ export interface UpdateTextStyleRequest {
   fields: (1 | 2 | 3 | 4 | 5 | 6 | 7)[]
 }
 
+export interface UpgradedForm {
+  /** 升级后的表单ID */
+  id?: string
+}
+
 export interface UpsertName {
   /** i18n文本 */
   name: I18nText
@@ -19650,6 +20110,19 @@ export interface UserLeave {
   approve_apply_time?: string
   /** 唯一幂等键 */
   idempotent_id?: string
+}
+
+export interface UserMigration {
+  /** 用户 id */
+  user_id?: string
+  /** 目标地理位置区域 */
+  dest_geo?: string
+  /** 最新迁移任务 id */
+  task_id?: string
+  /** 用户迁移状态 */
+  status?: '0' | '1' | '2'
+  /** 用户迁移进度 */
+  progress?: number
 }
 
 export interface UserOpenAppFeedCardDeleter {

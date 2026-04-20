@@ -64,7 +64,7 @@ export namespace Im {
        */
       pushFollowUp(message_id: string, body: PushFollowUpRequest): Promise<void>
       /**
-       * 查询消息已读信息
+       * 消息发送者查询消息已读状态
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/read_users
        */
       readUsers(message_id: string, query?: ReadUsersQuery): Paginated<Lark.ReadUser>
@@ -407,6 +407,11 @@ export namespace Im {
          */
         list(message_id: string, query?: ListQuery): Paginated<Lark.MessageReaction>
         /**
+         * 批量获取消息表情回复
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/batch_query
+         */
+        batchQuery(body: BatchQueryRequest, query?: BatchQueryQuery): Promise<BatchQueryResponse>
+        /**
          * 删除消息表情回复
          * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message-reaction/delete
          */
@@ -437,6 +442,29 @@ export namespace Im {
         reaction_type?: string
         /** 当操作人为用户时返回用户ID的类型 */
         user_id_type?: 'open_id' | 'union_id' | 'user_id'
+      }
+
+      export interface BatchQueryRequest {
+        /** 要查询的消息 */
+        queries: Lark.MessageQuery[]
+        /** 每个消息最多返回多少个表情 */
+        page_size_per_message?: number
+        /** 表情类型 */
+        reaction_type?: string
+      }
+
+      export interface BatchQueryQuery {
+        /** 用户 ID 类型，控制接口返回值中表情添加者的ID */
+        user_id_type?: 'user_id' | 'union_id' | 'open_id'
+      }
+
+      export interface BatchQueryResponse {
+        /** 成功获取到的表情列表 */
+        success_msg_reaction_details?: Lark.SuccessMsgReactionDetails[]
+        /** 成功获取到的表情数量统计 */
+        success_msg_reaction_counts?: Lark.SuccessMsgReactionCount[]
+        /** 未成功获取的消息 */
+        fail_msg_reaction_details?: Lark.FailMsgReactionDetails[]
       }
 
       export interface DeleteResponse {
@@ -1695,6 +1723,9 @@ Internal.define({
   '/im/v1/messages/{message_id}/reactions': {
     POST: 'im.message.reaction.create',
     GET: { name: 'im.message.reaction.list', pagination: { argIndex: 1 } },
+  },
+  '/im/messages/reactions/batch_query': {
+    POST: 'im.message.reaction.batchQuery',
   },
   '/im/v1/messages/{message_id}/reactions/{reaction_id}': {
     DELETE: 'im.message.reaction.delete',

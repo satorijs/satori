@@ -18,6 +18,7 @@ export namespace Bitable {
       dashboard: Dashboard.Methods
       role: Role.Methods
       workflow: Workflow.Methods
+      blockWorkflow: BlockWorkflow.Methods
       /**
        * 创建多维表格
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app/create
@@ -88,6 +89,7 @@ export namespace Bitable {
         view: View.Methods
         record: Record.Methods
         field: Field.Methods
+        fieldGroup: FieldGroup.Methods
         form: Form.Methods
         /**
          * 新增一个数据表
@@ -679,9 +681,34 @@ export namespace Bitable {
         }
       }
 
+      export namespace FieldGroup {
+        export interface Methods {
+          /**
+           * 创建字段编组
+           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-field_group/create
+           */
+          create(app_token: string, table_id: string, body: CreateRequest): Promise<CreateResponse>
+        }
+
+        export interface CreateRequest {
+          /** 要新增字段编组列表 */
+          field_groups: Lark.FieldGroup[]
+        }
+
+        export interface CreateResponse {
+          /** 字段编组的内容 */
+          field_groups?: string
+        }
+      }
+
       export namespace Form {
         export interface Methods {
           field: Field.Methods
+          /**
+           * 升级表单
+           * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form/upgrade
+           */
+          upgrade(app_token: string, table_id: string, form_id: string, body: UpgradeRequest): Promise<UpgradeResponse>
           /**
            * 更新表单元数据
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form/patch
@@ -692,6 +719,22 @@ export namespace Bitable {
            * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-table-form/get
            */
           get(app_token: string, table_id: string, form_id: string): Promise<GetResponse>
+        }
+
+        export interface UpgradeRequest {
+          /** 升级后的表单名称 */
+          form_name: string
+          /**
+           * 表单布局模式。可选值
+           * - traditional：传统布局
+           * - one_question_per_page：一页一题布局:
+           */
+          display_mode: Lark.FormDisplayMode
+        }
+
+        export interface UpgradeResponse {
+          /** 升级后的表单 */
+          form?: Lark.UpgradedForm
         }
 
         export interface PatchRequest {
@@ -943,6 +986,21 @@ export namespace Bitable {
         status: string
       }
     }
+
+    export namespace BlockWorkflow {
+      export interface Methods {
+        /**
+         * 列出工作流
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/bitable-v1/app-block_workflow/list
+         */
+        list(app_token: string): Promise<ListResponse>
+      }
+
+      export interface ListResponse {
+        /** 工作流列表 */
+        workflows?: Lark.BlockWorkflow[]
+      }
+    }
   }
 }
 
@@ -1012,11 +1070,17 @@ Internal.define({
     PUT: 'bitable.app.table.field.update',
     DELETE: 'bitable.app.table.field.delete',
   },
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/field_groups': {
+    POST: 'bitable.app.table.fieldGroup.create',
+  },
   '/bitable/v1/apps/{app_token}/dashboards/{block_id}/copy': {
     POST: 'bitable.app.dashboard.copy',
   },
   '/bitable/v1/apps/{app_token}/dashboards': {
     GET: { name: 'bitable.app.dashboard.list', pagination: { argIndex: 1, itemsKey: 'dashboards' } },
+  },
+  '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}/upgrade': {
+    POST: 'bitable.app.table.form.upgrade',
   },
   '/bitable/v1/apps/{app_token}/tables/{table_id}/forms/{form_id}': {
     PATCH: 'bitable.app.table.form.patch',
@@ -1050,6 +1114,9 @@ Internal.define({
   },
   '/bitable/v1/apps/{app_token}/workflows/{workflow_id}': {
     PUT: 'bitable.app.workflow.update',
+  },
+  '/bitable/v1/apps/{app_token}/block_workflows': {
+    GET: 'bitable.app.blockWorkflow.list',
   },
   '/bitable/v1/apps/{app_token}/roles': {
     POST: 'bitable.app.role.create',

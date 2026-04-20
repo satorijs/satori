@@ -12,6 +12,8 @@ export namespace SecurityAndCompliance {
     deviceRecord: DeviceRecord.Methods
     deviceApplyRecord: DeviceApplyRecord.Methods
     openapiLog: OpenapiLog.Methods
+    multiGeoEntity: MultiGeoEntity.Methods
+    userMigration: UserMigration.Methods
   }
 
   export namespace DeviceRecord {
@@ -312,6 +314,104 @@ export namespace SecurityAndCompliance {
       page_token?: string
     }
   }
+
+  export namespace MultiGeoEntity {
+    export interface Methods {
+      tenant: Tenant.Methods
+    }
+
+    export namespace Tenant {
+      export interface Methods {
+        /**
+         * 获取地理位置列表
+         * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/multi_geo_entity-tenant/get
+         */
+        get(): Promise<GetResponse>
+      }
+
+      export interface GetResponse {
+        /** 多地理位置租户信息 */
+        tenant?: Lark.Tenant
+      }
+    }
+  }
+
+  export namespace UserMigration {
+    export interface Methods {
+      /**
+       * 迁移用户
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/user_migration/create
+       */
+      create(body: CreateRequest, query?: CreateQuery): Promise<CreateResponse>
+      /**
+       * 获取单个用户迁移状态
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/user_migration/get
+       */
+      get(user_id: string, query?: GetQuery): Promise<GetResponse>
+      /**
+       * 批量获取用户迁移状态
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/user_migration/search
+       */
+      search(body: SearchRequest, query?: SearchQuery): Promise<SearchResponse>
+      /**
+       * 取消用户迁移
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/security_and_compliance-v1/user_migration/cancel
+       */
+      cancel(body: CancelRequest, query?: CancelQuery): Promise<void>
+    }
+
+    export interface CreateRequest {
+      /** 迁移用户 id 列表 */
+      user_ids: string[]
+      /** 迁移目标地理位置区域 */
+      dest_geo: string
+    }
+
+    export interface CreateQuery {
+      /** 此次调用中使用的用户 ID 的类型 */
+      user_id_type: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface CreateResponse {
+      /** 用户迁移列表 */
+      user_migrations?: Lark.UserMigration[]
+    }
+
+    export interface GetQuery {
+      /** 用户 id 类型 */
+      user_id_type: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface GetResponse {
+      /** 用户迁移 */
+      user_migration?: Lark.UserMigration
+    }
+
+    export interface SearchRequest {
+      /** 用户 id 列表 */
+      user_ids: string[]
+    }
+
+    export interface SearchQuery {
+      /** 此次调用中使用的用户 ID 的类型 */
+      user_id_type: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface SearchResponse {
+      /** 用户迁移列表 */
+      items?: Lark.UserMigration[]
+    }
+
+    export interface CancelRequest {
+      /** 取消迁移用户 id 列表 */
+      user_ids: string[]
+    }
+
+    export interface CancelQuery {
+      /** 此次调用中使用的用户 ID 的类型 */
+      user_id_type: 'user_id' | 'union_id' | 'open_id'
+    }
+  }
 }
 
 Internal.define({
@@ -332,5 +432,20 @@ Internal.define({
   },
   '/security_and_compliance/v1/openapi_logs/list_data': {
     POST: 'securityAndCompliance.openapiLog.listData',
+  },
+  '/security_and_compliance/v1/multi_geo_entity/tenant': {
+    GET: 'securityAndCompliance.multiGeoEntity.tenant.get',
+  },
+  '/security_and_compliance/v1/user_migrations': {
+    POST: 'securityAndCompliance.userMigration.create',
+  },
+  '/security_and_compliance/v1/user_migrations/{user_id}': {
+    GET: 'securityAndCompliance.userMigration.get',
+  },
+  '/security_and_compliance/v1/user_migrations/search': {
+    POST: 'securityAndCompliance.userMigration.search',
+  },
+  '/security_and_compliance/v1/user_migrations/cancel': {
+    POST: 'securityAndCompliance.userMigration.cancel',
   },
 })

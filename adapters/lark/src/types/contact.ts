@@ -76,6 +76,11 @@ export namespace Contact {
        */
       get(user_id: string, query?: GetQuery): Promise<GetResponse>
       /**
+       * 通过 ID 获取用户姓名
+       * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/basic_batch
+       */
+      basicBatch(body: BasicBatchRequest, query?: BasicBatchQuery): Promise<BasicBatchResponse>
+      /**
        * 批量获取用户信息
        * @see https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/contact-v3/user/batch
        */
@@ -291,6 +296,21 @@ export namespace Contact {
 
     export interface GetResponse {
       user?: Lark.User
+    }
+
+    export interface BasicBatchRequest {
+      /** 用户ID */
+      user_ids: string[]
+    }
+
+    export interface BasicBatchQuery {
+      /** 此次调用中使用的用户ID的类型 */
+      user_id_type?: 'user_id' | 'union_id' | 'open_id'
+    }
+
+    export interface BasicBatchResponse {
+      /** 用户信息 */
+      users?: Lark.BasicUser[]
     }
 
     export interface BatchQuery {
@@ -1472,6 +1492,9 @@ Internal.define({
   },
   '/contact/v3/users/{user_id}/update_user_id': {
     PATCH: 'contact.user.updateUserId',
+  },
+  '/contact/v3/users/basic_batch': {
+    POST: 'contact.user.basicBatch',
   },
   '/contact/v3/users/batch': {
     GET: 'contact.user.batch',
