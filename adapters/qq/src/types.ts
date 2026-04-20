@@ -415,6 +415,39 @@ export namespace Message {
     event_id?: string
     markdown?: Markdown
   }
+  export namespace Stream {
+    export enum InputMode {
+      REPLACE = 'replace',
+    }
+    export enum InputState {
+      NOT_STREAM = 0,
+      GENERATING = 1,
+      DONE = 10,
+    }
+    export enum ContentType {
+      MARKDOWN = 'markdown',
+    }
+    export interface Request {
+      /** 输入模式 */
+      input_mode?: InputMode
+      /** 输入状态 */
+      input_state: InputState
+      /** 内容类型 */
+      content_type: ContentType
+      /** markdown 内容 */
+      content_raw: string
+      /** 事件 ID */
+      event_id: string
+      /** 原始消息 ID */
+      msg_id: string
+      /** 流式消息 ID，首次发送后返回，后续分片需携带 */
+      stream_msg_id?: string
+      /** 递增序号 */
+      msg_seq: number
+      /** 同一条流式会话内的发送索引，从 0 开始，每次发送前递增；新流式会话重新从 0 开始 */
+      index: number
+    }
+  }
   export interface Request {
     /** 文本内容 */
     content?: string
@@ -872,12 +905,10 @@ export interface APIPermissionDemand {
 export interface Options {
   id: string
   secret: string
-  token: string
   type: 'public' | 'private'
   /** 是否开启沙箱模式 */
   sandbox?: boolean
   endpoint?: string
-  authType?: 'bot' | 'bearer'
   /** 重连次数 */
   retryTimes?: number
   /** 重连时间间隔，单位 ms */
@@ -1228,11 +1259,16 @@ export interface UserMessage {
   id: string
   author: {
     id: string
+    username?: string
   }
   content: string
   timestamp: string
   group_id: string
   attachments?: Attachment[] // not listed in document?
+  message_scene?: {
+    source: string
+    ext?: string[]
+  }
 }
 
 export enum ChatType {
