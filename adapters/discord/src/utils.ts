@@ -199,7 +199,6 @@ export async function decodeMessage(
 export function setupMessageGuildId(session: Session, guildId?: string) {
   session.guildId = guildId
   session.isDirect = !guildId
-  session.subtype = guildId ? 'group' : 'private'
 }
 
 type ReactionEvent = Partial<
@@ -214,7 +213,6 @@ function setupReaction(session: Session, data: ReactionEvent) {
   session.guildId = data.guild_id
   session.channelId = data.channel_id
   session.isDirect = !data.guild_id
-  session.subtype = data.guild_id ? 'group' : 'private'
   if (!data.emoji) return
   const { id, name } = data.emoji
   session.content = id ? `${name}:${id}` : name
@@ -256,15 +254,15 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE') {
     session.type = 'reaction-deleted'
-    session.subtype = 'one'
+    session['subtype'] = 'one'
     setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE_ALL') {
     session.type = 'reaction-deleted'
-    session.subtype = 'all'
+    session['subtype'] = 'all'
     setupReaction(session, input.d)
   } else if (input.t === 'MESSAGE_REACTION_REMOVE_EMOJI') {
     session.type = 'reaction-deleted'
-    session.subtype = 'emoji'
+    session['subtype'] = 'emoji'
     setupReaction(session, input.d)
   } else if (input.t === 'GUILD_ROLE_CREATE') {
     session.type = 'guild-role-added'
@@ -289,7 +287,6 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     })
     session.type = 'interaction/command'
     session.isDirect = !input.d.guild_id
-    session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
     session.userId = session.isDirect ? input.d.user!.id : input.d.member!.user!.id
@@ -306,7 +303,6 @@ export async function adaptSession(bot: DiscordBot, input: Discord.Gateway.Paylo
     })
     session.type = 'interaction/command'
     session.isDirect = !input.d.guild_id
-    session.subtype = input.d.guild_id ? 'group' : 'private'
     session.channelId = input.d.channel_id
     session.guildId = input.d.guild_id
     session.userId = session.isDirect ? input.d.user!.id : input.d.member!.user!.id

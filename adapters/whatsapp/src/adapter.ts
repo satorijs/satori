@@ -64,26 +64,6 @@ class HttpServer {
       }
       res.status = 403
     })
-
-    ctx.server.get('/whatsapp/assets/:self_id/:media_id', async (req, res) => {
-      const mediaId = req.params.media_id
-      const selfId = req.params.self_id
-      const bot = this.getBot(selfId)
-      if (!bot) {
-        res.status = 404
-        return
-      }
-
-      const fetched = await bot.internal.getMedia(mediaId)
-      this.ctx.logger.debug(fetched.url)
-      const resp = await bot.ctx.http(fetched.url, {
-        method: 'GET',
-      })
-      res.headers.set('content-type', resp.headers.get('content-type')!)
-      res.headers.set('cache-control', resp.headers.get('cache-control')!)
-      res.body = resp.body
-      res.status = 200
-    })
   }
 
   getBot(selfId: string) {
@@ -130,6 +110,17 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
         id: item.id,
         name: item.display_phone_number,
       }
+      bot.defineInternalRoute('/assets/:media_id', async ({ params }) => {
+        const fetched = await bot.internal.getMedia(params.media_id)
+        this.ctx.logger.debug(fetched.url)
+        const resp = await bot.ctx.http(fetched.url, { method: 'GET' })
+        return new Response(resp.body, {
+          headers: {
+            'content-type': resp.headers.get('content-type')!,
+            'cache-control': resp.headers.get('cache-control')!,
+          },
+        })
+      })
       this.bots.push(bot)
       bot.online()
     }

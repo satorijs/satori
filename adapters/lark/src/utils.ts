@@ -252,9 +252,7 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
     case 'im.message.receive_v1':
       session.event.referrer.event.message = pick(body.event.message, ['message_id', 'thread_id'])
       session.type = 'message'
-      session.subtype = body.event.message.chat_type
-      if (session.subtype === 'p2p') session.subtype = 'private'
-      session.isDirect = session.subtype === 'private'
+      session.isDirect = body.event.message.chat_type === 'p2p'
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
       break

@@ -23,6 +23,19 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
     this.http = ctx.http
     // this.internal = new Internal(this.http, this)
     ctx.plugin(HttpServer, this)
+
+    this.defineInternalRoute('/assets/:media_id', async ({ params }) => {
+      const resp = await this.http('/cgi-bin/media/get', {
+        method: 'GET',
+        params: { access_token: this.token, media_id: params.media_id },
+      })
+      return new Response(resp.body, {
+        headers: {
+          'content-type': resp.headers.get('content-type')!,
+          'cache-control': resp.headers.get('cache-control')!,
+        },
+      })
+    })
   }
 
   // @ts-ignore
@@ -87,7 +100,7 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   }
 
   $toMediaUrl(mediaId: string) {
-    return `${this.ctx.server.config.selfUrl}/wechat-official/assets/${this.selfId}/${mediaId}`
+    return this.getInternalUrl('/assets/' + mediaId)
   }
 }
 

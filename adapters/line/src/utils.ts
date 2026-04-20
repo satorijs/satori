@@ -45,20 +45,20 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
     } while (nowPos !== finalLen)
   } else if (message.type === 'image') {
     if (message.contentProvider.type === 'line') {
-      return [image(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [image(bot.getInternalUrl(`/assets/${message.id}`))]
     } else {
       return [image(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'video') {
     if (message.contentProvider.type === 'line') {
-      return [video(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [video(bot.getInternalUrl(`/assets/${message.id}`))]
     } else {
       return [video(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'sticker') {
     return [h('face', { type: 'sticker', id: `s:${message.packageId}:${message.stickerId}`, platform: bot.platform })]
   } else if (message.type === 'file') {
-    return [file(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+    return [file(bot.getInternalUrl(`/assets/${message.id}`))]
   }
   return result
 }

@@ -254,7 +254,6 @@ export async function adaptSession(bot: KookBot, input: any) {
       case 'updated_channel':
       case 'deleted_channel':
         session.type = 'channel-deleted'
-        session.subtype = 'group'
         session.channelId = body.id
         break
       case 'pinned_message':

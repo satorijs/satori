@@ -124,28 +124,6 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
       }
     })
 
-    bot.ctx.server.get('/wechat-official/assets/:self_id/:media_id', async (req, res) => {
-      const mediaId = req.params.media_id
-      const selfId = req.params.self_id
-      const localBot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!localBot) {
-        res.status = 404
-        return
-      }
-      const resp = await localBot.http(`/cgi-bin/media/get`, {
-        method: 'GET',
-        params: {
-          access_token: localBot.token,
-          media_id: mediaId,
-        },
-      })
-      res.headers.set('content-type', resp.headers.get('content-type')!)
-      res.headers.set('date', resp.headers.get('date')!)
-      res.headers.set('cache-control', resp.headers.get('cache-control')!)
-      res.body = resp.body
-      res.status = 200
-    })
-
     bot.online()
   }
 }

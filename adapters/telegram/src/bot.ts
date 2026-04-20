@@ -1,4 +1,4 @@
-import { Binary, Bot, Context, Dict, Inject, Time, Universal } from '@satorijs/core'
+import { Bot, Context, Dict, Inject, Time, Universal } from '@satorijs/core'
 import { Fragment, normalize } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
@@ -9,7 +9,6 @@ import { decodeGuildMember, decodeUser, downloadFile } from './utils'
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
-import { fileTypeFromBuffer } from 'file-type'
 import z from 'schemastery'
 
 export class SenderError extends Error {
@@ -39,7 +38,6 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   file: HTTP
   internal: Telegram.Internal
   local?: boolean
-  server?: string
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'telegram')
@@ -49,7 +47,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       baseUrl: `https://api.telegram.org/bot${config.token}`,
     })
     this.file = this.ctx.http.extend({
-      baseUrl: `${config.files.endpoint || 'https://api.telegram.org'}/file/bot${config.token}`,
+      baseUrl: `${config.files.baseUrl || 'https://api.telegram.org'}/file/bot${config.token}`,
     })
     this.internal = new Telegram.Internal(this)
     if (config.protocol === 'server') {
@@ -57,16 +55,10 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     } else if (config.protocol === 'polling') {
       ctx.plugin(HttpPolling, this)
     }
-    const selfUrl: string = config['selfUrl'] || ctx.get('server')?.config.selfUrl
-    if (config.files.server ?? selfUrl) {
-      const route = `/telegram/${this.selfId}`
-      this.server = selfUrl + route
-      ctx.get('server').get(route + '/:file+', async ctx => {
-        const { data, type } = await this.$getFile(ctx.params.file)
-        ctx.set('content-type', type)
-        ctx.body = Buffer.from(data)
-      })
-    }
+    this.defineInternalRoute('/files/:file+', async ({ params }) => {
+      const { data, type } = await this.$getFile(params.file)
+      return new Response(data, { headers: { 'content-type': type } })
+    })
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {
@@ -165,15 +157,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   }
 
   async $getFileFromPath(filePath: string, extra?: Record<string, any>) {
-    if (this.server) {
-      return { ...extra, src: `${this.server}/${filePath}` }
-    }
-    let { type, data } = await this.$getFile(filePath)
-    if (type === 'application/octet-stream') {
-      type = (await fileTypeFromBuffer(data))?.mime
-    }
-    const base64 = `data:${type};base64,` + Binary.toBase64(data)
-    return { ...extra, src: base64 }
+    return { ...extra, src: this.getInternalUrl(`/files/${filePath}`) }
   }
 
   private async setAvatarUrl(user: Universal.User) {
@@ -181,12 +165,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (!avatar) return
     const { file_id } = avatar[avatar.length - 1]
     const file = await this.internal.getFile({ file_id })
-    if (this.server) {
-      user.avatar = `${this.server}/${file.file_path}`
-    } else {
-      const { baseUrl } = this.file.config
-      user.avatar = `${baseUrl}/${file.file_path}`
-    }
+    user.avatar = this.getInternalUrl(`/files/${file.file_path}`)
   }
 
   async getUser(userId: string, guildId?: string) {
@@ -252,9 +231,8 @@ export namespace TelegramBot {
 
   export namespace Config {
     export interface Files {
-      endpoint?: string
+      baseUrl?: string
       local?: boolean
-      server?: boolean
     }
   }
 
@@ -274,9 +252,8 @@ export namespace TelegramBot {
     }).description('功能设置'),
     z.object({
       files: z.object({
-        endpoint: z.string().description('文件请求的终结点。'),
+        baseUrl: z.string().role('url').description('文件请求的终结点。'),
         local: z.boolean().description('是否启用 [Telegram Bot API](https://github.com/tdlib/telegram-bot-api) 本地模式。'),
-        server: z.boolean().description('是否启用文件代理。若开启将会使用 `selfUrl` 进行反代，否则会下载所有资源文件 (包括图片、视频等)。当配置了 `selfUrl` 时将默认开启。'),
       }),
     }).hidden(process.env.KOISHI_ENV === 'browser').description('文件设置'),
   ] as const)

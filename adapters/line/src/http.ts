@@ -34,22 +34,6 @@ export class HttpServer extends Adapter<LineBot> {
       res.status = 200
       res.body = 'ok'
     })
-    bot.ctx.server.get('/line/assets/:self_id/:message_id', async (req, res) => {
-      const messageId = req.params.message_id
-      const selfId = req.params.self_id
-      const bot = this.bots.find((bot) => bot.selfId === selfId)
-      if (!bot) {
-        res.status = 404
-        return
-      }
-      const resp = await bot.contentHttp(`/v2/bot/message/${messageId}/content`, {
-        method: 'GET',
-      })
-      res.headers.set('content-type', resp.headers.get('content-type')!)
-      res.headers.set('cache-control', resp.headers.get('cache-control')!)
-      res.body = resp.body
-      res.status = 200
-    })
     await bot.getLogin()
     await bot.internal.setWebhookEndpoint({
       endpoint: bot.ctx.server.config.selfUrl + '/line',

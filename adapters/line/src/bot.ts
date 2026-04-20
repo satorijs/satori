@@ -38,6 +38,16 @@ export class LineBot extends Bot<LineBot.Config> {
     this.internal = new Internal(this.http)
 
     ctx.plugin(HttpServer, this)
+
+    this.defineInternalRoute('/assets/:message_id', async ({ params }) => {
+      const resp = await this.contentHttp(`/v2/bot/message/${params.message_id}/content`, { method: 'GET' })
+      return new Response(resp.body, {
+        headers: {
+          'content-type': resp.headers.get('content-type')!,
+          'cache-control': resp.headers.get('cache-control')!,
+        },
+      })
+    })
   }
 
   // https://developers.line.biz/en/reference/messaging-api/#get-profile

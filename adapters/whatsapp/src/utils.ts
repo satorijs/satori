@@ -58,14 +58,14 @@ export async function decodeSession(bot: WhatsAppBot, entry: Entry) {
         const resource = message[message.type]
         if (resource.caption) elements.push(text(message[message.type].caption))
         const ctor = ({ video, audio, image, file } as Record<string, typeof image>)[type]
-        elements.push(ctor(`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${resource.id}`))
+        elements.push(ctor(bot.getInternalUrl(`/assets/${resource.id}`)))
         session.elements = elements
       } else if (message.type === 'sticker') {
         session.elements = [h('face', {
           id: /* (message.sticker.animated ? 'a:' : '') + */message.sticker.id,
           platform: 'whatsapp',
         }, [
-          image(`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
+          image(bot.getInternalUrl(`/assets/${message.sticker.id}`)),
         ])]
       } else if (message.type === 'location') {
         session.elements = [h('whatsapp:location', {

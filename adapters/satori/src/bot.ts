@@ -1,6 +1,5 @@
 import { Bot, camelCase, Context, Inject, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
 import { SatoriAdapter } from './ws'
-import type { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 
 function createInternal(bot: SatoriBot, prefix = '') {
