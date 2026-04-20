@@ -1,6 +1,8 @@
 import { Context, Element, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
 import { MailBot } from './bot'
 import { Attachment } from './mail'
+import { downloadFile } from './utils'
 
 const letters = 'abcdefghijklmnopqrstuvwxyz'
 
@@ -59,7 +61,7 @@ export class MailMessageEncoder extends MessageEncoder<MailBot> {
       let url: string = attrs.src || attrs.url
       if (!url.match(/^https?:/)) {
         const cid = randomId()
-        const { filename, type, data } = await this.bot.ctx.http.file(url)
+        const { filename, type, data } = await downloadFile(this.bot.ctx.http, url)
         this.attachments.push({
           cid,
           filename,

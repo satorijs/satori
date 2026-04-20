@@ -1,4 +1,6 @@
-import { Context, Dict, Element, h, MessageEncoder } from '@satorijs/core'
+import { Context, Dict, Element, MessageEncoder } from '@satorijs/core'
+import { escape } from '@satorijs/element'
+import {} from '@cordisjs/plugin-http'
 import { TelegramBot } from './bot'
 import * as Telegram from './utils'
 
@@ -7,7 +9,7 @@ type RenderMode = 'default' | 'figure'
 const supportedElements = ['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'del', 'a']
 
 export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
-  private asset: h[] = []
+  private asset: Element[] = []
   private payload: Dict
   private mode: RenderMode = 'default'
   private rows: Telegram.InlineKeyboardButton[][] = []
@@ -52,7 +54,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
 
         let i = 0
         for (const element of this.asset) {
-          const { filename, data, type: mime } = await this.bot.ctx.http.file(element.attrs.src || element.attrs.url, element.attrs)
+          const { filename, data, type: mime } = await Telegram.downloadFile(this.bot.ctx.http, element.attrs.src || element.attrs.url)
           files.push({
             filename: (i++) + filename,
             data,
@@ -206,10 +208,10 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
     if (this.rows.length && this.rows[this.rows.length - 1].length === 0) this.rows.pop()
   }
 
-  async visit(element: h) {
+  async visit(element: Element) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.payload.caption += h.escape(attrs.content)
+      this.payload.caption += escape(attrs.content)
     } else if (type === 'br') {
       this.payload.caption += '\n'
     } else if (type === 'p') {
@@ -223,7 +225,7 @@ export class TelegramMessageEncoder extends MessageEncoder<TelegramBot> {
       await this.render(children)
       this.payload.caption += '</tg-spoiler>'
     } else if (type === 'code') {
-      this.payload.caption += `<code>${attrs.content ? h.escape(attrs.content) : children.toString()}</code>`
+      this.payload.caption += `<code>${attrs.content ? escape(attrs.content) : children.toString()}</code>`
     } else if (type === 'code-block') {
       const { lang } = attrs
       this.payload.caption += `<pre><code${lang ? ` class="language-${lang}"` : ''}>${children.toString()}</code></pre>`

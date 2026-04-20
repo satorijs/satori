@@ -1,11 +1,16 @@
-import { Bot, Context, HTTP } from '@satorijs/core'
+import { Bot, Context, Inject } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { HttpServer } from './http'
 import { WechatOfficialMessageEncoder } from './message'
 // import { Internal } from './types/internal'
 import z from 'schemastery'
 
+@Inject('http', true, { baseUrl: 'https://api.weixin.qq.com/' })
+@Inject('logger', true, { name: 'wechat-official' })
 export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
-  static inject = ['server', 'http']
+  static inject = ['server']
   static MessageEncoder = WechatOfficialMessageEncoder
 
   http: HTTP
@@ -15,7 +20,7 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   constructor(ctx: Context, config: WechatOfficialBot.Config) {
     super(ctx, config, 'wechat-official')
     this.selfId = config.account
-    this.http = ctx.http.extend(config)
+    this.http = ctx.http
     // this.internal = new Internal(this.http, this)
     ctx.plugin(HttpServer, this)
   }
@@ -41,11 +46,11 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
       },
     })
     if (errcode > 0) {
-      this.logger.error(errmsg)
+      this.ctx.logger.error(errmsg)
       return
     }
     this.token = access_token
-    this.logger.debug('token %o, expires in %d', access_token, expires_in)
+    this.ctx.logger.debug('token %o, expires in %d', access_token, expires_in)
     this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (expires_in - 10) * 1000)
     return access_token
   }
@@ -87,7 +92,7 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
 }
 
 export namespace WechatOfficialBot {
-  export interface Config extends HTTP.Config {
+  export interface Config {
     appid: string
     secret: string
     token: string
@@ -96,15 +101,12 @@ export namespace WechatOfficialBot {
     account: string
   }
 
-  export const Config: z<Config> = z.intersect([
-    z.object({
-      account: z.string().required(),
-      appid: z.string().description('AppID').required(),
-      secret: z.string().role('secret').description('AppSecret').required(),
-      token: z.string().role('secret').description('Webhook Token').required(),
-      aesKey: z.string().role('secret').description('EncodingAESKey'),
-      customerService: z.boolean().default(false).description('启用客服消息回复'),
-    }),
-    HTTP.createConfig('https://api.weixin.qq.com/'),
-  ])
+  export const Config: z<Config> = z.object({
+    account: z.string().required(),
+    appid: z.string().description('AppID').required(),
+    secret: z.string().role('secret').description('AppSecret').required(),
+    token: z.string().role('secret').description('Webhook Token').required(),
+    aesKey: z.string().role('secret').description('EncodingAESKey'),
+    customerService: z.boolean().default(false).description('启用客服消息回复'),
+  })
 }

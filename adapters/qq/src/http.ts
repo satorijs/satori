@@ -4,6 +4,8 @@ import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession } from './utils'
 import { } from '@cordisjs/plugin-server'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import z from 'schemastery'
 
 export class HttpServer extends Adapter<QQBot> {
@@ -69,9 +71,10 @@ export class HttpServer extends Adapter<QQBot> {
       bot.online()
     } catch (e) {
       if (bot.http.isError(e) && e.response) {
-        bot.logger.warn(`GET /users/@me response: %o`, e.response.data)
+        const body = await e.response.json().catch(() => null)
+        bot.ctx.logger.warn(`GET /users/@me response: %o`, body)
       } else {
-        bot.logger.warn(e)
+        bot.ctx.logger.warn(e)
       }
       bot.offline()
     }

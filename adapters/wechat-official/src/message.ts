@@ -1,7 +1,10 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'
 import { SendMessage } from './types'
+import { downloadFile } from './utils'
 
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialBot> {
@@ -21,11 +24,11 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
   async sendByHttpResponse(payload: Partial<SendMessage>) {
     if (payload.MsgType === 'text' && !payload.Content.length) return
     if (this.sent) {
-      this.bot.logger.error('flushed twice')
+      this.bot.ctx.logger.error('flushed twice')
       return
     }
     if (new Date().valueOf() - this.options.session.timestamp > 5000) {
-      this.bot.logger.error('timeout %c', this.options.session.timestamp)
+      this.bot.ctx.logger.error('timeout %c', this.options.session.timestamp)
       return
     }
     payload = {
@@ -109,7 +112,7 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     const uploadType = element.type === 'audio' ? 'voice' : element.type
     const form = new FormData()
 
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const value = new Blob([data], { type })
     form.append('media', value, attrs.file || filename)
 

@@ -1,8 +1,22 @@
 import { Dict, h, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 
 export * from './types'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export const decodeUser = (data: Telegram.User): Universal.User => ({
   id: data.id.toString(),
@@ -22,7 +36,7 @@ const mediaGroupMap = new Map<string, [Date, {
 }[]]>()
 
 export async function handleUpdate(update: Telegram.Update, bot: TelegramBot) {
-  bot.logger.debug('receive %s', JSON.stringify(update))
+  bot.ctx.logger.debug('receive %s', JSON.stringify(update))
   // Internal event: get update type from field name.
   const subtype = Object.keys(update).filter(v => v !== 'update_id')[0]
   if (subtype) {
@@ -258,7 +272,7 @@ export async function decodeMessage(
         setName: data.sticker.set_name,
       })))
     } catch (e) {
-      bot.logger.warn('get file error', e)
+      bot.ctx.logger.warn('get file error', e)
       segments.push(h('text', { content: `[${data.sticker.set_name || 'sticker'} ${data.sticker.emoji || ''}]` }))
     }
   } else if (data.voice) {
@@ -275,7 +289,7 @@ export async function decodeMessage(
 
   message.elements = segments
   message.content = segments.join('')
-  message.id = message.messageId = data.message_id.toString()
+  message.id = data.message_id.toString()
 
   if (!payload) return
   payload.timestamp = data.date * 1000

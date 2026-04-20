@@ -1,8 +1,22 @@
-import { Context, h, isNullable, Session, Universal } from '@satorijs/core'
+import { Context, isNullable, Session, Universal } from '@satorijs/core'
+import h, { Element, parse, sharp, text } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import * as Kook from './types'
 import { KookBot } from './bot'
 
 export * from './types'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export const adaptGroup = (data: Kook.Guild): Universal.Guild => ({
   id: data.id,
@@ -23,7 +37,6 @@ export const adaptChannel = (data: Kook.Channel): Universal.Channel => ({
 export const adaptUser = (user: Kook.User): Universal.User => ({
   id: user.id,
   name: user.username,
-  userId: user.id,
   avatar: user.avatar,
   username: user.username,
   discriminator: user.identify_num,
@@ -72,8 +85,8 @@ function adaptMessageMeta(
       .replace(/@全体成员/, () => h('at', { type: 'all' }).toString())
       .replace(/@在线成员/, () => h('at', { type: 'here' }).toString())
       .replace(/@role:(\d+);/, (_, role) => h('at', { role }).toString())
-      .replace(/#channel:(\d+);/, (_, id) => h.sharp(id).toString())
-    message.elements = h.parse(message.content)
+      .replace(/#channel:(\d+);/, (_, id) => sharp(id).toString())
+    message.elements = parse(message.content)
   } else if (base.type === Kook.Type.image) {
     const element = h('img', { src: base.content, file: data.attachments?.name })
     message.elements = [element]
@@ -86,12 +99,12 @@ function adaptMessageMeta(
     let content = base.content
     let buffer = ''
     let cap: RegExpExecArray
-    const elements: h[] = []
+    const elements: Element[] = []
     const flushText = () => {
       if (!buffer) return
       // https://github.com/koishijs/koishi/issues/1050
       // https://github.com/koishijs/koishi/issues/1227
-      elements.push(h.text(buffer.replace(/\\(.)/g, (_, char) => char)))
+      elements.push(text(buffer.replace(/\\(.)/g, (_, char) => char)))
       buffer = ''
     }
     while (content) {
@@ -109,7 +122,7 @@ function adaptMessageMeta(
             elements.push(h('at', { id: cap[3], name }))
           }
         } else if (cap[2] === 'chn') {
-          elements.push(h.sharp(cap[3]))
+          elements.push(sharp(cap[3]))
         } else if (cap[2] === 'rol') {
           const name = data.kmarkdown.mention_role_part.find(mention => mention.role_id + '' === cap[3])?.name
           elements.push(h('at', { role: cap[3], name }))
@@ -132,7 +145,7 @@ function adaptMessageMeta(
 
 export function adaptMessage(data: Kook.Message, message: Universal.Message = {}, payload: Universal.MessageLike = message) {
   adaptMessageMeta(data, data, message, payload)
-  message.id = message.messageId = data.id
+  message.id = data.id
   return message
 }
 
@@ -143,11 +156,11 @@ function adaptMessageSession(
   payload: Universal.MessageLike = message,
 ) {
   adaptMessageMeta(data, meta, message)
-  message.id = message.messageId = data.msg_id
+  message.id = data.msg_id
   message.timestamp = data.msg_timestamp
   if (meta.quote) {
     message.quote = adaptMessageMeta(meta.quote, meta.quote)
-    message.quote.messageId = message.quote.id = meta.quote.rong_id
+    message.quote.id = meta.quote.rong_id
   }
   return message
 }

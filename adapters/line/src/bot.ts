@@ -1,11 +1,16 @@
-import { Bot, Context, HTTP } from '@satorijs/core'
+import { Bot, Context, Inject } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { HttpServer } from './http'
 import { Internal } from './types'
 import { LineMessageEncoder } from './message'
 import z from 'schemastery'
 
+@Inject('http')
+@Inject('logger', true, { name: 'line' })
 export class LineBot extends Bot<LineBot.Config> {
-  static inject = ['server', 'http']
+  static inject = ['server']
   static MessageEncoder = LineMessageEncoder
 
   public http: HTTP
@@ -15,17 +20,17 @@ export class LineBot extends Bot<LineBot.Config> {
   constructor(ctx: Context, config: LineBot.Config) {
     super(ctx, config, 'line')
     if (!ctx.server.config.selfUrl) {
-      this.logger.warn('selfUrl is not set, some features may not work')
+      this.ctx.logger.warn('selfUrl is not set, some features may not work')
     }
 
     this.http = ctx.http.extend({
-      ...config.api,
+      baseUrl: 'https://api.line.me/',
       headers: {
         Authorization: `Bearer ${config.token}`,
       },
     })
     this.contentHttp = ctx.http.extend({
-      ...config.content,
+      baseUrl: 'https://api-data.line.me/',
       headers: {
         Authorization: `Bearer ${config.token}`,
       },
@@ -73,8 +78,7 @@ export class LineBot extends Bot<LineBot.Config> {
         name: res.displayName,
         avatar: res.pictureUrl,
       },
-      userId: res.userId,
-      nickname: res.displayName,
+      nick: res.displayName,
       avatar: res.pictureUrl,
     }
   }
@@ -84,20 +88,10 @@ export namespace LineBot {
   export interface Config {
     token: string
     secret: string
-    api: HTTP.Config
-    content: HTTP.Config
   }
 
-  export const Config: z<Config> = z.intersect([
-    z.object({
-      token: z.string().required().description('机器人令牌。'),
-      secret: z.string().required().description('机器人密钥。'),
-    }),
-    z.object({
-      api: HTTP.createConfig('https://api.line.me/'),
-    }),
-    z.object({
-      content: HTTP.createConfig('https://api-data.line.me/'),
-    }),
-  ])
+  export const Config: z<Config> = z.object({
+    token: z.string().required().description('机器人令牌。'),
+    secret: z.string().required().description('机器人密钥。'),
+  })
 }

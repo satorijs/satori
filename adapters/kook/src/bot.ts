@@ -1,4 +1,7 @@
-import { Bot, Context, Fragment, h, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { Fragment, normalize } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { adaptChannel, adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
 import { WsClient } from './ws'
@@ -6,9 +9,10 @@ import { HttpServer } from './http'
 import { isDirectChannel, KookMessageEncoder } from './message'
 import z from 'schemastery'
 
+@Inject('http', true, { baseUrl: 'https://www.kookapp.cn/api/v3' })
+@Inject('logger', true, { name: 'kook' })
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   static MessageEncoder = KookMessageEncoder
-  static inject = ['http']
 
   http: HTTP
   internal: Kook.Internal
@@ -19,7 +23,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
       headers: {
         'Authorization': `Bot ${config.token}`,
       },
-    }).extend(config)
+    })
     ctx.satori.proxyUrls.add('https://www.kookapp.cn/')
     this.internal = new Kook.Internal(this.http)
 
@@ -30,11 +34,12 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     }
   }
 
-  async request<T = any>(method: HTTP.Method, path: string, data = {}, headers: any = {}): Promise<T> {
+  async request<T = any>(method: string, path: string, data = {}, headers: any = {}): Promise<T> {
     if (method === 'GET') {
-      return (await this.http.get(path, { params: data, headers })).data
+      return (await this.http.get(path, { params: data, headers }))?.data
     } else {
-      return (await this.http(method, path, { data, headers })).data?.data
+      const response = await this.http(path, { method, data, headers })
+      return (await response.json())?.data
     }
   }
 
@@ -47,7 +52,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   }
 
   async editMessage(channelId: string, msg_id: string, content: Fragment) {
-    content = h.normalize(content).join('')
+    content = normalize(content).join('')
     if (isDirectChannel(channelId)) {
       await this.request('POST', '/user-chat/update-msg', { msg_id, content })
     } else {
@@ -205,6 +210,5 @@ export namespace KookBot {
       HttpServer.Options,
     ]),
     KookMessageEncoder.Config,
-    HTTP.createConfig('https://www.kookapp.cn/api/v3'),
   ] as const)
 }

@@ -1,4 +1,6 @@
-import { Bot, Context, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
@@ -13,10 +15,11 @@ interface GetAppAccessTokenResult {
   expires_in: number
 }
 
+@Inject('http')
+@Inject('logger', true, { name: 'qq' })
 export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
   static MessageEncoder = QQMessageEncoder
   static inject = {
-    required: ['http'],
     optional: ['server'],
   }
 
@@ -30,13 +33,13 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'qq')
-    let endpoint = config.endpoint
+    let baseUrl = config.baseUrl
     if (config.sandbox) {
-      endpoint = endpoint.replace(/^(https?:\/\/)/, '$1sandbox.')
+      baseUrl = baseUrl.replace(/^(https?:\/\/)/, '$1sandbox.')
     }
     // 如果是 bot 类型, 使用固定 token
     this.http = this.ctx.http.extend({
-      endpoint,
+      baseUrl,
       headers: {
         'Authorization': this.config.authType === 'bot' ? `Bot ${this.config.id}.${this.config.token}` : '',
         'X-Union-Appid': this.config.id,
@@ -71,27 +74,28 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
 
   async _ensureAccessToken() {
     try {
-      const result = await this.ctx.http<GetAppAccessTokenResult>('https://bots.qq.com/app/getAppAccessToken', {
+      const response = await this.ctx.http('https://bots.qq.com/app/getAppAccessToken', {
         method: 'POST',
         data: {
           appId: this.config.id,
           clientSecret: this.config.secret,
         },
       })
-      if (!result.data.access_token) {
-        this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, result.data, result.headers.get('x-tps-trace-id'))
+      const data: GetAppAccessTokenResult = await response.json()
+      if (!data.access_token) {
+        this.ctx.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, data, response.headers.get('x-tps-trace-id'))
         throw new Error('failed to refresh access token')
       }
-      this._token = result.data.access_token
+      this._token = data.access_token
       this.http.config.headers.Authorization = `QQBot ${this._token}`
       // 在上一个 access_token 接近过期的 60 秒内
       // 重新请求可以获取到一个新的 access_token
       this._timer = setTimeout(() => {
         this._ensureAccessToken()
-      }, (result.data.expires_in - 40) * 1000)
+      }, (data.expires_in - 40) * 1000)
     } catch (e) {
       if (!this.ctx.http.isError(e) || !e.response) throw e
-      this.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, e.response.data, e.response.headers.get('x-tps-trace-id'))
+      this.ctx.logger.warn(`POST https://bots.qq.com/app/getAppAccessToken response: %o, trace id: %s`, await e.response.text(), e.response.headers.get('x-tps-trace-id'))
       throw e
     }
   }
@@ -140,7 +144,7 @@ export namespace QQBot {
       token: z.string().description('机器人令牌。').role('secret'),
       type: z.union(['public', 'private'] as const).description('机器人类型。').required(),
       sandbox: z.boolean().description('是否开启沙箱模式。').default(false),
-      endpoint: z.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
+      baseUrl: z.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
       authType: z.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
       intents: z.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: z.array(Number).description('发送消息遇到平台错误码时重试。').default([]),

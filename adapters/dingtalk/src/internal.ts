@@ -1,13 +1,14 @@
-import { Dict, HTTP } from '@satorijs/core'
+import { Dict } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 import { DingtalkBot } from './bot'
 
 export class Internal {
   constructor(private bot: DingtalkBot) { }
 
-  static define(routes: Dict<Partial<Record<HTTP.Method, Record<string, boolean>>>>) {
+  static define(routes: Dict<Partial<Record<string, Record<string, boolean>>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as HTTP.Method
+        const method = key
         for (const name of Object.keys(routes[path][method])) {
           const isOldApi = routes[path][method][name]
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
@@ -29,15 +30,16 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            const quester = isOldApi ? this.bot.oldHttp : this.bot.http
+            const http = isOldApi ? this.bot.oldHttp : this.bot.http
             if (isOldApi) {
-              config.params = { ...config.params, access_token: this.bot.token }
+              config.params = { method, ...config.params, access_token: this.bot.token }
             }
             try {
-              return (await quester(method, url, config)).data
+              const response = await http(url, { ...config, method })
+              return await response.json()
             } catch (error) {
               if (!this.bot.http.isError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
+              throw new Error(`[${error.response.status}] ${await error.response.text()}`)
             }
           }
         }

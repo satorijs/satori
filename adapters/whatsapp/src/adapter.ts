@@ -1,23 +1,20 @@
-import { Adapter, Context, remove, Service } from '@satorijs/core'
-import type { HTTP } from '@cordisjs/plugin-http'
-import type { Logger } from '@cordisjs/plugin-logger'
+import { Adapter, Context, Inject, remove, Service } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import type {} from '@cordisjs/plugin-server'
 import { Internal } from './internal'
 import { WhatsAppBot } from './bot'
 import { WebhookBody } from './types'
 import { decodeSession } from './utils'
-import internal from 'stream'
 import crypto from 'crypto'
 import z from 'schemastery'
 
 class HttpServer {
   static inject = ['server']
 
-  private logger: Logger
   private adapters: WhatsAppAdapter[] = []
 
   constructor(private ctx: Context) {
-    this.logger = ctx.logger('whatsapp')
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
     ctx.server.post('/whatsapp', async (req, res) => {
@@ -41,7 +38,7 @@ class HttpServer {
       }
 
       const parsed = JSON.parse(rawBody) as WebhookBody
-      this.logger.debug(parsed)
+      this.ctx.logger.debug(parsed)
       res.body = 'ok'
       res.status = 200
       if (parsed.object !== 'whatsapp_business_account') return
@@ -50,8 +47,8 @@ class HttpServer {
         const bot = this.getBot(phone_number_id)
         const session = await decodeSession(bot, entry)
         if (session.length) session.forEach(bot.dispatch.bind(bot))
-        this.logger.debug('handling bot: %s', bot.sid)
-        this.logger.debug(session)
+        this.ctx.logger.debug('handling bot: %s', bot.sid)
+        this.ctx.logger.debug(session)
       }
     })
 
@@ -78,14 +75,13 @@ class HttpServer {
       }
 
       const fetched = await bot.internal.getMedia(mediaId)
-      this.logger.debug(fetched.url)
-      const resp = await bot.ctx.http<internal.Readable>(fetched.url, {
+      this.ctx.logger.debug(fetched.url)
+      const resp = await bot.ctx.http(fetched.url, {
         method: 'GET',
-        responseType: 'stream',
       })
       res.headers.set('content-type', resp.headers.get('content-type')!)
       res.headers.set('cache-control', resp.headers.get('cache-control')!)
-      res.body = resp.data
+      res.body = resp.body
       res.status = 200
     })
   }
@@ -99,15 +95,16 @@ class HttpServer {
   }
 
   fork(ctx: Context, adapter: WhatsAppAdapter) {
-    this.adapters.push(adapter)
-    ctx.on('dispose', () => {
-      remove(this.adapters, adapter)
+    ctx.effect(() => {
+      this.adapters.push(adapter)
+      return () => remove(this.adapters, adapter)
     })
   }
 }
 
+@Inject('server')
+@Inject('http', true, { baseUrl: 'https://graph.facebook.com' })
 export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
-  static inject = ['server', 'http']
   static schema = true as any
   static reusable = true
 
@@ -121,7 +118,7 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
       headers: {
         Authorization: `Bearer ${this.config.systemToken}`,
       },
-    }).extend(this.config)
+    })
     const internal = new Internal(http)
     const data = await internal.getPhoneNumbers(this.config.id)
     for (const item of data) {
@@ -140,20 +137,17 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
 }
 
 export namespace WhatsAppAdapter {
-  export interface Config extends HTTP.Config {
+  export interface Config {
     systemToken: string
     verifyToken: string
     id: string
     secret: string
   }
 
-  export const Config: z<Config> = z.intersect([
-    z.object({
-      secret: z.string().role('secret').description('App Secret').required(),
-      systemToken: z.string().role('secret').description('System User Token').required(),
-      verifyToken: z.string().role('secret').description('Verify Token').required(),
-      id: z.string().description('WhatsApp Business Account ID').required(),
-    }),
-    HTTP.createConfig('https://graph.facebook.com'),
-  ] as const)
+  export const Config: z<Config> = z.object({
+    secret: z.string().role('secret').description('App Secret').required(),
+    systemToken: z.string().role('secret').description('System User Token').required(),
+    verifyToken: z.string().role('secret').description('Verify Token').required(),
+    id: z.string().description('WhatsApp Business Account ID').required(),
+  })
 }

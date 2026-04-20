@@ -1,5 +1,9 @@
-import { Context, h, MessageEncoder } from '@satorijs/core'
+import { Context, MessageEncoder } from '@satorijs/core'
+import h, { Element, text } from '@satorijs/element'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WecomBot } from './bot'
+import { downloadFile } from './utils'
 
 /** https://developer.work.weixin.qq.com/document/path/90236#%E6%94%AF%E6%8C%81%E7%9A%84markdown%E8%AF%AD%E6%B3%95 */
 
@@ -14,7 +18,7 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     session.userId = this.bot.selfId
     session.timestamp = new Date().valueOf()
     session.elements = payload.msgtype === 'text'
-      ? [h.text(payload.text.content)]
+      ? [text(payload.text.content)]
       : [h(payload.msgtype === 'voice' ? 'audio' : payload.msgtype, {
         src: this.bot.$toMediaUrl(payload[payload.msgtype].media_id),
       })]
@@ -37,7 +41,7 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     this.upsertSend(msgid, payload)
   }
 
-  async flushMedia(element: h) {
+  async flushMedia(element: Element) {
     if (!['audio', 'video', 'image', 'file', 'img'].includes(element.type)) return
     let type = element.type
     if (type === 'audio') type = 'voice'
@@ -63,12 +67,12 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
   }
 
   /** https://developer.work.weixin.qq.com/document/path/90253 */
-  async uploadMedia(element: h) {
+  async uploadMedia(element: Element) {
     const { attrs } = element
     const uploadType = element.type === 'audio' ? 'voice' : element.type
     const form = new FormData()
 
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const value = new Blob([data], { type })
     form.append('media', value, attrs.file || filename)
 
@@ -87,10 +91,10 @@ export class WecomMessageEncoder extends MessageEncoder<WecomBot> {
     if (resp.media_id) {
       return [resp.media_id, uploadType]
     }
-    this.bot.logger.error(resp.errmsg)
+    this.bot.ctx.logger.error(resp.errmsg)
   }
 
-  async visit(element: h) {
+  async visit(element: Element) {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content

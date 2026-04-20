@@ -1,12 +1,13 @@
-import { Dict, HTTP, makeArray } from '@satorijs/core'
+import { Dict, makeArray } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 
 export class Internal {
   constructor(private http: HTTP) { }
 
-  static define(routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>) {
+  static define(routes: Dict<Partial<Record<string, string | string[]>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as HTTP.Method
+        const method = key as string
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
@@ -28,10 +29,11 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             try {
-              return (await this.http(method, url, config)).data
+              const response = await this.http(url, { ...config, method })
+              return await response.json()
             } catch (error) {
               if (!this.http.isError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
+              throw new Error(`[${error.response.status}] ${await error.response.text()}`)
             }
           }
         }

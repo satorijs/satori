@@ -3,15 +3,8 @@
   "description": "Basic API server for Satori protocol",
   "version": "3.0.0-alpha.0",
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./lib/index.d.ts",
-      "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs"
-    },
-    "./src/*": "./src/*",
-    "./package.json": "./package.json"
-  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib",
     "src"
@@ -56,6 +49,7 @@
     "cordis": "^4.0.0-rc.3"
   },
   "dependencies": {
-    "cosmokit": "^1.8.1"
+    "cosmokit": "^1.8.1",
+    "schemastery": "^3.18.0"
   }
 }

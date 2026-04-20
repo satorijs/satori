@@ -1,9 +1,23 @@
 import crypto from 'crypto'
-import { Context, h, pick, Session, Universal } from '@satorijs/core'
+import { Context, pick, Session, Universal } from '@satorijs/core'
+import { at, audio, Element, file, image, text as $text, video } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'
 import { Im, ListChat, Message, User } from './types'
 import { MessageContent } from './content'
 import { hyphenate } from 'cosmokit'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export interface EventHeader<K extends keyof Events> {
   event_id: string
@@ -176,7 +190,7 @@ export async function adaptMessage(
   details = true,
 ): Promise<Session> {
   const json = JSON.parse(data.message.content)
-  const content: (string | h)[] = []
+  const content: (string | Element)[] = []
   switch (data.message.message_type) {
     case 'text': {
       const text = json.text as string
@@ -190,7 +204,7 @@ export async function adaptMessage(
         if (word.startsWith('@')) {
           const mention = data.message.mentions.find((mention) => mention.key === word)!
           if (mention) {
-            content.push(h.at(mention.id.open_id, { name: mention.name }))
+            content.push(at(mention.id.open_id, { name: mention.name }))
             return
           }
         }
@@ -199,18 +213,18 @@ export async function adaptMessage(
       break
     }
     case 'image':
-      content.push(h.image(bot.getResourceUrl('image', data.message.message_id, json.image_key)))
+      content.push(image(bot.getResourceUrl('image', data.message.message_id, json.image_key)))
       break
     case 'audio':
-      content.push(h.audio(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
+      content.push(audio(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
       break
     case 'media':
-      content.push(h.video(bot.getResourceUrl('file', data.message.message_id, json.file_key), {
+      content.push(video(bot.getResourceUrl('file', data.message.message_id, json.file_key), {
         poster: json.image_key,
       }))
       break
     case 'file':
-      content.push(h.file(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
+      content.push(file(bot.getResourceUrl('file', data.message.message_id, json.file_key)))
       break
   }
 
@@ -319,12 +333,12 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
 // TODO: This function has many duplicated code with `adaptMessage`, should refactor them
 export async function decodeMessage(bot: LarkBot, body: Message, details = true): Promise<Universal.Message> {
   const json = JSON.parse(body.body!.content)
-  const content: h[] = []
+  const content: Element[] = []
   switch (body.msg_type) {
     case 'text': {
       const text = json.text as string
       if (!body.mentions?.length) {
-        content.push(h.text(text))
+        content.push($text(text))
         break
       }
 
@@ -333,27 +347,27 @@ export async function decodeMessage(bot: LarkBot, body: Message, details = true)
         if (word.startsWith('@')) {
           const mention = body.mentions!.find((mention) => mention.key === word)!
           if (mention) {
-            content.push(h.at(mention.id, { name: mention.name }))
+            content.push(at(mention.id, { name: mention.name }))
             return
           }
         }
-        content.push(h.text(word))
+        content.push($text(word))
       })
       break
     }
     case 'image':
-      content.push(h.image(bot.getResourceUrl('image', body.message_id!, json.image_key)))
+      content.push(image(bot.getResourceUrl('image', body.message_id!, json.image_key)))
       break
     case 'audio':
-      content.push(h.audio(bot.getResourceUrl('file', body.message_id!, json.file_key)))
+      content.push(audio(bot.getResourceUrl('file', body.message_id!, json.file_key)))
       break
     case 'media':
-      content.push(h.video(bot.getResourceUrl('file', body.message_id!, json.file_key), {
+      content.push(video(bot.getResourceUrl('file', body.message_id!, json.file_key), {
         poster: json.image_key,
       }))
       break
     case 'file':
-      content.push(h.file(bot.getResourceUrl('file', body.message_id!, json.file_key)))
+      content.push(file(bot.getResourceUrl('file', body.message_id!, json.file_key)))
       break
   }
 
@@ -362,7 +376,6 @@ export async function decodeMessage(bot: LarkBot, body: Message, details = true)
     createdAt: +body.create_time!,
     updatedAt: +body.update_time!,
     id: body.message_id,
-    messageId: body.message_id,
     user: {
       id: body.sender!.id,
     },

@@ -1,5 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
 import { Response } from '@cordisjs/plugin-server'
+import {} from '@cordisjs/plugin-logger'
 import { MatrixBot } from './bot'
 import { dispatchSession } from './utils'
 import { ClientEvent, M_ROOM_MEMBER } from './types'
@@ -48,7 +49,7 @@ export class HttpAdapter extends Adapter<MatrixBot> {
       await bot.initialize()
       bot.online()
     } catch (e) {
-      bot.logger.error('failed to initialize', e)
+      bot.ctx.logger.error('failed to initialize', e)
       throw e
     }
   }

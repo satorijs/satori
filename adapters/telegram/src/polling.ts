@@ -1,4 +1,6 @@
 import { Adapter, Context, Time, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import z from 'schemastery'
@@ -16,7 +18,7 @@ export class HttpPolling extends Adapter<TelegramBot> {
       const { retryTimes, retryInterval } = bot.config
       const { url } = await bot.internal.getWebhookInfo()
       if (url) {
-        bot.logger.warn('Bot currently has a webhook set up, trying to remove it...')
+        bot.ctx.logger.warn('Bot currently has a webhook set up, trying to remove it...')
         await bot.internal.setWebhook({ url: '' })
       }
 
@@ -46,13 +48,14 @@ export class HttpPolling extends Adapter<TelegramBot> {
           }
           this.timeout = setTimeout(polling, 0)
         } catch (e) {
-          if (!bot.http.isError(e) || !e.response?.data) {
+          if (!bot.http.isError(e) || !e.response) {
             // Other error
-            bot.logger.warn('failed to get updates. reason: %s', e.message)
+            bot.ctx.logger.warn('failed to get updates. reason: %s', e.message)
           } else {
             // Telegram error
-            const { error_code, description } = e.response.data as any
-            bot.logger.warn('failed to get updates: %c %s', error_code, description)
+            const body = await e.response.json().catch(() => null)
+            const { error_code, description } = (body ?? {}) as any
+            bot.ctx.logger.warn('failed to get updates: %c %s', error_code, description)
           }
 
           if (_initial && _retryCount > retryTimes) {
@@ -66,7 +69,7 @@ export class HttpPolling extends Adapter<TelegramBot> {
         }
       }
       polling()
-      bot.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
+      bot.ctx.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
   }
 

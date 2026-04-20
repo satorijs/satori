@@ -1,6 +1,6 @@
 import { Bot } from './bot'
 import { Channel, Message, SendOptions } from '@satorijs/protocol'
-import * as h from '@cordisjs/element'
+import * as h from '@satorijs/element'
 import { Session } from './session'
 
 class AggregateError extends Error {

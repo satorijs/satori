@@ -1,4 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { SlackBot } from './bot'
 import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
@@ -9,14 +11,14 @@ export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & Ws
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)
     const { url } = data
-    this.bot.logger.debug('ws url: %s', url)
+    this.bot.ctx.logger.debug('ws url: %s', url)
     return this.bot.ctx.http.ws(url)
   }
 
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: SocketEvent = JSON.parse(data.toString())
-      this.bot.logger.debug(parsed)
+      this.bot.ctx.logger.debug(parsed)
       const { type } = parsed
       if (type === 'hello') {
         // @ts-ignore
@@ -31,7 +33,7 @@ export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & Ws
 
         if (session) {
           this.bot.dispatch(session)
-          this.bot.logger.debug(session)
+          this.bot.ctx.logger.debug(session)
         }
       }
     })

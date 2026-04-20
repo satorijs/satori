@@ -1,6 +1,6 @@
 import { Adapter, camelize, Context, Service, Time, Universal } from '@satorijs/core'
 import type { HTTP } from '@cordisjs/plugin-http'
-import type { Logger } from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
 
@@ -10,7 +10,6 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
   static inject = ['http']
 
   public http: HTTP
-  public logger: Logger
 
   private _status = Universal.Status.OFFLINE
   private sequence?: number
@@ -20,7 +19,6 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
 
   constructor(public ctx: Context, public config: SatoriAdapter.Config) {
     super(ctx, config)
-    this.logger = ctx.logger('satori')
     this.http = ctx.http.extend({
       baseUrl: config.baseUrl,
       headers: {
@@ -51,7 +49,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
     let bot = this.bots.find(bot => bot.config.sn === login.sn)
     if (bot) {
       if (action === 'created') {
-        this.logger.warn('bot already exists when login created, sn = %s, adapter = %s', login.sn, login.adapter)
+        this.ctx.logger.warn('bot already exists when login created, sn = %s, adapter = %s', login.sn, login.adapter)
       } else if (action === 'updated') {
         bot.update(login)
       } else if (action === 'removed') {
@@ -59,7 +57,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
       }
       return bot
     } else if (!action) {
-      this.logger.warn('bot not found when non-login event received, sn = %s, adapter = %s', action, login.sn, login.adapter)
+      this.ctx.logger.warn('bot not found when non-login event received, sn = %s, adapter = %s', action, login.sn, login.adapter)
       return
     }
 
@@ -92,11 +90,11 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
       try {
         parsed = Universal.transformKey(JSON.parse(data), camelize)
       } catch (error) {
-        return this.logger.warn('cannot parse message', data)
+        return this.ctx.logger.warn('cannot parse message', data)
       }
 
       if (parsed.op === Universal.Opcode.READY) {
-        this.logger.debug('ready')
+        this.ctx.logger.debug('ready')
         for (const login of parsed.body.logins) {
           this.getBot(login)
         }

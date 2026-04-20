@@ -1,4 +1,7 @@
-import { Bot, Context, h, HTTP, Time, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Time, Universal } from '@satorijs/core'
+import { Fragment } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { Im } from './types'
 import { HttpServer } from './http'
 import { WsClient } from './ws'
@@ -16,8 +19,9 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
   ppt: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
 }
 
+@Inject('http')
+@Inject('logger', true, { name: 'lark' })
 export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
-  static inject = ['http']
   static MessageEncoder = LarkMessageEncoder
 
   _refresher?: NodeJS.Timeout
@@ -29,7 +33,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     super(ctx, config, 'lark')
 
     this.http = ctx.http.extend({
-      endpoint: config.endpoint,
+      baseUrl: config.baseUrl,
     })
     this.assetsQuester = ctx.http
     this.internal = new Internal(this)
@@ -41,19 +45,12 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     }
 
     this.defineInternalRoute('/*path', async ({ params, method, headers, body, query }) => {
-      const response = await this.http('/' + params.path, {
+      return await this.http('/' + params.path, {
         method,
         headers,
         data: method === 'GET' || method === 'HEAD' ? null : body,
         params: Object.fromEntries(query.entries()),
-        responseType: 'arraybuffer',
-        validateStatus: () => true,
       })
-      return {
-        status: response.status,
-        body: response.data,
-        headers: response.headers,
-      }
     })
   }
 
@@ -90,11 +87,11 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
         app_id: this.config.appId,
         app_secret: this.config.appSecret,
       })
-      this.logger.debug('refreshed token %s', token)
+      this.ctx.logger.debug('refreshed token %s', token)
       this.http.config.headers!.Authorization = `Bearer ${token}`
     } catch (error) {
-      this.logger.error('failed to refresh token, retrying in 10s')
-      this.logger.error(error)
+      this.ctx.logger.error('failed to refresh token, retrying in 10s')
+      this.ctx.logger.error(error)
       timeout = Time.second * 10
     }
     if (this._refresher) clearTimeout(this._refresher)
@@ -102,7 +99,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     this.online()
   }
 
-  async editMessage(channelId: string, messageId: string, content: h.Fragment) {
+  async editMessage(channelId: string, messageId: string, content: Fragment) {
     const encoder = new LarkMessageEncoder(this, channelId)
     encoder.editMessageIds = [messageId]
     await encoder.send(content)
@@ -196,8 +193,8 @@ export namespace LarkBot {
       z.intersect([
         z.object({
           platform: z.const('lark').required(),
+          baseUrl: z.string().role('url').default('https://open.larksuite.com/open-apis'),
         }),
-        HTTP.createConfig('https://open.larksuite.com/open-apis'),
         z.union([
           HttpServer.createConfig('/lark'),
           WsClient.Options,
@@ -206,8 +203,8 @@ export namespace LarkBot {
       z.intersect([
         z.object({
           platform: z.const('feishu') as any,
+          baseUrl: z.string().role('url').default('https://open.feishu.cn/open-apis'),
         }),
-        HTTP.createConfig('https://open.feishu.cn/open-apis'),
         z.union([
           HttpServer.createConfig('/feishu'),
           WsClient.Options,

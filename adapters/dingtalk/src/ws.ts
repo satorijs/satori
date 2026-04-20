@@ -1,4 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
 import z from 'schemastery'
@@ -28,7 +30,7 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
     this.bot.online()
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed = JSON.parse(data.toString())
-      this.bot.logger.debug(parsed)
+      this.bot.ctx.logger.debug(parsed)
       if (parsed.type === 'SYSTEM') {
         if (parsed.headers.topic === 'ping') {
           this.socket.send(JSON.stringify({
@@ -39,10 +41,10 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
           }))
         }
       } else if (parsed.type === 'CALLBACK') {
-        this.bot.logger.debug(JSON.parse(parsed.data))
+        this.bot.ctx.logger.debug(JSON.parse(parsed.data))
         const session = await decodeMessage(this.bot, JSON.parse(parsed.data))
         if (session) this.bot.dispatch(session)
-        this.bot.logger.debug(session)
+        this.bot.ctx.logger.debug(session)
       }
     })
   }

@@ -1,5 +1,7 @@
 import { Adapter, Context } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'
 import { Message } from './types'
@@ -41,7 +43,7 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
       const nonce = req.query.get('nonce')
       const msg_signature = req.query.get('msg_signature')
       const rawBody = await req.text()
-      bot.logger.debug('%c', rawBody)
+      bot.ctx.logger.debug('%c', rawBody)
       let { xml: data }: {
         xml: Message
       } = await xml2js.parseStringPromise(rawBody, {
@@ -68,7 +70,7 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
         const { xml: data2 } = await xml2js.parseStringPromise(message, {
           explicitArray: false,
         })
-        bot.logger.debug('decrypted %c', data2)
+        bot.ctx.logger.debug('decrypted %c', data2)
         data = data2
       }
 
@@ -116,7 +118,7 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
         res.status = 200
         res.body = result
       } catch (error) {
-        localBot.logger.warn('resolve timeout')
+        localBot.ctx.logger.warn('resolve timeout')
         res.status = 200
         res.body = 'success'
       }
@@ -130,9 +132,8 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
         res.status = 404
         return
       }
-      const resp = await localBot.http<ReadableStream>(`/cgi-bin/media/get`, {
+      const resp = await localBot.http(`/cgi-bin/media/get`, {
         method: 'GET',
-        responseType: 'stream',
         params: {
           access_token: localBot.token,
           media_id: mediaId,
@@ -141,7 +142,7 @@ export class HttpServer extends Adapter<WechatOfficialBot> {
       res.headers.set('content-type', resp.headers.get('content-type')!)
       res.headers.set('date', resp.headers.get('date')!)
       res.headers.set('cache-control', resp.headers.get('cache-control')!)
-      res.body = resp.data
+      res.body = resp.body
       res.status = 200
     })
 

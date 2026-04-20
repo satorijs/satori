@@ -1,11 +1,14 @@
-import { Bot, Context } from '@satorijs/core'
+import { Bot, Context, Inject } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { IMAP, SMTP } from './mail'
 import { MailMessageEncoder } from './message'
 import z from 'schemastery'
 
+@Inject('http')
+@Inject('logger', true, { name: 'mail' })
 export class MailBot extends Bot<MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
-  static inject = ['http']
 
   internal: SMTP
 

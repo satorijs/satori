@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
-import { Context, HTTP } from '@satorijs/core'
+import { Context } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 import { KookBot } from './bot'
 
 export enum Signal {
@@ -665,7 +666,7 @@ export interface Events {
 export class Internal {
   constructor(private http: HTTP) {}
 
-  static define(name: string, method: HTTP.Method, path: string) {
+  static define(name: string, method: string, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
       const config: HTTP.RequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
@@ -673,7 +674,8 @@ export class Internal {
       } else {
         config.data = args[0]
       }
-      const { data } = await this.http(method, path, config)
+      const response = await this.http(path, { ...config, method })
+      const data = await response.json()
       if (data?.code !== 0) throw new Error(data?.message || 'Unexpected Error')
       return data?.data
     }

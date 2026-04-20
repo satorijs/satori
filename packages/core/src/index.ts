@@ -6,12 +6,12 @@ import { Session } from './session'
 import type {} from '@cordisjs/plugin-http'
 import { Meta, SendOptions } from '@satorijs/protocol'
 import { ExtractParams } from 'path-to-regexp-typed'
-import * as h from '@cordisjs/element'
+import * as h from '@satorijs/element'
 
 export * from 'cordis'
 export * from 'cosmokit'
 
-export * from '@cordisjs/element'
+export * from '@satorijs/element'
 export * as Universal from '@satorijs/protocol'
 
 export * from './bot'

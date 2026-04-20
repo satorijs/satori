@@ -1,4 +1,5 @@
-import { Dict, HTTP } from '@satorijs/core'
+import { Dict } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 import { SlackBot } from '../bot'
 
 // https://api.slack.com/web#methods_supporting_json
@@ -17,10 +18,10 @@ export class Internal {
   constructor(private bot: SlackBot, private http: HTTP) { }
 
   // route: content-type
-  static define(routes: Dict<Partial<Record<HTTP.Method, Record<string, SupportPostJSON>>>>) {
+  static define(routes: Dict<Partial<Record<string, Record<string, SupportPostJSON>>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as HTTP.Method
+        const method = key as string
         for (const name of Object.keys(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const config: HTTP.RequestConfig = {
@@ -44,10 +45,11 @@ export class Internal {
               config.data = args[1]
             }
             try {
-              return (await this.http(method, path, config)).data
+              const response = await this.http(path, { ...config, method })
+              return await response.json()
             } catch (error) {
               if (!this.http.isError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${JSON.stringify(error.response.data)}`)
+              throw new Error(`[${error.response.status}] ${await error.response.text()}`)
             }
           }
         }

@@ -1,6 +1,9 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WhatsAppBot } from './bot'
 import { Button, SendMessage } from './types'
+import { downloadFile } from './utils'
 
 const SUPPORTED_MEDIA = [
   'audio/aac',
@@ -82,7 +85,7 @@ export class WhatsAppMessageEncoder extends MessageEncoder<WhatsAppBot> {
 
   // https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#upload-media
   async uploadMedia(attrs: Dict) {
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
 
     if (!SUPPORTED_MEDIA.includes(type)) {
       this.bot.ctx.logger('whatsapp').warn(`Unsupported media type: ${type}`)

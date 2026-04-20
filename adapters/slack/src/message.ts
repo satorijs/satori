@@ -1,6 +1,7 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
 import { SlackBot } from './bot'
-import { adaptMessage, adaptSentAsset } from './utils'
+import { adaptMessage, adaptSentAsset, downloadFile } from './utils'
 import { File } from './types'
 
 // https://api.slack.com/reference/surfaces/formatting#basics
@@ -46,7 +47,7 @@ export class SlackMessageEncoder extends MessageEncoder<SlackBot> {
   async sendAsset(element: h) {
     if (this.buffer.length) await this.flush()
     const { attrs } = element
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const form = new FormData()
     const value = new Blob([data], { type })
     form.append('file', value, attrs.file || filename)

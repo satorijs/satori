@@ -1,4 +1,6 @@
 import { Adapter, Context, Time, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import { Payload, Signal } from './types'
@@ -44,10 +46,10 @@ export class WsClient extends Adapter.WsClient<KookBot<KookBot.BaseConfig & WsCl
       try {
         parsed = JSON.parse(data)
       } catch (error) {
-        return this.bot.logger.warn('cannot parse message', data)
+        return this.bot.ctx.logger.warn('cannot parse message', data)
       }
 
-      this.bot.logger.debug('[receive] %o', parsed)
+      this.bot.ctx.logger.debug('[receive] %o', parsed)
       if (parsed.s === Signal.event) {
         this._sn = Math.max(this._sn, parsed.sn)
         const session = await adaptSession(this.bot, parsed.d)

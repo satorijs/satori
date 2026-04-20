@@ -1,13 +1,13 @@
-import { Bot, camelCase, Context, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, Inject, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
 import { SatoriAdapter } from './ws'
 import type { HTTP } from '@cordisjs/plugin-http'
-import type { Logger } from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-logger'
 
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
     apply(target, thisArg, args) {
       const key = prefix.slice(1)
-      bot.logger.debug('[request.internal]', key, args)
+      bot.ctx.logger.debug('[request.internal]', key, args)
 
       const impl = async (pagination = false) => {
         const req = await JsonForm.encode(args)
@@ -60,19 +60,18 @@ function createInternal(bot: SatoriBot, prefix = '') {
   })
 }
 
+@Inject('logger', true, { name: 'satori' })
 export class SatoriBot extends Bot<Universal.Login> {
   declare adapter: SatoriAdapter<this>
 
   public internal = createInternal(this)
-  public logger: Logger
 
   constructor(ctx: Context, config: Universal.Login) {
     super(ctx, config, config.adapter)
-    this.logger = ctx.logger('satori')
     Object.assign(this, omit(config, ['sn', 'adapter']))
 
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
-      return this._request(
+      return await this._request(
         method as any,
         `/v1/${this.getInternalUrl('/' + params.path, query, true)}`,
         method === 'GET' || method === 'HEAD' ? null : body,
@@ -81,7 +80,7 @@ export class SatoriBot extends Bot<Universal.Login> {
     })
   }
 
-  _request(method: HTTP.Method, path: string, body: BodyInit | null, headers?: HeadersInit) {
+  _request(method: string, path: string, body: BodyInit | null, headers?: HeadersInit) {
     return this.adapter.http(path, {
       method,
       data: body,
@@ -121,7 +120,7 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
         }
       }
     }
-    this.logger.debug('[request]', key, payload)
+    this.ctx.logger.debug('[request]', key, payload)
     const result = await this._request('POST', '/v1/' + key, payload)
     return Universal.transformKey(result, camelCase)
   }

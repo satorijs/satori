@@ -1,5 +1,8 @@
-import { Context, MessageEncoder, segment, Universal } from '@satorijs/core'
+import { Context, MessageEncoder, Universal } from '@satorijs/core'
+import { Element } from '@satorijs/element'
+import {} from '@cordisjs/plugin-http'
 import { MatrixBot } from './bot'
+import { downloadFile } from './utils'
 
 export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
   private buffer: string = ''
@@ -8,7 +11,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
   async sendMedia(url: string, mediaType: 'file' | 'image' | 'video' | 'audio') {
     try {
       const session = this.bot.session(this.session)
-      const { data, filename, type } = await this.bot.ctx.http.file(url)
+      const { data, filename, type } = await downloadFile(this.bot.ctx.http, url)
       const id = await this.bot.internal.sendMediaMessage(
         this.channelId, mediaType, Buffer.from(data), this.reply?.id, type, filename,
       )
@@ -39,7 +42,7 @@ export class MatrixMessageEncoder extends MessageEncoder<MatrixBot> {
     }
   }
 
-  async visit(element: segment) {
+  async visit(element: Element) {
     const { type, attrs, children } = element
     if (type === 'text') {
       this.buffer += attrs.content.replace(/[\\*_`~|]/g, '\\$&')

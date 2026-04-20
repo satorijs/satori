@@ -1,7 +1,21 @@
-import { Dict, h, Session, Universal } from '@satorijs/core'
+import { Dict, Session, Universal } from '@satorijs/core'
+import h, { at, Element, image, transformAsync } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { ZulipBot } from './bot'
 import * as marked from 'marked'
 import * as Zulip from './types'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 // internal_url.ts
 const hashReplacements = new Map([
@@ -73,13 +87,13 @@ const sharp: marked.TokenizerAndRendererExtension = {
 marked.use({ extensions: [sharp, atBlock, atRoleBlock] })
 
 // @TODO u200b in quote's content?
-function renderToken(token: marked.Token): h {
+function renderToken(token: marked.Token): Element {
   if (token.type === 'code') {
     return h('code', { content: token.text })
   } else if (token.type === 'paragraph') {
     return h('p', render(token.tokens))
   } else if (token.type === 'image') {
-    return h.image(token.href)
+    return image(token.href)
   } else if (token.type === 'blockquote') {
     return h('p', render(token.tokens))
   } else if (token.type === 'text') {
@@ -102,7 +116,7 @@ function renderToken(token: marked.Token): h {
   return h('text', { content: token.raw })
 }
 
-function render(tokens: marked.Token[]): h[] {
+function render(tokens: marked.Token[]): Element[] {
   return tokens.map(renderToken).filter(Boolean)
 }
 
@@ -205,17 +219,17 @@ export async function decodeMessage(
   if (message.elements?.[0]?.type === 'p') {
     message.elements = message.elements[0].children
   }
-  message.elements = await h.transformAsync(message.elements, {
+  message.elements = await transformAsync(message.elements, {
     async at(attrs: Dict) {
       if (attrs.role) return h('at', attrs)
       const raw = attrs.raw as string
       if (raw === 'all' || raw === 'everyone' || raw === 'stream') return h('at', { type: 'all' })
-      if (raw.includes('|')) return h.at(raw.split('|')[1])
+      if (raw.includes('|')) return at(raw.split('|')[1])
       const { members } = await bot.internal.getUsers()
       const user = members.find(v => v.full_name === raw)
 
       // 没有 | 的是 guild 内没有重名的
-      if (user) return h.at(user.user_id.toString(), { name: user.full_name })
+      if (user) return at(user.user_id.toString(), { name: user.full_name })
     },
     async sharp(attrs: Dict) {
       const raw = attrs.raw as string

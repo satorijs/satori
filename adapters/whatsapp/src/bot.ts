@@ -1,7 +1,10 @@
-import { Bot, Context, HTTP } from '@satorijs/core'
+import { Bot, Context, Inject } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WhatsAppMessageEncoder } from './message'
 import { Internal } from './internal'
 
+@Inject('logger', true, { name: 'whatsapp' })
 export class WhatsAppBot extends Bot {
   static inject = ['server']
   static MessageEncoder = WhatsAppMessageEncoder

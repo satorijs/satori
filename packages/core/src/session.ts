@@ -1,5 +1,5 @@
 import { Channel, Event, GuildMember, Message, Resource, User } from '@satorijs/protocol'
-import * as h from '@cordisjs/element'
+import * as h from '@satorijs/element'
 import { clone, defineProperty, isNullable } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import { Bot } from './bot'

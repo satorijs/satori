@@ -1,5 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
+import {} from '@cordisjs/plugin-logger'
 import { SlackBot } from './bot'
 import crypto from 'node:crypto'
 import { EnvelopedEvent, SlackEvent, SocketEvent } from './types'
@@ -44,9 +45,9 @@ export class HttpServer extends Adapter<SlackBot> {
         res.status = 200
         res.body = 'ok'
         const payload = body as unknown as EnvelopedEvent<SlackEvent>
-        bot.logger.debug(payload)
+        bot.ctx.logger.debug(payload)
         const session = await adaptSession(bot, payload)
-        bot.logger.debug(session)
+        bot.ctx.logger.debug(session)
         if (session) bot.dispatch(session)
       }
     })

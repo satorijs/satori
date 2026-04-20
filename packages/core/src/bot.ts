@@ -1,6 +1,6 @@
 import { clone, Dict, isNonNullable, pick } from 'cosmokit'
 import { Context, Service } from 'cordis'
-import * as h from '@cordisjs/element'
+import * as h from '@satorijs/element'
 import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'

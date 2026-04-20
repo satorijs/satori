@@ -1,7 +1,9 @@
-import { Context, Dict, h, MessageEncoder, Universal } from '@satorijs/core'
+import { Dict, h, MessageEncoder, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
-import { decodeMessage, sanitize, sanitizeCode } from './utils'
+import { decodeMessage, downloadFile, sanitize, sanitizeCode } from './utils'
 import z from 'schemastery'
 
 type RenderMode = 'default' | 'figure'
@@ -72,15 +74,16 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       return message
     } catch (e) {
       if (this.bot.http.isError(e) && e.response) {
-        if (e.response.data?.code === 10015) {
-          this.bot.logger.debug('webhook has been deleted, recreating..., %o', e.response.data)
+        const body = await e.response.json().catch(() => null)
+        if (body?.code === 10015) {
+          this.bot.ctx.logger.debug('webhook has been deleted, recreating..., %o', body)
           if (!this.bot.webhookLock[this.channelId]) {
             this.bot.webhooks[this.channelId] = null
           }
           await this.ensureWebhook()
           return this.post(data, headers)
         } else {
-          e = new Error(`[${e.response.status}] ${JSON.stringify(e.response.data)}`)
+          e = new Error(`[${e.response.status}] ${JSON.stringify(body)}`)
         }
       }
       this.errors.push(e)
@@ -88,7 +91,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
   }
 
   async sendEmbed(attrs: Dict, payload: Dict) {
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const form = new FormData()
     const value = new Blob([data], { type })
     // https://discord.com/developers/docs/reference#uploading-files
@@ -354,7 +357,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
           if (c.guild_id) guildId = c.guild_id
         }
         if (!guildId) {
-          this.bot.logger.warn('skip <quote> due to missing guild id')
+          this.bot.ctx.logger.warn('skip <quote> due to missing guild id')
           return
         }
         this.addition.embeds = [{

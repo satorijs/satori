@@ -1,4 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
@@ -15,12 +17,13 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
     try {
       const url = this.bot.config.gatewayUrl
         ? this.bot.config.gatewayUrl
-        : (await this.bot.internal.getGateway()).url.replace('api.sgroup.qq.com', new URL(this.bot.config.endpoint).host)
-      this.bot.logger.debug('url: %s', url)
+        : (await this.bot.internal.getGateway()).url.replace('api.sgroup.qq.com', new URL(this.bot.config.baseUrl!).host)
+      this.bot.ctx.logger.debug('url: %s', url)
       return this.bot.http.ws(url)
     } catch (error) {
       if (this.bot.http.isError(error) && error.response) {
-        this.bot.logger.warn(`GET /gateway response: %o`, error.response.data)
+        const body = await error.response.json().catch(() => null)
+        this.bot.ctx.logger.warn(`GET /gateway response: %o`, body)
       }
       throw error
     }
@@ -28,7 +31,7 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
 
   heartbeat() {
     if (!this._acked) {
-      this.bot.logger.warn('zombied connection')
+      this.bot.ctx.logger.warn('zombied connection')
       return this.socket.close()
     }
     this.socket.send(JSON.stringify({
@@ -41,7 +44,7 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
   async accept() {
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
-      this.bot.logger.debug('websocket receives %o', parsed)
+      this.bot.ctx.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
         const token = this.bot.config.authType === 'bearer'
           ? `QQBot ${await this.bot.getAccessToken()}`
@@ -71,9 +74,9 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
       } else if (parsed.op === Opcode.INVALID_SESSION) {
         this._sessionId = ''
         this._s = null
-        this.bot.logger.warn('offline: invalid session')
+        this.bot.ctx.logger.warn('offline: invalid session')
       } else if (parsed.op === Opcode.RECONNECT) {
-        this.bot.logger.warn('offline: server request reconnect')
+        this.bot.ctx.logger.warn('offline: server request reconnect')
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
@@ -88,7 +91,7 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
           try {
             await this.bot.initialize()
           } catch (e) {
-            this.bot.logger.warn(e)
+            this.bot.ctx.logger.warn(e)
           }
           return this.bot.online()
         }
@@ -97,12 +100,12 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
         }
         const session = await adaptSession(this.bot, parsed)
         if (session) this.bot.dispatch(session)
-        // this.bot.logger.debug(session)
+        // this.bot.ctx.logger.debug(session)
       }
     })
 
     this.socket.addEventListener('close', (e) => {
-      this.bot.logger.debug('websocket closed, code %o, reason: %s', e.code, e.reason)
+      this.bot.ctx.logger.debug('websocket closed, code %o, reason: %s', e.code, e.reason)
       if (e.code > 4000 && ![4008, 4009].includes(e.code)) {
         this._sessionId = ''
         this._s = null

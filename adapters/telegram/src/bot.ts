@@ -1,7 +1,11 @@
-import { Binary, Bot, Context, Dict, h, HTTP, Time, Universal } from '@satorijs/core'
+import { Binary, Bot, Context, Dict, Inject, Time, Universal } from '@satorijs/core'
+import { Fragment, normalize } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { pathToFileURL } from 'url'
 import * as Telegram from './types'
-import { decodeGuildMember, decodeUser } from './utils'
+import { decodeGuildMember, decodeUser, downloadFile } from './utils'
 import { TelegramMessageEncoder } from './message'
 import { HttpServer } from './server'
 import { HttpPolling } from './polling'
@@ -26,9 +30,10 @@ export interface TelegramResponse {
   result: any
 }
 
+@Inject('http')
+@Inject('logger', true, { name: 'telegram' })
 export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   static MessageEncoder = TelegramMessageEncoder
-  static inject = ['http']
 
   http: HTTP
   file: HTTP
@@ -41,12 +46,10 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     this.selfId = config.token.split(':')[0]
     this.local = config.files.local
     this.http = this.ctx.http.extend({
-      ...config,
-      endpoint: `${config.endpoint}/bot${config.token}`,
+      baseUrl: `https://api.telegram.org/bot${config.token}`,
     })
     this.file = this.ctx.http.extend({
-      ...config,
-      endpoint: `${config.files.endpoint || config.endpoint}/file/bot${config.token}`,
+      baseUrl: `${config.files.endpoint || 'https://api.telegram.org'}/file/bot${config.token}`,
     })
     this.internal = new Telegram.Internal(this)
     if (config.protocol === 'server') {
@@ -69,7 +72,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   async initialize(callback: (bot: this) => Promise<void>) {
     await this.getLogin()
     await callback(this)
-    this.logger.debug('connected to %c', 'telegram:' + this.selfId)
+    this.ctx.logger.debug('connected to %c', 'telegram:' + this.selfId)
     this.online()
   }
 
@@ -78,14 +81,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     await this.internal.deleteMessage({ chat_id, message_id })
   }
 
-  async editMessage(chat_id: string, message_id: string | number, content: h.Fragment): Promise<void> {
+  async editMessage(chat_id: string, message_id: string | number, content: Fragment): Promise<void> {
     message_id = +message_id
     const payload: Telegram.EditMessageTextPayload = {
       chat_id,
       message_id,
       parse_mode: 'html',
     }
-    payload.text = h.normalize(content).join('')
+    payload.text = normalize(content).join('')
     await this.internal.editMessageText(payload)
   }
 
@@ -146,9 +149,9 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 
   async $getFile(filePath: string) {
     if (this.local) {
-      return await this.ctx.http.file(pathToFileURL(filePath).href)
+      return await downloadFile(this.ctx.http, pathToFileURL(filePath).href)
     } else {
-      return await this.file.file(`/${filePath}`)
+      return await downloadFile(this.file, `/${filePath}`)
     }
   }
 
@@ -157,7 +160,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       const file = await this.internal.getFile({ file_id })
       return await this.$getFileFromPath(file.file_path)
     } catch (e) {
-      this.logger.warn('get file error', e)
+      this.ctx.logger.warn('get file error', e)
     }
   }
 
@@ -181,8 +184,8 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
     if (this.server) {
       user.avatar = `${this.server}/${file.file_path}`
     } else {
-      const { endpoint } = this.file.config
-      user.avatar = `${endpoint}/${file.file_path}`
+      const { baseUrl } = this.file.config
+      user.avatar = `${baseUrl}/${file.file_path}`
     }
   }
 
@@ -269,7 +272,6 @@ export namespace TelegramBot {
     z.object({
       slash: z.boolean().description('是否启用斜线指令。').default(true),
     }).description('功能设置'),
-    HTTP.createConfig('https://api.telegram.org'),
     z.object({
       files: z.object({
         endpoint: z.string().description('文件请求的终结点。'),

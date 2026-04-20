@@ -1,7 +1,8 @@
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
 import { Im, Message } from './types'
-import { EventPayload, extractIdType } from './utils'
+import { EventPayload, downloadFile, extractIdType } from './utils'
 import { MessageContent } from './content'
 
 export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
@@ -69,9 +70,10 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
     } catch (e) {
       // try to extract error message from Lark API
       if (this.bot.http.isError(e)) {
-        if (e.response?.data?.code) {
+        const body = e.response ? await e.response.json().catch(() => null) : null
+        if (body?.code) {
           const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
-          e.message += ` (Lark error code ${e.response.data.code}: ${e.response.data.msg ?? generalErrorMsg})`
+          e.message += ` (Lark error code ${body.code}: ${body.msg ?? generalErrorMsg})`
         }
       }
       this.errors.push(e)
@@ -91,7 +93,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
 
     if (this.card) {
       // strip undefined properties
-      this.bot.logger.debug('card %o', JSON.parse(JSON.stringify(this.card)))
+      this.bot.ctx.logger.debug('card %o', JSON.parse(JSON.stringify(this.card)))
       await this.post({
         msg_type: 'interactive',
         content: JSON.stringify(this.card),
@@ -115,7 +117,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
   }
 
   async createImage(url: string) {
-    const { filename, type, data } = await this.bot.assetsQuester.file(url)
+    const { filename, type, data } = await downloadFile(this.bot.assetsQuester, url)
     const { image_key } = await this.bot.internal.im.image.create({
       image_type: 'message',
       image: new File([data], filename, { type }),
@@ -135,7 +137,7 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       return
     }
 
-    const { filename, type, data } = await this.bot.assetsQuester.file(url)
+    const { filename, type, data } = await downloadFile(this.bot.assetsQuester, url)
 
     let file_type: Im.File.CreateForm['file_type']
     if (_type === 'audio') {

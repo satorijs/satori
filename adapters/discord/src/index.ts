@@ -1,4 +1,3 @@
-import { Context } from '@satorijs/core'
 import { DiscordBot } from './bot'
 import * as Discord from './utils'
 

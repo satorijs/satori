@@ -1,7 +1,21 @@
-import { segment, Session, Universal } from '@satorijs/core'
+import { Session, Universal } from '@satorijs/core'
+import h, { escape, parse as parseElement } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { MatrixBot } from './bot'
 import * as Matrix from './types'
 import { INode, ITag, parse, SyntaxKind } from 'html5parser'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export const decodeUser = (data: Matrix.Profile, id: string): Universal.User => ({
   id,
@@ -15,7 +29,7 @@ export async function adaptMessage(
   message: Universal.Message = {},
   payload: Universal.MessageLike = message,
 ): Promise<Universal.Message> {
-  message.id = message.messageId = data.event_id
+  message.id = data.event_id
   const content = data.content as Matrix.M_ROOM_MESSAGE
   const reply = content['m.relates_to']?.['m.in_reply_to']
   if (reply) {
@@ -34,14 +48,14 @@ export async function adaptMessage(
     case 'm.video': {
       const src = bot.internal.getAssetUrl((content as any).url)
       const type = content.msgtype.substring(2)
-      message.content = segment(type === 'audio' ? 'record' : type === 'image' ? 'img' : type, { src }).toString()
+      message.content = h(type === 'audio' ? 'record' : type === 'image' ? 'img' : type, { src }).toString()
       break
     }
     default:
       return null
   }
   // result.content is not a setter if result is a Universal.Message
-  message.elements ??= segment.parse(message.content)
+  message.elements ??= parseElement(message.content)
 
   if (!payload) return message
   payload.timestamp = data.origin_server_ts
@@ -154,7 +168,7 @@ function parsseContent(bot: MatrixBot, content: Matrix.M_ROOM_MESSAGE) {
     if (!nodes) return
     for (const node of nodes) {
       if (node.type === SyntaxKind.Text) {
-        result += segment.escape(decodeHE(node.value).trim() || '')
+        result += escape(decodeHE(node.value).trim() || '')
       } else {
         function tag(name: string) {
           result += `<${name}>`

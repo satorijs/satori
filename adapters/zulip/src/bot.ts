@@ -1,4 +1,6 @@
-import { Bot, Context, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { HttpPolling } from './polling'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
@@ -7,9 +9,10 @@ import { version } from '../package.json'
 import { decodeGuild, decodeMessage, decodeUser } from './utils'
 import z from 'schemastery'
 
+@Inject('http')
+@Inject('logger', true, { name: 'zulip' })
 export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
-  static inject = ['http']
 
   public http: HTTP
   public internal: Internal
@@ -17,13 +20,11 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
   constructor(ctx: Context, config: ZulipBot.Config) {
     super(ctx, config, 'zulip')
     this.http = ctx.http.extend({
+      baseUrl: config.baseUrl + '/api/v1/',
       headers: {
         Authorization: `Basic ${Buffer.from(`${config.email}:${config.key}`).toString('base64')}`,
         'user-agent': `Koishi/${version}`,
       },
-    }).extend({
-      ...config,
-      baseURL: config.endpoint + '/api/v1/',
     })
     this.internal = new Internal(this.http)
 
@@ -103,19 +104,20 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 }
 
 export namespace ZulipBot {
-  export interface Config extends HTTP.Config, HttpPolling.Options {
+  export interface Config extends HttpPolling.Options {
+    baseUrl: string
     email: string
     key: string
   }
 
   export const Config: z<Config> = z.intersect([
     z.object({
+      baseUrl: z.string().role('url').required().description('Zulip 服务器地址。'),
       email: z.string().required().description('Bot Email'),
       key: z.string().required().role('secret').description('API Key'),
     }),
     z.union([
       HttpPolling.Options,
     ]).description('推送设置'),
-    HTTP.createConfig(),
   ])
 }

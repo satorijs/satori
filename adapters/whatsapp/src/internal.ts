@@ -1,4 +1,4 @@
-import { HTTP } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 import { SendMessage } from './types'
 
 interface PhoneNumber {

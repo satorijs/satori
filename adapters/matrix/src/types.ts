@@ -1,5 +1,6 @@
 import imageSize from 'image-size'
 import { Dict } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
 import { MatrixBot } from './bot'
 
 export interface Transaction {

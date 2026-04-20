@@ -1,6 +1,9 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { DingtalkBot } from './bot'
 import { SendMessageData } from './types'
+import { downloadFile } from './utils'
 // @ts-ignore
 import { Entry } from '@cordisjs/plugin-server-temp'
 
@@ -61,7 +64,7 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
 
   // https://open.dingtalk.com/document/orgapp/upload-media-files?spm=ding_open_doc.document.0.0.3b166172ERBuHw
   async uploadMedia(attrs: Dict) {
-    const { data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const form = new FormData()
     const value = new Blob([data], { type })
     let mediaType: string
@@ -93,7 +96,7 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       if (await this.bot.http.isLocal(src)) {
         const temp = this.bot.ctx.get('server.temp')
         if (!temp) {
-          return this.bot.logger.warn('missing temporary file service, cannot send assets with private url')
+          return this.bot.ctx.logger.warn('missing temporary file service, cannot send assets with private url')
         }
         const entry: Entry | undefined = await temp.create(src)
         this.buffer += `![${attrs.alt ?? ''}](${entry.url})`

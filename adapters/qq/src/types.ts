@@ -876,7 +876,7 @@ export interface Options {
   type: 'public' | 'private'
   /** 是否开启沙箱模式 */
   sandbox?: boolean
-  endpoint?: string
+  baseUrl?: string
   authType?: 'bot' | 'bearer'
   /** 重连次数 */
   retryTimes?: number

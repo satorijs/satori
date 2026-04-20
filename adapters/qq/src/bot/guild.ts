@@ -1,4 +1,5 @@
-import { Bot, Context, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
 import { QQBot } from '.'
 import { decodeChannel, decodeGuild, decodeGuildMember, decodeMessage, decodeUser } from '../utils'
 import { GuildInternal } from '../internal'

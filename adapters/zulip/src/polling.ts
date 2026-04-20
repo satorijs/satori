@@ -1,4 +1,6 @@
 import { Adapter, Context, Time, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { ZulipBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
@@ -29,20 +31,20 @@ export class HttpPolling extends Adapter<ZulipBot> {
         bot.online()
         _retryCount = 0
         for (const e of updates.events) {
-          bot.logger.debug('[receive] %o', e)
+          bot.ctx.logger.debug('[receive] %o', e)
 
           last = Math.max(last, e.id)
           const session = await adaptSession(bot, e)
 
           if (session) bot.dispatch(session)
-          bot.logger.debug('[session] %o', session)
+          bot.ctx.logger.debug('[session] %o', session)
         }
         setTimeout(polling, 0)
       } catch (e) {
-        if (!this.ctx.http.isError(e) || !e.response?.data) {
-          bot.logger.warn('failed to get updates. reason: %s', e.stack)
+        if (!this.ctx.http.isError(e) || !e.response) {
+          bot.ctx.logger.warn('failed to get updates. reason: %s', e.stack)
         } else {
-          bot.logger.error(e.stack)
+          bot.ctx.logger.error(e.stack)
         }
         if (_retryCount > retryTimes) {
           bot.error = e
@@ -54,7 +56,7 @@ export class HttpPolling extends Adapter<ZulipBot> {
       }
     }
     polling()
-    bot.logger.debug('listening updates %c', bot.sid)
+    bot.ctx.logger.debug('listening updates %c', bot.sid)
   }
 
   async disconnect(bot: ZulipBot) {

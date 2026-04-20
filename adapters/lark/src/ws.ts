@@ -1,4 +1,6 @@
 import { Adapter, Context, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
 import { adaptSession, EventPayload } from './utils'
 import pb from 'protobufjs/light'
@@ -59,7 +61,7 @@ export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsCl
   }
 
   async prepare() {
-    const baseUrl = this.bot.config.baseURL ?? new URL(this.bot.config.endpoint).origin
+    const baseUrl = new URL(this.bot.config.baseUrl!).origin
     const { code, data: { URL: url, ClientConfig: config }, msg } = await this.bot.http.post(`${baseUrl}/callback/ws/endpoint`, {
       AppID: this.bot.config.appId,
       AppSecret: this.bot.config.appSecret,
@@ -113,7 +115,7 @@ export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsCl
       }, {} as any)
 
       if (frame.method === FrameType.control && headers.type === MessageType.pong) {
-        this.bot.logger.debug('pong')
+        this.bot.ctx.logger.debug('pong')
         return
       }
 
@@ -130,7 +132,7 @@ export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsCl
 
         const body: EventPayload = JSON.parse(Buffer.from(data).toString('utf8'))
         if (!body.header) return
-        this.bot.logger.info('received event: %o', body)
+        this.bot.ctx.logger.info('received event: %o', body)
         body.type = body.header.event_type
         const session = await adaptSession(this.bot, body)
         this.bot.dispatch(session)

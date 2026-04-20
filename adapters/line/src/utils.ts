@@ -1,10 +1,12 @@
-import { h, hyphenate, Session } from '@satorijs/core'
+import { hyphenate, Session } from '@satorijs/core'
+import h, { Element, file, image, text, video } from '@satorijs/element'
+import {} from '@cordisjs/plugin-server'
 import { LineBot } from './bot'
 import { EventMessage, WebhookEvent } from './types'
 // import jose from 'jose'
 
 export async function adaptMessage(bot: LineBot, message: EventMessage) {
-  const result: h[] = []
+  const result: Element[] = []
   if (message.type === 'text') {
     const splits: number[] = []
     let nowPos = 0
@@ -15,11 +17,11 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
     for (const mention of (message.mention?.mentionees ?? [])) {
       splits.push(mention.index)
     }
-    if (splits.length === 0) return [h.text(message.text)]
+    if (splits.length === 0) return [text(message.text)]
     do {
       const nextPos = splits.shift() ?? finalLen
       if (nextPos !== nowPos) {
-        result.push(h.text(message.text.substring(nowPos, nextPos)))
+        result.push(text(message.text.substring(nowPos, nextPos)))
         nowPos = nextPos
       }
       if (message.emojis) {
@@ -43,20 +45,20 @@ export async function adaptMessage(bot: LineBot, message: EventMessage) {
     } while (nowPos !== finalLen)
   } else if (message.type === 'image') {
     if (message.contentProvider.type === 'line') {
-      return [h.image(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [image(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
     } else {
-      return [h.image(message.contentProvider.originalContentUrl)]
+      return [image(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'video') {
     if (message.contentProvider.type === 'line') {
-      return [h.video(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+      return [video(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
     } else {
-      return [h.video(message.contentProvider.originalContentUrl)]
+      return [video(message.contentProvider.originalContentUrl)]
     }
   } else if (message.type === 'sticker') {
     return [h('face', { type: 'sticker', id: `s:${message.packageId}:${message.stickerId}`, platform: bot.platform })]
   } else if (message.type === 'file') {
-    return [h.file(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
+    return [file(`${bot.ctx.server.config.selfUrl}/line/assets/${bot.selfId}/${message.id}`)]
   }
   return result
 }

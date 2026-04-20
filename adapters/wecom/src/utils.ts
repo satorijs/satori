@@ -1,6 +1,20 @@
 import { Message } from './types'
 import { WecomBot } from './bot'
-import { Context, h } from '@satorijs/core'
+import { Context } from '@satorijs/core'
+import h, { audio, image, text, video } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export async function decodeMessage(bot: WecomBot, message: Message) {
   const session = bot.session()
@@ -14,23 +28,23 @@ export async function decodeMessage(bot: WecomBot, message: Message) {
   if (message.MsgType === 'text') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.text(message.Content)]
+    session.elements = [text(message.Content)]
     return session
   } else if (message.MsgType === 'image') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.image(message.PicUrl)]
+    session.elements = [image(message.PicUrl)]
     return session
   } else if (message.MsgType === 'voice') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.audio(bot.$toMediaUrl(message.MediaId))]
+    session.elements = [audio(bot.$toMediaUrl(message.MediaId))]
     // https://developer.work.weixin.qq.com/document/path/90254
     return session
   } else if (message.MsgType === 'video') {
     session.isDirect = true
     session.type = 'message'
-    session.elements = [h.video(bot.$toMediaUrl(message.MediaId))]
+    session.elements = [video(bot.$toMediaUrl(message.MediaId))]
     return session
   } else if (message.MsgType === 'location') {
     session.isDirect = true

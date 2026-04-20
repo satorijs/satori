@@ -1,5 +1,6 @@
-import { Adapter, Context, Logger } from '@satorijs/core'
-import type {} from '@cordisjs/plugin-server'
+import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
 import z from 'schemastery'
@@ -7,12 +8,10 @@ import z from 'schemastery'
 export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
-  private logger: Logger
   private ciphers: Record<string, Cipher> = {}
 
   constructor(ctx: Context, bot: LarkBot) {
     super(ctx)
-    this.logger = ctx.logger('lark')
   }
 
   fork(ctx: Context, bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
@@ -83,7 +82,7 @@ export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.
       }
 
       // dispatch message
-      bot.logger.debug('received decrypted event: %o', body)
+      bot.ctx.logger.debug('received decrypted event: %o', body)
       this.dispatchSession(body)
 
       // Lark requires 200 OK response to make sure event is received
@@ -114,11 +113,11 @@ export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.
           return JSON.parse(cipher.decrypt(body.encrypt))
         } catch {}
       }
-      this.logger.warn('failed to decrypt message: %o', body)
+      this.ctx.logger.warn('failed to decrypt message: %o', body)
     }
 
     if (typeof body.encrypt === 'string' && !ciphers.length) {
-      this.logger.warn('encryptKey is not set, but received encrypted message: %o', body)
+      this.ctx.logger.warn('encryptKey is not set, but received encrypted message: %o', body)
     }
 
     return body

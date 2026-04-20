@@ -1,5 +1,6 @@
-import { Adapter, Context, Logger } from '@satorijs/core'
-import type {} from '@cordisjs/plugin-server'
+import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { DingtalkBot } from './bot'
 import crypto from 'node:crypto'
 import { Message } from './types'
@@ -8,11 +9,8 @@ import { decodeMessage } from './utils'
 export class HttpServer extends Adapter<DingtalkBot> {
   static inject = ['server']
 
-  private logger: Logger
-
   constructor(ctx: Context, bot: DingtalkBot) {
     super(ctx)
-    this.logger = ctx.logger('dingtalk')
   }
 
   async connect(bot: DingtalkBot) {
@@ -45,9 +43,9 @@ export class HttpServer extends Adapter<DingtalkBot> {
         return
       }
       const body = await req.json() as Message
-      this.logger.debug(body)
+      this.ctx.logger.debug(body)
       const session = await decodeMessage(bot, body)
-      this.logger.debug(session)
+      this.ctx.logger.debug(session)
       if (session) bot.dispatch(session)
     })
   }

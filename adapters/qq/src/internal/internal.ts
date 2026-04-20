@@ -1,12 +1,14 @@
-import { Bot, Dict, HTTP, makeArray } from '@satorijs/core'
+import { Bot, Dict, makeArray } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 
 export class Internal {
   constructor(private bot: Bot, private http: () => HTTP) { }
 
-  static define(isGuild: boolean, routes: Dict<Partial<Record<HTTP.Method, string | string[]>>>, preset?: HTTP.RequestConfig) {
+  static define(isGuild: boolean, routes: Dict<Partial<Record<string, string | string[]>>>, preset?: HTTP.RequestConfig) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as HTTP.Method
+        const method = key as string
         for (const name of makeArray(routes[path][method])) {
           (isGuild ? GuildInternal : GroupInternal).prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
@@ -28,14 +30,19 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const http = this.http()
+            const decode = async (res: Response) => {
+              return config.responseType === 'text' ? await res.text() : await res.json()
+            }
             try {
-              this.bot.logger.debug(`${method} ${url} request: %o`, config)
+              this.bot.ctx.logger.debug(`${method} ${url} request: %o`, config)
               const response = await http(url, { ...config, method })
-              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, response.data, response.headers.get('x-tps-trace-id'))
-              return response.data
+              const data = await decode(response)
+              this.bot.ctx.logger.debug(`${method} ${url} response: %o, trace id: %s`, data, response.headers.get('x-tps-trace-id'))
+              return data
             } catch (error) {
               if (!http.isError(error) || !error.response) throw error
-              this.bot.logger.debug(`${method} ${url} response: %o, trace id: %s`, error.response.data, error.response.headers.get('x-tps-trace-id'))
+              const body = await decode(error.response).catch(() => null)
+              this.bot.ctx.logger.debug(`${method} ${url} response: %o, trace id: %s`, body, error.response.headers.get('x-tps-trace-id'))
               throw error
             }
           }

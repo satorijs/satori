@@ -1,5 +1,6 @@
 import { Adapter, Context, sanitize, trimSlash } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
+import {} from '@cordisjs/plugin-logger'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import * as Telegram from './types'
@@ -38,7 +39,7 @@ export class HttpServer extends Adapter<TelegramBot> {
         drop_pending_updates: true,
       })
       if (!info) throw new Error('Set webhook failed')
-      bot.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
+      bot.ctx.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
   }
 }

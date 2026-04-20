@@ -3,6 +3,7 @@ import { createTransport, Transporter } from 'nodemailer'
 import { simpleParser } from 'mailparser'
 import { MailBot } from './bot'
 import { Adapter, Context, Universal } from '@satorijs/core'
+import {} from '@cordisjs/plugin-logger'
 import { dispatchSession } from './utils'
 
 export class IMAP extends Adapter<MailBot> {
@@ -20,7 +21,7 @@ export class IMAP extends Adapter<MailBot> {
       tls: bot.config.imap.tls,
     })
     this.imap.on('error', (error) => {
-      bot.logger.error(error)
+      bot.ctx.logger.error(error)
     })
   }
 
@@ -30,7 +31,7 @@ export class IMAP extends Adapter<MailBot> {
     })
     this.imap.on('close', () => {
       if (!bot.isActive) return
-      bot.logger.info('IMAP disconnected, will reconnect in 3s...')
+      bot.ctx.logger.info('IMAP disconnected, will reconnect in 3s...')
       bot.status = Universal.Status.RECONNECT
       setTimeout(() => {
         if (!bot.isActive) return
@@ -46,7 +47,7 @@ export class IMAP extends Adapter<MailBot> {
 
   inbox(error: Error) {
     if (error) {
-      this.bot.logger.error(error)
+      this.bot.ctx.logger.error(error)
       return
     }
     this.bot.online()
@@ -57,13 +58,13 @@ export class IMAP extends Adapter<MailBot> {
   scan() {
     this.imap.search(['UNSEEN'], (error, uids) => {
       if (error) {
-        this.bot.logger.error(error)
+        this.bot.ctx.logger.error(error)
         return
       }
       if (uids.length === 0) return
 
       this.imap.setFlags(uids, ['\\SEEN'], (error) => {
-        if (error) this.bot.logger.error(error)
+        if (error) this.bot.ctx.logger.error(error)
       })
 
       // markSeen doesn't work
@@ -72,7 +73,7 @@ export class IMAP extends Adapter<MailBot> {
         message.once('body', (stream) => {
           simpleParser(stream, (error, mail) => {
             if (error) {
-              this.bot.logger.error(error)
+              this.bot.ctx.logger.error(error)
               return
             }
             dispatchSession(this.bot, mail)

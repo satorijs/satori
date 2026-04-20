@@ -1,13 +1,16 @@
-import { Bot, Context, HTTP, omit, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, omit, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { HttpAdapter } from './http'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
-import { adaptMessage, decodeUser, dispatchSession } from './utils'
+import { adaptMessage, decodeUser, dispatchSession, downloadFile } from './utils'
 import z from 'schemastery'
 
+@Inject('http')
+@Inject('logger', true, { name: 'matrix' })
 export class MatrixBot extends Bot<MatrixBot.Config> {
   static MessageEncoder = MatrixMessageEncoder
-  static inject = ['http']
 
   http: HTTP
   id: string
@@ -35,7 +38,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     if (!user) user = await this.internal.login(this.id, this.config.asToken)
     this.http = this.ctx.http.extend({
       ...this.config,
-      endpoint: this.endpoint,
+      baseUrl: this.endpoint,
       headers: {
         'Authorization': `Bearer ${user.access_token}`,
       },
@@ -44,7 +47,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
       await this.internal.setDisplayName(this.userId, this.config.name)
     }
     if (this.config.avatar) {
-      const { data, type } = await this.http.file(this.config.avatar)
+      const { data, type } = await downloadFile(this.http, this.config.avatar)
       await this.internal.setAvatar(this.userId, Buffer.from(data), type)
     }
     await this.getLogin()
@@ -156,6 +159,7 @@ export namespace MatrixBot {
     asToken?: string
     host?: string
     path?: string
+    endpoint?: string
   }
 
   export const Config: z<Config> = z.object({
@@ -167,6 +171,6 @@ export namespace MatrixBot {
     asToken: z.string().description('as_token').role('secret').required(),
     endpoint: z.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
     path: z.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
-    ...omit(HTTP.Config.dict, ['endpoint']),
+    ...omit(HTTP.Config.dict, ['baseUrl']),
   })
 }

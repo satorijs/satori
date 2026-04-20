@@ -1,6 +1,21 @@
-import { h, Session, Universal } from '@satorijs/core'
+import { Session, Universal } from '@satorijs/core'
+import h, { audio, file, image, text, video } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-server'
 import { WhatsAppBot } from './bot'
 import { Entry } from './types'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export async function decodeSession(bot: WhatsAppBot, entry: Entry) {
   const result: Session[] = []
@@ -35,21 +50,22 @@ export async function decodeSession(bot: WhatsAppBot, entry: Entry) {
       }
 
       if (message.type === 'text') {
-        session.elements = [h.text(message.text.body)]
+        session.elements = [text(message.text.body)]
       } else if (['video', 'audio', 'image', 'document'].includes(message.type)) {
         const elements = []
         let type = message.type as string
         if (message.type === 'document') type = 'file'
         const resource = message[message.type]
-        if (resource.caption) elements.push(h.text(message[message.type].caption))
-        elements.push(h[type](`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${resource.id}`))
+        if (resource.caption) elements.push(text(message[message.type].caption))
+        const ctor = ({ video, audio, image, file } as Record<string, typeof image>)[type]
+        elements.push(ctor(`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${resource.id}`))
         session.elements = elements
       } else if (message.type === 'sticker') {
         session.elements = [h('face', {
           id: /* (message.sticker.animated ? 'a:' : '') + */message.sticker.id,
           platform: 'whatsapp',
         }, [
-          h.image(`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
+          image(`${bot.ctx.server.config.selfUrl}/whatsapp/assets/${bot.selfId}/${message.sticker.id}`),
         ])]
       } else if (message.type === 'location') {
         session.elements = [h('whatsapp:location', {

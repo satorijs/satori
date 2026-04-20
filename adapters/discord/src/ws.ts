@@ -1,4 +1,6 @@
 import { Adapter, Context } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
@@ -20,7 +22,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 
   heartbeat() {
     if (!this.socket) return
-    this.bot.logger.debug(`heartbeat d ${this._d}`)
+    this.bot.ctx.logger.debug(`heartbeat d ${this._d}`)
     this.socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
       d: this._d,
@@ -34,9 +36,9 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       try {
         parsed = JSON.parse(data)
       } catch (error) {
-        return this.bot.logger.warn('cannot parse message', data)
+        return this.bot.ctx.logger.warn('cannot parse message', data)
       }
-      this.bot.logger.debug(parsed)
+      this.bot.ctx.logger.debug(parsed)
       if (parsed.s) {
         this._d = parsed.s
       }
@@ -45,7 +47,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       if (parsed.op === Gateway.Opcode.HELLO) {
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) {
-          this.bot.logger.debug('resuming')
+          this.bot.ctx.logger.debug('resuming')
           this.socket!.send(JSON.stringify({
             op: Gateway.Opcode.RESUME,
             d: {
@@ -70,7 +72,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       if (parsed.op === Gateway.Opcode.INVALID_SESSION) {
         if (parsed.d) return
         this._sessionId = ''
-        this.bot.logger.warn('offline: invalid session')
+        this.bot.ctx.logger.warn('offline: invalid session')
         this.socket?.close()
       }
 
@@ -84,7 +86,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
           this._sessionId = parsed.d.session_id
           this._resumeUrl = parsed.d.resume_gateway_url
           this.bot.user = decodeUser(parsed.d.user)
-          this.bot.logger.debug('session_id ' + this._sessionId)
+          this.bot.ctx.logger.debug('session_id ' + this._sessionId)
           return this.bot.online()
         }
         if (parsed.t === 'RESUMED') {
@@ -95,7 +97,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
       }
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
-        this.bot.logger.warn('offline: discord request reconnect')
+        this.bot.ctx.logger.warn('offline: discord request reconnect')
         this.socket?.close()
       }
     })

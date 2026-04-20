@@ -1,7 +1,21 @@
-import { defineProperty, segment, Universal } from '@satorijs/core'
+import { defineProperty, Universal } from '@satorijs/core'
+import { escape, parse as parseElement } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { ParsedMail } from 'mailparser'
 import { INode, parse, SyntaxKind } from 'html5parser'
 import { MailBot } from './bot'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export async function adaptMessage(
   bot: MailBot,
@@ -9,15 +23,15 @@ export async function adaptMessage(
   message: Universal.Message,
   payload: Universal.MessageLike,
 ): Promise<Universal.Message> {
-  message.id = message.messageId = mail.messageId
+  message.id = mail.messageId
   let content = ''
   if (!mail.html) {
-    content = segment.escape(mail.text)
+    content = escape(mail.text)
   } else {
     function visit(nodes: INode[]) {
       for (const node of nodes) {
         if (node.type === SyntaxKind.Text) {
-          content += segment.escape(decodeHE(node.value).trim() || ' ')
+          content += escape(decodeHE(node.value).trim() || ' ')
         } else {
           switch (node.name) {
             case 'a': {
@@ -105,7 +119,7 @@ export async function adaptMessage(
   }
   content = content.trim()
   message.content = content
-  message.elements ||= segment.parse(content)
+  message.elements ||= parseElement(content)
   if (!payload) return message
   payload.timestamp = +mail.date
   payload.user = {

@@ -1,8 +1,22 @@
-import { Context, Dict, h, pick, Session, Universal, valueMap } from '@satorijs/core'
+import { Context, Dict, pick, Session, Universal, valueMap } from '@satorijs/core'
+import h, { at, image, parse, sharp } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
 export * from './types'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export const sanitize = (val: string) =>
   val
@@ -18,7 +32,6 @@ export const decodeUser = (user: Discord.User): Universal.User => ({
   id: user.id,
   nick: user.global_name,
   name: user.username,
-  userId: user.id,
   avatar: user.avatar && `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
   username: user.username,
   discriminator: user.discriminator,
@@ -68,7 +81,7 @@ export async function decodeMessage(
 ) {
   const { platform } = bot
 
-  message.id = message.messageId = data.id
+  message.id = data.id
   // https://discord.com/developers/docs/reference#message-formatting
   message.content = ''
   if (data.content) {
@@ -78,20 +91,20 @@ export async function decodeMessage(
           return h('at', { role: id }).toString()
         } else {
           const user = data.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
-          return h.at(id, { name: user?.username }).toString()
+          return at(id, { name: user?.username }).toString()
         }
       })
       .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
         const animated = _[1] === 'a'
         return h('face', { id, name, animated, platform }, [
-          h.image(`https://cdn.discordapp.com/emojis/${id}.webp?quality=lossless`),
+          image(`https://cdn.discordapp.com/emojis/${id}.webp?quality=lossless`),
         ]).toString()
       })
       .replace(/@everyone/g, () => h('at', { type: 'all' }).toString())
       .replace(/@here/g, () => h('at', { type: 'here' }).toString())
       .replace(/<#(.+?)>/g, (_, id) => {
         const channel = data.mention_channels?.find(c => c.id === id)
-        return h.sharp(id, { name: channel?.name }).toString()
+        return sharp(id, { name: channel?.name }).toString()
       })
   }
 
@@ -101,7 +114,7 @@ export async function decodeMessage(
       format_type: s.format_type,
       name: s.name,
     }, [
-      h.image(`https://media.discordapp.net/stickers/${s.id}.webp?size=160`),
+      image(`https://media.discordapp.net/stickers/${s.id}.webp?size=160`),
     ])).join('')
   }
 
@@ -160,7 +173,7 @@ export async function decodeMessage(
       message.content += h('video', { src: embed.video.url, proxy_url: embed.video.proxy_url })
     }
   }
-  message.elements = h.parse(message.content)
+  message.elements = parse(message.content)
   // 遇到过 cross post 的消息在这里不会传消息 id
   // https://github.com/satorijs/satori/issues/306
   // THREAD_CREATED (18) 事件下，message_reference 没有 message_id

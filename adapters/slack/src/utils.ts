@@ -1,4 +1,6 @@
-import { Context, Element, h, Session, Universal } from '@satorijs/core'
+import { Context, Session, Universal } from '@satorijs/core'
+import h, { at, Element, file as $file, image, sharp, text as $text, video } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { SlackBot } from './bot'
 // eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
@@ -6,13 +8,25 @@ import { KnownBlock } from '@slack/types'
 import { Definitions, File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
 
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
+
 type NewKnownBlock = KnownBlock | RichTextBlock
 
 function adaptRichText(elements: RichText[]) {
   const result: Element[] = []
   for (const text of elements) {
     if (text.type === 'text') {
-      let item = h.text(unescape(text.text))
+      let item = $text(unescape(text.text))
       if (text.style?.bold) item = h('b', {}, item)
       if (text.style?.italic) item = h('i', {}, item)
       if (text.style?.strike) item = h('del', {}, item)
@@ -21,9 +35,9 @@ function adaptRichText(elements: RichText[]) {
     } else if (text.type === 'link') {
       result.push(h('a', { href: text.url }, text.text))
     } else if (text.type === 'emoji') {
-      result.push(h.text(String.fromCodePoint(...text.unicode.split('-').map(v => parseInt(v, 16)))))
+      result.push($text(String.fromCodePoint(...text.unicode.split('-').map(v => parseInt(v, 16)))))
     } else if (text.type === 'user') {
-      result.push(h.at(text.user_id))
+      result.push(at(text.user_id))
     } else if (text.type === 'broadcast') {
       result.push(h('at', { type: text.range }))
     }
@@ -39,12 +53,12 @@ function adaptMarkdown(markdown: string) {
     if (!item) continue
     const match = item.match(/<(.*?)>/)
     if (match) {
-      if (match[0].startsWith('@U')) result.push(h.at(match[0].slice(2)))
-      if (match[0].startsWith('#C')) result.push(h.sharp(match[0].slice(2)))
+      if (match[0].startsWith('@U')) result.push(at(match[0].slice(2)))
+      if (match[0].startsWith('#C')) result.push(sharp(match[0].slice(2)))
     } else if (item.startsWith(':') && item.endsWith(':')) {
       result.push(h('face', { id: item.slice(1, -1) }))
     } else {
-      result.push(h.text(item))
+      result.push($text(item))
     }
   }
   return result
@@ -87,13 +101,13 @@ export async function adaptMessage(
   // if (evt.thread_ts) elements.unshift(h.quote(evt.thread_ts))
   for (const file of data.files ?? []) {
     if (file.mimetype.startsWith('video/')) {
-      elements.push(h.video(file.url_private, { id: file.id }))
+      elements.push(video(file.url_private, { id: file.id }))
     } else if (file.mimetype.startsWith('audio/')) {
-      elements.push(h.video(file.url_private, { id: file.id }))
+      elements.push(video(file.url_private, { id: file.id }))
     } else if (file.mimetype.startsWith('image/')) {
-      elements.push(h.image(file.url_private, { id: file.id }))
+      elements.push(image(file.url_private, { id: file.id }))
     } else {
-      elements.push(h.file(file.url_private, { id: file.id }))
+      elements.push($file(file.url_private, { id: file.id }))
     }
   }
   let forward = null
@@ -103,7 +117,7 @@ export async function adaptMessage(
       forward = attachment['ts']
     }
   }
-  message.id = message.messageId = data.ts
+  message.id = data.ts
   message.elements = forward ? [h('message', { forward: true, id: forward }, elements)] : elements
   message.content = message.elements.join('')
 
@@ -143,7 +157,7 @@ export function adaptMessageDeleted(bot: SlackBot, event: MessageDeletedEvent, s
 export function adaptSentAsset(file: File, session: Session) {
   session.messageId = file.shares.public[Object.keys(file.shares.public)[0]][0].ts
   session.timestamp = file.created * 1000
-  session.elements = [h.image(file.url_private, { id: file.id })]
+  session.elements = [image(file.url_private, { id: file.id })]
   session.content = session.elements.join('')
   session.channelId = file.channels[0]
   // session.guildId = file.shares.public[Object.keys(file.shares.public)[0]][0].ts
@@ -213,8 +227,7 @@ export interface AuthTestResponse {
 export const decodeUser = (data: SlackUser): Universal.User => ({
   id: data.id,
   name: data.real_name,
-  nickname: data.profile.display_name,
-  userId: data.id,
+  nick: data.profile.display_name,
   avatar: data.profile.image_512
     ?? data.profile.image_192
     ?? data.profile.image_72

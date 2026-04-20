@@ -1,6 +1,6 @@
-import { Bot, Context } from '@satorijs/core'
-import type { HTTP } from '@cordisjs/plugin-http'
-import type { Logger } from '@cordisjs/plugin-logger'
+import { Bot, Context, Inject } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
 import { WsClient } from './ws'
@@ -8,22 +8,21 @@ import { Internal } from './internal'
 import z from 'schemastery'
 
 // https://open.dingtalk.com/document/orgapp/enterprise-created-chatbot
+@Inject('http')
+@Inject('logger', true, { name: 'dingtalk' })
 export class DingtalkBot extends Bot<DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
-  static inject = ['http']
 
   public oldHttp: HTTP
   public http: HTTP
   public internal: Internal
   private refreshTokenTimer: NodeJS.Timeout
 
-  private logger: Logger
-
   constructor(ctx: Context, config: DingtalkBot.Config) {
     super(ctx, config, 'dingtalk')
     this.selfId = config.appkey
-    this.http = ctx.http.extend(config.api)
-    this.oldHttp = ctx.http.extend(config.oldApi)
+    this.http = ctx.http.extend({ baseUrl: 'https://api.dingtalk.com/v1.0/' })
+    this.oldHttp = ctx.http.extend({ baseUrl: 'https://oapi.dingtalk.com/' })
     this.internal = new Internal(this)
 
     if (config.protocol === 'http') {
@@ -43,12 +42,12 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
         return this.toJSON()
       }
     } catch (e) {
-      this.logger.warn(e)
+      this.ctx.logger.warn(e)
     }
 
     const data = await this.internal.oapiMicroappList()
     if (!data.appList) {
-      this.logger.error('getLogin failed: %o', data)
+      this.ctx.logger.error('getLogin failed: %o', data)
       return this.toJSON()
     }
     const self = data.appList.find(v => v.agentId === this.config.agentId)
@@ -71,14 +70,14 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
       appKey: this.config.appkey,
       appSecret: this.config.secret,
     })
-    this.logger.debug('gettoken result: %o', data)
+    this.ctx.logger.debug('gettoken result: %o', data)
     this.token = data.accessToken
     // https://open.dingtalk.com/document/orgapp/authorization-overview
     this.http = this.http.extend({
       headers: {
         'x-acs-dingtalk-access-token': data.accessToken,
       },
-    }).extend(this.config.api)
+    })
     this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (data.expireIn - 10) * 1000)
   }
 
@@ -113,8 +112,6 @@ export namespace DingtalkBot {
     protocol: string
     appkey: string
     agentId?: number
-    api: HTTP.Config
-    oldApi: HTTP.Config
   }
 
   export const Config: z<Config> = z.intersect([
@@ -127,8 +124,6 @@ export namespace DingtalkBot {
       secret: z.string().required().description('机器人密钥。'),
       agentId: z.number().description('AgentId'),
       appkey: z.string().required(),
-      api: HTTP.createConfig('https://api.dingtalk.com/v1.0/'),
-      oldApi: HTTP.createConfig('https://oapi.dingtalk.com/'),
     }),
     WsClient.Options,
   ])

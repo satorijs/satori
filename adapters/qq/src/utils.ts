@@ -1,6 +1,20 @@
-import { Bot, Context, h, Session, Universal } from '@satorijs/core'
+import { Bot, Context, Session, Universal } from '@satorijs/core'
+import { at, audio, file, image, parse, text, transform, unescape, video } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import * as QQ from './types'
 import { QQBot } from './bot'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
@@ -41,18 +55,18 @@ export function decodeGroupMessage(
 ) {
   message.id = data.id
   message.elements = []
-  if (data.content.length) message.elements.push(h.text(data.content))
+  if (data.content.length) message.elements.push(text(data.content))
   for (const attachment of (data.attachments ?? [])) {
     if (attachment.content_type === 'file') {
-      message.elements.push(h.file(attachment.url, {
+      message.elements.push(file(attachment.url, {
         filename: attachment.filename,
       }))
     } else if (attachment.content_type.startsWith('image/')) {
-      message.elements.push(h.image(attachment.url))
+      message.elements.push(image(attachment.url))
     } else if (attachment.content_type === 'voice') {
-      message.elements.push(h.audio(attachment.url))
+      message.elements.push(audio(attachment.url))
     } else if (attachment.content_type === 'video') {
-      message.elements.push(h.video(attachment.url))
+      message.elements.push(video(attachment.url))
     }
   }
   message.content = message.elements.join('')
@@ -74,18 +88,18 @@ export async function decodeMessage(
   message: Universal.Message = {},
   payload: Universal.MessageLike = message,
 ): Promise<Universal.Message> {
-  message.id = message.messageId = data.id
+  message.id = data.id
   message.content = (data.content ?? '')
-    .replace(/<@!(\d+)>/g, (_, $1) => h.at($1).toString())
+    .replace(/<@!(\d+)>/g, (_, $1) => at($1).toString())
   // .replace(/<#(.+)>/, (_, $1) => h.sharp($1).toString()) // not used?
   const { attachments = [] } = data
   if (attachments.length && !/\s$/.test(message.content)) message.content += ' '
   message.content = attachments
     .filter(({ content_type }) => content_type.startsWith('image'))
-    .reduce((content, attachment) => content + h.image('https://' + attachment.url), message.content)
-  message.elements = h.parse(message.content)
-  message.elements = h.transform(message.elements, {
-    text: (attrs) => h.unescape(attrs.content),
+    .reduce((content, attachment) => content + image('https://' + attachment.url), message.content)
+  message.elements = parse(message.content)
+  message.elements = transform(message.elements, {
+    text: (attrs) => unescape(attrs.content),
   })
 
   if (data.message_reference) {
@@ -176,7 +190,7 @@ export async function adaptSession(bot: QQBot, input: QQ.DispatchPayload) {
     session.isDirect = false
     decodeGroupMessage(bot, input.d, session.event.message = {}, session.event)
     session.channelId = session.guildId
-    session.elements.unshift(h.at(session.selfId))
+    session.elements.unshift(at(session.selfId))
   } else if (input.t === 'C2C_MESSAGE_CREATE') {
     session.type = 'message'
     session.isDirect = true

@@ -1,4 +1,7 @@
-import { Bot, Context, Fragment, h, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { Fragment, normalize } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
@@ -8,9 +11,10 @@ import z from 'schemastery'
 // @ts-ignore
 import { version } from '../package.json'
 
+@Inject('http', true, { baseUrl: 'https://discord.com/api/v10' })
+@Inject('logger', true, { name: 'discord' })
 export class DiscordBot extends Bot<DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
-  static inject = ['http']
 
   public http: HTTP
   public internal: Internal
@@ -21,11 +25,9 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config, 'discord')
     this.http = ctx.http.extend({
-      ...config,
       headers: {
         Authorization: config.type === 'user' ? config.token : `Bot ${config.token}`,
         'User-Agent': `Satori (https://koishi.chat/, ${version})`,
-        ...config.headers,
       },
     })
     this.internal = new Internal(this)
@@ -71,7 +73,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   }
 
   async editMessage(channelId: string, messageId: string, content: Fragment) {
-    const elements = h.normalize(content)
+    const elements = normalize(content)
     content = elements.toString()
     const image = elements.find(v => v.type === 'img' || v.type === 'image')
     if (image) {
@@ -222,7 +224,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     this.commands = commands
     const updates = commands.map(Discord.encodeCommand)
     if (updates.length) {
-      this.logger.debug('update %d command(s)', updates.length)
+      this.ctx.logger.debug('update %d command(s)', updates.length)
       await this.internal.bulkOverwriteGlobalApplicationCommands(this.selfId, updates)
     }
   }
@@ -254,6 +256,5 @@ export namespace DiscordBot {
     }).description('功能设置'),
     WsClient.Options,
     DiscordMessageEncoder.Config,
-    HTTP.createConfig('https://discord.com/api/v10'),
   ]) as any
 }

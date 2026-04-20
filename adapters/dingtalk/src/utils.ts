@@ -1,6 +1,19 @@
-import { Context, h } from '@satorijs/core'
+import { at, Element, file, image, text } from '@satorijs/element'
+import { HTTP } from '@cordisjs/plugin-http'
 import { Message } from './types'
 import { DingtalkBot } from './bot'
+
+export async function downloadFile(http: HTTP, url: string) {
+  const response = await http(url)
+  const data = await response.arrayBuffer()
+  const type = response.headers.get('content-type') ?? 'application/octet-stream'
+  const disposition = response.headers.get('content-disposition') ?? ''
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)
+  const filename = match
+    ? decodeURIComponent(match[1])
+    : new URL(url, 'http://localhost').pathname.split('/').pop() || 'file'
+  return { type, filename, data }
+}
 
 export async function decodeMessage(bot: DingtalkBot, body: Message) {
   const session = bot.session()
@@ -16,8 +29,8 @@ export async function decodeMessage(bot: DingtalkBot, body: Message) {
     session.channelId = session.userId
     session.isDirect = true
   } else {
-    const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => h.at(v.staffId))
-    session.elements = [h.at(body.robotCode), ...atUsers]
+    const atUsers = body.atUsers.filter(v => v.dingtalkId !== body.chatbotUserId).map(v => at(v.staffId))
+    session.elements = [at(body.robotCode), ...atUsers]
     session.channelId = body.conversationId
     session.isDirect = false
   }
@@ -30,21 +43,21 @@ export async function decodeMessage(bot: DingtalkBot, body: Message) {
   }
   session.timestamp = +body.createAt
   if (body.msgtype === 'text') {
-    session.elements = [h.text(body.text.content)]
+    session.elements = [text(body.text.content)]
   } else if (body.msgtype === 'richText') {
-    const elements: h[] = []
+    const elements: Element[] = []
     for (const item of body.content.richText) {
-      if (item.text) elements.push(h.text(item.text))
+      if (item.text) elements.push(text(item.text))
       if (item.downloadCode) {
         const url = await bot.downloadFile(item.downloadCode)
-        elements.push(h.image(url))
+        elements.push(image(url))
       }
     }
     session.elements = elements
   } else if (body.msgtype === 'picture') {
-    session.elements = [h.image(await bot.downloadFile(body.content.downloadCode))]
+    session.elements = [image(await bot.downloadFile(body.content.downloadCode))]
   } else if (body.msgtype === 'file') {
-    session.elements = [h.file(await bot.downloadFile(body.content.downloadCode))]
+    session.elements = [file(await bot.downloadFile(body.content.downloadCode))]
   } else {
     return
   }

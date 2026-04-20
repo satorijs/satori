@@ -1,10 +1,14 @@
-import { Bot, Context, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { HttpServer } from './http'
 import { WecomMessageEncoder } from './message'
 import z from 'schemastery'
 
+@Inject('http', true, { baseUrl: 'https://qyapi.weixin.qq.com/' })
+@Inject('logger', true, { name: 'wecom' })
 export class WecomBot extends Bot<WecomBot.Config> {
-  static inject = ['server', 'http']
+  static inject = ['server']
   static MessageEncoder = WecomMessageEncoder
 
   http: HTTP
@@ -14,7 +18,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
   constructor(ctx: Context, config: WecomBot.Config) {
     super(ctx, config, 'wecom')
     this.selfId = config.agentId
-    this.http = ctx.http.extend(config)
+    this.http = ctx.http
     // this.internal = new Internal(this.http, this)
 
     ctx.plugin(HttpServer, this)
@@ -39,11 +43,11 @@ export class WecomBot extends Bot<WecomBot.Config> {
       },
     })
     if (errcode > 0) {
-      this.logger.error(errmsg)
+      this.ctx.logger.error(errmsg)
       return
     }
     this.token = access_token
-    this.logger.debug('token %o, expires in %d', access_token, expires_in)
+    this.ctx.logger.debug('token %o, expires in %d', access_token, expires_in)
     this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (expires_in - 10) * 1000)
     return access_token
   }
@@ -102,8 +106,6 @@ export class WecomBot extends Bot<WecomBot.Config> {
     this.user = {
       id: this.config.agentId,
       name,
-      userId: this.config.agentId,
-      username: name,
       avatar: square_logo_url,
     }
     return this.toJSON()
@@ -120,7 +122,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
 }
 
 export namespace WecomBot {
-  export interface Config extends HTTP.Config {
+  export interface Config {
     corpId: string
     token: string
     aesKey: string
@@ -128,14 +130,11 @@ export namespace WecomBot {
     secret: string
   }
 
-  export const Config: z<Config> = z.intersect([
-    z.object({
-      corpId: z.string().required(),
-      agentId: z.string().description('AgentID').required(),
-      secret: z.string().role('secret').description('AppSecret').required(),
-      token: z.string().role('secret').description('Webhook Token').required(),
-      aesKey: z.string().role('secret').description('EncodingAESKey'),
-    }),
-    HTTP.createConfig('https://qyapi.weixin.qq.com/'),
-  ])
+  export const Config: z<Config> = z.object({
+    corpId: z.string().required(),
+    agentId: z.string().description('AgentID').required(),
+    secret: z.string().role('secret').description('AppSecret').required(),
+    token: z.string().role('secret').description('Webhook Token').required(),
+    aesKey: z.string().role('secret').description('EncodingAESKey'),
+  })
 }

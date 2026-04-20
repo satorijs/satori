@@ -1,4 +1,6 @@
-import { Bot, Context, HTTP, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
 import { adaptMessage, decodeChannel, decodeGuild, decodeGuildMember, decodeUser } from './utils'
@@ -7,16 +9,17 @@ import { GenericMessageEvent, SlackChannel, SlackTeam, SlackUser } from './types
 import { Internal, Token } from './types/internal'
 import z from 'schemastery'
 
+@Inject('http', true, { baseUrl: 'https://slack.com/api/' })
+@Inject('logger', true, { name: 'slack' })
 export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
   static MessageEncoder = SlackMessageEncoder
-  static inject = ['http']
 
   public http: HTTP
   public internal: Internal
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'slack')
-    this.http = ctx.http.extend(config)
+    this.http = ctx.http
     this.internal = new Internal(this, this.http)
 
     if (config.protocol === 'ws') {
@@ -26,12 +29,13 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     }
   }
 
-  async request<T = any>(method: HTTP.Method, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
+  async request<T = any>(method: string, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
     headers['Authorization'] = `Bearer ${zap ? this.config.token : this.config.botToken}`
     if (method === 'GET') {
       return await this.http.get(path, { params: data, headers })
     } else {
-      return (await this.http(method, path, { data, headers })).data
+      const response = await this.http(path, { method, data, headers })
+      return await response.json()
     }
   }
 
@@ -40,7 +44,6 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     this.user = {
       id: data.user_id,
       name: data.user,
-      userId: data.user_id,
       avatar: null,
       username: data.user,
       isBot: !!data.bot_id,
@@ -149,7 +152,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       full: true,
     })
     return message.reactions.find(v => v.name === emoji)?.users.map(v => ({
-      userId: v,
+      id: v,
     })) ?? []
   }
 
@@ -198,6 +201,5 @@ export namespace SlackBot {
       WsClient.Options,
       HttpServer.Options,
     ]),
-    HTTP.createConfig('https://slack.com/api/'),
   ] as const)
 }

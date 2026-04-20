@@ -1,7 +1,10 @@
 import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
+import { downloadFile } from './utils'
 
 export const escapeMarkdown = (val: string) =>
   val
@@ -33,7 +36,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     if (this.passiveId) msg_id = this.passiveId
 
     let r: Partial<QQ.Message.Response>
-    this.bot.logger.debug('use form data %s', useFormData)
+    this.bot.ctx.logger.debug('use form data %s', useFormData)
     try {
       if (useFormData) {
         const form = new FormData()
@@ -71,20 +74,21 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
         else r = await this.bot.internal.sendMessage(this.channelId, payload)
       }
     } catch (e) {
-      if (this.bot.http.isError(e)) {
-        if (this.bot.parent.config.retryWhen.includes(e.response.data.code) && !this.retry && this.fileUrl) {
-          this.bot.logger.warn('retry image sending')
+      if (this.bot.http.isError(e) && e.response) {
+        const body = await e.response.json().catch(() => null)
+        if (this.bot.parent.config.retryWhen.includes(body?.code) && !this.retry && this.fileUrl) {
+          this.bot.ctx.logger.warn('retry image sending')
           this.retry = true
           await this.resolveFile(null, true)
           await this.flush()
         }
         if (useFormData) {
-          this.bot.logger.warn(`POST ${endpoint} response: %o, trace id: %s`, e.response.data, e.response.headers.get('x-tps-trace-id'))
+          this.bot.ctx.logger.warn(`POST ${endpoint} response: %o, trace id: %s`, body, e.response.headers.get('x-tps-trace-id'))
         }
       }
     }
 
-    // this.bot.logger.debug(r)
+    // this.bot.ctx.logger.debug(r)
     const session = this.bot.session()
     session.type = 'send'
     // await decodeMessage(this.bot, r, session.event.message = {}, session.event)
@@ -108,7 +112,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
         session.app.emit(session, 'send', session)
         this.results.push(session.event.message)
       } catch (e) {
-        this.bot.logger.error(e)
+        this.bot.ctx.logger.error(e)
       }
     }
     this.content = ''
@@ -141,7 +145,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
     if (!download && !await this.bot.ctx.http.isLocal(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
-    const { data, filename, type } = await this.bot.ctx.http.file(this.fileUrl || attrs.src || attrs.url, attrs)
+    const { data, filename, type } = await downloadFile(this.bot.ctx.http, this.fileUrl || attrs.src || attrs.url)
     this.file = new Blob([data], { type })
     this.filename = filename
     this.fileUrl = null
@@ -262,14 +266,15 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
             session.app.emit(session, 'send', session)
             this.results.push(session.event.message)
           } catch (e) {
-            this.bot.logger.error(e)
+            this.bot.ctx.logger.error(e)
           }
         }
       } catch (e) {
         if (!this.bot.http.isError(e)) throw e
         this.errors.push(e)
-        if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-          this.bot.logger.warn('%s retry message sending', this.session.cid)
+        const body = e.response ? await e.response.json().catch(() => null) : null
+        if (!this.retry && this.bot.config.retryWhen.includes(body?.code)) {
+          this.bot.ctx.logger.warn('%s retry message sending', this.session.cid)
           this.retry = true
           await send()
         }
@@ -317,7 +322,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
     if (capture?.[2]) {
       data.file_data = capture[2]
     } else if (await this.bot.ctx.http.isLocal(url)) {
-      data.file_data = Buffer.from((await this.bot.ctx.http.file(url)).data).toString('base64')
+      data.file_data = Buffer.from((await downloadFile(this.bot.ctx.http, url)).data).toString('base64')
     } else {
       data.url = url
     }
@@ -331,8 +336,9 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
     } catch (e) {
       if (!this.bot.http.isError(e)) throw e
       this.errors.push(e)
-      if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-        this.bot.logger.warn('%s retry message sending', this.session.cid)
+      const body = e.response ? await e.response.json().catch(() => null) : null
+      if (!this.retry && this.bot.config.retryWhen.includes(body?.code)) {
+        this.bot.ctx.logger.warn('%s retry message sending', this.session.cid)
         this.retry = true
         await this.sendFile(type, attrs)
       }
@@ -402,7 +408,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       await this.flush() // text can't send with video
     } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.flush()
-      const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+      const { data } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
       if (new TextDecoder().decode(data.slice(0, 7)).includes('#!SILK')) {
         const onlineFile = await this.sendFile(type, {
           src: `data:audio/amr;base64,` + Buffer.from(data).toString('base64'),
@@ -418,7 +424,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
           if (onlineFile) this.attachedFile = onlineFile
         } else {
           const silk = this.bot.ctx.get('silk')
-          if (!silk) return this.bot.logger.warn('missing ntsilk/silk service, cannot send non-silk audio')
+          if (!silk) return this.bot.ctx.logger.warn('missing ntsilk/silk service, cannot send non-silk audio')
           const allowSampleRate = [8000, 12000, 16000, 24000, 32000, 44100, 48000]
           if (silk.isWav(data) && allowSampleRate.includes(silk.getWavFileInfo(data).fmt.sampleRate)) {
             const result = await silk.encode(data, 0)
@@ -427,7 +433,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
             })
             if (onlineFile) this.attachedFile = onlineFile
           } else {
-            if (!this.bot.ctx.get('ffmpeg')) return this.bot.logger.warn('missing ffmpeg service, cannot send non-silk audio except some wav')
+            if (!this.bot.ctx.get('ffmpeg')) return this.bot.ctx.logger.warn('missing ffmpeg service, cannot send non-silk audio except some wav')
             const pcmBuf = await this.bot.ctx.get('ffmpeg')
               .builder()
               .input(Buffer.from(data))

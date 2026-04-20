@@ -50,7 +50,7 @@
     "@cordisjs/plugin-http": "^1.3.0"
   },
   "dependencies": {
-    "@cordisjs/element": "^0.3.0",
+    "@satorijs/element": "^4.0.0-alpha.0",
     "@satorijs/protocol": "^2.0.0-alpha.0",
     "cordis": "^4.0.0-rc.3",
     "cosmokit": "^1.8.1",

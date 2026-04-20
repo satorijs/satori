@@ -1,6 +1,8 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { ZulipBot } from './bot'
-import { by_stream_topic_url, encodeHashComponent } from './utils'
+import { by_stream_topic_url, downloadFile, encodeHashComponent } from './utils'
 
 export const escape = (val: string) =>
   val
@@ -39,7 +41,7 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
 
   async uploadMedia(element: h) {
     const { attrs } = element
-    const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
+    const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
     const form = new FormData()
     const value = new Blob([data], { type })
     form.append('file', value, attrs.file || filename)
@@ -94,7 +96,7 @@ export class ZulipMessageEncoder extends MessageEncoder<ZulipBot> {
         const u = await this.getUser(attrs.id)
         if (u) this.buffer += ` @**${u}|${attrs.id}** `
       } catch (e) {
-        this.bot.logger.error(e)
+        this.bot.ctx.logger.error(e)
         this.buffer += ` @**${attrs.id}** `
       }
     } else if (type === 'at' && ['all', 'here'].includes(attrs.type)) {

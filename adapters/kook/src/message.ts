@@ -1,6 +1,8 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
+import {} from '@cordisjs/plugin-http'
 import { KookBot } from './bot'
 import * as Kook from './types'
+import { downloadFile } from './utils'
 import z from 'schemastery'
 
 declare global {
@@ -77,18 +79,19 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
     const src = attrs.src || attrs.url
     if (await this.bot.http.isLocal(src)) {
       const payload = new FormData()
-      const { data, type, filename } = await this.bot.http.file(src, attrs)
+      const { data, type, filename } = await downloadFile(this.bot.http, src)
       payload.append('file', new Blob([data], { type }), attrs.file || filename)
       const { data: { url } } = await this.bot.http.post('/asset/create', payload)
       return url
     } else if (!src.includes('kookapp.cn')) {
-      const { data, headers } = await this.bot.ctx.http<ArrayBuffer>('GET', src, {
+      const response = await this.bot.ctx.http(src, {
+        method: 'GET',
         headers: { accept: type + '/*' },
-        responseType: 'arraybuffer',
         timeout: +attrs.timeout || undefined,
       })
+      const data = await response.arrayBuffer()
       const payload = new FormData()
-      payload.append('file', new Blob([data], { type: headers.get('Content-Type') }), 'file')
+      payload.append('file', new Blob([data], { type: response.headers.get('Content-Type')! }), 'file')
       const { data: { url } } = await this.bot.http.post('/asset/create', payload)
       return url
     } else {

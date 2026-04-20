@@ -1,5 +1,6 @@
-import { Adapter, Context, Logger, sanitize } from '@satorijs/core'
-import type {} from '@cordisjs/plugin-server'
+import { Adapter, Context, sanitize } from '@satorijs/core'
+import {} from '@cordisjs/plugin-logger'
+import {} from '@cordisjs/plugin-server'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
@@ -7,16 +8,13 @@ import z from 'schemastery'
 export class HttpServer extends Adapter<KookBot<KookBot.BaseConfig & HttpServer.Options>> {
   static inject = ['server']
 
-  private logger: Logger
-
   constructor(ctx: Context, bot: KookBot) {
     super(ctx)
-    this.logger = ctx.logger('kook')
     let { path } = bot.config as HttpServer.Options
     path = sanitize(path)
     ctx.server.post(path, async (req, res) => {
       const body = await req.json()
-      this.logger.debug('receive %o', body)
+      this.ctx.logger.debug('receive %o', body)
 
       const { challenge } = body.d
       res.status = 200

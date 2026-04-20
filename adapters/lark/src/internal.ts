@@ -1,4 +1,6 @@
-import { Context, Dict, HTTP, makeArray } from '@satorijs/core'
+import { Context, Dict, makeArray } from '@satorijs/core'
+import { HTTP } from '@cordisjs/plugin-http'
+import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
 
 export interface Internal {}
@@ -45,9 +47,9 @@ export class Internal {
     })
   }
 
-  private static _assertResponse(bot: LarkBot, response: HTTP.Response<BaseResponse>) {
-    if (!response.data.code) return
-    bot.logger.debug('response: %o', response.data)
+  private static _assertResponse(bot: LarkBot, data: BaseResponse, response: Response) {
+    if (!data.code) return
+    bot.ctx.logger.debug('response: %o', data)
     const error = new HTTP.Error(`request failed`)
     error.response = response
     throw error
@@ -71,10 +73,10 @@ export class Internal {
 
   private static _tree: Dict = Object.create(null)
 
-  static define(routes: Dict<Partial<Record<HTTP.Method, string | InternalRoute>>>) {
+  static define(routes: Dict<Partial<Record<string, string | InternalRoute>>>) {
     for (const path in routes) {
       for (const key in routes[path]) {
-        const method = key as HTTP.Method
+        const method = key as string
         for (let route of makeArray(routes[path][method])) {
           if (typeof route === 'string') {
             route = { name: route }
@@ -99,15 +101,16 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
+            const response = await bot.http(url, { ...config, method })
             if (route.type === 'binary') {
-              config.responseType = 'arraybuffer'
+              return await response.arrayBuffer()
             }
-            const response = await bot.http(method, url, config)
-            Internal._assertResponse(bot, response)
-            if (route.type === 'raw-json' || route.type === 'binary') {
-              return response.data
+            const data = await response.json() as BaseResponse & { data?: any }
+            Internal._assertResponse(bot, data, response)
+            if (route.type === 'raw-json') {
+              return data
             } else {
-              return response.data.data
+              return data.data
             }
           }
 
