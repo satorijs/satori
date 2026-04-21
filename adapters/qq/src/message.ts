@@ -1,6 +1,7 @@
 import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
+import isLocal from '@cordisjs/url-is-local'
 import {} from '@cordisjs/plugin-logger'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
@@ -142,7 +143,7 @@ export class QQGuildMessageEncoder extends MessageEncoder<QQGuildBot> {
   }
 
   async resolveFile(attrs: Dict, download = false) {
-    if (!download && !await this.bot.ctx.http.isLocal(attrs.src || attrs.url)) {
+    if (!download && !await isLocal(attrs.src || attrs.url)) {
       return this.fileUrl = attrs.src || attrs.url
     }
     const { data, filename, type } = await downloadFile(this.bot.ctx.http, this.fileUrl || attrs.src || attrs.url)
@@ -321,7 +322,7 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
     const capture = /^data:([\w/.+-]+);base64,(.*)$/.exec(url)
     if (capture?.[2]) {
       data.file_data = capture[2]
-    } else if (await this.bot.ctx.http.isLocal(url)) {
+    } else if (await isLocal(url)) {
       data.file_data = Buffer.from((await downloadFile(this.bot.ctx.http, url)).data).toString('base64')
     } else {
       data.url = url

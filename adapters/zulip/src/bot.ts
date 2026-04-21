@@ -1,12 +1,11 @@
-import { Bot, Context, Inject, Universal } from '@satorijs/core'
+import { Bot, Context, Inject, Time, Universal } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
-import { HttpPolling } from './polling'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
 // @ts-ignore
 import { version } from '../package.json'
-import { decodeGuild, decodeMessage, decodeUser } from './utils'
+import { adaptSession, decodeGuild, decodeMessage, decodeUser } from './utils'
 import z from 'schemastery'
 
 @Inject('http')
@@ -16,6 +15,7 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 
   public http: HTTP
   public internal: Internal
+  private timeout: NodeJS.Timeout
 
   constructor(ctx: Context, config: ZulipBot.Config) {
     super(ctx, config, 'zulip')
@@ -27,8 +27,59 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
       },
     })
     this.internal = new Internal(this.http)
+  }
 
-    ctx.plugin(HttpPolling, this)
+  async connect() {
+    await this.getLogin()
+    const r = await this.internal.registerQueue({
+      // event_types: `["message"]`,
+    })
+    let last = -1
+    let _retryCount = 0
+    this.online()
+    const { retryTimes, retryInterval } = this.config
+    const polling = async () => {
+      try {
+        const updates = await this.internal.getEvents({
+          queue_id: r.queue_id,
+          last_event_id: last,
+        })
+        if (!this.isActive) {
+          return this.offline()
+        }
+        this.online()
+        _retryCount = 0
+        for (const e of updates.events) {
+          this.ctx.logger.debug('[receive] %o', e)
+
+          last = Math.max(last, e.id)
+          const session = await adaptSession(this, e)
+
+          if (session) this.dispatch(session)
+          this.ctx.logger.debug('[session] %o', session)
+        }
+        setTimeout(polling, 0)
+      } catch (e) {
+        if (!this.ctx.http.isError(e) || !e.response) {
+          this.ctx.logger.warn('failed to get updates. reason: %s', e.stack)
+        } else {
+          this.ctx.logger.error(e.stack)
+        }
+        if (_retryCount > retryTimes) {
+          this.error = e
+          return this.status = Universal.Status.OFFLINE
+        }
+        _retryCount++
+        this.status = Universal.Status.RECONNECT
+        this.timeout = setTimeout(() => polling(), retryInterval)
+      }
+    }
+    polling()
+    this.ctx.logger.debug('listening updates %c', this.sid)
+  }
+
+  async disconnect() {
+    clearTimeout(this.timeout)
   }
 
   async getGuildList() {
@@ -104,10 +155,13 @@ export class ZulipBot extends Bot<ZulipBot.Config> {
 }
 
 export namespace ZulipBot {
-  export interface Config extends HttpPolling.Options {
+  export interface Config {
     baseUrl: string
     email: string
     key: string
+    protocol: 'polling'
+    retryTimes?: number
+    retryInterval?: number
   }
 
   export const Config: z<Config> = z.intersect([
@@ -116,8 +170,10 @@ export namespace ZulipBot {
       email: z.string().required().description('Bot Email'),
       key: z.string().required().role('secret').description('API Key'),
     }),
-    z.union([
-      HttpPolling.Options,
-    ]).description('推送设置'),
+    z.object({
+      protocol: z.const('polling').required(process.env.KOISHI_ENV !== 'browser'),
+      retryTimes: z.natural().description('连接时的最大重试次数。').default(6),
+      retryInterval: z.natural().role('ms').default(Time.second * 5).description('长轮询断开后的重试时间间隔 (单位为毫秒)。'),
+    }).description('推送设置'),
   ])
 }

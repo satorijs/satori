@@ -1,11 +1,16 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { DingtalkBot } from './bot'
 import { decodeMessage } from './utils'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<DingtalkBot> {
+export class WsClient extends CoreWsClient<DingtalkBot> {
+  constructor(ctx: Context, bot: DingtalkBot) {
+    super(ctx, bot)
+    bot.adapter = this
+  }
+
   async prepare() {
     await this.bot.refreshToken()
     await this.bot.getLogin()
@@ -51,9 +56,9 @@ export class WsClient extends Adapter.WsClient<DingtalkBot> {
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {}
+  export interface Options extends WsClientConfig {}
 
   export const Options: z<Options> = z.intersect([
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ] as const)
 }

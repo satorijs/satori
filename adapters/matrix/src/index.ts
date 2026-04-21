@@ -8,7 +8,6 @@ declare module '@satorijs/core' {
 }
 
 export * from './bot'
-export * from './http'
 export * from './message'
 export * from './types'
 export * from './utils'

@@ -28,6 +28,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
   http: HTTP
   assetsQuester: HTTP
   internal: Internal
+  public adapter?: HttpServer | WsClient
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'lark')
@@ -39,7 +40,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     this.internal = new Internal(this)
 
     if (config.protocol === 'http') {
-      ctx.plugin(HttpServer, this)
+      ctx.plugin(HttpServer, this as any)
     } else if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this as any)
     }
@@ -52,6 +53,14 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
         params: Object.fromEntries(query.entries()),
       })
     })
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   getResourceUrl(type: string, message_id: string, file_key: string) {
@@ -153,7 +162,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     return { data, next: members.page_token }
   }
 
-  async createUpload(...uploads: Universal.Upload[]): Promise<string[]> {
+  async createUpload(...uploads: Blob[]): Promise<string[]> {
     return await Promise.all(uploads.map(async (upload) => {
       let type: Im.File.CreateForm['file_type'] = 'stream'
       for (const [key, value] of Object.entries(fileTypeMap)) {
@@ -163,9 +172,9 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
         }
       }
       const response = await this.internal.im.file.create({
-        file_name: upload.filename,
+        file_name: (upload as File).name || 'file',
         file_type: type,
-        file: new Blob([upload.data]),
+        file: upload,
       })
       return this.getInternalUrl(`/im/v1/files/${response.file_key}`)
     }))

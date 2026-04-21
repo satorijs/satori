@@ -1,31 +1,26 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context } from '@satorijs/core'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.Options>> {
+export class HttpServer {
   static inject = ['server']
 
-  private ciphers: Record<string, Cipher> = {}
+  private cipher?: Cipher
 
-  constructor(ctx: Context, bot: LarkBot) {
-    super(ctx)
+  constructor(public ctx: Context, public bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
+    bot.adapter = this
+    if (bot.config.encryptKey) {
+      this.cipher = new Cipher(bot.config.encryptKey)
+    }
   }
 
-  fork(ctx: Context, bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
-    super.fork(ctx, bot)
-
-    this._refreshCipher()
-    return bot.initialize()
-  }
-
-  async connect(bot: LarkBot<LarkBot.BaseConfig & HttpServer.Options>) {
+  async connect() {
+    const bot = this.bot
     const { path } = bot.config
-    this.ctx.server.post(path, async (req, res) => {
-      this._refreshCipher()
-
+    this.ctx.server.post(path, async (req, res, next) => {
       const rawBody = await req.text()
       const parsedBody = JSON.parse(rawBody)
 
@@ -33,17 +28,14 @@ export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.
       // But not every message contains signature
       // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case#d41e8916
       const signature = req.headers.get('X-Lark-Signature')
-      const enabledSignatureVerify = this.bots.filter((bot) => bot.config.verifySignature)
-      if (signature && enabledSignatureVerify.length) {
-        const result = enabledSignatureVerify.some((bot) => {
-          const timestamp = req.headers.get('X-Lark-Request-Timestamp')
-          const nonce = req.headers.get('X-Lark-Request-Nonce')
-          const actualSignature = this.ciphers[bot.config.appId]?.calculateSignature(timestamp, nonce, rawBody)
-          if (actualSignature === signature) return true
-          else return false
-        })
-        if (!result) {
-          res.status = 403
+      if (signature && bot.config.verifySignature) {
+        const timestamp = req.headers.get('X-Lark-Request-Timestamp')
+        const nonce = req.headers.get('X-Lark-Request-Nonce')
+        const actualSignature = this.cipher?.calculateSignature(timestamp, nonce, rawBody)
+        if (actualSignature !== signature) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
           return
         }
       }
@@ -65,22 +57,25 @@ export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.
       }
 
       // compare verification token
-      const enabledVerifyTokenVerify = this.bots.filter((bot) => bot.config.verifyToken && bot.config.verificationToken)
-      if (enabledVerifyTokenVerify.length) {
+      if (bot.config.verifyToken && bot.config.verificationToken) {
         const token = parsedBody?.token
         // only compare token if token exists
-        if (token) {
-          const result = enabledVerifyTokenVerify.some((bot) => {
-            if (token === bot.config.verificationToken) return true
-            else return false
-          })
-          if (!result) {
-            res.status = 403
-            return
-          }
+        if (token && token !== bot.config.verificationToken) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
+          return
         }
       }
 
+      // verify app_id matches this bot
+      const appId = body?.header?.app_id
+      if (appId && appId !== bot.config.appId) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
       // dispatch message
       bot.ctx.logger.debug('received decrypted event: %o', body)
       this.dispatchSession(body)
@@ -90,48 +85,37 @@ export class HttpServer extends Adapter<LarkBot<LarkBot.BaseConfig & HttpServer.
       res.body = JSON.stringify({})
       res.status = 200
     })
+
+    await bot.initialize()
   }
+
+  async disconnect() {}
 
   async dispatchSession(body: EventPayload) {
     const { header } = body
     if (!header) return
-    const { app_id, event_type } = header
+    const { event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
-    const bot = this.bots.find((bot) => bot.config.appId === app_id)!
-    const session = await adaptSession(bot, body)
-    bot.dispatch(session)
+    const session = await adaptSession(this.bot, body)
+    this.bot.dispatch(session)
   }
 
   private _tryDecryptBody(body: any): any {
-    this._refreshCipher()
     // try to decrypt message if encryptKey is set
     // https://open.larksuite.com/document/ukTMukTMukTM/uYDNxYjL2QTM24iN0EjN/event-subscription-configure-/encrypt-key-encryption-configuration-case
-    const ciphers = Object.values(this.ciphers)
-    if (ciphers.length && typeof body.encrypt === 'string') {
-      for (const cipher of ciphers) {
-        try {
-          return JSON.parse(cipher.decrypt(body.encrypt))
-        } catch {}
+    if (this.cipher && typeof body.encrypt === 'string') {
+      try {
+        return JSON.parse(this.cipher.decrypt(body.encrypt))
+      } catch {
+        this.ctx.logger.warn('failed to decrypt message: %o', body)
       }
-      this.ctx.logger.warn('failed to decrypt message: %o', body)
     }
 
-    if (typeof body.encrypt === 'string' && !ciphers.length) {
+    if (typeof body.encrypt === 'string' && !this.cipher) {
       this.ctx.logger.warn('encryptKey is not set, but received encrypted message: %o', body)
     }
 
     return body
-  }
-
-  private _refreshCipher(): void {
-    const ciphers = Object.keys(this.ciphers)
-    const bots = this.bots.map((bot) => bot.config.appId)
-    if (bots.length === ciphers.length && bots.every((bot) => ciphers.includes(bot))) return
-
-    this.ciphers = {}
-    for (const bot of this.bots) {
-      this.ciphers[bot.config.appId] = new Cipher(bot.config.encryptKey)
-    }
   }
 }
 

@@ -16,6 +16,7 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
   public oldHttp: HTTP
   public http: HTTP
   public internal: Internal
+  public adapter?: HttpServer | WsClient
   private refreshTokenTimer: NodeJS.Timeout
 
   constructor(ctx: Context, config: DingtalkBot.Config) {
@@ -30,6 +31,14 @@ export class DingtalkBot extends Bot<DingtalkBot.Config> {
     } else if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this)
     }
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   async getLogin() {

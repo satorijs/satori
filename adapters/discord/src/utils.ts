@@ -33,7 +33,6 @@ export const decodeUser = (user: Discord.User): Universal.User => ({
   nick: user.global_name,
   name: user.username,
   avatar: user.avatar && `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`,
-  username: user.username,
   discriminator: user.discriminator,
   isBot: user.bot || false,
 })

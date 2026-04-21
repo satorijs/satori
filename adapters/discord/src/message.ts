@@ -1,5 +1,6 @@
 import { Dict, h, MessageEncoder, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
+import isLocal from '@cordisjs/url-is-local'
 import {} from '@cordisjs/plugin-logger'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
@@ -115,7 +116,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
       return this.post({ ...addition, content: attrs.src || attrs.url })
     }
 
-    if (await this.bot.http.isLocal(attrs.src || attrs.url)) {
+    if (await isLocal(attrs.src || attrs.url)) {
       return await this.sendEmbed(attrs, addition)
     }
 

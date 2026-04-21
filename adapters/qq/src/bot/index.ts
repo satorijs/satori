@@ -24,6 +24,7 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
   }
 
   public guildBot: QQGuildBot
+  public adapter?: HttpServer | WsClient
 
   internal: GroupInternal
   http: HTTP
@@ -55,6 +56,14 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
     } else {
       this.ctx.plugin(HttpServer, this)
     }
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   async initialize() {

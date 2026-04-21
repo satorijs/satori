@@ -11,7 +11,6 @@ declare module '@satorijs/core' {
 export * from './bot'
 export * from './utils'
 export * from './types'
-export * from './http'
 export * from './message'
 
 export default WechatOfficialBot

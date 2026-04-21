@@ -1,4 +1,4 @@
-import { Adapter, Binary, Context, Universal } from '@satorijs/core'
+import { Binary, Context, Universal } from '@satorijs/core'
 import { getPublicKeyAsync, signAsync, verifyAsync } from '@noble/ed25519'
 import { QQBot } from './bot'
 import { Opcode, Payload } from './types'
@@ -8,22 +8,27 @@ import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<QQBot> {
+export class HttpServer {
   static inject = ['server']
 
-  async connect(bot: QQBot) {
+  constructor(public ctx: Context, public bot: QQBot) {
+    bot.adapter = this
+  }
+
+  async connect() {
+    const bot = this.bot
     if (bot.config.authType === 'bearer') {
       await bot.getAccessToken()
     }
     await this.initialize(bot)
 
-    bot.ctx.server.post(bot.config.path, async (req, res) => {
-      const bot = this.bots.find(bot => bot.config.id === req.headers.get('X-Bot-Appid'))
-      if (!bot) {
-        res.status = 403
+    bot.ctx.server.post(bot.config.path, async (req, res, next) => {
+      if (req.headers.get('X-Bot-Appid') !== bot.config.id) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
         return
       }
-
       res.status = 200
       const rawBody = await req.text()
       const payload: Payload = JSON.parse(rawBody)
@@ -34,7 +39,7 @@ export class HttpServer extends Adapter<QQBot> {
         res.headers.set('content-type', 'application/json')
         res.body = JSON.stringify({
           plain_token: payload.d.plain_token,
-          signature: Binary.toHex(sig),
+          signature: Binary.toHex(sig.buffer),
         })
         return
       } else if (payload.op === Opcode.DISPATCH) {
@@ -64,6 +69,8 @@ export class HttpServer extends Adapter<QQBot> {
       })
     })
   }
+
+  async disconnect() {}
 
   async initialize(bot: QQBot) {
     try {

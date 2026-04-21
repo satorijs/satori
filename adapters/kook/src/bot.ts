@@ -16,6 +16,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 
   http: HTTP
   internal: Kook.Internal
+  public adapter?: HttpServer | WsClient
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'kook')
@@ -28,10 +29,18 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
     this.internal = new Kook.Internal(this.http)
 
     if (config.protocol === 'http') {
-      ctx.plugin(HttpServer, this)
+      ctx.plugin(HttpServer, this as any)
     } else if (config.protocol === 'ws') {
       ctx.plugin(WsClient, this as any)
     }
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   async request<T = any>(method: string, path: string, data = {}, headers: any = {}): Promise<T> {

@@ -1,4 +1,4 @@
-import { Adapter, Context, sanitize, trimSlash } from '@satorijs/core'
+import { Context, sanitize, trimSlash } from '@satorijs/core'
 import type {} from '@cordisjs/plugin-server'
 import {} from '@cordisjs/plugin-logger'
 import { TelegramBot } from './bot'
@@ -8,10 +8,15 @@ import z from 'schemastery'
 
 export { Telegram }
 
-export class HttpServer extends Adapter<TelegramBot> {
+export class HttpServer {
   static inject = ['server']
 
-  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpServer.Options>) {
+  constructor(public ctx: Context, public bot: TelegramBot) {
+    bot.adapter = this
+  }
+
+  async connect() {
+    const bot = this.bot as TelegramBot<TelegramBot.BaseConfig & HttpServer.Options>
     let { token, path, selfUrl } = bot.config
     path = sanitize(path || '/telegram')
     if (selfUrl) {
@@ -20,13 +25,14 @@ export class HttpServer extends Adapter<TelegramBot> {
       selfUrl = this.ctx.server.config.selfUrl
     }
 
-    this.ctx.server.post(path, async (req, res) => {
+    this.ctx.server.post(path, async (req, res, next) => {
       const payload: Telegram.Update = await req.json()
-      const token = req.query.get('token')!
-      const [selfId] = token.split(':')
-      const bot = this.bots.find(bot => bot.selfId === selfId)
-      if (!(bot?.config?.token === token)) {
-        res.status = 403
+      const reqToken = req.query.get('token')!
+      const [selfId] = reqToken.split(':')
+      if (bot.selfId !== selfId || bot.config.token !== reqToken) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
         return
       }
       res.body = 'OK'
@@ -42,6 +48,8 @@ export class HttpServer extends Adapter<TelegramBot> {
       bot.ctx.logger.debug('listening updates %c', 'telegram: ' + bot.selfId)
     })
   }
+
+  async disconnect() {}
 }
 
 export namespace HttpServer {

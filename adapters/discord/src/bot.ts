@@ -21,6 +21,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   public webhooks: Record<string, Webhook | null> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
   public commands: Universal.Command[] = []
+  private _ws?: WsClient
 
   constructor(ctx: Context, config: DiscordBot.Config) {
     super(ctx, config, 'discord')
@@ -32,7 +33,16 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
     })
     this.internal = new Internal(this)
     ctx.satori.proxyUrls.add('https://cdn.discordapp.com/')
-    ctx.plugin(WsClient, this)
+  }
+
+  async connect() {
+    this._ws = new WsClient(this.ctx, this)
+    await this._ws.start()
+  }
+
+  async disconnect() {
+    await this._ws?.stop()
+    this._ws = undefined
   }
 
   private async _ensureWebhook(channelId: string) {

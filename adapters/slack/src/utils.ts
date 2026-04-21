@@ -234,7 +234,6 @@ export const decodeUser = (data: SlackUser): Universal.User => ({
     ?? data.profile.image_48
     ?? data.profile.image_32
     ?? data.profile.image_24,
-  username: data.real_name,
   isBot: data.is_bot,
 })
 

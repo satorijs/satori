@@ -38,7 +38,6 @@ export const adaptUser = (user: Kook.User): Universal.User => ({
   id: user.id,
   name: user.username,
   avatar: user.avatar,
-  username: user.username,
   discriminator: user.identify_num,
 })
 

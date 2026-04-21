@@ -1,4 +1,4 @@
-import { Adapter, Context, Universal } from '@satorijs/core'
+import { Context, Universal, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
@@ -25,7 +25,7 @@ interface FrameSegment {
   data: Uint8Array
 }
 
-export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends CoreWsClient<LarkBot<LarkBot.BaseConfig & WsClient.Options>> {
   _deviceId: string
   _serviceId: number
   _pingInterval: number = 90000
@@ -35,6 +35,7 @@ export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsCl
 
   constructor(ctx: Context, bot: LarkBot<LarkBot.BaseConfig & WsClient.Options>) {
     super(ctx, bot)
+    bot.adapter = this
     this._frame = pb.Root.fromJSON({
       nested: {
         Header: {
@@ -171,7 +172,7 @@ export class WsClient extends Adapter.WsClient<LarkBot<LarkBot.BaseConfig & WsCl
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {
+  export interface Options extends WsClientConfig {
     protocol: 'ws'
   }
 
@@ -179,6 +180,6 @@ export namespace WsClient {
     z.object({
       protocol: z.const('ws').required(),
     }),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ])
 }

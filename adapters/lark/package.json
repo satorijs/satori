@@ -38,6 +38,7 @@
     "@cordisjs/plugin-logger": "^1.0.2",
     "@cordisjs/plugin-server": "^1.4.0",
     "@satorijs/core": "^5.0.0-alpha.0",
+    "@satorijs/element": "^4.0.0-alpha.0",
     "cordis": "^4.0.0-rc.3",
     "cosmokit": "^1.8.1",
     "dedent": "^1.7.2"
@@ -46,7 +47,8 @@
     "@cordisjs/plugin-http": "^1.3.0",
     "@cordisjs/plugin-logger": "^1.0.2",
     "@cordisjs/plugin-server": "^1.4.0",
-    "@satorijs/core": "^5.0.0-alpha.0"
+    "@satorijs/core": "^5.0.0-alpha.0",
+    "@satorijs/element": "^4.0.0-alpha.0"
   },
   "dependencies": {
     "protobufjs": "^8.0.0",

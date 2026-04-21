@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { SlackBot } from './bot'
@@ -6,7 +6,11 @@ import { adaptSession } from './utils'
 import { SocketEvent } from './types/events'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends CoreWsClient<SlackBot<SlackBot.BaseConfig & WsClient.Options>> {
+  constructor(ctx: Context, bot: SlackBot<SlackBot.BaseConfig & WsClient.Options>) {
+    super(ctx, bot)
+    bot.adapter = this
+  }
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)
@@ -41,7 +45,7 @@ export class WsClient extends Adapter.WsClient<SlackBot<SlackBot.BaseConfig & Ws
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {
+  export interface Options extends WsClientConfig {
     protocol: 'ws'
   }
 
@@ -49,6 +53,6 @@ export namespace WsClient {
     z.object({
       protocol: z.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
     }),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ])
 }

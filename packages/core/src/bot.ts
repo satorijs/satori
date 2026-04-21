@@ -1,7 +1,6 @@
 import { clone, Dict, isNonNullable, pick } from 'cosmokit'
 import { Context, Service } from 'cordis'
 import * as h from '@satorijs/element'
-import { Adapter } from './adapter'
 import { MessageEncoder } from './message'
 import { defineAccessor, Session } from './session'
 import { ExtractParams } from 'path-to-regexp-typed'
@@ -36,7 +35,6 @@ export abstract class Bot<T = any> {
   public platform?: string
   public features: string[]
   public hidden = false
-  public adapter!: Adapter<this>
   public error: any
   public callbacks: Dict<Function> = {}
 
@@ -130,12 +128,15 @@ export abstract class Bot<T = any> {
     this.error = error
   }
 
+  async connect(): Promise<void> {}
+  async disconnect(): Promise<void> {}
+
   async start() {
     if (this.isActive) return
     this.status = Status.CONNECT
     try {
       await this.context.parallel('bot-connect', this)
-      await this.adapter?.connect(this)
+      await this.connect()
     } catch (error: any) {
       this.offline(error)
     }
@@ -146,7 +147,7 @@ export abstract class Bot<T = any> {
     this.status = Status.DISCONNECT
     try {
       await this.context.parallel('bot-disconnect', this)
-      await this.adapter?.disconnect(this)
+      await this.disconnect()
     } catch (error) {
       this.context.emit(this.ctx, 'internal/error', error)
     } finally {

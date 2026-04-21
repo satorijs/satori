@@ -1,8 +1,11 @@
-import { Bot, Context, Inject } from '@satorijs/core'
+import { Bot, Context, Inject, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
-import { IMAP, SMTP } from './mail'
+import NodeIMAP from 'node-imap'
+import { simpleParser } from 'mailparser'
+import { SMTP } from './mail'
 import { MailMessageEncoder } from './message'
+import { dispatchSession } from './utils'
 import z from 'schemastery'
 
 @Inject('http')
@@ -11,13 +14,81 @@ export class MailBot extends Bot<MailBot.Config> {
   static MessageEncoder = MailMessageEncoder
 
   internal: SMTP
+  imap: NodeIMAP
 
   constructor(ctx: Context, config: MailBot.Config) {
     super(ctx, config, 'mail')
     this.selfId = config.selfId || config.username
     this.user.name = this.config.username
     this.internal = new SMTP(this.config)
-    this.ctx.plugin(IMAP, this)
+  }
+
+  async connect() {
+    this.imap = new NodeIMAP({
+      user: this.config.username,
+      password: this.config.password,
+      host: this.config.imap.host,
+      port: this.config.imap.port,
+      tls: this.config.imap.tls,
+    })
+    this.imap.on('error', (error) => {
+      this.ctx.logger.error(error)
+    })
+    this.imap.on('ready', () => {
+      this.imap.openBox('INBOX', false, this.inbox.bind(this))
+    })
+    this.imap.on('close', () => {
+      if (!this.isActive) return
+      this.ctx.logger.info('IMAP disconnected, will reconnect in 3s...')
+      this.status = Universal.Status.RECONNECT
+      setTimeout(() => {
+        if (!this.isActive) return
+        this.imap.connect()
+      }, 3000)
+    })
+    this.imap.connect()
+  }
+
+  async disconnect() {
+    this.imap?.end()
+  }
+
+  private inbox(error: Error) {
+    if (error) {
+      this.ctx.logger.error(error)
+      return
+    }
+    this.online()
+    this.scan()
+    this.imap.on('mail', this.scan.bind(this))
+  }
+
+  private scan() {
+    this.imap.search(['UNSEEN'], (error, uids) => {
+      if (error) {
+        this.ctx.logger.error(error)
+        return
+      }
+      if (uids.length === 0) return
+
+      this.imap.setFlags(uids, ['\\SEEN'], (error) => {
+        if (error) this.ctx.logger.error(error)
+      })
+
+      // markSeen doesn't work
+      const mails = this.imap.fetch(uids, { bodies: '' })
+      mails.on('message', message => {
+        message.once('body', (stream) => {
+          simpleParser(stream, (error, mail) => {
+            if (error) {
+              this.ctx.logger.error(error)
+              return
+            }
+            dispatchSession(this, mail)
+          })
+        })
+      })
+    })
   }
 }
 

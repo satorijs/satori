@@ -1,15 +1,15 @@
-import { Adapter, camelize, Context, Service, Time, Universal } from '@satorijs/core'
+import { camelize, Context, Service, Time, Universal, WsClientBase, WsClientConfig } from '@satorijs/core'
 import type { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
 
-export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsClientBase<B> {
+export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase<B> {
   static schema = true as any
-  static reusable = true
   static inject = ['http']
 
   public http: HTTP
+  public bots: B[] = []
 
   private _status = Universal.Status.OFFLINE
   private sequence?: number
@@ -18,7 +18,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
   private _metaDispose?: () => void
 
   constructor(public ctx: Context, public config: SatoriAdapter.Config) {
-    super(ctx, config)
+    super(ctx, null as any, config)
     this.http = ctx.http.extend({
       baseUrl: config.baseUrl,
       headers: {
@@ -148,7 +148,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends Adapter.WsCl
 }
 
 export namespace SatoriAdapter {
-  export interface Config extends Adapter.WsClientConfig {
+  export interface Config extends WsClientConfig {
     baseUrl: string
     token?: string
   }
@@ -158,6 +158,6 @@ export namespace SatoriAdapter {
       baseUrl: z.string().description('API 终结点。').required(),
       token: z.string().description('API 访问令牌。'),
     }),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ] as const)
 }

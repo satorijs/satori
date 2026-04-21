@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context } from '@satorijs/core'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { DingtalkBot } from './bot'
@@ -6,24 +6,27 @@ import crypto from 'node:crypto'
 import { Message } from './types'
 import { decodeMessage } from './utils'
 
-export class HttpServer extends Adapter<DingtalkBot> {
+export class HttpServer {
   static inject = ['server']
 
-  constructor(ctx: Context, bot: DingtalkBot) {
-    super(ctx)
+  constructor(public ctx: Context, public bot: DingtalkBot) {
+    bot.adapter = this
   }
 
-  async connect(bot: DingtalkBot) {
+  async connect() {
+    const bot = this.bot
     await bot.refreshToken()
     await bot.getLogin()
     bot.online()
 
     // https://open.dingtalk.com/document/orgapp/receive-message
-    this.ctx.server.post('/dingtalk', async (req, res) => {
+    this.ctx.server.post('/dingtalk', async (req, res, next) => {
       const timestamp = req.headers.get('timestamp')
       const sign = req.headers.get('sign')
       if (!timestamp || !sign) {
-        res.status = 403
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 401
         return
       }
 
@@ -39,7 +42,9 @@ export class HttpServer extends Adapter<DingtalkBot> {
         .digest('base64')
 
       if (computedSign !== sign) {
-        res.status = 403
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 401
         return
       }
       const body = await req.json() as Message
@@ -49,4 +54,6 @@ export class HttpServer extends Adapter<DingtalkBot> {
       if (session) bot.dispatch(session)
     })
   }
+
+  async disconnect() {}
 }

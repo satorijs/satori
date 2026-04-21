@@ -2,8 +2,11 @@ import { Bot, Context, Inject } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
-import { HttpServer } from './http'
+import xml2js from 'xml2js'
+import { decrypt, encrypt, getSignature } from '@wecom/crypto'
 import { WechatOfficialMessageEncoder } from './message'
+import { Message } from './types'
+import { decodeMessage } from './utils'
 // import { Internal } from './types/internal'
 import z from 'schemastery'
 
@@ -22,7 +25,6 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
     this.selfId = config.account
     this.http = ctx.http
     // this.internal = new Internal(this.http, this)
-    ctx.plugin(HttpServer, this)
 
     this.defineInternalRoute('/assets/:media_id', async ({ params }) => {
       const resp = await this.http('/cgi-bin/media/get', {
@@ -36,6 +38,120 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
         },
       })
     })
+  }
+
+  async connect() {
+    await this.refreshToken()
+    await this.ensureCustom()
+
+    // https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Access_Overview.html
+    this.ctx.server.get('/wechat-official', async (req, res, next) => {
+      const signature = req.query.get('signature')
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const echostr = req.query.get('echostr')
+
+      const localSign = getSignature(this.config.token, timestamp, nonce, '')
+      if (localSign !== signature) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      res.status = 200
+      res.body = echostr
+    })
+
+    this.ctx.server.post('/wechat-official', async (req, res, next) => {
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const msg_signature = req.query.get('msg_signature')
+      const rawBody = await req.text()
+      this.ctx.logger.debug('%c', rawBody)
+      let { xml: data }: {
+        xml: Message
+      } = await xml2js.parseStringPromise(rawBody, {
+        explicitArray: false,
+      })
+      if (data.ToUserName !== this.selfId) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      if (data.Encrypt) {
+        const localSign = getSignature(this.config.token, timestamp, nonce, data.Encrypt)
+        if (localSign !== msg_signature) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
+          return
+        }
+        const { message, id } = decrypt(this.config.aesKey, data.Encrypt)
+        if (id !== this.config.appid) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
+          return
+        }
+        const { xml: data2 } = await xml2js.parseStringPromise(message, {
+          explicitArray: false,
+        })
+        this.ctx.logger.debug('decrypted %c', data2)
+        data = data2
+      }
+
+      const session = await decodeMessage(this, data)
+
+      let resolveFunction: (text: string) => void
+      const promise = new Promise((resolve, reject) => {
+        if (this.config.customerService) return resolve('success')
+        const timeout = setTimeout(() => {
+          res.status = 200
+          res.body = 'success'
+          reject(new Error('timeout'))
+        }, 4500)
+        resolveFunction = (text: string) => {
+          resolve(text)
+          clearTimeout(timeout)
+        }
+      })
+      if (session) {
+        session.wechatOfficialResolve = resolveFunction
+        this.dispatch(session)
+        // bot.logger.debug(session)
+      }
+      try {
+        const result: any = await promise
+        if (this.config.aesKey) {
+          const builder = new xml2js.Builder({
+            cdata: true,
+            headless: true,
+          })
+          const encrypted = encrypt(this.config.aesKey, result, this.config.appid)
+          const sign = getSignature(this.config.token, timestamp, nonce, encrypted)
+          const xml = builder.buildObject({
+            xml: {
+              Encrypt: encrypted,
+              Nonce: nonce,
+              TimeStamp: timestamp,
+              MsgSignature: sign,
+            },
+          })
+          res.body = xml
+          return
+        }
+
+        res.status = 200
+        res.body = result
+      } catch (error) {
+        this.ctx.logger.warn('resolve timeout')
+        res.status = 200
+        res.body = 'success'
+      }
+    })
+
+    this.online()
   }
 
   // @ts-ignore

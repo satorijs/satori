@@ -1,4 +1,4 @@
-import { Adapter, Context, Inject, remove, Service } from '@satorijs/core'
+import { Context, Inject, Service } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import type {} from '@cordisjs/plugin-server'
@@ -12,31 +12,28 @@ import z from 'schemastery'
 class HttpServer {
   static inject = ['server']
 
-  private adapters: WhatsAppAdapter[] = []
-
-  constructor(private ctx: Context) {
+  constructor(private ctx: Context, private adapter: WhatsAppAdapter) {
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started
     // https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-whatsapp/
-    ctx.server.post('/whatsapp', async (req, res) => {
+    ctx.server.post('/whatsapp', async (req, res, next) => {
       const received = (req.headers.get('X-Hub-Signature-256') || '').split('sha256=')[1]
       if (!received) {
-        res.status = 403
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
         return
       }
-
       const rawBody = await req.text()
-      const adapters = this.adapters.filter((adapter) => {
-        const expected = crypto
-          .createHmac('sha256', adapter.config.secret)
-          .update(rawBody)
-          .digest('hex')
-        return expected === received
-      })
-      if (!adapters.length) {
-        res.status = 403
+      const expected = crypto
+        .createHmac('sha256', this.adapter.config.secret)
+        .update(rawBody)
+        .digest('hex')
+      if (expected !== received) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
         return
       }
-
       const parsed = JSON.parse(rawBody) as WebhookBody
       this.ctx.logger.debug(parsed)
       res.body = 'ok'
@@ -45,6 +42,7 @@ class HttpServer {
       for (const entry of parsed.entry) {
         const phone_number_id = entry.changes[0].value.metadata.phone_number_id
         const bot = this.getBot(phone_number_id)
+        if (!bot) continue
         const session = await decodeSession(bot, entry)
         if (session.length) session.forEach(bot.dispatch.bind(bot))
         this.ctx.logger.debug('handling bot: %s', bot.sid)
@@ -52,44 +50,36 @@ class HttpServer {
       }
     })
 
-    ctx.server.get('/whatsapp', async (req, res) => {
+    ctx.server.get('/whatsapp', async (req, res, next) => {
       const verifyToken = req.query.get('hub.verify_token')
       const challenge = req.query.get('hub.challenge')
-      for (const adapter of this.adapters) {
-        if (adapter.config.verifyToken === verifyToken) {
-          res.body = challenge
-          res.status = 200
-          return
-        }
+      if (this.adapter.config.verifyToken !== verifyToken) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
       }
-      res.status = 403
+      res.body = challenge
+      res.status = 200
     })
   }
 
   getBot(selfId: string) {
-    for (const adapter of this.adapters) {
-      for (const bot of adapter.bots) {
-        if (bot.selfId === selfId) return bot
-      }
+    for (const bot of this.adapter.bots) {
+      if (bot.selfId === selfId) return bot
     }
-  }
-
-  fork(ctx: Context, adapter: WhatsAppAdapter) {
-    ctx.effect(() => {
-      this.adapters.push(adapter)
-      return () => remove(this.adapters, adapter)
-    })
   }
 }
 
 @Inject('server')
 @Inject('http', true, { baseUrl: 'https://graph.facebook.com' })
-export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
+export class WhatsAppAdapter {
   static schema = true as any
   static reusable = true
 
-  constructor(ctx: Context, public config: WhatsAppAdapter.Config) {
-    super(ctx)
+  public bots: WhatsAppBot[] = []
+
+  constructor(public ctx: Context, public config: WhatsAppAdapter.Config) {
     ctx.plugin(HttpServer, this)
   }
 
@@ -104,7 +94,6 @@ export class WhatsAppAdapter extends Adapter<WhatsAppBot> {
     for (const item of data) {
       const bot = new WhatsAppBot(this.ctx)
       bot.selfId = item.id
-      bot.adapter = this
       bot.internal = internal
       bot.user = {
         id: item.id,

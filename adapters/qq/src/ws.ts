@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { QQBot } from './bot'
@@ -6,11 +6,16 @@ import { Opcode, Payload } from './types'
 import { adaptSession, decodeUser } from './utils'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Options>> {
+export class WsClient extends CoreWsClient<QQBot<QQBot.Config & WsClient.Options>> {
   _sessionId = ''
   _s: number = null
   _ping: NodeJS.Timeout
   _acked = true
+
+  constructor(ctx: Context, bot: QQBot<QQBot.Config & WsClient.Options>) {
+    super(ctx, bot)
+    bot.adapter = this
+  }
 
   async prepare() {
     if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
@@ -116,7 +121,7 @@ export class WsClient extends Adapter.WsClient<QQBot<QQBot.Config & WsClient.Opt
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {
+  export interface Options extends WsClientConfig {
     protocol?: 'websocket'
   }
 
@@ -124,6 +129,6 @@ export namespace WsClient {
     z.object({
       protocol: z.const('websocket').required(false),
     }),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ])
 }

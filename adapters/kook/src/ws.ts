@@ -1,4 +1,4 @@
-import { Adapter, Context, Time, Universal } from '@satorijs/core'
+import { Context, Time, Universal, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { KookBot } from './bot'
@@ -8,10 +8,15 @@ import z from 'schemastery'
 
 const heartbeatIntervals = [6, 2, 4]
 
-export class WsClient extends Adapter.WsClient<KookBot<KookBot.BaseConfig & WsClient.Options>> {
+export class WsClient extends CoreWsClient<KookBot<KookBot.BaseConfig & WsClient.Options>> {
   _sn = 0
   _ping: NodeJS.Timeout
   _heartbeat: NodeJS.Timeout
+
+  constructor(ctx: Context, bot: KookBot<KookBot.BaseConfig & WsClient.Options>) {
+    super(ctx, bot)
+    bot.adapter = this
+  }
 
   async prepare() {
     const { url } = await this.bot.request('GET', '/gateway/index?compress=0')
@@ -68,7 +73,7 @@ export class WsClient extends Adapter.WsClient<KookBot<KookBot.BaseConfig & WsCl
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {
+  export interface Options extends WsClientConfig {
     protocol: 'ws'
     token: string
   }
@@ -78,6 +83,6 @@ export namespace WsClient {
       protocol: z.const('ws').required(process.env.KOISHI_ENV !== 'browser'),
       token: z.string().description('机器人的用户令牌。').role('secret').required(),
     }),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ])
 }

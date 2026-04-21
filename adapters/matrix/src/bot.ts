@@ -1,7 +1,7 @@
 import { Bot, Context, Inject, omit, Universal } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
-import { HttpAdapter } from './http'
+import { Response } from '@cordisjs/plugin-server'
 import { MatrixMessageEncoder } from './message'
 import * as Matrix from './types'
 import { adaptMessage, decodeUser, dispatchSession, downloadFile } from './utils'
@@ -10,6 +10,7 @@ import z from 'schemastery'
 @Inject('http')
 @Inject('logger', true, { name: 'matrix' })
 export class MatrixBot extends Bot<MatrixBot.Config> {
+  static inject = ['server']
   static MessageEncoder = MatrixMessageEncoder
 
   http: HTTP
@@ -18,6 +19,8 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   rooms: string[] = []
   internal: Matrix.Internal
 
+  private txnId: string = null
+
   constructor(ctx: Context, config: MatrixBot.Config) {
     super(ctx, config, 'matrix')
     this.id = config.id
@@ -25,7 +28,84 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
     this.user.name = config.name || this.id
     this.endpoint = (config.endpoint || `https://${config.host}`) + '/_matrix'
     this.internal = new Matrix.Internal(this)
-    ctx.plugin(HttpAdapter, this)
+  }
+
+  async connect() {
+    this.ctx.server.all('/*path', async (req, res, next) => {
+      const reqPath = '/' + req.params.path
+      if (!reqPath.startsWith(this.config.path + '/')) return next()
+      //                                            Bearer
+      const asToken = req.headers.get('authorization')?.substring(7) || req.query.get('access_token')
+      if (!asToken) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      if (this.config.hsToken !== asToken) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      const trimmed = reqPath.substring(this.config.path.length)
+      const path = trimmed.startsWith('/_matrix/app/v1/') ? trimmed.substring(15) : trimmed
+      if (req.method === 'PUT' && path.startsWith('/transactions/')) {
+        const txnId = path.substring(14)
+        const body = await req.json()
+        this.transactions(body, res, txnId)
+      } else if (req.method === 'GET' && path.startsWith('/users/')) {
+        const user = path.substring(7)
+        this.users(res, user)
+      } else if (req.method === 'GET' && path.startsWith('/rooms/')) {
+        const room = path.substring(7)
+        this.rooms_(res, room)
+      } else {
+        res.status = 404
+      }
+    })
+
+    try {
+      await this.initialize()
+      this.online()
+    } catch (e) {
+      this.ctx.logger.error('failed to initialize', e)
+      throw e
+    }
+  }
+
+  private transactions(body: any, res: Response, txnId: string) {
+    const events = body.events as Matrix.ClientEvent[]
+    res.headers.set('content-type', 'application/json')
+    res.body = JSON.stringify({})
+    if (txnId === this.txnId) return
+    this.txnId = txnId
+    for (const event of events) {
+      const inRoom = this.userId !== event.sender && this.rooms.includes(event.room_id)
+      const isInvite = event.type === 'm.room.member'
+        && (event.content as Matrix.M_ROOM_MEMBER).membership === 'invite'
+        && this.userId === event.state_key
+      if (inRoom || isInvite) {
+        dispatchSession(this, event)
+      }
+    }
+  }
+
+  private users(res: Response, userId: string) {
+    if (this.userId !== userId) {
+      res.status = 404
+      res.headers.set('content-type', 'application/json')
+      res.body = JSON.stringify({ 'errcode': 'CHAT.SATORI.NOT_FOUND' })
+      return
+    }
+    res.headers.set('content-type', 'application/json')
+    res.body = JSON.stringify({})
+  }
+
+  private rooms_(res: Response, room: string) {
+    res.status = 404
+    res.headers.set('content-type', 'application/json')
+    res.body = JSON.stringify({ 'errcode': 'CHAT.SATORI.NOT_FOUND' })
   }
 
   async initialize() {

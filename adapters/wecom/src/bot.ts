@@ -1,8 +1,12 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
-import { HttpServer } from './http'
+import {} from '@cordisjs/plugin-server'
+import xml2js from 'xml2js'
+import { decrypt, getSignature } from '@wecom/crypto'
 import { WecomMessageEncoder } from './message'
+import { Message } from './types'
+import { decodeMessage } from './utils'
 import z from 'schemastery'
 
 @Inject('http', true, { baseUrl: 'https://qyapi.weixin.qq.com/' })
@@ -21,8 +25,6 @@ export class WecomBot extends Bot<WecomBot.Config> {
     this.http = ctx.http
     // this.internal = new Internal(this.http, this)
 
-    ctx.plugin(HttpServer, this)
-
     this.defineInternalRoute('/assets/:media_id', async ({ params }) => {
       const resp = await this.http('/cgi-bin/media/get', {
         method: 'GET',
@@ -35,6 +37,75 @@ export class WecomBot extends Bot<WecomBot.Config> {
         },
       })
     })
+  }
+
+  async connect() {
+    await this.refreshToken()
+    await this.getLogin()
+
+    // https://developer.work.weixin.qq.com/document/10514
+    this.ctx.server.get('/wecom', async (req, res, next) => {
+      const msg_signature = req.query.get('msg_signature')
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const echostr = req.query.get('echostr')
+
+      const localSign = getSignature(this.config.token, timestamp, nonce, echostr)
+      if (localSign !== msg_signature) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      const dec = decrypt(this.config.aesKey, echostr)
+      res.body = dec.message
+      res.status = 200
+    })
+
+    this.ctx.server.post('/wecom', async (req, res, next) => {
+      const timestamp = req.query.get('timestamp')
+      const nonce = req.query.get('nonce')
+      const msg_signature = req.query.get('msg_signature')
+      const rawBody = await req.text()
+      this.ctx.logger.debug(rawBody)
+      let { xml: data }: {
+        xml: Message
+      } = await xml2js.parseStringPromise(rawBody, {
+        explicitArray: false,
+      })
+      if (data.AgentID !== this.selfId) {
+        const result = await next()
+        if (result) return result
+        if (!res.claimed) res.status = 403
+        return
+      }
+      if (data.Encrypt) {
+        const localSign = getSignature(this.config.token, timestamp, nonce, data.Encrypt)
+        if (localSign !== msg_signature) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
+          return
+        }
+        const { message } = decrypt(this.config.aesKey, data.Encrypt)
+        // if (id !== bot.config.appid) return ctx.status = 403
+        const { xml: data2 } = await xml2js.parseStringPromise(message, {
+          explicitArray: false,
+        })
+        this.ctx.logger.debug('decrypted %c', data2)
+        data = data2
+      }
+
+      const session = await decodeMessage(this, data)
+      if (session) {
+        this.dispatch(session)
+        this.ctx.logger.debug(session)
+      }
+      res.status = 200
+      res.body = 'success'
+    })
+
+    this.online()
   }
 
   async stop() {

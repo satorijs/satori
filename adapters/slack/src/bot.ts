@@ -16,6 +16,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 
   public http: HTTP
   public internal: Internal
+  public adapter?: HttpServer | WsClient
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'slack')
@@ -27,6 +28,14 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
     } else {
       ctx.plugin(HttpServer, this)
     }
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   async request<T = any>(method: string, path: string, data = {}, headers: any = {}, zap: boolean = false): Promise<T> {
@@ -45,7 +54,6 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
       id: data.user_id,
       name: data.user,
       avatar: null,
-      username: data.user,
       isBot: !!data.bot_id,
     }
     return this.toJSON()

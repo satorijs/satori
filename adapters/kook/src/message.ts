@@ -1,5 +1,6 @@
 import { Context, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
+import isLocal from '@cordisjs/url-is-local'
 import { KookBot } from './bot'
 import * as Kook from './types'
 import { downloadFile } from './utils'
@@ -77,7 +78,7 @@ export class KookMessageEncoder extends MessageEncoder<KookBot> {
 
   private async transformUrl({ type, attrs }: h) {
     const src = attrs.src || attrs.url
-    if (await this.bot.http.isLocal(src)) {
+    if (await isLocal(src)) {
       const payload = new FormData()
       const { data, type, filename } = await downloadFile(this.bot.http, src)
       payload.append('file', new Blob([data], { type }), attrs.file || filename)

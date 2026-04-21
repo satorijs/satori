@@ -1,4 +1,4 @@
-import { Adapter, Context } from '@satorijs/core'
+import { Context, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { Gateway } from './types'
@@ -6,7 +6,7 @@ import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
 import z from 'schemastery'
 
-export class WsClient extends Adapter.WsClient<DiscordBot> {
+export class WsClient extends CoreWsClient<DiscordBot> {
   _d = 0
   _ping?: NodeJS.Timeout
   _sessionId = ''
@@ -109,7 +109,7 @@ export class WsClient extends Adapter.WsClient<DiscordBot> {
 }
 
 export namespace WsClient {
-  export interface Options extends Adapter.WsClientConfig {
+  export interface Options extends WsClientConfig {
     intents?: number
   }
 
@@ -122,6 +122,6 @@ export namespace WsClient {
         | Gateway.Intent.DIRECT_MESSAGE_REACTIONS
         | Gateway.Intent.MESSAGE_CONTENT),
     }).description('推送设置'),
-    Adapter.WsClientConfig,
+    WsClientConfig,
   ] as const)
 }

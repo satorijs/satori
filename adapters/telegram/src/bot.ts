@@ -38,6 +38,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
   file: HTTP
   internal: Telegram.Internal
   local?: boolean
+  public adapter?: HttpServer | HttpPolling
 
   constructor(ctx: Context, config: T) {
     super(ctx, config, 'telegram')
@@ -59,6 +60,14 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
       const { data, type } = await this.$getFile(params.file)
       return new Response(data, { headers: { 'content-type': type } })
     })
+  }
+
+  async connect() {
+    await this.adapter?.connect()
+  }
+
+  async disconnect() {
+    await this.adapter?.disconnect()
   }
 
   async initialize(callback: (bot: this) => Promise<void>) {

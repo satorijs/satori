@@ -1,42 +1,60 @@
-import { Adapter, Context, sanitize } from '@satorijs/core'
+import { Context, sanitize } from '@satorijs/core'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { KookBot } from './bot'
 import { adaptSession } from './utils'
 import z from 'schemastery'
 
-export class HttpServer extends Adapter<KookBot<KookBot.BaseConfig & HttpServer.Options>> {
+export class HttpServer {
   static inject = ['server']
 
-  constructor(ctx: Context, bot: KookBot) {
-    super(ctx)
+  constructor(public ctx: Context, public bot: KookBot<KookBot.BaseConfig & HttpServer.Options>) {
+    bot.adapter = this
     let { path } = bot.config as HttpServer.Options
     path = sanitize(path)
-    ctx.server.post(path, async (req, res) => {
+    ctx.server.post(path, async (req, res, next) => {
       const body = await req.json()
       this.ctx.logger.debug('receive %o', body)
 
       const { challenge } = body.d
-      res.status = 200
       if (challenge) {
+        if (this.bot.config.verifyToken !== body.d.verify_token) {
+          const result = await next()
+          if (result) return result
+          if (!res.claimed) res.status = 403
+          return
+        }
+        res.status = 200
         res.headers.set('content-type', 'application/json')
         res.body = JSON.stringify({ challenge })
         return
       }
 
-      const bot = this.bots.find(bot => bot.config.verifyToken === body.d.verify_token)
-      if (!bot) return
+      if (this.bot.config.verifyToken !== body.d.verify_token) {
+
+        const result = await next()
+
+        if (result) return result
+
+        if (!res.claimed) res.status = 403
+
+        return
+
+      }
+      res.status = 200
 
       // dispatch events
-      const session = await adaptSession(bot, body.d)
-      if (session) bot.dispatch(session)
+      const session = await adaptSession(this.bot, body.d)
+      if (session) this.bot.dispatch(session)
     })
   }
 
-  async connect(bot: KookBot) {
-    await bot.getLogin()
-    bot.online()
+  async connect() {
+    await this.bot.getLogin()
+    this.bot.online()
   }
+
+  async disconnect() {}
 }
 
 export namespace HttpServer {

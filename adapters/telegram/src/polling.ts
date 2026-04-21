@@ -1,17 +1,20 @@
-import { Adapter, Context, Time, Universal } from '@satorijs/core'
+import { Context, Time, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { TelegramBot } from './bot'
 import { handleUpdate } from './utils'
 import z from 'schemastery'
 
-export class HttpPolling extends Adapter<TelegramBot> {
-  static reusable = true
-
+export class HttpPolling {
   private offset = 0
   private timeout: NodeJS.Timeout
 
-  async connect(bot: TelegramBot<TelegramBot.BaseConfig & HttpPolling.Options>) {
+  constructor(public ctx: Context, public bot: TelegramBot) {
+    bot.adapter = this
+  }
+
+  async connect() {
+    const bot = this.bot as TelegramBot<TelegramBot.BaseConfig & HttpPolling.Options>
     bot.initialize(async () => {
       let _retryCount = 0
       let _initial = true

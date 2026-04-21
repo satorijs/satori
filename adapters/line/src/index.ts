@@ -6,7 +6,6 @@ export { Line }
 
 export * from './bot'
 export * from './utils'
-export * from './http'
 export * from './message'
 
 type LineEvents = {

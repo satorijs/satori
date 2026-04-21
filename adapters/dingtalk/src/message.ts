@@ -1,5 +1,6 @@
 import { Dict, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
+import isLocal from '@cordisjs/url-is-local'
 import {} from '@cordisjs/plugin-logger'
 import { DingtalkBot } from './bot'
 import { SendMessageData } from './types'
@@ -93,7 +94,7 @@ export class DingtalkMessageEncoder extends MessageEncoder<DingtalkBot> {
       // await this.sendMessage('sampleImageMsg', {
       //   photoURL: src,
       // })
-      if (await this.bot.http.isLocal(src)) {
+      if (await isLocal(src)) {
         const temp = this.bot.ctx.get('server.temp')
         if (!temp) {
           return this.bot.ctx.logger.warn('missing temporary file service, cannot send assets with private url')
