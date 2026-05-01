@@ -42,6 +42,17 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, D
         const session = await decodeMessage(this.bot, JSON.parse(parsed.data))
         if (session) this.bot.dispatch(session)
         this.bot.logger.debug(session)
+        // Ref: https://open.dingtalk.com/document/direction/stream-mode-protocol-access-description
+        // Send response for CALLBACK type to prevent duplicate pushes
+        this.socket.send(JSON.stringify({
+          code: 200,
+          headers: {
+            contentType: 'application/json',
+            messageId: parsed.headers.messageId,
+          },
+          message: 'OK',
+          data: JSON.stringify({ response: {} }),
+        }))
       }
     })
   }
