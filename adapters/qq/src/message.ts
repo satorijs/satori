@@ -190,6 +190,8 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
 const MSG_TIMEOUT = 5 * 60 * 1000 - 2000// 5 mins
 
 export class QQMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQBot<C>> {
+  declare referrer?: Exclude<QQ.DispatchPayload, QQ.PayloadStructure<QQ.Opcode.DISPATCH, 'RESUMED', string>>
+
   private content: string = ''
   private passiveId: string
   private passiveSeq: number
@@ -204,12 +206,18 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
     this.trimButtons()
     let msg_id: string, msg_seq: number, event_id: string
-    if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
-      this.options.session['seq'] ||= 0
-      msg_id = this.options.session.messageId
-      msg_seq = ++this.options.session['seq']
-    } else if (this.options?.session?.qq['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
-      event_id = this.options.session.qq['id']
+    if (this.referrer && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
+      if (this.referrer.t === 'AT_MESSAGE_CREATE'
+        || this.referrer.t === 'MESSAGE_CREATE'
+        || this.referrer.t === 'DIRECT_MESSAGE_CREATE'
+        || this.referrer.t === 'GROUP_AT_MESSAGE_CREATE'
+        || this.referrer.t === 'C2C_MESSAGE_CREATE') {
+        this.options.session['seq'] ||= 0
+        msg_id = this.referrer.d.id
+        msg_seq = ++this.options.session['seq']
+      } else {
+        event_id = this.referrer.id
+      }
     }
     if (this.passiveId) msg_id = this.passiveId
     if (this.passiveSeq) msg_seq = this.passiveSeq
@@ -323,8 +331,8 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     let res: QQ.Message.File.Response
     try {
-      if (this.session.isDirect) {
-        res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
+      if (this.session.isDirect && 'author' in this.referrer.d) {
+        res = await this.bot.internal.sendFilePrivate(this.referrer.d.author.id, data)
       } else {
         res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
       }
