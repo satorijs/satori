@@ -1,7 +1,7 @@
 {
   "name": "@satorijs/plugin-server",
   "description": "Basic API server for Satori protocol",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "type": "module",
   "exports": {
     ".": {
