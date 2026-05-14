@@ -65,6 +65,7 @@ export function decodeGroupMessage(
   payload.timestamp = new Date(date).valueOf()
   payload.guild = data.group_id && { id: data.group_id }
   payload.user = { id: data.author.id, avatar: `https://q.qlogo.cn/qqapp/${bot.config.id}/${data.author.id}/640` }
+  if (data.author.username) payload.user.name = data.author.username
   return message
 }
 

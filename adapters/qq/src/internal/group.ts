@@ -15,6 +15,10 @@ declare module './internal' {
       audit_id?: string
       audit_tips?: string
     }>
+    sendPrivateStreamMessage(openid: string, data: QQ.Message.Stream.Request): Promise<{
+      id: string
+      timestamp: string
+    }>
     sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<any>
     sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<any>
     acknowledgeInteraction(interaction_id: string, data: {
@@ -36,6 +40,9 @@ GroupInternal.define(false, {
   },
   '/v2/users/{user.id}/messages': {
     POST: 'sendPrivateMessage',
+  },
+  '/v2/users/{user.id}/stream_messages': {
+    POST: 'sendPrivateStreamMessage',
   },
   '/v2/users/{user.id}/messages/{message.id}': {
     DELETE: 'deletePrivateMessage',

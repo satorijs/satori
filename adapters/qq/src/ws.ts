@@ -10,7 +10,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   _acked = true
 
   async prepare() {
-    if (this.bot.config.authType === 'bearer') await this.bot.getAccessToken()
+    await this.bot.getAccessToken()
     try {
       const url = this.bot.config.gatewayUrl
         ? this.bot.config.gatewayUrl
@@ -42,9 +42,7 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
       const parsed: Payload = JSON.parse(data.toString())
       this.bot.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
-        const token = this.bot.config.authType === 'bearer'
-          ? `QQBot ${await this.bot.getAccessToken()}`
-          : `Bot ${this.bot.config.id}.${this.bot.config.token}`
+        const token = `QQBot ${await this.bot.getAccessToken()}`
         if (this._sessionId) {
           this.socket.send(JSON.stringify({
             op: Opcode.RESUME,

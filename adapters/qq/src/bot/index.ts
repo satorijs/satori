@@ -37,7 +37,7 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
     this.http = this.ctx.http.extend({
       endpoint,
       headers: {
-        'Authorization': this.config.authType === 'bot' ? `Bot ${this.config.id}.${this.config.token}` : '',
+        'Authorization': '',
         'X-Union-Appid': this.config.id,
       },
     })
@@ -136,11 +136,9 @@ export namespace QQBot {
     Schema.object({
       id: Schema.string().description('机器人 id。').required(),
       secret: Schema.string().description('机器人密钥。').role('secret'),
-      token: Schema.string().description('机器人令牌。').role('secret'),
       type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),
       endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
-      authType: Schema.union(['bot', 'bearer'] as const).description('采用的验证方式。').default('bearer'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
       protocol: Schema.union(['websocket', 'webhook']).description('选择要使用的协议。').default('websocket'),
