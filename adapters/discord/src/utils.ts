@@ -267,6 +267,35 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     session.type = 'guild-role-added'
     session.guildId = input.d.guild_id
     session.roleId = input.d.role_id
+  } else if (input.t === 'GUILD_MEMBER_ADD') {
+    session.type = 'guild-member-added'
+    session.guildId = input.d.guild_id
+    session.userId = input.d.user?.id
+    session.event.member = decodeGuildMember(input.d)
+    if (session.event.member.user) {
+      session.event.user = session.event.member.user
+      delete session.event.member.user
+    }
+    session.timestamp = input.d.joined_at ? new Date(input.d.joined_at).valueOf() : Date.now()
+  } else if (input.t === 'GUILD_MEMBER_REMOVE') {
+    session.type = 'guild-member-removed'
+    session.guildId = input.d.guild_id
+    session.userId = input.d.user.id
+    session.event.user = decodeUser(input.d.user)
+  } else if (input.t === 'GUILD_MEMBER_UPDATE') {
+    session.type = 'guild-member-updated'
+    session.guildId = input.d.guild_id
+    session.userId = input.d.user?.id
+    session.event.member = decodeGuildMember({
+      user: input.d.user,
+      nick: input.d.nick,
+      roles: input.d.roles,
+      joined_at: input.d.joined_at,
+    })
+    if (session.event.member.user) {
+      session.event.user = session.event.member.user
+      delete session.event.member.user
+    }
   } else if (input.t === 'INTERACTION_CREATE' && input.d.type === Discord.Interaction.Type.APPLICATION_COMMAND) {
     const data = input.d.data as Discord.InteractionData.ApplicationCommand
     const command = bot.commands.find(cmd => cmd.name === data.name)
