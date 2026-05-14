@@ -33,6 +33,11 @@ export class WsClient extends CoreWsClient<DingtalkBot> {
 
   accept() {
     this.bot.online()
+    // DingTalk Stream API may redeliver the same event within a short window to avoid delivery loss.
+    // Keep a small in-memory dedup window per connection as a minimal idempotency guard.
+    const handledMessageIds = new Set<string>()
+    const handledMessageQueue: string[] = []
+    const handledMessageLimit = 100
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed = JSON.parse(data.toString())
       this.bot.ctx.logger.debug(parsed)
@@ -48,7 +53,21 @@ export class WsClient extends CoreWsClient<DingtalkBot> {
       } else if (parsed.type === 'CALLBACK') {
         this.bot.ctx.logger.debug(JSON.parse(parsed.data))
         const session = await decodeMessage(this.bot, JSON.parse(parsed.data))
-        if (session) this.bot.dispatch(session)
+        if (session) {
+          const messageId = session.messageId
+          if (messageId && handledMessageIds.has(messageId)) {
+            this.bot.ctx.logger.debug('duplicate message %s, skipped', messageId)
+          } else {
+            this.bot.dispatch(session)
+            if (messageId) {
+              handledMessageIds.add(messageId)
+              handledMessageQueue.push(messageId)
+              if (handledMessageQueue.length > handledMessageLimit) {
+                handledMessageIds.delete(handledMessageQueue.shift()!)
+              }
+            }
+          }
+        }
         this.bot.ctx.logger.debug(session)
       }
     })
