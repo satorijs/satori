@@ -61,17 +61,19 @@ export namespace GuildMember {
     /** https://discord.com/developers/docs/resources/guild#modify-guild-member-json-params */
     export interface Modify {
       /** value to set user's nickname to */
-      nick: string
+      nick?: string | null
       /** array of role ids the member is assigned */
-      roles: snowflake[]
+      roles?: snowflake[] | null
       /** whether the user is muted in voice channels. Will throw a 400 if the user is not in a voice channel */
-      mute: boolean
+      mute?: boolean | null
       /** whether the user is deafened in voice channels. Will throw a 400 if the user is not in a voice channel */
-      deaf: boolean
+      deaf?: boolean | null
       /** id of channel to move user to (if they are connected to voice) */
-      channel_id: snowflake
+      channel_id?: snowflake | null
       /** when the user's timeout will expire and the user will be able to communicate in the guild again (up to 28 days in the future), set to null to remove timeout */
-      communication_disabled_until?: timestamp
+      communication_disabled_until?: timestamp | null
+      /** guild member flags */
+      flags?: integer | null
     }
 
     /** https://discord.com/developers/docs/resources/guild#modify-current-member-json-params */
