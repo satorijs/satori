@@ -52,6 +52,11 @@ export enum Intents {
    */
   AUDIO_OR_LIVE_CHANNEL_MEMBER = 1 << 19,
   /**
+   * - GROUP_MEMBER_ADD 成员进群
+   * - GROUP_MEMBER_REMOVE 成员退群
+   */
+  GROUP_MEMBERS = 1 << 24,
+  /**
    * - C2C_MESSAGE_CREATE 用户在单聊发送消息给机器人
    * - GROUP_AT_MESSAGE_CREATE 用户在群聊 @ 机器人发送消息
    */
@@ -170,6 +175,8 @@ export interface GatewayEvents {
   GROUP_AT_MESSAGE_CREATE: UserMessage
   GROUP_MESSAGE_CREATE: UserMessage
   INTERACTION_CREATE: Interaction
+  GROUP_MEMBER_ADD: MemberWithGroup
+  GROUP_MEMBER_REMOVE: MemberWithGroup
   GROUP_ADD_ROBOT: GroupEvent
   GROUP_DEL_ROBOT: GroupEvent
   GROUP_MSG_REJECT: GroupEvent
@@ -1350,6 +1357,12 @@ export interface GroupEvent {
   timestamp: number
   group_openid: string
   op_member_openid: string
+}
+
+export interface MemberWithGroup {
+  timestamp: number
+  group_openid: string
+  member_openid: string
 }
 
 export interface UserEvent {

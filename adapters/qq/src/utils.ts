@@ -208,7 +208,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
   let session = bot.session()
 
   if (!['GROUP_AT_MESSAGE_CREATE', 'C2C_MESSAGE_CREATE', 'GROUP_MESSAGE_CREATE', 'FRIEND_ADD', 'FRIEND_DEL',
-    'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT', 'INTERACTION_CREATE'].includes(input.t)) {
+    'GROUP_ADD_ROBOT', 'GROUP_DEL_ROBOT', 'INTERACTION_CREATE', 'GROUP_MEMBER_ADD', 'GROUP_MEMBER_REMOVE'].includes(input.t)) {
     session = bot.guildBot.session()
     session.setInternal(bot.guildBot.platform, input)
   } else {
@@ -324,6 +324,14 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     // session.timestamp = new Date(input.d.joined_at).valueOf()
     session.timestamp = Date.now()
     session.event.user = decodeUser(input.d.user)
+  } else if (input.t === 'GROUP_MEMBER_ADD' || input.t === 'GROUP_MEMBER_REMOVE') {
+    session.type = {
+      GROUP_MEMBER_ADD: 'guild-member-added',
+      GROUP_MEMBER_REMOVE: 'guild-member-removed',
+    }[input.t]
+    session.guildId = input.d.group_openid
+    session.userId = input.d.member_openid
+    session.timestamp = input.d.timestamp
   } else {
     return
   }
