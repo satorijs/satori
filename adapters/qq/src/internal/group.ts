@@ -19,8 +19,12 @@ declare module './internal' {
       id: string
       timestamp: string
     }>
-    sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<any>
-    sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<any>
+    sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
+    sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
+    uploadPreparePrivate(openid: string, data: QQ.Message.File.UploadPrepareRequest): Promise<QQ.Message.File.UploadPrepareResponse>
+    uploadPrepareGuild(group_openid: string, data: QQ.Message.File.UploadPrepareRequest): Promise<QQ.Message.File.UploadPrepareResponse>
+    uploadPartFinishPrivate(openid: string, data: QQ.Message.File.UploadPartFinishRequest): Promise<void>
+    uploadPartFinishGuild(group_openid: string, data: QQ.Message.File.UploadPartFinishRequest): Promise<void>
     acknowledgeInteraction(interaction_id: string, data: {
       code: number
     }): Promise<any>
@@ -52,6 +56,18 @@ GroupInternal.define(false, {
   },
   '/v2/groups/{channel.id}/files': {
     POST: 'sendFileGuild',
+  },
+  '/v2/users/{user.id}/upload_prepare': {
+    POST: 'uploadPreparePrivate',
+  },
+  '/v2/groups/{channel.id}/upload_prepare': {
+    POST: 'uploadPrepareGuild',
+  },
+  '/v2/users/{user.id}/upload_part_finish': {
+    POST: 'uploadPartFinishPrivate',
+  },
+  '/v2/groups/{channel.id}/upload_part_finish': {
+    POST: 'uploadPartFinishGuild',
   },
   '/gateway': {
     GET: 'getGateway',

@@ -128,6 +128,7 @@ export namespace QQBot {
     protocol: 'websocket' | 'webhook'
     path?: string
     gatewayUrl?: string
+    uploadThreshold: number
   }
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
@@ -149,6 +150,7 @@ export namespace QQBot {
     ]),
     Schema.object({
       manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
+      uploadThreshold: Schema.natural().role('ms').description('超过该大小的文件将使用分片上传。').default(3 * 1000 * 1000),
       gatewayUrl: Schema.string().role('link').description('覆写 WebSocket 地址。'),
     }).description('高级设置'),
   ] as const)

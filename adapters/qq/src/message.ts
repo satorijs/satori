@@ -2,6 +2,7 @@ import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
+import crypto from 'crypto'
 
 export const escapeMarkdown = (val: string) =>
   val
@@ -333,10 +334,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (attrs.title) data.file_name = attrs.title
     let res: QQ.Message.File.Response
     try {
-      if (this.session.isDirect) {
-        res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
+      if (data.file_data?.length > this.bot.config.uploadThreshold) {
+        res = await this.chunkedUpload(file_type, data.file_name ?? 'unnamed', Buffer.from(data.file_data, 'base64'))
       } else {
-        res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
+        if (this.session.isDirect) {
+          res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
+        } else {
+          res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
+        }
       }
     } catch (e) {
       if (!this.bot.http.isError(e)) throw e
@@ -349,6 +354,53 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     this.retry = false
     return res
+  }
+
+  async chunkedUpload(
+    fileType: QQ.Message.File.Type,
+    fileName: string,
+    fileData: Uint8Array,
+    send?: boolean,
+  ) {
+    const md5 = crypto.createHash('md5').update(fileData).digest('hex')
+    const sha1 = crypto.createHash('sha1').update(fileData).digest('hex')
+    let uploadInfo: QQ.Message.File.UploadPrepareResponse
+    if (this.session.isDirect) {
+      uploadInfo = await this.bot.internal.uploadPreparePrivate(this.options.session.userId, {
+        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1,
+      })
+    } else {
+      uploadInfo = await this.bot.internal.uploadPrepareGuild(this.session.channelId, {
+        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1,
+      })
+    }
+    const blockSize = +uploadInfo.block_size
+    for (const part of uploadInfo.parts) {
+      const buffer = fileData.subarray((part.index - 1) * blockSize, part.index * blockSize)
+      await this.bot.ctx.http.put(part.presigned_url, buffer)
+      const data: QQ.Message.File.UploadPartFinishRequest = {
+        upload_id: uploadInfo.upload_id,
+        part_index: part.index,
+        block_size: buffer.length,
+        md5: crypto.createHash('md5').update(buffer).digest('hex'),
+      }
+      if (this.session.isDirect) {
+        await this.bot.internal.uploadPartFinishPrivate(this.options.session.userId, data)
+      } else {
+        await this.bot.internal.uploadPartFinishGuild(this.session.channelId, data)
+      }
+    }
+    if (this.session.isDirect) {
+      return this.bot.internal.sendFilePrivate(this.options.session.userId, {
+        upload_id: uploadInfo.upload_id,
+        srv_send_msg: !!send,
+      })
+    } else {
+      return this.bot.internal.sendFileGuild(this.session.channelId, {
+        upload_id: uploadInfo.upload_id,
+        srv_send_msg: !!send,
+      })
+    }
   }
 
   decodeButton(attrs: Dict, label: string) {

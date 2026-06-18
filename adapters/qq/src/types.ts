@@ -504,20 +504,59 @@ export namespace Message {
       AUDIO = 3,
       FILE = 4
     }
-    export interface Request {
+
+    export type Request = {
       file_type: Type
       url?: string
       srv_send_msg: boolean
       file_name?: string
       file_data?: string
+    } | {
+      upload_id: string
+      srv_send_msg: boolean
     }
 
     export interface Response {
       file_uuid: string
       file_info: string
       ttl: number
+      id: string
     }
 
+    export interface UploadPrepareRequest {
+      file_type: Type
+      file_name: string
+      file_size: number
+      md5: string
+      sha1: string
+      md5_10m?: string
+    }
+
+    export interface UploadPrepareResponse {
+      upload_id: string
+      block_size: string
+      parts: {
+        index: number
+        presigned_url: string
+        block_size: number
+      }[]
+      upload_config: {
+        concurrency: number
+        retry_timeout: number
+        retry_delay: number
+      }
+    }
+
+    export interface UploadPartFinishRequest {
+      upload_id: string
+      part_index: number
+      block_size: number
+      md5: string
+    }
+
+    export interface CompleteUploadRequest {
+      upload_id: string
+    }
   }
 
   // https://github.com/tencent-connect/openclaw-qqbot/blob/3eee78922ed0b19af5c4c55f1dfe7d1c848e31f5/src/types.ts#L243-L255
