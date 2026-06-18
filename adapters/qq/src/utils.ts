@@ -134,7 +134,7 @@ export function decodeGroupMessage(
     quoted.push(...decodeAttachments(data.msg_elements[0].attachments ?? [], quotedAttached))
     message.quote = {
       member: {
-        nick: data.msg_elements[0].author.username,
+        nick: data.msg_elements[0].author?.username,
       },
       elements: quoted,
     }

@@ -561,7 +561,7 @@ export namespace Message {
 
   // https://github.com/tencent-connect/openclaw-qqbot/blob/3eee78922ed0b19af5c4c55f1dfe7d1c848e31f5/src/types.ts#L243-L255
   export interface MsgElement {
-    author: {
+    author?: {
       username?: string
       bot?: boolean
     }
