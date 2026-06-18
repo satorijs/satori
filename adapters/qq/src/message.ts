@@ -313,6 +313,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (type === 'img' || type === 'image') file_type = 1
     else if (type === 'video') file_type = 2
     else if (type === 'audio') file_type = 3
+    else if (type === 'file') file_type = 4
     else return
     const data: QQ.Message.File.Request = {
       file_type,
@@ -323,10 +324,13 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (capture?.[2]) {
       data.file_data = capture[2]
     } else if (await this.bot.ctx.http.isLocal(url)) {
-      data.file_data = Buffer.from((await this.bot.ctx.http.file(url)).data).toString('base64')
+      const file = await this.bot.ctx.http.file(url)
+      data.file_name = file.filename
+      data.file_data = Buffer.from(file.data).toString('base64')
     } else {
       data.url = url
     }
+    if (attrs.title) data.file_name = attrs.title
     let res: QQ.Message.File.Response
     try {
       if (this.session.isDirect) {
@@ -409,6 +413,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       const data = await this.sendFile(type, attrs)
       if (data) this.attachedFile = data
       await this.flush() // text can't send with video
+    } else if (type === 'file' && (attrs.src || attrs.url)) {
+      await this.flush()
+      const data = await this.sendFile(type, attrs)
+      if (data) this.attachedFile = data
+      await this.flush()
     } else if (type === 'audio' && (attrs.src || attrs.url)) {
       await this.flush()
       const { data } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)

@@ -508,7 +508,8 @@ export namespace Message {
       file_type: Type
       url?: string
       srv_send_msg: boolean
-      file_data?: unknown
+      file_name?: string
+      file_data?: string
     }
 
     export interface Response {
