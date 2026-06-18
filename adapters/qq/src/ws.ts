@@ -112,11 +112,13 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 export namespace WsClient {
   export interface Options extends Adapter.WsClientConfig {
     protocol?: 'websocket'
+    gatewayUrl?: string
   }
 
   export const Options: Schema<Options> = Schema.intersect([
     Schema.object({
       protocol: Schema.const('websocket').required(false),
+      gatewayUrl: Schema.string().role('link').description('覆写 WebSocket 地址。'),
     }),
     Adapter.WsClientConfig,
   ])
