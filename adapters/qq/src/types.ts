@@ -1327,6 +1327,7 @@ export interface UserMessage {
   author: {
     id: string
     member_openid: string
+    member_role?: 'owner' | 'admin' | 'member'
     username?: string
     union_openid: string
     bot?: boolean
