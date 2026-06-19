@@ -319,23 +319,31 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       file_type,
       srv_send_msg: false,
     }
+    let fileData: Buffer | undefined
+    let fileDataBase64: string | undefined
+    let fileSize = 0
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
     const capture = /^data:([\w/.+-]+);base64,(.*)$/.exec(url)
     if (capture?.[2]) {
-      data.file_data = capture[2]
+      fileDataBase64 = capture[2]
+      fileSize = Buffer.byteLength(fileDataBase64, 'base64')
     } else if (await this.bot.ctx.http.isLocal(url)) {
       const file = await this.bot.ctx.http.file(url)
       data.file_name = file.filename
-      data.file_data = Buffer.from(file.data).toString('base64')
+      fileData = Buffer.from(file.data)
+      fileSize = fileData.length
     } else {
       data.url = url
     }
     if (attrs.title) data.file_name = attrs.title
     let res: QQ.Message.File.Response
     try {
-      if (data.file_data?.length > this.bot.config.uploadThreshold) {
-        res = await this.chunkedUpload(file_type, data.file_name ?? 'unnamed', Buffer.from(data.file_data, 'base64'))
+      if (fileSize > this.bot.config.uploadThreshold) {
+        res = await this.chunkedUpload(file_type, data.file_name ?? 'unnamed', fileData ?? Buffer.from(fileDataBase64!, 'base64'))
       } else {
+        if (fileData || fileDataBase64) {
+          data.file_data = fileDataBase64 ?? fileData.toString('base64')
+        }
         if (this.session.isDirect) {
           res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
         } else {
