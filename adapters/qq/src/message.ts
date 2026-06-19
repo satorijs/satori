@@ -229,7 +229,6 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       }
     }
     if (this.attachedFile) {
-      if (!data.content.length) data.content = ' '
       data.media = this.attachedFile
       data.msg_type = QQ.Message.Type.MEDIA
     }
