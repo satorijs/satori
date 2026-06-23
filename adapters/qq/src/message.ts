@@ -232,13 +232,20 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (this.attachedFile) {
       data.media = this.attachedFile
       data.msg_type = QQ.Message.Type.MEDIA
+      if (this.content) {
+        const content = this.content
+        const rows = this.rows
+        await this.flush()
+        data.msg_type = QQ.Message.Type.TEXT
+        data.content = content
+        this.rows = rows
+      }
     }
-    
     if (this.useMarkdown) {
       data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
-        content: this.content,
+        content: data.content,
       }
       if (this.rows.length) {
         data.keyboard = {
