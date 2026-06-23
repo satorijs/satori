@@ -196,6 +196,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private passiveSeq: number
   private passiveEventId: string
   private useMarkdown = false
+  private inMarkdown = 0
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
   private retry = false
@@ -231,13 +232,20 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (this.attachedFile) {
       data.media = this.attachedFile
       data.msg_type = QQ.Message.Type.MEDIA
+      if (this.content) {
+        const content = this.content
+        const rows = this.rows
+        await this.flush()
+        data.msg_type = QQ.Message.Type.TEXT
+        data.content = content
+        this.rows = rows
+      }
     }
-
     if (this.useMarkdown) {
       data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
-        content: escapeMarkdown(this.content) || ' ',
+        content: data.content,
       }
       if (this.rows.length) {
         data.keyboard = {
@@ -452,10 +460,18 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     })) as QQ.InlineKeyboardRow[]
   }
 
+  ensureMarkdown() {
+    if (!this.useMarkdown) {
+      this.content = escapeMarkdown(this.content)
+      this.useMarkdown = true
+    }
+  }
+
   async visit(element: h) {
     const { type, attrs, children } = element
     if (type === 'text') {
-      this.content += attrs.content
+      this.content += this.useMarkdown && !this.inMarkdown
+        ? escapeMarkdown(attrs.content) : attrs.content
     } else if (type === 'passive') {
       if (attrs.messageId) this.passiveId = attrs.messageId
       if (attrs.seq) this.passiveSeq = Number(attrs.seq)
@@ -525,13 +541,18 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       if (!this.content.endsWith('\n')) this.content += '\n'
       await this.render(children)
       if (!this.content.endsWith('\n')) this.content += '\n'
+    } else if (type === 'qq:markdown') {
+      this.ensureMarkdown()
+      this.inMarkdown++
+      await this.render(children)
+      this.inMarkdown--
     } else if (type === 'button-group') {
-      this.useMarkdown = true
+      this.ensureMarkdown()
       this.rows.push([])
       await this.render(children)
       this.rows.push([])
     } else if (type === 'button') {
-      this.useMarkdown = true
+      this.ensureMarkdown()
       const last = this.lastRow()
       last.push(this.decodeButton(attrs, children.join('')))
     } else if (type === 'message') {
