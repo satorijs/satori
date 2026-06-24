@@ -1,12 +1,40 @@
 import * as QQ from './types'
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Context, Dict, h, MessageEncoder, Session } from '@satorijs/core'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
 import crypto from 'crypto'
+import { parseQQArkElement } from './ark'
 
 export const escapeMarkdown = (val: string) =>
-  val
-    .replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
+  val.replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
+  // TODO: fix `\(\LaTeX\)`
+
+export function inlinecmd({
+  text,
+  show,
+  enter = false,
+  reply = false,
+}: {
+  text: string
+  show?: string
+  enter?: boolean
+  reply?: boolean
+}) {
+  const command = encodeURIComponent(text)
+    .replaceAll('(', '%28')
+    .replaceAll(')', '%29')
+  return `[${show || text}](mqqapi://aio/inlinecmd?${Object
+    .entries({ command, reply, enter })
+    .map(([key, value]) => `${key}=${value}`)
+    .join('&')})`
+}
+
+declare module '@satorijs/core' {
+  interface Session {
+    seq: number
+    streamId?: string
+  }
+}
 
 export class QQGuildMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQGuildBot<C>> {
   private content: string = ''
@@ -196,18 +224,53 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private passiveSeq: number
   private passiveEventId: string
   private useMarkdown = false
+  private inMarkdown = 0
   private rows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
+  private ark: QQ.Message.Ark
+  private stream: QQ.Message.Stream
   private retry = false
   reference: string
 
-  // 先图后文
+  async sendMessage(data: QQ.Message.Request, session: Session) {
+    try {
+      const resp = this.session.isDirect
+        ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
+        : await this.bot.internal.sendMessage(this.session.channelId, data)
+      if (resp.id && !resp.audit_id) {
+        session.messageId = resp.id
+        session.timestamp = new Date(resp.timestamp).valueOf()
+        session.channelId = this.session.channelId
+        session.guildId = this.session.guildId
+        session.app.emit(session, 'send', session)
+        this.results.push(session.event.message)
+      } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+        try {
+          const auditData: QQ.MessageAudited = await this.audit(resp.audit_id)
+          session.messageId = auditData.message_id
+          session.app.emit(session, 'send', session)
+          this.results.push(session.event.message)
+        } catch (e) {
+          this.bot.logger.error(e)
+        }
+      }
+    } catch (e) {
+      if (!this.bot.http.isError(e)) throw e
+      this.errors.push(e)
+      if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
+        this.bot.logger.warn('%s retry message sending', this.session.cid)
+        this.retry = true
+        await this.sendMessage(data, session)
+      }
+    }
+  }
+
   async flush() {
-    if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) return
+    if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile && !this.ark) return
     this.trimButtons()
     let msg_id: string, msg_seq: number, event_id: string
     if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
-      this.options.session['seq'] ||= 0
+      this.options.session.seq ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
     } else if (this.options?.session?.qq?.['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
@@ -232,12 +295,15 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       data.media = this.attachedFile
       data.msg_type = QQ.Message.Type.MEDIA
     }
-
+    if (this.stream) {
+      this.ensureMarkdown()
+      data.stream = this.stream
+    }
     if (this.useMarkdown) {
       data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
-        content: escapeMarkdown(this.content) || ' ',
+        content: this.content,
       }
       if (this.rows.length) {
         data.keyboard = {
@@ -247,44 +313,23 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         }
       }
     }
+    if (this.ark) {
+      data.content = ' '
+      delete data.markdown
+      data.msg_type = QQ.Message.Type.ARK
+      data.ark = this.ark
+    }
     const session = this.bot.session()
     session.type = 'send'
-    const send = async () => {
-      try {
-        const resp = this.session.isDirect
-          ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-          : await this.bot.internal.sendMessage(this.session.channelId, data)
-        if (resp.id && !resp.audit_id) {
-          session.messageId = resp.id
-          session.timestamp = new Date(resp.timestamp).valueOf()
-          session.channelId = this.session.channelId
-          session.guildId = this.session.guildId
-          session.app.emit(session, 'send', session)
-          this.results.push(session.event.message)
-        } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
-          try {
-            const auditData: QQ.MessageAudited = await this.audit(resp.audit_id)
-            session.messageId = auditData.message_id
-            session.app.emit(session, 'send', session)
-            this.results.push(session.event.message)
-          } catch (e) {
-            this.bot.logger.error(e)
-          }
-        }
-      } catch (e) {
-        if (!this.bot.http.isError(e)) throw e
-        this.errors.push(e)
-        if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-          this.bot.logger.warn('%s retry message sending', this.session.cid)
-          this.retry = true
-          await send()
-        }
-      }
+    await this.sendMessage(data, session)
+    if (this.stream && session.messageId) {
+      this.options.session.streamId = session.messageId
     }
-    await send()
     this.content = ''
     this.attachedFile = null
     this.rows = []
+    this.ark = null
+    this.stream = null
     this.retry = false
   }
 
@@ -452,10 +497,40 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     })) as QQ.InlineKeyboardRow[]
   }
 
+  ensureMarkdown() {
+    if (!this.useMarkdown) {
+      this.content = escapeMarkdown(this.content)
+      this.useMarkdown = true
+    }
+  }
+
+  static MARKDOWN_MODIFIERS = Object.entries({
+    '**': ['b', 'strong'],
+    '_': ['i', 'em'],
+    '~~': ['s', 'del'],
+    '`': ['code'],
+    // '/': ['u', 'ins'],
+    // '==': ['mark'],
+  })
+
   async visit(element: h) {
-    const { type, attrs, children } = element
+    const { attrs, children } = element
+    const type = element.type.replace(/^qq:/, '')
     if (type === 'text') {
-      this.content += attrs.content
+      this.content += this.useMarkdown && !this.inMarkdown
+        ? escapeMarkdown(attrs.content) : attrs.content
+    } else if (type === 'at') {
+      this.ensureMarkdown()
+      switch (attrs.type) {
+        case 'all':
+          this.content += `@everyone`
+          break
+        default:
+          this.content += `<@${attrs.id}>`
+      }
+    } else if (type === 'emoji') {
+      // FIXME: emoji id 和 Unicode 码点似乎不全是对应的，可能需要手动映射
+      // this.content += String.fromCharCode(20, attrs.id)
     } else if (type === 'passive') {
       if (attrs.messageId) this.passiveId = attrs.messageId
       if (attrs.seq) this.passiveSeq = Number(attrs.seq)
@@ -464,9 +539,16 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       this.reference = attrs.id
       await this.flush()
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
-      await this.flush()
-      const data = await this.sendFile(type, attrs)
-      if (data) this.attachedFile = data
+      if (this.useMarkdown) {
+        let { alt = attrs.title, src = attrs.url, width, height } = attrs
+        if (width && height)
+          alt += ` #${width}px #${height}px`
+        this.content += `![${alt}](${src})`
+      } else {
+        await this.flush()
+        const data = await this.sendFile(type, attrs)
+        if (data) this.attachedFile = data
+      }
     } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
@@ -525,20 +607,50 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       if (!this.content.endsWith('\n')) this.content += '\n'
       await this.render(children)
       if (!this.content.endsWith('\n')) this.content += '\n'
+    } else if (type === 'markdown') {
+      this.ensureMarkdown()
+      this.inMarkdown++
+      await this.render(children)
+      this.inMarkdown--
     } else if (type === 'button-group') {
-      this.useMarkdown = true
+      this.ensureMarkdown()
       this.rows.push([])
       await this.render(children)
       this.rows.push([])
     } else if (type === 'button') {
-      this.useMarkdown = true
+      this.ensureMarkdown()
       const last = this.lastRow()
       last.push(this.decodeButton(attrs, children.join('')))
+    } else if (type.startsWith('ark')) {
+      await this.flush()
+      this.ark = parseQQArkElement(element)
+      await this.flush()
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
       await this.flush()
+    } else if (type === 'stream') {
+      await this.flush()
+      await this.render([h('markdown', ...children)])
+      this.stream = {
+        state: attrs.done || attrs.finish
+          ? QQ.Message.Stream.InputState.DONE
+          : QQ.Message.Stream.InputState.GENERATING,
+        id: this.session.streamId,
+        index: this.session.seq,
+        reset: Boolean(attrs.reset),
+      }
+      await this.flush()
     } else {
+      for (const [delimiter, types] of QQMessageEncoder.MARKDOWN_MODIFIERS) {
+        if (types.includes(type)) {
+          this.ensureMarkdown()
+          this.content += delimiter
+          await this.render(children)
+          this.content += delimiter
+          return
+        }
+      }
       await this.render(children)
     }
   }

@@ -366,8 +366,8 @@ export namespace Message {
     obj?: ArkObj[]
   }
   export interface ArkObj {
-    /** ark objkv 列表 */
-    objKv: ArkObjKv[]
+    /** ark obj_kv 列表 */
+    obj_kv: ArkObjKv[]
   }
   export interface ArkObjKv {
     key: string
@@ -424,6 +424,12 @@ export namespace Message {
     event_id?: string
     markdown?: Markdown
   }
+  export interface Stream {
+    state: Stream.InputState;
+    id?: string;
+    index?: number;
+    reset?: boolean;
+  }
   export namespace Stream {
     export enum InputMode {
       REPLACE = 'replace',
@@ -460,9 +466,7 @@ export namespace Message {
   export interface Request {
     /** 文本内容 */
     content?: string
-    /** 消息类型
-     * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
-     */
+    /** 消息类型 */
     msg_type: Type
     markdown?: Markdown
     keyboard?: Partial<MessageKeyboard>
@@ -476,6 +480,7 @@ export namespace Message {
     msg_id?: string
     msg_seq?: number
     media?: Partial<File.Response>
+    stream?: Stream
   }
 
   export interface ResponseBase extends Message {
