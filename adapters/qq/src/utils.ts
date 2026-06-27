@@ -330,7 +330,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
       GROUP_MEMBER_ADD: 'guild-member-added',
       GROUP_MEMBER_REMOVE: 'guild-member-removed',
     }[input.t]
-    session.guildId = input.d.group_openid
+    session.guildId = session.channelId = input.d.group_openid
     session.userId = input.d.member_openid
     session.timestamp = input.d.timestamp
   } else {
