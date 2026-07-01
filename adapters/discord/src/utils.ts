@@ -170,8 +170,12 @@ export async function decodeMessage<C extends Context = Context>(
     try {
       message.quote = await bot.getMessage(channel_id!, message_id, false)
     } catch (e) {
-      // ephemeral messages or deleted messages cannot be fetched via REST API
-      bot.logger.debug('failed to fetch quoted message %s: %o', message_id, e)
+      if (bot.http.isError(e) && e.response?.data?.code === 10008) {
+        // ephemeral or deleted messages cannot be fetched via REST API
+        bot.logger.debug('failed to fetch quoted message %s', message_id)
+      } else {
+        throw e
+      }
     }
   }
 
@@ -235,8 +239,12 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     try {
       message = await bot._getMessage(input.d.channel_id!, input.d.id!)
     } catch (e) {
-      // ephemeral messages cannot be fetched via REST API, fall back to partial payload
-      bot.logger.debug('failed to fetch updated message %s: %o', input.d.id!, e)
+      if (bot.http.isError(e) && e.response?.data?.code === 10008) {
+        // ephemeral messages cannot be fetched via REST API, fall back to partial payload
+        bot.logger.debug('failed to fetch updated message %s', input.d.id!)
+      } else {
+        throw e
+      }
     }
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
