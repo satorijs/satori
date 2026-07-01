@@ -48,6 +48,15 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
 
   async post(data?: any, headers?: any) {
     try {
+      // propagate ephemeral flag from deferred response to all followup messages
+      const sess = this.options?.session
+      if (sess?._discordEphemeral && data && !(data instanceof FormData)) {
+        if (data._noEphemeral) {
+          delete data._noEphemeral
+        } else {
+          data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+        }
+      }
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
@@ -378,6 +387,11 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer = ''
       this.mode = 'default'
     } else if (type === 'message' && !attrs.forward) {
+      if (attrs.ephemeral) {
+        this.addition.flags = (this.addition.flags || 0) | Message.Flag.EPHEMERAL
+      } else if (attrs.ephemeral === false) {
+        this.addition._noEphemeral = true
+      }
       if (this.mode === 'figure') {
         await this.render(children)
         this.buffer += '\n'

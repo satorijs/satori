@@ -167,7 +167,12 @@ export async function decodeMessage<C extends Context = Context>(
   // THREAD_STARTER_MESSAGE (21) 事件下，message_reference 有 message_id
   if (details && data.message_reference?.message_id) {
     const { message_id, channel_id } = data.message_reference
-    message.quote = await bot.getMessage(channel_id!, message_id, false)
+    try {
+      message.quote = await bot.getMessage(channel_id!, message_id, false)
+    } catch (e) {
+      // ephemeral messages or deleted messages cannot be fetched via REST API
+      bot.logger.debug('failed to fetch quoted message %s: %o', message_id, e)
+    }
   }
 
   message.createdAt = new Date(data.timestamp).valueOf()
@@ -226,7 +231,13 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     // if (!session.content) return
   } else if (input.t === 'MESSAGE_UPDATE') {
     session.type = 'message-updated'
-    const message = await bot._getMessage(input.d.channel_id!, input.d.id!)
+    let message = input.d as Discord.Message
+    try {
+      message = await bot._getMessage(input.d.channel_id!, input.d.id!)
+    } catch (e) {
+      // ephemeral messages cannot be fetched via REST API, fall back to partial payload
+      bot.logger.debug('failed to fetch updated message %s: %o', input.d.id!, e)
+    }
     // Unlike creates, message updates may contain only a subset of the full message object payload
     // https://discord.com/developers/docs/topics/gateway-events#message-update
     await decodeMessage(bot, message, session.event.message = {}, session.event)
@@ -300,8 +311,11 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     const data = input.d.data as Discord.InteractionData.ApplicationCommand
     const command = bot.commands.find(cmd => cmd.name === data.name)
     if (!command) return
+    const ephemeral = !!(command as any).ephemeral
+    if (ephemeral) session._discordEphemeral = true
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
       type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+      ...(ephemeral ? { data: { flags: 64 } } : {}),
     })
     session.type = 'interaction/command'
     session.isDirect = !input.d.guild_id
