@@ -52,8 +52,17 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       const sess = this.options?.session
       const noEphemeral = !!(data && data._noEphemeral)
       if (data?._noEphemeral) delete data._noEphemeral
-      if (sess?._discordEphemeral && data && !(data instanceof FormData) && !noEphemeral) {
-        data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+      if (sess?._discordEphemeral && data && !noEphemeral) {
+        if (data instanceof FormData) {
+          const raw = data.get('payload_json')
+          if (typeof raw === 'string') {
+            const payload = JSON.parse(raw)
+            payload.flags = (payload.flags || 0) | Message.Flag.EPHEMERAL
+            data.set('payload_json', JSON.stringify(payload))
+          }
+        } else {
+          data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+        }
       }
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
