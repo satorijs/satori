@@ -315,7 +315,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     if (ephemeral) session._discordEphemeral = true
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
       type: Discord.Interaction.CallbackType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
-      ...(ephemeral ? { data: { flags: 64 } } : {}),
+      ...(ephemeral ? { data: { flags: Discord.Message.Flag.EPHEMERAL } } : {}),
     })
     session.type = 'interaction/command'
     session.isDirect = !input.d.guild_id
