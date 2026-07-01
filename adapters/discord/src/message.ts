@@ -50,11 +50,24 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     try {
       // propagate ephemeral flag from deferred response to all followup messages
       const sess = this.options?.session
-      if (sess?._discordEphemeral && data && !(data instanceof FormData)) {
-        if (data._noEphemeral) {
-          delete data._noEphemeral
+      if (data) {
+        if (data instanceof FormData) {
+          const raw = data.get('payload_json')
+          if (typeof raw === 'string') {
+            const payload = JSON.parse(raw)
+            const noEphemeral = !!payload._noEphemeral
+            if (payload._noEphemeral) delete payload._noEphemeral
+            if (sess?._discordEphemeral && !noEphemeral) {
+              payload.flags = (payload.flags || 0) | Message.Flag.EPHEMERAL
+            }
+            data.set('payload_json', JSON.stringify(payload))
+          }
         } else {
-          data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+          const noEphemeral = !!data._noEphemeral
+          if (data._noEphemeral) delete data._noEphemeral
+          if (sess?._discordEphemeral && !noEphemeral) {
+            data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+          }
         }
       }
       const url = await this.getUrl()
