@@ -170,7 +170,7 @@ export async function decodeMessage<C extends Context = Context>(
     try {
       message.quote = await bot.getMessage(channel_id!, message_id, false)
     } catch (e) {
-      if (bot.http.isError(e) && e.response?.data?.code === 10008) {
+      if (e instanceof Error && /"code"\s*:\s*10008/.test(e.message)) {
         // ephemeral or deleted messages cannot be fetched via REST API
         bot.logger.debug('failed to fetch quoted message %s', message_id)
       } else {
@@ -239,7 +239,7 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     try {
       message = await bot._getMessage(input.d.channel_id!, input.d.id!)
     } catch (e) {
-      if (bot.http.isError(e) && e.response?.data?.code === 10008) {
+      if (e instanceof Error && /"code"\s*:\s*10008/.test(e.message)) {
         // ephemeral messages cannot be fetched via REST API, fall back to partial payload
         bot.logger.debug('failed to fetch updated message %s', input.d.id!)
       } else {
