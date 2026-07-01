@@ -425,7 +425,7 @@ export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationComman
   ...encodeDescription(cmd),
   name: cmd.name,
   type: Discord.ApplicationCommand.Type.CHAT_INPUT,
-  options: encodeCommandOptions(cmd),
+  options: encodeCommandOptions(cmd).slice(0, 25),
 })
 
 const decodeArgv = (
@@ -488,5 +488,5 @@ export function encodeCommandOptions(cmd: Universal.Command): Discord.Applicatio
       })
     }
   }
-  return result.sort((a, b) => +b.required! - +a.required!)
+  return result.sort((a, b) => +b.required! - +a.required!).slice(0, 25)
 }
