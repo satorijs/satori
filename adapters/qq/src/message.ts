@@ -227,7 +227,6 @@ export class QQMessageEncoder extends MessageEncoder<QQBot> {
       event_id,
     }
     if (this.attachedFile) {
-      if (!data.content.length) data.content = ' '
       data.media = this.attachedFile
       data.msg_type = QQ.Message.Type.MEDIA
     }
