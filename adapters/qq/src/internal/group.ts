@@ -9,6 +9,7 @@ declare module './internal' {
       audit_id?: string
       audit_tips?: string
     }>
+    deleteMessage(openid: string, message_id: string): Promise<any>
     sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<{
       id: string
       timestamp: string
@@ -19,6 +20,7 @@ declare module './internal' {
       id: string
       timestamp: string
     }>
+    deletePrivateMessage(userid: string, message_id: string): Promise<any>
     sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
     sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
     uploadPreparePrivate(openid: string, data: QQ.Message.File.UploadPrepareRequest): Promise<QQ.Message.File.UploadPrepareResponse>
@@ -28,10 +30,9 @@ declare module './internal' {
     acknowledgeInteraction(interaction_id: string, data: {
       code: number
     }): Promise<any>
+    getGuildMember(group_openid: string, openid: string): Promise<QQ.User>
     getGateway(): Promise<QQ.GetGatewayResponse>
     getGatewayBot(): Promise<QQ.GetGatewayBotResponse>
-    deleteMessage(openid: string, message_id: string): Promise<any>
-    deletePrivateMessage(userid: string, message_id: string): Promise<any>
   }
 }
 
@@ -68,6 +69,9 @@ GroupInternal.define(false, {
   },
   '/v2/groups/{channel.id}/upload_part_finish': {
     POST: 'uploadPartFinishGuild',
+  },
+  '/v2/groups/{channel.id}/members/{user.id}': {
+    GET: 'getGuildMember'
   },
   '/gateway': {
     GET: 'getGateway',
