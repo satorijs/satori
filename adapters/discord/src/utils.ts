@@ -319,8 +319,9 @@ export async function adaptSession<C extends Context>(bot: DiscordBot<C>, input:
     const data = input.d.data as Discord.InteractionData.ApplicationCommand
     const command = bot.commands.find(cmd => cmd.name === data.name)
     if (!command) return
-    const cmd = (bot.ctx.root as any).$commander?._commandList
-      ?.find((c: any) => c.name === data.name)
+    const cmd = (bot.ctx.root as unknown as {
+      $commander?: { _commandList?: { name: string; config?: { ephemeral?: boolean } }[] }
+    }).$commander?._commandList?.find(c => c.name === data.name)
     const ephemeral = !!cmd?.config?.ephemeral
     if (ephemeral) session._discordEphemeral = true
     await bot.internal.createInteractionResponse(input.d.id, input.d.token, {
