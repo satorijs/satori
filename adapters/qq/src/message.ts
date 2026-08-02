@@ -485,9 +485,16 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       this.reference = attrs.id
       await this.flush()
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
-      await this.flush()
-      const data = await this.sendFile(type, attrs)
-      if (data) this.attachedFile = data
+      if (this.useMarkdown) {
+        let { alt = attrs.title, src = attrs.url, width, height } = attrs
+        if (width && height)
+          alt += ` #${width}px #${height}px`
+        this.content += `![${alt}](${src})`
+      } else {
+        await this.flush()
+        const data = await this.sendFile(type, attrs)
+        if (data) this.attachedFile = data
+      }
     } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
