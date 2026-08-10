@@ -1396,6 +1396,32 @@ export interface Interaction {
   version: 1
 }
 
+export interface GroupInfo {
+  group_openid: string
+  group_name: string
+  group_finger_memo: string
+  group_class_text: string
+  group_tags: string[]
+  group_member_num: number
+}
+
+export interface GroupBotState {
+  member_openid: string
+  joined_at: string
+  allow_proactive_msg: boolean
+  recv_msg_setting: 'all' | 'only_mention' | 'mention_and_context'
+  member_role: 'owner' | 'admin' | 'member'
+}
+
+export interface GroupMember {
+  member_openid: string
+  username: string
+  member_role: 'owner' | 'admin' | 'member'
+  bot: boolean
+  joined_at: string
+  union_openid: string
+}
+
 export interface GroupEvent {
   timestamp: number
   group_openid: string

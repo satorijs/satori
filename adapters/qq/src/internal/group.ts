@@ -3,6 +3,9 @@ import { GroupInternal } from '.'
 
 declare module './internal' {
   interface GroupInternal {
+    getGuildInfo(group_openid: string): Promise<QQ.GroupInfo>
+    getGuildBotState(group_openid: string): Promise<QQ.GroupBotState>
+    getGuildMember(group_openid: string, user_openid: string): Promise<QQ.GroupMember>
     sendMessage(channel_id: string, data: QQ.Message.Request): Promise<{
       id: string
       timestamp: string
@@ -36,6 +39,15 @@ declare module './internal' {
 }
 
 GroupInternal.define(false, {
+  '/v2/groups/{channel.id}/info': {
+    GET: 'getGuildInfo',
+  },
+  '/v2/groups/{channel.id}/bot_state': {
+    GET: 'getGuildBotState',
+  },
+  '/v2/groups/{channel.id}/members/{user.id}': {
+    GET: 'getGuildMember',
+  },
   '/v2/groups/{channel.id}/messages': {
     POST: 'sendMessage',
   },

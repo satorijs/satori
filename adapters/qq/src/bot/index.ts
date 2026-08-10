@@ -118,6 +118,21 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
       await this.internal.deletePrivateMessage(channelId, messageId)
     }
   }
+
+  async getGuild(guildId: string): Promise<Universal.Guild> {
+    const data = await this.internal.getGuildInfo(guildId)
+    return { id: data.group_openid, name: data.group_name }
+  }
+
+  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+    const data = await this.internal.getGuildMember(guildId, userId)
+    return {
+      user: { id: data.member_openid, name: data.username, avatar: `https://q.qlogo.cn/qqapp/${this.config.id}/${data.member_openid}/640` },
+      name: data.username,
+      roles: [{ id: data.member_role }],
+      joinedAt: new Date(data.joined_at).getTime(),
+    }
+  }
 }
 
 export namespace QQBot {
