@@ -143,6 +143,18 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
       }],
     })
   }
+
+  public guildMemberRequestMap = new Map<string, { guildId: string; userId: string }>()
+  async handleGuildMemberRequest(messageId: string, approve: boolean, comment?: string): Promise<void> {
+    const request = this.guildMemberRequestMap.get(messageId)
+    if (!request) throw new Error('join request not found')
+    await this.internal.approveGuildJoinRequest(request.guildId, request.userId, {
+      op: approve ? 'approve' : 'decline',
+      join_request_id: messageId,
+      reject_reason: comment,
+    })
+    this.guildMemberRequestMap.delete(messageId)
+  }
 }
 
 export namespace QQBot {

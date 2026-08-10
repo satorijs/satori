@@ -177,6 +177,7 @@ export interface GatewayEvents {
   INTERACTION_CREATE: Interaction
   GROUP_MEMBER_ADD: MemberWithGroup
   GROUP_MEMBER_REMOVE: MemberWithGroup
+  GROUP_JOIN_REQUEST: GroupJoinRequest
   GROUP_ADD_ROBOT: GroupEvent
   GROUP_DEL_ROBOT: GroupEvent
   GROUP_MSG_REJECT: GroupEvent
@@ -1432,6 +1433,39 @@ export interface MemberWithGroup {
   timestamp: number
   group_openid: string
   member_openid: string
+}
+
+export interface GroupJoinRequest {
+  apply_at: string
+  apply_source: 'self_apply' | 'invited'
+  group_openid: string
+  join_request_id: string
+  member_openid: string
+  invited_by?: string
+  username: string
+  verify_info?: {
+    method: 'verify_message' | 'admin_review_qa'
+    verify_message?: string
+    review_qa_list?: {
+      question: string
+      answer: string
+    }[]
+  }
+  auto_approved?: {
+    strategy_id: string
+  }
+
+  // API额外返回的字段
+  risk_tips?: string
+  union_openid?: string
+  bot?: boolean
+}
+
+export interface ApprovalJoinRequestRequest {
+  op: 'approve' | 'decline'
+  join_request_id?: string
+  reject_reason?: string
+  add_to_member_blacklist?: boolean
 }
 
 export interface RestrictChatSetting {

@@ -6,6 +6,11 @@ declare module './internal' {
     getGuildInfo(group_openid: string): Promise<QQ.GroupInfo>
     getGuildBotState(group_openid: string): Promise<QQ.GroupBotState>
     getGuildMember(group_openid: string, user_openid: string): Promise<QQ.GroupMember>
+    getGuildJoinRequestList(group_openid: string): Promise<{
+      list: QQ.GroupJoinRequest[]
+      next_cursor: string
+    }>
+    approveGuildJoinRequest(group_openid: string, user_openid: string, data: QQ.ApprovalJoinRequestRequest): Promise<void>
     getRestrictChatSetting(group_openid: string): Promise<QQ.RestrictChatSetting>
     updateRestrictChatSetting(group_openid: string, data: QQ.UpdateRestrictChatSettingRequest): Promise<QQ.RestrictChatSetting>
     sendMessage(channel_id: string, data: QQ.Message.Request): Promise<{
@@ -49,6 +54,12 @@ GroupInternal.define(false, {
   },
   '/v2/groups/{channel.id}/members/{user.id}': {
     GET: 'getGuildMember',
+  },
+  '/v2/groups/{channel.id}/join_request_list': {
+    GET: 'getGuildJoinRequestList',
+  },
+  '/v2/groups/{channel.id}/approval_join_request/{user.id}': {
+    POST: 'approveGuildJoinRequest',
   },
   '/v2/groups/{channel.id}/restrict_chat_setting': {
     GET: 'getRestrictChatSetting',
