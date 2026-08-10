@@ -398,6 +398,8 @@ export namespace Message {
     params?: MarkdownParam[]
     /** 原生 markdown 内容，与 template_id 和 params 参数互斥，参数都传值将报错。 */
     content?: string
+    /** 开启后，当图片资源转存失败时，将中断消息发送并返回失败。 */
+    force_verify_image_resource?: boolean
   }
   export interface MarkdownParam {
     /** markdown 模版 key */

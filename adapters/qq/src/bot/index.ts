@@ -128,6 +128,7 @@ export namespace QQBot {
     protocol: 'websocket' | 'webhook'
     path?: string
     uploadThreshold: number
+    markdownVerifyImage: boolean
   }
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
@@ -150,6 +151,7 @@ export namespace QQBot {
     Schema.object({
       manualAcknowledge: Schema.boolean().description('手动响应回调消息。').default(false),
       uploadThreshold: Schema.natural().role('ms').description('超过该大小的文件将使用分片上传。').default(3 * 1000 * 1000),
+      markdownVerifyImage: Schema.boolean().description('在 Markdown 图片转存失败时报错。').default(false),
     }).description('高级设置'),
   ] as const)
 }

@@ -242,6 +242,9 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       data.markdown = {
         content: this.content,
       }
+      if (this.bot.config.markdownVerifyImage) {
+        data.markdown.force_verify_image_resource = true
+      }
       if (this.rows.length) {
         data.markdown.content ||= ' '
         data.keyboard = {
