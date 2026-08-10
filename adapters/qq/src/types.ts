@@ -1434,6 +1434,41 @@ export interface MemberWithGroup {
   member_openid: string
 }
 
+export interface RestrictChatSetting {
+  global_rule: {
+    mode: 'none' | 'always' | 'schedule'
+    schedule_rules: {
+      task_id: string
+      start_at: string
+      end_at: string
+      enabled: boolean
+    }[]
+    recurring_rules: {
+      task_id: string
+      weekdays: number[]
+      start_time: string
+      end_time: string
+      enabled: boolean
+    }[]
+  }
+  members: {
+    member_openid: string
+    mute_expire_at: string
+    username: string
+    union_openid: string
+  }[]
+}
+
+interface MemberMuteState {
+  op: 'add' | 'update' | 'del'
+  member_openid: string
+  mute_expire_at?: string
+}
+
+export interface UpdateRestrictChatSettingRequest {
+  members: MemberMuteState[]
+}
+
 export interface UserEvent {
   timestamp: number
   openid: string

@@ -133,6 +133,16 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
       joinedAt: new Date(data.joined_at).getTime(),
     }
   }
+
+  async muteGuildMember(guildId: string, userId: string, duration: number): Promise<void> {
+    await this.internal.updateRestrictChatSetting(guildId, {
+      members: [{
+        op: duration ? 'add' : 'del',
+        member_openid: userId,
+        mute_expire_at: duration ? new Date(Date.now() + duration).toISOString() : undefined,
+      }],
+    })
+  }
 }
 
 export namespace QQBot {
