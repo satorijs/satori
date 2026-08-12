@@ -105,6 +105,7 @@ export function decodeGroupMessage(
 ) {
   message.id = data.id
   const attachedFace = new Set<number>() // attachments 下标
+  if (data.msg_elements?.length && data.content[0] === ' ') data.content = data.content.slice(1)
   message.elements = decodeGroupMessageContent(data.content, data.attachments ?? [], attachedFace)
   const mentionMap = new Map<string, h>()
   for (const mention of data.mentions ?? []) {
