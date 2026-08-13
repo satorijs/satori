@@ -347,6 +347,8 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
     }
     if (input.d.verify_info?.verify_message) {
       session.content = input.d.verify_info.verify_message
+    } else if (input.d.verify_info?.review_qa_list?.length) {
+      session.content = input.d.verify_info.review_qa_list.map(qa => qa.answer).join('\n')
     }
     bot.guildMemberRequestMap.set(input.d.join_request_id, { guildId: input.d.group_openid, userId: input.d.member_openid })
   } else {
