@@ -332,12 +332,14 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
       GROUP_MEMBER_REMOVE: 'guild-member-removed',
     }[input.t]
     session.guildId = input.d.group_openid
+    session.channelId = input.d.group_openid
     session.userId = input.d.member_openid
     session.timestamp = input.d.timestamp
   } else if (input.t === 'GROUP_JOIN_REQUEST') {
     session.type = 'guild-member-request'
     session.timestamp = new Date(input.d.apply_at).getTime()
     session.guildId = input.d.group_openid
+    session.channelId = input.d.group_openid
     session.userId = input.d.member_openid
     session.messageId = input.d.join_request_id
     session.event.user = {
