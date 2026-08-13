@@ -176,7 +176,7 @@ export namespace QQBot {
       secret: Schema.string().description('机器人密钥。').role('secret'),
       type: Schema.union(['public', 'private'] as const).description('机器人类型。').required(),
       sandbox: Schema.boolean().description('是否开启沙箱模式。').default(false),
-      endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.sgroup.qq.com/'),
+      endpoint: Schema.string().role('link').description('要连接的服务器地址。').default('https://api.bot.qq.com/'),
       intents: Schema.bitset(QQ.Intents).description('需要订阅的机器人事件。'),
       retryWhen: Schema.array(Number).description('发送消息遇到平台错误码时重试。').default([]),
       protocol: Schema.union(['websocket', 'webhook']).description('选择要使用的协议。').default('websocket'),
