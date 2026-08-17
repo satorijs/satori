@@ -48,6 +48,38 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
 
   async post(data?: any, headers?: any) {
     try {
+      // propagate ephemeral flag from deferred response to all followup messages
+      const sess = this.options?.session
+
+      // Determine if _noEphemeral was explicitly set — for plain objects it's on
+      // the object itself; for FormData it may be serialized inside payload_json.
+      let noEphemeral = !!(data && data._noEphemeral)
+
+      // Strip _noEphemeral from non-FormData before sending.
+      // Use a shallow copy to avoid mutating the caller's shared object
+      if (data?._noEphemeral && !(data instanceof FormData)) {
+        data = { ...data }
+        delete data._noEphemeral
+      }
+
+      // For FormData, _noEphemeral lives inside the payload_json string.
+      if (data instanceof FormData) {
+        const raw = data.get('payload_json')
+        if (typeof raw === 'string') {
+          const payload = JSON.parse(raw)
+          if (payload._noEphemeral) {
+            noEphemeral = true
+            delete payload._noEphemeral
+            data.set('payload_json', JSON.stringify(payload))
+          }
+          if (sess?._discordEphemeral && !noEphemeral) {
+            payload.flags = (payload.flags || 0) | Message.Flag.EPHEMERAL
+            data.set('payload_json', JSON.stringify(payload))
+          }
+        }
+      } else if (sess?._discordEphemeral && data && !noEphemeral) {
+        data.flags = (data.flags || 0) | Message.Flag.EPHEMERAL
+      }
       const url = await this.getUrl()
       const result = await this.bot.http.post<Message>(url, data, { headers })
       const session = this.bot.session()
@@ -378,6 +410,11 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer = ''
       this.mode = 'default'
     } else if (type === 'message' && !attrs.forward) {
+      if (attrs.ephemeral) {
+        this.addition.flags = (this.addition.flags || 0) | Message.Flag.EPHEMERAL
+      } else if (attrs.ephemeral === false) {
+        this.addition._noEphemeral = true
+      }
       if (this.mode === 'figure') {
         await this.render(children)
         this.buffer += '\n'

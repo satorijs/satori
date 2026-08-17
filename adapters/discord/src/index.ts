@@ -22,6 +22,7 @@ type DiscordEvents<C extends Context = Context> = {
 declare module '@satorijs/core' {
   interface Session {
     discord?: Discord.Gateway.Payload & Discord.Internal
+    _discordEphemeral?: boolean
   }
 }
 
