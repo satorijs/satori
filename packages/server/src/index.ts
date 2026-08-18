@@ -2,7 +2,6 @@ import { Context, Inject, Service, Session, Universal } from '@satorijs/core'
 import { camelCase, snakeCase, Time } from 'cosmokit'
 import { Request, Response } from '@cordisjs/plugin-server'
 import type {} from '@cordisjs/plugin-http'
-import type {} from '@cordisjs/plugin-logger'
 import { WebSocket } from 'ws'
 import z from 'schemastery'
 
@@ -25,9 +24,9 @@ const FILTER_HEADERS = [
   'satori-platform',
 ]
 
-@Inject('http', true)
-@Inject('server', true, { path: '/satori' })
-@Inject('logger', true, { name: 'satori:server' })
+@Inject('satori')
+@Inject('http')
+@Inject('server', { path: '/satori' })
 class SatoriServer extends Service {
   private buffer: Session[] = []
 
@@ -43,55 +42,6 @@ class SatoriServer extends Service {
       }
     }
 
-    ctx.server.get('/v1/:name', async (req, res, next) => {
-      const method = Universal.Methods[req.params.name]
-      if (!method) return next()
-      res.body = 'Please use POST method to send requests.'
-      res.status = 405
-    })
-
-    ctx.server.post('/v1/:name', async (req, res) => {
-      const method = Universal.Methods[req.params.name]
-      if (!method) {
-        res.body = 'method not found'
-        res.status = 404
-        return
-      }
-
-      if (checkAuth(req, res)) return
-
-      const selfId = req.headers.get('satori-user-id')
-      const platform = req.headers.get('satori-platform')
-      const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
-      if (!bot) {
-        res.body = 'login not found'
-        res.status = 403
-        return
-      }
-
-      if (method.name === 'createUpload') {
-        const form = await req.formData()
-        const blobs = [...form].map(([, value]) => {
-          if (value instanceof File) return value
-          return new Blob([value], { type: 'text/plain' })
-        })
-        const result = await bot.createUpload(...blobs)
-        res.body = JSON.stringify(Object.fromEntries([...form].map(([key], index) => [key, result[index]])))
-        res.headers.set('content-type', 'application/json')
-        res.status = 200
-        return
-      }
-
-      const json = await req.json()
-      const args = method.fields.map(({ name }) => {
-        if (name === 'referrer') return json[name]
-        return Universal.transformKey(json[name], camelCase)
-      })
-      const result = await bot[method.name](...args)
-      res.body = Universal.transformKey(result, snakeCase)
-      res.status = 200
-    })
-
     ctx.server.all('/v1/internal/*path', async (req, res) => {
       const url = new URL(`satori:${req.params.path}`)
       for (const [key, value] of req.query) {
@@ -102,7 +52,12 @@ class SatoriServer extends Service {
         if (FILTER_HEADERS.includes(key)) continue
         headers.set(key, value as string)
       }
-      const _req = new globalThis.Request(url, { headers, body: req.body })
+      const _req = new globalThis.Request(url, {
+        method: req.method,
+        headers,
+        body: req.method === 'GET' || req.method === 'HEAD' ? undefined : req.body,
+        duplex: 'half',
+      } as RequestInit)
       return ctx.satori.handleInternalRoute(_req)
     })
 
@@ -116,7 +71,7 @@ class SatoriServer extends Service {
         return
       }
 
-      req.headers.set('access-control-allow-origin', ctx.server.config.selfUrl || '*')
+      res.headers.set('access-control-allow-origin', ctx.server.config.baseUrl ?? ctx.server.baseUrl)
       const proxyUrls = [...ctx.satori.proxyUrls]
       if (!proxyUrls.some(proxyUrl => url.href.startsWith(proxyUrl))) {
         res.body = 'forbidden'
@@ -208,6 +163,56 @@ class SatoriServer extends Service {
       })
     })
 
+    ctx.server.get('/v1/:name', async (req, res, next) => {
+      const method = Universal.Methods[req.params.name]
+      if (!method) return next()
+      res.body = 'Please use POST method to send requests.'
+      res.status = 405
+    })
+
+    ctx.server.post('/v1/:name', async (req, res) => {
+      const method = Universal.Methods[req.params.name]
+      if (!method) {
+        res.body = 'method not found'
+        res.status = 404
+        return
+      }
+
+      if (checkAuth(req, res)) return
+
+      const selfId = req.headers.get('satori-user-id')
+      const platform = req.headers.get('satori-platform')
+      const bot = ctx.bots.find(bot => bot.selfId === selfId && bot.platform === platform)
+      if (!bot) {
+        res.body = 'login not found'
+        res.status = 403
+        return
+      }
+
+      if (method.name === 'createUpload') {
+        const form = await req.formData()
+        const blobs = [...form].map(([, value]) => {
+          if (value instanceof File) return value
+          return new Blob([value], { type: 'text/plain' })
+        })
+        const result = await bot.createUpload(...blobs)
+        res.body = JSON.stringify(Object.fromEntries([...form].map(([key], index) => [key, result[index]])))
+        res.headers.set('content-type', 'application/json')
+        res.status = 200
+        return
+      }
+
+      const json = await req.json()
+      const args = method.fields.map(({ name }) => {
+        if (name === 'referrer') return json[name]
+        return Universal.transformKey(json[name], camelCase)
+      })
+      const result = await bot[method.name](...args)
+      res.body = JSON.stringify(Universal.transformKey(result, snakeCase))
+      res.headers.set('content-type', 'application/json')
+      res.status = 200
+    })
+
     function dispatch(socket: WebSocket, body: any) {
       socket.send(JSON.stringify({
         op: Universal.Opcode.EVENT,
@@ -245,7 +250,7 @@ class SatoriServer extends Service {
   }
 
   get url() {
-    return (this.ctx.server.config.selfUrl ?? this.ctx.server.selfUrl) + this.config.path
+    return (this.ctx.server.config.baseUrl ?? this.ctx.server.baseUrl) + this.config.path
   }
 
   * [Service.init]() {

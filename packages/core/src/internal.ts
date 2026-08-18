@@ -42,7 +42,7 @@ export class InternalRouter {
       route.keys.forEach(({ name }, index) => {
         params[name] = capture[index + 1]
       })
-      const _req = Object.assign(Object.create(req), { params, query })
+      const _req = Object.assign(req, { params, query })
       return route.callback(_req, bot)
     }
   }

@@ -1,6 +1,5 @@
 import { Awaitable, Time } from 'cosmokit'
 import { Status, WebSocket } from '@satorijs/protocol'
-import type {} from '@cordisjs/plugin-logger'
 import { Context } from 'cordis'
 import { Bot } from './bot'
 import z from 'schemastery'
