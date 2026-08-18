@@ -1,8 +1,7 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
-import {} from '@cordisjs/plugin-logger'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { Im, Message } from './types'
-import { EventPayload, downloadFile, extractIdType } from './utils'
+import { downloadFile, EventPayload, extractIdType } from './utils'
 import { MessageContent } from './content'
 
 export class LarkMessageEncoder extends MessageEncoder<LarkBot> {

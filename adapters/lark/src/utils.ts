@@ -1,13 +1,13 @@
 import crypto from 'crypto'
-import { Context, pick, Session, Universal } from '@satorijs/core'
-import { at, audio, Element, file, image, text as $text, video } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { pick, Session, Universal } from '@satorijs/core'
+import { text as $text, at, audio, Element, file, image, video } from '@satorijs/element'
+import { Http } from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'
 import { Im, ListChat, Message, User } from './types'
 import { MessageContent } from './content'
 import { hyphenate } from 'cosmokit'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

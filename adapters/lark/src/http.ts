@@ -1,5 +1,4 @@
 import { Context } from '@satorijs/core'
-import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'

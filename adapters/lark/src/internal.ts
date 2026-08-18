@@ -1,6 +1,5 @@
-import { Context, Dict, makeArray } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
+import { Dict, makeArray } from '@satorijs/core'
+import { Http } from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'
 
 export interface Internal {}
@@ -50,7 +49,7 @@ export class Internal {
   private static _assertResponse(bot: LarkBot, data: BaseResponse, response: Response) {
     if (!data.code) return
     bot.ctx.logger.debug('response: %o', data)
-    const error = new HTTP.Error(`request failed`)
+    const error = new Http.Error(`request failed`)
     error.response = response
     throw error
   }
@@ -84,11 +83,11 @@ export class Internal {
 
           const impl = async function (bot: LarkBot, ...args: any[]) {
             const raw = args.join(', ')
-            const url = path.replace(/\{([^}]+)\}/g, () => {
+            const url = path.replace(/^\//, '').replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: HTTP.RequestConfig = {}
+            const config: Http.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
