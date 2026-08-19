@@ -20,30 +20,6 @@ export * from './message'
 export * from './internal'
 export * from './session'
 
-export function isLocal(input: string) {
-  let url: URL
-  try {
-    url = new URL(input)
-  } catch {
-    return true
-  }
-
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return true
-
-  const hostname = url.hostname.replace(/^\[|\]$/g, '').toLowerCase()
-  return hostname === 'localhost'
-    || hostname.endsWith('.localhost')
-    || hostname.endsWith('.local')
-    || hostname === '0.0.0.0'
-    || hostname.startsWith('10.')
-    || hostname.startsWith('127.')
-    || hostname.startsWith('192.168.')
-    || /^172\.(1[6-9]|2\d|3[01])\./.test(hostname)
-    || hostname === '::1'
-    || /^fe[89ab]/.test(hostname)
-    || /^f[cd]/.test(hostname)
-}
-
 declare module 'cordis' {
   export interface Context {
     [Context.session]: Session
