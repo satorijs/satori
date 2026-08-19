@@ -1,6 +1,6 @@
 import { Dict, h, MessageEncoder, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import isLocal from '@cordisjs/url-is-local'
+import { isLocal } from '@cordisjs/url-is-local'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, downloadFile, sanitize, sanitizeCode } from './utils'

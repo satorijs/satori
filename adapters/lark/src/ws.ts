@@ -2,7 +2,7 @@ import { Context, WsClient as CoreWsClient, Universal, WsClientConfig } from '@s
 import {} from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'
 import { adaptSession, EventPayload } from './utils'
-import pb from 'protobufjs/light'
+import pb from 'protobufjs/light.js'
 import z from 'schemastery'
 
 enum FrameType {
@@ -137,7 +137,7 @@ export class WsClient extends CoreWsClient<LarkBot<LarkBot.BaseConfig & WsClient
         this.bot.ctx.logger.info('received event: %o', body)
         body.type = body.header.event_type
         const session = await adaptSession(this.bot, body)
-        this.bot.dispatch(session)
+        if (session) this.bot.dispatch(session)
 
         this.send({
           ...frame,

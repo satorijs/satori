@@ -207,8 +207,8 @@ class SatoriServer extends Service {
         if (name === 'referrer') return json[name]
         return Universal.transformKey(json[name], camelCase)
       })
-      const result = await bot[method.name](...args)
-      res.body = JSON.stringify(Universal.transformKey(result, snakeCase))
+      const result = Universal.transformKey(await bot[method.name](...args), snakeCase)
+      res.body = JSON.stringify(result ?? null)
       res.headers.set('content-type', 'application/json')
       res.status = 200
     })

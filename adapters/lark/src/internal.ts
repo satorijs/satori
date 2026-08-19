@@ -46,12 +46,23 @@ export class Internal {
     })
   }
 
-  private static _assertResponse(bot: LarkBot, data: BaseResponse, response: Response) {
+  private static _assertResponse(bot: LarkBot, data: BaseResponse) {
     if (!data.code) return
     bot.ctx.logger.debug('response: %o', data)
-    const error = new Http.Error(`request failed`)
-    error.response = response
-    throw error
+    throw new Error(`Lark API error ${data.code}: ${data.msg || 'unknown error'}`)
+  }
+
+  private static async _assertStatus(bot: LarkBot, response: Response) {
+    if (response.status < 400) return
+    const body = await response.text()
+    let data: BaseResponse | undefined
+    try {
+      data = JSON.parse(body)
+    } catch {}
+    if (data?.code) {
+      Internal._assertResponse(bot, data)
+    }
+    throw new Error(`[${response.status}] ${body || response.statusText}`)
   }
 
   private static _buildData(arg: object, options: InternalRoute) {
@@ -101,11 +112,14 @@ export class Internal {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
             const response = await bot.http(url, { ...config, method })
+            await Internal._assertStatus(bot, response)
             if (route.type === 'binary') {
               return await response.arrayBuffer()
             }
-            const data = await response.json() as BaseResponse & { data?: any }
-            Internal._assertResponse(bot, data, response)
+            const body = await response.text()
+            if (!body) return
+            const data = JSON.parse(body) as BaseResponse & { data?: any }
+            Internal._assertResponse(bot, data)
             if (route.type === 'raw-json') {
               return data
             } else {

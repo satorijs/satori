@@ -29,14 +29,14 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            try {
-              this.bot.ctx.logger.debug(`${method} ${url}`, config)
-              const response = await this.bot.http(url, { ...config, method })
-              return await response.json()
-            } catch (error) {
-              if (!this.bot.http.isError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${await error.response.text()}`)
+            this.bot.ctx.logger.debug(`${method} ${url}`, config)
+            const response = await this.bot.http(url, { ...config, method })
+            const body = await response.text()
+            if (response.status >= 400) {
+              throw new Error(`[${response.status}] ${body}`)
             }
+            if (!body) return
+            return JSON.parse(body)
           }
         }
       }

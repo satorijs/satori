@@ -67,14 +67,6 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       session.app.emit(session, 'send', session)
       this.results.push(session.event.message)
     } catch (e) {
-      // try to extract error message from Lark API
-      if (this.bot.http.isError(e)) {
-        const body = e.response ? await e.response.json().catch(() => null) : null
-        if (body?.code) {
-          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
-          e.message += ` (Lark error code ${body.code}: ${body.msg ?? generalErrorMsg})`
-        }
-      }
       this.errors.push(e)
     }
   }

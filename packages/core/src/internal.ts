@@ -90,7 +90,7 @@ export namespace JsonForm {
 
   export async function encode(data: any): Promise<Response> {
     const form = new FormData()
-    const json = JSON.stringify(JsonForm.dump(data, '$', form))
+    const json = JSON.stringify(JsonForm.dump(data, '$', form)) ?? 'null'
     if ([...form.entries()].length) {
       form.append('$', json)
       return new Response(form)

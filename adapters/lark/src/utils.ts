@@ -70,6 +70,16 @@ export interface Events {
     message_id_list: string[]
   }
   /**
+   * Message recalled event.
+   * @see https://open.larksuite.com/document/server-docs/im-v1/message/events/recalled
+   */
+  'im.message.recalled_v1': {
+    chat_id: string
+    message_id: string
+    recall_time: string
+    recall_type: string
+  }
+  /**
    * Message card callback event.
    * @see https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-callback-communication
    */
@@ -256,6 +266,13 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
       break
+    case 'im.message.recalled_v1':
+      session.type = 'message-deleted'
+      session.messageId = body.event.message_id
+      session.channelId = body.event.chat_id
+      session.guildId = body.event.chat_id
+      session.timestamp = +body.event.recall_time
+      break
     case 'application.bot.menu_v6':
       if (body.event.event_key.startsWith('command:')) {
         session.type = 'interaction/command'
@@ -325,6 +342,7 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
       }
       break
   }
+  if (!session.type) return
   return session
 }
 

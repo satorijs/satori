@@ -6,9 +6,9 @@ import { DiscordMessageEncoder } from './message'
 import { Internal, Webhook } from './types'
 import { WsClient } from './ws'
 import z from 'schemastery'
+import packageJson from '../package.json' with { type: 'json' }
 
-// @ts-ignore
-import { version } from '../package.json'
+const { version } = packageJson
 
 @Inject('http')
 export class DiscordBot extends Bot<DiscordBot.Config> {

@@ -3,8 +3,15 @@
   "description": "Lark (飞书) Adapter for Satorijs",
   "version": "4.0.0-alpha.0",
   "type": "module",
-  "main": "lib/index.cjs",
-  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
   "files": [
     "lib",
     "src"
