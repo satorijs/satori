@@ -44,6 +44,7 @@
     "@satorijs/element": "^4.0.0-alpha.0"
   },
   "dependencies": {
+    "@cordisjs/url-is-local": "^1.0.0",
     "schemastery": "^3.18.0"
   }
 }
