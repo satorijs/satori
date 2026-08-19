@@ -1,12 +1,12 @@
-import { Context, Dict, pick, Session, Universal, valueMap } from '@satorijs/core'
+import { Dict, pick, Session, Universal, valueMap } from '@satorijs/core'
 import h, { at, image, parse, sharp } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
 export * from './types'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

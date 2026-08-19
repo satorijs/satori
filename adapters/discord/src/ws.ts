@@ -1,6 +1,5 @@
-import { Context, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
+import { WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
