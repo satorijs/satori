@@ -1,7 +1,6 @@
 import { Dict, h, MessageEncoder, Universal } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import isLocal from '@cordisjs/url-is-local'
-import {} from '@cordisjs/plugin-logger'
+import { isLocal } from '@cordisjs/url-is-local'
 import { DiscordBot } from './bot'
 import { ActionRow, Button, ButtonStyles, Channel, ComponentType, Message } from './types'
 import { decodeMessage, downloadFile, sanitize, sanitizeCode } from './utils'
@@ -50,10 +49,10 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
     }
   }
 
-  async post(data?: any, headers?: any) {
+  async post(data?: any) {
     try {
       const url = await this.getUrl()
-      const result = await this.bot.http.post<Message>(url, data, { headers })
+      const result = await this.bot.http.post<Message>(url.replace(/^\//, ''), data)
       const session = this.bot.session()
       const message = await decodeMessage(this.bot, result, session.event.message = {}, session.event)
       session.app.emit(session, 'send', session)
@@ -82,7 +81,7 @@ export class DiscordMessageEncoder extends MessageEncoder<DiscordBot> {
             this.bot.webhooks[this.channelId] = null
           }
           await this.ensureWebhook()
-          return this.post(data, headers)
+          return this.post(data)
         } else {
           e = new Error(`[${e.response.status}] ${JSON.stringify(body)}`)
         }

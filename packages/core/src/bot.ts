@@ -22,7 +22,7 @@ export interface Bot extends Methods {
 }
 
 export abstract class Bot<T = any> {
-  static reusable = true
+  static inject = ['satori']
   static MessageEncoder?: new (bot: Bot, channelId: string, referrer?: any, options?: SendOptions) => MessageEncoder
 
   public [Service.tracker] = {
@@ -62,16 +62,16 @@ export abstract class Bot<T = any> {
     })
   }
 
-  * [Service.init]() {
+  async* [Service.init]() {
     yield () => this.dispose()
     this.dispatchLoginEvent('login-added')
-    return this.start()
+    await this.start()
   }
 
-  getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0], slash?: boolean) {
+  getInternalUrl(path: string, init?: ConstructorParameters<typeof URLSearchParams>[0]) {
     let search = new URLSearchParams(init).toString()
     if (search) search = '?' + search
-    return `internal${slash ? '/' : ':'}${this.platform}/${this.selfId}${path}${search}`
+    return `satori:${this.platform}/${this.selfId}${path}${search}`
   }
 
   defineInternalRoute<P extends string>(path: P, callback: InternalRouteCallback<ExtractParams<P>>) {
@@ -149,7 +149,7 @@ export abstract class Bot<T = any> {
       await this.context.parallel('bot-disconnect', this)
       await this.disconnect()
     } catch (error) {
-      this.context.emit(this.ctx, 'internal/error', error)
+      this.ctx.logger.error(error)
     } finally {
       this.offline()
     }
@@ -210,14 +210,14 @@ export abstract class Bot<T = any> {
       ids.push(id)
     }
     const ctx = this.ctx
-    const dispose = this.ctx.effect(function* () {
-      yield () => {
+    const dispose = this.ctx.effect(() => {
+      const timer = setTimeout(() => dispose(), 600000)
+      return () => {
+        clearTimeout(timer)
         for (const id of ids) {
           delete ctx.satori._tempStore[id]
         }
       }
-      const timer = setTimeout(dispose, 600000)
-      yield () => clearTimeout(timer)
     }, 'bot.createUpload()')
     return ids.map(id => this.getInternalUrl(`/_tmp/${id}`))
   }

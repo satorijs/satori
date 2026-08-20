@@ -1,7 +1,6 @@
 import { Bot, Context, Inject, Time, Universal } from '@satorijs/core'
 import { Fragment } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
+import { Http } from '@cordisjs/plugin-http'
 import { Im } from './types'
 import { HttpServer } from './http'
 import { WsClient } from './ws'
@@ -20,13 +19,12 @@ const fileTypeMap: Record<Exclude<Im.File.CreateForm['file_type'], 'stream'>, st
 }
 
 @Inject('http')
-@Inject('logger', true, { name: 'lark' })
 export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
   static MessageEncoder = LarkMessageEncoder
 
   _refresher?: NodeJS.Timeout
-  http: HTTP
-  assetsQuester: HTTP
+  http: Http
+  assetsQuester: Http
   internal: Internal
   public adapter?: HttpServer | WsClient
 
@@ -34,7 +32,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     super(ctx, config, 'lark')
 
     this.http = ctx.http.extend({
-      baseUrl: config.baseUrl,
+      baseUrl: config.baseUrl.replace(/\/?$/, '/'),
     })
     this.assetsQuester = ctx.http
     this.internal = new Internal(this)
@@ -46,7 +44,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
     }
 
     this.defineInternalRoute('/*path', async ({ params, method, headers, body, query }) => {
-      return await this.http('/' + params.path, {
+      return await this.http(params.path, {
         method,
         headers,
         data: method === 'GET' || method === 'HEAD' ? null : body,
@@ -77,7 +75,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
         ip_white_list: any[]
         open_id: string
       }
-    }>('/bot/v3/info')
+    }>('bot/v3/info')
     this.selfId = bot.open_id
     this.user.avatar = bot.avatar_url
     this.user.name = bot.app_name
@@ -182,7 +180,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
 }
 
 export namespace LarkBot {
-  export interface BaseConfig extends HTTP.Config {
+  export interface BaseConfig extends Http.Config {
     appId: string
     appSecret: string
   }
