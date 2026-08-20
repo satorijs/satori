@@ -82,7 +82,9 @@ export namespace JsonForm {
       const json = form.get('$') as string
       return load(JSON.parse(json), '$', form)
     } else if (type?.startsWith('application/json')) {
-      return await body.json()
+      const json = await body.text()
+      if (!json) return
+      return JSON.parse(json)
     } else {
       throw new Error(`Unsupported content type: ${type}`)
     }

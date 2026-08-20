@@ -7,7 +7,7 @@ import * as Discord from './types'
 export * from './types'
 
 export async function downloadFile(http: Http, url: string) {
-  const response = await http(url)
+  const response = await http.get(url, { responseType: response => response })
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'
   const disposition = response.headers.get('content-disposition') ?? ''

@@ -250,7 +250,7 @@ class SatoriServer extends Service {
   }
 
   get url() {
-    return (this.ctx.server.config.baseUrl ?? this.ctx.server.baseUrl) + this.config.path
+    return (this.ctx.server.config.baseUrl ?? this.ctx.server.baseUrl).replace(/\/$/, '') + this.config.path
   }
 
   * [Service.init]() {
