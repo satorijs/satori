@@ -487,6 +487,12 @@ export interface User {
   union_openid: string
   /** 机器人关联的互联应用的用户信息，与union_openid关联的应用是同一个。如需申请，请联系平台运营人员。 */
   union_user_account: string
+  /** 单聊场景使用的用户 OpenID */
+  user_openid?: string
+  /** 群聊场景使用的群成员 OpenID */
+  member_openid?: string
+  /** 群内角色 */
+  member_role?: 'member' | 'admin' | 'owner'
 }
 
 export type CreateGuildRoleParams =
@@ -1226,9 +1232,7 @@ export namespace Forum {
 
 export interface UserMessage {
   id: string
-  author: {
-    id: string
-  }
+  author: User
   content: string
   timestamp: string
   group_id: string
