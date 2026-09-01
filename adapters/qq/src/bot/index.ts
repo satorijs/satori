@@ -24,6 +24,7 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
   internal: GroupInternal
   http: HTTP
 
+  msgIdxMap = new Map<string, string>()
   private _token: string
   private _timer: NodeJS.Timeout
 
@@ -51,6 +52,13 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
     } else {
       this.ctx.plugin(HttpServer, this)
     }
+    this.ctx.on('message', (session) => {
+      const ext: string[] = session.event._data?.d?.message_scene?.ext || []
+      if (ext.length) {
+        const msgIdx = ext.find((ext) => ext.startsWith('msg_idx='))?.slice(8)
+        this.msgIdxMap.set(session.messageId, msgIdx)
+      }
+    })
   }
 
   async initialize() {

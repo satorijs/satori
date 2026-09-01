@@ -1,6 +1,7 @@
 import { Bot, Context, h, Session, Universal } from '@satorijs/core'
 import * as QQ from './types'
 import { QQBot } from './bot'
+import { inspect } from 'node:util'
 
 export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
@@ -104,6 +105,9 @@ export function decodeGroupMessage(
   payload: Universal.MessageLike = message,
 ) {
   message.id = data.id
+
+  if (data.message_type === QQ.Message.Type.QUOTE) // fuck tencent
+    data.content = data.content.replace(/^(<@[0-9A-F]{32}>) \1/, '$1')
   const attachedFace = new Set<number>() // attachments 下标
   if (data.msg_elements?.length && data.content[0] === ' ') data.content = data.content.slice(1)
   message.elements = decodeGroupMessageContent(data.content, data.attachments ?? [], attachedFace)
@@ -125,8 +129,8 @@ export function decodeGroupMessage(
         })
     },
   })
-
   message.elements.push(...decodeAttachments(data.attachments ?? [], attachedFace))
+
   if (data.message_type === QQ.Message.Type.QUOTE) {
     // msg_elements[0] 无 mentions；有 author, content 会有 <faceType ...>
     const quoted: h[] = []
@@ -134,10 +138,8 @@ export function decodeGroupMessage(
     quoted.push(...decodeGroupMessageContent(data.msg_elements[0].content, data.msg_elements[0].attachments ?? [], quotedAttached))
     quoted.push(...decodeAttachments(data.msg_elements[0].attachments ?? [], quotedAttached))
     message.quote = {
-      member: {
-        nick: data.msg_elements[0].author?.username,
-      },
       elements: quoted,
+      content: quoted.join(''),
     }
   }
   message.content = message.elements.join('')
@@ -314,7 +316,7 @@ export async function adaptSession<C extends Context = Context>(bot: QQBot<C>, i
 
     // {message: 'get header appid failed', code: 630006}
     // {"message":"check app privilege not pass","code":11253
-    if (!bot.config.manualAcknowledge) bot.internal.acknowledgeInteraction(input.d.id, { code: 0 }).catch(() => { })
+    if (!bot.config.manualAcknowledge) bot.internal.acknowledgeInteraction(input.d.id, { code: 0 }).catch(() => {})
   } else if (input.t === 'GUILD_MEMBER_ADD' || input.t === 'GUILD_MEMBER_DELETE' || input.t === 'GUILD_MEMBER_UPDATE') {
     session.type = {
       GUILD_MEMBER_ADD: 'guild-member-added',

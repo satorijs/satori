@@ -19,6 +19,7 @@ declare module './internal' {
       audit_id?: string
       audit_tips?: string
     }>
+    deleteMessage(openid: string, message_id: string): Promise<any>
     sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<{
       id: string
       timestamp: string
@@ -29,6 +30,7 @@ declare module './internal' {
       id: string
       timestamp: string
     }>
+    deletePrivateMessage(userid: string, message_id: string): Promise<any>
     sendFilePrivate(openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
     sendFileGuild(group_openid: string, data: QQ.Message.File.Request): Promise<QQ.Message.File.Response>
     uploadPreparePrivate(openid: string, data: QQ.Message.File.UploadPrepareRequest): Promise<QQ.Message.File.UploadPrepareResponse>
@@ -40,8 +42,6 @@ declare module './internal' {
     }): Promise<any>
     getGateway(): Promise<QQ.GetGatewayResponse>
     getGatewayBot(): Promise<QQ.GetGatewayBotResponse>
-    deleteMessage(openid: string, message_id: string): Promise<any>
-    deletePrivateMessage(userid: string, message_id: string): Promise<any>
   }
 }
 
