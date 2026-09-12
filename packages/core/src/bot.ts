@@ -93,7 +93,11 @@ export abstract class Bot<C extends Context = Context, T = any> {
   }
 
   dispose() {
-    const index = this.ctx.bots.findIndex(bot => bot.sid === this.sid)
+    // `ctx.bots` is the `satori` service's mixin, and a Bot disposer runs inside
+    // cordis's teardown loop; when that service is torn down first the mixin is
+    // already gone, so there is nothing left to unregister from. Same guard the
+    // `status` setter below already applies.
+    const index = this.ctx.bots?.findIndex(bot => bot.sid === this.sid) ?? -1
     if (index >= 0) {
       this.ctx.bots.splice(index, 1)
       this.context.emit('bot-removed', this)
