@@ -27,8 +27,10 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
 
   heartbeat() {
     if (!this._acked) {
-      this.bot.logger.warn('zombied connection')
-      return this.socket.close()
+      this.bot.logger.warn('zombied connection, closing socket to reconnect')
+      clearInterval(this._ping)
+      this._ping = undefined
+      return this.socket.close(4000, 'zombied connection')
     }
     this.socket.send(JSON.stringify({
       op: Opcode.HEARTBEAT,
@@ -38,10 +40,12 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
   }
 
   async accept() {
+    this._acked = true
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
       this.bot.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
+        this._acked = true
         const token = `QQBot ${await this.bot.getAccessToken()}`
         if (this._sessionId) {
           this.socket.send(JSON.stringify({
@@ -62,15 +66,22 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
             },
           }))
         }
+        clearInterval(this._ping)
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
       } else if (parsed.op === Opcode.HEARTBEAT_ACK) {
         this._acked = true
       } else if (parsed.op === Opcode.INVALID_SESSION) {
         this._sessionId = ''
         this._s = null
-        this.bot.logger.warn('offline: invalid session')
+        this.bot.logger.warn('offline: invalid session, closing socket to reconnect with identify')
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'invalid session')
       } else if (parsed.op === Opcode.RECONNECT) {
-        this.bot.logger.warn('offline: server request reconnect')
+        this.bot.logger.warn('offline: server request reconnect, closing socket to reconnect')
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'server request reconnect')
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
@@ -105,7 +116,14 @@ export class WsClient<C extends Context = Context> extends Adapter.WsClient<C, Q
         this._s = null
       }
       clearInterval(this._ping)
+      this._ping = undefined
     })
+  }
+
+  async stop() {
+    clearInterval(this._ping)
+    this._ping = undefined
+    await super.stop()
   }
 }
 
