@@ -292,13 +292,13 @@ export enum AllowedMentionType {
 /** https://discord.com/developers/docs/resources/channel#allowed-mentions-object-allowed-mentions-structure */
 export interface AllowedMentions {
   /** An array of allowed mention types to parse from the content. */
-  parse: AllowedMentionType[]
+  parse?: AllowedMentionType[]
   /** Array of role_ids to mention (Max size of 100) */
-  roles: snowflake[]
+  roles?: snowflake[]
   /** Array of user_ids to mention (Max size of 100) */
-  users: snowflake[]
+  users?: snowflake[]
   /** For replies, whether to mention the author of the message being replied to (default false) */
-  replied_user: boolean
+  replied_user?: boolean
 }
 
 export interface ChannelCreateEvent extends Channel {}
