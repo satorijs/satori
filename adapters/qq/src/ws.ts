@@ -36,8 +36,10 @@ export class WsClient extends CoreWsClient<QQBot<QQBot.Config & WsClient.Options
 
   heartbeat() {
     if (!this._acked) {
-      this.bot.ctx.logger.warn('zombied connection')
-      return this.socket.close()
+      this.bot.ctx.logger.warn('zombied connection, closing socket to reconnect')
+      clearInterval(this._ping)
+      this._ping = undefined
+      return this.socket.close(4000, 'zombied connection')
     }
     this.socket.send(JSON.stringify({
       op: Opcode.HEARTBEAT,
@@ -47,10 +49,12 @@ export class WsClient extends CoreWsClient<QQBot<QQBot.Config & WsClient.Options
   }
 
   async accept() {
+    this._acked = true
     this.socket.addEventListener('message', async ({ data }) => {
       const parsed: Payload = JSON.parse(data.toString())
       this.bot.ctx.logger.debug('websocket receives %o', parsed)
       if (parsed.op === Opcode.HELLO) {
+        this._acked = true
         const token = this.bot.config.authType === 'bearer'
           ? `QQBot ${await this.bot.getAccessToken()}`
           : `Bot ${this.bot.config.id}.${this.bot.config.token}`
@@ -73,15 +77,22 @@ export class WsClient extends CoreWsClient<QQBot<QQBot.Config & WsClient.Options
             },
           }))
         }
+        clearInterval(this._ping)
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
       } else if (parsed.op === Opcode.HEARTBEAT_ACK) {
         this._acked = true
       } else if (parsed.op === Opcode.INVALID_SESSION) {
         this._sessionId = ''
         this._s = null
-        this.bot.ctx.logger.warn('offline: invalid session')
+        this.bot.ctx.logger.warn('offline: invalid session, closing socket to reconnect with identify')
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'invalid session')
       } else if (parsed.op === Opcode.RECONNECT) {
-        this.bot.ctx.logger.warn('offline: server request reconnect')
+        this.bot.ctx.logger.warn('offline: server request reconnect, closing socket to reconnect')
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'server request reconnect')
       } else if (parsed.op === Opcode.DISPATCH) {
         this.bot.dispatch(this.bot.session({
           type: 'internal',
@@ -116,7 +127,14 @@ export class WsClient extends CoreWsClient<QQBot<QQBot.Config & WsClient.Options
         this._s = null
       }
       clearInterval(this._ping)
+      this._ping = undefined
     })
+  }
+
+  async stop() {
+    clearInterval(this._ping)
+    this._ping = undefined
+    await super.stop()
   }
 }
 
