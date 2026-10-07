@@ -167,11 +167,11 @@ export namespace Message {
   /** https://discord.com/developers/docs/resources/channel#create-message-jsonform-params */
   export interface CreateParams extends EditParams {
     /** true if this is a TTS message */
-    tts: boolean
+    tts?: boolean
     /** include to make your message a reply */
-    message_reference: Reference
+    message_reference?: Reference
     /** IDs of up to 3 stickers in the server to send in the message */
-    sticker_ids: snowflake[]
+    sticker_ids?: snowflake[]
   }
 
   /** https://discord.com/developers/docs/resources/channel#edit-message-jsonform-params */
