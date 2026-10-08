@@ -5,6 +5,8 @@ import { decodeMessage, sanitize, sanitizeCode } from './utils'
 
 type RenderMode = 'default' | 'figure'
 
+const URL_END = '\uE000'
+
 class State {
   author: Partial<Universal.User> = {}
   quote: Partial<Universal.Message> = {}
@@ -145,8 +147,16 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     return this.bot.ensureWebhook(this.channelId)
   }
 
+  // URL_END 后面紧跟着空白字符、<，或者结尾，删掉 URL_END
+  // 剩下的 URL_END 替换为零宽
+  private content() {
+    return this.buffer
+      .replace(new RegExp(`${URL_END}(?=[\\s<]|$)`, 'g'), '')
+      .replace(new RegExp(URL_END, 'g'), '\uFEFF')
+  }
+
   async flush() {
-    const content = this.buffer.trim()
+    const content = this.content()
     this.trimButtons()
     if (!content && !this.rows.length) return
     this.addition.components = this.rows
@@ -240,13 +250,15 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer += sanitizeCode(children.toString())
       this.buffer += '\n```'
     } else if (type === 'a') {
-      this.buffer += '['
-      await this.render(children)
-      this.buffer += ']'
-      if (this.options.linkPreview) {
-        this.buffer += `(${attrs.href})`
+      if (children.length) {
+        this.buffer += '['
+        await this.render(children)
+        this.buffer += ']'
+        this.buffer += this.options.linkPreview ? `(${attrs.href})` : `(<${attrs.href}>)`
+      } else if (this.options.linkPreview) {
+        this.buffer += attrs.href + URL_END
       } else {
-        this.buffer += `(<${attrs.href}>)`
+        this.buffer += `<${attrs.href}>`
       }
     } else if (type === 'br') {
       this.buffer += '\n'
@@ -275,6 +287,8 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     } else if (type === 'at') {
       if (attrs.id) {
         this.buffer += `<@${attrs.id}>`
+      } else if (attrs.role) {
+        this.buffer += `<@&${attrs.role}>`
       } else if (attrs.type === 'all') {
         this.buffer += `@everyone`
       } else if (attrs.type === 'here') {
@@ -282,7 +296,13 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       }
     } else if (type === 'sharp' && attrs.id) {
       this.buffer += `<#${attrs.id}>`
-    } else if (type === 'face') {
+    } else if (type === 'discord:timestamp' && attrs.value) {
+      this.buffer += `<t:${attrs.value}${attrs.style ? `:${attrs.style}` : ''}>`
+    } else if (type === 'discord:navigation' && attrs.type) {
+      this.buffer += `<id:${attrs.type}${attrs.id ? `:${attrs.id}` : ''}>`
+    } else if (type === 'discord:game-profile' && attrs.id) {
+      this.buffer += `<@$${attrs.id}>`
+    } else if (type === 'face' || type === 'emoji') {
       if (attrs.platform && attrs.platform !== this.bot.platform) {
         return this.render(children)
       } else {
@@ -294,7 +314,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       } else {
         await this.sendAsset(type, attrs, {
           ...this.addition,
-          content: this.buffer.trim(),
+          content: this.content(),
         })
         this.buffer = ''
       }
@@ -373,7 +393,7 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       await this.render(children)
       await this.sendAsset(this.figure.type, this.figure.attrs, {
         ...this.addition,
-        content: this.buffer.trim(),
+        content: this.content(),
       })
       this.buffer = ''
       this.mode = 'default'

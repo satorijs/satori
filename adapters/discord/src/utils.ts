@@ -1,4 +1,5 @@
 import { Context, Dict, h, pick, Session, Universal, valueMap } from '@satorijs/core'
+import { rulesExtended, SimpleMarkdown } from 'discord-markdown-parser'
 import { DiscordBot } from './bot'
 import * as Discord from './types'
 
@@ -6,7 +7,7 @@ export * from './types'
 
 export const sanitize = (val: string) =>
   val
-    .replace(/[\\*_`~|()\[\]]/g, '\\$&')
+    .replace(/[\\*_`~|()\[\]<]/g, '\\$&')
     .replace(/@everyone/g, () => '\\@everyone')
     .replace(/@here/g, () => '\\@here')
 
@@ -59,6 +60,92 @@ export const encodeRole = (role: Partial<Universal.GuildRole>): Partial<Discord.
   permissions: role.permissions ? '' + role.permissions : undefined,
 })
 
+interface MarkdownNode {
+  type: string
+  [key: string]: any
+}
+
+const inlineRule = (regexp: RegExp, parse: (capture: RegExpExecArray) => object) => ({
+  order: SimpleMarkdown.defaultRules.strong.order,
+  match: (source: string) => regexp.exec(source),
+  parse,
+})
+
+// https://discord.com/developers/docs/reference#message-formatting
+const parseMarkdown = SimpleMarkdown.parserFor({
+  ...rulesExtended,
+  // parser lib misses the `s` and `S` styles
+  timestamp: inlineRule(/^<t:(-?\d+)(?::([tTdDfFsSR]))?>/, ([, timestamp, format]) => ({ timestamp, format })),
+  // parser lib expects `<GUILD_ID:TYPE>`, it doesn't work. Use `<id:TYPE>`
+  guildNavigation: inlineRule(/^<id:(customize|browse|guide|linked-roles)(?::(\d+))?>/, ([, navigation, roleId]) => ({ navigation, roleId })),
+  gameProfile: inlineRule(/^<@\$(\d+)>/, ([, id]) => ({ id })),
+})
+
+function decodeMarkdown(nodes: MarkdownNode[], data: Discord.Message, platform: string): h[] {
+  const result: h[] = []
+  for (const node of nodes) {
+    const children = () => decodeMarkdown(node.content, data, platform)
+    let element: h | h[]
+    switch (node.type) {
+      case 'text': element = h.text(node.content); break
+      case 'br': element = h('br'); break
+      case 'strong': element = h('b', children()); break
+      case 'em': element = h('i', children()); break
+      case 'underline': element = h('u', children()); break
+      case 'strikethrough': element = h('s', children()); break
+      case 'spoiler': element = h('spl', children()); break
+      case 'inlineCode': element = h('code', [h.text(node.content)]); break
+      case 'codeBlock': element = h('code-block', { language: node.lang || undefined }, [h.text(node.content)]); break
+      case 'blockQuote': element = h('blockquote', children()); break
+      case 'url':
+      case 'autolink':
+      // case 'link': element = h.text(node.target); break
+      case 'link': element = h('a', { href: node.target }, children()); break
+      case 'heading':
+      case 'subtext': element = node === nodes[nodes.length - 1] ? children() : [...children(), h('br')]; break
+      case 'user': {
+        const user = data.mentions?.find(u => u.id === node.id)
+        element = h.at(node.id, { name: user?.username })
+        break
+      }
+      case 'role': element = h('at', { role: node.id }); break
+      case 'everyone': element = h('at', { type: 'all' }); break
+      case 'here': element = h('at', { type: 'here' }); break
+      case 'channel': {
+        const channel = data.mention_channels?.find(c => c.id === node.id)
+        element = h.sharp(node.id, { name: channel?.name })
+        break
+      }
+      case 'emoji':
+        element = h('emoji', { id: node.id, name: node.name, animated: node.animated, platform }, [
+          h.image(`https://cdn.discordapp.com/emojis/${node.id}.webp?quality=lossless`),
+        ])
+        break
+      case 'slashCommand': element = h.text(`/${node.fullName ?? ''}`); break
+      case 'timestamp':
+        element = h('discord:timestamp', { value: node.timestamp, style: node.format }, [h.text(node.timestamp)])
+        break
+      case 'guildNavigation': element = h('discord:navigation', { type: node.navigation, id: node.roleId }); break
+      case 'gameProfile': element = h('discord:game-profile', { id: node.id }); break
+      default: element = Array.isArray(node.content) ? children() : []
+    }
+    for (const item of [element].flat()) {
+      const last = result[result.length - 1]
+      if (item.type === 'text' && last?.type === 'text') {
+        last.attrs.content += item.attrs.content
+      } else {
+        result.push(item)
+      }
+    }
+  }
+  return result
+}
+
+function decodeContent(data: Discord.Message, platform: string): h[] {
+  const nodes = parseMarkdown(data.content, { inline: true }) as MarkdownNode[]
+  return decodeMarkdown(nodes, data, platform)
+}
+
 export async function decodeMessage<C extends Context = Context>(
   bot: DiscordBot<C>,
   data: Discord.Message,
@@ -70,45 +157,24 @@ export async function decodeMessage<C extends Context = Context>(
 
   message.id = message.messageId = data.id
   // https://discord.com/developers/docs/reference#message-formatting
-  message.content = ''
-  if (data.content) {
-    message.content = data.content
-      .replace(/<@[!&]?(.+?)>/g, (_, id) => {
-        if (data.mention_roles.includes(id)) {
-          return h('at', { role: id }).toString()
-        } else {
-          const user = data.mentions?.find(u => u.id === id || `${u.username}#${u.discriminator}` === id)
-          return h.at(id, { name: user?.username }).toString()
-        }
-      })
-      .replace(/<a?:(.*):(.+?)>/g, (_, name, id) => {
-        const animated = _[1] === 'a'
-        return h('face', { id, name, animated, platform }, [
-          h.image(`https://cdn.discordapp.com/emojis/${id}.webp?quality=lossless`),
-        ]).toString()
-      })
-      .replace(/@everyone/g, () => h('at', { type: 'all' }).toString())
-      .replace(/@here/g, () => h('at', { type: 'here' }).toString())
-      .replace(/<#(.+?)>/g, (_, id) => {
-        const channel = data.mention_channels?.find(c => c.id === id)
-        return h.sharp(id, { name: channel?.name }).toString()
-      })
-  }
+  const elements = data.content ? decodeContent(data, platform) : []
 
   if (data.sticker_items) {
-    message.content += data.sticker_items.map(s => h('sticker', {
+    elements.push(...data.sticker_items.map(s => h('sticker', {
       id: s.id,
       format_type: s.format_type,
       name: s.name,
     }, [
       h.image(`https://media.discordapp.net/stickers/${s.id}.webp?size=160`),
-    ])).join('')
+    ])))
   }
 
   // embed 的 update event 太阴间了 只有 id embeds channel_id guild_id 四个成员
   if (data.attachments?.length) {
-    if (!/\s$/.test(message.content)) message.content += ' '
-    message.content += data.attachments.map(v => {
+    const last = elements[elements.length - 1]
+    if (last?.type !== 'text') elements.push(h.text(' '))
+    else if (!/\s$/.test(last.attrs.content)) last.attrs.content += ' '
+    elements.push(...data.attachments.map(v => {
       if (v.height && v.width && v.content_type?.startsWith('image/')) {
         return h('img', {
           src: v.url,
@@ -145,22 +211,23 @@ export async function decodeMessage<C extends Context = Context>(
           size: v.size,
         })
       }
-    }).join('')
+    }))
   }
   for (const embed of data.embeds) {
     // not using embed types
     // https://discord.com/developers/docs/resources/channel#embed-object-embed-types
     if (embed.image) {
-      message.content += h('img', { src: embed.image.url, proxy_url: embed.image.proxy_url })
+      elements.push(h('img', { src: embed.image.url, proxy_url: embed.image.proxy_url }))
     }
     if (embed.thumbnail) {
-      message.content += h('img', { src: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url })
+      elements.push(h('img', { src: embed.thumbnail.url, proxy_url: embed.thumbnail.proxy_url }))
     }
     if (embed.video) {
-      message.content += h('video', { src: embed.video.url, proxy_url: embed.video.proxy_url })
+      elements.push(h('video', { src: embed.video.url, proxy_url: embed.video.proxy_url }))
     }
   }
-  message.elements = h.parse(message.content)
+  message.elements = elements
+  message.content = elements.join('')
   // 遇到过 cross post 的消息在这里不会传消息 id
   // https://github.com/satorijs/satori/issues/306
   // THREAD_CREATED (18) 事件下，message_reference 没有 message_id
