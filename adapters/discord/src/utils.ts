@@ -165,7 +165,8 @@ export async function decodeMessage<C extends Context = Context>(
   // https://github.com/satorijs/satori/issues/306
   // THREAD_CREATED (18) 事件下，message_reference 没有 message_id
   // THREAD_STARTER_MESSAGE (21) 事件下，message_reference 有 message_id
-  if (details && data.message_reference?.message_id) {
+  // 来自其它服务器频道的消息不处理 quote, 可能出现 Missing Access
+  if (details && data.message_reference?.message_id && data.message_reference?.channel_id === data.channel_id) {
     const { message_id, channel_id } = data.message_reference
     message.quote = await bot.getMessage(channel_id!, message_id, false)
   }
