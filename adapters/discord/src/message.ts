@@ -310,7 +310,8 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         ...this.addition,
         embeds: [{ ...attrs }],
       })
-    } else if (type === 'audio') {
+    } else if (type === 'audio' && attrs.src) {
+      await this.flush()
       await this.sendAsset('file', attrs, {
         ...this.addition,
         content: '',
