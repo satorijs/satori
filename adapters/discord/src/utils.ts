@@ -161,13 +161,22 @@ export async function decodeMessage<C extends Context = Context>(
     }
   }
   message.elements = h.parse(message.content)
-  // 遇到过 cross post 的消息在这里不会传消息 id
-  // https://github.com/satorijs/satori/issues/306
-  // THREAD_CREATED (18) 事件下，message_reference 没有 message_id
-  // THREAD_STARTER_MESSAGE (21) 事件下，message_reference 有 message_id
-  if (details && data.message_reference?.message_id) {
-    const { message_id, channel_id } = data.message_reference
-    message.quote = await bot.getMessage(channel_id!, message_id, false)
+
+  // 这里曾有过 thread、crosspost 等讨论，现在不使用 message_reference 获取引用消息了
+  if (details && data.type === Discord.Message.Type.REPLY) {
+    const { message_id, channel_id, guild_id } = data.message_reference
+    try {
+      message.quote = await bot.getMessage(channel_id!, message_id, false)
+    } catch (e) {
+      bot.logger.warn('failed to fetch quote message, channelId: %s, messageId: %s', data.channel_id, data.id)
+      bot.logger.warn(e)
+      message.quote = {
+        id: message_id,
+        // @ts-expect-error
+        channel: { id: channel_id },
+        guild: { id: guild_id },
+      }
+    }
   }
 
   message.createdAt = new Date(data.timestamp).valueOf()
