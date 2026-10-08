@@ -99,7 +99,6 @@ function decodeMarkdown(nodes: MarkdownNode[], data: Discord.Message, platform: 
       case 'blockQuote': element = h('blockquote', children()); break
       case 'url':
       case 'autolink':
-      // case 'link': element = h.text(node.target); break
       case 'link': element = h('a', { href: node.target }, children()); break
       case 'heading':
       case 'subtext': element = node === nodes[nodes.length - 1] ? children() : [...children(), h('br')]; break
