@@ -244,13 +244,9 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
         this.buffer += '['
         await this.render(children)
         this.buffer += ']'
-      }
-      if (children.length && this.options.linkPreview) {
-        this.buffer += `(${attrs.href})`
-      } else if (children.length) {
-        this.buffer += `(<${attrs.href}>)`
+        this.buffer += this.options.linkPreview ? `(${attrs.href})` : `(<${attrs.href}>)`
       } else {
-        this.buffer += `<${attrs.href}>`
+        this.buffer += this.options.linkPreview ? `${attrs.href}` : `<${attrs.href}>`
       }
     } else if (type === 'br') {
       this.buffer += '\n'
