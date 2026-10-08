@@ -1,9 +1,8 @@
-import { Context, Universal, WsClient as CoreWsClient, WsClientConfig } from '@satorijs/core'
+import { Context, WsClient as CoreWsClient, Universal, WsClientConfig } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
 import { adaptSession, EventPayload } from './utils'
-import pb from 'protobufjs/light'
+import pb from 'protobufjs/light.js'
 import z from 'schemastery'
 
 enum FrameType {
@@ -74,7 +73,9 @@ export class WsClient extends CoreWsClient<LarkBot<LarkBot.BaseConfig & WsClient
     this._serviceId = +urlObj.searchParams.get('service_id')
     this._pingInterval = config.PingInterval * 1000
 
-    return this.bot.ctx.http.ws(url)
+    const socket = this.bot.ctx.http.ws(url)
+    socket.binaryType = 'arraybuffer'
+    return socket
   }
 
   ping() {
@@ -136,7 +137,7 @@ export class WsClient extends CoreWsClient<LarkBot<LarkBot.BaseConfig & WsClient
         this.bot.ctx.logger.info('received event: %o', body)
         body.type = body.header.event_type
         const session = await adaptSession(this.bot, body)
-        this.bot.dispatch(session)
+        if (session) this.bot.dispatch(session)
 
         this.send({
           ...frame,

@@ -3,8 +3,14 @@
   "description": "Lark (飞书) Adapter for Satorijs",
   "version": "4.0.0-alpha.0",
   "type": "module",
-  "main": "lib/index.cjs",
-  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
   "files": [
     "lib",
     "src"
@@ -34,19 +40,17 @@
     "chat"
   ],
   "devDependencies": {
-    "@cordisjs/plugin-http": "^1.3.0",
-    "@cordisjs/plugin-logger": "^1.0.2",
-    "@cordisjs/plugin-server": "^1.4.0",
+    "@cordisjs/plugin-http": "^1.5.1",
+    "@cordisjs/plugin-server": "^1.7.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "@satorijs/element": "^4.0.0-alpha.0",
-    "cordis": "^4.0.0-rc.3",
+    "cordis": "^4.0.0-rc.8",
     "cosmokit": "^1.8.1",
     "dedent": "^1.7.2"
   },
   "peerDependencies": {
-    "@cordisjs/plugin-http": "^1.3.0",
-    "@cordisjs/plugin-logger": "^1.0.2",
-    "@cordisjs/plugin-server": "^1.4.0",
+    "@cordisjs/plugin-http": "^1.5.1",
+    "@cordisjs/plugin-server": "^1.7.0",
     "@satorijs/core": "^5.0.0-alpha.0",
     "@satorijs/element": "^4.0.0-alpha.0"
   },

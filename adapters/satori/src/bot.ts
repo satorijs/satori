@@ -1,6 +1,10 @@
-import { Bot, camelCase, Context, Inject, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
+import { Bot, camelCase, Context, JsonForm, normalize, omit, snakeCase, Universal } from '@satorijs/core'
 import { SatoriAdapter } from './ws'
-import {} from '@cordisjs/plugin-logger'
+
+function getInternalEndpoint(bot: Bot, path: string, query?: ConstructorParameters<typeof URLSearchParams>[0]) {
+  const url = new URL(bot.getInternalUrl(path, query))
+  return `v1/internal/${url.pathname}${url.search}`
+}
 
 function createInternal(bot: SatoriBot, prefix = '') {
   return new Proxy(() => {}, {
@@ -15,7 +19,7 @@ function createInternal(bot: SatoriBot, prefix = '') {
         }
         const res = await bot._request(
           'POST',
-          '/v1/' + bot.getInternalUrl(`/_api/${key}`, {}, true),
+          getInternalEndpoint(bot, `/_api/${key}`),
           req.body,
           req.headers,
         )
@@ -59,7 +63,6 @@ function createInternal(bot: SatoriBot, prefix = '') {
   })
 }
 
-@Inject('logger', true, { name: 'satori' })
 export class SatoriBot extends Bot<Universal.Login> {
   declare adapter: SatoriAdapter<this>
 
@@ -72,7 +75,7 @@ export class SatoriBot extends Bot<Universal.Login> {
     this.defineInternalRoute('/*path', async ({ method, params, query, headers, body }) => {
       return await this._request(
         method as any,
-        `/v1/${this.getInternalUrl('/' + params.path, query, true)}`,
+        getInternalEndpoint(this, '/' + params.path, query),
         method === 'GET' || method === 'HEAD' ? null : body,
         headers,
       )
@@ -85,6 +88,7 @@ export class SatoriBot extends Bot<Universal.Login> {
       data: body,
       headers: {
         ...Object.fromEntries(new Headers(headers)),
+        ...this.adapter.http.config.headers,
         'satori-platform': this.platform,
         'satori-user-id': this.user?.id,
       },
@@ -120,7 +124,8 @@ for (const [key, method] of Object.entries(Universal.Methods)) {
       }
     }
     this.ctx.logger.debug('[request]', key, payload)
-    const result = await this._request('POST', '/v1/' + key, payload)
+    const response = await this._request('POST', 'v1/' + key, payload)
+    const result = await JsonForm.decode(response)
     return Universal.transformKey(result, camelCase)
   }
 }

@@ -1,14 +1,12 @@
 import { camelize, Context, Service, Time, Universal, WsClientBase, WsClientConfig } from '@satorijs/core'
-import type { HTTP } from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
+import type { Http } from '@cordisjs/plugin-http'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
 
 export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase<B> {
-  static schema = true as any
-  static inject = ['http']
+  static inject = ['http', 'satori']
 
-  public http: HTTP
+  public http: Http
   public bots: B[] = []
 
   private _status = Universal.Status.OFFLINE
@@ -20,7 +18,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase
   constructor(public ctx: Context, public config: SatoriAdapter.Config) {
     super(ctx, null as any, config)
     this.http = ctx.http.extend({
-      baseUrl: config.baseUrl,
+      baseUrl: config.baseUrl.replace(/\/?$/, '/'),
       headers: {
         'Authorization': `Bearer ${config.token}`,
       },
@@ -41,7 +39,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase
   }
 
   async prepare() {
-    return this.http.ws('/v1/events')
+    return this.http.ws('v1/events')
   }
 
   getBot(login: Universal.Login, action?: 'created' | 'updated' | 'removed') {
@@ -96,7 +94,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase
       if (parsed.op === Universal.Opcode.READY) {
         this.ctx.logger.debug('ready')
         for (const login of parsed.body.logins) {
-          this.getBot(login)
+          this.getBot(login, 'created')
         }
         this._metaDispose?.()
         this._metaDispose = this.ctx.satori.proxyUrls.add(...parsed.body.proxyUrls ?? [])

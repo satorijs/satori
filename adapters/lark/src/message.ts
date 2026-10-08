@@ -1,8 +1,7 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
-import {} from '@cordisjs/plugin-logger'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import { LarkBot } from './bot'
 import { Im, Message } from './types'
-import { EventPayload, downloadFile, extractIdType } from './utils'
+import { downloadFile, EventPayload, extractIdType } from './utils'
 import { MessageContent } from './content'
 
 export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
@@ -68,14 +67,6 @@ export class LarkMessageEncoder extends MessageEncoder<LarkBot> {
       session.app.emit(session, 'send', session)
       this.results.push(session.event.message)
     } catch (e) {
-      // try to extract error message from Lark API
-      if (this.bot.http.isError(e)) {
-        const body = e.response ? await e.response.json().catch(() => null) : null
-        if (body?.code) {
-          const generalErrorMsg = `Check error code at https://open.larksuite.com/document/server-docs/getting-started/server-error-codes`
-          e.message += ` (Lark error code ${body.code}: ${body.msg ?? generalErrorMsg})`
-        }
-      }
       this.errors.push(e)
     }
   }

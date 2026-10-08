@@ -136,13 +136,22 @@ export class Satori extends Service {
     defineProperty(this.bots, Service.tracker, {})
 
     const self = this
-    ;(ctx as Context).on('http/fetch', async function (url, init, next) {
-      if (url.protocol !== 'satori:') return
-      const res = await self.handleInternalRoute(new Request(url))
-      if (res.status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${status}`)
+    ;(ctx as Context).on('http/fetch', async function (url, init, config, next) {
+      if (url.protocol !== 'satori:') return next()
+      const res = await self.handleInternalRoute(new Request(url, {
+        method: init.method,
+        headers: init.headers,
+        body: init.method === 'GET' || init.method === 'HEAD'
+          ? undefined
+          : init.body as unknown as BodyInit,
+      } as RequestInit))
+      if (res.status >= 400) throw new Error(`Failed to fetch ${url}, status code: ${res.status}`)
       if (res.status >= 300) {
         const location = res.headers.get('location')!
-        return this(location) as any // FIXME
+        return this(new URL(location, url), {
+          ...config,
+          responseType: response => response,
+        })
       }
       return res
     })
@@ -220,8 +229,8 @@ export class Satori extends Service {
     const [, platform, selfId, path] = capture
     const bot = this.bots[`${platform}:${selfId}`]
     if (!bot) return new Response(null, { status: 404 })
-    let response = await this._internalRouter.handle(bot, req, path, url.searchParams)
-    response ??= await bot._internalRouter.handle(bot, req, path, url.searchParams)
+    let response = await bot._internalRouter.handle(bot, req, path, url.searchParams)
+    response ??= await this._internalRouter.handle(bot, req, path, url.searchParams)
     if (!response) return new Response(null, { status: 404 })
     return response
   }

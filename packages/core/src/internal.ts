@@ -42,7 +42,7 @@ export class InternalRouter {
       route.keys.forEach(({ name }, index) => {
         params[name] = capture[index + 1]
       })
-      const _req = Object.assign(Object.create(req), { params, query })
+      const _req = Object.assign(req, { params, query })
       return route.callback(_req, bot)
     }
   }
@@ -82,7 +82,9 @@ export namespace JsonForm {
       const json = form.get('$') as string
       return load(JSON.parse(json), '$', form)
     } else if (type?.startsWith('application/json')) {
-      return await body.json()
+      const json = await body.text()
+      if (!json) return
+      return JSON.parse(json)
     } else {
       throw new Error(`Unsupported content type: ${type}`)
     }
@@ -90,7 +92,7 @@ export namespace JsonForm {
 
   export async function encode(data: any): Promise<Response> {
     const form = new FormData()
-    const json = JSON.stringify(JsonForm.dump(data, '$', form))
+    const json = JSON.stringify(JsonForm.dump(data, '$', form)) ?? 'null'
     if ([...form.entries()].length) {
       form.append('$', json)
       return new Response(form)

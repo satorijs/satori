@@ -1,5 +1,4 @@
 import { Context } from '@satorijs/core'
-import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { LarkBot } from './bot'
 import { adaptSession, Cipher, EventPayload } from './utils'
@@ -97,7 +96,7 @@ export class HttpServer {
     const { event_type } = header
     body.type = event_type // add type to body to ease typescript type narrowing
     const session = await adaptSession(this.bot, body)
-    this.bot.dispatch(session)
+    if (session) this.bot.dispatch(session)
   }
 
   private _tryDecryptBody(body: any): any {

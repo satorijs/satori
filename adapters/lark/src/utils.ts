@@ -1,14 +1,14 @@
 import crypto from 'crypto'
-import { Context, pick, Session, Universal } from '@satorijs/core'
-import { at, audio, Element, file, image, text as $text, video } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { pick, Session, Universal } from '@satorijs/core'
+import { text as $text, at, audio, Element, file, image, video } from '@satorijs/element'
+import { Http } from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'
 import { Im, ListChat, Message, User } from './types'
 import { MessageContent } from './content'
 import { hyphenate } from 'cosmokit'
 
-export async function downloadFile(http: HTTP, url: string) {
-  const response = await http(url)
+export async function downloadFile(http: Http, url: string) {
+  const response = await http.get(url, { responseType: response => response })
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'
   const disposition = response.headers.get('content-disposition') ?? ''
@@ -68,6 +68,16 @@ export interface Events {
       tenant_key: string
     }
     message_id_list: string[]
+  }
+  /**
+   * Message recalled event.
+   * @see https://open.larksuite.com/document/server-docs/im-v1/message/events/recalled
+   */
+  'im.message.recalled_v1': {
+    chat_id: string
+    message_id: string
+    recall_time: string
+    recall_type: string
   }
   /**
    * Message card callback event.
@@ -256,6 +266,13 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
       break
+    case 'im.message.recalled_v1':
+      session.type = 'message-deleted'
+      session.messageId = body.event.message_id
+      session.channelId = body.event.chat_id
+      session.guildId = body.event.chat_id
+      session.timestamp = +body.event.recall_time
+      break
     case 'application.bot.menu_v6':
       if (body.event.event_key.startsWith('command:')) {
         session.type = 'interaction/command'
@@ -325,6 +342,7 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
       }
       break
   }
+  if (!session.type) return
   return session
 }
 

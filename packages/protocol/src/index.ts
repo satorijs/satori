@@ -431,6 +431,10 @@ export interface GatewayBody {
 }
 
 export namespace WebSocket {
+  export type BinaryType = 'blob' | 'arraybuffer'
+  export type Data = string | Blob | ArrayBuffer
+  export type SendData = string | Blob | ArrayBufferLike | ArrayBufferView
+
   /** The connection is not yet open. */
   export const CONNECTING = 0
   /** The connection is open and ready to communicate. */
@@ -468,7 +472,7 @@ export namespace WebSocket {
   }
 
   export interface MessageEvent extends Event {
-    data: string
+    data: Data
   }
 
   export interface ErrorEvent extends Event {
@@ -480,8 +484,9 @@ export interface WebSocket {
   readonly url: string
   readonly protocol?: string
   readonly readyState?: number
+  binaryType: WebSocket.BinaryType
   close(code?: number, reason?: string): void
-  send(data: string): void
+  send(data: WebSocket.SendData): void
   dispatchEvent?(event: any): boolean
   addEventListener<K extends keyof WebSocket.EventMap>(type: K, listener: (event: WebSocket.EventMap[K]) => void): void
   removeEventListener<K extends keyof WebSocket.EventMap>(type: K, listener: (event: WebSocket.EventMap[K]) => void): void

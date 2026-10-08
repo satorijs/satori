@@ -1,6 +1,5 @@
-import { Context, Dict, makeArray } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
-import {} from '@cordisjs/plugin-logger'
+import { Dict, makeArray } from '@satorijs/core'
+import { Http } from '@cordisjs/plugin-http'
 import { DiscordBot } from '../bot'
 
 export class Internal {
@@ -13,11 +12,11 @@ export class Internal {
         for (const name of makeArray(routes[path][method])) {
           Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
             const raw = args.join(', ')
-            const url = path.replace(/\{([^}]+)\}/g, () => {
+            const url = path.replace(/^\//, '').replace(/\{([^}]+)\}/g, () => {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: HTTP.RequestConfig = {}
+            const config: Http.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]
@@ -30,14 +29,14 @@ export class Internal {
             } else if (args.length > 1) {
               throw new Error(`too many arguments for ${path}, received ${raw}`)
             }
-            try {
-              this.bot.ctx.logger.debug(`${method} ${url}`, config)
-              const response = await this.bot.http(url, { ...config, method })
-              return await response.json()
-            } catch (error) {
-              if (!this.bot.http.isError(error) || !error.response) throw error
-              throw new Error(`[${error.response.status}] ${await error.response.text()}`)
+            this.bot.ctx.logger.debug(`${method} ${url}`, config)
+            const response = await this.bot.http(url, { ...config, method })
+            const body = await response.text()
+            if (response.status >= 400) {
+              throw new Error(`[${response.status}] ${body}`)
             }
+            if (!body) return
+            return JSON.parse(body)
           }
         }
       }
