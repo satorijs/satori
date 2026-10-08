@@ -240,13 +240,17 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       this.buffer += sanitizeCode(children.toString())
       this.buffer += '\n```'
     } else if (type === 'a') {
-      this.buffer += '['
-      await this.render(children)
-      this.buffer += ']'
-      if (this.options.linkPreview) {
+      if (children.length) {
+        this.buffer += '['
+        await this.render(children)
+        this.buffer += ']'
+      }
+      if (children.length && this.options.linkPreview) {
         this.buffer += `(${attrs.href})`
-      } else {
+      } else if (children.length) {
         this.buffer += `(<${attrs.href}>)`
+      } else {
+        this.buffer += `<${attrs.href}>`
       }
     } else if (type === 'br') {
       this.buffer += '\n'
