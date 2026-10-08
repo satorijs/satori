@@ -288,6 +288,12 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
       } else {
         this.buffer += `<${attrs.animated ? 'a' : ''}:${attrs.name}:${attrs.id}>`
       }
+    } else if (type === 'file' && attrs.src) {
+      await this.sendAsset('file', attrs, {
+        ...this.addition,
+        content: this.buffer.trim(),
+      })
+      this.buffer = ''
     } else if ((type === 'img' || type === 'image' || type === 'video') && (attrs.src || attrs.url)) {
       if (this.mode === 'figure') {
         this.figure = element
