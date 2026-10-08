@@ -11,6 +11,7 @@ export class WsClient extends CoreWsClient<DiscordBot> {
   _ping?: NodeJS.Timeout
   _sessionId = ''
   _resumeUrl?: string
+  _acked = true
 
   async prepare() {
     if (this._resumeUrl) {
@@ -22,14 +23,22 @@ export class WsClient extends CoreWsClient<DiscordBot> {
 
   heartbeat() {
     if (!this.socket) return
+    if (!this._acked) {
+      this.bot.ctx.logger.warn('zombied connection: heartbeat ACK not received, closing socket to reconnect')
+      clearInterval(this._ping)
+      this._ping = undefined
+      return this.socket.close(4000, 'zombied connection')
+    }
     this.bot.ctx.logger.debug(`heartbeat d ${this._d}`)
     this.socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
       d: this._d,
     }))
+    this._acked = false
   }
 
   accept() {
+    this._acked = true
     this.socket!.addEventListener('message', async ({ data }) => {
       let parsed: Gateway.Payload
       data = data.toString()
@@ -45,6 +54,8 @@ export class WsClient extends CoreWsClient<DiscordBot> {
 
       // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
       if (parsed.op === Gateway.Opcode.HELLO) {
+        this._acked = true
+        clearInterval(this._ping)
         this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
         if (this._sessionId) {
           this.bot.ctx.logger.debug('resuming')
@@ -69,11 +80,19 @@ export class WsClient extends CoreWsClient<DiscordBot> {
         }
       }
 
+      if (parsed.op === Gateway.Opcode.HEARTBEAT_ACK) {
+        this._acked = true
+      }
+
       if (parsed.op === Gateway.Opcode.INVALID_SESSION) {
-        if (parsed.d) return
-        this._sessionId = ''
-        this.bot.ctx.logger.warn('offline: invalid session')
-        this.socket?.close()
+        this.bot.ctx.logger.warn('offline: invalid session, resumable: %o', parsed.d)
+        if (!parsed.d) {
+          this._sessionId = ''
+          this._resumeUrl = undefined
+        }
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'invalid session')
       }
 
       if (parsed.op === Gateway.Opcode.DISPATCH) {
@@ -98,13 +117,27 @@ export class WsClient extends CoreWsClient<DiscordBot> {
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
         this.bot.ctx.logger.warn('offline: discord request reconnect')
-        this.socket?.close()
+        clearInterval(this._ping)
+        this._ping = undefined
+        this.socket?.close(4000, 'discord request reconnect')
       }
     })
 
-    this.socket!.addEventListener('close', () => {
+    this.socket!.addEventListener('close', (e) => {
+      this.bot.ctx.logger.debug('websocket closed, code %o, reason: %s', e.code, e.reason)
       clearInterval(this._ping)
+      this._ping = undefined
+      if (e.code === 4004 || (e.code >= 4010 && e.code <= 4014)) {
+        this._sessionId = ''
+        this._resumeUrl = undefined
+      }
     })
+  }
+
+  async stop() {
+    clearInterval(this._ping)
+    this._ping = undefined
+    await super.stop()
   }
 }
 
