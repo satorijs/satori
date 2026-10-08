@@ -1,12 +1,55 @@
 import * as QQ from './types'
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Context, Dict, h, MessageEncoder, omit, Session } from '@satorijs/core'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
 import crypto from 'crypto'
 
-export const escapeMarkdown = (val: string) =>
-  val
-    .replace(/([\\`*_[\*_~`\]\-(#!>])/g, '\\$&')
+export const escapeMarkdown = (value: string, before: string) => {
+  value = value.replaceAll(/[\\`*_!|>]|(?<=\])\(|^[#+-]|(?<=^\d+)\./gm, '\\$&')
+  if (before.match(/\n\d+$/) && value.startsWith('.')
+    || before.endsWith(']') && value.startsWith('(')
+    || before.endsWith('\n') && '#+-'.includes(value[0]))
+    value = '\\' + value
+  return value
+}
+
+interface InlineCmdOption {
+  text: string
+  show?: string
+  enter?: boolean
+  reply?: boolean
+}
+
+export function inlinecmd({
+  text,
+  show,
+  enter = false,
+  reply = false,
+}: InlineCmdOption) {
+  return `[${show || text}](${inlinecmdUrl({ text, reply, enter })})`
+}
+
+export function inlinecmdUrl({
+  text,
+  reply = false,
+  enter = false
+}: Omit<InlineCmdOption, 'show'>) {
+  const command = encodeURIComponent(text)
+    .replaceAll('(', '%28')
+    .replaceAll(')', '%29')
+  return `mqqapi://aio/inlinecmd?` +
+    Object.entries({ command, reply, enter })
+      .map(([key, value]) => `${key}=${value}`)
+      .join('&')
+}
+
+declare module '@satorijs/core' {
+  interface Session {
+    seq: number
+    streamIndex?: number
+    streamId?: string
+  }
+}
 
 export class QQGuildMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQGuildBot<C>> {
   private content: string = ''
@@ -195,23 +238,85 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private passiveId: string
   private passiveSeq: number
   private passiveEventId: string
+  // private markdownFontSize: QQ.Message.Markdown['style']['main_font_size']
+  private markdownLayout: QQ.Message.Markdown['style']['layout']
   private useMarkdown = false
   private inMarkdown = 0
-  private rows: QQ.Button[][] = []
+  private keyboardFontSize: string
+  private keyboardRows: QQ.Button[][] = []
+  private promptRows: QQ.Button[][] = []
   private attachedFile: QQ.Message.File.Response
+  private ark: QQ.Message.Ark
+  private stream: QQ.Message.Stream.Request
   private retry = false
   reference: string
 
-  // 先图后文
+  async sendMessage(data: QQ.Message.Request, session: Session) {
+    try {
+      const resp = this.session.isDirect
+        ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
+        : await this.bot.internal.sendMessage(this.session.channelId, data)
+      if (resp.id && !resp.audit_id) {
+        session.messageId = resp.id
+        session.timestamp = new Date(resp.timestamp).valueOf()
+        session.channelId = this.session.channelId
+        session.guildId = this.session.guildId
+        session.app.emit(session, 'send', session)
+        this.results.push(session.event.message)
+      } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
+        try {
+          const auditData: QQ.MessageAudited = await this.audit(resp.audit_id)
+          session.messageId = auditData.message_id
+          session.app.emit(session, 'send', session)
+          this.results.push(session.event.message)
+        } catch (e) {
+          this.bot.logger.error(e)
+        }
+      }
+    } catch (e) {
+      if (!this.bot.http.isError(e)) throw e
+      this.bot.logger.error(e.response.data)
+      this.errors.push(e)
+      if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
+        this.bot.logger.warn('%s retry message sending', this.session.cid)
+        this.retry = true
+        await this.sendMessage(data, session)
+      }
+    }
+  }
+
+  async sendStreamMessage(data: QQ.Message.Stream.Request, session: Session) {
+    try {
+      const resp = await this.bot.internal.sendPrivateStreamMessage(this.session.channelId, data)
+      if (resp.id) {
+        session.messageId = resp.id
+        session.timestamp = new Date(resp.timestamp).valueOf()
+        session.channelId = this.session.channelId
+        session.guildId = this.session.guildId
+        session.app.emit(session, 'send', session)
+        this.results.push(session.event.message)
+      }
+    } catch (e) {
+      if (!this.bot.http.isError(e)) throw e
+      this.bot.logger.error(e.response.data)
+      this.errors.push(e)
+      if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
+        this.bot.logger.warn('%s retry message sending', this.session.cid)
+        this.retry = true
+        await this.sendStreamMessage(data, session)
+      }
+    }
+  }
+
   async flush() {
-    if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) {
+    if (!this.content.trim() && !this.keyboardRows.flat().length && !this.promptRows.flat().length && !this.attachedFile && !this.ark) {
       this.reset() // eg: <><qq:markdown></qq:markdown><image ...></>
       return
     }
     this.trimButtons()
     let msg_id: string, msg_seq: number, event_id: string
     if (this.options?.session?.messageId && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
-      this.options.session['seq'] ||= 0
+      this.options.session.seq ||= 0
       msg_id = this.options.session.messageId
       msg_seq = ++this.options.session['seq']
     } else if (this.options?.session?.qq?.['id'] && Date.now() - this.options.session.timestamp < MSG_TIMEOUT) {
@@ -221,7 +326,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (this.passiveSeq) msg_seq = this.passiveSeq
     if (this.passiveEventId) event_id = this.passiveEventId
     const data: QQ.Message.Request = {
-      content: this.content,
+      content: this.content.trim(),
       msg_type: QQ.Message.Type.TEXT,
       msg_id,
       msg_seq,
@@ -229,7 +334,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     if (this.reference) {
       data.message_reference = {
-        message_id: this.reference,
+        message_id: this.bot.msgIdxMap.get(this.reference) || this.reference,
       }
     }
     if (this.attachedFile) {
@@ -237,58 +342,63 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       data.msg_type = QQ.Message.Type.MEDIA
     }
     if (this.useMarkdown) {
+      if (this.attachedFile)
+        throw new Error('attachedFile and markdown cannot be used together')
       data.msg_type = QQ.Message.Type.MARKDOWN
       delete data.content
       data.markdown = {
         content: this.content,
+        ...this.markdownLayout ? {
+          style: {
+            // main_font_size: this.markdownFontSize,
+            layout: this.markdownLayout,
+          }
+        } : {},
       }
       if (this.bot.config.markdownVerifyImage) {
         data.markdown.force_verify_image_resource = true
       }
-      if (this.rows.length) {
+      if (this.keyboardRows.length) {
         data.markdown.content ||= ' '
         data.keyboard = {
           content: {
+            ...this.keyboardFontSize ? { style: { font_size: this.keyboardFontSize } } : {},
             rows: this.exportButtons(),
           },
         }
       }
-    }
-    const session = this.bot.session()
-    session.type = 'send'
-    const send = async () => {
-      try {
-        const resp = this.session.isDirect
-          ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-          : await this.bot.internal.sendMessage(this.session.channelId, data)
-        if (resp.id && !resp.audit_id) {
-          session.messageId = resp.id
-          session.timestamp = new Date(resp.timestamp).valueOf()
-          session.channelId = this.session.channelId
-          session.guildId = this.session.guildId
-          session.app.emit(session, 'send', session)
-          this.results.push(session.event.message)
-        } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
-          try {
-            const auditData: QQ.MessageAudited = await this.audit(resp.audit_id)
-            session.messageId = auditData.message_id
-            session.app.emit(session, 'send', session)
-            this.results.push(session.event.message)
-          } catch (e) {
-            this.bot.logger.error(e)
+      if (this.promptRows.length) {
+        data.markdown.content ||= ' '
+        data.prompt_keyboard = {
+          keyboard: {
+            content: {
+              rows: this.exportButtons(true),
+            },
           }
-        }
-      } catch (e) {
-        if (!this.bot.http.isError(e)) throw e
-        this.errors.push(e)
-        if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
-          this.bot.logger.warn('%s retry message sending', this.session.cid)
-          this.retry = true
-          await send()
         }
       }
     }
-    await send()
+    if (this.ark) {
+      data.content = ' '
+      delete data.markdown // noop
+      data.msg_type = QQ.Message.Type.ARK
+      data.ark = this.ark
+    }
+    const session = this.bot.session()
+    session.type = 'send'
+    if (this.stream && this.session.isDirect) {
+      await this.sendStreamMessage(Object.assign(this.stream, {
+        msg_id,
+        msg_seq,
+        event_id,
+      }), session)
+      if (session.messageId) {
+        this.options.session.streamId = session.messageId
+      }
+    }
+    else {
+      await this.sendMessage(data, session)
+    }
     this.reset()
   }
 
@@ -296,7 +406,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     this.content = ''
     this.useMarkdown = false
     this.attachedFile = null
-    this.rows = []
+    this.keyboardFontSize = null
+    this.keyboardRows = []
+    this.promptRows = []
+    this.ark = null
+    this.stream = null
     this.retry = false
   }
 
@@ -364,11 +478,12 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       }
     } catch (e) {
       if (!this.bot.http.isError(e)) throw e
+      this.bot.logger.error(e.response.data)
       this.errors.push(e)
       if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
         this.bot.logger.warn('%s retry message sending', this.session.cid)
         this.retry = true
-        await this.sendFile(type, attrs)
+        return await this.sendFile(type, attrs)
       }
     }
     this.retry = false
@@ -422,64 +537,152 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
   }
 
+
+  static buttonStyleMap = {
+    default: 0,
+    primary: 1,
+    suggest: 2,
+    danger: 3,
+    filled: 4
+  } as const
+
+  static buttonActionMap = {
+    url: 0, link: 0,
+    callback: 1, action: 1,
+    atbot: 2, input: 2,
+    mqqapi: 3, scheme: 3,
+    subscribe: 4,
+  } as const
+
   decodeButton(attrs: Dict, label: string) {
+    const visited = attrs['qq:visited'] ?? attrs['visited']
+    const reply = attrs['qq:reply'] ?? attrs['reply']
+    const enter = attrs['qq:enter'] ?? attrs['enter']
+    const anchor = attrs['qq:anchor'] ?? attrs['anchor']
+    const type = attrs['qq:type'] != null ? +attrs['qq:type'] :
+      QQMessageEncoder.buttonActionMap[attrs.type?.toLowerCase()] ?? (
+        attrs.text ? QQMessageEncoder.buttonActionMap.input
+          : attrs.href ? attrs.href.startsWith('mqq')
+            ? QQMessageEncoder.buttonActionMap.mqqapi
+            : QQMessageEncoder.buttonActionMap.link
+            : QQMessageEncoder.buttonActionMap.atbot
+      )
     const result: QQ.Button = {
       id: attrs.id,
+      ...attrs['qq:group'] ? { group_id: attrs['qq:group'] } : {},
       render_data: {
         label,
-        visited_label: label,
-        style: attrs.class === 'primary' ? 1 : 0,
+        visited_label: visited || label, // 电脑端不加 visited_label 点完就没了。
+        // ...visited === true ? { visited_label: label }
+        //   : visited ? { visited_label: visited } : {},
+        style: attrs['qq:style'] != null ? +attrs['qq:style'] :
+          QQMessageEncoder.buttonStyleMap[attrs.class ?? attrs.style] ?? 0,
       },
       action: {
-        type: attrs.type === 'input' ? 2
-          : (attrs.type === 'link' ? 0 : 1),
-        permission: {
-          type: 2,
-        },
-        data: attrs.type === 'input'
-          ? attrs.text : attrs.type === 'link'
-            ? attrs.href : attrs.id,
+        type,
+        permission: attrs['qq:permission'] ||
+          { type: attrs.permission === 'admin' ? 1 : 2 },
+        data: attrs['qq:data'] != null ? attrs['qq:data'] : {
+          [QQMessageEncoder.buttonActionMap.url]: attrs.href,
+          [QQMessageEncoder.buttonActionMap.callback]: attrs.id,
+          [QQMessageEncoder.buttonActionMap.atbot]: attrs.text,
+          [QQMessageEncoder.buttonActionMap.mqqapi]: attrs.href,
+        }[type],
+        ...reply ? { reply } : {},
+        ...enter ? { enter } : {},
+        ...anchor != null ? { anchor: +anchor } : {},
+        ...attrs['qq:subscribe_data'] ? { subscribe_data: tryParseJson(attrs['qq:subscribe_data']) } : {},
+        ...attrs['qq:modal'] ? { modal: tryParseJson(attrs['qq:modal']) || { content: attrs['qq:modal'] } } : {},
       },
     }
     return result
   }
 
-  lastRow() {
-    if (!this.rows.length) this.rows.push([])
-    let last = this.rows[this.rows.length - 1]
+  decodeArkKv(attrs: Dict<string | Dict<string>[]>): QQ.Message.ArkKv[] {
+    return Object.entries(attrs)
+      .flatMap(([key, value]): QQ.Message.ArkKv[] => {
+        key = `#${key.toUpperCase()}#`;
+        return typeof value === 'string' ? [{ key, value }] : [{
+          key, obj: value.map(item => ({
+            obj_kv: Object.entries(item)
+              .map(([key, value]) => ({ key, value }))
+          }))
+        }];
+      })
+  }
+
+  lastRow(prompt = false) {
+    const rows = prompt ? this.promptRows : this.keyboardRows
+    if (!rows.length) rows.push([])
+    let last = rows[rows.length - 1]
     if (last.length >= 5) {
-      this.rows.push([])
-      last = this.rows[this.rows.length - 1]
+      rows.push([])
+      last = rows[rows.length - 1]
     }
     return last
   }
 
   trimButtons() {
-    if (this.rows.length && this.rows[this.rows.length - 1].length === 0) this.rows.pop()
+    this.keyboardRows = this.keyboardRows.filter(v => v.length > 0)
+    this.promptRows = this.promptRows.filter(v => v.length > 0)
   }
 
-  exportButtons() {
-    return this.rows.map(v => ({
+  exportButtons(prompt = false) {
+    const rows = prompt ? this.promptRows : this.keyboardRows
+    return rows.map(v => ({
       buttons: v,
     })) as QQ.InlineKeyboardRow[]
   }
 
   async ensureMarkdown() {
-    if (this.attachedFile) {
-      this.useMarkdown = false
+    if (this.useMarkdown)
+      return
+    if (this.attachedFile)
       await this.flush()
-    }
-    if (!this.useMarkdown) {
-      this.content = escapeMarkdown(this.content)
-      this.useMarkdown = true
-    }
+    this.content = escapeMarkdown(this.content, '')
+    this.useMarkdown = true
   }
 
+  parseKeyboardFontSize(attrs: Dict) {
+    const fontSize = attrs['qq:size'] || attrs['size']
+    if (fontSize)
+      this.keyboardFontSize = fontSize
+    if (attrs['small'])
+      this.keyboardFontSize = 'small'
+  }
+
+  static MARKDOWN_MODIFIERS = Object.entries({
+    '**': ['b', 'strong'],
+    '_': ['i', 'em'],
+    '~~': ['s', 'del'],
+    '`': ['code'],
+    // '/': ['u', 'ins'],
+    // '==': ['mark'],
+  })
+
   async visit(element: h) {
-    const { type, attrs, children } = element
+    const { attrs, children } = element
+    const type = element.type.replace(/^qq:/, '')
     if (type === 'text') {
       this.content += this.useMarkdown && !this.inMarkdown
-        ? escapeMarkdown(attrs.content) : attrs.content
+        ? escapeMarkdown(attrs.content, this.content) : attrs.content
+    } else if (type === 'at') {
+      await this.ensureMarkdown()
+      if (attrs.type === 'all') this.content += `@everyone`
+      else if (attrs.id) this.content += `<@${attrs.id}>`
+    } else if (type === 'inlinecmd' || type === 'a' && attrs.href) {
+      await this.ensureMarkdown()
+      this.content += `[`
+      const length = this.content.length
+      await this.render(children)
+      if (type === 'inlinecmd') {
+        attrs.text ??= this.content.slice(length)
+        attrs.href = inlinecmdUrl(attrs as InlineCmdOption)
+      }
+      this.content += `](${attrs.href})`
+    } else if (type === 'emoji') {
+      // TODO: emoji id 和 Unicode 码点似乎不全是对应的，可能需要手动映射
+      // this.content += String.fromCharCode(20, attrs.id)
     } else if (type === 'passive') {
       if (attrs.messageId) this.passiveId = attrs.messageId
       if (attrs.seq) this.passiveSeq = Number(attrs.seq)
@@ -488,9 +691,16 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       this.reference = attrs.id
       await this.flush()
     } else if ((type === 'img' || type === 'image') && (attrs.src || attrs.url)) {
-      await this.flush()
-      const data = await this.sendFile(type, attrs)
-      if (data) this.attachedFile = data
+      if (this.useMarkdown) {
+        let { alt = attrs.title, src = attrs.url, width, height } = attrs
+        if (width && height)
+          alt += ` #${width}px #${height}px`
+        this.content += `![${alt}](${src})`
+      } else {
+        await this.flush()
+        const data = await this.sendFile(type, attrs)
+        if (data) this.attachedFile = data
+      }
     } else if (type === 'video' && (attrs.src || attrs.url)) {
       await this.flush()
       const data = await this.sendFile(type, attrs)
@@ -549,26 +759,86 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
       if (!this.content.endsWith('\n')) this.content += '\n'
       await this.render(children)
       if (!this.content.endsWith('\n')) this.content += '\n'
-    } else if (type === 'qq:markdown') {
+    } else if (type === 'markdown') {
+      if (attrs['qq:layout'])
+        this.markdownLayout = attrs['qq:layout']
+      if (attrs['qq:fullwidth'] || attrs.fullwidth)
+        this.markdownLayout = 'hide_avatar_and_center'
       await this.ensureMarkdown()
       this.inMarkdown++
       await this.render(children)
       this.inMarkdown--
     } else if (type === 'button-group') {
+      this.parseKeyboardFontSize(attrs)
       await this.ensureMarkdown()
-      this.rows.push([])
+      this.keyboardRows.push([])
       await this.render(children)
-      this.rows.push([])
+      this.keyboardRows.push([])
     } else if (type === 'button') {
+      this.parseKeyboardFontSize(attrs)
       await this.ensureMarkdown()
-      const last = this.lastRow()
+      const prompt = attrs['qq:prompt'] || attrs['qq:suggest'] || attrs.prompt || attrs.suggest
+      const last = this.lastRow(!!prompt)
       last.push(this.decodeButton(attrs, children.join('')))
+    } else if (type.startsWith('ark')) {
+      await this.flush()
+      this.ark = {
+        template_id: type.slice(3) || attrs.id,
+        kv: attrs.kv || this.decodeArkKv(omit(attrs, ['id'])),
+      }
+      await this.flush()
     } else if (type === 'message') {
       await this.flush()
       await this.render(children)
       await this.flush()
+    } else if (type === 'stream') {
+      await this.flush()
+      await this.ensureMarkdown()
+      await this.render(children)
+
+      const reset = attrs.reset || attrs.head || attrs.start || !this.session.streamId
+      const done = attrs.done || attrs.tail || attrs.end || attrs.finish
+      if (reset) {
+        this.options.session.streamIndex = 0
+        this.options.session.streamId = undefined
+      }
+      this.stream = {
+        input_mode: attrs.replace
+          ? QQ.Message.Stream.InputMode.REPLACE
+          : QQ.Message.Stream.InputMode.APPEND,
+        input_state: done
+          ? QQ.Message.Stream.InputState.DONE
+          : QQ.Message.Stream.InputState.GENERATING,
+        index: this.options.session.streamIndex++,
+        content_type: this.useMarkdown
+          || true // 整条流式消息 content_type 必须相同，使用 markdown 可以部分兼容 text。
+          ? QQ.Message.Stream.ContentType.MARKDOWN
+          : QQ.Message.Stream.ContentType.TEXT,
+        content_raw: this.content,
+        stream_msg_id: this.session.streamId,
+        msg_seq: this.session.seq,
+      }
+      await this.flush()
+      if (done) {
+        delete this.options.session.streamIndex
+        delete this.options.session.streamId
+      }
     } else {
+      for (const [delimiter, types] of QQMessageEncoder.MARKDOWN_MODIFIERS) {
+        if (types.includes(type)) {
+          await this.ensureMarkdown()
+          this.content += delimiter
+          await this.render(children)
+          this.content += delimiter
+          return
+        }
+      }
       await this.render(children)
     }
   }
+}
+
+function tryParseJson<T>(source: string | any): T | undefined {
+  if (typeof source !== 'string') return source
+  try { return JSON.parse(source) } catch {}
 }

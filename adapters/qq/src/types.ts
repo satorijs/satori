@@ -352,6 +352,8 @@ export namespace Message {
     ARK = 3,
     EMBED = 4,
     MEDIA = 7,
+    PARALLEL = 101,
+    FORWARD = 102,
     QUOTE = 103,
   }
   export interface Ark {
@@ -367,8 +369,8 @@ export namespace Message {
     obj?: ArkObj[]
   }
   export interface ArkObj {
-    /** ark objkv 列表 */
-    objKv: ArkObjKv[]
+    /** ark obj_kv 列表 */
+    obj_kv: ArkObjKv[]
   }
   export interface ArkObjKv {
     key: string
@@ -399,6 +401,10 @@ export namespace Message {
     params?: MarkdownParam[]
     /** 原生 markdown 内容，与 template_id 和 params 参数互斥，参数都传值将报错。 */
     content?: string
+    style?: {
+      // main_font_size?: 'small' | 'middle' | 'large' // small 没用， middle large 服务器 500
+      layout?: 'hide_avatar_and_center'
+    }
     /** 开启后，当图片资源转存失败时，将中断消息发送并返回失败。 */
     force_verify_image_resource?: boolean
   }
@@ -427,16 +433,24 @@ export namespace Message {
     event_id?: string
     markdown?: Markdown
   }
+  export interface Stream {
+    mode: Stream.InputMode;
+    state: Stream.InputState;
+    id?: string;
+    index?: number;
+  }
   export namespace Stream {
     export enum InputMode {
+      APPEND = 'append',
       REPLACE = 'replace',
     }
     export enum InputState {
-      NOT_STREAM = 0,
+      // NOT_STREAM = 0,
       GENERATING = 1,
       DONE = 10,
     }
     export enum ContentType {
+      TEXT = 'text',
       MARKDOWN = 'markdown',
     }
     export interface Request {
@@ -449,26 +463,27 @@ export namespace Message {
       /** markdown 内容 */
       content_raw: string
       /** 事件 ID */
-      event_id: string
+      event_id?: string
       /** 原始消息 ID */
-      msg_id: string
+      msg_id?: string
       /** 流式消息 ID，首次发送后返回，后续分片需携带 */
       stream_msg_id?: string
       /** 递增序号 */
       msg_seq: number
       /** 同一条流式会话内的发送索引，从 0 开始，每次发送前递增；新流式会话重新从 0 开始 */
       index: number
+      /** 是否为召回消息。true 时不校验 msg_id/event_id 有效期 */
+      is_weakup?: boolean
     }
   }
   export interface Request {
     /** 文本内容 */
     content?: string
-    /** 消息类型
-     * 当发送 md，ark，embed 的时候 centent 字段需要填入随意内容，否则发送失败
-     */
+    /** 消息类型 */
     msg_type: Type
     markdown?: Markdown
     keyboard?: Partial<MessageKeyboard>
+    prompt_keyboard?: { keyboard: Partial<MessageKeyboard> }
     ark?: Ark
     // image?: unknown
     message_reference?: {
@@ -479,6 +494,7 @@ export namespace Message {
     msg_id?: string
     msg_seq?: number
     media?: Partial<File.Response>
+    stream?: Stream
   }
 
   export interface ResponseBase extends Message {
@@ -1515,6 +1531,9 @@ export interface MessageKeyboard {
 
 export interface InlineKeyboard {
   rows: InlineKeyboardRow[]
+  style?: {
+    font_size: 'small' | string
+  }
 }
 
 export interface InlineKeyboardRow {
