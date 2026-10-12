@@ -1,13 +1,11 @@
-// 拉取 Fluxer 全量 OpenAPI，裁剪成适配器用到的最小闭包，写入 src/protocol/fluxer.openapi.json。
-// 根集合直接从 src/types/index.ts 的 `Schema['X']` 引用读出；闭包按 $ref 递归。
-// 用法：node scripts/prune-openapi.mjs [source-url]  （缺省官方实例）
 import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import openapiTS, { astToString, COMMENT_HEADER } from 'openapi-typescript'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const source = process.argv[2] ?? 'https://api.fluxer.app/openapi.json'
-const output = join(root, 'src/protocol/fluxer.openapi.json')
+const output = join(root, 'src/protocol/schema.ts')
 
 const types = readFileSync(join(root, 'src/types/index.ts'), 'utf8')
 const roots = [...types.matchAll(/Schema\['([^']+)'\]/g)].map((match) => match[1])
@@ -37,17 +35,13 @@ while (stack.length) {
 const missing = [...kept].filter((name) => !(name in schemas))
 if (missing.length) throw new Error(`unknown schemas referenced: ${missing.join(', ')}`)
 
-writeFileSync(output, JSON.stringify({
+const pruned = {
   openapi: spec.openapi,
-  info: {
-    title: spec.info?.title ?? 'Fluxer API',
-    version: spec.info?.version ?? '0.0.0',
-    description: 'Pruned subset of the Fluxer OpenAPI document: only the schemas referenced by this adapter. '
-      + 'Regenerate with `yarn sync-openapi`.',
-  },
-  components: {
-    schemas: Object.fromEntries([...kept].sort().map((name) => [name, schemas[name]])),
-  },
-}, null, 2) + '\n')
+  info: spec.info,
+  components: { schemas: Object.fromEntries([...kept].sort().map((name) => [name, schemas[name]])) },
+}
 
-process.stdout.write(`pruned ${Object.keys(schemas).length} → ${kept.size} schemas (source: ${source})\n`)
+const ast = await openapiTS(pruned)
+writeFileSync(output, COMMENT_HEADER + astToString(ast))
+
+process.stdout.write(`generated ${output} from ${kept.size}/${Object.keys(schemas).length} schemas (source: ${source})\n`)

@@ -18,8 +18,7 @@
     "url": "https://github.com/satorijs/satori/issues"
   },
   "scripts": {
-    "sync-openapi": "node scripts/prune-openapi.mjs",
-    "codegen": "openapi-typescript src/protocol/fluxer.openapi.json -o src/protocol/schema.ts"
+    "codegen": "node scripts/codegen.mjs"
   },
   "devDependencies": {
     "@satorijs/core": "^4.6.0",
