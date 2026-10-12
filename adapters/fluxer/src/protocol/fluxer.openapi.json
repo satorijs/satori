@@ -1,0 +1,4893 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fluxer API",
+    "version": "1.0.0",
+    "description": "Pruned subset of the Fluxer OpenAPI document: only the schemas referenced by this adapter. Regenerate with `yarn sync-openapi`."
+  },
+  "components": {
+    "schemas": {
+      "AllowedMentionsRequest": {
+        "type": "object",
+        "properties": {
+          "parse": {
+            "description": "Types of mentions to parse from content",
+            "type": "array",
+            "items": {
+              "description": "Types of mentions to parse from content",
+              "x-enumNames": [
+                "USERS",
+                "ROLES",
+                "EVERYONE"
+              ],
+              "x-enumDescriptions": [
+                "Parse user mentions from the message content",
+                "Parse role mentions from the message content",
+                "Parse @everyone and @here mentions from the message content"
+              ],
+              "enum": [
+                "users",
+                "roles",
+                "everyone"
+              ],
+              "type": "string"
+            }
+          },
+          "users": {
+            "description": "Array of user IDs to mention (max 100)",
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeType"
+            }
+          },
+          "roles": {
+            "description": "Array of role IDs to mention (max 100)",
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeType"
+            }
+          },
+          "replied_user": {
+            "description": "Whether to mention the author of the replied message",
+            "type": "boolean"
+          }
+        }
+      },
+      "ChannelOverwriteResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for the role or user this overwrite applies to",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ChannelOverwriteType"
+          },
+          "allow": {
+            "description": "The bitwise value of allowed permissions",
+            "$ref": "#/components/schemas/Permissions"
+          },
+          "deny": {
+            "description": "The bitwise value of denied permissions",
+            "$ref": "#/components/schemas/Permissions"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "allow",
+          "deny"
+        ],
+        "additionalProperties": false
+      },
+      "ChannelOverwriteType": {
+        "description": "The type of entity the overwrite applies to",
+        "x-enumNames": [
+          "ROLE",
+          "MEMBER"
+        ],
+        "x-enumDescriptions": [
+          "Overwrite applies to a role",
+          "Overwrite applies to a member"
+        ],
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer"
+      },
+      "ChannelResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for this channel",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "guild_id": {
+            "description": "The ID of the guild this channel belongs to",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "description": "The name of the channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "topic": {
+            "description": "The topic of the channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "description": "The URL associated with the channel",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "description": "The icon hash of the channel (for group DMs)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_id": {
+            "description": "The ID of the owner of the channel (for group DMs)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/ChannelType"
+          },
+          "position": {
+            "description": "The sorting position of the channel",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "parent_id": {
+            "description": "The ID of the parent category for this channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bitrate": {
+            "description": "The bitrate of the voice channel in bits per second",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user_limit": {
+            "description": "The maximum number of users allowed in the voice channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voice_connection_limit": {
+            "description": "The maximum active voice connections allowed per user in the voice channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rtc_region": {
+            "description": "The voice region ID for the voice channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rtc_p2p": {
+            "description": "Whether calls in the voice channel connect participants directly instead of through a voice server",
+            "type": "boolean"
+          },
+          "last_message_id": {
+            "description": "The ID of the last message sent in this channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_pin_timestamp": {
+            "description": "The ISO 8601 timestamp of when the last pinned message was pinned",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "permission_overwrites": {
+            "description": "The permission overwrites for this channel",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelOverwriteResponse"
+            }
+          },
+          "recipients": {
+            "description": "The recipients of the DM channel",
+            "maxItems": 49,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPartialResponse"
+            }
+          },
+          "nsfw": {
+            "description": "Whether the channel is marked as NSFW (effective value, walking channel → category → guild)",
+            "type": "boolean"
+          },
+          "nsfw_override": {
+            "description": "Per-channel adult-content override; null means inherit from parent category and then guild. Categories use this same field as their own override.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "content_warning_level": {
+            "description": "Channel-level content warning override (0=inherit, 1=force-warn)",
+            "$ref": "#/components/schemas/ContentWarningLevel"
+          },
+          "content_warning_text": {
+            "description": "Custom channel content warning text (max 200 characters); null inherits from parent or guild",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rate_limit_per_user": {
+            "description": "The slowmode rate limit in seconds",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "nicks": {
+            "description": "Custom nicknames for users in this channel (for group DMs)",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            }
+          },
+          "flags": {
+            "description": "Channel flags",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "thread_metadata": {
+            "description": "Thread-specific fields",
+            "$ref": "#/components/schemas/ThreadMetadataResponse"
+          },
+          "applied_tags": {
+            "description": "IDs of the tags applied to a forum or media post",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeStringType"
+            }
+          },
+          "message_count": {
+            "description": "Messages in the thread, excluding the starter and deleted messages",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "total_message_sent": {
+            "description": "Messages ever sent in the thread, never decremented",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "member_count": {
+            "description": "Approximate number of thread members, capped at 50",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "member_ids_preview": {
+            "description": "IDs of the most recently joined members of a forum or media post, newest first",
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeStringType"
+            }
+          },
+          "member": {
+            "description": "The thread member object for the current user",
+            "$ref": "#/components/schemas/ThreadMemberResponse"
+          },
+          "default_auto_archive_duration": {
+            "description": "Default auto archive duration for new threads",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_thread_rate_limit_per_user": {
+            "description": "Slowmode copied onto new threads",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "available_tags": {
+            "description": "Tags that can be applied to posts",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForumTagResponse"
+            }
+          },
+          "default_reaction_emoji": {
+            "description": "Default reaction for posts",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DefaultReactionEmojiResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_sort_order": {
+            "description": "Default sort order for posts",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_forum_layout": {
+            "description": "Default layout for forum posts",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "default_tag_setting": {
+            "description": "Default tag search setting",
+            "type": "string",
+            "enum": [
+              "match_some",
+              "match_all"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "ChannelType": {
+        "description": "The type of the channel",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          10,
+          11,
+          12,
+          15,
+          16,
+          998,
+          999
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "GUILD_TEXT",
+          "DM",
+          "GUILD_VOICE",
+          "GROUP_DM",
+          "GUILD_CATEGORY",
+          "GUILD_ANNOUNCEMENT",
+          "ANNOUNCEMENT_THREAD",
+          "PUBLIC_THREAD",
+          "PRIVATE_THREAD",
+          "GUILD_FORUM",
+          "GUILD_MEDIA",
+          "GUILD_LINK",
+          "DM_PERSONAL_NOTES"
+        ],
+        "x-enumDescriptions": [
+          "A text channel within a guild",
+          "A direct message between users",
+          "A voice channel within a guild",
+          "A group direct message between users",
+          "A category that contains channels",
+          "A guild channel whose messages can be published to channels that follow it",
+          "A public thread within an announcement channel",
+          "A public thread within a text, forum or media channel",
+          "A private thread within a text channel",
+          "A channel that can only contain threads",
+          "A channel that can only contain threads in a gallery view",
+          "A link channel for external resources",
+          "Personal notes DM channel"
+        ]
+      },
+      "ClientAttachmentRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "A title for the attachment (1-1024 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "An alt text description of the attachment (1-4096 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "flags": {
+            "$ref": "#/components/schemas/MessageAttachmentFlags",
+            "description": "Attachment flags"
+          },
+          "duration": {
+            "description": "The duration of the audio file in seconds",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "waveform": {
+            "description": "Base64 encoded audio waveform data",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "The client-side identifier for this attachment",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "filename": {
+            "description": "The name of the file being uploaded",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "content_type": {
+            "description": "Optional MIME type for the uploaded file",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "filename"
+        ]
+      },
+      "ClientUploadedAttachmentRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "description": "A title for the attachment (1-1024 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "An alt text description of the attachment (1-4096 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "flags": {
+            "$ref": "#/components/schemas/MessageAttachmentFlags",
+            "description": "Attachment flags"
+          },
+          "duration": {
+            "description": "The duration of the audio file in seconds",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "waveform": {
+            "description": "Base64 encoded audio waveform data",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "id": {
+            "description": "The client-side identifier for this attachment",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "filename": {
+            "description": "The name of the file being uploaded",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "content_type": {
+            "description": "MIME type of the uploaded file",
+            "type": "string"
+          },
+          "upload_filename": {
+            "description": "Temporary upload key returned by the attachment upload endpoint",
+            "type": "string"
+          },
+          "file_size": {
+            "description": "Uploaded file size in bytes",
+            "$ref": "#/components/schemas/NonNegativeSafeIntegerType"
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "content_type",
+          "upload_filename",
+          "file_size"
+        ]
+      },
+      "ColorType": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 16777215
+      },
+      "ContentWarningLevel": {
+        "description": "The content warning level for a guild, category, or channel",
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "INHERIT",
+          "CONTENT_WARNING"
+        ],
+        "x-enumDescriptions": [
+          "No level set on this scope; channels and categories inherit from parent",
+          "Show a content warning before entering"
+        ]
+      },
+      "DefaultMessageNotifications": {
+        "description": "Default notification level for new members",
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "ALL_MESSAGES",
+          "ONLY_MENTIONS"
+        ],
+        "x-enumDescriptions": [
+          "Notify on all messages",
+          "Notify only on mentions"
+        ]
+      },
+      "DefaultReactionEmojiResponse": {
+        "type": "object",
+        "properties": {
+          "emoji_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The ID of a custom guild emoji"
+          },
+          "emoji_name": {
+            "description": "The unicode character of the emoji",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "emoji_id",
+          "emoji_name"
+        ],
+        "additionalProperties": false
+      },
+      "EmbedAuthorResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the author"
+          },
+          "url": {
+            "description": "The URL of the author",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon_url": {
+            "description": "The URL of the author icon",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "proxy_icon_url": {
+            "description": "The proxied URL of the author icon",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "EmbedFieldResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the field"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value of the field"
+          },
+          "inline": {
+            "type": "boolean",
+            "description": "Whether the field should be displayed inline"
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "inline"
+        ],
+        "additionalProperties": false
+      },
+      "EmbedFooterResponse": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The footer text"
+          },
+          "icon_url": {
+            "description": "The URL of the footer icon",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "proxy_icon_url": {
+            "description": "The proxied URL of the footer icon",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "EmbedMediaFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "The bitwise flags for this media",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "CONTAINS_EXPLICIT_MEDIA",
+            "value": "16",
+            "description": "Embed media contains explicit content"
+          },
+          {
+            "name": "IS_ANIMATED",
+            "value": "32",
+            "description": "Embed media is animated"
+          }
+        ]
+      },
+      "EmbedMediaResponse": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The URL of the media"
+          },
+          "proxy_url": {
+            "description": "The proxied URL of the media",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content_type": {
+            "description": "The MIME type of the media",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content_hash": {
+            "description": "The hash of the media content",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width": {
+            "description": "The width of the media in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "height": {
+            "description": "The height of the media in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "description": "The description of the media",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "placeholder": {
+            "description": "The base64 encoded placeholder image for lazy loading",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "duration": {
+            "description": "The duration of the media in seconds",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "flags": {
+            "$ref": "#/components/schemas/EmbedMediaFlags"
+          }
+        },
+        "required": [
+          "url",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "EmbedProviderResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the provider"
+          },
+          "url": {
+            "description": "The URL of the provider",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      },
+      "ForumTagResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the tag",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "The name of the tag"
+          },
+          "moderated": {
+            "type": "boolean",
+            "description": "Whether only moderators can add or remove this tag"
+          },
+          "emoji_id": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The ID of a custom guild emoji"
+          },
+          "emoji_name": {
+            "description": "The unicode character of the emoji",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "moderated",
+          "emoji_id",
+          "emoji_name"
+        ],
+        "additionalProperties": false
+      },
+      "GuildEmojiResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this emoji",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the emoji"
+          },
+          "animated": {
+            "type": "boolean",
+            "description": "Whether this emoji is animated"
+          },
+          "nsfw": {
+            "type": "boolean",
+            "description": "Deprecated; always false. Retained for compatibility with older clients"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "animated",
+          "nsfw"
+        ],
+        "additionalProperties": false
+      },
+      "GuildExplicitContentFilter": {
+        "description": "Level of content filtering for explicit media",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "DISABLED",
+          "MEMBERS_WITHOUT_ROLES",
+          "ALL_MEMBERS"
+        ],
+        "x-enumDescriptions": [
+          "Media content will not be scanned",
+          "Media content from members without roles will be scanned",
+          "Media content from all members will be scanned"
+        ]
+      },
+      "GuildFeatureSchema": {
+        "description": "A guild feature flag Known values: ANIMATED_ICON, ANIMATED_BANNER, AUDIO_BITRATE_128_KBPS, AUDIO_BITRATE_256_KBPS, AUDIO_BITRATE_384_KBPS, BANNER, CLONE_EMOJI_DISABLED, CLONE_EMOJI_ENABLED, CLONE_STICKER_DISABLED, CLONE_STICKER_ENABLED, DETACHED_BANNER, INVITE_SPLASH, INVITES_DISABLED, RAID_DETECTED, TEXT_CHANNEL_FLEXIBLE_NAMES, HIDE_OWNER_CROWN, MORE_EMOJI, MORE_STICKERS, UNLIMITED_EMOJI, UNLIMITED_STICKERS, EXPRESSION_PURGE_ALLOWED, VANITY_URL, DISCOVERABLE, PARTNERED, VERIFIED, VIP_VOICE, VOICE_E2EE, UNAVAILABLE_FOR_EVERYONE, UNAVAILABLE_FOR_EVERYONE_BUT_STAFF, UNAVAILABLE_HIDDEN, VISIONARY, LARGE_GUILD_OVERRIDE, VERY_LARGE_GUILD, ANNOUNCEMENT_CHANNELS_DISABLED (other values allowed)",
+        "x-enumNames": [
+          "ANIMATED_ICON",
+          "ANIMATED_BANNER",
+          "AUDIO_BITRATE_128_KBPS",
+          "AUDIO_BITRATE_256_KBPS",
+          "AUDIO_BITRATE_384_KBPS",
+          "BANNER",
+          "CLONE_EMOJI_DISABLED",
+          "CLONE_EMOJI_ENABLED",
+          "CLONE_STICKER_DISABLED",
+          "CLONE_STICKER_ENABLED",
+          "DETACHED_BANNER",
+          "INVITE_SPLASH",
+          "INVITES_DISABLED",
+          "RAID_DETECTED",
+          "TEXT_CHANNEL_FLEXIBLE_NAMES",
+          "HIDE_OWNER_CROWN",
+          "MORE_EMOJI",
+          "MORE_STICKERS",
+          "UNLIMITED_EMOJI",
+          "UNLIMITED_STICKERS",
+          "EXPRESSION_PURGE_ALLOWED",
+          "VANITY_URL",
+          "DISCOVERABLE",
+          "PARTNERED",
+          "VERIFIED",
+          "VIP_VOICE",
+          "VOICE_E2EE",
+          "UNAVAILABLE_FOR_EVERYONE",
+          "UNAVAILABLE_FOR_EVERYONE_BUT_STAFF",
+          "UNAVAILABLE_HIDDEN",
+          "VISIONARY",
+          "LARGE_GUILD_OVERRIDE",
+          "VERY_LARGE_GUILD",
+          "ANNOUNCEMENT_CHANNELS_DISABLED"
+        ],
+        "x-enumDescriptions": [
+          "Guild can have an animated icon",
+          "Guild can have an animated banner",
+          "Guild can set a voice channel bitrate of up to 128 kbps",
+          "Guild can set a voice channel bitrate of up to 256 kbps",
+          "Guild can set a voice channel bitrate of up to 384 kbps",
+          "Guild can have a banner",
+          "Deprecated and no longer enforced: emoji cloning is now opt-in through CLONE_EMOJI_ENABLED",
+          "Guild allows non-members to use the in-app one-click emoji clone shortcut",
+          "Deprecated and no longer enforced: sticker cloning is now opt-in through CLONE_STICKER_ENABLED",
+          "Guild allows non-members to use the in-app one-click sticker clone shortcut",
+          "Guild banner is detached from splash",
+          "Guild can have an invite splash",
+          "Guild has invites disabled",
+          "Guild has a detected raid and invites are restricted",
+          "Guild allows flexible text channel names",
+          "Guild hides the community owner crown icon",
+          "Legacy increased emoji slots feature",
+          "Legacy increased sticker slots feature",
+          "Guild has unlimited emoji slots",
+          "Guild has unlimited sticker slots",
+          "Guild allows purging expressions",
+          "Guild can have a vanity URL",
+          "Guild is listed in the public discovery directory",
+          "Guild is a partnered guild",
+          "Guild is verified",
+          "Guild has VIP voice features",
+          "Guild has end-to-end encryption for voice channel calls",
+          "Guild is unavailable for everyone",
+          "Guild is unavailable except for staff",
+          "Guild is hidden when it is force unavailable",
+          "Guild is a visionary guild",
+          "Guild has large guild overrides enabled",
+          "Guild has increased member capacity enabled",
+          "Guild cannot publish announcement messages or gain new followers"
+        ],
+        "type": "string"
+      },
+      "GuildMFALevel": {
+        "description": "Required MFA level for moderation actions",
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "NONE",
+          "ELEVATED"
+        ],
+        "x-enumDescriptions": [
+          "Guild has no MFA requirement",
+          "Guild requires 2FA for moderation actions"
+        ]
+      },
+      "GuildMemberProfileFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "Member profile flags",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "AVATAR_UNSET",
+            "value": "1",
+            "description": "Guild member avatar is unset"
+          },
+          {
+            "name": "BANNER_UNSET",
+            "value": "2",
+            "description": "Guild member banner is unset"
+          }
+        ]
+      },
+      "GuildMemberResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "description": "The user this guild member represents",
+            "$ref": "#/components/schemas/UserPartialResponse"
+          },
+          "nick": {
+            "description": "The nickname of the member in this guild",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "avatar": {
+            "description": "The hash of the member guild-specific avatar",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "banner": {
+            "description": "The hash of the member guild-specific banner",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accent_color": {
+            "description": "The accent colour of the member guild profile as an integer",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "roles": {
+            "maxItems": 250,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of role IDs the member has"
+          },
+          "joined_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "ISO8601 timestamp of when the user joined the guild"
+          },
+          "mute": {
+            "type": "boolean",
+            "description": "Whether the member is muted in voice channels"
+          },
+          "deaf": {
+            "type": "boolean",
+            "description": "Whether the member is deafened in voice channels"
+          },
+          "communication_disabled_until": {
+            "description": "ISO8601 timestamp until which the member is timed out",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile_flags": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GuildMemberProfileFlags"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mention_flags": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MentionReplyPreferences",
+                "description": "Per-guild reply mention preference override; NO_PREFERENCE means inherit the user-level mention_flags."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "user",
+          "roles",
+          "joined_at",
+          "mute",
+          "deaf"
+        ],
+        "additionalProperties": false
+      },
+      "GuildOperations": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "Bitfield of disabled operations in the guild",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "PUSH_NOTIFICATIONS",
+            "value": "1",
+            "description": "Allow push notifications for this guild"
+          },
+          {
+            "name": "EVERYONE_MENTIONS",
+            "value": "2",
+            "description": "Allow @everyone mentions in this guild"
+          },
+          {
+            "name": "TYPING_EVENTS",
+            "value": "4",
+            "description": "Enable typing indicator events"
+          },
+          {
+            "name": "INSTANT_INVITES",
+            "value": "8",
+            "description": "Allow creation of instant invites"
+          },
+          {
+            "name": "SEND_MESSAGE",
+            "value": "16",
+            "description": "Allow sending messages in the guild"
+          },
+          {
+            "name": "REACTIONS",
+            "value": "32",
+            "description": "Allow adding reactions to messages"
+          },
+          {
+            "name": "MEMBER_LIST_UPDATES",
+            "value": "64",
+            "description": "Enable member list update events"
+          }
+        ]
+      },
+      "GuildResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this guild",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the guild"
+          },
+          "icon": {
+            "description": "The hash of the guild icon",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "banner": {
+            "description": "The hash of the guild banner",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "banner_width": {
+            "description": "The width of the guild banner in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "banner_height": {
+            "description": "The height of the guild banner in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "splash": {
+            "description": "The hash of the guild splash screen",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "splash_width": {
+            "description": "The width of the guild splash in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "splash_height": {
+            "description": "The height of the guild splash in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "splash_card_alignment": {
+            "description": "The alignment of the splash card",
+            "x-enumNames": [
+              "CENTER",
+              "LEFT",
+              "RIGHT"
+            ],
+            "x-enumDescriptions": [
+              "Splash card is centred",
+              "Splash card is aligned to the left",
+              "Splash card is aligned to the right"
+            ],
+            "enum": [
+              0,
+              1,
+              2
+            ],
+            "type": "integer"
+          },
+          "embed_splash": {
+            "description": "The hash of the embedded invite splash",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "embed_splash_width": {
+            "description": "The width of the embedded invite splash in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "embed_splash_height": {
+            "description": "The height of the embedded invite splash in pixels",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "vanity_url_code": {
+            "description": "The vanity URL code for the guild",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_id": {
+            "description": "The ID of the guild owner",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "system_channel_id": {
+            "description": "The ID of the channel where system messages are sent",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "system_channel_flags": {
+            "$ref": "#/components/schemas/SystemChannelFlags"
+          },
+          "rules_channel_id": {
+            "description": "The ID of the rules channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "afk_channel_id": {
+            "description": "The ID of the AFK voice channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "afk_timeout": {
+            "description": "AFK timeout in seconds before moving users to the AFK channel",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuildFeatureSchema"
+            },
+            "description": "Array of guild feature flags"
+          },
+          "verification_level": {
+            "$ref": "#/components/schemas/GuildVerificationLevel",
+            "description": "Required verification level for members to participate"
+          },
+          "mfa_level": {
+            "$ref": "#/components/schemas/GuildMFALevel"
+          },
+          "nsfw_level": {
+            "$ref": "#/components/schemas/NSFWLevel",
+            "description": "The NSFW level of the guild (legacy; derived from nsfw)"
+          },
+          "nsfw": {
+            "type": "boolean",
+            "description": "Whether the guild is marked as adult (18+) content"
+          },
+          "content_warning_level": {
+            "$ref": "#/components/schemas/ContentWarningLevel",
+            "description": "Whether the guild displays a content warning before entering"
+          },
+          "content_warning_text": {
+            "description": "Custom guild-wide content warning text; null falls back to a localized default",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "explicit_content_filter": {
+            "$ref": "#/components/schemas/GuildExplicitContentFilter"
+          },
+          "default_message_notifications": {
+            "$ref": "#/components/schemas/DefaultMessageNotifications"
+          },
+          "disabled_operations": {
+            "$ref": "#/components/schemas/GuildOperations"
+          },
+          "message_history_cutoff": {
+            "description": "ISO8601 timestamp controlling how far back members without Read Message History can access messages. When null, no historical access is allowed.",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "permissions": {
+            "description": "The current user permissions in this guild when available",
+            "$ref": "#/components/schemas/Permissions"
+          },
+          "roles": {
+            "description": "Roles in the guild from gateway state",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuildRoleResponse"
+            }
+          },
+          "emojis": {
+            "description": "Emojis in the guild from gateway state",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuildEmojiResponse"
+            }
+          },
+          "stickers": {
+            "description": "Stickers in the guild from gateway state",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GuildStickerResponse"
+            }
+          },
+          "channels": {
+            "description": "Channels visible to the requesting user from gateway state",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelResponse"
+            }
+          },
+          "member_count": {
+            "description": "Total number of members in the guild",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "online_count": {
+            "description": "Number of online members visible in the guild",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "approximate_member_count": {
+            "description": "Approximate total member count (only when with_counts is true)",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "approximate_presence_count": {
+            "description": "Approximate online member count (only when with_counts is true)",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "threads_active": {
+            "type": "boolean",
+            "const": true,
+            "description": "Present and true when threads, forum and media channels are active in this guild for the requesting client. Only set on the current user guild list",
+            "x-fluxer-experiment": "channel_threads"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "splash_card_alignment",
+          "owner_id",
+          "system_channel_flags",
+          "afk_timeout",
+          "features",
+          "verification_level",
+          "mfa_level",
+          "nsfw_level",
+          "nsfw",
+          "content_warning_level",
+          "explicit_content_filter",
+          "default_message_notifications",
+          "disabled_operations"
+        ],
+        "additionalProperties": false
+      },
+      "GuildRoleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this role",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the role"
+          },
+          "color": {
+            "description": "The colour of the role as an integer",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "position": {
+            "description": "The position of the role in the role hierarchy",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "hoist_position": {
+            "description": "The position of the role in the hoisted member list",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "permissions": {
+            "description": "The permissions bitfield for the role",
+            "$ref": "#/components/schemas/Permissions"
+          },
+          "hoist": {
+            "type": "boolean",
+            "description": "Whether this role is displayed separately in the member list"
+          },
+          "mentionable": {
+            "type": "boolean",
+            "description": "Whether this role can be mentioned by anyone"
+          },
+          "unicode_emoji": {
+            "description": "The unicode emoji for this role",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "color",
+          "position",
+          "permissions",
+          "hoist",
+          "mentionable"
+        ],
+        "additionalProperties": false
+      },
+      "GuildStickerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this sticker",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the sticker"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the sticker"
+          },
+          "tags": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Autocomplete/suggestion tags for the sticker"
+          },
+          "animated": {
+            "type": "boolean",
+            "description": "Whether this sticker is animated"
+          },
+          "nsfw": {
+            "type": "boolean",
+            "description": "Deprecated; always false. Retained for compatibility with older clients"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description",
+          "tags",
+          "animated",
+          "nsfw"
+        ],
+        "additionalProperties": false
+      },
+      "GuildVerificationLevel": {
+        "description": "Required verification level for members",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "NONE",
+          "LOW",
+          "MEDIUM",
+          "HIGH"
+        ],
+        "x-enumDescriptions": [
+          "Unrestricted",
+          "Must have verified email",
+          "Registered for more than 5 minutes",
+          "Member of the server for more than 10 minutes"
+        ]
+      },
+      "Int32Type": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "format": "int32"
+      },
+      "MentionReplyPreferences": {
+        "description": "Reply mention preference",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "NO_PREFERENCE",
+          "PREFER_MENTION",
+          "PREFER_NO_MENTION"
+        ],
+        "x-enumDescriptions": [
+          "Respect the sender intent on each reply, with no warning when toggling the @ mention. On a guild member, inherits the value from the user-level preference.",
+          "Default replies to @mention this user, and warn the sender when they disable the mention",
+          "Default replies to omit the @mention for this user, and warn the sender when they enable it"
+        ]
+      },
+      "MessageAttachmentFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "The bitwise flags for this attachment",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "IS_SPOILER",
+            "value": "8",
+            "description": "Attachment is marked as a spoiler"
+          },
+          {
+            "name": "CONTAINS_EXPLICIT_MEDIA",
+            "value": "16",
+            "description": "Attachment contains explicit media content"
+          },
+          {
+            "name": "IS_ANIMATED",
+            "value": "32",
+            "description": "Attachment is animated"
+          }
+        ]
+      },
+      "MessageAttachmentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier for this attachment",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "filename": {
+            "type": "string",
+            "description": "The name of the attached file"
+          },
+          "title": {
+            "description": "The title of the attachment",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "description": "The description of the attachment",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content_type": {
+            "description": "The MIME type of the attachment",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "content_hash": {
+            "description": "The hash of the attachment content",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "size": {
+            "description": "The size of the attachment in bytes",
+            "$ref": "#/components/schemas/NonNegativeSafeIntegerType"
+          },
+          "url": {
+            "description": "The URL of the attachment",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proxy_url": {
+            "description": "The proxied URL of the attachment",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "width": {
+            "description": "The width of the attachment in pixels (for images/videos)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "height": {
+            "description": "The height of the attachment in pixels (for images/videos)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "placeholder": {
+            "description": "The base64 encoded placeholder image for lazy loading",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "flags": {
+            "$ref": "#/components/schemas/MessageAttachmentFlags"
+          },
+          "nsfw": {
+            "description": "Whether the attachment is flagged as NSFW",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "duration": {
+            "description": "The duration of the media in seconds",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "waveform": {
+            "description": "The base64 encoded audio waveform data",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expires_at": {
+            "description": "The ISO 8601 timestamp when the attachment URL expires",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "expired": {
+            "description": "Whether the attachment URL has expired",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "filename",
+          "size",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "MessageChannelMentionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the mentioned channel",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the mentioned channel"
+          },
+          "type": {
+            "description": "The type of the mentioned channel",
+            "$ref": "#/components/schemas/Int32Type"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "MessageContentRequest": {
+        "type": "string",
+        "description": "The message content. Non-premium users can send up to 2000 characters; premium users, bots, and webhooks can send up to 4000 characters."
+      },
+      "MessageEmbedChildResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of embed (e.g., rich, image, video, gifv, article, link)"
+          },
+          "url": {
+            "description": "The URL of the embed",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "description": "The title of the embed",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color": {
+            "description": "The color code of the embed sidebar",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "description": "The ISO 8601 timestamp of the embed content",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "description": "The description of the embed",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "author": {
+            "description": "The author information of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedAuthorResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "image": {
+            "description": "The image of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thumbnail": {
+            "description": "The thumbnail of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "footer": {
+            "description": "The footer of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedFooterResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fields": {
+            "description": "The fields of the embed",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EmbedFieldResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provider": {
+            "description": "The provider of the embed (e.g., YouTube, Twitter)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedProviderResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "video": {
+            "description": "The video of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audio": {
+            "description": "The audio of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "html": {
+            "description": "Sanitized oEmbed HTML for trusted specialized embed renderers",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "html_width": {
+            "description": "The preferred width of sanitized oEmbed HTML",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "html_height": {
+            "description": "The preferred height of sanitized oEmbed HTML",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nsfw": {
+            "description": "Whether the embed is flagged as NSFW",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "MessageEmbedResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of embed (e.g., rich, image, video, gifv, article, link)"
+          },
+          "url": {
+            "description": "The URL of the embed",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "description": "The title of the embed",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color": {
+            "description": "The color code of the embed sidebar",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "description": "The ISO 8601 timestamp of the embed content",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "description": "The description of the embed",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "author": {
+            "description": "The author information of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedAuthorResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "image": {
+            "description": "The image of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thumbnail": {
+            "description": "The thumbnail of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "footer": {
+            "description": "The footer of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedFooterResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fields": {
+            "description": "The fields of the embed",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EmbedFieldResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provider": {
+            "description": "The provider of the embed (e.g., YouTube, Twitter)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedProviderResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "video": {
+            "description": "The video of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "audio": {
+            "description": "The audio of the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EmbedMediaResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "html": {
+            "description": "Sanitized oEmbed HTML for trusted specialized embed renderers",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "html_width": {
+            "description": "The preferred width of sanitized oEmbed HTML",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "html_height": {
+            "description": "The preferred height of sanitized oEmbed HTML",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nsfw": {
+            "description": "Whether the embed is flagged as NSFW",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "children": {
+            "description": "Internal nested embeds generated by unfurlers",
+            "anyOf": [
+              {
+                "maxItems": 1,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageEmbedChildResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "MessageFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "The bitwise flags of the original message",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "CROSSPOSTED",
+            "value": "1",
+            "description": "This message has been published to channels that follow this announcement channel"
+          },
+          {
+            "name": "IS_CROSSPOST",
+            "value": "2",
+            "description": "This message was delivered from an announcement channel this channel follows"
+          },
+          {
+            "name": "SUPPRESS_EMBEDS",
+            "value": "4",
+            "description": "Do not include embeds when serialising this message"
+          },
+          {
+            "name": "SOURCE_MESSAGE_DELETED",
+            "value": "8",
+            "description": "The published message this copy came from has been deleted"
+          },
+          {
+            "name": "SUPPRESS_NOTIFICATIONS",
+            "value": "4096",
+            "description": "This message will not trigger push or desktop notifications"
+          },
+          {
+            "name": "VOICE_MESSAGE",
+            "value": "8192",
+            "description": "This message is a voice message"
+          }
+        ]
+      },
+      "MessageNonceRequest": {
+        "description": "Client-generated identifier for the message",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        ]
+      },
+      "MessageReactionResponse": {
+        "type": "object",
+        "properties": {
+          "emoji": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The ID of the custom emoji (null for Unicode emojis)",
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/SnowflakeStringType"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the emoji (or Unicode character for standard emojis)"
+              },
+              "animated": {
+                "description": "Whether the emoji is animated",
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false,
+            "description": "The emoji used for the reaction"
+          },
+          "count": {
+            "description": "The total number of times this reaction has been used",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "me": {
+            "description": "Whether the current user has reacted with this emoji",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "emoji",
+          "count"
+        ],
+        "additionalProperties": false
+      },
+      "MessageReferenceRequest": {
+        "type": "object",
+        "properties": {
+          "message_id": {
+            "description": "ID of the message being referenced",
+            "$ref": "#/components/schemas/SnowflakeType"
+          },
+          "channel_id": {
+            "description": "ID of the channel containing the referenced message",
+            "$ref": "#/components/schemas/SnowflakeType"
+          },
+          "guild_id": {
+            "description": "ID of the guild containing the referenced message",
+            "$ref": "#/components/schemas/SnowflakeType"
+          },
+          "type": {
+            "$ref": "#/components/schemas/MessageReferenceTypeInput",
+            "description": "Type of reference (0 = default, 1 = forward)"
+          },
+          "attachment_ids": {
+            "description": "Optional attachment IDs to include when forwarding only selected media",
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeType"
+            }
+          },
+          "embed_indices": {
+            "description": "Optional embed indices to include when forwarding only selected media",
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Int32Type"
+            }
+          }
+        },
+        "required": [
+          "message_id"
+        ]
+      },
+      "MessageReferenceType": {
+        "description": "The type of message reference",
+        "type": "integer",
+        "enum": [
+          0,
+          1
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "DEFAULT",
+          "FORWARD"
+        ],
+        "x-enumDescriptions": [
+          "Default reference (reply)",
+          "Forwarded message reference"
+        ]
+      },
+      "MessageReferenceTypeInput": {
+        "description": "The type of message reference",
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "format": "int32",
+        "x-enumNames": [
+          "DEFAULT",
+          "FORWARD"
+        ],
+        "x-enumDescriptions": [
+          "Default reference (reply)",
+          "Forwarded message reference"
+        ],
+        "enum": [
+          0,
+          1
+        ]
+      },
+      "MessageRequestSchema": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageContentRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "embeds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RichEmbedRequest"
+            },
+            "description": "Array of embed objects to include in the message"
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/ClientUploadedAttachmentRequest"
+                },
+                {
+                  "$ref": "#/components/schemas/ClientAttachmentRequest"
+                }
+              ]
+            },
+            "description": "Array of attachment objects"
+          },
+          "message_reference": {
+            "description": "Reference to another message (for replies or forwards)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MessageReferenceRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "allowed_mentions": {
+            "description": "Controls which mentions trigger notifications",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AllowedMentionsRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "flags": {
+            "default": 0,
+            "$ref": "#/components/schemas/MessageFlags",
+            "description": "Message flags bitfield"
+          },
+          "nonce": {
+            "$ref": "#/components/schemas/MessageNonceRequest"
+          },
+          "favorite_meme_id": {
+            "description": "ID of a favorite meme to attach",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sticker_ids": {
+            "description": "Array of sticker IDs to include (max 3)",
+            "anyOf": [
+              {
+                "maxItems": 3,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SnowflakeType"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tts": {
+            "description": "Whether this is a text-to-speech message",
+            "type": "boolean"
+          }
+        }
+      },
+      "MessageResponseSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for this message",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "channel_id": {
+            "description": "The ID of the channel this message was sent in",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "author": {
+            "description": "The author of the message",
+            "$ref": "#/components/schemas/UserPartialResponse"
+          },
+          "webhook_id": {
+            "description": "The ID of the webhook that sent this message",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/MessageType"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/MessageFlags",
+            "description": "The bitwise flags for this message"
+          },
+          "content": {
+            "type": "string",
+            "description": "The text content of the message"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "The ISO 8601 timestamp of when the message was created"
+          },
+          "edited_timestamp": {
+            "description": "The ISO 8601 timestamp of when the message was last edited",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pinned": {
+            "type": "boolean",
+            "description": "Whether the message is pinned"
+          },
+          "mention_everyone": {
+            "type": "boolean",
+            "description": "Whether the message mentions @everyone"
+          },
+          "tts": {
+            "type": "boolean",
+            "description": "Whether the message was sent as text-to-speech"
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPartialResponse"
+            },
+            "description": "The users mentioned in the message"
+          },
+          "mention_roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The role IDs mentioned in the message"
+          },
+          "mention_channels": {
+            "description": "Channels mentioned in the message that are visible to @everyone",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageChannelMentionResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "users": {
+            "description": "Users referenced from non-notifying content, embed, and snapshot text, included for client-side resolution",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/UserPartialResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "embeds": {
+            "description": "The embeds attached to the message",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageEmbedResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attachments": {
+            "description": "The files attached to the message",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageAttachmentResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stickers": {
+            "description": "The stickers sent with the message",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageStickerResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reactions": {
+            "description": "The reactions on the message",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageReactionResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message_reference": {
+            "description": "Reference data for replies or forwards",
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "channel_id": {
+                    "description": "The ID of the channel containing the referenced message",
+                    "$ref": "#/components/schemas/SnowflakeStringType"
+                  },
+                  "message_id": {
+                    "description": "The ID of the referenced message, absent on a channel follow system message and on thread created messages that reference only a thread",
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/SnowflakeStringType"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "guild_id": {
+                    "description": "The ID of the guild containing the referenced message",
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/SnowflakeStringType"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "$ref": "#/components/schemas/MessageReferenceType"
+                  }
+                },
+                "required": [
+                  "channel_id",
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message_snapshots": {
+            "description": "Snapshots of forwarded messages",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageSnapshotResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nonce": {
+            "description": "A client-provided value for message deduplication",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "call": {
+            "description": "Call information if this message represents a call",
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "participants": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The user IDs of participants in the call"
+                  },
+                  "ended_timestamp": {
+                    "description": "The ISO 8601 timestamp of when the call ended",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "participants"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thread": {
+            "description": "The thread started from this message, when the viewer can see threads",
+            "$ref": "#/components/schemas/ThreadChannelResponse"
+          },
+          "referenced_message": {
+            "description": "The reply target. Present and populated when the target resolved, present and null when the target is gone, absent when this message has no default reference. Clients must tell null apart from absent by key presence.",
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "The unique identifier (snowflake) for this message",
+                    "$ref": "#/components/schemas/SnowflakeStringType"
+                  },
+                  "channel_id": {
+                    "description": "The ID of the channel this message was sent in",
+                    "$ref": "#/components/schemas/SnowflakeStringType"
+                  },
+                  "author": {
+                    "description": "The author of the message",
+                    "$ref": "#/components/schemas/UserPartialResponse"
+                  },
+                  "webhook_id": {
+                    "description": "The ID of the webhook that sent this message",
+                    "anyOf": [
+                      {
+                        "$ref": "#/components/schemas/SnowflakeStringType"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "type": {
+                    "$ref": "#/components/schemas/MessageType"
+                  },
+                  "flags": {
+                    "$ref": "#/components/schemas/MessageFlags",
+                    "description": "The bitwise flags for this message"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "The text content of the message"
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+                    "description": "The ISO 8601 timestamp of when the message was created"
+                  },
+                  "edited_timestamp": {
+                    "description": "The ISO 8601 timestamp of when the message was last edited",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "pinned": {
+                    "type": "boolean",
+                    "description": "Whether the message is pinned"
+                  },
+                  "mention_everyone": {
+                    "type": "boolean",
+                    "description": "Whether the message mentions @everyone"
+                  },
+                  "tts": {
+                    "type": "boolean",
+                    "description": "Whether the message was sent as text-to-speech"
+                  },
+                  "mentions": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/UserPartialResponse"
+                    },
+                    "description": "The users mentioned in the message"
+                  },
+                  "mention_roles": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The role IDs mentioned in the message"
+                  },
+                  "mention_channels": {
+                    "description": "Channels mentioned in the message that are visible to @everyone",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageChannelMentionResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "users": {
+                    "description": "Users referenced from non-notifying content, embed, and snapshot text, included for client-side resolution",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/UserPartialResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "embeds": {
+                    "description": "The embeds attached to the message",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageEmbedResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "attachments": {
+                    "description": "The files attached to the message",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageAttachmentResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "stickers": {
+                    "description": "The stickers sent with the message",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageStickerResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "reactions": {
+                    "description": "The reactions on the message",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageReactionResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "message_reference": {
+                    "description": "Reference data for replies or forwards",
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "channel_id": {
+                            "description": "The ID of the channel containing the referenced message",
+                            "$ref": "#/components/schemas/SnowflakeStringType"
+                          },
+                          "message_id": {
+                            "description": "The ID of the referenced message, absent on a channel follow system message and on thread created messages that reference only a thread",
+                            "anyOf": [
+                              {
+                                "$ref": "#/components/schemas/SnowflakeStringType"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "guild_id": {
+                            "description": "The ID of the guild containing the referenced message",
+                            "anyOf": [
+                              {
+                                "$ref": "#/components/schemas/SnowflakeStringType"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "type": {
+                            "$ref": "#/components/schemas/MessageReferenceType"
+                          }
+                        },
+                        "required": [
+                          "channel_id",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "message_snapshots": {
+                    "description": "Snapshots of forwarded messages",
+                    "anyOf": [
+                      {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/MessageSnapshotResponse"
+                        }
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "nonce": {
+                    "description": "A client-provided value for message deduplication",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "call": {
+                    "description": "Call information if this message represents a call",
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "participants": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "The user IDs of participants in the call"
+                          },
+                          "ended_timestamp": {
+                            "description": "The ISO 8601 timestamp of when the call ended",
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "participants"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "thread": {
+                    "description": "The thread started from this message, when the viewer can see threads",
+                    "$ref": "#/components/schemas/ThreadChannelResponse"
+                  }
+                },
+                "required": [
+                  "id",
+                  "channel_id",
+                  "author",
+                  "type",
+                  "flags",
+                  "content",
+                  "timestamp",
+                  "pinned",
+                  "mention_everyone",
+                  "tts",
+                  "mentions",
+                  "mention_roles"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "channel_id",
+          "author",
+          "type",
+          "flags",
+          "content",
+          "timestamp",
+          "pinned",
+          "mention_everyone",
+          "tts",
+          "mentions",
+          "mention_roles"
+        ],
+        "additionalProperties": false
+      },
+      "MessageSnapshotResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "description": "The text content of the snapshot",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "The ISO 8601 timestamp of when the original message was created"
+          },
+          "edited_timestamp": {
+            "description": "The ISO 8601 timestamp of when the original message was last edited",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mentions": {
+            "description": "The user IDs mentioned in the snapshot",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mention_roles": {
+            "description": "The role IDs mentioned in the snapshot",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mention_channels": {
+            "description": "Channels mentioned in the snapshot that are visible to @everyone",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageChannelMentionResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "embeds": {
+            "description": "The embeds included in the snapshot",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageEmbedResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attachments": {
+            "description": "The attachments included in the snapshot",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageAttachmentResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stickers": {
+            "description": "The stickers included in the snapshot",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MessageStickerResponse"
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/MessageType"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/MessageFlags"
+          }
+        },
+        "required": [
+          "timestamp",
+          "type",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "MessageStickerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier of the sticker",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the sticker"
+          },
+          "animated": {
+            "type": "boolean",
+            "description": "Whether the sticker is animated"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "animated"
+        ],
+        "additionalProperties": false
+      },
+      "MessageType": {
+        "description": "The type of message",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          12,
+          18,
+          19,
+          21
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "DEFAULT",
+          "RECIPIENT_ADD",
+          "RECIPIENT_REMOVE",
+          "CALL",
+          "CHANNEL_NAME_CHANGE",
+          "CHANNEL_ICON_CHANGE",
+          "CHANNEL_PINNED_MESSAGE",
+          "USER_JOIN",
+          "CHANNEL_FOLLOW_ADD",
+          "THREAD_CREATED",
+          "REPLY",
+          "THREAD_STARTER_MESSAGE"
+        ],
+        "x-enumDescriptions": [
+          "A regular message",
+          "A system message indicating a user was added to the conversation",
+          "A system message indicating a user was removed from the conversation",
+          "A message representing a call",
+          "A system message indicating the channel name changed",
+          "A system message indicating the channel icon changed",
+          "A system message indicating a message was pinned",
+          "A system message indicating a user joined",
+          "System message posted when a channel starts following an announcement channel",
+          "A system message indicating a thread was created",
+          "A reply message",
+          "The first message of a thread, pointing at its source"
+        ]
+      },
+      "NSFWLevel": {
+        "description": "The NSFW level of the guild",
+        "type": "integer",
+        "enum": [
+          0,
+          3
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "SAFE",
+          "AGE_RESTRICTED"
+        ],
+        "x-enumDescriptions": [
+          "Guild is safe for all ages",
+          "Guild is age-restricted"
+        ]
+      },
+      "NonNegativeSafeIntegerType": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      },
+      "Permissions": {
+        "type": "string",
+        "pattern": "^\\d+$",
+        "description": "Permission bitfield as string",
+        "format": "int64",
+        "x-bitflagValues": [
+          {
+            "name": "CREATE_INSTANT_INVITE",
+            "value": "1",
+            "description": "Allows creation of instant invites"
+          },
+          {
+            "name": "KICK_MEMBERS",
+            "value": "2",
+            "description": "Allows kicking members from the guild"
+          },
+          {
+            "name": "BAN_MEMBERS",
+            "value": "4",
+            "description": "Allows banning members from the guild"
+          },
+          {
+            "name": "ADMINISTRATOR",
+            "value": "8",
+            "description": "Grants all permissions and bypasses channel permission overwrites"
+          },
+          {
+            "name": "MANAGE_CHANNELS",
+            "value": "16",
+            "description": "Allows management, editing, and deletion of channels"
+          },
+          {
+            "name": "MANAGE_GUILD",
+            "value": "32",
+            "description": "Allows management and editing of the guild"
+          },
+          {
+            "name": "ADD_REACTIONS",
+            "value": "64",
+            "description": "Allows adding reactions to messages"
+          },
+          {
+            "name": "VIEW_AUDIT_LOG",
+            "value": "128",
+            "description": "Allows viewing of the audit log"
+          },
+          {
+            "name": "PRIORITY_SPEAKER",
+            "value": "256",
+            "description": "Allows using priority speaker in a voice channel"
+          },
+          {
+            "name": "STREAM",
+            "value": "512",
+            "description": "Allows the user to go live"
+          },
+          {
+            "name": "VIEW_CHANNEL",
+            "value": "1024",
+            "description": "Allows viewing a channel"
+          },
+          {
+            "name": "SEND_MESSAGES",
+            "value": "2048",
+            "description": "Allows sending messages in a channel"
+          },
+          {
+            "name": "SEND_TTS_MESSAGES",
+            "value": "4096",
+            "description": "Allows sending text-to-speech messages"
+          },
+          {
+            "name": "MANAGE_MESSAGES",
+            "value": "8192",
+            "description": "Allows for deleting and pinning messages"
+          },
+          {
+            "name": "EMBED_LINKS",
+            "value": "16384",
+            "description": "Links sent will have an embed automatically"
+          },
+          {
+            "name": "ATTACH_FILES",
+            "value": "32768",
+            "description": "Allows uploading files"
+          },
+          {
+            "name": "READ_MESSAGE_HISTORY",
+            "value": "65536",
+            "description": "Allows reading message history"
+          },
+          {
+            "name": "MENTION_EVERYONE",
+            "value": "131072",
+            "description": "Allows using @everyone and @here mentions"
+          },
+          {
+            "name": "USE_EXTERNAL_EMOJIS",
+            "value": "262144",
+            "description": "Allows using emojis from other guilds"
+          },
+          {
+            "name": "CONNECT",
+            "value": "1048576",
+            "description": "Allows connecting to a voice channel"
+          },
+          {
+            "name": "SPEAK",
+            "value": "2097152",
+            "description": "Allows speaking in a voice channel"
+          },
+          {
+            "name": "MUTE_MEMBERS",
+            "value": "4194304",
+            "description": "Allows muting members in voice channels"
+          },
+          {
+            "name": "DEAFEN_MEMBERS",
+            "value": "8388608",
+            "description": "Allows deafening members in voice channels"
+          },
+          {
+            "name": "MOVE_MEMBERS",
+            "value": "16777216",
+            "description": "Allows moving members between voice channels"
+          },
+          {
+            "name": "USE_VAD",
+            "value": "33554432",
+            "description": "Allows using voice activity detection"
+          },
+          {
+            "name": "CHANGE_NICKNAME",
+            "value": "67108864",
+            "description": "Allows changing own nickname"
+          },
+          {
+            "name": "MANAGE_NICKNAMES",
+            "value": "134217728",
+            "description": "Allows changing other members nicknames"
+          },
+          {
+            "name": "MANAGE_ROLES",
+            "value": "268435456",
+            "description": "Allows management and editing of roles"
+          },
+          {
+            "name": "MANAGE_WEBHOOKS",
+            "value": "536870912",
+            "description": "Allows management and editing of webhooks"
+          },
+          {
+            "name": "MANAGE_EXPRESSIONS",
+            "value": "1073741824",
+            "description": "Allows management of guild expressions"
+          },
+          {
+            "name": "USE_EXTERNAL_STICKERS",
+            "value": "137438953472",
+            "description": "Allows using stickers from other guilds"
+          },
+          {
+            "name": "MODERATE_MEMBERS",
+            "value": "1099511627776",
+            "description": "Allows timing out users"
+          },
+          {
+            "name": "CREATE_EXPRESSIONS",
+            "value": "8796093022208",
+            "description": "Allows creating guild expressions"
+          },
+          {
+            "name": "PIN_MESSAGES",
+            "value": "2251799813685248",
+            "description": "Allows pinning messages"
+          },
+          {
+            "name": "BYPASS_SLOWMODE",
+            "value": "4503599627370496",
+            "description": "Allows bypassing slowmode"
+          },
+          {
+            "name": "UPDATE_RTC_REGION",
+            "value": "9007199254740992",
+            "description": "Allows updating the voice region"
+          },
+          {
+            "name": "VIEW_CHANNEL_MEMBERS",
+            "value": "18014398509481984",
+            "description": "Allows viewing the member list in a channel"
+          }
+        ]
+      },
+      "ProfileFieldPrivacyFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "Bitfield controlling who can see the profile timezone",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "EVERYONE",
+            "value": "1",
+            "description": "Allow anyone who can view the full profile to see this profile field"
+          },
+          {
+            "name": "FRIENDS",
+            "value": "2",
+            "description": "Allow friends to see this profile field"
+          },
+          {
+            "name": "MUTUAL_GUILDS",
+            "value": "4",
+            "description": "Allow members from mutual guilds to see this profile field"
+          }
+        ]
+      },
+      "PublicUserFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "The public flags on the user account",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "STAFF",
+            "value": "1",
+            "description": "User is a staff member"
+          },
+          {
+            "name": "PARTNER",
+            "value": "4",
+            "description": "User is a partner"
+          },
+          {
+            "name": "BUG_HUNTER",
+            "value": "8",
+            "description": "User is a bug hunter"
+          },
+          {
+            "name": "FRIENDLY_BOT",
+            "value": "16",
+            "description": "Bot accepts friend requests from users"
+          },
+          {
+            "name": "FRIENDLY_BOT_MANUAL_APPROVAL",
+            "value": "32",
+            "description": "Bot requires manual approval for friend requests"
+          },
+          {
+            "name": "SPAMMER",
+            "value": "64",
+            "description": "User is flagged as a spammer"
+          }
+        ]
+      },
+      "RichEmbedAuthorRequest": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "Name of the embed author",
+                "type": "string"
+              },
+              "url": {
+                "description": "URL to link from the author name",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "icon_url": {
+                "description": "URL of the author icon",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "RichEmbedFooterRequest": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "text": {
+                "description": "Footer text (1-2048 characters)",
+                "type": "string"
+              },
+              "icon_url": {
+                "description": "URL of the footer icon",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "text"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "RichEmbedMediaRequest": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "url": {
+                "description": "URL of the media (image, video, etc.)",
+                "type": "string"
+              },
+              "description": {
+                "description": "Alt text description of the media",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "url"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "RichEmbedRequest": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "description": "URL of the embed",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "title": {
+            "description": "Title of the embed (0-256 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "color": {
+            "description": "Color code of the embed (hex integer)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timestamp": {
+            "description": "ISO8601 timestamp for the embed",
+            "anyOf": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:?\\d{2})?$"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 8640000000000000
+                  }
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "description": "Description of the embed (1-4096 characters)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "author": {
+            "description": "Author information",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichEmbedAuthorRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "image": {
+            "description": "Image to display in the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichEmbedMediaRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thumbnail": {
+            "description": "Thumbnail image for the embed",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichEmbedMediaRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "footer": {
+            "description": "Footer information",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RichEmbedFooterRequest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fields": {
+            "description": "Array of field objects (max 25)",
+            "anyOf": [
+              {
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "description": "Name of the field",
+                      "type": "string"
+                    },
+                    "value": {
+                      "description": "Value of the field (0-1024 characters)",
+                      "type": "string"
+                    },
+                    "inline": {
+                      "default": false,
+                      "description": "Whether the field should display inline",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value"
+                  ]
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "SnowflakeStringType": {
+        "type": "string",
+        "pattern": "^(0|[1-9][0-9]*)$",
+        "format": "snowflake"
+      },
+      "SnowflakeType": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        ],
+        "format": "snowflake"
+      },
+      "SystemChannelFlags": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 2147483647,
+        "description": "System channel message flags",
+        "format": "int32",
+        "x-bitflagValues": [
+          {
+            "name": "SUPPRESS_JOIN_NOTIFICATIONS",
+            "value": "1",
+            "description": "Suppress member join notifications in system channel"
+          }
+        ]
+      },
+      "ThreadChannelResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for this channel",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "guild_id": {
+            "description": "The ID of the guild this channel belongs to",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "description": "The name of the channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "topic": {
+            "description": "The topic of the channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "description": "The URL associated with the channel",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "description": "The icon hash of the channel (for group DMs)",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "owner_id": {
+            "description": "The ID of the owner of the channel (for group DMs)",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/ChannelType"
+          },
+          "position": {
+            "description": "The sorting position of the channel",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "parent_id": {
+            "description": "The ID of the parent category for this channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bitrate": {
+            "description": "The bitrate of the voice channel in bits per second",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "user_limit": {
+            "description": "The maximum number of users allowed in the voice channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voice_connection_limit": {
+            "description": "The maximum active voice connections allowed per user in the voice channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rtc_region": {
+            "description": "The voice region ID for the voice channel",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "rtc_p2p": {
+            "description": "Whether calls in the voice channel connect participants directly instead of through a voice server",
+            "type": "boolean"
+          },
+          "last_message_id": {
+            "description": "The ID of the last message sent in this channel",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "last_pin_timestamp": {
+            "description": "The ISO 8601 timestamp of when the last pinned message was pinned",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "permission_overwrites": {
+            "description": "The permission overwrites for this channel",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChannelOverwriteResponse"
+            }
+          },
+          "recipients": {
+            "description": "The recipients of the DM channel",
+            "maxItems": 49,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserPartialResponse"
+            }
+          },
+          "nsfw": {
+            "description": "Whether the channel is marked as NSFW (effective value, walking channel → category → guild)",
+            "type": "boolean"
+          },
+          "nsfw_override": {
+            "description": "Per-channel adult-content override; null means inherit from parent category and then guild. Categories use this same field as their own override.",
+            "type": [
+              "boolean",
+              "null"
+            ]
+          },
+          "content_warning_level": {
+            "description": "Channel-level content warning override (0=inherit, 1=force-warn)",
+            "$ref": "#/components/schemas/ContentWarningLevel"
+          },
+          "content_warning_text": {
+            "description": "Custom channel content warning text (max 200 characters); null inherits from parent or guild",
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rate_limit_per_user": {
+            "description": "The slowmode rate limit in seconds",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "nicks": {
+            "description": "Custom nicknames for users in this channel (for group DMs)",
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 32
+            }
+          },
+          "flags": {
+            "description": "Channel flags",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "thread_metadata": {
+            "description": "Thread-specific fields",
+            "$ref": "#/components/schemas/ThreadMetadataResponse"
+          },
+          "applied_tags": {
+            "description": "IDs of the tags applied to a forum or media post",
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeStringType"
+            }
+          },
+          "message_count": {
+            "description": "Messages in the thread, excluding the starter and deleted messages",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "total_message_sent": {
+            "description": "Messages ever sent in the thread, never decremented",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "member_count": {
+            "description": "Approximate number of thread members, capped at 50",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "member_ids_preview": {
+            "description": "IDs of the most recently joined members of a forum or media post, newest first",
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnowflakeStringType"
+            }
+          },
+          "member": {
+            "description": "The thread member object for the current user",
+            "$ref": "#/components/schemas/ThreadMemberResponse"
+          },
+          "default_auto_archive_duration": {
+            "description": "Default auto archive duration for new threads",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_thread_rate_limit_per_user": {
+            "description": "Slowmode copied onto new threads",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "available_tags": {
+            "description": "Tags that can be applied to posts",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForumTagResponse"
+            }
+          },
+          "default_reaction_emoji": {
+            "description": "Default reaction for posts",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DefaultReactionEmojiResponse"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_sort_order": {
+            "description": "Default sort order for posts",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_forum_layout": {
+            "description": "Default layout for forum posts",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "default_tag_setting": {
+            "description": "Default tag search setting",
+            "type": "string",
+            "enum": [
+              "match_some",
+              "match_all"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadMemberResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The ID of the thread",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "user_id": {
+            "description": "The ID of the user",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "join_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "When the user last joined the thread"
+          },
+          "flags": {
+            "description": "Thread member flags",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "muted": {
+            "description": "Whether the user has muted the thread (current user only)",
+            "type": "boolean"
+          },
+          "mute_config": {
+            "description": "The mute configuration for the thread (current user only)",
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "end_time": {
+                    "description": "ISO8601 timestamp of when the mute expires",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "selected_time_window": {
+                    "description": "The selected mute duration in seconds",
+                    "$ref": "#/components/schemas/Int32Type"
+                  }
+                },
+                "required": [
+                  "end_time",
+                  "selected_time_window"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "member": {
+            "description": "The guild member object for the user",
+            "$ref": "#/components/schemas/GuildMemberResponse"
+          }
+        },
+        "required": [
+          "join_timestamp",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadMetadataResponse": {
+        "type": "object",
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "description": "Whether the thread is archived"
+          },
+          "auto_archive_duration": {
+            "description": "Minutes of inactivity before the thread stops showing in the channel list",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "archive_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "When the archive status of the thread last changed"
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "Whether only moderators can interact with the thread"
+          },
+          "invitable": {
+            "description": "Whether non-moderators can add other non-moderators (private threads)",
+            "type": "boolean"
+          },
+          "create_timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$",
+            "description": "When the thread was created"
+          }
+        },
+        "required": [
+          "archived",
+          "auto_archive_duration",
+          "archive_timestamp",
+          "locked",
+          "create_timestamp"
+        ],
+        "additionalProperties": false
+      },
+      "UserAuthenticatorTypes": {
+        "description": "Authenticator type",
+        "type": "integer",
+        "enum": [
+          0,
+          2
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "TOTP",
+          "WEBAUTHN"
+        ],
+        "x-enumDescriptions": [
+          "Time-based one-time password authenticator",
+          "WebAuthn authenticator"
+        ]
+      },
+      "UserPartialResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for this user",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "username": {
+            "type": "string",
+            "description": "The username of the user, not unique across the platform"
+          },
+          "discriminator": {
+            "type": "string",
+            "description": "The four-digit discriminator tag of the user"
+          },
+          "global_name": {
+            "description": "The display name of the user, if set",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "avatar": {
+            "description": "The hash of the user avatar image",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "avatar_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The dominant avatar color of the user as an integer"
+          },
+          "bot": {
+            "description": "Whether the user is a bot account",
+            "type": "boolean"
+          },
+          "system": {
+            "description": "Whether the user is an official system user",
+            "type": "boolean"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/PublicUserFlags"
+          },
+          "mention_flags": {
+            "description": "The user's account-wide reply mention preference. Omitted when the user has no preference set (treated as NO_PREFERENCE).",
+            "$ref": "#/components/schemas/MentionReplyPreferences"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "discriminator",
+          "global_name",
+          "avatar",
+          "avatar_color",
+          "flags"
+        ],
+        "additionalProperties": false
+      },
+      "UserPremiumTypes": {
+        "description": "Premium subscription type",
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "NONE",
+          "SUBSCRIPTION",
+          "LIFETIME"
+        ],
+        "x-enumDescriptions": [
+          "No premium subscription",
+          "Active premium subscription",
+          "Lifetime premium subscription"
+        ]
+      },
+      "UserPrivateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for this user",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "username": {
+            "type": "string",
+            "description": "The username of the user, not unique across the platform"
+          },
+          "discriminator": {
+            "type": "string",
+            "description": "The four-digit discriminator tag of the user"
+          },
+          "global_name": {
+            "description": "The display name of the user, if set",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "avatar": {
+            "description": "The hash of the user avatar image",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "avatar_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The dominant avatar color of the user as an integer"
+          },
+          "bot": {
+            "description": "Whether the user is a bot account",
+            "type": "boolean"
+          },
+          "system": {
+            "description": "Whether the user is an official system user",
+            "type": "boolean"
+          },
+          "flags": {
+            "$ref": "#/components/schemas/PublicUserFlags"
+          },
+          "mention_flags": {
+            "description": "The user's account-wide reply mention preference. Omitted when the user has no preference set (treated as NO_PREFERENCE).",
+            "$ref": "#/components/schemas/MentionReplyPreferences"
+          },
+          "is_staff": {
+            "type": "boolean",
+            "description": "Whether the user has staff permissions"
+          },
+          "acls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Access control list entries for the user"
+          },
+          "traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Special traits assigned to the user account"
+          },
+          "email": {
+            "description": "The email address associated with the account",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "email_bounced": {
+            "description": "Whether the current email address is marked as bounced by the mail provider",
+            "type": "boolean"
+          },
+          "has_verified_phone": {
+            "type": "boolean",
+            "description": "Deprecated. Always false."
+          },
+          "bio": {
+            "description": "The user biography text",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pronouns": {
+            "description": "The preferred pronouns of the user",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accent_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The user-selected accent color as an integer"
+          },
+          "timezone": {
+            "description": "The IANA timezone identifier saved by the user",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "timezone_privacy_flags": {
+            "$ref": "#/components/schemas/ProfileFieldPrivacyFlags"
+          },
+          "banner": {
+            "description": "The hash of the user profile banner image",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "banner_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The default banner color if no custom banner is set"
+          },
+          "mfa_enabled": {
+            "type": "boolean",
+            "description": "Whether multi-factor authentication is enabled"
+          },
+          "authenticator_types": {
+            "description": "The types of authenticators configured for MFA",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserAuthenticatorTypes"
+            }
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the email address has been verified"
+          },
+          "account_limited": {
+            "description": "Whether the account is limited",
+            "type": "boolean"
+          },
+          "premium_type": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserPremiumTypes",
+                "description": "The type of premium subscription"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "premium_since": {
+            "description": "ISO8601 timestamp of when premium was first activated",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "premium_until": {
+            "description": "ISO8601 timestamp of when premium access ends, including stacked gift time",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "premium_will_cancel": {
+            "type": "boolean",
+            "description": "Whether premium is set to cancel at the end of the billing period"
+          },
+          "premium_billing_cycle": {
+            "description": "The billing cycle for the premium subscription",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "premium_lifetime_sequence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Int32Type"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The sequence number for lifetime premium subscribers"
+          },
+          "premium_grace_ends_at": {
+            "description": "ISO8601 timestamp at which grace access ends after premium_until passes: after a failed renewal payment (7 days from the renewal for monthly plans, 14 for yearly), after a subscription ends (3 days), or during an App Store or Google Play grace period. Perks stay active and the original premium_since is kept on resubscribe until this timestamp passes. Null when no grace is recorded, in which case access lasts 3 days after premium_until.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "premium_discriminator": {
+            "type": "boolean",
+            "description": "Whether the user selected a premium-only discriminator that will be rerolled when non-lifetime premium access ends"
+          },
+          "premium_badge_hidden": {
+            "type": "boolean",
+            "description": "Whether the premium badge is hidden on the profile"
+          },
+          "premium_badge_masked": {
+            "type": "boolean",
+            "description": "Whether the premium badge shows a masked appearance"
+          },
+          "premium_badge_timestamp_hidden": {
+            "type": "boolean",
+            "description": "Whether the premium start timestamp is hidden"
+          },
+          "premium_badge_sequence_hidden": {
+            "type": "boolean",
+            "description": "Whether the lifetime sequence number is hidden"
+          },
+          "premium_purchase_disabled": {
+            "type": "boolean",
+            "description": "Whether premium purchases are disabled for this account"
+          },
+          "premium_enabled_override": {
+            "type": "boolean",
+            "description": "Whether premium features are enabled via override"
+          },
+          "premium_perks_disabled": {
+            "type": "boolean",
+            "description": "Whether premium perks are temporarily disabled for this account"
+          },
+          "password_last_changed_at": {
+            "description": "ISO8601 timestamp of the last password change",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "last_voice_activity_sharing_change_at": {
+            "description": "ISO8601 timestamp of the last bulk voice-activity-sharing change. Drives the 24-hour cooldown for re-toggling the Active Now sharing default.",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "required_actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Deprecated. Always empty."
+          },
+          "nsfw_allowed": {
+            "type": "boolean",
+            "description": "Whether the user is allowed to view NSFW content"
+          },
+          "has_dismissed_premium_onboarding": {
+            "type": "boolean",
+            "description": "Whether the user has dismissed the premium onboarding flow"
+          },
+          "has_ever_purchased": {
+            "type": "boolean",
+            "description": "Whether the user has ever made a purchase"
+          },
+          "has_unread_gift_inventory": {
+            "type": "boolean",
+            "description": "Whether there are unread items in the gift inventory"
+          },
+          "unread_gift_inventory_count": {
+            "description": "The number of unread gift inventory items",
+            "$ref": "#/components/schemas/Int32Type"
+          },
+          "pending_bulk_message_deletion": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "scheduled_at": {
+                    "type": "string",
+                    "description": "ISO8601 timestamp of when the deletion was scheduled"
+                  },
+                  "channel_count": {
+                    "description": "The number of channels with messages to delete",
+                    "$ref": "#/components/schemas/Int32Type"
+                  },
+                  "message_count": {
+                    "description": "The total number of messages to delete",
+                    "$ref": "#/components/schemas/Int32Type"
+                  }
+                },
+                "required": [
+                  "scheduled_at",
+                  "channel_count",
+                  "message_count"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Information about a pending bulk message deletion request. Only populated when the legacy delayed-deletion flow is in progress; the new immediate-deletion flow does not surface a pending state here."
+          },
+          "age_verified_adult": {
+            "description": "Whether the user has verified their age as an adult via credit card verification",
+            "type": "boolean"
+          },
+          "terms_agreed_at": {
+            "description": "ISO8601 timestamp of when the user last agreed to the terms of service",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "privacy_agreed_at": {
+            "description": "ISO8601 timestamp of when the user last agreed to the privacy policy",
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "discriminator",
+          "global_name",
+          "avatar",
+          "avatar_color",
+          "flags",
+          "is_staff",
+          "acls",
+          "traits",
+          "email",
+          "has_verified_phone",
+          "bio",
+          "pronouns",
+          "accent_color",
+          "banner",
+          "banner_color",
+          "mfa_enabled",
+          "verified",
+          "premium_type",
+          "premium_since",
+          "premium_until",
+          "premium_will_cancel",
+          "premium_billing_cycle",
+          "premium_lifetime_sequence",
+          "premium_grace_ends_at",
+          "premium_discriminator",
+          "premium_badge_hidden",
+          "premium_badge_masked",
+          "premium_badge_timestamp_hidden",
+          "premium_badge_sequence_hidden",
+          "premium_purchase_disabled",
+          "premium_enabled_override",
+          "premium_perks_disabled",
+          "password_last_changed_at",
+          "last_voice_activity_sharing_change_at",
+          "required_actions",
+          "nsfw_allowed",
+          "has_dismissed_premium_onboarding",
+          "has_ever_purchased",
+          "has_unread_gift_inventory",
+          "unread_gift_inventory_count",
+          "pending_bulk_message_deletion",
+          "terms_agreed_at",
+          "privacy_agreed_at"
+        ],
+        "additionalProperties": false
+      },
+      "WebhookResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "The unique identifier (snowflake) for the webhook",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "guild_id": {
+            "description": "The ID of the guild this webhook belongs to",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "channel_id": {
+            "description": "The ID of the channel this webhook posts to",
+            "$ref": "#/components/schemas/SnowflakeStringType"
+          },
+          "name": {
+            "type": "string",
+            "description": "The display name of the webhook"
+          },
+          "avatar": {
+            "description": "The hash of the webhook avatar image",
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/WebhookType"
+          },
+          "token": {
+            "description": "The secure token used to execute the webhook, omitted for channel follower webhooks",
+            "type": "string"
+          },
+          "user": {
+            "description": "The user who created the webhook",
+            "$ref": "#/components/schemas/UserPartialResponse"
+          },
+          "source_guild": {
+            "description": "The guild of the followed announcement channel, present on channel follower webhooks while the creator can view it",
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The ID of the guild that owns the followed announcement channel",
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the guild that owns the followed announcement channel"
+              },
+              "icon": {
+                "description": "The icon hash of the guild that owns the followed announcement channel",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "source_channel": {
+            "description": "The followed announcement channel, present on channel follower webhooks while the creator can view it",
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "The ID of the followed announcement channel",
+                "$ref": "#/components/schemas/SnowflakeStringType"
+              },
+              "name": {
+                "type": "string",
+                "description": "The name of the followed announcement channel"
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "guild_id",
+          "channel_id",
+          "name",
+          "type",
+          "user"
+        ],
+        "additionalProperties": false
+      },
+      "WebhookType": {
+        "description": "The type of webhook",
+        "type": "integer",
+        "enum": [
+          1,
+          2
+        ],
+        "format": "int32",
+        "x-enumNames": [
+          "INCOMING",
+          "CHANNEL_FOLLOWER"
+        ],
+        "x-enumDescriptions": [
+          "Incoming webhook",
+          "Channel follower webhook"
+        ]
+      }
+    }
+  }
+}
