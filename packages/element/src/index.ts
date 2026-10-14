@@ -81,7 +81,7 @@ function createAssetFactory(type: string): AssetFactory {
     } else if (is('ArrayBuffer', src)) {
       src = prefix + Binary.toBase64(src)
     } else if (ArrayBuffer.isView(src)) {
-      src = prefix + Binary.toBase64(src.buffer)
+      src = prefix + Binary.toBase64(src)
     }
     return Element(type, { ...args[0] as {}, src })
   }
