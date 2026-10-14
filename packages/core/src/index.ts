@@ -19,6 +19,7 @@ export * from './adapter'
 export * from './message'
 export * from './internal'
 export * from './session'
+export * from './url'
 
 declare module 'cordis' {
   export interface Context {

@@ -1,6 +1,5 @@
-import { Context, h, MessageEncoder } from '@satorijs/core'
+import { Context, h, isLocal, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import isLocal from '@cordisjs/url-is-local'
 import { KookBot } from './bot'
 import * as Kook from './types'
 import { downloadFile } from './utils'

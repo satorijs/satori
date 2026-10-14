@@ -1,7 +1,6 @@
 import * as QQ from './types'
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Context, Dict, h, isLocal, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
-import isLocal from '@cordisjs/url-is-local'
 import {} from '@cordisjs/plugin-logger'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
