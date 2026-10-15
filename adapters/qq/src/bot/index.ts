@@ -1,5 +1,5 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
@@ -27,7 +27,7 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
   public adapter?: HttpServer | WsClient
 
   internal: GroupInternal
-  http: HTTP
+  http: Http
 
   private _token: string
   private _timer: NodeJS.Timeout

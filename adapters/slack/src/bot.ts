@@ -1,5 +1,5 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { WsClient } from './ws'
 import { HttpServer } from './http'
@@ -14,7 +14,7 @@ import z from 'schemastery'
 export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T> {
   static MessageEncoder = SlackMessageEncoder
 
-  public http: HTTP
+  public http: Http
   public internal: Internal
   public adapter?: HttpServer | WsClient
 
@@ -192,7 +192,7 @@ export class SlackBot<T extends SlackBot.Config = SlackBot.Config> extends Bot<T
 }
 
 export namespace SlackBot {
-  export interface BaseConfig extends HTTP.Config {
+  export interface BaseConfig extends Http.Config {
     token: string
     botToken: string
   }

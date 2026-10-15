@@ -1,5 +1,5 @@
 import { Bot, Context, Inject } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { HttpServer } from './http'
 import { DingtalkMessageEncoder } from './message'
@@ -13,8 +13,8 @@ import z from 'schemastery'
 export class DingtalkBot extends Bot<DingtalkBot.Config> {
   static MessageEncoder = DingtalkMessageEncoder
 
-  public oldHttp: HTTP
-  public http: HTTP
+  public oldHttp: Http
+  public http: Http
   public internal: Internal
   public adapter?: HttpServer | WsClient
   private refreshTokenTimer: NodeJS.Timeout

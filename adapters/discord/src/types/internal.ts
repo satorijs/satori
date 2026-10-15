@@ -1,5 +1,5 @@
 import { Context, Dict, makeArray } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { DiscordBot } from '../bot'
 
@@ -17,7 +17,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: HTTP.RequestConfig = {}
+            const config: Http.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

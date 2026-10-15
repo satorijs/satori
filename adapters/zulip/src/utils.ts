@@ -1,11 +1,11 @@
 import { Dict, Session, Universal } from '@satorijs/core'
 import h, { at, Element, image, transformAsync } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { ZulipBot } from './bot'
 import * as marked from 'marked'
 import * as Zulip from './types'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

@@ -1,5 +1,5 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import xml2js from 'xml2js'
@@ -15,7 +15,7 @@ export class WecomBot extends Bot<WecomBot.Config> {
   static inject = ['server']
   static MessageEncoder = WecomMessageEncoder
 
-  http: HTTP
+  http: Http
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 

@@ -1,4 +1,4 @@
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { SendMessage } from './types'
 
 interface PhoneNumber {
@@ -10,7 +10,7 @@ interface PhoneNumber {
 }
 
 export class Internal {
-  constructor(public http: HTTP) { }
+  constructor(public http: Http) { }
 
   async getPhoneNumbers(id: string) {
     // https://developers.facebook.com/docs/whatsapp/business-management-api/manage-phone-numbers#all-phone-numbers

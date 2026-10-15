@@ -1,11 +1,11 @@
 import { Session, Universal } from '@satorijs/core'
 import h, { audio, file, image, text, video } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-server'
 import { WhatsAppBot } from './bot'
 import { Entry } from './types'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

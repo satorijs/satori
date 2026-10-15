@@ -1,6 +1,6 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
 import { Fragment, normalize } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { adaptChannel, adaptGroup, adaptMessage, adaptUser, decodeGuildMember, decodeRole, encodeRole } from './utils'
 import * as Kook from './types'
@@ -14,7 +14,7 @@ import z from 'schemastery'
 export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
   static MessageEncoder = KookMessageEncoder
 
-  http: HTTP
+  http: Http
   internal: Kook.Internal
   public adapter?: HttpServer | WsClient
 
@@ -204,7 +204,7 @@ export class KookBot<T extends KookBot.Config = KookBot.Config> extends Bot<T> {
 }
 
 export namespace KookBot {
-  export interface BaseConfig extends HTTP.Config, KookMessageEncoder.Config {}
+  export interface BaseConfig extends Http.Config, KookMessageEncoder.Config {}
 
   export type Config = BaseConfig & (HttpServer.Options | WsClient.Options)
 

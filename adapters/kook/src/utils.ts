@@ -1,12 +1,12 @@
 import { Context, isNullable, Session, Universal } from '@satorijs/core'
 import h, { Element, parse, sharp, text } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import * as Kook from './types'
 import { KookBot } from './bot'
 
 export * from './types'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

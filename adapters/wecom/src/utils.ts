@@ -2,9 +2,9 @@ import { Message } from './types'
 import { WecomBot } from './bot'
 import { Context } from '@satorijs/core'
 import h, { audio, image, text, video } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

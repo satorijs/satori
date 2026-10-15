@@ -1,5 +1,5 @@
 import { camelize, Context, Service, Time, Universal, WsClientBase, WsClientConfig } from '@satorijs/core'
-import type { HTTP } from '@cordisjs/plugin-http'
+import type { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { SatoriBot } from './bot'
 import z from 'schemastery'
@@ -8,7 +8,7 @@ export class SatoriAdapter<B extends SatoriBot = SatoriBot> extends WsClientBase
   static schema = true as any
   static inject = ['http']
 
-  public http: HTTP
+  public http: Http
   public bots: B[] = []
 
   private _status = Universal.Status.OFFLINE

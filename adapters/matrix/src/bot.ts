@@ -1,5 +1,5 @@
 import { Bot, Context, Inject, omit, Universal } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { Response } from '@cordisjs/plugin-server'
 import { MatrixMessageEncoder } from './message'
@@ -13,7 +13,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
   static inject = ['server']
   static MessageEncoder = MatrixMessageEncoder
 
-  http: HTTP
+  http: Http
   id: string
   endpoint: string
   rooms: string[] = []
@@ -231,7 +231,7 @@ export class MatrixBot extends Bot<MatrixBot.Config> {
 }
 
 export namespace MatrixBot {
-  export interface Config extends HTTP.Config {
+  export interface Config extends Http.Config {
     name?: string
     avatar?: string
     id?: string
@@ -251,6 +251,6 @@ export namespace MatrixBot {
     asToken: z.string().description('as_token').role('secret').required(),
     endpoint: z.string().description('Matrix Homeserver 地址。默认为 `https://{host}`。'),
     path: z.string().description('Matrix Application Service 的路径。默认为 `/matrix`。').default('/matrix'),
-    ...omit(HTTP.Config.dict, ['baseUrl']),
+    ...omit(Http.Config.dict, ['baseUrl']),
   })
 }

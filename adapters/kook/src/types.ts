@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { Context } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { KookBot } from './bot'
 
 export enum Signal {
@@ -664,11 +664,11 @@ export interface Events {
 }
 
 export class Internal {
-  constructor(private http: HTTP) {}
+  constructor(private http: Http) {}
 
   static define(name: string, method: string, path: string) {
     Internal.prototype[name] = async function (this: Internal, ...args: any[]) {
-      const config: HTTP.RequestConfig = {}
+      const config: Http.RequestConfig = {}
       if (method === 'GET' || method === 'DELETE') {
         config.params = args[0]
       } else {

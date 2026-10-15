@@ -1,9 +1,9 @@
 import { at, Element, file, image, text } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { Message } from './types'
 import { DingtalkBot } from './bot'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

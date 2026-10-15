@@ -1,6 +1,6 @@
 import { Bot, Context, Inject, Time, Universal } from '@satorijs/core'
 import { Fragment } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { Im } from './types'
 import { HttpServer } from './http'
@@ -25,8 +25,8 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
   static MessageEncoder = LarkMessageEncoder
 
   _refresher?: NodeJS.Timeout
-  http: HTTP
-  assetsQuester: HTTP
+  http: Http
+  assetsQuester: Http
   internal: Internal
   public adapter?: HttpServer | WsClient
 
@@ -182,7 +182,7 @@ export class LarkBot<T extends LarkBot.Config = LarkBot.Config> extends Bot<T> {
 }
 
 export namespace LarkBot {
-  export interface BaseConfig extends HTTP.Config {
+  export interface BaseConfig extends Http.Config {
     appId: string
     appSecret: string
   }

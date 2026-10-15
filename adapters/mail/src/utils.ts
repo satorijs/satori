@@ -1,11 +1,11 @@
 import { defineProperty, Universal } from '@satorijs/core'
 import { escape, parse as parseElement } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { ParsedMail } from 'mailparser'
 import { INode, parse, SyntaxKind } from 'html5parser'
 import { MailBot } from './bot'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

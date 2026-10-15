@@ -1,8 +1,8 @@
 import { Dict, makeArray } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 
 export class Internal {
-  constructor(public http: HTTP) { }
+  constructor(public http: Http) { }
 
   static define(routes: Dict<Partial<Record<string, string | string[]>>>) {
     for (const path in routes) {
@@ -15,7 +15,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: HTTP.RequestConfig = {}
+            const config: Http.RequestConfig = {}
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

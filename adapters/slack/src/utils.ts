@@ -1,6 +1,6 @@
 import { Context, Session, Universal } from '@satorijs/core'
 import h, { at, Element, file as $file, image, sharp, text as $text, video } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import { SlackBot } from './bot'
 // eslint-disable-next-line max-len
 import { EnvelopedEvent, GenericMessageEvent, MessageChangedEvent, MessageDeletedEvent, ReactionAddedEvent, ReactionRemovedEvent, RichText, RichTextBlock, SlackEvent, SlackUser } from './types/events'
@@ -8,7 +8,7 @@ import { KnownBlock } from '@slack/types'
 import { Definitions, File, SlackChannel, SlackTeam } from './types'
 import { unescape } from './message'
 
-export async function downloadFile(http: HTTP, url: string) {
+export async function downloadFile(http: Http, url: string) {
   const response = await http(url)
   const data = await response.arrayBuffer()
   const type = response.headers.get('content-type') ?? 'application/octet-stream'

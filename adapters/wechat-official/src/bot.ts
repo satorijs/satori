@@ -1,5 +1,5 @@
 import { Bot, Context, Inject } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import xml2js from 'xml2js'
@@ -16,7 +16,7 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   static inject = ['server']
   static MessageEncoder = WechatOfficialMessageEncoder
 
-  http: HTTP
+  http: Http
   // internal: Internal
   refreshTokenTimer: NodeJS.Timeout
 

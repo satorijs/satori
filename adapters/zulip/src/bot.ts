@@ -1,5 +1,5 @@
 import { Bot, Context, Inject, Time, Universal } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { Internal } from './types'
 import { ZulipMessageEncoder } from './message'
@@ -13,7 +13,7 @@ import z from 'schemastery'
 export class ZulipBot extends Bot<ZulipBot.Config> {
   static MessageEncoder = ZulipMessageEncoder
 
-  public http: HTTP
+  public http: Http
   public internal: Internal
   private timeout: NodeJS.Timeout
 

@@ -1,5 +1,5 @@
 import { Bot, Context, Inject } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import crypto from 'node:crypto'
@@ -14,8 +14,8 @@ export class LineBot extends Bot<LineBot.Config> {
   static inject = ['server']
   static MessageEncoder = LineMessageEncoder
 
-  public http: HTTP
-  public contentHttp: HTTP
+  public http: Http
+  public contentHttp: Http
   public internal: Internal
 
   constructor(ctx: Context, config: LineBot.Config) {

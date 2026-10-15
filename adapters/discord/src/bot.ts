@@ -1,6 +1,6 @@
 import { Bot, Context, Inject, Universal } from '@satorijs/core'
 import { Fragment, normalize } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import * as Discord from './utils'
 import { DiscordMessageEncoder } from './message'
@@ -16,7 +16,7 @@ import { version } from '../package.json'
 export class DiscordBot extends Bot<DiscordBot.Config> {
   static MessageEncoder = DiscordMessageEncoder
 
-  public http: HTTP
+  public http: Http
   public internal: Internal
   public webhooks: Record<string, Webhook | null> = {}
   public webhookLock: Record<string, Promise<Webhook>> = {}
@@ -241,7 +241,7 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
 }
 
 export namespace DiscordBot {
-  export interface Config extends HTTP.Config, DiscordMessageEncoder.Config, WsClient.Options {
+  export interface Config extends Http.Config, DiscordMessageEncoder.Config, WsClient.Options {
     type: 'bot' | 'user'
     token: string
     slash?: boolean

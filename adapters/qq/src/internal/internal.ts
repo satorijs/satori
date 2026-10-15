@@ -1,11 +1,11 @@
 import { Bot, Dict, makeArray } from '@satorijs/core'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 
 export class Internal {
-  constructor(private bot: Bot, private http: () => HTTP) { }
+  constructor(private bot: Bot, private http: () => Http) { }
 
-  static define(isGuild: boolean, routes: Dict<Partial<Record<string, string | string[]>>>, preset?: HTTP.RequestConfig) {
+  static define(isGuild: boolean, routes: Dict<Partial<Record<string, string | string[]>>>, preset?: Http.RequestConfig) {
     for (const path in routes) {
       for (const key in routes[path]) {
         const method = key as string
@@ -16,7 +16,7 @@ export class Internal {
               if (!args.length) throw new Error(`too few arguments for ${path}, received ${raw}`)
               return args.shift()
             })
-            const config: HTTP.RequestConfig = { ...preset }
+            const config: Http.RequestConfig = { ...preset }
             if (args.length === 1) {
               if (method === 'GET' || method === 'DELETE') {
                 config.params = args[0]

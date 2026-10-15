@@ -1,6 +1,6 @@
 import { Bot, Context, Dict, Inject, Time, Universal } from '@satorijs/core'
 import { Fragment, normalize } from '@satorijs/element'
-import { HTTP } from '@cordisjs/plugin-http'
+import { Http } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import {} from '@cordisjs/plugin-server'
 import { pathToFileURL } from 'url'
@@ -34,8 +34,8 @@ export interface TelegramResponse {
 export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> extends Bot<T> {
   static MessageEncoder = TelegramMessageEncoder
 
-  http: HTTP
-  file: HTTP
+  http: Http
+  file: Http
   internal: Telegram.Internal
   local?: boolean
   public adapter?: HttpServer | HttpPolling
@@ -229,7 +229,7 @@ export class TelegramBot<T extends TelegramBot.Config = TelegramBot.Config> exte
 }
 
 export namespace TelegramBot {
-  export interface BaseConfig extends HTTP.Config {
+  export interface BaseConfig extends Http.Config {
     protocol: 'server' | 'polling'
     token: string
     files?: Config.Files
