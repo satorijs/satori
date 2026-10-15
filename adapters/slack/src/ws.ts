@@ -11,6 +11,7 @@ export class WsClient extends CoreWsClient<SlackBot<SlackBot.BaseConfig & WsClie
     super(ctx, bot)
     bot.adapter = this
   }
+
   async prepare() {
     await this.bot.getLogin()
     const data = await this.bot.request('POST', '/apps.connections.open', {}, {}, true)

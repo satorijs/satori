@@ -1,4 +1,4 @@
-import { Context, Dict, Element, MessageEncoder } from '@satorijs/core'
+import { Dict, Element, MessageEncoder } from '@satorijs/core'
 import { escape } from '@satorijs/element'
 import {} from '@cordisjs/plugin-http'
 import { TelegramBot } from './bot'

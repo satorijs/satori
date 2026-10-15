@@ -1,4 +1,4 @@
-import { Context, MessageEncoder } from '@satorijs/core'
+import { MessageEncoder } from '@satorijs/core'
 import h, { Element, text } from '@satorijs/element'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'

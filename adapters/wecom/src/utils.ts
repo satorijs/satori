@@ -1,6 +1,5 @@
 import { Message } from './types'
 import { WecomBot } from './bot'
-import { Context } from '@satorijs/core'
 import h, { audio, image, text, video } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 

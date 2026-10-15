@@ -1,5 +1,4 @@
 /* eslint-disable max-len */
-import { Context } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import { KookBot } from './bot'
 

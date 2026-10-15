@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { WhatsAppBot } from './bot'

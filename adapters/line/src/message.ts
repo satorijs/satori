@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import { LineBot } from './bot'
 import * as Line from './types'
 

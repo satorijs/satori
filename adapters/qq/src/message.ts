@@ -1,5 +1,5 @@
 import * as QQ from './types'
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import isLocal from '@cordisjs/url-is-local'
 import {} from '@cordisjs/plugin-logger'

@@ -1,4 +1,4 @@
-import { Bot, Context, Session, Universal } from '@satorijs/core'
+import { Bot, Session, Universal } from '@satorijs/core'
 import { at, audio, file, image, parse, text, transform, unescape, video } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import * as QQ from './types'

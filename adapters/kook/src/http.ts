@@ -31,7 +31,6 @@ export class HttpServer {
       }
 
       if (this.bot.config.verifyToken !== body.d.verify_token) {
-
         const result = await next()
 
         if (result) return result
@@ -39,7 +38,6 @@ export class HttpServer {
         if (!res.claimed) res.status = 403
 
         return
-
       }
       res.status = 200
 

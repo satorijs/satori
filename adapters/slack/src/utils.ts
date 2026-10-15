@@ -1,4 +1,4 @@
-import { Context, Session, Universal } from '@satorijs/core'
+import { Session, Universal } from '@satorijs/core'
 import h, { at, Element, file as $file, image, sharp, text as $text, video } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import { SlackBot } from './bot'

@@ -1,4 +1,4 @@
-import { Context, isNullable, Session, Universal } from '@satorijs/core'
+import { isNullable, Session, Universal } from '@satorijs/core'
 import h, { Element, parse, sharp, text } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import * as Kook from './types'

@@ -1,4 +1,4 @@
-import { Context, Element, MessageEncoder } from '@satorijs/core'
+import { Element, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import { MailBot } from './bot'
 import { Attachment } from './mail'

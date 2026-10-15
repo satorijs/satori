@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Context, pick, Session, Universal } from '@satorijs/core'
+import { pick, Session, Universal } from '@satorijs/core'
 import { at, audio, Element, file, image, text as $text, video } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import { LarkBot } from './bot'

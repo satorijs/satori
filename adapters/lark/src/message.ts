@@ -1,4 +1,4 @@
-import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
+import { Dict, h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-logger'
 import { LarkBot } from './bot'
 import { Im, Message } from './types'

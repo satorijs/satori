@@ -1,4 +1,4 @@
-import { Context, Dict, pick, Session, Universal, valueMap } from '@satorijs/core'
+import { Dict, pick, Session, Universal, valueMap } from '@satorijs/core'
 import h, { at, image, parse, sharp } from '@satorijs/element'
 import { HTTP } from '@cordisjs/plugin-http'
 import { DiscordBot } from './bot'

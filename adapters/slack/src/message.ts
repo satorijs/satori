@@ -1,4 +1,4 @@
-import { Context, h, MessageEncoder } from '@satorijs/core'
+import { h, MessageEncoder } from '@satorijs/core'
 import {} from '@cordisjs/plugin-http'
 import { SlackBot } from './bot'
 import { adaptMessage, adaptSentAsset, downloadFile } from './utils'

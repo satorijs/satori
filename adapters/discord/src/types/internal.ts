@@ -1,4 +1,4 @@
-import { Context, Dict, makeArray } from '@satorijs/core'
+import { Dict, makeArray } from '@satorijs/core'
 import { HTTP } from '@cordisjs/plugin-http'
 import {} from '@cordisjs/plugin-logger'
 import { DiscordBot } from '../bot'

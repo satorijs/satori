@@ -1,4 +1,4 @@
-import { Context, MessageEncoder, Universal } from '@satorijs/core'
+import { MessageEncoder, Universal } from '@satorijs/core'
 import { Element } from '@satorijs/element'
 import {} from '@cordisjs/plugin-http'
 import { MatrixBot } from './bot'

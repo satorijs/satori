@@ -1,4 +1,3 @@
-import { Context } from '@satorijs/core'
 import { TelegramBot } from './bot'
 import * as Telegram from './types'
 

@@ -35,7 +35,6 @@ export class HttpServer {
       hmac.update(`${version}:${timestamp}:${requestBody}`)
 
       if (hash !== hmac.digest('hex')) {
-
         const result = await next()
 
         if (result) return result
@@ -43,7 +42,6 @@ export class HttpServer {
         if (!res.claimed) res.status = 403
 
         return
-
       }
       const body = JSON.parse(requestBody) as SocketEvent
       if (body.type === 'url_verification') {
