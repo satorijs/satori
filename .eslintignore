@@ -6,3 +6,5 @@ lib
 tests
 
 *.js
+
+adapters/*/src/protocol/schema.ts

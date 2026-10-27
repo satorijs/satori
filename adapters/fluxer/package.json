@@ -1,0 +1,31 @@
+{
+  "name": "@satorijs/adapter-fluxer",
+  "description": "Fluxer adapter for Satori",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "author": "Lipraty <i@lonay.me>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satorijs/satori.git",
+    "directory": "adapters/fluxer"
+  },
+  "bugs": {
+    "url": "https://github.com/satorijs/satori/issues"
+  },
+  "scripts": {
+    "codegen": "node scripts/codegen.mjs"
+  },
+  "devDependencies": {
+    "@satorijs/core": "^4.6.0",
+    "cordis": "^3.18.1",
+    "openapi-typescript": "^7.13.0"
+  },
+  "peerDependencies": {
+    "@satorijs/core": "^4.6.0"
+  }
+}
