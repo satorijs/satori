@@ -21,11 +21,11 @@
     "codegen": "node scripts/codegen.mjs"
   },
   "devDependencies": {
-    "@satorijs/core": "^4.6.0",
+    "@satorijs/core": "^4.6.1",
     "cordis": "^3.18.1",
     "openapi-typescript": "^7.13.0"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.6.0"
+    "@satorijs/core": "^4.6.1"
   }
 }
