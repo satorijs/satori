@@ -531,7 +531,7 @@ namespace Element {
       } else if (is('ArrayBuffer', src)) {
         src = prefix + Binary.toBase64(src)
       } else if (ArrayBuffer.isView(src)) {
-        src = prefix + Binary.toBase64(src.buffer)
+        src = prefix + Binary.toBase64(src)
       }
       if (src.startsWith('base64://')) {
         warn(`protocol "base64:" is deprecated and will be removed in the future, please use "data:" instead`)
