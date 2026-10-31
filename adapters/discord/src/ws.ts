@@ -4,33 +4,60 @@ import {} from '@cordisjs/plugin-logger'
 import { Gateway } from './types'
 import { adaptSession, decodeUser } from './utils'
 import { DiscordBot } from './bot'
+import type { WebSocket } from '@satorijs/protocol'
 import z from 'schemastery'
 
 export class WsClient extends CoreWsClient<DiscordBot> {
   _d = 0
-  _ping?: NodeJS.Timeout
+  _ping = new WeakMap<WebSocket, NodeJS.Timeout>()
   _sessionId = ''
   _resumeUrl?: string
+  _lastHeartbeatAck = true
+  responseTimeout = 5000
 
   async prepare() {
     if (this._resumeUrl) {
       return this.bot.http.ws(this._resumeUrl + '/?v=10&encoding=json')
     }
     const { url } = await this.bot.internal.getGatewayBot()
-    return this.bot.http.ws(url + '/?v=10&encoding=json')
+    this._lastHeartbeatAck = true
+    this.responseTimeout = this.config.retryInterval * 0.9
+    const socket = this.bot.http.ws(url + '/?v=10&encoding=json')
+    setTimeout(() => {
+      if (this._ping.get(socket)) return
+      this.bot.ctx.logger.warn(`offline: connect timeout after ${this.responseTimeout}ms`)
+      socket.close()
+      // Forcibly start a new connection instead of waiting for the closing handshake to finish.
+      // This is because the situation where the response timeout occurs is when the connection is already broken
+      // or when the peer is already dead,
+      // so waiting for the closing frame will just hang indefinitely until the close timeout
+      // set by the underlying WebSocket library used by @cordisjs/plugin-http is reached
+      // (which is hardcoded to 30s for the case of ws, or never for the case of undici,
+      // in which case it will only close when the OS cleans dead TCP connections automatically).
+      this.start()
+    }, this.responseTimeout)
+    return socket
   }
 
-  heartbeat() {
-    if (!this.socket) return
+  heartbeat(socket: WebSocket) {
+    if (socket !== this.socket) return
     this.bot.ctx.logger.debug(`heartbeat d ${this._d}`)
-    this.socket.send(JSON.stringify({
+    socket.send(JSON.stringify({
       op: Gateway.Opcode.HEARTBEAT,
       d: this._d,
     }))
+    this._lastHeartbeatAck = false
+    setTimeout(() => {
+      if (this._lastHeartbeatAck) return
+      this.bot.ctx.logger.warn(`offline: heartbeat timeout after ${this.responseTimeout}ms`)
+      socket.close()
+      this.start() // refer to the comment in prepare()
+    }, this.responseTimeout)
   }
 
   accept() {
-    this.socket!.addEventListener('message', async ({ data }) => {
+    const socket = this.socket!
+    socket.addEventListener('message', async ({ data }) => {
       let parsed: Gateway.Payload
       data = data.toString()
       try {
@@ -45,10 +72,11 @@ export class WsClient extends CoreWsClient<DiscordBot> {
 
       // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
       if (parsed.op === Gateway.Opcode.HELLO) {
-        this._ping = setInterval(() => this.heartbeat(), parsed.d.heartbeat_interval)
+        this.responseTimeout = Math.min(this.config.retryInterval, parsed.d.heartbeat_interval) * 0.9
+        this._ping.set(socket, setInterval(() => this.heartbeat(socket), parsed.d.heartbeat_interval))
         if (this._sessionId) {
           this.bot.ctx.logger.debug('resuming')
-          this.socket!.send(JSON.stringify({
+          socket.send(JSON.stringify({
             op: Gateway.Opcode.RESUME,
             d: {
               token: this.bot.config.token,
@@ -57,7 +85,7 @@ export class WsClient extends CoreWsClient<DiscordBot> {
             },
           }))
         } else {
-          this.socket!.send(JSON.stringify({
+          socket.send(JSON.stringify({
             op: Gateway.Opcode.IDENTIFY,
             d: {
               token: this.bot.config.token,
@@ -69,11 +97,16 @@ export class WsClient extends CoreWsClient<DiscordBot> {
         }
       }
 
+      if (parsed.op === Gateway.Opcode.HEARTBEAT_ACK) {
+        this._lastHeartbeatAck = true
+        this.bot.ctx.logger.debug('heartbeat ack')
+      }
+
       if (parsed.op === Gateway.Opcode.INVALID_SESSION) {
         if (parsed.d) return
         this._sessionId = ''
         this.bot.ctx.logger.warn('offline: invalid session')
-        this.socket?.close()
+        socket.close()
       }
 
       if (parsed.op === Gateway.Opcode.DISPATCH) {
@@ -98,12 +131,12 @@ export class WsClient extends CoreWsClient<DiscordBot> {
 
       if (parsed.op === Gateway.Opcode.RECONNECT) {
         this.bot.ctx.logger.warn('offline: discord request reconnect')
-        this.socket?.close()
+        socket.close()
       }
     })
 
-    this.socket!.addEventListener('close', () => {
-      clearInterval(this._ping)
+    socket.addEventListener('close', () => {
+      clearInterval(this._ping.get(socket))
     })
   }
 }
