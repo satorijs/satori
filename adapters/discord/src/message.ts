@@ -15,6 +15,20 @@ class State {
   constructor(public type: 'message' | 'forward') { }
 }
 
+// https://redd.it/f2kt5r
+const EMBED_FILE_TYPES = {
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/gif": ".gif",
+  "video/webm": ".webm",
+  "video/mp4": ".mp4",
+  "audio/wav": ".wav",
+  "audio/mpeg": ".mp3",
+  "audio/ogg": ".ogg",
+  "audio/mp4": ".mp3",
+  "audio/webm": ".webm",
+}
+
 export class DiscordMessageEncoder<C extends Context = Context> extends MessageEncoder<C, DiscordBot<C>> {
   private stack: State[] = [new State('message')]
   private buffer: string = ''
@@ -90,8 +104,12 @@ export class DiscordMessageEncoder<C extends Context = Context> extends MessageE
     const { filename, data, type } = await this.bot.ctx.http.file(attrs.src || attrs.url, attrs)
     const form = new FormData()
     const value = new Blob([data], { type })
+    let name = attrs.file || filename
+    if (type in EMBED_FILE_TYPES && !name.endsWith(EMBED_FILE_TYPES[type])) {
+      name += EMBED_FILE_TYPES[type]
+    }
     // https://discord.com/developers/docs/reference#uploading-files
-    form.append('files[0]', value, attrs.file || filename)
+    form.append('files[0]', value, name)
     form.append('payload_json', JSON.stringify(payload))
     return this.post(form)
   }
