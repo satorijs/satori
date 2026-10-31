@@ -1,6 +1,12 @@
 import { Bot, Context, h, Session, Universal } from '@satorijs/core'
 import * as QQ from './types'
 import { QQBot } from './bot'
+import { cacheMessage, getQuotedMessage } from './message-cache'
+
+function messageSceneIndex(data: QQ.UserMessage, key: string) {
+  const prefix = key + '='
+  return data.message_scene?.ext?.find(value => value.startsWith(prefix))?.slice(prefix.length)
+}
 
 export const decodeGuild = (guild: QQ.Guild): Universal.Guild => ({
   id: guild.id,
@@ -128,14 +134,20 @@ export function decodeGroupMessage(
 
   message.elements.push(...decodeAttachments(data.attachments ?? [], attachedFace))
   if (data.message_type === QQ.Message.Type.QUOTE) {
-    // msg_elements[0] 无 mentions；有 author, content 会有 <faceType ...>
+    // msg_elements[0] has no mentions and may omit the original author.
+    const original = data.msg_elements?.[0]
+    const index = original?.msg_idx || messageSceneIndex(data, 'ref_msg_idx')
+    const cached = index && getQuotedMessage(bot, data.group_id || data.author.id, !data.group_id, index)
     const quoted: h[] = []
     const quotedAttached = new Set<number>()
-    quoted.push(...decodeGroupMessageContent(data.msg_elements[0].content, data.msg_elements[0].attachments ?? [], quotedAttached))
-    quoted.push(...decodeAttachments(data.msg_elements[0].attachments ?? [], quotedAttached))
+    quoted.push(...decodeGroupMessageContent(original?.content ?? '', original?.attachments ?? [], quotedAttached))
+    quoted.push(...decodeAttachments(original?.attachments ?? [], quotedAttached))
     message.quote = {
+      id: cached?.id,
+      user: cached?.user && { ...cached.user },
       member: {
-        nick: data.msg_elements[0].author?.username,
+        ...cached?.member,
+        nick: original?.author?.username || cached?.member?.nick,
       },
       elements: quoted,
     }
@@ -152,6 +164,14 @@ export function decodeGroupMessage(
   payload.user = { id: data.author.id, avatar: `https://q.qlogo.cn/qqapp/${bot.config.id}/${data.author.id}/640` }
   if (data.author.username) payload.user.name = data.author.username
   if (data.author.member_role) payload.member = { roles: [{ id: data.author.member_role }] }
+  const index = messageSceneIndex(data, 'msg_idx')
+  if (index) {
+    cacheMessage(bot, data.group_id || data.author.id, !data.group_id, {
+      id: message.id,
+      user: payload.user,
+      member: payload.member,
+    }, index)
+  }
   return message
 }
 

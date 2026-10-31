@@ -18,12 +18,14 @@ declare module './internal' {
       timestamp: string
       audit_id?: string
       audit_tips?: string
+      ext_info?: { ref_idx?: string }
     }>
     sendPrivateMessage(openid: string, data: QQ.Message.Request): Promise<{
       id: string
       timestamp: string
       audit_id?: string
       audit_tips?: string
+      ext_info?: { ref_idx?: string }
     }>
     sendPrivateStreamMessage(openid: string, data: QQ.Message.Stream.Request): Promise<{
       id: string
