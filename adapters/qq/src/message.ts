@@ -2,6 +2,7 @@ import * as QQ from './types'
 import { Context, Dict, h, MessageEncoder } from '@satorijs/core'
 import { QQBot } from './bot'
 import { QQGuildBot } from './bot/guild'
+import { cacheMessage, getQuoteReference } from './message-cache'
 import crypto from 'crypto'
 
 export const escapeMarkdown = (val: string) =>
@@ -229,7 +230,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     if (this.reference) {
       data.message_reference = {
-        message_id: this.reference,
+        message_id: getQuoteReference(this.bot, this.session.channelId, this.session.isDirect, this.reference),
       }
     }
     if (this.attachedFile) {
@@ -266,6 +267,10 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           session.timestamp = new Date(resp.timestamp).valueOf()
           session.channelId = this.session.channelId
           session.guildId = this.session.guildId
+          cacheMessage(this.bot, this.session.channelId, this.session.isDirect, {
+            id: resp.id,
+            user: this.bot.user,
+          }, resp.ext_info?.ref_idx)
           session.app.emit(session, 'send', session)
           this.results.push(session.event.message)
         } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
