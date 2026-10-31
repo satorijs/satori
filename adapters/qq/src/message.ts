@@ -189,6 +189,7 @@ export class QQGuildMessageEncoder<C extends Context = Context> extends MessageE
 }
 
 const MSG_TIMEOUT = 5 * 60 * 1000 - 2000 // 5 mins
+const REMOTE_FILE_ERRORS = new Set([40093007, 850027, 40034003])
 
 export class QQMessageEncoder<C extends Context = Context> extends MessageEncoder<C, QQBot<C>> {
   private content: string = ''
@@ -319,7 +320,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     })
   }
 
-  async sendFile(type: string, attrs: Dict) {
+  async sendFile(type: string, attrs: Dict, download = false) {
     const url = attrs.src || attrs.url
     let file_type = 0
     if (type === 'img' || type === 'image') file_type = 1
@@ -330,6 +331,7 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     const data: QQ.Message.File.Request = {
       file_type,
       srv_send_msg: false,
+      file_name: attrs.title || attrs.filename || attrs.file,
     }
     let fileData: Buffer | undefined
     let fileDataBase64: string | undefined
@@ -339,15 +341,14 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     if (capture?.[2]) {
       fileDataBase64 = capture[2]
       fileSize = Buffer.byteLength(fileDataBase64, 'base64')
-    } else if (await this.bot.ctx.http.isLocal(url)) {
+    } else if (download || await this.bot.ctx.http.isLocal(url)) {
       const file = await this.bot.ctx.http.file(url)
-      data.file_name = file.filename
+      data.file_name ||= file.filename
       fileData = Buffer.from(file.data)
       fileSize = fileData.length
     } else {
       data.url = url
     }
-    if (attrs.title) data.file_name = attrs.title
     let res: QQ.Message.File.Response
     try {
       if (fileSize > this.bot.config.uploadThreshold) {
@@ -357,19 +358,24 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
           data.file_data = fileDataBase64 ?? fileData.toString('base64')
         }
         if (this.session.isDirect) {
-          res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
+          res = await this.bot.internal.sendFilePrivate(this.session.channelId, data)
         } else {
           res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
         }
       }
     } catch (e) {
       if (!this.bot.http.isError(e)) throw e
-      this.errors.push(e)
+      // QQ cannot always fetch third-party CDNs (for example Discord). Upload
+      // the bytes ourselves once instead of sending the same inaccessible URL.
+      if (data.url && (REMOTE_FILE_ERRORS.has(e.response?.data?.code) || REMOTE_FILE_ERRORS.has(e.response?.data?.err_code))) {
+        return this.sendFile(type, attrs, true)
+      }
       if (!this.retry && this.bot.config.retryWhen.includes(e.response.data.code)) {
         this.bot.logger.warn('%s retry message sending', this.session.cid)
         this.retry = true
-        await this.sendFile(type, attrs)
+        return this.sendFile(type, attrs, download)
       }
+      this.errors.push(e)
     }
     this.retry = false
     return res
@@ -383,19 +389,23 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   ) {
     const md5 = crypto.createHash('md5').update(fileData).digest('hex')
     const sha1 = crypto.createHash('sha1').update(fileData).digest('hex')
+    // QQ defines this prefix as 10,002,432 bytes, rather than 10 MiB.
+    const md5_10m = crypto.createHash('md5').update(fileData.subarray(0, 10_002_432)).digest('hex')
     let uploadInfo: QQ.Message.File.UploadPrepareResponse
     if (this.session.isDirect) {
-      uploadInfo = await this.bot.internal.uploadPreparePrivate(this.options.session.userId, {
-        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1,
+      uploadInfo = await this.bot.internal.uploadPreparePrivate(this.session.channelId, {
+        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1, md5_10m,
       })
     } else {
       uploadInfo = await this.bot.internal.uploadPrepareGuild(this.session.channelId, {
-        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1,
+        file_type: fileType, file_size: fileData.length, file_name: fileName, md5, sha1, md5_10m,
       })
     }
     const blockSize = +uploadInfo.block_size
     for (const part of uploadInfo.parts) {
-      const buffer = fileData.subarray((part.index - 1) * blockSize, part.index * blockSize)
+      const offset = (part.index - 1) * blockSize
+      const length = +part.block_size > 0 ? +part.block_size : blockSize
+      const buffer = fileData.subarray(offset, offset + length)
       await this.bot.ctx.http.put(part.presigned_url, buffer)
       const data: QQ.Message.File.UploadPartFinishRequest = {
         upload_id: uploadInfo.upload_id,
@@ -404,13 +414,13 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         md5: crypto.createHash('md5').update(buffer).digest('hex'),
       }
       if (this.session.isDirect) {
-        await this.bot.internal.uploadPartFinishPrivate(this.options.session.userId, data)
+        await this.bot.internal.uploadPartFinishPrivate(this.session.channelId, data)
       } else {
         await this.bot.internal.uploadPartFinishGuild(this.session.channelId, data)
       }
     }
     if (this.session.isDirect) {
-      return this.bot.internal.sendFilePrivate(this.options.session.userId, {
+      return this.bot.internal.sendFilePrivate(this.session.channelId, {
         upload_id: uploadInfo.upload_id,
         srv_send_msg: !!send,
       })
