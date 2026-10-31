@@ -83,15 +83,15 @@ export const decodeAttachments = (attachments: QQ.Attachment[], attachedFace: Se
   for (const [index, attachment] of attachments.entries()) {
     if (attachment.content_type === 'file') {
       elements.push(h.file(attachment.url, {
-        filename: attachment.filename,
+        file: attachment.filename,
       }))
     } else if (attachment.content_type.startsWith('image/')) {
       if (attachedFace.has(index)) continue
-      elements.push(h.image(attachment.url, { width: attachment.width, height: attachment.height }))
+      elements.push(h.image(attachment.url, { file: attachment.filename, width: attachment.width, height: attachment.height }))
     } else if (attachment.content_type === 'voice') {
-      elements.push(h.audio(attachment.url))
+      elements.push(h.audio(attachment.url, { file: attachment.filename }))
     } else if (attachment.content_type.startsWith('video')) {
-      elements.push(h.video(attachment.url, { width: attachment.width, height: attachment.height }))
+      elements.push(h.video(attachment.url, { file: attachment.filename, width: attachment.width, height: attachment.height }))
     }
   }
   return elements
