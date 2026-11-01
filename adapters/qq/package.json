@@ -33,9 +33,11 @@
   "devDependencies": {
     "@noble/ed25519": "^2.1.0",
     "@satorijs/core": "^4.6.1",
+    "@satorijs/protocol": "^1.7.0",
     "cordis": "^3.18.1"
   },
   "peerDependencies": {
-    "@satorijs/core": "^4.6.1"
+    "@satorijs/core": "^4.6.1",
+    "@satorijs/protocol": "^1.7.0"
   }
 }

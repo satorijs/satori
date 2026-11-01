@@ -1567,3 +1567,10 @@ export interface Button {
     unsupport_tips?: string
   }
 }
+
+declare module '@satorijs/protocol' {
+  interface SendOptions {
+    /** 由 QQBot.sendPrivateMessage 标记的主动私聊发送（群 openid 与用户 openid 格式相同，无法从 id 区分） */
+    direct?: boolean
+  }
+}
