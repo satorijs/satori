@@ -202,6 +202,12 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
   private retry = false
   reference: string
 
+  // 主动发送时没有真实 session 可依据（core 的 sendPrivateMessage 只使用 id，丢弃了 createDirectChannel 的 type），
+  // 而群 openid 与用户 openid 格式相同，无法从 id 区分，因此由 bot.sendPrivateMessage 显式标记。
+  private get isDirectSend() {
+    return this.options?.direct === true
+  }
+
   // 先图后文
   async flush() {
     if (!this.content.trim() && !this.rows.flat().length && !this.attachedFile) {
@@ -256,16 +262,19 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
     }
     const session = this.bot.session()
     session.type = 'send'
+    const isDirect = this.isDirectSend || this.session.isDirect
+    const channelId = this.channelId || this.session.channelId
     const send = async () => {
       try {
-        const resp = this.session.isDirect
-          ? await this.bot.internal.sendPrivateMessage(this.session.channelId, data)
-          : await this.bot.internal.sendMessage(this.session.channelId, data)
+        const resp = isDirect
+          ? await this.bot.internal.sendPrivateMessage(channelId, data)
+          : await this.bot.internal.sendMessage(channelId, data)
         if (resp.id && !resp.audit_id) {
           session.messageId = resp.id
           session.timestamp = new Date(resp.timestamp).valueOf()
-          session.channelId = this.session.channelId
+          session.channelId = channelId
           session.guildId = this.session.guildId
+          session.isDirect = isDirect
           session.app.emit(session, 'send', session)
           this.results.push(session.event.message)
         } else if (resp.audit_id && this.bot.config.intents & QQ.Intents.MESSAGE_AUDIT) {
@@ -356,10 +365,11 @@ export class QQMessageEncoder<C extends Context = Context> extends MessageEncode
         if (fileData || fileDataBase64) {
           data.file_data = fileDataBase64 ?? fileData.toString('base64')
         }
-        if (this.session.isDirect) {
-          res = await this.bot.internal.sendFilePrivate(this.options.session.userId, data)
+        if (this.isDirectSend || this.session.isDirect) {
+          // 主动私聊的 channelId 就是用户 openid
+          res = await this.bot.internal.sendFilePrivate(this.channelId || this.options.session?.userId, data)
         } else {
-          res = await this.bot.internal.sendFileGuild(this.session.channelId, data)
+          res = await this.bot.internal.sendFileGuild(this.channelId || this.session.channelId, data)
         }
       }
     } catch (e) {

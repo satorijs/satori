@@ -1,4 +1,5 @@
-import { Bot, Context, HTTP, Schema, Universal } from '@satorijs/core'
+import { Bot, Context, h, HTTP, Schema, Universal } from '@satorijs/core'
+import { SendOptions } from '@satorijs/protocol'
 import { WsClient } from '../ws'
 import * as QQ from '../types'
 import { QQGuildBot } from './guild'
@@ -108,6 +109,13 @@ export class QQBot<C extends Context = Context, T extends QQBot.Config = QQBot.C
 
   async createDirectChannel(id: string) {
     return { id, type: Universal.Channel.Type.DIRECT }
+  }
+
+  async sendPrivateMessage(userId: string, content: h.Fragment, guildId?: string, options?: SendOptions) {
+    // core 只使用了 createDirectChannel 返回的 id，channel type 会在 MessageEncoder 中被丢弃，
+    // 导致主动私聊被当成群聊发送（/v2/groups/{openid}/messages）。此处显式标记，交由 encoder 选择接口。
+    const { id } = await this.createDirectChannel(userId)
+    return this.sendMessage(id, content, null, { ...options, direct: true })
   }
 
   async deleteMessage(channelId: string, messageId: string): Promise<void> {
