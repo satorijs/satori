@@ -201,6 +201,9 @@ async function adaptMessageModify(bot: KookBot, data: Kook.Data, meta: Kook.Noti
     session.channelId = meta.chat_code || (await bot.createDirectChannel(session.userId)).id
   }
   adaptMessageSession(data, meta, session.event.message = {}, session.event)
+  if (meta.msg_id) {
+    session.event.message.id = meta.msg_id
+  }
 }
 
 function adaptReaction(data: Kook.Data, body: Kook.NoticeBody, session: Session) {
