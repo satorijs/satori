@@ -70,6 +70,19 @@ export interface Events {
     message_id_list: string[]
   }
   /**
+   * Message recalled event.
+   * @see https://open.feishu.cn/document/server-docs/im-v1/message/events/recalled
+   */
+  'im.message.recalled_v1': {
+    message_id: string
+    chat_id: string
+    recall_time: string
+    recall_type: string
+    sender_id?: UserIds
+    operator_id?: UserIds
+    chat_type?: string
+  }
+  /**
    * Message card callback event.
    * @see https://open.feishu.cn/document/uAjLw4CM/ukzMukzMukzM/feishu-cards/card-callback-communication
    */
@@ -255,6 +268,15 @@ export async function adaptSession(bot: LarkBot, body: EventPayload) {
       session.isDirect = body.event.message.chat_type === 'p2p'
       adaptSender(body.event.sender, session)
       await adaptMessage(bot, body.event, session)
+      break
+    case 'im.message.recalled_v1':
+      session.type = 'message-deleted'
+      session.messageId = body.event.message_id
+      session.channelId = body.event.chat_id
+      session.guildId = body.event.chat_id
+      session.userId = body.event.operator_id?.open_id || body.event.sender_id?.open_id
+      session.isDirect = body.event.chat_type === 'p2p'
+      session.timestamp = +body.event.recall_time
       break
     case 'application.bot.menu_v6':
       if (body.event.event_key.startsWith('command:')) {
