@@ -182,6 +182,20 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
       await this.flush()
       await this.render(children)
       await this.flush()
+    } else if (type === 'a') {
+      let tag = `<a`
+      for (const [key, value] of Object.entries(attrs)) {
+        if (value !== undefined && value !== null) {
+          const k = key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())
+          tag += ` ${k}="${String(value).replace(/"/g, '&quot;')}"`
+        }
+      }
+      tag += `>`
+      this.buffer += tag
+      await this.render(children)
+      this.buffer += `</a>`
+    } else {
+      await this.render(children)
     }
   }
 }
