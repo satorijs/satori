@@ -67,7 +67,9 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     let type = element.type
     if (type === 'audio') type = 'voice'
     if (type === 'img') type = 'image'
-    const [media] = await this.uploadMedia(element)
+    const result = await this.uploadMedia(element)
+    if (!result) return
+    const [media] = result
 
     if (this.options.session.wechatOfficialResolve && !this.bot.config.customerService) {
       await this.sendByHttpResponse({
@@ -109,7 +111,9 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
   // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/New_temporary_materials.html
   async uploadMedia(element: h) {
     const { attrs } = element
-    const uploadType = element.type === 'audio' ? 'voice' : element.type
+    let uploadType = element.type
+    if (uploadType === 'audio') uploadType = 'voice'
+    if (uploadType === 'img') uploadType = 'image'
     const form = new FormData()
 
     const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
@@ -131,6 +135,7 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     if (resp.media_id) {
       return [resp.media_id, uploadType]
     }
+    this.bot.logger.warn('failed to upload media to wechat: %s, %s', resp.errcode, resp.errmsg)
   }
 
   async visit(element: h) {
