@@ -132,10 +132,16 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
         type: uploadType,
       },
     })
-    if (resp.media_id) {
-      return [resp.media_id, uploadType]
+    let resData: any = resp
+    if (typeof resData === 'string') {
+      try {
+        resData = JSON.parse(resData)
+      } catch {}
     }
-    this.bot.logger.warn('failed to upload media to wechat: %s, %s', resp.errcode, resp.errmsg)
+    if (resData?.media_id) {
+      return [resData.media_id, uploadType]
+    }
+    this.bot.logger.warn('failed to upload media to wechat: %s, %s', resData?.errcode, resData?.errmsg)
   }
 
   async visit(element: h) {
