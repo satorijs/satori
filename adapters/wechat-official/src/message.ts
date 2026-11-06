@@ -138,6 +138,28 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
         resData = JSON.parse(resData)
       } catch {}
     }
+    if (resData?.errcode === 40001) {
+      this.bot.logger.warn('access_token expired, refreshing token and retrying upload...')
+      await this.bot.refreshToken()
+      const retryResp = await this.bot.http.post<{
+        type: string
+        media_id: string
+        created_at: number
+        errcode: number
+        errmsg: string
+      }>('/cgi-bin/media/upload', form, {
+        params: {
+          access_token: this.bot.token,
+          type: uploadType,
+        },
+      })
+      resData = retryResp
+      if (typeof resData === 'string') {
+        try {
+          resData = JSON.parse(resData)
+        } catch {}
+      }
+    }
     if (resData?.media_id) {
       return [resData.media_id, uploadType]
     }
