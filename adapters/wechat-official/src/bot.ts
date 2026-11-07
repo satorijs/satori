@@ -228,6 +228,7 @@ export namespace WechatOfficialBot {
     aesKey: string
     customerService: boolean
     account: string
+    audioTranscodePriority?: 'internal' | 'ffmpeg'
   }
 
   export const Config: z<Config> = z.object({
@@ -237,5 +238,9 @@ export namespace WechatOfficialBot {
     token: z.string().role('secret').description('Webhook Token').required(),
     aesKey: z.string().role('secret').description('EncodingAESKey'),
     customerService: z.boolean().default(false).description('启用客服消息回复'),
+    audioTranscodePriority: z.union([
+      z.const('internal').description('内置纯 JS 编码器优先（零系统依赖，开箱即用）'),
+      z.const('ffmpeg').description('FFmpeg 服务优先（需安装 ffmpeg 服务，支持全格式）'),
+    ]).role('radio').default('internal').description('非 MP3 语音素材自动转码优先级（失败时自动降级回退）'),
   })
 }

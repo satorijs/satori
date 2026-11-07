@@ -48,6 +48,7 @@
     "@satorijs/element": "^4.0.0-alpha.0"
   },
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@wecom/crypto": "^1.0.1",
     "schemastery": "^3.18.0",
     "xml2js": "^0.6.2"
