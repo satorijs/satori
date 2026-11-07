@@ -4,7 +4,7 @@ import {} from '@cordisjs/plugin-logger'
 import { WechatOfficialBot } from './bot'
 import xml2js from 'xml2js'
 import { SendMessage } from './types'
-import { downloadFile } from './utils'
+import { downloadFile, transcodeAudioWithFfmpeg, transcodeWavToMp3 } from './utils'
 
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialBot> {
@@ -67,7 +67,12 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     let type = element.type
     if (type === 'audio') type = 'voice'
     if (type === 'img') type = 'image'
-    const [media] = await this.uploadMedia(element)
+    const res = await this.uploadMedia(element)
+    if (!res || !res[0]) {
+      this.bot.ctx.logger.warn(`多媒体素材 [${element.type}] 上传失败，跳过该素材发送`)
+      return
+    }
+    const [media] = res
 
     if (this.options.session.wechatOfficialResolve && !this.bot.config.customerService) {
       await this.sendByHttpResponse({
@@ -109,12 +114,63 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
   // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/New_temporary_materials.html
   async uploadMedia(element: h) {
     const { attrs } = element
-    const uploadType = element.type === 'audio' ? 'voice' : element.type
+    const uploadType = element.type === 'audio' ? 'voice' : (element.type === 'img' ? 'image' : element.type)
     const form = new FormData()
 
     const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
-    const value = new Blob([data], { type })
-    form.append('media', value, attrs.file || filename)
+
+    let uploadData: any = data
+    let uploadFilename = attrs.file || filename || 'voice.mp3'
+    let uploadMime = type
+
+    if (uploadType === 'voice') {
+      const isAlreadyMp3OrAmr =
+        uploadMime?.includes('mpeg') ||
+        uploadMime?.includes('mp3') ||
+        uploadMime?.includes('amr') ||
+        uploadFilename?.endsWith('.mp3') ||
+        uploadFilename?.endsWith('.amr')
+
+      if (!isAlreadyMp3OrAmr) {
+        const priority = this.bot.config.audioTranscodePriority || 'internal'
+        let converted: Buffer | null = null
+
+        if (priority === 'internal') {
+          try {
+            converted = await transcodeWavToMp3(data)
+          } catch (internalErr) {
+            this.bot.ctx.logger.info(`内置 JS 音频转码未命中或失败 (${internalErr})，尝试降级回退至 FFmpeg 服务...`)
+            try {
+              converted = await transcodeAudioWithFfmpeg(this.bot.ctx, data)
+            } catch (ffmpegErr) {
+              this.bot.ctx.logger.warn(`音频转码双引擎均失败: 内置 (${internalErr}), FFmpeg (${ffmpegErr})`)
+            }
+          }
+        } else {
+          try {
+            converted = await transcodeAudioWithFfmpeg(this.bot.ctx, data)
+          } catch (ffmpegErr) {
+            this.bot.ctx.logger.info(`FFmpeg 音频转码未命中或失败 (${ffmpegErr})，尝试降级回退至内置 JS 编码器...`)
+            try {
+              converted = await transcodeWavToMp3(data)
+            } catch (internalErr) {
+              this.bot.ctx.logger.warn(`音频转码双引擎均失败: FFmpeg (${ffmpegErr}), 内置 (${internalErr})`)
+            }
+          }
+        }
+
+        if (converted && converted.length > 0) {
+          uploadData = converted
+          uploadFilename = 'voice.mp3'
+          uploadMime = 'audio/mpeg'
+        } else {
+          this.bot.ctx.logger.warn(`无法将语音素材 [${uploadFilename}] 转码为 MP3 格式，微信可能拒绝接收 (40005)`)
+        }
+      }
+    }
+
+    const value = new Blob([uploadData], { type: uploadMime })
+    form.append('media', value, attrs.file || uploadFilename)
 
     const resp = await this.bot.http.post<{
       type: string
