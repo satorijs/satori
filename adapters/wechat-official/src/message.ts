@@ -67,7 +67,9 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
     let type = element.type
     if (type === 'audio') type = 'voice'
     if (type === 'img') type = 'image'
-    const [media] = await this.uploadMedia(element)
+    const result = await this.uploadMedia(element)
+    if (!result) return
+    const [media] = result
 
     if (this.options.session.wechatOfficialResolve && !this.bot.config.customerService) {
       await this.sendByHttpResponse({
@@ -109,7 +111,9 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
   // https://developers.weixin.qq.com/doc/offiaccount/Asset_Management/New_temporary_materials.html
   async uploadMedia(element: h) {
     const { attrs } = element
-    const uploadType = element.type === 'audio' ? 'voice' : element.type
+    let uploadType = element.type
+    if (uploadType === 'audio') uploadType = 'voice'
+    if (uploadType === 'img') uploadType = 'image'
     const form = new FormData()
 
     const { filename, data, type } = await downloadFile(this.bot.ctx.http, attrs.src || attrs.url)
@@ -128,9 +132,38 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
         type: uploadType,
       },
     })
-    if (resp.media_id) {
-      return [resp.media_id, uploadType]
+    let resData: any = resp
+    if (typeof resData === 'string') {
+      try {
+        resData = JSON.parse(resData)
+      } catch {}
     }
+    if (resData?.errcode === 40001) {
+      this.bot.logger.warn('access_token expired, refreshing token and retrying upload...')
+      await this.bot.refreshToken()
+      const retryResp = await this.bot.http.post<{
+        type: string
+        media_id: string
+        created_at: number
+        errcode: number
+        errmsg: string
+      }>('/cgi-bin/media/upload', form, {
+        params: {
+          access_token: this.bot.token,
+          type: uploadType,
+        },
+      })
+      resData = retryResp
+      if (typeof resData === 'string') {
+        try {
+          resData = JSON.parse(resData)
+        } catch {}
+      }
+    }
+    if (resData?.media_id) {
+      return [resData.media_id, uploadType]
+    }
+    this.bot.logger.warn('failed to upload media to wechat: %s, %s', resData?.errcode, resData?.errmsg)
   }
 
   async visit(element: h) {
@@ -149,6 +182,20 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
       await this.flush()
       await this.render(children)
       await this.flush()
+    } else if (type === 'a') {
+      let tag = `<a`
+      for (const [key, value] of Object.entries(attrs)) {
+        if (value !== undefined && value !== null) {
+          const k = key.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())
+          tag += ` ${k}="${String(value).replace(/"/g, '&quot;')}"`
+        }
+      }
+      tag += `>`
+      this.buffer += tag
+      await this.render(children)
+      this.buffer += `</a>`
+    } else {
+      await this.render(children)
     }
   }
 }
