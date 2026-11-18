@@ -1,4 +1,5 @@
 import { Bot, Context, h, Session, Universal } from '@satorijs/core'
+import { pick } from 'cosmokit'
 import * as QQ from './types'
 import { QQBot } from './bot'
 
@@ -127,17 +128,25 @@ export function decodeGroupMessage(
   })
 
   message.elements.push(...decodeAttachments(data.attachments ?? [], attachedFace))
-  if (data.message_type === QQ.Message.Type.QUOTE) {
-    // msg_elements[0] 无 mentions；有 author, content 会有 <faceType ...>
-    const quoted: h[] = []
-    const quotedAttached = new Set<number>()
-    quoted.push(...decodeGroupMessageContent(data.msg_elements[0].content, data.msg_elements[0].attachments ?? [], quotedAttached))
-    quoted.push(...decodeAttachments(data.msg_elements[0].attachments ?? [], quotedAttached))
-    message.quote = {
-      member: {
-        nick: data.msg_elements[0].author?.username,
-      },
-      elements: quoted,
+  const refIdx = data.message_scene?.ext?.find(item => item.startsWith('ref_msg_idx='))?.slice('ref_msg_idx='.length)
+  if (refIdx || data.message_type === QQ.Message.Type.QUOTE) {
+    const element = data.msg_elements?.find(el => el.msg_idx === refIdx) ?? data.msg_elements?.[0]
+    if (refIdx || element) {
+      const quote: Universal.Message = {}
+      if (element) {
+        const quotedAttached = new Set<number>()
+        const quoted = decodeGroupMessageContent(element.content ?? '', element.attachments ?? [], quotedAttached)
+        quoted.push(...decodeAttachments(element.attachments ?? [], quotedAttached))
+        quote.elements = quoted
+        quote.content = quoted.join('')
+        const author = element.author
+        const name = author?.member_nickname || author?.username
+        const user = author ? pick({ ...author, name }, ['id', 'avatar', 'name']) : {}
+        if (Object.keys(user).length) quote.user = user as Universal.User
+        if (name) quote.member = { nick: name }
+      }
+      quote.id = refIdx || element?.msg_idx
+      message.quote = quote
     }
   }
   message.content = message.elements.join('')
