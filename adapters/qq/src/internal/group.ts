@@ -24,6 +24,12 @@ declare module './internal' {
     getGatewayBot(): Promise<QQ.GetGatewayBotResponse>
     deleteMessage(openid: string, message_id: string): Promise<any>
     deletePrivateMessage(userid: string, message_id: string): Promise<any>
+    getGroupInfo(group_openid: string): Promise<QQ.GroupInfo>
+    getGroupMembers(group_openid: string, params?: { cursor?: string }): Promise<QQ.GroupMemberList>
+    getGroupMember(group_openid: string, member_openid: string): Promise<QQ.GroupMember>
+    batchRemoveGroupMembers(group_openid: string, data: QQ.BatchRemoveGroupMembersRequest): Promise<QQ.BatchRemoveGroupMembersResponse>
+    getRestrictChatSetting(group_openid: string): Promise<QQ.RestrictChatSetting>
+    setRestrictChatSetting(group_openid: string, data: QQ.SetRestrictChatSettingRequest): Promise<any>
   }
 }
 
@@ -51,6 +57,22 @@ GroupInternal.define(false, {
   },
   '/gateway/bot': {
     GET: 'getGatewayBot',
+  },
+  '/v2/groups/{channel.id}/info': {
+    GET: 'getGroupInfo',
+  },
+  '/v2/groups/{channel.id}/members': {
+    GET: 'getGroupMembers',
+  },
+  '/v2/groups/{channel.id}/members/{user.id}': {
+    GET: 'getGroupMember',
+  },
+  '/v2/groups/{channel.id}/batch_remove_members': {
+    POST: 'batchRemoveGroupMembers',
+  },
+  '/v2/groups/{channel.id}/restrict_chat_setting': {
+    GET: 'getRestrictChatSetting',
+    POST: 'setRestrictChatSetting',
   },
 })
 

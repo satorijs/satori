@@ -132,6 +132,77 @@ export class QQBot<T extends QQBot.Config = QQBot.Config> extends Bot<T> {
       await this.internal.deletePrivateMessage(channelId, messageId)
     }
   }
+
+  async getChannel(channelId: string): Promise<Universal.Channel> {
+    const group = await this.internal.getGroupInfo(channelId)
+    return {
+      id: group.group_openid,
+      type: Universal.Channel.Type.TEXT,
+      name: group.group_name,
+    }
+  }
+
+  async getChannelList(guildId: string, next?: string): Promise<Universal.List<Universal.Channel>> {
+    return { data: [await this.getChannel(guildId)] }
+  }
+
+  async getGuild(guildId: string): Promise<Universal.Guild> {
+    const group = await this.internal.getGroupInfo(guildId)
+    return {
+      id: group.group_openid,
+      name: group.group_name,
+      avatar: group.group_avatar,
+    }
+  }
+
+  async getGuildMember(guildId: string, userId: string): Promise<Universal.GuildMember> {
+    const member = await this.internal.getGroupMember(guildId, userId)
+    return {
+      user: {
+        id: member.member_openid,
+        name: member.username,
+        isBot: member.bot,
+      },
+      roles: [member.member_role],
+      joinedAt: member.joined_at ? new Date(member.joined_at).getTime() : undefined,
+    }
+  }
+
+  async kickGuildMember(guildId: string, userId: string): Promise<void> {
+    try {
+      await this.internal.batchRemoveGroupMembers(guildId, {
+        member_openids: [userId],
+      })
+    } catch (error: any) {
+      const code = error?.response?.data?.code
+      if (code === 40103011) {
+        this.ctx.logger.warn(`群 ${guildId} 移除群成员失败：机器人尚未在开放平台 WEB 管理端开启“移除群成员”权限 (code: 40103011)`)
+      } else if (code === 40103012) {
+        this.ctx.logger.warn(`群 ${guildId} 移除群成员失败：群主尚未在手机 QQ 群设置中授权机器人“移除群成员”权限 (code: 40103012)`)
+      }
+      throw error
+    }
+  }
+
+  async muteChannel(channelId: string, guildId?: string, enable = true): Promise<void> {
+    const targetGuildId = guildId ?? channelId
+    await this.internal.setRestrictChatSetting(targetGuildId, {
+      global_rule: {
+        mode: enable ? 'always' : 'none',
+      },
+    })
+  }
+
+  async muteGuildMember(guildId: string, userId: string, duration: number): Promise<void> {
+    const op = duration <= 0 ? 'del' : 'add'
+    await this.internal.setRestrictChatSetting(guildId, {
+      members: [{
+        op,
+        member_openid: userId,
+        mute_expire_at: duration > 0 ? new Date(Date.now() + duration).toISOString() : '',
+      }],
+    })
+  }
 }
 
 export namespace QQBot {

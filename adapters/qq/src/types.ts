@@ -1279,6 +1279,58 @@ export interface GroupEvent {
   op_member_openid: string
 }
 
+export interface GroupInfo {
+  group_openid: string
+  group_name: string
+  group_finger_memo: string
+  group_class_text: string
+  group_tags: string[]
+  group_member_num: number
+  group_avatar?: string
+}
+
+export interface GroupMember {
+  member_openid: string
+  username: string
+  member_role: 'member' | 'owner' | 'admin'
+  bot: boolean
+  joined_at: string
+  union_openid?: string
+}
+
+export interface GroupMemberList {
+  members: GroupMember[]
+  next_cursor: string
+}
+
+export interface BatchRemoveGroupMembersRequest {
+  member_openids: string[]
+}
+
+export interface BatchRemoveGroupMembersResponse {
+  failed_member_openids?: string[]
+}
+
+export interface RestrictChatMember {
+  op?: 'add' | 'update' | 'del'
+  member_openid: string
+  mute_expire_at?: string
+}
+
+export interface RestrictChatSetting {
+  global_rule?: {
+    mode: 'none' | 'always' | 'schedule'
+  }
+  members?: RestrictChatMember[]
+}
+
+export interface SetRestrictChatSettingRequest {
+  global_rule?: {
+    mode: 'none' | 'always' | 'schedule'
+  }
+  members?: RestrictChatMember[]
+}
+
 export interface UserEvent {
   timestamp: number
   openid: string
