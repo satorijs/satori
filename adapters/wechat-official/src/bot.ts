@@ -162,26 +162,33 @@ export class WechatOfficialBot extends Bot<WechatOfficialBot.Config> {
   public token: string
   /** https://developers.weixin.qq.com/doc/offiaccount/Basic_Information/Get_access_token.html */
   async refreshToken() {
-    const { access_token, expires_in, errcode, errmsg } = await this.http.get<{
-      access_token: string
-      expires_in: number
-      errcode?: number
-      errmsg?: string
-    }>('/cgi-bin/token', {
-      params: {
-        grant_type: 'client_credential',
-        appid: this.config.appid,
-        secret: this.config.secret,
-      },
-    })
-    if (errcode > 0) {
-      this.ctx.logger.error(errmsg)
-      return
+    clearTimeout(this.refreshTokenTimer)
+    try {
+      const { access_token, expires_in, errcode, errmsg } = await this.http.get<{
+        access_token: string
+        expires_in: number
+        errcode?: number
+        errmsg?: string
+      }>('/cgi-bin/token', {
+        params: {
+          grant_type: 'client_credential',
+          appid: this.config.appid,
+          secret: this.config.secret,
+        },
+      })
+      if (errcode > 0) {
+        this.ctx.logger.error('failed to refresh token: %s (code: %s)', errmsg, errcode)
+        this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), 10000)
+        return
+      }
+      this.token = access_token
+      this.ctx.logger.debug('token %o, expires in %d', access_token, expires_in)
+      this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (expires_in - 10) * 1000)
+      return access_token
+    } catch (error) {
+      this.ctx.logger.error('failed to refresh token due to network/http error: %s', error)
+      this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), 10000)
     }
-    this.token = access_token
-    this.ctx.logger.debug('token %o, expires in %d', access_token, expires_in)
-    this.refreshTokenTimer = setTimeout(this.refreshToken.bind(this), (expires_in - 10) * 1000)
-    return access_token
   }
 
   /** https://developers.weixin.qq.com/doc/offiaccount/Customer_Service/Customer_Service_Management.html */

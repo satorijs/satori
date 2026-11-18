@@ -128,9 +128,38 @@ export class WechatOfficialMessageEncoder extends MessageEncoder<WechatOfficialB
         type: uploadType,
       },
     })
-    if (resp.media_id) {
-      return [resp.media_id, uploadType]
+    let resData: any = resp
+    if (typeof resData === 'string') {
+      try {
+        resData = JSON.parse(resData)
+      } catch {}
     }
+    if ([40001, 40014, 42001].includes(resData?.errcode)) {
+      this.bot.ctx.logger.warn(`access_token expired or invalid (%s), refreshing token and retrying upload...`, resData.errcode)
+      await this.bot.refreshToken()
+      const retryResp = await this.bot.http.post<{
+        type: string
+        media_id: string
+        created_at: number
+        errcode: number
+        errmsg: string
+      }>('/cgi-bin/media/upload', form, {
+        params: {
+          access_token: this.bot.token,
+          type: uploadType,
+        },
+      })
+      resData = retryResp
+      if (typeof resData === 'string') {
+        try {
+          resData = JSON.parse(resData)
+        } catch {}
+      }
+    }
+    if (resData?.media_id) {
+      return [resData.media_id, uploadType]
+    }
+    this.bot.ctx.logger.warn('failed to upload media to wechat: %s, %s', resData?.errcode, resData?.errmsg)
   }
 
   async visit(element: h) {
