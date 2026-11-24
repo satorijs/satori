@@ -1305,7 +1305,7 @@ export interface Button {
     label: string
     /** 点击后按钮上的文字 */
     visited_label?: string
-    /** 按钮样式：0 灰色线框，1 蓝色线框 */
+    /** 按钮样式：	0：灰色线框，1：蓝色线框 3: 白色背景+红色字体, 4:蓝色背景+白色字体 */
     style?: number
   }
   action: {
@@ -1340,6 +1340,26 @@ export interface Button {
     /** @deprecated */
     at_bot_show_channel_list?: boolean
     /** 客户端不支持本 action 的时候，弹出的 toast 文案 */
-    unsupport_tips?: string
+    unsupport_tips?: string,
+    /** 用户点击二次确认操作 */
+    modal?: {
+      /**
+       * 二次确认的提示文本,如果不为空则会进行二次确认.
+       * 注意:最多40个字符, 不能有URL
+       */
+      content: string,
+
+      /**
+       * 二次确认提示确认按钮中展示的文字,可以为空, 默认为"确认"
+       * 注意:最多4个字符
+       */
+      confirm_text?: string,
+
+      /**
+       * 二次确认提示取消按钮中的文字,可以为空,默认为"取消"
+       * 注意:最多4个字符
+       */
+      cancel_text?: string
+    }
   }
 }
