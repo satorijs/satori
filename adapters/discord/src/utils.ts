@@ -428,6 +428,15 @@ export const encodeCommand = (cmd: Universal.Command): Discord.ApplicationComman
   options: encodeCommandOptions(cmd).slice(0, 25),
 })
 
+export function findCommandsOverLimit(commands: Universal.Command[]): string[] {
+  const collect = (cmd: Universal.Command): string[] => {
+    if (cmd.children.length) return cmd.children.flatMap(collect)
+    const count = cmd.arguments.length + cmd.options.length
+    return count > 25 ? [cmd.name] : []
+  }
+  return commands.flatMap(collect)
+}
+
 const decodeArgv = (
   data: Discord.InteractionData.ApplicationCommand | Discord.InteractionData.ApplicationCommand.Option,
   command: Universal.Command,

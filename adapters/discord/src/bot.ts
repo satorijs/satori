@@ -232,6 +232,10 @@ export class DiscordBot extends Bot<DiscordBot.Config> {
   async updateCommands(commands: Universal.Command[]) {
     if (!this.config.slash) return
     this.commands = commands
+    const overLimit = Discord.findCommandsOverLimit(commands)
+    if (overLimit.length) {
+      this.ctx.logger.warn('%d command(s) exceed the 25-option limit, extra options will be dropped: %s', overLimit.length, overLimit.join(', '))
+    }
     const updates = commands.map(Discord.encodeCommand)
     if (updates.length) {
       this.ctx.logger.debug('update %d command(s)', updates.length)
